@@ -221,57 +221,91 @@ module Emma::Common::FormatMethods
 
   # Match a named reference like "%{name}" for a #sprintf argument.
   #
+  # $1 = [String] name
+  #
   # @type [Regexp]
   #
-  SPRINTF_NAMED_REFERENCE = /%{([^}]+)}/.freeze
+  SIMPLE_NAMED_REFERENCE = /%{([^}\n]+)}/.freeze
 
   # Match a formatted named reference like "%<name>s" for a #sprintf argument.
   #
+  # $1 = [String] name
+  #
   # @type [Regexp]
   #
-  SPRINTF_FMT_NAMED_REFERENCE = /%<([^>]+)>/.freeze
+  FORMAT_NAMED_REF_BASE = /%<([^>\n]+)>/.freeze
 
   # @private
   # @type [Array<Regexp>]
-  SPRINTF_NAMED_REF_PATTERNS =
-    [SPRINTF_NAMED_REFERENCE, SPRINTF_FMT_NAMED_REFERENCE].freeze
+  NAMED_REFERENCES = [SIMPLE_NAMED_REFERENCE, FORMAT_NAMED_REF_BASE].freeze
 
   # Extract the named references in a format string.
   #
   # @param [String, *]             text   String with #sprintf formatting.
-  # @param [Array<Regexp>, Regexp] match  Patterns to match
+  # @param [Array<Regexp>, Regexp] match  Default: #NAMED_REFERENCES
   #
   # @return [Array<Symbol>]
   #
   # @see Kernel#sprintf
   #
-  def named_references(text, match = SPRINTF_NAMED_REF_PATTERNS)
+  def named_references(text, match: nil)
     return [] unless (text = text.to_s).match?(/%[{<]/)
-    matches = Array.wrap(match).flat_map { |pat| text.scan(pat).map(&:shift) }
-    matches.compact_blank!.map!(&:to_sym).uniq
+    match  = match ? Array.wrap(match) : NAMED_REFERENCES
+    result = match.flat_map { |pat| text.scan(pat).map(&:shift) }
+    result.compact_blank!.map!(&:to_sym).uniq
   end
 
-  # Match a named reference along with "%<name>s" the format portion.
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Match the format portion of a named reference like "%<name>".
   #
-  # $1 = [String, nil] name
-  # $2 = [String, nil] flags
-  # $3 = [String, nil] width
-  # $4 = [String, nil] precision
-  # $5 = [String]      format
+  # $1 = [String, nil] flags
+  # $2 = [String, nil] width
+  # $3 = [String, nil] precision
+  # $4 = [String]      format type
   #
   # @type [Regexp]
   #
   #--
   # noinspection RegExpRedundantEscape, SpellCheckingInspection
   #++
-  SPRINTF_FORMAT = /
-    %                                 # required
-    (<[^>]+>)?                        # optional name
-    (\d+\$\*\d+\$|\d+\$|[\ #+0-]+)?   # optional flags
-    (\d+)?                            # optional width
-    (\.\d+)?                          # optional precision
-    ([bBdiouxXeEfgGaAcps])            # required format
+  FORMAT_MATCH = /
+    (\d+\$\*\d+\$|\d+\$|[\ #+0-]+)? # $1 - optional flags
+    (\d+)?                          # $2 - optional width
+    (\.\d+)?                        # $3 - optional precision
+    ([bBdiouxXeEfgGcpsaA])          # $4 - required format type
   /x.freeze
+
+  # Match a named reference like "%<name>" along with its format.
+  #
+  # $1 = [String]      name
+  # $2 = [String, nil] flags
+  # $3 = [String, nil] width
+  # $4 = [String, nil] precision
+  # $5 = [String]      format type
+  #
+  # @type [Regexp]
+  #
+  FORMAT_NAMED_REFERENCE =
+    /#{FORMAT_NAMED_REF_BASE.source}#{FORMAT_MATCH.source}/x.freeze
+
+  # Match a named reference "%{name}" or "%<name>" along with its format.
+  #
+  # $1 = [String]      name           String for "%{name}"; nil for "%<name>".
+  # $2 = [String]      name           String for "%<name>"; nil for "%{name}".
+  # $3 = [String, nil] flags          Always nil for "%{name}".
+  # $4 = [String, nil] width          Always nil for "%{name}".
+  # $5 = [String, nil] precision      Always nil for "%{name}".
+  # $6 = [String, nil] format type    String for "%<name>"; nil for "%{name}".
+  #
+  # @type [Regexp]
+  #
+  NAMED_REFERENCE =
+    Regexp.union(SIMPLE_NAMED_REFERENCE, FORMAT_NAMED_REFERENCE).freeze
 
   # Extract the named references in a format string and pair them with their
   # respective sprintf formats.  Each "%{name}" reference is paired with "%s";
@@ -283,14 +317,77 @@ module Emma::Common::FormatMethods
   # @return [Hash{Symbol=>String}]
   #
   def named_references_and_formats(text, default_fmt: '%s')
-    named_references(text).map { |name| [name, default_fmt] }.to_h.tap do |res|
-      if res.present?
-        text.to_s.scan(SPRINTF_FORMAT).each do |parts|
-          next if (name = parts.shift).blank? || (fmt = parts.join).blank?
-          res[name.delete('<>').to_sym] = "%#{fmt}"
-        end
-      end
+    result = {}
+    text.to_s.scan(NAMED_REFERENCE).each do |parts|
+      name = parts.shift || parts.shift
+      fmt  = parts.presence&.join || default_fmt
+      fmt  = "%#{fmt}" if fmt && !fmt.start_with?('%')
+      result[name.to_sym] = fmt
     end
+    result
+  end
+
+  # Matches the given named reference appearing in a string as "%{name}".
+  # Named references of the form "%<name>" will not be matched.
+  #
+  # @param [String|Symbol] var
+  #
+  # @return [Regexp]
+  #
+  def match_simple_named_ref(var)
+    /%{#{var}}/
+  end
+
+  # Matches the given named reference appearing in a string as "%<name>...".
+  # Named references of the form "%{name}" will not be matched.
+  #
+  # @param [String|Symbol] var
+  #
+  # @return [Regexp]
+  #
+  def match_format_named_ref(var)
+    /%<#{var}>#{FORMAT_MATCH.source}/x
+  end
+
+  # Matches the given named reference appearing in a string as either "%{name}"
+  # or "%<name>...".
+  #
+  # @param [String|Symbol] var
+  #
+  # @return [Regexp]
+  #
+  def named_reference_matcher(var)
+    Regexp.union(match_simple_named_ref(var), match_format_named_ref(var))
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Used by #indefinite_article to find the first substring after "%{an}" or
+  # "%<an>" in order to determine whether the subject starts with a vowel.
+  #
+  # @type [Regexp]
+  #
+  NAMED_REF_AN = named_reference_matcher(:an).freeze
+
+  # Return the appropriate article ('a' or 'an') for the given word or phrase.
+  #
+  # If *term* contains "%{an}" or "%<an>...", the substring following it is
+  # used to determine whether the subject starts with a vowel.
+  #
+  # @param [String] term
+  #
+  # @return [String]
+  #
+  def indefinite_article(term)
+    term  = term.to_s
+    term  = term.split(NAMED_REF_AN).second || term if term.match?(/%[{<]/)
+    first = term.lstrip[0]
+    vowel = first && 'aeiou'.include?(first.downcase)
+    config_text(vowel ? :an : :a)
   end
 
   # ===========================================================================

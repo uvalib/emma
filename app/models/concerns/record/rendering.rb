@@ -21,13 +21,13 @@ module Record::Rendering
 
   public
 
-  # Default label. TODO: I18n
+  # Default label.
   #
   # @type [String]
   #
   # @note From UploadWorkflow::Errors::RenderMethods#DEFAULT_LABEL
   #
-  DEFAULT_LABEL = '(missing)'
+  DEFAULT_LABEL = config_text(:record, :missing)
 
   # ===========================================================================
   # :section:

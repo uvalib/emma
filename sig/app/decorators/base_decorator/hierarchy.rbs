@@ -26,11 +26,13 @@ module BaseDecorator::Hierarchy
   #
   def render_field_hierarchy: (?action: String|Symbol|nil, ?pairs: symHash|nil, ?separator: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # The term used for a file instance instead of 'file'. # TODO: I18n
+  # The term used for a file instance instead of 'file'.
   #
   # @type [String, nil]
   #
   FILE_TERM: String
+
+  COMPLETE_WORK: String
 
   # Data for all of the lines that represent a hierarchical entry.
   #

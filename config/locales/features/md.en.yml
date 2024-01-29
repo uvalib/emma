@@ -1,0 +1,83 @@
+# config/locales/features/md.en.yml
+#
+# Math Detective API trial
+
+en:
+
+  emma:
+
+    md:
+
+      # =======================================================================
+      # Messages (overriding "en.emma.messages")
+      # =======================================================================
+
+      messages:
+
+        clipboard:
+          access:       'Change settings to allow clipboard access'
+          copied:       '(copied)'
+          failed:       '(failed)'
+          saved:        'saved in the clipboard'
+          unknown:      'unknown error'
+          data:
+            image:      'Image'
+            no_image:   'No image'
+            nothing:    'Nothing'
+          input:
+            label:      'Clipboard image'
+            paste:      'Paste'
+            file_name:  '(clipboard)'
+
+        copy:
+          tooltip:      'Copy this output to clipboard'
+          icon:         '' # TODO: CLIPBOARD_ICON
+
+        error:
+          label:        'No equations detected'
+          placeholder:  'NONE'
+
+        file:
+          input:
+            label:      'Image file'
+
+        output:
+          label:        'Status'
+          placeholder:  'NONE'
+
+        preview:
+          title:        'Selected Image'
+          label:        'Preview of selected file'
+
+        mathml:
+          title:        'Equation(s) as MathML'
+
+        latex:
+          title:        'Equation(s) as LaTeX'
+
+        spoken:
+          title:        'Equation(s) as spoken English'
+
+        results:
+          title:        'Math Detective API Response Data'
+
+        response:
+          error:        'ERROR'
+          fatal:        'FATAL'
+          unknown:      'unknown error'
+          no_item:      'could not find item'
+          size_limit:   'API only accepts images <= 5 megabytes'
+          bad_http:     'unexpected HTTP'
+          no_data:      'No image data supplied'
+          no_req:       'Missing request identifier to check'
+
+        status:
+          label:        'Status'
+          placeholder:  'NONE'
+
+          starting:     'STARTING'
+          failed:       'FAILED'
+          fetching:     'FETCHING'
+          submitting:   'SUBMITTING'
+          initializing: 'INITIALIZING'
+          timeout:      'TIMEOUT'

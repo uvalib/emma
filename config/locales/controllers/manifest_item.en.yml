@@ -21,6 +21,35 @@ en:
         storage:        true
 
       # =======================================================================
+      # Messages (overriding "en.emma.messages")
+      # =======================================================================
+
+      messages:
+
+        details:
+          dd:           'Displayed as'
+          dt:           'Data value'
+          one_or_more:  'one or more'
+          type:         'type'
+          type_boolean: 'TRUE or FALSE value'
+          type_date:    '%{type} [YYYYMMDD]'
+          type_desc:    'Description of %{type} to come...'
+          type_text:    'string'
+          type_value:   '%{type} value'
+
+        row_details:
+          label:        'Item Details'
+
+        submit:
+          edit_label:   'Edit'
+          edit_tooltip: 'Modify this manifest item'
+          item_name:    'Item name'
+          item_select:  'Select item %{number} for submission'
+
+        uploader:
+          error:        'unknown uploader error'
+
+      # =======================================================================
       # Layout
       # =======================================================================
 
@@ -54,16 +83,13 @@ en:
       action_links:
 
         new:
-          label:        'Create %{article} new item'
-          article:      'a'
+          label:        'Create %{an} new item'
 
         edit:
-          label:        'Modify %{article} item'
-          article:      'a'
+          label:        'Modify %{an} item'
 
         delete:
-          label:        'Remove %{article} item'
-          article:      'a'
+          label:        'Remove %{an} item'
 
         index:
           label:        'List all items'

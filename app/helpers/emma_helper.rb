@@ -135,9 +135,12 @@ module EmmaHelper
 
   # The "mailto:" link for the general e-mail contact.
   #
+  # @param [String, nil] label        Link text instead of the email address.
+  #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def emma_administrator(label = 'EMMA administrator') # TODO: I18n
+  def emma_administrator(label = nil)
+    label ||= config_text(:administrator)
     contact_email(label)
   end
 

@@ -259,11 +259,11 @@ module Record::Assignable
   #
   LINE_JOIN = ";\n"
 
-  # The phrase indicating a problematic value. # TODO: I18n
+  # The phrase indicating a problematic value.
   #
   # @type [String]
   #
-  INVALID_FIELD = 'illegal value'
+  INVALID_FIELD = config_text(:record, :invalid_field).freeze
 
   # Indicate whether the value is valid for *type*.
   #

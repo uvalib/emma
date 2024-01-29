@@ -47,7 +47,7 @@ module UploadWorkflow::Errors
 
     extend ::UploadWorkflow::Errors::RenderMethods
 
-    # Default label. TODO: I18n
+    # Default label.
     #
     # @type [String]
     #
@@ -701,7 +701,7 @@ module UploadWorkflow::External
   #
   def normalize_index_items: (*(Upload|String|Array[Upload|String]) items, ?meth: Symbol|nil, ?max: Integer) -> Array[Upload|String]
 
-  # Failure messages for partner repository requests. # TODO: I18n
+  # Failure messages for partner repository requests.
   #
   # @type [Hash{Symbol=>String}]
   #

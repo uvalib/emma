@@ -197,18 +197,19 @@ module SearchConcern
   # @return [Hash]
   #
   def validate_identifiers(value)
-    ids    = []
-    errors = []
+    ids = []
+    err = []
     PublicationIdentifier.object_map(value).each_pair do |term, id|
+      val = id&.to_s
       if id&.valid?
-        ids << id.to_s
+        ids << val
       elsif id
-        errors << "#{id.to_s.inspect} is not a valid #{id.type.upcase}" # TODO: I18n
+        err << config_text(:search, :invalid, id: val.inspect, type: id.type)
       else
-        errors << "#{term.inspect} is not a standard identifier" # TODO: I18n
+        err << config_text(:search, :not_standard, term: term.inspect)
       end
     end
-    { valid: errors.blank?, ids: ids, errors: errors}
+    { valid: err.blank?, ids: ids, errors: err }
   end
 
   # ===========================================================================

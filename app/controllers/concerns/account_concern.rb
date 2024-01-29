@@ -201,9 +201,9 @@ module AccountConcern
     message &&= message % interpolation_terms(action, config)
     message ||=
       case base_action(action)
-        when :new,    :create  then 'Account created.' # TODO: I18n
-        when :delete, :destroy then 'Account removed.' # TODO: I18n
-        else                        'Account updated.' # TODO: I18n
+        when :new,    :create  then config_text(:account, :created)
+        when :delete, :destroy then config_text(:account, :removed)
+        else                        config_text(:account, :updated)
       end
     opt[:notice] = message
     if (redirect ||= params[:redirect])
@@ -227,7 +227,7 @@ module AccountConcern
     config    = account_fields
     message ||= message_for(action, :failure, config)
     message &&= message % interpolation_terms(action, config)
-    message ||= 'FAILED' # TODO: I18n
+    message ||= config_text(:account, :failed)
     if error
       error   = error.full_messages if error.is_a?(ActiveModel::Errors)
       message = message&.remove(/[[:punct:]]$/)&.concat(':') || 'ERRORS:'

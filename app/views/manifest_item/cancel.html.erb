@@ -8,7 +8,7 @@
   help  ||= nil # %i[manifest_item cancel]
   title ||= t('emma.manifest_item.cancel.title')
 
-  error ||= 'Invalid identifier' # TODO: I18n
+  error ||= config_text(:manifest_item, :invalid_id)
 
   unless modal?
     set_page_meta_title(title)

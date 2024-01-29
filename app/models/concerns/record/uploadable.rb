@@ -259,10 +259,10 @@ module Record::Uploadable
       # noinspection RubyScope
       err =
         case
-          when stat.nil?          then 'missing request env data'
-          when stat != 200        then 'invalid file'
-          when body&.first.blank? then 'invalid response body'
-        end # TODO: I18n
+          when stat.nil?          then config_text(:record, :upload, :failure)
+          when stat != 200        then config_text(:record, :upload, :invalid)
+          when body&.first.blank? then config_text(:record, :upload, :blank)
+        end
       file_attacher.errors.add(:file, :invalid, message: err) if err
     end
   end

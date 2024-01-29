@@ -207,6 +207,8 @@ module BaseDecorator::Grid
   #
   def render_grid_template_row: (?(Array[Model]|nil) model, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  CONTROLS_LABEL: String
+
   CONTROLS_CELL_CLASS: String
 
   # Properties that need to be conveyed to the grid header columns.
@@ -269,6 +271,8 @@ module BaseDecorator::Grid
   # @return [ActiveSupport::SafeBuffer]
   #
   def grid_head_label: (?(String|nil) text, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  ROW_CONTROLS: String
 
   # grid_row
   #

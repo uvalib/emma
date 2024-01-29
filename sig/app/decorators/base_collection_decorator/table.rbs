@@ -25,6 +25,10 @@ module BaseCollectionDecorator::Table
   #
   def render_table: (?tag: Symbol|nil, ?css: String|nil, **untyped opt) { (symHash, Array[Model], symHash) -> void } -> ActiveSupport::SafeBuffer
 
+  ALL_RECORDS: String
+
+  ROWS_HERE: String
+
   # Render a link to a page for access to the full contents of a table.
   #
   # @param [String, nil]  path        Default: `#table_path`.

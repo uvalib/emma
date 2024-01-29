@@ -84,11 +84,11 @@ module HelpHelper
 
     }.compact.to_h.deep_freeze
 
-  # Default text to display while help is loading asynchronously. # TODO: I18n
+  # Default text to display while help is loading asynchronously.
   #
   # @type [String]
   #
-  HELP_PLACEHOLDER = 'Loading help topic...'
+  HELP_PLACEHOLDER = config_text(:help, :placeholder).freeze
 
   # ===========================================================================
   # :section:
@@ -115,13 +115,13 @@ module HelpHelper
   def help_popup(topic, sub_topic = nil, css: '.help-popup', **opt)
     return if topic.blank?
     topic, sub_topic = help_normalize(topic, sub_topic)
-    ph_opt = opt.delete(:placeholder)
+    p_opt  = opt.delete(:placeholder)
     attr   = opt.delete(:attr)&.dup || {}
-    id     = opt[:'data-iframe'] || attr[:id] || css_randomize("help-#{topic}")
+    css_id = opt[:'data-iframe'] || attr[:id] || css_randomize("help-#{topic}")
 
     opt[:title]        ||= HELP_ENTRY.dig(topic.to_sym, :tooltip)
-    opt[:'aria-label'] ||= 'Help' # TODO: I18n
-    opt[:'data-iframe']  = attr[:id] = id
+    opt[:'aria-label'] ||= config_text(:help, :label)
+    opt[:'data-iframe']  = attr[:id] = css_id
 
     unless opt.dig(:control, :icon)
       opt[:control] = opt[:control]&.dup || {}
@@ -129,17 +129,17 @@ module HelpHelper
     end
     unless opt.dig(:panel, :'aria-label')
       opt[:panel] = opt[:panel]&.dup || {}
-      opt[:panel].merge!('aria-label': 'Help contents') # TODO: I18n
+      opt[:panel].merge!('aria-label': config_text(:help, :contents))
     end
 
     prepend_css!(opt, css)
     inline_popup(**opt) do
-      ph_opt = prepend_css(ph_opt, 'iframe', POPUP_DEFERRED_CLASS)
-      ph_opt[:'data-path']  = help_path(id: topic, modal: true)
-      ph_opt[:'data-attr']  = attr.to_json
-      ph_opt[:'data-topic'] = [topic, sub_topic, 'help'].compact.join('_')
-      ph_txt = ph_opt.delete(:text) || HELP_PLACEHOLDER
-      html_div(ph_txt, **ph_opt)
+      p_opt = prepend_css(p_opt, 'iframe', POPUP_DEFERRED_CLASS)
+      p_opt[:'data-path']  = help_path(id: topic, modal: true)
+      p_opt[:'data-attr']  = attr.to_json
+      p_opt[:'data-topic'] = [topic, sub_topic, 'help'].compact.join('_')
+      ph_txt = p_opt.delete(:text) || HELP_PLACEHOLDER
+      html_div(ph_txt, **p_opt)
     end
   end
 

@@ -238,7 +238,7 @@ module HtmlHelper::Tags
   # @return [ActiveSupport::SafeBuffer]
   #
   def html_details(summary, *content, id: nil, title: nil, **opt, &blk)
-    title ||= 'Click to show details' # TODO: I18n
+    title ||= config_text(:details, :tooltip)
     summary = html_tag(:summary, summary, id: id, title: title)
     content = html_div(*content, class: 'content', &blk)
     html_tag(:details, **opt) do

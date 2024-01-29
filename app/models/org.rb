@@ -155,8 +155,8 @@ class Org < ApplicationRecord
     # noinspection RbsMissingTypeSignature
     @null ||= new(
       id:           INTERNAL_ID,
-      short_name:   INTERNAL_NAME,
-      long_name:    '(no organization)', # TODO: I18n
+      short_name:   INTERNAL[:short_name],
+      long_name:    INTERNAL[:long_name],
       status:       :active,
       status_date:  (t0 = DateTime.new(0)),
       start_date:   t0,

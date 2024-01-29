@@ -731,9 +731,9 @@ module BaseDecorator::Fields
 
   protected
 
-  VALID_LANGUAGE   = 'Provided value: "%s"' # TODO: I18n
-  INVALID_LANGUAGE = 'The underlying data contains this value ' \
-                     'instead of a valid ISO 639 language code.'
+  VALID_LANG   = config_text(:fields, :valid_lang).freeze
+  INVALID_LANG = config_text(:fields, :invalid_lang).freeze
+  INVALID_ID   = config_text(:fields, :invalid_id).freeze
 
   # Wrap invalid language values in a *span*.
   #
@@ -762,13 +762,13 @@ module BaseDecorator::Fields
     elsif !(lang = LanguageType.cast(value, warn: false, invalid: true))
       value
     elsif !lang.valid?
-      html_span(value, title: INVALID_LANGUAGE, class: 'invalid')
+      html_span(value, class: 'invalid', title: INVALID_LANG)
     elsif code
       lang.code
     elsif value.casecmp?(lang.label)
       value
     else
-      html_span(lang.label, title: (VALID_LANGUAGE % value))
+      html_span(lang.label, title: (VALID_LANG % value))
     end
   end
 
@@ -798,8 +798,8 @@ module BaseDecorator::Fields
     elsif (identifier = PublicationIdentifier.create(id_part, type))&.valid?
       identifier.to_s
     else
-      tip = "This is not a valid #{type.upcase} identifier." # TODO: I18n
-      html_span(value, class: 'invalid', title: tip)
+      tooltip = interpolate_named_references(INVALID_ID, type: type)
+      html_span(value, class: 'invalid', title: tooltip)
     end
   end
 

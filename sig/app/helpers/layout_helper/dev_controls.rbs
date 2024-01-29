@@ -54,7 +54,7 @@ module LayoutHelper::DevControls
   #
   def dev_controls: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # A control for turning off display of developer-only controls. # TODO: I18n
+  # A control for turning off display of developer-only controls.
   #
   # For the sake of demos, where the presence of developer-only controls might
   # be confusing, this control redirects with "app.dev_controls=false".
@@ -89,7 +89,7 @@ module LayoutHelper::DevControls
   #
   def dev_toggle_controller_debug: (?ctrlr: Symbol|nil, ?state: bool|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
-  # A control for toggling a debug status. # TODO: I18n
+  # A control for toggling a debug status.
   #
   # @param [Symbol, String, nil] ctrlr
   # @param [Boolean, nil]        state  Default: `#session_debug?(ctrlr)`.

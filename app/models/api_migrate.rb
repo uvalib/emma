@@ -734,11 +734,11 @@ class ApiMigrate
       return unless current.blank? || current.match?(/^\([A-Z]+\)$/)
       default =
         case
-          when emma_data[:rem_status] == 'notRemediated' then 'NONE'
-          when true?(emma_data[:rem_complete])           then 'ALL'
-          else                                                'UNKNOWN'
+          when emma_data[:rem_status] == 'notRemediated' then :none
+          when true?(emma_data[:rem_complete])           then :all
+          else                                                :unknown
         end
-      '(%s)' % default # TODO: I18n
+      '(%s)'.upcase % config_text(default)
     end
 
     # =========================================================================

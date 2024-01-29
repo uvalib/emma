@@ -3,7 +3,7 @@
 module SysHelper::Settings
   include SysHelper::Common
 
-  # @private # TODO: I18n
+  # @private
   COMMIT_LABEL: String
 
   # On/off toggles for each application setting flag.

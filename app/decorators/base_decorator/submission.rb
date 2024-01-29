@@ -39,6 +39,20 @@ module BaseDecorator::Submission
   #
   MONITOR_JS_CLASS = 'SubmitModal'
 
+  # @private
+  # @type [Hash{Symbol=>String}]
+  SUBMIT_MSGS = config_text_section(:submission, :monitor).deep_freeze
+
+  SUBMIT_TITLE      = SUBMIT_MSGS[:title]
+  SUBMIT_DESC       = SUBMIT_MSGS[:description]
+  SUBMIT_CLOSE      = SUBMIT_MSGS[:close]
+  SUBMIT_SUCCESSES  = SUBMIT_MSGS[:successes]
+  SUBMIT_FAILURES   = SUBMIT_MSGS[:failures]
+  SUBMIT_MESSAGES   = SUBMIT_MSGS[:messages]
+  SUBMIT_ERRORS     = SUBMIT_MSGS[:errors]
+  SUBMIT_DIAG       = SUBMIT_MSGS[:diagnostics]
+  SUBMIT_DIAG_TIP   = SUBMIT_MSGS[:diagnostics_tip]
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -84,7 +98,7 @@ module BaseDecorator::Submission
   def monitor_modal(container: {}, css: MONITOR_CLASS, **opt)
     opt[:close]        = monitor_cancel_options
     opt[:controls]     = monitor_log_toggle
-    opt[:'aria-label'] = 'Listing of completed submission attempts' # TODO: I18n
+    opt[:'aria-label'] = SUBMIT_DESC
     prepend_css!(opt, css)
     trace_attrs!(opt)
     h.modal_popup(**opt) do
@@ -121,7 +135,7 @@ module BaseDecorator::Submission
   # @return [Hash]
   #
   def monitor_cancel_options(**opt)
-    opt[:label] ||= 'Close' # TODO: I18n
+    opt[:label] ||= SUBMIT_CLOSE
     opt
   end
 
@@ -134,8 +148,8 @@ module BaseDecorator::Submission
   # @return [ActiveSupport::SafeBuffer]
   #
   def monitor_log_toggle(label: nil, css: '.log-toggle', **opt)
-    label       ||= 'Diagnostics' # TODO: I18n
-    opt[:title] ||= 'View WebSocket communications' # TODO: I18n
+    label       ||= SUBMIT_DIAG
+    opt[:title] ||= SUBMIT_DIAG_TIP
     prepend_css!(opt, css)
     trace_attrs!(opt)
     html_button(label, **opt)
@@ -186,11 +200,10 @@ module BaseDecorator::Submission
   # @return [ActiveSupport::SafeBuffer]
   #
   def monitor_heading(unique:, css: '.monitor-heading', **opt)
-    label    = 'Bulk Submission Monitor' # TODO: I18n
     opt[:id] = unique_id(css, unique: unique)
     prepend_css!(opt, css)
     trace_attrs!(opt)
-    html_h1(label, **opt)
+    html_h1(SUBMIT_TITLE, **opt)
   end
 
   # monitor_status
@@ -225,12 +238,10 @@ module BaseDecorator::Submission
     opt.delete(:unique)
 
     # === Successes element
-    successes = 'Submitted Items' # TODO: I18n
-    successes = output_part(successes, css: 'success', **t_opt)
+    successes = output_part(SUBMIT_SUCCESSES, css: 'success', **t_opt)
 
     # === Failures element
-    failures = 'Submission Errors' # TODO: I18n
-    failures = output_part(failures, css: 'failure', **t_opt)
+    failures = output_part(SUBMIT_FAILURES, css: 'failure', **t_opt)
 
     # === Output display body
     prepend_css!(opt, css)
@@ -271,16 +282,13 @@ module BaseDecorator::Submission
     t_opt = trace_attrs_from(opt)
 
     # === Results element
-    res = 'Messages' # TODO: I18n
-    res = log_part(res, type: :results, unique: unique, **t_opt)
+    res = log_part(SUBMIT_MESSAGES, type: :results, unique: unique, **t_opt)
 
     # === Errors element
-    err = 'Errors' # TODO: I18n
-    err = log_part(err, type: :errors, unique: unique, **t_opt)
+    err = log_part(SUBMIT_ERRORS, type: :errors, unique: unique, **t_opt)
 
     # === Diagnostics element
-    dia = 'Diagnostics' # TODO: I18n
-    dia = log_part(dia, type: :diagnostics, unique: unique, **t_opt)
+    dia = log_part(SUBMIT_DIAG, type: :diagnostics, unique: unique, **t_opt)
 
     # === Log display body
     prepend_css!(opt, css)

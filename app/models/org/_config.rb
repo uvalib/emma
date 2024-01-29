@@ -13,19 +13,25 @@ module Org::Config
 
   public
 
+  # The internal organization.
+  #
+  # @type [Hash{Symbol=>Integer,String}]
+  #
+  INTERNAL = config_text_section(:org, :internal).deep_freeze
+
   # The internal organization identifier.  This may be assigned as an :org_id
   # indicating an internal EMMA user, however no persisted Org record has this
   # as its :id.
   #
   # @type [Integer]
   #
-  INTERNAL_ID = 0
+  INTERNAL_ID = INTERNAL[:id]
 
   # The display name for the internal organization.
   #
   # @type [String]
   #
-  INTERNAL_NAME = '(EMMA)'
+  INTERNAL_NAME = INTERNAL[:short_name]
 
   # ===========================================================================
   # :section:

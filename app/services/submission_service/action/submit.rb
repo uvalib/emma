@@ -440,8 +440,8 @@ module SubmissionService::Action::Submit
   #
   def await_upload(records, wait: 1, **opt)
     $stderr.puts "=== STEP #{__method__} | #{Emma::ThreadMethods.thread_name} | #{records.size} recs = #{records.map { |r| manifest_item_id(r) }} = #{records.inspect.truncate(1024)}" # TODO: testing - remove
-    opt[:success] = 'uploaded' # TODO: I18n
     opt[:meth]    = __method__
+    opt[:success] = config_text(:submission, :service, :uploaded)
     run_step(records, wait: wait, **opt) do |_id, rec|
       rec.file_uploaded_now?
     end
@@ -456,8 +456,8 @@ module SubmissionService::Action::Submit
   #
   def promote_file(records, **opt)
     $stderr.puts "=== STEP #{__method__} | #{Emma::ThreadMethods.thread_name} | #{records.size} recs = #{records.map { |r| manifest_item_id(r) }} = #{records.inspect.truncate(1024)}" # TODO: testing - remove
-    opt[:success] = 'stored' # TODO: I18n
     opt[:meth]    = __method__
+    opt[:success] = config_text(:submission, :service, :stored)
     run_step(records, **opt) do |_id, rec|
       rec.promote_file(fatal: true)
     end
@@ -486,8 +486,8 @@ module SubmissionService::Action::Submit
     result = ingest_api.put_records(*fields)
     remaining, failure = process_ingest_errors(result, *records)
 
-    opt[:success] = 'indexed' # TODO: I18n
     opt[:meth]    = __method__
+    opt[:success] = config_text(:submission, :service, :indexed)
     opt[:initial] = { failure: failure }
 
     now = DateTime.now
@@ -543,8 +543,9 @@ module SubmissionService::Action::Submit
     # Remaining (general) errors indicate that there was a problem with the
     # request and that all items have failed.
     if errors.present?
-      general = errors.values.presence || ['unknown error'] # TODO: I18n
-      general = records.map { |rec| [manifest_item_id(rec), general] }.to_h
+      general   = errors.values.compact_blank.presence
+      general ||= [config_text(:submission, :service, :unknown)]
+      general   = records.map { |rec| [manifest_item_id(rec), general] }.to_h
       failed.rmerge!(general)
     end
 
@@ -603,7 +604,8 @@ module SubmissionService::Action::Submit
     # Note any items that were not confirmed as having created a matching EMMA
     # entry record.
     if sid_rec.present?
-      error  = "#{__method__}: unknown database error" # TODO: I18n
+      error  = config_text(:submission, :service, :db_error)
+      error  = "#{__method__}: #{error}"
       failed = sid_rec.values.map { |rec| [rec.id, { error: error }] }.to_h
       result.merge!(failed)
     end

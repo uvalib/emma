@@ -28,7 +28,7 @@
   by_title_title    = 'Results By Title'
   by_file_title     = 'Results By File'
 
-  search            = 'Search'
+  search            = config_item('emma.search_bar.button.label')
   search            = help_span(search, class: 'search-button')
   x                 = LayoutHelper::SearchBar::CLEAR_SEARCH_ICON
   x                 = html_span(x, title: 'X')

@@ -44,11 +44,10 @@ class User::RegistrationsController < Devise::RegistrationsController
   def new
     __log_activity
     __debug_route
-    if current_user
-      message = 'You already have an EMMA account' # TODO: I18n
-      return redirect_back(fallback_location: root_path, alert: message)
-    end
+    raise config_text(:account, :self_create) if current_user
     super
+  rescue => error
+    auth_failure_redirect(message: error)
   end
 
   # === POST /users

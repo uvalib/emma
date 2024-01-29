@@ -5,6 +5,14 @@ module LayoutHelper::Footer
 
   include GridHelper
 
+  include LinkHelper
+
+  # Footer elements.
+  #
+  # @type [Hash{Symbol=>*}]
+  #
+  FOOT_CONFIG: symHash
+
   # Render a table of values from `#session`.
   #
   # @param [String] css               Characteristic CSS class/selector.
@@ -20,5 +28,5 @@ module LayoutHelper::Footer
   #
   # @return [Hash]
   #
-  def footer_items: (**untyped opt) -> symHash
+  def footer_items: (**untyped opt) -> strHash
 end

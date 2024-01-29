@@ -170,10 +170,10 @@ module EngineConcern
     spaces  = opt.delete(:spaces) || FLASH_RESET_NOTICE_SPACES
     spaces  = HTML_SPACE * spaces if spaces.is_a?(Integer)
     spaces  = ERB::Util.h(spaces)
-    label   = '[RESTORE DEFAULT]' # TODO: I18n
-    tip     = "Click to restore the default #{engine}" # TODO: I18n
+    label   = config_text(:engine, :reset, :label)
+    tooltip = config_text(:engine, :reset, :tooltip, service: service)
     link    = { engine: 'reset' }
-    link    = flash_link(label, link, title: tip)
+    link    = flash_link(label, link, title: tooltip)
     flash_now_notice((notice << spaces << link), **opt)
   end
 

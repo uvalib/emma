@@ -146,7 +146,7 @@ class AccountDecorator < BaseDecorator
     # @return [String]
     #
     def items_menu_prompt(**)
-      'Select an EMMA user account' # TODO: I18n
+      config_text(:account, :select)
     end
 
     # Descriptive term for an item of the given type.
@@ -157,7 +157,7 @@ class AccountDecorator < BaseDecorator
     # @return [String]
     #
     def model_item_name(model: nil, capitalize: true)
-      model ? super : 'EMMA User Account' # TODO: I18n
+      model ? super : config_text(:account, :model_name)
     end
 
     # =========================================================================
@@ -166,11 +166,11 @@ class AccountDecorator < BaseDecorator
 
     public
 
-    # Tooltip giving the reason why the field cannot be changed. # TODO: I18n
+    # Tooltip giving the reason why the field cannot be changed.
     #
     # @type [String]
     #
-    EMAIL_FIELD_READONLY = 'Cannot change the account identifier'
+    EMAIL_FIELD_READONLY = config_text(:account, :id_readonly).freeze
 
     # Input placeholder to indicate that the password field does not need to be
     # filled out.
@@ -329,6 +329,8 @@ class AccountDecorator
     edit   = (action == :edit)
     opt[:readonly] = true                 if edit
     opt[:title]    = EMAIL_FIELD_READONLY if edit
+    opt[:readonly] = true                                if edit
+    opt[:title]    = config_text(:account, :id_readonly) if edit
     opt.reverse_merge!(autocomplete: 'email')
     super
   end
@@ -413,11 +415,8 @@ class AccountDecorator
     bulk_new  bulk_create bulk_edit bulk_update bulk_delete bulk_destroy
   ].freeze
 
-  ABILITY_COLUMNS = {
-    model:  'Model',        # TODO: I18n
-    action: 'Action',       # TODO: I18n
-    status: 'Can perform?', # TODO: I18n
-  }.freeze
+  ABILITY_COLUMNS =
+    config_text_section(:account, :ability, :column).deep_freeze
 
   # A table of abilities.
   #

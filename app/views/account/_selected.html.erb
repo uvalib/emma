@@ -15,14 +15,15 @@
   skip     = [*skip, :thumbnail, :number]
   panel_id = panel_css = toggle = nil
   if item.is_a?(User)
-    heading   = "Selected item #{item.id} record details:" # TODO: I18n
+    name      = item.id
+    heading   = config_text(:account, :selected, :title, item: name)
     panel_css = 'selected-details'
     panel_id  = css_randomize(panel_css)
     toggle    = toggle_button(id: panel_id)
     panel_css = "#{panel_css} row-#{row}"
   else
     name      = html_span(item, class: 'item')
-    heading   = "Item #{name} is not in the database".html_safe # TODO: I18n
+    heading   = config_text(:account, :selected, :invalid, item: name)
   end
 
 -%>

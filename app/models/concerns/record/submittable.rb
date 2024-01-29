@@ -478,19 +478,13 @@ module Record::Submittable
 
     public
 
-    # Failure messages for partner repository requests. # TODO: I18n
+    # Failure messages for partner repository requests.
     #
     # @type [Hash{Symbol=>String}]
     #
     # @note From UploadWorkflow::External#REPO_FAILURE
     #
-    REPO_FAILURE = {
-      no_repo:    'No repository given',
-      no_items:   'No items given',
-      no_create:  'Repository submissions are disabled',
-      no_edit:    'Repository modification requests are disabled',
-      no_remove:  'Repository removal requests are disabled',
-    }.deep_freeze
+    REPO_FAILURE = config_text_section(:record, :failure).deep_freeze
 
     # Submit a new item to a partner repository.
     #
@@ -931,8 +925,10 @@ module Record::Submittable
 
       # Save the record to the database.
       item = db_insert(data)
-      return nil, ["#{type} not created"] unless item.is_a?(type) # TODO: I18n
-      return item, item.errors            if item.errors.present?
+      unless item.is_a?(type)
+        return nil, [config_text(:record, :not_created, type: type)]
+      end
+      return item, item.errors unless item.errors.blank?
 
       # Include the new submission in the index if specified.
       return item, [] unless index
@@ -966,17 +962,19 @@ module Record::Submittable
       __debug_items("ENTRY WF #{__method__}", binding)
       if (id = data[:id]).blank?
         if (id = data[:submission_id]).blank?
-          return nil, ['No identifier provided'] # TODO: I18n
+          return nil, [config_text(:record, :no_identifier)]
         elsif !valid_sid?(id)
-          return nil, ["Invalid EMMA submission ID #{id}"] # TODO: I18n
+          return nil, [config_text(:record, :invalid_sid, sid: id)]
         end
       end
       type = record_class
 
       # Fetch the record and update it in the database.
       item = db_update(data)
-      return nil, ["#{type} #{id} not found"] unless item.is_a?(type) # TODO: I18n
-      return item, item.errors                if item.errors.present?
+      unless item.is_a?(type)
+        return nil, [config_text(:record, :not_found, type: type, id: id)]
+      end
+      return item, item.errors unless item.errors.blank?
 
       # Update the index with the modified submission if specified.
       return item, [] unless index
@@ -1073,7 +1071,8 @@ module Record::Submittable
           msg << retained.map { |item| item_label(item) }.join(', ')
           msg.join(': ')
         end
-        retained.map! { |item| FlashPart.new(item, 'not removed') } # TODO: I18n
+        not_removed = config_text(:record, :not_removed)
+        retained.map! { |item| FlashPart.new(item, not_removed) }
       end
 
       # Remove the associated entries from the index.

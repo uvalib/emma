@@ -82,6 +82,24 @@ en:
         invalid:
           message:      'Issues to resolve: %s'
 
+        invalid_id:
+          message:      'Invalid ID for: %s'
+
+        no_data:
+          message:      'No item data'
+
+        no_id:
+          message:      'No record ID was provided'
+
+        no_ids:
+          message:      'No record identifiers'
+
+        not_array:
+          message:      'Not an Array: %s'
+
+        not_hash:
+          message:      'Not a Hash: %s'
+
         file_data:
           message:      'No file data provided'
 
@@ -130,3 +148,9 @@ en:
       manifest_item:
 
         <<:             *MODEL
+
+        invalid_id:
+          message:      'Invalid manifest ID for: %s'
+
+        no_id:
+          message:      'No manifest ID was provided'

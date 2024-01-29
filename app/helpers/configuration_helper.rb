@@ -17,18 +17,6 @@ module ConfigurationHelper
 
   public
 
-  # Fall-back fatal configuration message. # TODO: I18n
-  #
-  # @type [String]
-  #
-  CONFIG_FAIL = 'Fatal configuration error'
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Determine the path through the configuration hierarchy for the given
   # controller/action pair.
   #
@@ -138,8 +126,8 @@ module ConfigurationHelper
         cfg  = controller_configuration.dig(*full_path)
         break cfg[item] if cfg.is_a?(Hash) && cfg.key?(item)
       end
-    raise(CONFIG_FAIL) if entry.nil? && fatal
-    return default     if entry.nil?
+    raise config_text(:configuration, :fail) if entry.nil? && fatal
+    return default                           if entry.nil?
 
     # Use count-specific definitions if present.
     local = opt.extract!(:mode, :one, :many)

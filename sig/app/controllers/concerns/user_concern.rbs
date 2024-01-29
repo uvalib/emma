@@ -68,8 +68,6 @@ module UserConcern
 
   private
 
-  ROLE_FAILURE: String
-
   # Cause an insufficient role for an authenticated session to generate an
   # authentication failure the way Devise does.
   #

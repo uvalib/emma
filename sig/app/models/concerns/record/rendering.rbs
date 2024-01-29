@@ -7,7 +7,7 @@ module Record::Rendering
 
   extend ::Record::Rendering
 
-  # Default label. TODO: I18n
+  # Default label.
   #
   # @type [String]
   #

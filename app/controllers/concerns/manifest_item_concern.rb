@@ -440,7 +440,7 @@ module ManifestItemConcern
         if !file_data
           # NOTE: Should not happen normally if status is 200...
           Log.debug { "#{meth}: unexpected response item #{entry.inspect}" }
-          entry  = 'unknown uploader error' # TODO: I18n
+          entry  = config_text(:manifest_item, :uploader, :error)
           status = 400
         elsif !update_time
           record.set_field_direct(:file_data, file_data)
@@ -474,7 +474,7 @@ module ManifestItemConcern
   def all_manifest_items(manifest_id = nil, **opt)
     manifest_id ||= opt[:manifest_id] || opt[:manifest]
     manifest_id = manifest_id[:id] if manifest_id.is_a?(Hash)
-    raise_failure('No :manifest_id was provided') if manifest_id.blank?
+    raise_failure(:no_id)          if manifest_id.blank?
     ManifestItem.where(manifest_id: manifest_id).in_row_order
   end
 
@@ -569,7 +569,7 @@ module ManifestItemConcern
   def bulk_destroy_manifest_items
     prm = current_params
     ids = Array.wrap(prm.values_at(:ids, :id).compact.first)
-    raise_failure(:destroy, 'no record identifiers') if ids.blank?
+    raise_failure(:destroy, :no_ids) if ids.blank?
     if prm[:commit]
       ManifestItem.delete_by(id: ids)
     else
@@ -613,17 +613,17 @@ module ManifestItemConcern
   def bulk_item_data
     prm   = manifest_item_bulk_post_params
     items = prm[:data]
-    raise_failure("not an Array: #{items.inspect}") unless items.is_a?(Array)
-    raise_failure('no item data')                   unless items.present?
+    raise_failure(:not_array, items.inspect) unless items.is_a?(Array)
+    raise_failure(:no_data)                  unless items.present?
     row   = prm[:row].to_i
     delta = prm[:delta].to_i
     items.map do |item|
-      raise_failure("not a Hash: #{item.inspect}") unless item.is_a?(Hash)
+      raise_failure(:not_hash, items.inspect)     unless items.is_a?(Array)
       item[:manifest_id] = item.delete(:manifest) if item.key?(:manifest)
       if item[:manifest_id].blank?
         item[:manifest_id] = manifest_id
       elsif item[:manifest_id] != manifest_id
-        raise_failure("invalid manifest_id for #{item.inspect}")
+        raise_failure(:invalid_id, item.inspect)
       end
       row   = (item[:row]   ||= row)
       delta = (item[:delta] ||= delta + 1)

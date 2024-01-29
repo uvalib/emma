@@ -25,6 +25,34 @@ module BaseDecorator::Lookup
   #
   LOOKUP_JS_CLASS: String
 
+  # @private
+  # @type [Hash{Symbol=>String}]
+  LOOKUP_MSGS: Hash[Symbol, String]
+
+  LOOKUP_DESC: String
+
+  LOOKUP_LABEL: String
+
+  CANCEL_LABEL: String
+
+  COMMIT_LABEL: String
+
+  CANCEL_TIP: String
+
+  COMMIT_TIP: String
+
+  QUERY_LABEL: String
+
+  SEPARATORS_LABEL: String
+
+  SEARCHING_LABEL: String
+
+  RESULTS_LABEL: String
+
+  ERRORS_LABEL: String
+
+  DIAG_LABEL: String
+
   # Bibliographic lookup control which engages #lookup_modal.
   #
   # In addition to creating the control, this method also adds the modal to

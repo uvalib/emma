@@ -3,12 +3,6 @@
 module ConfigurationHelper
   include Emma::Common
 
-  # Fall-back fatal configuration message. # TODO: I18n
-  #
-  # @type [String]
-  #
-  CONFIG_FAIL: String
-
   # Determine the path through the configuration hierarchy for the given
   # controller/action pair.
   #

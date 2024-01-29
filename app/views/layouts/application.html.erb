@@ -2,7 +2,8 @@
 <%-
   # Application page layout.
 
-  main_id = 'main' # TODO: I18n for 'Main Content'
+  main_lbl = config_text(:layout, :skip_nav, :main)
+  main_id  = 'main'
 
   append_page_classes('debug') if session_debug?
 
@@ -37,7 +38,7 @@
     <%= render 'layouts/footer' %>
     <%= page_modals %>
     <%= scroll_to_top_button %>
-    <%- skip_nav_prepend('Main Content' => main_id) -%>
+    <%- skip_nav_prepend(main_lbl => main_id) -%>
     <%= render 'layouts/skip_nav' %>
     <%= render 'layouts/analytics' %>
     <%= render 'layouts/copyright' %>

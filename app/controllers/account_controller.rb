@@ -106,7 +106,7 @@ class AccountController < ApplicationController
     return redirect_to action: :show_current if current_id?
     @item = get_record
     user_authorize!
-    raise "Record #{quote(identifier)} not found" if @item.blank? # TODO: I18n
+    raise config_text(:account, :not_found, id: identifier) if @item.blank?
   rescue => error
     error_response(error, show_select_account_path)
   end
@@ -143,7 +143,7 @@ class AccountController < ApplicationController
     __log_activity
     __debug_route
     @item  = create_record(fatal: false)
-    errors = @item&.errors || 'Not created' # TODO: I18n
+    errors = @item&.errors || config_text(:account, :not_created)
     user_authorize!
     respond_to do |format|
       if errors.blank?
@@ -176,7 +176,7 @@ class AccountController < ApplicationController
     return redirect_to action: :edit_current if current_id?
     @item = edit_record
     user_authorize!
-    raise "Record #{quote(identifier)} not found" if @item.blank? # TODO: I18n
+    raise config_text(:account, :not_found, id: identifier) if @item.blank?
   rescue => error
     error_response(error, edit_select_account_path)
   end
@@ -193,7 +193,7 @@ class AccountController < ApplicationController
     __debug_route
     __debug_request
     @item  = update_record(fatal: false)
-    errors = @item&.errors || "#{params[:id]} not found" # TODO: I18n
+    errors = @item&.errors || config_text(:account, :not_found, id: identifier)
     user_authorize!
     respond_to do |format|
       if errors.blank?
@@ -220,11 +220,11 @@ class AccountController < ApplicationController
     __log_activity
     __debug_route
     return redirect_to action: :delete_select if identifier.blank?
-    raise 'Cannot delete your own account'    if current_id? # TODO: I18n
+    raise config_text(:account, :self_delete) if current_id?
     @list = delete_records.list&.records
     #user_authorize!(@list) # TODO: authorize :delete
     unless @list.present? || last_operation_path&.include?('/destroy')
-      raise "No records match #{quote(identifier_list)}" # TODO: I18n
+      raise config_text(:account, :no_match, id: identifier_list)
     end
   rescue => error
     error_response(error, delete_select_account_path)
@@ -243,7 +243,7 @@ class AccountController < ApplicationController
     __log_activity
     __debug_route
     back  = delete_select_account_path
-    raise 'Cannot delete your own account' if current_id? # TODO: I18n
+    raise config_text(:account, :self_delete) if current_id?
     @list = destroy_records
     #user_authorize!(@list) # TODO: authorize :destroy
     post_response(:ok, @list, redirect: back)
@@ -332,7 +332,7 @@ class AccountController < ApplicationController
     return redirect_to action: :show if identifier.present?
     @item = get_record(current_id)
     user_authorize!
-    raise "Record #{quote(current_id)} not found" if @item.blank? # TODO: I18n
+    raise config_text(:account, :not_found, id: identifier) if @item.blank?
     respond_to do |format|
       format.html { render 'account/show' }
       format.json { render 'account/show' }
@@ -354,7 +354,7 @@ class AccountController < ApplicationController
     return redirect_to action: :edit if identifier.present?
     @item = edit_record(current_id)
     user_authorize!
-    raise "Record #{quote(current_id)} not found" if @item.blank? # TODO: I18n
+    raise config_text(:account, :not_found, id: identifier) if @item.blank?
     respond_to do |format|
       format.html { render 'account/edit' }
       format.json { render 'account/edit' }

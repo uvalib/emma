@@ -207,11 +207,11 @@ module UploadWorkflow::Bulk::External
   #
   # @param [Upload, Hash, String]  item
   # @param [String, Array<String>] message
-  # @param [Integer]               position
+  # @param [Integer]               pos
   #
   # @return [FlashPart]
   #
-  def db_failed_format: ((symHash|String|Upload) item, (String|strArray) message, Integer position) -> UploadWorkflow::Errors::FlashPart
+  def db_failed_format: ((symHash|String|Upload) item, (String|strArray) message, Integer pos) -> UploadWorkflow::Errors::FlashPart
 
   # Add the indicated items from the EMMA Unified Index.
   #

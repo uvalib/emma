@@ -73,11 +73,12 @@ module BaseDecorator::Hierarchy
 
   protected
 
-  # The term used for a file instance instead of 'file'. # TODO: I18n
+  # The term used for a file instance instead of 'file'.
   #
   # @type [String, nil]
   #
-  FILE_TERM = 'copy'
+  FILE_TERM     = config_text(:hierarchy, :file_term).freeze
+  COMPLETE_WORK = config_text(:hierarchy, :complete).freeze
 
   # Data for all of the lines that represent a hierarchical entry.
   #
@@ -156,7 +157,7 @@ module BaseDecorator::Hierarchy
       value   = part.dig(:bibliographic, :bib_seriesPosition).presence
       if many_parts && !value
         value = :all
-        name  = ERB::Util.h('Complete Work') # TODO: I18n
+        name  = ERB::Util.h(COMPLETE_WORK)
       else
         name  = value&.inspect || part_no
       end

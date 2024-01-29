@@ -99,7 +99,7 @@ class SearchesDecorator < BaseCollectionDecorator
       menu_name   = :results
       option_tags = h.options_for_select(pairs, selected)
       select_opt  = { id: unique_id(menu_name) }
-      select_opt[:title]          = 'Search results output mode' # TODO: I18n
+      select_opt[:title]          = config_text(:search, :mode, :tooltip)
       select_opt[:'aria-label']   = select_opt[:title]
       select_opt[:'data-default'] = default if default
       h.select_tag(menu_name, option_tags, select_opt)

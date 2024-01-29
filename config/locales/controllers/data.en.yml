@@ -10,6 +10,18 @@ en:
         database:       true
 
       # =======================================================================
+      # Messages (overriding "en.emma.messages")
+      # =======================================================================
+
+      messages:
+
+        records:        '%{count} record'
+
+        field:
+          total:        'TOTAL'
+          invalid:      'This is not a valid EMMA data field'
+
+      # =======================================================================
       # Layout
       # =======================================================================
 
@@ -37,7 +49,7 @@ en:
 
       show:
         label:          'Record'
-        title:          '%{table} Records'
+        title:          '%{table} table'
         tooltip:        'View records for this database table'
         _endpoint:      true
 

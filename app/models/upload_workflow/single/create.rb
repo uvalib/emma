@@ -108,7 +108,8 @@ module UploadWorkflow::Single::Create::Actions
     else
       sid  = record.submission_id.inspect
       repo = Upload.repository_name(record)
-      self.succeeded << "Request #{sid} submitted to #{repo}" # TODO: I18n
+      msg  = config_text(:upload, :non_native, :create, sid: sid, repo: repo)
+      self.succeeded << msg
     end
   end
 

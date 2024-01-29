@@ -105,7 +105,7 @@ module Record::Assignable
   #
   LINE_JOIN: String
 
-  # The phrase indicating a problematic value. # TODO: I18n
+  # The phrase indicating a problematic value.
   #
   # @type [String]
   #

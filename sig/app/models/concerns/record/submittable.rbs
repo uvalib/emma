@@ -238,7 +238,7 @@ module Record::Submittable
     #
     def aws_api: () -> AwsS3Service
 
-    # Failure messages for partner repository requests. # TODO: I18n
+    # Failure messages for partner repository requests.
     #
     # @type [Hash{Symbol=>String}]
     #

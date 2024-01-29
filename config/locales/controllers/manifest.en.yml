@@ -21,6 +21,29 @@ en:
         storage:        true
 
       # =======================================================================
+      # Messages (overriding "en.emma.messages")
+      # =======================================================================
+
+      messages:
+
+        select_any:     'Select an existing manifest'
+        select_own:     'Select a manifest you created'
+
+        create_button:  'Create'
+        default_name:   'Started %B %d, %Y at %l:%M %P'
+        new_label:      'Start a new manifest'
+        no_items:       'Use the %{control} control above to start a new manifest.'
+
+        heading:
+          leader:       'Manifest:'
+          edit_label:   'Edit'
+          edit_tooltip: 'Click to change the title of this manifest'
+
+        selected:
+          title:        'Selected manifest details:'
+          invalid:      'No index entries match %{item}'
+
+      # =======================================================================
       # Layout
       # =======================================================================
 
@@ -57,20 +80,16 @@ en:
       action_links:
 
         new:
-          label:        'Create %{article} new manifest'
-          article:      'a'
+          label:        'Create %{an} new manifest'
 
         edit:
-          label:        'Change details of %{article} existing manifest'
-          article:      'an'
+          label:        'Change details of %{an} existing manifest'
 
         delete:
-          label:        'Remove %{article} existing manifest'
-          article:      'an'
+          label:        'Remove %{an} existing manifest'
 
         remit:
-          label:        'Submit %{article} manifest'
-          article:      'a'
+          label:        'Submit %{an} manifest'
 
         list_all:
           label:        'List all manifests'

@@ -47,12 +47,6 @@ module BaseCollectionDecorator::List
 
   public
 
-  # Text for #no_records_row. # TODO: I18n
-  #
-  # @type [String]
-  #
-  NO_RECORDS = 'NO RECORDS'
-
   # Hidden row that is shown only when no field rows are being displayed.
   #
   # @param [String] css               Characteristic CSS class/selector.
@@ -63,7 +57,9 @@ module BaseCollectionDecorator::List
   def no_records_row(css: '.no-records', **opt)
     prepend_css!(opt, css)
     trace_attrs!(opt)
-    html_div('', **opt) << html_div(NO_RECORDS, **opt)
+    space  = html_div(**opt)
+    notice = html_div(**opt) { config_text(:list, :no_records) }
+    space << notice
   end
 
   # ===========================================================================
@@ -88,7 +84,7 @@ module BaseCollectionDecorator::List
   def index_controls(row: nil, **opt)
     trace_attrs!(opt)
     list   = opt.delete(:list) || object || []
-    unit   = opt.delete(:unit) || 'title' # TODO: I18n
+    unit   = opt.delete(:unit) || config_text(:list, :unit)
     unit   = nil unless list.first&.aggregate?
 
     ctrls  = list_controls(**opt)

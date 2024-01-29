@@ -383,8 +383,8 @@ class UploadDecorator < BaseDecorator
     #
     def items_menu_prompt(user: nil, **)
       case user
-        when nil, :all then 'Select an existing EMMA entry'    # TODO: I18n
-        else                'Select an EMMA entry you created' # TODO: I18n
+        when nil, :all then config_text(:upload, :select_any)
+        else                config_text(:upload, :select_own)
       end
     end
 
@@ -406,9 +406,10 @@ class UploadDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def uploaded_filename_display(leader: nil, css: FILE_NAME_CLASS, **opt)
-      leader ||= 'Selected file:' # TODO: I18n
+      leader ||= config_text(:upload, :uploaded_file, :leader)
       leader   = html_span(leader, class: 'leader')
-      filename = html_span('', class: 'filename')
+      filename = config_text(:upload, :uploaded_file, :blank)
+      filename = html_span(filename, class: 'filename')
       prepend_css!(opt, css)
       trace_attrs!(opt)
       html_div(**opt) do
@@ -730,13 +731,13 @@ class UploadDecorator
   #
   def check_status_popup(path, id:, css: '.check-status-popup', **opt)
     icon   = opt.delete(:icon)
-    ph_opt = opt.delete(:placeholder)
+    p_opt  = opt.delete(:placeholder)
     attr   = opt.delete(:attr)&.dup || {}
     css_id = opt[:'data-iframe'] || attr[:id] || "popup-frame-#{id}"
     path   = send(path, id: id, modal: true) if path.is_a?(Symbol)
 
     opt[:'data-iframe'] = attr[:id] = css_id
-    opt[:title]          ||= 'Check the status of this submission' # TODO: I18n
+    opt[:title]          ||= config_text(:upload, :check_status, :tooltip)
     opt[:control]        ||= {}
     opt[:control][:icon] ||= icon
     opt[:panel]  = append_css(opt[:panel], 'refetch z-order-capture')
@@ -744,11 +745,12 @@ class UploadDecorator
 
     prepend_css!(opt, css)
     inline_popup(**opt) do
-      ph_opt = prepend_css(ph_opt, 'iframe', POPUP_DEFERRED_CLASS)
-      ph_opt[:'data-path'] = path
-      ph_opt[:'data-attr'] = attr.to_json
-      ph_txt = ph_opt.delete(:text) || 'Checking...' # TODO: I18n
-      html_div(ph_txt, **ph_opt)
+      p_opt = prepend_css(p_opt, 'iframe', POPUP_DEFERRED_CLASS)
+      p_opt[:'data-path'] = path
+      p_opt[:'data-attr'] = attr.to_json
+      p_txt   = p_opt.delete(:text)
+      p_txt ||= config_text(:upload, :check_status, :placeholder)
+      html_div(p_txt, **p_opt)
     end
   end
 
@@ -895,10 +897,7 @@ class UploadDecorator
 
     # Directions.
     t_id   = "#{id}-title"
-    title  =
-      'Please indicate the EMMA entry for the original repository item. ' \
-      'If possible, enter the standard identifier (ISBN, DOI, OCLC, etc.) ' \
-      'or the full title of the original work.' # TODO: I18n
+    title  = config_text(:upload, :parent_select, :title)
     title  = html_div(title, id: t_id, class: 'search-title')
 
     # Text input.
@@ -910,7 +909,7 @@ class UploadDecorator
     submit = html_div(submit, class: 'search-button', **b_opt, **t_opt)
 
     # Cancel button.
-    cancel = 'Cancel' # TODO: I18n
+    cancel = config_text(:upload, :parent_select, :cancel)
     cancel = html_div(cancel, class: 'search-cancel', **b_opt, **t_opt)
 
     opt[:'aria-describedby'] ||= t_id

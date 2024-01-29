@@ -79,12 +79,29 @@ class AccountDecorator < BaseDecorator
     #
     def model_item_name: (?model: Symbol|String|nil, ?capitalize: bool) -> String
 
+    # Tooltip giving the reason why the field cannot be changed.
+    #
+    # @type [String]
+    #
     EMAIL_FIELD_READONLY: String
 
+    # Input placeholder to indicate that the password field does not need to be
+    # filled out.
+    #
+    # @type [String, nil]
+    #
     PASSWORD_PLACEHOLDER: String | nil
 
+    # If set, the minimum number of characters accepted for passwords.
+    #
+    # @type [Integer, nil]
+    #
     MINIMUM_PASSWORD_LENGTH: Integer | nil
 
+    # If set, the maximum number of characters accepted for passwords.
+    #
+    # @type [Integer, nil]
+    #
     MAXIMUM_PASSWORD_LENGTH: Integer | nil
   end
 

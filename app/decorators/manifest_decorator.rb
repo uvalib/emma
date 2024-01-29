@@ -191,10 +191,8 @@ class ManifestDecorator < BaseDecorator
     # @return [String]
     #
     def items_menu_prompt(user: nil, **)
-      case user
-        when nil, :all then 'Select an existing manifest'   # TODO: I18n
-        else                'Select a manifest you created' # TODO: I18n
-      end
+      user = nil if user == :all
+      config_text(:manifest, (user ? :select_own : :select_any))
     end
 
     # Generate a label for a specific menu entry.
@@ -224,8 +222,8 @@ class ManifestDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def no_items(css: '.no-items', **opt)
-      desc = 'Use the %s control above to start a new manifest.' # TODO: I18n
-      desc = ERB::Util.h(desc) % new_button('Create')
+      ctrl = new_button(config_text(:manifest, :create_button))
+      desc = config_text(:manifest, :no_items, control: ctrl)
       prepend_css!(opt, css)
       h.page_description_section(desc, **opt)
     end
@@ -245,7 +243,7 @@ class ManifestDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def new_button(label = nil, css: '.new-button', **opt)
-      label ||= 'Start a new manifest' # TODO: I18n
+      label ||= config_text(:manifest, :new_label)
       prepend_css!(opt, css)
       link_to_action(label, action: :new, link_opt: opt)
     end
@@ -591,15 +589,16 @@ class ManifestDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def manifest_page_heading(help: nil, **opt)
+    text  = config_text_section(:manifest, :heading)
     name  = object.name
 
-    t_lbl = 'Manifest:' # TODO: I18n
-    t_lbl = html_span(t_lbl, class: 'text label')
-    t_nam = html_span(name, class: 'text name')
+    t_lbl = html_span(class: 'text label') { text[:leader]}
+    t_nam = html_span(class: 'text name')  { name }
     title = t_lbl << t_nam
 
-    edit  = 'Click to change the title of this manifest' # TODO: I18n
-    edit  = html_button('Edit', class: 'title-edit', title: edit)
+    e_lbl = text[:edit_label]
+    e_tip = text[:edit_tooltip]
+    edit  = html_button(e_lbl, title: e_tip, class: 'title-edit')
 
     input = model_line_editor(pairs: { name: name })
 
@@ -656,7 +655,7 @@ class ManifestDecorator
   # @type [Hash{Symbol=>String}]
   #
   STATUS_MESSAGE = {
-    offline: 'EMMA is offline', # TODO: I18n
+    offline: config_text(:status, :offline),
     dynamic: '',
   }.freeze
 

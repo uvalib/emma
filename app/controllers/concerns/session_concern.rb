@@ -125,9 +125,9 @@ module SessionConcern
     user   ||= resource
     user     = user[:uid] || user['uid'] if user.is_a?(Hash)
     user     = user.account              if user.respond_to?(:account)
-    user     = user.to_s.presence || 'unknown user' # TODO: I18n
+    user     = user.to_s.presence || config_text(:session, :unknown_user)
     # noinspection RubyMismatchedReturnType
-    I18n.t("emma.user.sessions.#{action}.#{status}", user: user)
+    config_item("emma.user.sessions.#{action}.#{status}", user: user)
   end
 
   # ===========================================================================

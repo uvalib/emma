@@ -665,8 +665,13 @@ table.manifest_item-grid {
                             font-family: monospace;
                         }
 
+                        .type-count {
+                            margin-left: 0.125rem;
+                        }
+
                         .type-name {
-                            font-style: italic;
+                            margin-left: 0.125rem;
+                            font-style:  italic;
                         }
                     }
 

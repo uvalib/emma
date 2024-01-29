@@ -120,7 +120,7 @@ class IngestService::Error < ApiService::Error
         # Turn " : 'FIELD_NAME' is a required property" into "FIELD_NAME".
         prop, val = val.partition { |v| v.match?(/required\s+property/i) }
         if prop.present?
-          tag  = 'missing field'.pluralize(prop.size) # TODO: I18n
+          tag  = config_text(:ingest, :missing_field).pluralize(prop.size)
           list = prop.map! { |v| v.sub(/^\W*([\w_]+)\W*.*$/, '\1') }.join(', ')
           issues << "#{tag}: #{list}"
         end
@@ -150,7 +150,7 @@ class IngestService::Error < ApiService::Error
           issues.concat(val) if val.present?
         end
 
-        issues << 'UNKNOWN PROBLEM' if issues.blank? # TODO: I18n
+        issues << config_text(:ingest, :unknown) if issues.blank?
         "#{key} - %s" % issues.join('; ')
       end
     end

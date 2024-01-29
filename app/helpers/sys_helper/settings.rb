@@ -23,8 +23,8 @@ module SysHelper::Settings
 
   public
 
-  # @private # TODO: I18n
-  COMMIT_LABEL = 'Commit'
+  # @private
+  COMMIT_LABEL = config_text(:sys, :commit).freeze
 
   # ===========================================================================
   # :section:
@@ -122,19 +122,19 @@ module SysHelper::Settings
     tip = []
     if env
       cls << 'from-env'
-      tip << 'from ENV variable' # TODO: I18n
+      tip << config_text(:sys, :from_env_var)
     else
-      tip << 'ENV variable not present' # TODO: I18n
+      tip << config_text(:sys, :no_env_var)
     end
     if obj
       cls << 'from-obj'
-      tip << 'value from constant' # TODO: I18n
+      tip << config_text(:sys, :from_constant)
     end
     if value.nil? || (value == EMPTY_VALUE)
       cls << 'missing'
     elsif !boolean?(value)
       cls << 'invalid'
-      tip << "invalid value #{value.inspect}" # TODO: I18n
+      tip << config_text(:sys, :invalid_value, value: value.inspect)
     end
 
     opt  = { class: css_classes('radio-group line', *cls) }
@@ -171,13 +171,13 @@ module SysHelper::Settings
     tip = []
     if env
       cls << 'from-env'
-      tip << 'from ENV variable' # TODO: I18n
+      tip << config_text(:sys, :from_env_var)
     else
-      tip << 'ENV variable not present' # TODO: I18n
+      tip << config_text(:sys, :no_env_var)
     end
     if obj
       cls << 'from-obj'
-      tip << 'value from constant' # TODO: I18n
+      tip << config_text(:sys, :from_constant)
     end
     case value
       when nil         then cls << 'missing'; value = EMPTY_VALUE
@@ -212,8 +212,8 @@ module SysHelper::Settings
   #
   def app_flag_radio_button(flag, value, on:)
     checked = on ? true?(value) : false?(value)
-    label   = on ? 'ON'         : 'OFF' # TODO: I18n
     control = radio_button_tag(flag, on, checked)
+    label   = config_text(on ? :_on : :_off).upcase
     label   = label_tag(flag, label, value: on)
     control << label
   end

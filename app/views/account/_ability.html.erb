@@ -8,7 +8,7 @@
   dec  ||= AccountDecorator.new(user, **context)
 
   name   = dec.object.email.presence || 'anonymous'
-  label  = "Authorization for user #{name.inspect}" # TODO: I18n
+  label  = config_text(:account, :ability, :title, user: name.inspect)
   label  = html_h2(label, class: 'label')
 
 -%>

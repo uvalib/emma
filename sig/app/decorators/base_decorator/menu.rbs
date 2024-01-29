@@ -26,6 +26,9 @@ module BaseDecorator::Menu
   #
   def items_menu: (?action: Symbol|String|nil, ?constraints: symHash|nil, ?sort: symHash|nil, ?prompt: String|nil, ?table: symHash|nil, ?id: String|nil, ?name: String|Symbol, ?ujs: String|symHash, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  # @private
+  ITEM_PROMPT: String
+
   # The name of the controller used in generating link paths.
   #
   # @return [Symbol]
@@ -34,9 +37,11 @@ module BaseDecorator::Menu
 
   # Generate a prompt for #items_menu.
   #
+  # @param [Hash] opt
+  #
   # @return [String]
   #
-  def items_menu_prompt: () -> String
+  def items_menu_prompt: (**untyped opt) -> String
 
   # Generate a label for a specific menu entry.
   #

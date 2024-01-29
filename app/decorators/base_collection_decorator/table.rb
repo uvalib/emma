@@ -86,6 +86,9 @@ module BaseCollectionDecorator::Table
     }
   end
 
+  ALL_RECORDS = config_text(:table, :all_records).freeze
+  ROWS_HERE   = config_text(:table, :rows_here).freeze
+
   # Render a link to a page for access to the full contents of a table.
   #
   # @param [String, nil]  path        Default: `#table_path`.
@@ -95,10 +98,14 @@ module BaseCollectionDecorator::Table
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_full_table_link(path: nil, rows: nil, css: '.full-table-link', **opt)
-    label = 'See all records' # TODO: I18n
-    link  = make_link(label, (path || table_path))
-    rows  = "(#{rows} displayed here)" if rows.present? # TODO: I18n
+  def render_full_table_link(
+    path: nil,
+    rows: nil,
+    css:  '.full-table-link',
+    **opt
+  )
+    link = make_link(ALL_RECORDS, (path || table_path))
+    rows = interpolate_named_references("(#{ROWS_HERE})", rows: rows)
     prepend_css!(opt, css)
     html_tag(:div, link, rows, **opt)
   end

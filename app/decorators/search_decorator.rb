@@ -424,11 +424,11 @@ class SearchDecorator
     opt = {}
     if (enabled = index && (index > paginator.first_index))
       opt[:icon]     = UP_TRIANGLE
-      opt[:title]    = 'Go to the previous record' # TODO: I18n
+      opt[:title]    = config_text(:search, :record, :prev_tooltip)
       opt[:url]      = '#value-Title-%d' % (index - 1)
     else
       opt[:icon]     = DELTA
-      opt[:title]    = 'This is the first record on the page' # TODO: I18n
+      opt[:title]    = config_text(:search, :record, :first_tooltip)
       opt[:tabindex] = -1
     end
     prepend_css!(opt, css)
@@ -450,11 +450,11 @@ class SearchDecorator
     opt = {}
     if (enabled = index && (index < paginator.last_index))
       opt[:icon]     = DOWN_TRIANGLE
-      opt[:title]    = 'Go to the next record' # TODO: I18n
+      opt[:title]    = config_text(:search, :record, :next_tooltip)
       opt[:url]      = '#value-Title-%d' % (index + 1)
     else
       opt[:icon]     = REVERSE_DELTA
-      opt[:title]    = 'This is the last record on the page' # TODO: I18n
+      opt[:title]    = config_text(:search, :record, :last_tooltip)
       opt[:tabindex] = -1
     end
     prepend_css!(opt, css)
@@ -472,17 +472,13 @@ class SearchDecorator
   def source_record_link(**opt)
     url  = object.record_title_url
     repo = repository_for(url)
-    if repo == EmmaRepository.default
-      record_popup(**opt)
-    elsif url.present?
-      repo = repo&.titleize || 'source repository'             # TODO: I18n
-      opt[:title] ||= "View this item on the #{repo} website." # TODO: I18n
-      rid = CGI.unescape(object.emma_repositoryRecordId)
-      external_link(rid, url, **opt)
-    else
-      rid = CGI.unescape(object.emma_repositoryRecordId)
-      ERB::Util.h(rid)
+    return record_popup(**opt) if repo == EmmaRepository.default
+    if url && !opt[:title]
+      repo = repo&.titleize || config_text(:search, :source, :default)
+      opt[:title] = config_text(:search, :source, :link_tooltip, repo: repo)
     end
+    rid = CGI.unescape(object.emma_repositoryRecordId)
+    url ? external_link(rid, url, **opt) : ERB::Util.h(rid)
   end
 
   # Make a clickable link to retrieve a remediated file.
@@ -515,15 +511,15 @@ class SearchDecorator
     opt[:title] ||=
       if allow
         fmt     = object.dc_format.to_s.underscore.upcase.tr('_', ' ')
-        origin  = repo&.titleize || 'the source repository' # TODO: I18n
-        "Retrieve the #{fmt} source from #{origin}."        # TODO: I18n
+        origin  = repo&.titleize || config_text(:search, :source, :origin)
+        config_text(:search, :source, :retrieval_tip, fmt: fmt, repo: origin)
       else
-        tip_key = (h.signed_in?) ? 'disallowed' : 'sign_in'
-        tip_key = :"emma.download.link.#{tip_key}.tooltip"
         fmt     = object.label
         origin  = repo || EmmaRepository.default
         default = %i[emma.download.tooltip]
-        I18n.t(tip_key, fmt: fmt, repo: origin, default: default)
+        tip_key = (h.signed_in?) ? 'disallowed' : 'sign_in'
+        tip_key = "emma.download.link.#{tip_key}.tooltip"
+        config_item(tip_key, fmt: fmt, repo: origin, default: default)
       end
 
     case repo&.to_sym
@@ -580,23 +576,24 @@ class SearchDecorator
   # @see file:javascripts/shared/modal-base.js *ModalBase.toggleModal()*
   #
   def record_popup(css: '.record-popup', **opt)
+    p_opt  = opt.delete(:placeholder)
     attr   = opt.delete(:attr)&.dup || {}
+    css_id = opt[:'data-iframe'] || attr[:id] || "record-frame-#{rid}"
     rid    = object.emma_repositoryRecordId
-    id     = opt[:'data-iframe'] || attr[:id] || "record-frame-#{rid}"
 
-    opt[:'data-iframe'] = attr[:id] = id
-    opt[:title]          ||= 'View this repository record.' # TODO: I18n
+    opt[:'data-iframe'] = attr[:id] = css_id
+    opt[:title]          ||= config_text(:search, :popup, :tooltip)
     opt[:control]        ||= {}
     opt[:control][:text] ||= ERB::Util.h(rid)
 
-    ph_opt = opt.delete(:placeholder)
     prepend_css!(opt, css)
     inline_popup(**opt) do
-      ph_opt = prepend_css(ph_opt, 'iframe', POPUP_DEFERRED_CLASS)
-      ph_opt[:'data-path'] = UploadDecorator.show_path(id: rid, modal: true)
-      ph_opt[:'data-attr'] = attr.to_json
-      ph_txt = ph_opt.delete(:text) || 'Loading record...' # TODO: I18n
-      html_div(ph_txt, **ph_opt)
+      p_opt = prepend_css(p_opt, 'iframe', POPUP_DEFERRED_CLASS)
+      p_opt[:'data-path'] = UploadDecorator.show_path(id: rid, modal: true)
+      p_opt[:'data-attr'] = attr.to_json
+      p_txt   = p_opt.delete(:text)
+      p_txt ||= config_text(:search, :popup, :placeholder)
+      html_div(p_txt, **p_opt)
     end
   end
 

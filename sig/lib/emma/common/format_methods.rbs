@@ -133,42 +133,70 @@ module Emma::Common::FormatMethods
 
   # Match a named reference like "%{name}" for a #sprintf argument.
   #
+  # $1 = [String] name
+  #
   # @type [Regexp]
   #
-  SPRINTF_NAMED_REFERENCE: Regexp
+  SIMPLE_NAMED_REFERENCE: Regexp
 
   # Match a formatted named reference like "%<name>s" for a #sprintf argument.
   #
+  # $1 = [String] name
+  #
   # @type [Regexp]
   #
-  SPRINTF_FMT_NAMED_REFERENCE: Regexp
+  FORMAT_NAMED_REF_BASE: Regexp
 
   # @private
   # @type [Array<Regexp>]
-  SPRINTF_NAMED_REF_PATTERNS: Array[Regexp]
+  NAMED_REFERENCES: Array[Regexp]
 
   # Extract the named references in a format string.
   #
   # @param [String, *]             text   String with #sprintf formatting.
-  # @param [Array<Regexp>, Regexp] match  Patterns to match
+  # @param [Array<Regexp>, Regexp] match  Default: #NAMED_REFERENCES
   #
   # @return [Array<Symbol>]
   #
   # @see Kernel#sprintf
   #
-  def named_references: (untyped text, ?(Array[Regexp]|Regexp) match) -> symArray
+  def named_references: (untyped text, ?match: Array[Regexp]|Regexp|nil) -> symArray
 
-  # Match a named reference along with "%<name>s" the format portion.
+  # Match the format portion of a named reference like "%<name>".
   #
-  # $1 = [String, nil] name
-  # $2 = [String, nil] flags
-  # $3 = [String, nil] width
-  # $4 = [String, nil] precision
-  # $5 = [String]      format
+  # $1 = [String, nil] flags
+  # $2 = [String, nil] width
+  # $3 = [String, nil] precision
+  # $4 = [String]      format type
   #
   # @type [Regexp]
   #
-  SPRINTF_FORMAT: Regexp
+  FORMAT_MATCH: Regexp
+
+  # Match a named reference like "%<name>" along with its format.
+  #
+  # $1 = [String]      name
+  # $2 = [String, nil] flags
+  # $3 = [String, nil] width
+  # $4 = [String, nil] precision
+  # $5 = [String]      format type
+  #
+  # @type [Regexp]
+  #
+  FORMAT_NAMED_REFERENCE: Regexp
+
+  # Match a named reference "%{name}" or "%<name>" along with its format.
+  #
+  # $1 = [String]      name           String for "%{name}"; nil for "%<name>".
+  # $2 = [String]      name           String for "%<name>"; nil for "%{name}".
+  # $3 = [String, nil] flags          Always nil for "%{name}".
+  # $4 = [String, nil] width          Always nil for "%{name}".
+  # $5 = [String, nil] precision      Always nil for "%{name}".
+  # $6 = [String, nil] format type    String for "%<name>"; nil for "%{name}".
+  #
+  # @type [Regexp]
+  #
+  NAMED_REFERENCE: Regexp
 
   # Extract the named references in a format string and pair them with their
   # respective sprintf formats.  Each "%{name}" reference is paired with "%s";
@@ -180,6 +208,51 @@ module Emma::Common::FormatMethods
   # @return [Hash{Symbol=>String}]
   #
   def named_references_and_formats: (untyped text, ?default_fmt: String|nil) -> Hash[Symbol,String]
+
+  # Matches the given named reference appearing in a string as "%{name}".
+  # Named references of the form "%<name>" will not be matched.
+  #
+  # @param [String|Symbol] var
+  #
+  # @return [Regexp]
+  #
+  def match_simple_named_ref: (String|Symbol var) -> Regexp
+
+  # Matches the given named reference appearing in a string as "%<name>...".
+  # Named references of the form "%{name}" will not be matched.
+  #
+  # @param [String|Symbol] var
+  #
+  # @return [Regexp]
+  #
+  def match_format_named_ref: (String|Symbol var) -> Regexp
+
+  # Matches the given named reference appearing in a string as either "%{name}"
+  # or "%<name>...".
+  #
+  # @param [String|Symbol] var
+  #
+  # @return [Regexp]
+  #
+  def named_reference_matcher: (String|Symbol var) -> Regexp
+
+  # Used by #indefinite_article to find the first substring after "%{an}" or
+  # "%<an>" in order to determine whether the subject starts with a vowel.
+  #
+  # @type [Regexp]
+  #
+  NAMED_REF_AN: Regexp
+
+  # Return the appropriate article ('a' or 'an') for the given word or phrase.
+  #
+  # If *term* contains "%{an}" or "%<an>...", the substring following it is
+  # used to determine whether the subject starts with a vowel.
+  #
+  # @param [String] term
+  #
+  # @return [String]
+  #
+  def indefinite_article: (String term) -> String
 
   # Attempt to apply interpolations to all strings in *item*.
   #

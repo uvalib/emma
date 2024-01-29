@@ -131,11 +131,8 @@ module BaseDecorator::Links
 
   public
 
-  # TODO: I18n
-  #
-  # @type [String]
-  #
-  ANOTHER = 'another'
+  # @private
+  ANOTHER = config_text(:another).freeze
 
   # A list of controller action links.  If the current action is provided,
   # the associated action link will be appear at the top of the list, except
@@ -236,7 +233,11 @@ module BaseDecorator::Links
     table ||= action_links(**opt)
     table[action]&.dup&.tap do |entry|
       # noinspection RubyMismatchedArgumentType
-      entry[:article]  = ANOTHER if base_action(action) == base_action(current)
+      if base_action(action) == base_action(current)
+        entry[:an] = ANOTHER
+      elsif entry[:an].nil?
+        entry[:an] = indefinite_article(opt[:label] || entry[:label])
+      end
       entry[:current]  = current
       entry[:action] ||= action
     end || {}

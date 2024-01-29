@@ -38,6 +38,25 @@ module BaseDecorator::Lookup
   #
   LOOKUP_JS_CLASS = 'LookupModal'
 
+  # @private
+  # @type [Hash{Symbol=>String}]
+  LOOKUP_MSGS = config_text_section(:lookup).deep_freeze
+
+  LOOKUP_DESC       = LOOKUP_MSGS[:description]
+  LOOKUP_LABEL      = LOOKUP_MSGS[:lookup]
+  CANCEL_LABEL      = LOOKUP_MSGS[:cancel]
+  COMMIT_LABEL      = LOOKUP_MSGS[:commit]
+  CANCEL_TIP        = LOOKUP_MSGS[:cancel_tip]
+  COMMIT_TIP        = LOOKUP_MSGS[:commit_tip]
+
+  QUERY_LABEL       = LOOKUP_MSGS[:query]
+  SEPARATORS_LABEL  = LOOKUP_MSGS[:separators]
+  SEARCHING_LABEL   = LOOKUP_MSGS[:searching]
+
+  RESULTS_LABEL     = LOOKUP_MSGS[:results]
+  ERRORS_LABEL      = LOOKUP_MSGS[:errors]
+  DIAG_LABEL        = LOOKUP_MSGS[:diagnostics]
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -82,7 +101,7 @@ module BaseDecorator::Lookup
   def lookup_modal(container: {}, css: LOOKUP_CLASS, **opt)
     opt[:close]        = lookup_cancel_options
     opt[:controls]     = lookup_commit_button
-    opt[:'aria-label'] = 'Search for additional bibliographic details' # TODO: I18n
+    opt[:'aria-label'] = LOOKUP_DESC
     prepend_css!(opt, css)
     trace_attrs!(opt)
     h.modal_popup(**opt) do
@@ -110,7 +129,7 @@ module BaseDecorator::Lookup
   # @see PopupHelper#inline_popup
   #
   def lookup_button_options(css: '.lookup-button', **opt)
-    opt[:label] ||= 'Lookup' # TODO: I18n
+    opt[:label] ||= LOOKUP_LABEL
     prepend_css!(opt, css)
   end
 
@@ -121,8 +140,8 @@ module BaseDecorator::Lookup
   # @return [Hash]
   #
   def lookup_cancel_options(**opt)
-    opt[:label] ||= 'Cancel' # TODO: I18n
-    opt[:title] ||= "Don't make any changes to submission field values" # TODO: I18n
+    opt[:label] ||= CANCEL_LABEL
+    opt[:title] ||= CANCEL_TIP
     opt
   end
 
@@ -135,9 +154,9 @@ module BaseDecorator::Lookup
   # @return [ActiveSupport::SafeBuffer]
   #
   def lookup_commit_button(label: nil, css: '.commit', **opt)
-    label       ||= 'Update' # TODO: I18n
+    label       ||= COMMIT_LABEL
+    opt[:title] ||= COMMIT_TIP
     opt[:type]  ||= 'submit'
-    opt[:title] ||= 'Replace submission field values with these changes' # TODO: I18n
     prepend_css!(opt, css)
     trace_attrs!(opt)
     html_button(label, **opt)
@@ -195,8 +214,7 @@ module BaseDecorator::Lookup
   #
   def lookup_query(unique: nil, css: '.lookup-query', **opt)
     l_id   = unique_id('label', css, unique: unique || hex_rand)
-    label  = 'Query' # TODO: I18n
-    label  = html_div(label, id: l_id)
+    label  = html_div(QUERY_LABEL, id: l_id)
     terms  = html_div(class: 'terms', 'aria-describedby': l_id)
     prepend_css!(opt, css)
     trace_attrs!(opt)
@@ -216,36 +234,36 @@ module BaseDecorator::Lookup
   # @see file:app/assets/javascripts/shared/lookup-modal.js *inputPrompt*
   #
   def lookup_input(unique: nil, css: '.lookup-prompt', **opt)
-    uniq_opt     = { unique: unique || hex_rand }
+    uniq_opt = { unique: unique || hex_rand }
 
     # === Lookup query terms input
-    lookup_label = 'Lookup' # TODO: I18n
-    terms_label  = 'Query'  # TODO: I18n
-    terms_css    = 'item-terms'
-    terms_id     = unique_id(terms_css, **uniq_opt)
-    terms_input  =
-      html_div(class: terms_css) do
-        label  = h.label_tag(terms_id, "#{terms_label}:")
+    terms_css   = 'item-terms'
+    terms_id    = unique_id(terms_css, **uniq_opt)
+    terms_opt   = { class: terms_css }
+    terms_input =
+      html_div(**terms_opt) do
+        label  = QUERY_LABEL
+        label  = "#{label}:" unless label.end_with?(':')
+        label  = h.label_tag(terms_id, label)
         input  = h.text_field_tag('terms', nil, id: terms_id)
-        button = html_button(lookup_label, class: 'submit')
+        button = html_button(LOOKUP_LABEL, class: 'submit')
         label << input << button
       end
 
-    # === Separator type radio buttons
-    sep_label    = 'Term Separators' # TODO: I18n
-    sep_css      = 'item-separator'
-    sep_id       = unique_id(sep_css, **uniq_opt)
-    sep_opt      = { id: sep_id, class: sep_css, tabindex: 0 }
-    sep_selected = :space
-    sep_types    = {
+    # === Separator type radio button choices
+    sep_type = {
       space: 'Space, tab, and <strong>|</strong> (pipe)'.html_safe,
       pipe:  'Only <strong>|</strong> (pipe)'.html_safe
     }
-    separator_choices =
-      html_fieldset(sep_label, **sep_opt) do
-        sep_types.map.with_index do |(value, text), index|
+    selected = sep_type.keys.first
+    sep_css  = 'item-separator'
+    sep_id   = unique_id(sep_css, **uniq_opt)
+    sep_opt  = { id: sep_id, class: sep_css, tabindex: 0 }
+    choices  =
+      html_fieldset(SEPARATORS_LABEL, **sep_opt) do
+        sep_type.map.with_index do |(value, text), index|
           id      = "#{sep_id}-#{index}"
-          checked = sep_selected ? (value == sep_selected) : index.zero?
+          checked = selected ? (value == selected) : index.zero?
           button  = h.radio_button_tag('separator', value, checked, id: id)
           label   = h.label_tag(id, text)
           button << label
@@ -256,7 +274,7 @@ module BaseDecorator::Lookup
     prepend_css!(opt, css)
     trace_attrs!(opt)
     html_div(**opt) do
-      terms_input << separator_choices
+      terms_input << choices
     end
   end
 
@@ -272,7 +290,8 @@ module BaseDecorator::Lookup
   #
   def lookup_status(unique: nil, css: '.lookup-status', **opt)
     unique # NOTE: unused
-    label  = 'Searching:' # TODO: I18n
+    label  = SEARCHING_LABEL
+    label  = "#{label}:" unless label.end_with?(':')
     label  = html_span(label, class: 'label')
     status = html_div(class: 'services invisible') { label }
     notice = html_div(class: 'notice')
@@ -299,10 +318,9 @@ module BaseDecorator::Lookup
     uniq_opt  = { unique: unique || hex_rand }
 
     # === Output display heading
-    hdg_label = 'Results' # TODO: I18n
     hdg_css   = 'lookup-heading'
     hdg_id    = unique_id(hdg_css, **uniq_opt)
-    heading   = html_h2(hdg_label, id: hdg_id, class: hdg_css, **t_opt)
+    heading   = html_h2(RESULTS_LABEL, id: hdg_id, class: hdg_css, **t_opt)
 
     # === Output results element
     res_css   = 'item-results'
@@ -311,23 +329,21 @@ module BaseDecorator::Lookup
     results   = h.text_area_tag(res_id, nil, res_opt)
 
     # === Output errors element
-    err_label = 'Errors' # TODO: I18n
     err_css   = 'item-errors'
     err_id    = unique_id(err_css, **uniq_opt)
     errors    =
       html_div(class: 'pair') do
-        label   = h.label_tag(err_id, err_label, class: 'label')
+        label   = h.label_tag(err_id, ERRORS_LABEL, class: 'label')
         display = h.text_area_tag(err_id, nil, class: "#{err_css} value")
         label << display
       end
 
     # === Output diagnostics element
-    diag_label  = 'Diagnostics' # TODO: I18n
     diag_css    = 'item-diagnostics'
     diag_id     = unique_id(diag_css, **uniq_opt)
     diagnostics =
       html_div(class: 'pair') do
-        label   = h.label_tag(diag_id, diag_label, class: 'label')
+        label   = h.label_tag(diag_id, DIAG_LABEL, class: 'label')
         display = h.text_area_tag(diag_id, nil, class: "#{diag_css} value")
         label << display
       end

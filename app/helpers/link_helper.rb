@@ -84,7 +84,7 @@ module LinkHelper
   #
   def icon_button(icon: nil, text: nil, url: nil, **opt)
     icon        ||= DEFAULT_ICON
-    text        ||= opt[:title] || 'Action' # TODO: I18n
+    text        ||= opt[:title] || config_text(:link, :icon_action)
     opt[:title] ||= text
 
     sr_only = html_span(text, class: 'text sr-only')
@@ -111,11 +111,11 @@ module LinkHelper
 
   public
 
-  # Added to the tooltip of external links. # TODO: I18n
+  # Added to the tooltip of external links.
   #
   # @type [String]
   #
-  NEW_TAB = 'opens in a new window'
+  NEW_TAB = config_text(:link, :new_tab).freeze
 
   # Produce a link with appropriate accessibility settings.
   #

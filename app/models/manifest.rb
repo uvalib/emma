@@ -168,7 +168,7 @@ class Manifest < ApplicationRecord
   # @return [String]
   #
   def self.default_name
-    DateTime.now.strftime('Started %B %d, %Y at %l:%M %P').squish # TODO: I18n
+    DateTime.now.strftime(config_text(:manifest, :default_name)).squish
   end
 
 end

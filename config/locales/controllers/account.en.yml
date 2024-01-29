@@ -19,6 +19,37 @@ en:
         database:       true
 
       # =======================================================================
+      # Messages (overriding "en.emma.messages")
+      # =======================================================================
+
+      messages:
+
+        success:        'EMMA user account was successfully %{actioned}.'
+        failure:        'Could not %{action} EMMA user account.'
+
+        created:        'Account created'
+        updated:        'Account updated'
+        removed:        'Account removed'
+        failed:         'FAILED'
+
+        self_create:    'You already have an EMMA account'
+        self_delete:    'Cannot delete your own account'
+
+        select:         'Select an EMMA user account'
+        model_name:     'EMMA User Account'
+        id_readonly:    'Cannot change the account identifier'
+
+        ability:
+          title:        'Authorization for user %{user}'
+          column:       # In this order:
+            model:      'Model'
+            action:     'Action'
+            status:     'Can perform?'
+
+        details:
+          title:        'Account Details'
+
+      # =======================================================================
       # Search endpoint
       # =======================================================================
 
@@ -65,16 +96,13 @@ en:
       action_links:
 
         new:
-          label:        'Create %{article} new EMMA user account'
-          article:      'a'
+          label:        'Create %{an} new EMMA user account'
 
         edit:
-          label:        'Modify %{article} existing EMMA user account'
-          article:      'an'
+          label:        'Modify %{an} existing EMMA user account'
 
         delete:
-          label:        'Remove %{article} existing EMMA user account'
-          article:      'an'
+          label:        'Remove %{an} existing EMMA user account'
 
         list_all:
           label:        'List all EMMA user accounts'
@@ -116,14 +144,6 @@ en:
         - effective_id:   { ignored: true }
         - access_token:   { ignored: true }
         - refresh_token:  { ignored: true }
-
-      # =======================================================================
-      # Messages
-      # =======================================================================
-
-      messages:
-        success:        'EMMA user account was successfully %{actioned}.'
-        failure:        'Could not %{action} EMMA user account.'
 
       # =======================================================================
       # Pages

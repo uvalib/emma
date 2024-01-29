@@ -355,6 +355,9 @@ class ManifestItemDecorator < BaseDecorator
       (:repository unless ManifestItem::ALLOW_NIL_REPOSITORY)
     ].compact.freeze
 
+    FIELD    = config_text(:manifest_item, :field).freeze
+    REQUIRED = config_text(:manifest_item, :required).freeze
+
     # The names of ManifestItem columns that are not rendered.
     #
     # @return [Array<Symbol>]
@@ -434,7 +437,7 @@ class ManifestItemDecorator < BaseDecorator
             text  = opt[:label] || prop&.dig(:label) || col.to_s
             text  = html_span(text, **t_opt) unless text.html_safe?
             n_opt = { class: 'required' }
-            n_opt[:'aria-label'] = note = 'required' # TODO: I18n
+            n_opt[:'aria-label'] = note = REQUIRED
             n_opt[:title] = "(#{note})"
             note  = html_span('*', **n_opt)
             text << note
@@ -466,9 +469,9 @@ class ManifestItemDecorator < BaseDecorator
     #
     def field_details(col, prop = nil, &blk)
       prop ||= field_configuration(col)
-      tag    = 'field' # TODO: I18n
+      tag    = FIELD
       name   = prop[:field] || col
-      req    = ('required' if prop[:required]) # TODO: I18n
+      req    = (REQUIRED if prop[:required])
 
       tag    = html_span("#{tag}: ", class: 'tag')
       name   = html_span(name, class: 'field-name')
@@ -489,37 +492,36 @@ class ManifestItemDecorator < BaseDecorator
     #
     def type_details(col, prop = nil, &blk)
       prop ||= field_configuration(col)
-      tag    = 'type' # TODO: I18n
       many   = prop[:array].presence
       type   = prop[:type]&.to_s || 'string'
-      # noinspection SpellCheckingInspection
       case type
-        when /^text/     then name = 'string'
-        when 'date'      then name = "#{type} [YYYYMMDD]"
-        when 'TrueFalse' then name = 'TRUE or FALSE value'
-        when /^[A-Z]/    then name = "#{type} value".pluralize(many || 1) # TODO: I18n
-        else                  name = type
+        when /^text/     then name, plural = :type_text
+        when 'date'      then name, plural = :type_date
+        when 'TrueFalse' then name, plural = :type_boolean
+        when /^[A-Z]/    then name, plural = :type_value, many
+        else                  name, plural = nil
       end
+      text   = config_text_section(:manifest_item, :details, type: type)
+      name   = name ? text[name] : type
+      name   = name.pluralize if plural
 
-      tag    = html_span("#{tag}: ", class: 'tag')
-      many   = 'one or more ' if many # TODO: I18n
-      name   = html_span(name, class: 'type-name')
+      tag    = html_span(class: 'tag')        { "#{text[:type]}:" }
+      many &&= html_span(class: 'type-count') { text[:one_or_more] }
+      name   = html_span(class: 'type-name')  { name }
       first  = safe_join([tag, many, name].compact)
       lines  =
         if prop[:pairs]
-          label_dt = 'Data value'   # TODO: I18n
-          label_dd = 'Displayed as' # TODO: I18n
           html_dl do
             opt = { class: 'label' } # First pair only
-            { label_dt => label_dd }.merge!(prop[:pairs]).map do |value, label|
-              value = html_dt(value, **opt)
-              label = html_dd(label, **opt)
-              opt   = {}
-              value << label
+            { text[:dt] => text[:dd] }.merge!(prop[:pairs]).map do |val, lbl|
+              val = html_dt(val, **opt)
+              lbl = html_dd(lbl, **opt)
+              opt = {}
+              val << lbl
             end
           end
         else
-          "Description of #{type.inspect} to come..." # TODO: ...
+          config_text(:manifest_item, :details, :type_desc, type: type.inspect)
         end
       html_details(first, *lines, &blk)
     end
@@ -672,7 +674,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     def submission_status_header(row: HEADER_ROW, css: '.head', **opt)
       ctrl = nil
-      name = 'Item Name' # TODO: I18n
+      name = config_text(:manifest_item, :submit, :item_name)
       stat = SUBMIT_STEPS
       prepend_css!(opt, css)
       submit_status_element(ctrl, name, stat, row: row, **opt)
@@ -767,8 +769,9 @@ class ManifestItemDecorator < BaseDecorator
         base ||= unique_id(css)
         cb_id  = "checkbox-#{base}"
         lbl_id = "label-#{base}"
-        number = opt[:'data-number']
-        label  = "Select item #{number} for submission".squeeze # TODO: I18n
+        number = { number: opt[:'data-number'] }
+        label  = config_text(:manifest_item, :submit, :item_select, **number)
+        label  = label.squeeze
         label  = h.label_tag(cb_id, label, id: lbl_id)
         cb     = h.check_box_tag(cb_id)
         ctrl   = control_group(lbl_id) { cb << label }
@@ -810,9 +813,11 @@ class ManifestItemDecorator < BaseDecorator
         sep   = ' / '
         first = [*part[:title], *part[:author], *part[:identifier]].take(2)
         first = first.join(sep)
+        text  = config_text_section(:manifest_item, :submit)
+        part.transform_keys! { |k| text[k] || k.capitalize }
         uniq  = hex_rand
         r_opt = { index: uniq, separator: sep, no_fmt: true, no_help: true }
-        lines = part.map { |k, v| render_pair(k.capitalize, v, **r_opt) } # TODO: I18n
+        lines = part.map { |k, v| render_pair(k, v, **r_opt) }
         l_id  = 'label-%s' % (base || unique_id(css))
         item  = html_details(first, *lines, class: 'text', id: l_id)
         item  = control_group(l_id) { item }
@@ -910,9 +915,10 @@ class ManifestItemDecorator < BaseDecorator
     # @see file:javascripts/controllers/manifest-edit.js *scrollToCenter()*
     #
     def submit_status_link(_type, status, row: nil, css: '.fix', **opt)
-      label = 'Edit' # TODO: I18n
+      text  = config_text_section(:manifest_item, :submit)
+      label = text[:edit_label]
       path  = edit_row_path(row)
-      opt[:title] ||= 'Modify this manifest item' # TODO: I18n
+      opt[:title] ||= text[:edit_tooltip]
       prepend_css!(opt, css)
       append_css!(opt, 'hidden') unless STATUS_SHOW_EDIT.include?(status)
       make_link(label, path, **opt, 'data-turbolinks': false)
@@ -993,7 +999,7 @@ class ManifestItemDecorator < BaseDecorator
       index   = opt.delete(:index)
       unique ||= index || hex_rand
       id_base = [row, unique].compact.join('-')
-      summary = 'Item Details' # TODO: I18n
+      summary = config_text(:manifest_item, :row_details, :label)
       content =
         DETAILS_FIELDS.map do |field|
           v_id  = "#{field}-detail-#{id_base}"

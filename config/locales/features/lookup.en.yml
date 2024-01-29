@@ -20,3 +20,44 @@ en:
         tooltip:  |
           Please supply either a standard identifier (ISBN, DOI, etc) or
           a title and an author
+
+      # =======================================================================
+      # Messages (overriding "en.emma.messages")
+      # =======================================================================
+
+      messages:
+
+        description:  'Search for additional bibliographic details'
+        field_is:     'field is'
+        no_changes:   'No fields changed'
+
+        cancel_tip:   "Don't make any changes to submission field values"
+        commit_tip:   'Replace submission field values with these changes'
+
+        lookup:       'Lookup'
+        cancel:       'Cancel'
+        commit:       'Update'
+        query:        'Query'
+        terms:        'Query'
+        separators:   'Term Separators'
+        searching:    'Searching'
+        results:      'Results'
+        errors:       'Errors'
+        diagnostics:  'Diagnostics'
+
+        lock:
+          tooltip:    'Click to prevent this data field from being replaced'
+
+        unlock:
+          tooltip:    'Click to allow this data field to be replaceable'
+
+        column:
+          selection:              'USE'
+          tag:                    'FROM'
+          dc_identifier:          'FROM'
+          dc_title:               'IDENTIFIER'
+          dc_creator:             'AUTHOR/CREATOR'
+          dc_publisher:           'PUBLISHER'
+          emma_publicationDate:   'DATE'
+          dcterms_dateCopyright:  'YEAR'
+          dc_description:         'DESCRIPTION'

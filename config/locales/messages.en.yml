@@ -1,0 +1,341 @@
+# config/locales/messages.en.yml
+#
+# General text messages.
+
+en:
+
+  emma:
+
+    vocabulary:             &VOCABULARY
+
+      EMMA:                 'EMMA'
+
+      _off:                 'off'
+      _on:                  'on'
+      a:                    'a'
+      administrator:        'EMMA administrator'
+      all:                  'all'
+      also:                 'also'
+      an:                   'an'
+      another:              'another'
+      attention:            'attention'
+      controls:             'controls'
+      entry:                'entry'
+      error:                'error'
+      field:                'field'
+      file:                 'file'
+      for:                  'for'
+      from:                 'from'
+      invalid:              'invalid'
+      item:                 'item'
+      match:                'match'
+      one:                  'one'
+      or:                   'or'
+      original:             'original'
+      other:                'other'
+      problem:              'problem'
+      require:              'require'
+      required:             'required'
+      resolved:             'resolved'
+      result:               'result'
+      still:                'still'
+      the:                  'the'
+      this:                 'this'
+      type:                 'type'
+
+    messages:               &MESSAGES
+
+      <<:                   *VOCABULARY
+
+      invalid_id:           'Invalid identifier'
+      no_match:             'No records match %{id}'
+      not_created:          'Not created'
+      not_found:            'Record %{id} not found'
+
+      api_migrate:
+        changes:            'Record %{rid}'
+        empty_column:       'EMPTY DATABASE COLUMN'
+        no_changes:         'NO CHANGES'
+        no_data:            'NO DATA'
+        summary:            '%{count} records in %{table} table'
+
+      auth:
+        no_data:            'No auth data received'
+        no_user:            'Could not locate user account'
+
+      aws:
+        no_records:         'no records'
+        no_sids:            'no submission IDs'
+        prefix:             'Prefix'
+        bucket:
+          label:            'AWS'
+          empty:            'EMPTY'
+          more:             '[%{count} more]'
+
+      configuration:
+        fail:               'Fatal configuration error'
+
+      details:
+        tooltip:            'Click to show details'
+
+      dev:
+
+        hide_dev_controls:
+          label:            'Suppress'
+          tooltip:
+            - 'Click to stop showing these controls'
+            - 'Supply "&%{param}=true" to restore them.'
+            - ''
+            - 'NOTE: DOES NOT AFFECT session["app.debug"]'
+            - '(Toggle this off first to remove all dev-only enhancements.)'
+
+        toggle_debug:
+          ctrlr_label:      '%{ctrlr} debug %{state}'
+          label:            'Debug %{state}'
+          tooltip:          'Click to turn %{state}'
+
+      engine:
+        reset:
+          label:            '[RESTORE DEFAULT]'
+          tooltip:          'Click to restore the default %{service} engine'
+
+      field:
+        readonly:           'This cannot be changed for an existing EMMA entry'
+        validation:
+          empty:            'empty value'
+          no_server:        'Could not contact server for validation'
+          too_big:          'Too many characters.'
+          too_small:        'Not enough characters.'
+
+      fields:
+        valid_lang:         'Provided value: %s'
+        invalid_lang:       'The underlying data contains this value instead of a valid ISO 639 language code'
+        invalid_id:         'This is not a valid %{TYPE} identifier.'
+
+      flash:
+        more:               'more'
+        total:              '%{count} total'
+        client:
+          no_fetch:         'could not fetch message'
+          no_data:          'no data for message'
+          bad_data:         'unexpected data type'
+
+      form:
+        cancel:             'Cancel'
+        cancel_first:       'Cancel this submission before retrying'
+        filter:             'Filter input fields by state:'
+        no_fields:          'NO FIELDS'
+        no_lookup:          |
+          Bibliographic metadata is inherited from
+          the original repository entry.
+        success:            'Changes saved'
+        unchangeable:       'NOT CHANGEABLE WHILE THE SERVER IS OFFLINE'
+        unmodifiable:       'System-generated; not modifiable.'
+        unset:              '(unset)'
+        update:             'Change'
+        action:
+          create:           'create'
+          created:          'created'
+          update:           'update'
+          updated:          'updated'
+
+      grid:
+        controls_lbl:       'Row controls'
+        row_controls:       'Controls for row %{row}'
+
+      hierarchy:
+        complete:           'Complete Work'
+        file_term:          'copy'
+
+      ia_download:
+        response:           '%{service} response: %{body}'
+        retry:              'Close this browser tab and retry the original download link.'
+
+      image:
+        alt:                'Illustration'
+
+      ingest:
+        missing_field:      'missing field'
+        missing_title:      '[TITLE MISSING]'
+        unknown:            'UNKNOWN PROBLEM'
+
+      layout:
+        menu:
+          all_items:        'All %{items}'
+          my_items:         'My %{items}'
+          org_items:        'Organization %{items}'
+        nav_bar:
+          current_page:     'Current page'
+        skip_nav:
+          label:            'Skip directly to'
+          main:             'Main Content'
+
+      link:
+        icon_action:        'Action'
+        new_tab:            'opens in a new window'
+
+      list:
+        no_entries:         'Empty results'
+        no_records:         'NO RECORDS'
+        no_results:         'NONE FOUND'
+        one_entry:          'Entry'
+        unit:               'title'
+
+      menu:
+        item_prompt:        'Select %{an} %{item}'
+
+      popup:
+        click:              'Click'
+        label:              'Popup'
+        close:
+          icon:             'X'
+          label:            'Close'
+          tooltip:          'Close this popup'
+        control:
+          label:            'Button'
+
+      record:
+        invalid_data:       'INTERNAL ERROR: data class %{class}'
+        invalid_field:      'illegal value'
+        invalid_sid:        'Invalid EMMA submission ID %{sid}'
+        item:               'Item %{id}'
+        missing:            '(missing)'
+        no_identifier:      'No identifier provided'
+        not_added:          'Not added'
+        not_created:        '%{type} not created'
+        not_found:          '%{type} %{id} not found'
+        not_removed:        'Not removed'
+        not_updated:        'Not updated'
+        submission:         'submission %{sid}'
+        failure:
+          no_repo:          'No repository given'
+          no_items:         'No items given'
+          no_create:        'Repository submissions are disabled'
+          no_edit:          'Repository modification requests are disabled'
+          no_remove:        'Repository removal requests are disabled'
+        upload:
+          failure:          'missing request env data'
+          invalid:          'invalid file'
+          blank:            'invalid response body'
+
+      repository:
+        general:
+          name:             'an external repository'
+          tooltip:          'From %{name}'
+        item:
+          name:             'external'
+          tooltip:          'This is %{an} %{name} repository item'
+
+      scroll_to_top:
+        top:
+          label:            '' # TODO: UP_TRIANGLE
+          tooltip:          'Go back to the top of the main content area'
+        down:
+          label:            '' # TODO: DOWN_TRIANGLE
+          tooltip:          'Align with the top of the main content area'
+
+      search_analysis:
+        early_exile:        'A LATER PAGE OF SEARCH RESULTS HAS ITEM(S) MATCHING THIS ONE'
+        error:              'THIS ITEM IS OUT-OF-SEQUENCE'
+        fields:             'specific metadata field(s)'
+        jump:               'Jump to the first occurrence on the page of this identity'
+        late_exile:         'THIS ITEM BELONGS ON AN EARLIER PAGE OF SEARCH RESULTS'
+        tooltip:            'Relevancy based on'
+
+      search_bar:
+        input_select:
+          tooltip:          'Search Type'
+        row_add:
+          tooltip:          'Include another search term typ.'
+        row_remove:
+          tooltip:          'Remove this search term'
+        search_button:
+          not_ready:
+            tooltip:        'To perform a new search, add/modify search terms or filter selections.'
+          ready:
+            tooltip:        ''
+        search_clear:
+          tooltip:          'Clear search terms'
+
+      search_filters:
+        fixed_value:        'NOTE: this value is fixed for results by title.'
+        placeholder:        '(select)'
+        remove_all:         'Remove all selected values'
+
+      selected:
+        invalid:            'Item %{item} is not in the database'
+        no_match:           'No index entries match %{item}'
+        removing:           'Removing index entry %{item}'
+        title:              'Selected item %{item} record details:'
+
+      session:
+        expired:            'Your session has expired'
+        unknown_user:       'unknown user'
+
+      status:
+        offline:            'EMMA is offline'
+
+      submission:
+        all_resolved:       'all files resolved'
+        all_selected:       'all selected'
+        blocked:            'Files must be resolved before the submission process can begin'
+        conn_error:         'Connection error'
+        none_saved:         'None of the items in the manifest have been completed and saved'
+        not_selectable:     'not selectable until resolved'
+        ready_for_upload:   'ready for upload'
+        refresh:            'Refresh this page to re-authenticate.'
+        some_selected:      'some selected'
+        still_needed:       'still needed'
+        submitted:          'submitted'
+        submitted_as:       'submitted as entry'
+        failed:
+          cancel:           'Cancel failed'
+          pause:            'Pause failed'
+          resume:           'Resume failed'
+          submit:           'Submission failed'
+        monitor:
+          close:            'Errors'
+          description:      'Listing of completed submission attempts'
+          diagnostics:      'Diagnostics'
+          diagnostics_tip:  'View WebSocket communications'
+          errors:           'Errors'
+          failures:         'Submission Errors'
+          messages:         'Messages'
+          successes:        'Submitted Items'
+          title:            'Bulk Submission Monitor'
+        service:
+          db_error:         'unknown database error'
+          indexed:          'indexed'
+          stored:           'stored'
+          unknown:          'unknown error'
+          uploaded:         'uploaded'
+        status:
+          complete:         'Completed'
+          done:             'Worker done'
+          starting:         'Working'
+          step:             'Submission step'
+          unexpected:       'unexpected'
+
+      table:
+        all_records:        'See all records'
+        rows_here:          '%{rows} displayed here'
+        sort:
+          ascending:        'Sorted; click to reverse-sort on this column'
+          descending:       'Reverse-sorted; click to stop sorting on this column'
+          none:             'Unsorted; click to sort on this column'
+
+      tool:
+        sign_in:            '(sign-in required)'
+
+      uploader:
+        error:              'FILE UPLOAD ERROR'
+        paused:             'paused'
+        placeholder:        'Uploading...'
+        results:            'Upload results'
+        resumed:            'resumed'
+        state:
+          canceled:         'Uploading CANCELED'
+          paused:           'Uploading PAUSED'
+          resumed:          'Uploading RESUMED'
+          retrying:         'Retrying'
+          uploading:        'Uploading'

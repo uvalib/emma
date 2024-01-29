@@ -185,7 +185,7 @@ module LayoutHelper::PageControls
         else        opt[:many] = true
       end
     end
-    config_lookup('page_controls.label', **opt) || 'Controls' # TODO: I18n
+    config_lookup('page_controls.label', **opt) || config_text(:controls)
   end
 
   # ===========================================================================

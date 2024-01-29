@@ -252,7 +252,7 @@ module HealthConcern
   ensure
     warn_only = !entry[:restart] || lockout
     degraded  = !healthy && warn_only
-    message ||= lockout  && 'EMMA system unavailable' # TODO: I18n
+    message ||= lockout  && config_text(:health, :unavailable)
     message ||= degraded && entry[:degraded]
     message ||= healthy ? entry[:healthy] : entry[:failed]
     message ||= time_span(start)

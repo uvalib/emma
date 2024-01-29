@@ -93,6 +93,9 @@ module BaseDecorator::Menu
 
   protected
 
+  # @private
+  ITEM_PROMPT = config_text(:menu, :item_prompt).freeze
+
   # The name of the controller used in generating link paths.
   #
   # @return [Symbol]
@@ -103,12 +106,14 @@ module BaseDecorator::Menu
 
   # Generate a prompt for #items_menu.
   #
+  # @param [Hash] opt
+  #
   # @return [String]
   #
-  def items_menu_prompt(**)
-    item = model_item_name(capitalize: false)
-    an   = item.match?(/^[aeiou]/i) ? 'an' : 'a'
-    "Select #{an} #{item}" # TODO: I18n
+  def items_menu_prompt(**opt)
+    opt[:item] ||= model_item_name(capitalize: false)
+    opt[:an]   ||= indefinite_article(opt[:item])
+    interpolate_named_references(ITEM_PROMPT, **opt)
   end
 
   # Generate a label for a specific menu entry.

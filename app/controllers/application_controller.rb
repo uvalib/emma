@@ -56,7 +56,7 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActionController::InvalidAuthenticityToken do |exception|
     __debug_exception('RESCUE_FROM', exception)
-    flash_alert('Your session has expired') # TODO: I18n
+    flash_alert(config_text(:session, :expired))
     redirect_to root_path
   end
 

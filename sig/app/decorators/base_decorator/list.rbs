@@ -134,7 +134,7 @@ module BaseDecorator::List
   #
   def render_help_icon: (Symbol field, untyped value, *(Symbol|String) help, **untyped _ignored) -> ActiveSupport::SafeBuffer
 
-  # Displayed in place of a results list. # TODO: I18n
+  # Displayed in place of a results list.
   #
   # @type [String]
   #
@@ -258,6 +258,10 @@ module BaseDecorator::List
   # @yieldreturn [Array<ActiveSupport::SafeBuffer>,ActiveSupport::SafeBuffer]
   #
   def list_item_number: (index: Integer, ?level: Integer|nil, ?group: String|nil, ?row: Integer|nil, ?inner: (bool|String|strArray|nil) inner, ?outer: (bool|String|strArray|nil), ?css: String|nil, **untyped opt) ?{ () -> (Array[ActiveSupport::SafeBuffer] | ActiveSupport::SafeBuffer | nil) } -> ActiveSupport::SafeBuffer
+
+  ONE_ENTRY: String
+
+  NO_ENTRIES: String
 
   # list_item_number_label
   #

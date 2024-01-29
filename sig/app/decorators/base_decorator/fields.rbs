@@ -323,9 +323,11 @@ module BaseDecorator::Fields
   #
   def format_multiline: (String|anyArray text, ?separator: String|Regexp, **untyped _ignored) -> strArray
 
-  VALID_LANGUAGE: String
+  VALID_LANG: String
 
-  INVALID_LANGUAGE: String
+  INVALID_LANG: String
+
+  INVALID_ID: String
 
   # Wrap invalid language values in a *span*.
   #

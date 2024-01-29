@@ -146,15 +146,10 @@ module LogoHelper
   # @return [String]
   #
   def repository_tooltip(item, name = nil)
-    name ||= repository_name(item)
-    if item.is_a?(Model)
-      name ||= 'external' # TODO: I18n
-      a = name.match?(/^[aeiou]/i) ? 'an' : 'a'
-      "This is #{a} #{name} repository item" # TODO: I18n
-    else
-      name ||= 'an external repository' # TODO: I18n
-      "From #{name}" # TODO: I18n
-    end
+    key    = item.is_a?(Model) ? :item : :general
+    name ||= repository_name(item) || config_text(:repository, key, :name)
+    opt    = (key == :item) ? { an: indefinite_article(name) } : {}
+    config_text(:repository, key, :tooltip, name: name, **opt)
   end
 
   # ===========================================================================

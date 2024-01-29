@@ -14,6 +14,18 @@ en:
         database:       true
 
       # =======================================================================
+      # Messages (overriding "en.emma.messages")
+      # =======================================================================
+
+      messages:
+
+        commit:         'Commit'
+        from_constant:  'value from constant'
+        from_env_var:   'from ENV variable'
+        invalid_value:  'invalid value %{value}'
+        no_env_var:     'ENV variable not present'
+
+      # =======================================================================
       # Layout
       # =======================================================================
 

@@ -79,8 +79,7 @@ module ToolHelper
 
     n_css  = %w[notice]
     n_css << 'hidden' if allow
-    notice = '(sign-in required)' # TODO: I18n
-    notice = html_span(notice, **append_css(n_css))
+    notice = html_span(**append_css(n_css)) { config_text(:tool, :sign_in) }
 
     prepend_css!(opt, css)
     html_li(**opt) do

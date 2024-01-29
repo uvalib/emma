@@ -234,7 +234,7 @@ module UploadWorkflow::Bulk::External
     end
     if failed.present?
       failed.each(&:delete_file)
-      db_failed_format!(failed, 'Not added') # TODO: I18n
+      db_failed_format!(failed, config_text(:upload, :record, :not_added))
     end
     return succeeded, failed
   end
@@ -252,7 +252,7 @@ module UploadWorkflow::Bulk::External
     succeeded, failed = bulk_db_operation(:upsert_all, records, **opt)
     if failed.present?
       # TODO: removal of newly-added files associated with failed records.
-      db_failed_format!(failed, 'Not updated') # TODO: I18n
+      db_failed_format!(failed, config_text(:upload, :record, :not_updated))
     end
     return succeeded, failed
   end
@@ -306,7 +306,8 @@ module UploadWorkflow::Bulk::External
     if success
       return ids, []
     else
-      return [], db_failed_format!(ids, 'Not removed') # TODO: I18n
+      msg = config_text(:upload, :record, :not_removed)
+      return [], db_failed_format!(ids, msg)
     end
   end
 
@@ -443,12 +444,12 @@ module UploadWorkflow::Bulk::External
   #
   # @param [Upload, Hash, String]  item
   # @param [String, Array<String>] message
-  # @param [Integer]               position
+  # @param [Integer]               pos
   #
   # @return [FlashPart]
   #
-  def db_failed_format(item, message, position)
-    label = make_label(item, default: "Item #{position}") # TODO: I18n
+  def db_failed_format(item, message, pos)
+    label = make_label(item, default: config_text(:record, :item, id: pos))
     FlashPart.new(label, message)
   end
 

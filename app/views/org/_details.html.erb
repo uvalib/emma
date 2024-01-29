@@ -14,7 +14,7 @@
   skip    = [*skip]
   heading =
     if (level == 1) && !skip.include?(:title)
-      title ||= 'Organization Details' # TODO: I18n
+      title ||= config_text(:org, :details, :title)
       html_tag((level + 1), title, class: 'details-heading')
     end
 

@@ -1,4 +1,10 @@
 module Org::Config
+  # The internal organization.
+  #
+  # @type [Hash{Symbol=>Integer,String}]
+  #
+  INTERNAL: Hash[Symbol,(Integer|String)]
+
   # The internal organization identifier.  This may be assigned as an :org_id
   # indicating an internal EMMA user, however no persisted Org record has this
   # as its :id.

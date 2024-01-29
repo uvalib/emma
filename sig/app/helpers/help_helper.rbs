@@ -37,7 +37,7 @@ module HelpHelper
   #
   HELP_ENTRY: Hash[Symbol,symHash]
 
-  # Default text to display while help is loading asynchronously. # TODO: I18n
+  # Default text to display while help is loading asynchronously.
   #
   # @type [String]
   #

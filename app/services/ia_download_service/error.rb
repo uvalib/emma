@@ -63,7 +63,8 @@ class IaDownloadService::Error < ApiService::Error
     def extract_message(src)
       result = []
       if (body = extract_body(src)).present?
-        result << "#{service_name} response: #{body}" # TODO: I18n
+        c_opt = { service: service_name, body: body }
+        result << config_text(:ia_download, :response, **c_opt)
         if (notes = added_messages(body)).present?
           result.concat(notes).map!.with_index do |line, count|
             html_opt = { class: 'line' }
@@ -85,9 +86,8 @@ class IaDownloadService::Error < ApiService::Error
     #
     # @type [Hash{String,Regexp=>String}]
     #
-    IA_MESSAGES = { # TODO: I18n
-      /refresh this page/ =>
-        'Close this browser tab and retry the original download link.'
+    IA_MESSAGES = {
+      /refresh this page/ => config_text(:ia_download, :retry)
     }.deep_freeze
 
     # Produce additional line(s) to be displayed in the flash message along

@@ -86,6 +86,8 @@ module ExceptionHelper
     end
     err = err.safe_constantize if err.is_a?(String) || err.is_a?(Symbol)
 
+    value, _ = MODEL_ERROR.dig(model, value) if value.is_a?(Symbol)
+
     # Perform message interpolations if required to generate the report.
     if rpt.nil? && msg.is_a?(String)
       ary = value.is_a?(Array)  # Multiple item values.

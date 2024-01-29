@@ -26,6 +26,28 @@ module BaseDecorator::Submission
   #
   MONITOR_JS_CLASS: String
 
+  # @private
+  # @type [Hash{Symbol=>String}]
+  SUBMIT_MSGS: Hash[Symbol, String]
+
+  SUBMIT_TITLE: String
+
+  SUBMIT_DESC: String
+
+  SUBMIT_CLOSE: String
+
+  SUBMIT_SUCCESSES: String
+
+  SUBMIT_FAILURES: String
+
+  SUBMIT_MESSAGES: String
+
+  SUBMIT_ERRORS: String
+
+  SUBMIT_DIAG: String
+
+  SUBMIT_DIAG_TIP: String
+
   # A control which engages #monitor_modal display.
   #
   # In addition to creating the control, this method also adds the modal to

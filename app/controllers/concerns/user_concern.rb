@@ -113,8 +113,6 @@ module UserConcern
 
   private
 
-  ROLE_FAILURE = 'Insufficient privilege for this operation'.freeze
-
   # Cause an insufficient role for an authenticated session to generate an
   # authentication failure the way Devise does.
   #
@@ -126,14 +124,14 @@ module UserConcern
   # page as the redirect from DeviseController#require_no_authentication.
   #
   def role_failure(msg = nil)
-    if msg.is_a?(Symbol)
-      role = msg.to_s.capitalize
-      msg  = +''
-      msg << params[:action].to_s << ': ' if params[:action]
-      msg << "#{role}-only feature" # TODO: I18n
+    if msg.nil?
+      msg = config_text(:user, :role_failure)
+    elsif msg.is_a?(Symbol)
+      msg = config_text(:user, :privileged, role: msg).capitalize
+      msg = "#{params[:action]}: #{msg}" if params[:action]
     end
-    session['app.devise.failure.message'] = msg ||= ROLE_FAILURE
-    session['app.devise.redirect'] = dashboard_path
+    session['app.devise.failure.message'] = msg
+    session['app.devise.redirect']        = dashboard_path
     throw(:warden, message: msg)
   end
 

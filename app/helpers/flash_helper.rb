@@ -472,7 +472,11 @@ module FlashHelper
   # @return [ActiveSupport::SafeBuffer] If *html* is *true*.
   #
   def flash_omission(count = nil, html: false, **)
-    text = count ? "#{count} total" : 'more' # TODO: I18n
+    if count
+      text = config_text(:flash, :total, count: count)
+    else
+      text = config_text(:flash, :more)
+    end
     text = "[#{text}]"
     html ? %Q(<div class="line">#{text}</div>).html_safe : "\n#{text}"
   end

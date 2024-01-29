@@ -29,7 +29,7 @@ module ApiMigrateHelper
       html_div(class: 'summary') do
         count = report[:count] || 0
         table = report[:table] || '???'
-        "#{count} records in '#{table}' table" # TODO: I18n
+        config_text(:api_migrate, :summary, count: count, table: table.inspect)
       end
     record_changes =
       html_ul(class: 'record-list') do
@@ -54,7 +54,7 @@ module ApiMigrateHelper
   #
   def api_record_changes(rid, entry, level)
     html_li(class: 'record-results', id: rid) do
-      heading = "Record #{rid}" # TODO: I18n
+      heading = config_text(:api_migrate, :changes, rid: rid)
       heading = html_tag(level, heading, class: 'record-id')
       changes = api_field_section(rid, entry, :changes, (level + 1))
       results = api_field_section(rid, entry, :results, (level + 1))
@@ -82,7 +82,7 @@ module ApiMigrateHelper
       html_div(class: css, 'aria-describedby': id) do
         entry[part.to_sym].presence&.map do |column, field|
           send("api_field_#{part}", column, field, (level + 1))
-        end || html_div('NO DATA', class: 'field') # TODO: I18n
+        end || html_div(class: 'field') { config_text(:api_migrate, :no_data) }
       end
     label << info
   end
@@ -107,7 +107,7 @@ module ApiMigrateHelper
               change_table_line(*field_values, row: row)
             end
         else
-          html_div('NO CHANGES', class: 'field') # TODO: I18n
+          html_div(class: 'field') { config_text(:api_migrate, :no_changes) }
         end
       end
     # noinspection RubyMismatchedReturnType, RubyMismatchedArgumentType
@@ -125,15 +125,17 @@ module ApiMigrateHelper
   #
   def api_field_results(column, fields, level = nil)
     f_css = 'fields'
-    if fields.present?
-      f_id   = unique_id(f_css)
-      column = html_span(column) << toggle_button(id: f_id)
-      f_opt  = { class: "#{f_css} toggle-panel", id: f_id }
-      fields = UploadDecorator.new.render_json_data(fields)
-    else
-      f_opt  = { class: "#{f_css} empty open" }
-      fields = html_div('EMPTY DATABASE COLUMN', class: 'field') # TODO: I18n
-    end
+    f_opt = { class: f_css }
+    fields =
+      if fields.present?
+        f_id   = unique_id(f_css)
+        column = html_span(column) << toggle_button(id: f_id)
+        append_css!(f_opt, 'toggle-panel').merge!(id: f_id)
+        UploadDecorator.new.render_json_data(fields)
+      else
+        append_css!(f_opt, 'empty open')
+        html_div(class: 'field') { config_text(:api_migrate, :empty_column) }
+      end
     column = html_tag(level, column, class: 'column')
     fields = html_div(fields, **f_opt)
     # noinspection RubyMismatchedReturnType, RubyMismatchedArgumentType

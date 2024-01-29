@@ -67,11 +67,11 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   def list_filter_options: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # Labels for inputs associated with transmitted parameters. # TODO: I18n
+  # Labels for inputs associated with transmitted parameters.
   #
   # @type [Hash{Symbol=>String}]
   #
-  DELETE_LABEL: Hash[Symbol,String]
+  DELETE_OPTIONS: Hash[Symbol,String]
 
   # delete_submit_option_keys
   #
@@ -158,7 +158,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   def bulk_input: (ActionView::Helpers::FormBuilder f, Symbol param, ?untyped value, labels: Hash[Symbol,String], ?meth: Symbol, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # Labels for inputs associated with transmitted parameters. # TODO: I18n
+  # Labels for inputs associated with transmitted parameters.
   #
   # @type [Hash{Symbol=>String}]
   #

@@ -17,12 +17,6 @@ module BaseCollectionDecorator::List
   #
   def list_rows: (?row: Integer|nil, ?index: Integer|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # Text for #no_records_row. # TODO: I18n
-  #
-  # @type [String]
-  #
-  NO_RECORDS: String
-
   # Hidden row that is shown only when no field rows are being displayed.
   #
   # @param [String] css               Characteristic CSS class/selector.

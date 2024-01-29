@@ -116,7 +116,7 @@ class OrgController < ApplicationController
     return redirect_to action: :show_current if current_id?
     @item = get_record
     org_authorize!
-    raise "Record #{quote(identifier)} not found" if @item.blank? # TODO: I18n
+    raise config_text(:org, :not_found, id: identifier) if @item.blank?
   rescue => error
     error_response(error, show_select_org_path)
   end
@@ -172,7 +172,7 @@ class OrgController < ApplicationController
     return redirect_to action: :edit_current if current_id?
     @item = get_record
     org_authorize!
-    raise "Record #{quote(identifier)} not found" if @item.blank? # TODO: I18n
+    raise config_text(:org, :not_found, id: identifier) if @item.blank?
   rescue => error
     error_response(error, edit_select_org_path)
   end
@@ -209,12 +209,12 @@ class OrgController < ApplicationController
   def delete
     __log_activity
     __debug_route
-    return redirect_to action: :delete_select   if identifier.blank?
-    raise 'Cannot delete your own organization' if current_id? # TODO: I18n
+    return redirect_to action: :delete_select if identifier.blank?
+    raise config_text(:org, :self_delete)     if current_id?
     @list = delete_records.list&.records
     #org_authorize!(@list) # TODO: authorize :delete
     unless @list.present? || last_operation_path&.include?('/destroy')
-      raise "No records match #{quote(identifier_list)}" # TODO: I18n
+      raise config_text(:org, :no_match, id: identifier_list)
     end
   rescue => error
     error_response(error, delete_select_org_path)
@@ -231,7 +231,7 @@ class OrgController < ApplicationController
     __log_activity
     __debug_route
     back  = delete_select_org_path
-    raise 'Cannot delete your own organization' if current_id? # TODO: I18n
+    raise config_text(:org, :self_delete) if current_id?
     @list = destroy_records
     #org_authorize!(@list) # TODO: authorize :destroy
     post_response(:ok, @list, redirect: back)

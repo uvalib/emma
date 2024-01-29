@@ -50,7 +50,7 @@ module BaseDecorator::Form
 
   include Values
 
-  # @private # TODO: I18n
+  # @private
   UNMODIFIABLE: String
 
   # Render field/value pairs.
@@ -118,6 +118,9 @@ module BaseDecorator::Form
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_form_pair_label: (Symbol field, (String|nil) label, ?tag: Symbol, ?status: symArray|Symbol|nil, ?help: Array[Symbol|String]|Symbol|String|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # @private
+  UNSET_MENU_ITEM: String
 
   # @private
   MENU_SINGLE_OPT: symArray
@@ -322,7 +325,7 @@ module BaseDecorator::Form
   #
   def model_form: (?label: String|nil, ?action: String|Symbol|nil, ?cancel: String|nil, ?uploader: bool|nil, ?outer: symHash|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # Label for line-editor update button. # TODO: I18n
+  # Label for line-editor update button.
   #
   # @type [String]
   #
@@ -330,7 +333,7 @@ module BaseDecorator::Form
 
   UPDATE_CSS: String
 
-  # Label for line-editor cancel button. # TODO: I18n
+  # Label for line-editor cancel button.
   #
   # @type [String]
   #
@@ -545,6 +548,8 @@ module BaseDecorator::Form
   #
   FIELD_GROUP_NAME: String
 
+  FILTER_LEGEND: String
+
   # Control for filtering which fields are displayed.
   #
   # @param [String] name              Element name for controls.
@@ -559,11 +564,13 @@ module BaseDecorator::Form
   #
   def field_group_controls: (?name: String, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # Text for #no_fields_row. # TODO: I18n
+  # Text for #no_fields_row.
   #
   # @type [String]
   #
   NO_FIELDS: String
+
+  THIS: String
 
   # Hidden row that is shown only when no field rows are being displayed.
   #

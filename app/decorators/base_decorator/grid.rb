@@ -395,6 +395,9 @@ module BaseDecorator::Grid
   public
 
   # @private
+  CONTROLS_LABEL = config_text(:grid, :controls_lbl).freeze
+
+  # @private
   CONTROLS_CELL_CLASS = 'controls-cell'
 
   # Properties that need to be conveyed to the grid header columns.
@@ -435,7 +438,7 @@ module BaseDecorator::Grid
     t_opt = trace_attrs_from(opt)
     idx   = opt[:'aria-colindex'] ||= 1
     l_id  = opt[:'aria-labelledby'] = unique_id(css, index: idx)
-    label = 'Row controls' # TODO: I18n
+    label = CONTROLS_LABEL
     opt[:label] = grid_head_label(label, id: l_id, class: 'sr-only', **t_opt)
     [grid_head_cell(nil, css: css, **opt, &blk)]
   end
@@ -516,6 +519,9 @@ module BaseDecorator::Grid
 
   public
 
+  # @private
+  ROW_CONTROLS = config_text(:grid, :row_controls).freeze
+
   # grid_row
   #
   # @param [Hash]    control          Options for #grid_row_controls.
@@ -561,7 +567,7 @@ module BaseDecorator::Grid
     button = unique ? button.merge(unique: unique) : button.dup
     row    = opt[:'aria-rowindex']
     l_id   = opt[:'aria-labelledby'] = unique_id(css, index: row)
-    label  = opt.delete(:label) || button[:label] || 'Controls for row %{row}' # TODO: I18n
+    label  = opt.delete(:label) || button[:label] || ROW_CONTROLS
     label  = label % { row: row } if row && label.include?('%{row}')
     unless label.html_safe?
       label = grid_head_label(label, id: l_id, class: 'sr-only')

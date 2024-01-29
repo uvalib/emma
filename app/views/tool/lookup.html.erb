@@ -54,14 +54,14 @@
   errors_id         = "#{errors}-#{unique}"
   diagnostics_id    = "#{diagnostics}-#{unique}"
 
-  query_label       = 'Query'           # TODO: I18n
-  terms_label       = 'Query'           # TODO: I18n
-  lookup_label      = 'Lookup'          # TODO: I18n
-  separators_label  = 'Term Separators' # TODO: I18n
-  services_label    = 'Searching:'      # TODO: I18n
-  heading_label     = 'Results'         # TODO: I18n
-  errors_label      = 'Errors'          # TODO: I18n
-  diagnostics_label = 'Diagnostics'     # TODO: I18n
+  query_label       = config_text(:lookup, :query)
+  terms_label       = config_text(:lookup, :terms)
+  lookup_label      = config_text(:lookup, :lookup)
+  separators_label  = config_text(:lookup, :separators)
+  services_label    = config_text(:lookup, :searching)
+  heading_label     = config_text(:lookup, :results)
+  errors_label      = config_text(:lookup, :errors)
+  diagnostics_label = config_text(:lookup, :diagnostics)
 
   separators = {
     space: 'Space, tab, and <strong>|</strong> (pipe)'.html_safe,

@@ -168,6 +168,10 @@ class ManifestItemDecorator < BaseDecorator
 
     UNDISPLAYED_FIELDS: symArray
 
+    FIELD: String
+
+    REQUIRED: String
+
     # The names of ManifestItem columns that are not rendered.
     #
     # @return [Array<Symbol>]

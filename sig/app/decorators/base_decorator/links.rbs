@@ -63,10 +63,7 @@ module BaseDecorator::Links
   #
   def show_tooltip: () -> (Symbol | nil)
 
-  # TODO: I18n
-  #
-  # @type [String]
-  #
+  # @private
   ANOTHER: String
 
   # A list of controller action links.  If the current action is provided,

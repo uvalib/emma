@@ -103,7 +103,7 @@ module LayoutHelper::DevControls
     safe_join(controls.compact)
   end
 
-  # A control for turning off display of developer-only controls. # TODO: I18n
+  # A control for turning off display of developer-only controls.
   #
   # For the sake of demos, where the presence of developer-only controls might
   # be confusing, this control redirects with "app.dev_controls=false".
@@ -119,15 +119,10 @@ module LayoutHelper::DevControls
   #
   def dev_hide_dev_controls(**opt)
     param = :dev_controls
-    label = 'Suppress'
-    tip   = [
-      'Click to stop showing these controls',
-      %Q(Supply "&#{param}=true" to restore them.),
-      nil,
-      %Q(NOTE: DOES NOT AFFECT session['app.debug']),
-      '(Toggle this off first to remove all dev-only enhancements.)'
-    ].join("\n")
-    link = opt.delete(:params).merge(param => false)
+    text  = config_text_section(:dev, :hide_dev_controls, param: param)
+    label = text[:label]
+    tip   = Array.wrap(text[:tooltip]).join("\n")
+    link  = opt.delete(:params).merge(param => false)
     make_link(label, link, **opt, title: tip)
   end
 
@@ -158,7 +153,7 @@ module LayoutHelper::DevControls
     dev_toggle_debug(ctrlr: ctrlr, state: state, param: param, **opt)
   end
 
-  # A control for toggling a debug status. # TODO: I18n
+  # A control for toggling a debug status.
   #
   # @param [Symbol, String, nil] ctrlr
   # @param [Boolean, nil]        state  Default: `#session_debug?(ctrlr)`.
@@ -172,10 +167,17 @@ module LayoutHelper::DevControls
   def dev_toggle_debug(ctrlr:, state:, param:, **opt)
     param = param&.to_sym || :debug
     state = session_debug?(ctrlr) if state.nil?
-    label = ctrlr ? "#{ctrlr.to_s.titleize} debug" : 'Debug'
-    label = "#{label} %s" % (state ? 'ON' : 'OFF')
+    t_opt = {}
+    t_opt[:ctrlr] = ctrlr.to_s.titleize if ctrlr
+
+    t_opt[:state] = config_text(state ? :_on : :_off).upcase
+    label = ctrlr ? :ctrlr_label : :label
+    label = config_text(:dev, :toggle_debug, label, **t_opt)
+
+    t_opt[:state] = config_text(state ? :_off : :_on)
+    tip   = config_text(:dev, :toggle_debug, :tooltip, **t_opt)
+
     link  = opt.delete(:params).merge(param => !state)
-    tip   = 'Click to turn %s' % (state ? 'off' : 'on')
     make_link(label, link, **opt, title: tip)
   end
 

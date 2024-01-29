@@ -112,11 +112,17 @@ end
 # @see file:app/assets/javascripts/shared/decode.js *decodeJSON()*
 #
 def js(arg)
-  result = arg.is_a?(String) ? arg.dup : arg.to_json
+  if arg.is_a?(String)
+    result = arg.strip
+  else
+    result = arg.to_json.gsub(/\\n"([,\]}])/, '"\1')
+  end
   result.gsub!('\u003e', '>') # Undo JSONGemEncoder::ESCAPED_CHARS
   result.gsub!('\u003c', '<') # Undo JSONGemEncoder::ESCAPED_CHARS
   result.gsub!('\u0026', '&') # Undo JSONGemEncoder::ESCAPED_CHARS
-  result.gsub!(/\\"/, '%5C%22')
+  result.gsub!(/\n/,     '\n')
+  result.gsub!(/'/,      '%27')
+  result.gsub!(/\\"/,    '%5C%22')
   # noinspection RubyMismatchedReturnType
   result
 end

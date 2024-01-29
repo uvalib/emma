@@ -91,11 +91,11 @@ module UploadWorkflow::Errors
 
     public
 
-    # Default label. TODO: I18n
+    # Default label.
     #
     # @type [String]
     #
-    DEFAULT_LABEL = '(missing)'
+    DEFAULT_LABEL = config_text(:record, :missing)
 
     # Show the submission ID if it can be determined for the given item(s).
     #
@@ -641,8 +641,10 @@ module UploadWorkflow::External
 
     # Save the Upload record to the database.
     item = db_insert(data)
-    return nil,  ['Entry not created'] unless item.is_a?(Upload) # TODO: I18n
-    return item, item.errors           if item.errors.present?
+    unless item.is_a?(Upload)
+      return nil, [config_text(:upload, :record, :not_created)]
+    end
+    return item, item.errors unless item.errors.blank?
 
     # Include the new submission in the index if specified.
     return item, [] unless index
@@ -670,16 +672,18 @@ module UploadWorkflow::External
     __debug_items("UPLOAD WF #{__method__}", binding)
     if (id = data[:id]).blank?
       if (id = data[:submission_id]).blank?
-        return nil, ['No identifier provided'] # TODO: I18n
+        return nil, [config_text(:upload, :record, :not_created)]
       elsif !Upload.valid_sid?(id)
-        return nil, ["Invalid EMMA submission ID #{id}"] # TODO: I18n
+        return nil, [config_text(:upload, :record, :invalid_sid, sid: id)]
       end
     end
 
     # Fetch the Upload record and update it in the database.
     item = db_update(data)
-    return nil, ["Entry #{id} not found"] unless item.is_a?(Upload) # TODO: I18n
-    return item, item.errors              if item.errors.present?
+    unless item.is_a?(Upload)
+      return nil, [config_text(:upload, :record, :not_found, id: id)]
+    end
+    return item, item.errors unless item.errors.blank?
 
     # Update the index with the modified submission if specified.
     return item, [] unless index
@@ -771,7 +775,8 @@ module UploadWorkflow::External
         msg << retained.map { |item| make_label(item) }.join(', ')
         msg.join(': ')
       end
-      retained.map! { |item| FlashPart.new(item, 'not removed') } # TODO: I18n
+      not_removed = config_text(:upload, :record, :not_removed)
+      retained.map! { |item| FlashPart.new(item, not_removed) }
     end
 
     # Remove the associated entries from the index.
@@ -1342,17 +1347,11 @@ module UploadWorkflow::External
 
   public
 
-  # Failure messages for partner repository requests. # TODO: I18n
+  # Failure messages for partner repository requests.
   #
   # @type [Hash{Symbol=>String}]
   #
-  REPO_FAILURE = {
-    no_repo:    'No repository given',
-    no_items:   'No items given',
-    no_create:  'Repository submissions are disabled',
-    no_edit:    'Repository modification requests are disabled',
-    no_remove:  'Repository removal requests are disabled',
-  }.deep_freeze
+  REPO_FAILURE = config_text_section(:record, :failure).deep_freeze
 
   # Submit a new item to a partner repository.
   #

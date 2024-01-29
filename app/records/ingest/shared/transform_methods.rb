@@ -23,9 +23,9 @@ module Ingest::Shared::TransformMethods
   # Because :dc_title is a required field for EMMA Unified Ingest, this value
   # is supplied if the metadata does not include a title.
   #
-  # @type [String, nil] # TODO: MISSING_TITLE: I18n - keep?
+  # @type [String, nil]
   #
-  MISSING_TITLE = '[TITLE MISSING]'
+  MISSING_TITLE = config_text(:ingest, :missing_title).deep_freeze
 
   # ===========================================================================
   # :section:

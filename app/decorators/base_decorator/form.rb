@@ -72,8 +72,8 @@ module BaseDecorator::Form
 
   public
 
-  # @private # TODO: I18n
-  UNMODIFIABLE = 'System-generated; not modifiable.'
+  # @private
+  UNMODIFIABLE = config_text(:form, :unmodifiable).freeze
 
   # Render field/value pairs.
   #
@@ -274,7 +274,7 @@ module BaseDecorator::Form
     # Input element pre-populated with value.
     v_opt = prepend_css(opt, value_css)
     v_opt.merge!(id: v_id, name: name, base: "form-#{type}")
-    v_opt[:title]             = UNMODIFIABLE if disabled # TODO: I18n
+    v_opt[:title]             = UNMODIFIABLE if disabled
     v_opt[:readonly]          = true         if disabled # Not :disabled.
     v_opt[:placeholder]       = placeholder  if placeholder
     v_opt[:'data-field']      = field        if field
@@ -349,6 +349,9 @@ module BaseDecorator::Form
   end
 
   # @private
+  UNSET_MENU_ITEM = config_text(:form, :unset).freeze
+
+  # @private
   MENU_SINGLE_OPT = %i[name base fixed readonly constraints].freeze
 
   # Single-select menu - drop-down.
@@ -395,7 +398,7 @@ module BaseDecorator::Form
         item_label = item_value.titleize if item_label.blank?
         [item_label, item_value]
       end
-    menu.unshift(['(unset)', '']) unless menu.first.last.blank? # TODO: I18n
+    menu.unshift([UNSET_MENU_ITEM, '']) unless menu.first.last.blank?
     menu = h.options_for_select(menu, selected)
 
     html_opt[:disabled] = true     if opt[:readonly]
@@ -751,18 +754,18 @@ module BaseDecorator::Form
     end
   end
 
-  # Label for line-editor update button. # TODO: I18n
+  # Label for line-editor update button.
   #
   # @type [String]
   #
-  UPDATE_LABEL = 'Change'
+  UPDATE_LABEL = config_text(:form, :update).freeze
   UPDATE_CSS   = 'update'
 
-  # Label for line-editor cancel button. # TODO: I18n
+  # Label for line-editor cancel button.
   #
   # @type [String]
   #
-  CANCEL_LABEL = 'Cancel'
+  CANCEL_LABEL = config_text(:form, :cancel).freeze
   CANCEL_CSS   = 'cancel'
 
   # Generate a form for inline use.
@@ -1149,6 +1152,7 @@ module BaseDecorator::Form
   # @type [String]
   #
   FIELD_GROUP_NAME = 'field-group'
+  FILTER_LEGEND    = config_text(:form, :filter).freeze
 
   # Control for filtering which fields are displayed.
   #
@@ -1194,8 +1198,7 @@ module BaseDecorator::Form
     return ''.html_safe if controls.blank?
 
     # A label for the group (screen-reader only).
-    legend = 'Filter input fields by state:' # TODO: I18n
-    legend = html_legend(legend, class: 'sr-only')
+    legend = html_legend(FILTER_LEGEND, class: 'sr-only')
 
     opt[:role]     = 'radiogroup'
     opt[:tabindex] = 0
@@ -1210,11 +1213,12 @@ module BaseDecorator::Form
 
   protected
 
-  # Text for #no_fields_row. # TODO: I18n
+  # Text for #no_fields_row.
   #
   # @type [String]
   #
-  NO_FIELDS = 'NO FIELDS'
+  NO_FIELDS = config_text(:form, :no_fields).freeze
+  THIS      = config_text(:form, :this).freeze
 
   # Hidden row that is shown only when no field rows are being displayed.
   #
@@ -1251,9 +1255,10 @@ module BaseDecorator::Form
     entry  = status_markers.values_at(*status).first
     icon, tip = entry&.values_at(:label, :tooltip)
     if tip
-      if tip.include?('%')
-        label &&= label.to_s.sub(/[[:punct:]]+$/, '')
-        tip %= { This: (label ? %Q("#{label}") : 'This') } # TODO: I18n
+      if tip.include?('%{This}')
+        label &&= quote(label.to_s.sub(/[[:punct:]]+$/, ''))
+        label ||= THIS.capitalize
+        tip %= { This: label }
       end
       opt[:'data-title'] = tip
       opt[:title] ||= tip

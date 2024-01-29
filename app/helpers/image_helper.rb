@@ -74,7 +74,7 @@ module ImageHelper
   #
   def image_element(url, link: nil, alt: nil, row: nil, **opt)
     return if url.blank?
-    alt ||= 'Illustration' # TODO: I18n
+    alt ||= config_text(:image, :alt)
     image =
       if ASYNCHRONOUS_IMAGES
         image_placeholder(url, alt: alt)

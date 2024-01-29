@@ -19,6 +19,27 @@ en:
         database:       true
 
       # =======================================================================
+      # Messages (overriding "en.emma.messages")
+      # =======================================================================
+
+      messages:
+
+        success:        'XXX EMMA member organization was successfully %{actioned}.'
+        failure:        'Could not %{action} EMMA member organization.'
+
+        model_name:     'EMMA Member Organization'
+        select:         'Select an EMMA member organization'
+        self_delete:    'Cannot delete your own organization'
+
+        details:
+          title:        'Organization Details'
+
+        internal:
+          id:           0
+          short_name:   '(EMMA)'
+          long_name:    '(no organization)'
+
+      # =======================================================================
       # Search endpoint
       # =======================================================================
 
@@ -68,16 +89,13 @@ en:
       action_links:
 
         new:
-          label:        'Create %{article} new EMMA member organization'
-          article:      'a'
+          label:        'Create %{an} new EMMA member organization'
 
         edit_select:
-          label:        'Modify %{article} existing EMMA member organization'
-          article:      'an'
+          label:        'Modify %{an} existing EMMA member organization'
 
         delete_select:
-          label:        'Remove %{article} existing EMMA member organization'
-          article:      'an'
+          label:        'Remove %{an} existing EMMA member organization'
 
         list_all:
           label:        'List all EMMA member organizations'
@@ -102,14 +120,6 @@ en:
         - provider:   { ignored: true }
         - info:       { ignored: true }
         - history:    { ignored: true }
-
-      # =======================================================================
-      # Messages
-      # =======================================================================
-
-      messages:
-        success:        'XXX EMMA member organization was successfully %{actioned}.'
-        failure:        'Could not %{action} EMMA member organization.'
 
       # =======================================================================
       # Pages

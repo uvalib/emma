@@ -18,7 +18,7 @@ en:
           name:         'Staging'
 
     # =========================================================================
-    # HTML page head
+    # HTML page header and footer
     # =========================================================================
 
     head:
@@ -41,6 +41,16 @@ en:
       javascripts:
         # NOTE: Now handling by Yarn through /package.json.
         - ~
+
+    foot:
+
+      website:
+        label:          'Website'
+        link:           'https://emma.uvacreate.virginia.edu'
+
+      contact:
+        label:          'Contact'
+        link:           'emmahelp@virginia.edu'
 
     # =========================================================================
     # Layout
@@ -293,24 +303,24 @@ en:
         no_link:
           tooltip:      'Currently on the last page of results'
 
-    placeholder:
+    placeholder:        &PLACEHOLDER
       format:           'this'
       image:            &PLACEHOLDER_IMAGE
         alt:            'Retrieving...'
         asset:          'loading-balls.gif'
 
-    thumbnail:
+    thumbnail:          &THUMBNAIL
       image:
         alt:            '' # NOTE: not 'Thumbnail image for %{item}'
 
-    cover:
+    cover:              &COVER
       image:
         alt:            '' # NOTE: not 'Cover image for %{item}'
       placeholder:
         image:
           <<:           *PLACEHOLDER_IMAGE
 
-    download:
+    download:           &DOWNLOAD
 
       # NOTE: Some of these definitions require parameters to be supplied:
       #
@@ -416,13 +426,6 @@ en:
         label:        "\u2002" #   EN SPACE
 
     # =========================================================================
-    # Messages
-    # =========================================================================
-
-    messages:           &MESSAGES
-      confirmation:     'Are you sure?'
-
-    # =========================================================================
     # Generic (parameterized) page definitions
     # =========================================================================
 
@@ -478,6 +481,18 @@ en:
           one:          '%{item} found'
           many:         '%{items} found'
 
+      placeholder:
+        <<:             *PLACEHOLDER
+
+      thumbnail:
+        <<:             *THUMBNAIL
+
+      cover:
+        <<:             *COVER
+
+      download:
+        <<:             *DOWNLOAD
+
       action_links:
         <<:             *ACTION_LINKS
 
@@ -489,13 +504,6 @@ en:
 
       status_marker:
         <<:             *STATUS_MARKER
-
-      # =======================================================================
-      # Messages
-      # =======================================================================
-
-      messages:
-        <<:             *MESSAGES
 
       # =======================================================================
       # Pages

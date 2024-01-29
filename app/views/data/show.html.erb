@@ -8,7 +8,7 @@
   name  ||= @name
 
   help  ||= nil # %i[data show]
-  title ||= t('emma.data.show.title', table: (name&.titleize || '???'))
+  title ||= t('emma.data.show.title', table: name.inspect)
 
   unless modal?
     label = t('emma.data.show.label', default: title)
@@ -16,10 +16,9 @@
     set_page_description(title)
   end
 
-  table   = "#{name.inspect} table" # TODO: I18n
   count   = positive(item.size - 1) || 0
-  records = 'record'.pluralize(count) # TODO: I18n
-  title   = "#{title} (#{table} - #{count} #{records})"
+  records = config_text(:data, :records, count: count).pluralize(count)
+  title   = [title, records].join(' - ')
 
 -%>
 
