@@ -138,10 +138,43 @@ class Org < ApplicationRecord
   end
 
   # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Return the common name of *org*.
+  #
+  # @param [User, String, Symbol, Integer, *] org   Default: self.
+  #
+  # @return [String, nil]
+  #
+  def org_name(org = nil)
+   self.class.send(__method__, (org || self))
+  end
+
+  # ===========================================================================
   # :section: Class methods
   # ===========================================================================
 
   public
+
+  # Return the common name of *org*.
+  #
+  # @note This method assumes that if *org* is a String or Symbol it already
+  #   represents an organization name unless it resolves to an org ID.
+  #
+  # @param [User, String, Symbol, Integer, *] org
+  #
+  # @return [String, nil]
+  #
+  def self.org_name(org)
+    return                if org.blank?
+    org = org.to_s        if org.is_a?(Symbol)
+    org = oid(org) || org if org.is_a?(String)
+    # noinspection RubyMismatchedReturnType
+    org.is_a?(String) ? org : instance_for(org)&.abbrev
+  end
 
   # This is the (non-persisted) organization associated with ID 0.
   #

@@ -112,7 +112,7 @@ class User < ApplicationRecord
   #
   # @option opt [Boolean] :fatal      False by default.
   #
-  # @return [User, nil]
+  # @return [User, nil]               A fresh record unless *item* is a User.
   #
   def self.find_record: (untyped item, **untyped opt) -> (User | nil)
 
@@ -129,6 +129,9 @@ class User < ApplicationRecord
   def account_name: (?untyped user) -> (String | nil)
 
   # Return the account ID of *user*.
+  #
+  # @note This method assumes that if *user* is a String or Symbol it already
+  #   represents an account name unless it resolves to a user ID.
   #
   # @param [User, String, Symbol, Integer, *] user
   #

@@ -286,8 +286,9 @@ module Record::EmmaIdentification
     sid_key = opt.key?(:sid_key) ? opt[:sid_key] : sid_column
     if id_key || sid_key
       opt.merge!(item) if item.is_a?(Hash)
-      opt.reverse_merge!(id_term(item, **opt))
-      id  = id_key  && (opt[id_key] || opt[alt_id_key(opt)])
+      alt = id_key && alt_id_key(opt)
+      opt = id_term(item, **opt).merge!(opt.slice(alt))
+      id  = id_key  && (opt[id_key] || opt[alt])
       sid = sid_key && opt[sid_key]
       if valid_sid?(id)
         if sid && (id != sid)
@@ -299,10 +300,7 @@ module Record::EmmaIdentification
           "#{meth}: choosing id: #{id.inspect} over sid: #{sid.inspect}"
         end
       end
-      if id && (id_key == id_column)
-        record = record_class.find(id)
-        error  = "for #{id_key} #{id.inspect}" unless record
-      elsif id
+      if id
         record = record_class.find_by(id_key => id)
         error  = "for #{id_key} #{id.inspect}" unless record
       elsif sid

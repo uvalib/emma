@@ -150,18 +150,14 @@ module Workflow::Base::Roles
 
   # Get the workflow role of the given identity.
   #
-  # @param [User, String, Symbol, nil] user
+  # @param [User, String, Symbol, *] user
   #
   # @return [Symbol, nil]
   #
   def get_wf_role(user)
-    # noinspection RubyMismatchedReturnType
-    return user                   if user.is_a?(Symbol)
-    user = User.find(email: user) if user.is_a?(String)
-    return                        if user.nil?
-    return :developer_wf          if user.developer?
-    # TODO: role mapping
-    (user == 'emmadso@bookshare.org') ? :developer_wf : :user_wf
+    return user if user.is_a?(Symbol)
+    user = User.instance_for(user)
+    user.developer? ? :developer_wf : :user_wf if user
   end
 
   # ===========================================================================

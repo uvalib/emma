@@ -900,7 +900,7 @@ class UploadController < ApplicationController
       created_at:    rec.created_at,
       updated_at:    rec.updated_at,
       user_id:       rec.uid,
-      user:          User.account_name(rec.uid),
+      user:          User.account_name(rec),
       file_url:      get_s3_public_url(rec),
       file_data:     safe_json_parse(rec.file_data),
       emma_data:     rec.emma_metadata,

@@ -109,11 +109,11 @@ module Workflow::Base::Roles
 
   # Get the workflow role of the given identity.
   #
-  # @param [User, String, Symbol, nil] user
+  # @param [User, String, Symbol, *] user
   #
   # @return [Symbol, nil]
   #
-  def get_wf_role: ((User|String|Symbol|nil) user) -> (Symbol | nil)
+  def get_wf_role: (untyped user) -> (Symbol | nil)
 
   # Indicate whether the instance is associated with a user acting in the
   # capacity of a submitter.

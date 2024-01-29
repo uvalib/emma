@@ -188,7 +188,7 @@ module AuthConcern
   #
   def user_from_id(uid = nil)
     user   = (uid || params[:uid] || params[:id]).to_s.strip.presence
-    user &&= User.find_by(email: user.downcase)
+    user &&= User.instance_for(user)
     session['omniauth.auth'] = auth_hash(user) if user
     user
   end

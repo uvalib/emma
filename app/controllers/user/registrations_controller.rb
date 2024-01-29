@@ -76,7 +76,7 @@ class User::RegistrationsController < Devise::RegistrationsController
     __debug_route
     id = identifier_list.first
     if id.is_a?(Integer)
-      @item = User.find_record(id) or raise "invalid selection #{id.inspect}"
+      @item = User.instance_for(id) or raise "invalid selection #{id.inspect}"
     else
       @item = current_user
     end

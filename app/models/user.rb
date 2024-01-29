@@ -214,19 +214,15 @@ class User < ApplicationRecord
   #
   # @option opt [Boolean] :fatal      False by default.
   #
-  # @return [User, nil]
+  # @return [User, nil]               A fresh record unless *item* is a User.
   #
   #--
   # noinspection RubyMismatchedReturnType
   #++
   def self.find_record(item, **opt)
     item = item.to_s if item.is_a?(Symbol)
-    if item.is_a?(String) && !digits_only?(item)
-      find_by(email: item)
-    else
-      opt.reverse_merge!(fatal: false)
-      super
-    end
+    opt.reverse_merge!(fatal: false)
+    super || instance_for(item)
   end
 
   # ===========================================================================
@@ -254,21 +250,24 @@ class User < ApplicationRecord
   # @return [String, nil]
   #
   def account_name(user = nil)
-    user ? self.class.send(__method__, user) : email.presence
+    self.class.send(__method__, (user || self))
   end
 
   # Return the account ID of *user*.
+  #
+  # @note This method assumes that if *user* is a String or Symbol it already
+  #   represents an account name unless it resolves to a user ID.
   #
   # @param [User, String, Symbol, Integer, *] user
   #
   # @return [String, nil]
   #
   def self.account_name(user)
-    user = positive(user) || user
-    user = find(user) if user.is_a?(Integer)
-    user = user.email if user.is_a?(User)
-    user = user.to_s  if user.is_a?(Symbol)
-    user.presence     if user.is_a?(String)
+    return                   if user.blank?
+    user = user.to_s         if user.is_a?(Symbol)
+    user = uid(user) || user if user.is_a?(String)
+    # noinspection RubyMismatchedReturnType
+    user.is_a?(String) ? user : instance_for(user)&.email&.presence
   end
 
   # ===========================================================================

@@ -550,13 +550,7 @@ module BaseDecorator::Fields
   # @return [String, nil]
   #
   def format_org(value, **)
-    return EMPTY_VALUE          if value.blank?
-    return value                if value.is_a?(String)
-    id    = (value              if value.is_a?(Integer))
-    id  ||= (value.org_id       if value.is_a?(ApplicationRecord))
-    value = Org.none            if id == Org::INTERNAL_ID
-    value = Org.find_by(id: id) if id && !value.is_a?(Org)
-    value.abbrev                if value.is_a?(Org)
+    value && Org.org_name(value) || EMPTY_VALUE
   end
 
   # format_user
@@ -566,12 +560,7 @@ module BaseDecorator::Fields
   # @return [String, nil]
   #
   def format_user(value, **)
-    return EMPTY_VALUE if value.blank?
-    # noinspection RubyMismatchedReturnType
-    case value
-      when Integer, String, User then User.account_name(value)
-      when ApplicationRecord     then User.account_name(value.user_id)
-    end
+    value && User.account_name(value) || EMPTY_VALUE
   end
 
   # ===========================================================================

@@ -1486,7 +1486,7 @@ class UploadWorkflow::Single < UploadWorkflow
   # @return [UploadWorkflow::Single]
   #
   def self.generate(data, **opt)
-    data &&= data.is_a?(Upload) ? data : Upload.get_record(data)
+    data &&= Upload.instance_for(data)
     opt[:variant] ||= (:remove if data.nil?)
     opt[:variant] ||= data.phase
     opt[:variant] ||= (data.state&.to_sym == FINAL_STATE) ? :edit : :create

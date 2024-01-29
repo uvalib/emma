@@ -155,9 +155,7 @@ module Manifest::ItemMethods
   #
   def items_related_to(manifest)
     manifest ||= default_to_self
-    record     = manifest.is_a?(String) ? Manifest.find(manifest) : manifest
-    # noinspection RubyMismatchedReturnType
-    record.is_a?(Manifest) ? record.manifest_items : record
+    Manifest.instance_for(manifest)&.manifest_items
   end
 
   # The number of ManifestItems for the given Manifest that are included in the

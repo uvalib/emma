@@ -126,8 +126,9 @@ module AccountConcern
     super do |record, attr|
       if administrator?
         attr[:org_id] = Org.none.id if attr[:org_id].nil?
+      elsif (org = current_org&.id).blank?
+        raise "no org for #{current_user}"
       else
-        org     = current_org&.id or raise "no org for #{current_user}"
         discard = []
         if attr.key?((k = :org_id)) && (attr[k] != org)
           discard << k
@@ -135,14 +136,14 @@ module AccountConcern
         if attr.key?((k = :email)) && ((acct = attr[k]) != record.account)
           if !acct.present? || !manager?
             discard << k
-          elsif User.find_by(email: acct)&.org_id != org
+          elsif User.find_by(k => acct)&.org_id != org
             discard << k
           end
         end
-        if (discarded = discard.presence && attr.except!(*discard)).present?
+        if discard.present? && attr.except!(*discard).present?
           Log.info do
             # noinspection RubyScope
-            list = discarded.map { |k, v| "#{k}=#{v.inspect}" }.join(', ')
+            list = discard.map { |k, v| "#{k}=#{v.inspect}" }.join(', ')
             "#{__method__}: discarded: #{list} for #{current_user}"
           end
         end

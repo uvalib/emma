@@ -204,12 +204,10 @@ module Record::Identification
     id_key = opt.key?(:id_key) ? opt[:id_key] : id_column
     if id_key
       opt.merge!(item) if item.is_a?(Hash)
-      opt.reverse_merge!(id_term(item, **opt))
-      id = opt[id_key] || opt[alt_id_key(opt)]
-      if id && (id_key == id_column)
-        record = record_class.find(id)
-        error  = "for #{id_key} #{id.inspect}" unless record
-      elsif id
+      alt = alt_id_key(opt)
+      opt = id_term(item, **opt).merge!(opt.slice(alt))
+      id  = opt[id_key] || opt[alt]
+      if id
         record = record_class.find_by(id_key => id)
         error  = "for #{id_key} #{id.inspect}" unless record
       else

@@ -76,10 +76,9 @@ module Matomo
   # @return [ActiveSupport::SafeBuffer]
   #
   def self.script_element(for_user = nil)
-    for_user = User.find(for_user)           if for_user.is_a?(Integer)
-    for_user = User.find_by(email: for_user) if for_user.is_a?(String)
-    user_id  = (for_user.email               if for_user.is_a?(User))
-    visitor  = ('%016d' % for_user.id        if for_user.is_a?(User))
+    user    = User.instance_for(for_user)
+    user_id = user&.email
+    visitor = ('%016d' % user.id if user)
     <<~HEREDOC.squish.html_safe
       <script type="text/javascript" data-cid="#{visitor}">
         let _paq = window._paq = window._paq || [];

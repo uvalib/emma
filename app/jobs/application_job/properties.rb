@@ -88,14 +88,11 @@ module ApplicationJob::Properties
   #
   # @type [Symbol, nil]
   #
-  #--
-  # noinspection RailsParamDefResolve
-  #++
   def queue_key_for(val)
-    if val.is_a?(Integer)
-      QUEUE_PRIORITY.invert[val]
-    else
-      val.try(:queue_key) || val.try(:to_sym)
+    # noinspection RailsParamDefResolve
+    case val
+      when Integer then QUEUE_PRIORITY.invert[val]
+      else              val.try(:queue_key) || val.try(:to_sym)
     end
   end
 

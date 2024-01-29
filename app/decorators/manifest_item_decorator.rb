@@ -94,13 +94,14 @@ class ManifestItemDecorator < BaseDecorator
     #
     # @return [String, nil]
     #
-    #--
-    # noinspection RailsParamDefResolve
-    #++
     def manifest_for(item = nil, **opt)
-      return opt[:manifest] if opt[:manifest]
-      return item.id        if item.is_a?(Manifest)
-      (item || try(:object))&.try(:manifest_id)
+      item = opt[:manifest] || opt[:manifest_id] || item || try(:object)
+      # noinspection RubyMismatchedReturnType, RailsParamDefResolve
+      case item
+        when String   then item
+        when Manifest then item.id
+        else               item.try(:manifest_id)
+      end
     end
 
     # =========================================================================

@@ -519,7 +519,7 @@ module UploadWorkflow::External
 
   # Return with the specified record or *nil* if one could not be found.
   #
-  # @param [String, Hash, Upload, nil] id
+  # @param [String, Symbol, Integer, Hash, Model, nil] id
   # @param [Boolean]  fatal               If *false*, do not raise exceptions.
   # @param [Symbol]   meth                Calling method (for logging).
   #
@@ -528,7 +528,7 @@ module UploadWorkflow::External
   # @return [Upload]                  A fresh record from the database.
   # @return [nil]                     If *item* not found and *fatal*.
   #
-  def get_record: ((Upload|symHash|String|nil) id, ?fatal: bool, ?meth: Symbol|nil) -> (Upload | nil)
+  def find_record: ((symHash|String|Symbol|Integer|Model|nil) id, ?fatal: bool, ?meth: Symbol|nil) -> (Upload | nil)
 
   # Find all of the specified Upload records.
   #

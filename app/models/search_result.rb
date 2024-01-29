@@ -45,7 +45,7 @@ class SearchResult < ApplicationRecord
   public
 
   def oid(item = nil)
-    item ? super : self[:user_id].then { |u| u && User.find(u)&.oid }
+    item ? super : User.instance_for(self[:user_id])&.oid
   end
 
   def self.for_org(org = nil, **opt)

@@ -111,8 +111,9 @@ class BaseDecorator < Draper::Decorator
     #++
     def id_for(item = nil, **opt)
       id   = opt[:id]
-      id ||= (item if item.is_a?(Array) || item.is_a?(String))
-      id ||= item&.try(:id) || try(:object)&.try(:id)
+      id ||= (item if item.is_a?(Array))
+      id ||= object_class.get_id(item, :id)
+      id ||= try(:object).try(:id)
       id.is_a?(Array) ? id.join(',') : id
     end
 

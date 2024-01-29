@@ -936,7 +936,7 @@ module UploadWorkflow::External
 
   # Return with the specified record or *nil* if one could not be found.
   #
-  # @param [String, Hash, Upload, nil] id
+  # @param [String, Symbol, Integer, Hash, Model, nil] id
   # @param [Boolean]  fatal               If *false*, do not raise exceptions.
   # @param [Symbol]   meth                Calling method (for logging).
   #
@@ -945,15 +945,28 @@ module UploadWorkflow::External
   # @return [Upload]                  A fresh record from the database.
   # @return [nil]                     If *item* not found and *fatal*.
   #
-  def get_record(id, fatal: true, meth: nil)
-    if (result = Upload.get_record(id))
-      result
-    elsif Upload.id_term(id).values.first.blank?
+  def find_record(id, fatal: true, meth: nil)
+    meth ||= __method__
+    record = error = nil
+
+    if id
+      record = Upload.fetch_record(id)
+      error  = "for id: #{id.inspect}" unless record
+    else
+      error  = ':id value given'
+    end
+    error &&= "No Upload #{error}"
+
+    if record
+      # noinspection RubyMismatchedReturnType
+      record
+    elsif id.nil? || Upload.id_term(id).values.first.blank?
+      Log.info { "#{meth}: #{error} (no record specified)" }
       raise_failure(:file_id) if fatal
     elsif !fatal
-      Log.warn  { "#{meth || __method__}: #{id}: skipping record" }
+      Log.warn { "#{meth}: #{error} (skipping)" }
     else
-      Log.error { "#{meth || __method__}: #{id}: non-existent record" }
+      Log.error { "#{meth}: #{error}" }
       raise_failure(:find, id)
     end
   end

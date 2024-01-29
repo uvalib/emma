@@ -227,7 +227,7 @@ module BaseDecorator::List
       value  = value.split(/[,;|\t\n]/) if value.is_a?(String)
       value  = Array.wrap(value).compact_blank
       value.map! { |v| type.cast(v, warn: false) || v } if enum
-      value.map! { |v| type.find_by(id: v)       || v } if model
+      value.map! { |v| type.instance_for(v)      || v } if model
       v_dv ||= value.join('|')
       value  = value.first unless array || value.many?
     end

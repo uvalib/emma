@@ -77,6 +77,25 @@ class Org < ApplicationRecord
   #
   def manifest_count: () -> Integer
 
+  # Return the common name of *org*.
+  #
+  # @param [User, String, Symbol, Integer, *] org   Default: self.
+  #
+  # @return [String, nil]
+  #
+  def org_name: (?untyped org) -> (String | nil)
+
+  # Return the common name of *org*.
+  #
+  # @note This method assumes that if *org* is a String or Symbol it already
+  #   represents an organization name unless it resolves to an org ID.
+  #
+  # @param [User, String, Symbol, Integer, *] org
+  #
+  # @return [String, nil]
+  #
+  def self.org_name: (untyped org) -> (String | nil)
+
   # This is the (non-persisted) organization associated with ID 0.
   #
   # User records use :org_id == 0 to indicate that the user is explicitly not
