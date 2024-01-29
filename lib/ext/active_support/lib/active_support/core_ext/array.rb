@@ -83,27 +83,55 @@ module ArrayExt
   # appended to *self* unconditionally.
   #
   def rmerge!(other)
-    if other.is_a?(Array)
-      other.each { |v| self << v.rdup unless include?(v) }
-    elsif other
-      self << other.rdup unless include?(other)
-    end
-    self
+    added = (Array.wrap(other) - to_a).presence
+    added ? self.concat(added.map(&:rdup)) : self
   end
 
   # Remove element(s).
   #
   # Whereas `a -= b` removes elements by allocating a new array, `a.remove(b)`
-  # removes elements from the instance itself.
+  # removes elements from the instance itself by repeated calling #delete.
   #
   # @param [Array] elements
   #
   # @return [self]
   #
   def remove(*elements)
-    elements.flatten!
-    elements.uniq!
-    delete_if { |v| elements.include?(v) }
+    elements.flatten.each { |v| delete(v) }
+    self
+  end
+
+  # Remove elements; return *nil* if there were no changes.
+  #
+  # @param [Array] elements
+  #
+  # @return [self, nil]
+  #
+  def remove!(*elements)
+    removed = intersection(elements.flatten).presence
+    removed&.each { |v| delete(v) } and self
+  end
+
+  # Retain only the indicated elements.
+  #
+  # @param [Array] elements
+  #
+  # @return [self]
+  #
+  def keep(*elements)
+    kept = intersection(elements.flatten)
+    (kept.size == size) ? self : replace(kept)
+  end
+
+  # Retain only the indicated elements; return *nil* if there were no changes.
+  #
+  # @param [Array] elements
+  #
+  # @return [self, nil]
+  #
+  def keep!(*elements)
+    kept = intersection(elements.flatten)
+    replace(kept) unless kept.size == size
   end
 
 end

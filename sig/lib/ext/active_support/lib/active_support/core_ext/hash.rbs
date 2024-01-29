@@ -44,13 +44,45 @@ module HashExt
   # any other value, it is ignored (unless *raise_error* is *true*).
   #
   # @param [Hash]    other
-  # @param [Boolean] raise_error      If *true*, raise exceptions.
+  # @param [Boolean] fatal            If *true*, raise exceptions.
   #
   # @raise [RuntimeError]             If *other* is not a Hash.
   #
   # @return [self]
   #
-  def rmerge!: (anyHash other, ?bool raise_error) -> self
+  def rmerge!: (anyHash other, ?fatal: bool) -> self
+
+  # Remove element(s).
+  #
+  # @param [Array] elements
+  #
+  # @return [self]
+  #
+  def remove: (*untyped elements) -> self
+
+  # Remove element(s) or return *nil* if no changes.
+  #
+  # @param [Array] elements
+  #
+  # @return [self, nil]
+  #
+  def remove!: (*untyped elements) -> (self | nil)
+
+  # Retain only the indicated elements.
+  #
+  # @param [Array] elements
+  #
+  # @return [self]
+  #
+  def keep: (*untyped elements) -> self
+
+  # Retain only the indicated elements or return *nil* if no changes.
+  #
+  # @param [Array] elements
+  #
+  # @return [self, nil]
+  #
+  def keep!: (*untyped elements) -> (self | nil)
 end
 
 class Hash[unchecked out K, unchecked out V] < Object

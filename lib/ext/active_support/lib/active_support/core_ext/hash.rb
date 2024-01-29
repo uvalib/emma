@@ -72,26 +72,70 @@ module HashExt
   # any other value, it is ignored (unless *raise_error* is *true*).
   #
   # @param [Hash]    other
-  # @param [Boolean] raise_error      If *true*, raise exceptions.
+  # @param [Boolean] fatal            If *true*, raise exceptions.
   #
   # @raise [RuntimeError]             If *other* is not a Hash.
   #
   # @return [self]
   #
-  def rmerge!(other, raise_error = false)
-    if other.is_a?(Hash)
+  def rmerge!(other, fatal: false)
+    if !other.is_a?(Hash)
+      raise "#{other.class} invalid" if fatal
+    elsif empty?
+      replace(other.rdup)
+    else
       other.each_pair do |k, v|
-        key = (k if key?(k)) || (k.to_sym if key?(k.to_sym))
-        if key && self[key].is_a?(Enumerable)
-          self[key].rmerge!(v)
-        else
-          self[key || k] = v.rdup
-        end
+        key   = (k        if key?(k))
+        key ||= (k.to_s   if k.is_a?(Symbol) && key?(k.to_s))
+        key ||= (k.to_sym if k.is_a?(String) && key?(k.to_sym))
+        key && self[key].try(:rmerge!, v) || merge!((key || k) => v.rdup)
       end
-    elsif raise_error
-      raise "#{other.class} invalid"
     end
     self
+  end
+
+  # Remove element(s).
+  #
+  # @param [Array] elements
+  #
+  # @return [self]
+  #
+  def remove(*elements)
+    elements.flatten.each { |key| delete(key) }
+    self
+  end
+
+  # Remove element(s) or return *nil* if no changes.
+  #
+  # @param [Array] elements
+  #
+  # @return [self, nil]
+  #
+  def remove!(*elements)
+    removed = keys.intersection(elements.flatten).presence
+    removed&.each { |v| delete(v) } and self
+  end
+
+  # Retain only the indicated elements.
+  #
+  # @param [Array] elements
+  #
+  # @return [self]
+  #
+  def keep(*elements)
+    kept = slice(*elements.flatten)
+    (kept.size == size) ? self : replace(kept)
+  end
+
+  # Retain only the indicated elements or return *nil* if no changes.
+  #
+  # @param [Array] elements
+  #
+  # @return [self, nil]
+  #
+  def keep!(*elements)
+    kept = slice(*elements.flatten)
+    replace(kept) unless kept.size == size
   end
 
 end

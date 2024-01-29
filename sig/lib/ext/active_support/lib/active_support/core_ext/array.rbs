@@ -59,13 +59,37 @@ module ArrayExt
   # Remove element(s).
   #
   # Whereas `a -= b` removes elements by allocating a new array, `a.remove(b)`
-  # removes elements from the instance itself.
+  # removes elements from the instance itself by repeated calling #delete.
   #
   # @param [Array] elements
   #
   # @return [self]
   #
   def remove: (*untyped elements) -> self
+
+  # Remove elements; return *nil* if there were no changes.
+  #
+  # @param [Array] elements
+  #
+  # @return [self, nil]
+  #
+  def remove!: (*untyped elements) -> (self | nil)
+
+  # Retain only the indicated elements.
+  #
+  # @param [Array] elements
+  #
+  # @return [self]
+  #
+  def keep: (*untyped elements) -> self
+
+  # Retain only the indicated elements; return *nil* if there were no changes.
+  #
+  # @param [Array] elements
+  #
+  # @return [self, nil]
+  #
+  def keep!: (*untyped elements) -> (self | nil)
 end
 
 class Array[unchecked out Elem] < Object
