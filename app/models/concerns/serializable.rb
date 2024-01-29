@@ -45,8 +45,13 @@ module Serializable
     # @type [Array<String,Symbol>]
     RESERVED_KEYS = ActiveJob::Arguments.const_get(:RESERVED_KEYS).freeze
 
+    # The value here is from ActiveJob::Arguments::PERMITTED_TYPES which was
+    # removed in Rails 7.1.3.
+    #
     # @type [Array<Module>]
-    PERMITTED_TYPES = ActiveJob::Arguments.const_get(:PERMITTED_TYPES).freeze
+    #
+    PERMITTED_TYPES =
+      [NilClass, String, Integer, Float, TrueClass, FalseClass].freeze
 
     # @type [Array<Module>]
     ENUMERABLE_TYPES = [Hash, Array].freeze
