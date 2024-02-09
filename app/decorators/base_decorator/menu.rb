@@ -113,7 +113,7 @@ module BaseDecorator::Menu
   def items_menu_prompt(**opt)
     opt[:item] ||= model_item_name(capitalize: false)
     opt[:an]   ||= indefinite_article(opt[:item])
-    interpolate_named_references(ITEM_PROMPT, **opt)
+    interpolate(ITEM_PROMPT, **opt)
   end
 
   # Generate a label for a specific menu entry.

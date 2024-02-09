@@ -105,7 +105,7 @@ module BaseCollectionDecorator::Table
     **opt
   )
     link = make_link(ALL_RECORDS, (path || table_path))
-    rows = interpolate_named_references("(#{ROWS_HERE})", rows: rows)
+    rows = interpolate("(#{ROWS_HERE})", rows: rows)
     prepend_css!(opt, css)
     html_tag(:div, link, rows, **opt)
   end

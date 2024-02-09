@@ -305,15 +305,15 @@ module Emma::Config
 
   # Attempt to apply interpolations to *item*.
   #
-  # @param [String, *] item
-  # @param [Hash]      opt            Passed to #interpolate_named_references
+  # @param [any, nil] item            String
+  # @param [Hash]     opt             Passed to #interpolate
   #
   # @return [String, any, nil]
   #
   def config_interpolate(item, **opt)
     return item unless item.is_a?(String) && opt.present?
     opt[:id] = Emma::Common::FormatMethods.quote(opt[:id]) if opt.key?(:id)
-    Emma::Common::FormatMethods.interpolate_named_references(item, **opt)
+    Emma::Common::FormatMethods.interpolate(item, **opt)
   end
 
   # Attempt to apply interpolations to all strings in *item*.
@@ -326,7 +326,7 @@ module Emma::Config
   def config_deep_interpolate(item, **opt)
     return item unless opt.present?
     opt[:id] = Emma::Common::FormatMethods.quote(opt[:id]) if opt.key?(:id)
-    Emma::Common::FormatMethods.deep_interpolate_named_references(item, **opt)
+    Emma::Common::FormatMethods.deep_interpolate(item, **opt)
   end
 
   # ===========================================================================

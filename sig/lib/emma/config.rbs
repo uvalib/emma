@@ -164,8 +164,8 @@ module Emma::Config
 
   # Attempt to apply interpolations to *item*.
   #
-  # @param [String, *] item
-  # @param [Hash]      opt            Passed to #interpolate_named_references
+  # @param [any, nil] item            String
+  # @param [Hash]     opt             Passed to #interpolate
   #
   # @return [String, any, nil]
   #

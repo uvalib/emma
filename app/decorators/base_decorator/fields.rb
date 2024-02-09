@@ -787,7 +787,7 @@ module BaseDecorator::Fields
     elsif (identifier = PublicationIdentifier.create(id_part, type))&.valid?
       identifier.to_s
     else
-      tooltip = interpolate_named_references(INVALID_ID, type: type)
+      tooltip = interpolate(INVALID_ID, type: type)
       html_span(value, class: 'invalid', title: tooltip)
     end
   end

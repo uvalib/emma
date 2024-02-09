@@ -107,7 +107,7 @@ class ManifestDecorator < BaseDecorator
     #
     ICONS =
       BaseDecorator::Controls::ICONS.transform_values { |prop|
-        tip = interpolate_named_references!(prop[:tooltip], item: ITEM_NAME)
+        tip = interpolate!(prop[:tooltip], item: ITEM_NAME)
         tip ? prop.merge(tooltip: tip) : prop
       }.deep_freeze
 

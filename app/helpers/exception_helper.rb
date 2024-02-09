@@ -33,15 +33,15 @@ module ExceptionHelper
       next if entry.blank?
       value = model_entry.except(*entry.keys)
       value = value.map { |k, v| [k.to_sym, v] if (k = k.to_s.sub!(/^_/, '')) }
-      value = value.compact.to_h
+      value = value.compact.to_h.presence
       entry =
         entry.transform_values { |properties|
           m, e = properties.values_at(:message, :error)
-          m = interpolate_named_references(m, value) if value.present?
-          e = e.to_s             if e.is_a?(Symbol)
-          e = "Net::#{e}"        if e.is_a?(String) && !e.include?('::')
-          e = e.safe_constantize if e.is_a?(String)
-          e = e.exception_type   if e.respond_to?(:exception_type)
+          m = interpolate(m, value) if value
+          e = e.to_s                if e.is_a?(Symbol)
+          e = "Net::#{e}"           if e.is_a?(String) && !e.include?('::')
+          e = e.safe_constantize    if e.is_a?(String)
+          e = e.exception_type      if e.respond_to?(:exception_type)
           [m, e]
         }.compact
       [model, entry]

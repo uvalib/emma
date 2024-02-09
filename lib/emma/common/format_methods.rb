@@ -403,11 +403,11 @@ module Emma::Common::FormatMethods
   #
   # @return [any, nil]
   #
-  def deep_interpolate_named_references(item, **opt)
+  def deep_interpolate(item, **opt)
     case item
       when Hash   then item.transform_values { |v| send(__method__, v, **opt) }
       when Array  then item.map { |v| send(__method__, v, **opt) }
-      when String then interpolate_named_references(item, **opt)
+      when String then interpolate(item, **opt)
       else             item
     end
   end
@@ -433,8 +433,8 @@ module Emma::Common::FormatMethods
   # intermediate string, then (by the caller) a second pass on that result to
   # supply values for the unnamed specifiers.
   #
-  def interpolate_named_references(text, *src, **opt)
-    interpolate_named_references!(text, *src, **opt) || text.to_s
+  def interpolate(text, *src, **opt)
+    interpolate!(text, *src, **opt) || text.to_s
   end
 
   # If possible, make a copy of *text* with #sprintf named references replaced
@@ -447,10 +447,12 @@ module Emma::Common::FormatMethods
   # @return [String]                  A modified copy of *text*.
   # @return [nil]                     If no interpolations could be made.
   #
-  # @see #interpolate_named_references
+  # @see #interpolate
   #
-  def interpolate_named_references!(text, *src, **opt)
+  def interpolate!(text, *src, **opt)
     return if text.blank? || src.push(opt).compact_blank!.empty?
+
+    text   = text.to_s
     html   = false
     values =
       named_references_and_formats(text, default_fmt: nil).map { |term, format|
@@ -480,11 +482,11 @@ module Emma::Common::FormatMethods
         html ||= htm
         [key, val]
       }.compact.presence&.to_h or return
+
     html ||= text.is_a?(ActiveSupport::SafeBuffer)
-    values.transform_values! { |val| ERB::Util.h(val) } if html
-    text = text.to_s.gsub(/(?<!%)(%[^{<])/, '%\1')  # Preserve %s specifiers
-    text %= values                                  # Interpolate named values
-    text = text.gsub(/(?<!%)%(%[^{<])/, '\1')       # Restore %s specifiers
+    text   = text.gsub(/(?<!%)(%[^{<])/,  '%\1')  # Preserve %s specifiers
+    text  %= html ? values.transform_values! { |v| ERB::Util.h(v) } : values
+    text   = text.gsub(/(?<!%)%(%[^{<])/, '\1')   # Restore %s specifiers
     html ? text.html_safe : text
   end
 

@@ -261,7 +261,7 @@ module Emma::Common::FormatMethods
   #
   # @return [any, nil]
   #
-  def deep_interpolate_named_references: [T] (T item, **untyped opt) -> T
+  def deep_interpolate: [T] (T item, **untyped opt) -> T
 
   # If possible, make a copy of *text* with #sprintf named references replaced
   # by the matching values extracted from *src* or *opt*.  Otherwise return
@@ -284,7 +284,7 @@ module Emma::Common::FormatMethods
   # intermediate string, then (by the caller) a second pass on that result to
   # supply values for the unnamed specifiers.
   #
-  def interpolate_named_references
+  def interpolate
     : (ActiveSupport::SafeBuffer text, *untyped src, **untyped opt) -> ActiveSupport::SafeBuffer
     | (untyped                   text, *untyped src, **untyped opt) -> String
 
@@ -298,9 +298,9 @@ module Emma::Common::FormatMethods
   # @return [String]                  A modified copy of *text*.
   # @return [nil]                     If no interpolations could be made.
   #
-  # @see #interpolate_named_references
+  # @see #interpolate
   #
-  def interpolate_named_references!
+  def interpolate!
     : (ActiveSupport::SafeBuffer text, *untyped src, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
     | (untyped                   text, *untyped src, **untyped opt) -> (String | nil)
 end

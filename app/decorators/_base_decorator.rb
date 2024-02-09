@@ -571,9 +571,9 @@ class BaseDecorator < Draper::Decorator
       action = opt.delete(:action) || context[:action]
       value  = controller_config.dig(action, value) if value.is_a?(Symbol)
       if value
-        interpolate_named_references(value, object, **opt)
+        interpolate(value, object, **opt)
       elsif default.is_a?(TrueClass)
-        [action, model_type].map(&:to_s).map(&:titleize).join(' ')
+        [action, model_type].map { |v| v.to_s.titleize }.join(' ')
       elsif default
         default.to_s
       end

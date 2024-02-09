@@ -134,11 +134,11 @@ module TestHelper::Common
     meth:       nil,
     **opt
   )
-    meth   ||= __method__
     action ||= :index
-    value    = property(controller, action, prop_key).to_s
-    fail "#{meth}: no :#{prop_key} for #{controller}/#{action}" if value.blank?
-    interpolate_named_references(value, item, **opt)
+    if (value = property(controller, action, prop_key)).blank?
+      fail "#{meth || __method__}: no :#{prop_key} for #{controller}/#{action}"
+    end
+    interpolate(value, item, **opt)
   end
 
   # ===========================================================================

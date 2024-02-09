@@ -295,7 +295,7 @@ class UploadDecorator < BaseDecorator
     #
     ICONS =
       BaseDecorator::Controls::ICONS.transform_values { |prop|
-        tip = interpolate_named_references!(prop[:tooltip], item: ITEM_NAME)
+        tip = interpolate!(prop[:tooltip], item: ITEM_NAME)
         tip ? prop.merge(tooltip: tip) : prop
       }.merge!(
         check: {

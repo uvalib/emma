@@ -231,7 +231,7 @@ module ConfigurationHelper
   #
   def apply_config_interpolations(item, **opt)
     units = config_interpolations(**opt)
-    deep_interpolate_named_references(item, **opt, **units)
+    deep_interpolate(item, **opt, **units)
   end
 
   # The variations on the description of a model item managed by a controller.
