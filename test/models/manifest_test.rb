@@ -10,7 +10,7 @@ class ManifestTest < ActiveSupport::TestCase
   test 'model - valid manifest' do
     run_test(__method__) do
       item = manifests(:example)
-      show item
+      show_item(item)
       assert item.valid?
     end
   end
@@ -20,7 +20,7 @@ class ManifestTest < ActiveSupport::TestCase
       item = manifests(:example).dup
       item.manifest_items << manifest_items(:one)
       item.manifest_items << manifest_items(:two)
-      show item
+      show_item(item)
       assert item.valid?
     end
   end

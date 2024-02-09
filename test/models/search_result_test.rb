@@ -10,7 +10,7 @@ class SearchResultTest < ActiveSupport::TestCase
   test 'model - valid search result' do
     run_test(__method__) do
       item = search_results(:example)
-      show item
+      show_item(item)
       assert item.valid?
     end
   end

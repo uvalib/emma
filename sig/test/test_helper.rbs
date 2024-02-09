@@ -4,7 +4,7 @@
 #
 BASE_URL: String
 
-# If *true* then #show and #show_reflections will produce output on the
+# If *true* then #show_item and #show_reflections will produce output on the
 # console.
 #
 # @type [Boolean]

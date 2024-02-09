@@ -8,7 +8,6 @@
 module TestHelper::SystemTests::Index
 
   include TestHelper::SystemTests::Action
-  include SearchTermsHelper # for :search_terms
 
   # ===========================================================================
   # :section:
@@ -83,12 +82,11 @@ module TestHelper::SystemTests::Index
   #
   def title_terms(model, **terms)
     ctrlr = controller_name(model)
-    search_terms(ctrlr, pairs: terms).map { |_field, term|
-      next if term.blank?
+    SearchTermsHelper.search_terms(ctrlr, pairs: terms).values.map { |term|
       if term.query?
         array_string(term.names, inspect: true)
-      else
-        "#{term.label}: " + array_string(term.values, inspect: true)
+      elsif term.present?
+        "#{term.label}: %s" % array_string(term.values, inspect: true)
       end
     }.compact.join(' | ')
   end
@@ -128,7 +126,7 @@ module TestHelper::SystemTests::Index
   def assert_search_count(model, total: nil, records: nil, **)
     ctrlr     = controller_name(model)
     records ||= property(ctrlr, :index, :count)
-    assert records, "#{ctrlr} unit could not be determined"
+    assert records, ->() { "#{ctrlr} unit could not be determined" }
     records = "#{total} #{records}".strip if total.present?
     assert_selector SEARCH_COUNT_CLASS, text: records
   end
@@ -191,7 +189,7 @@ module TestHelper::SystemTests::Index
   def visit_each_show_page(model, entry_css: nil, &blk)
     ctrlr       = controller_name(model)
     entry_css ||= property(ctrlr, :index, :entry_css)
-    assert entry_css, "#{ctrlr} entry_css could not be determined"
+    assert entry_css, ->() { "#{ctrlr} entry_css could not be determined" }
     entry_count = all(entry_css).size
     max_index = entry_count - 1
     (0..max_index).each do |index|

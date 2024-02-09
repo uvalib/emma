@@ -10,7 +10,7 @@ class JobResultTest < ActiveSupport::TestCase
   test 'model - valid job result' do
     run_test(__method__) do
       item = job_results(:example)
-      show item
+      show_item(item)
       assert item.valid?
     end
   end

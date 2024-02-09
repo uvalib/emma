@@ -11,7 +11,7 @@ require_relative '../config/environment'
 require 'capybara/rails'
 require 'rails/test_help'
 
-# If *true* then #show and #show_reflections will produce output on the
+# If *true* then #show_item and #show_reflections will produce output on the
 # console.
 #
 # @type [Boolean]

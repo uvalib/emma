@@ -176,6 +176,12 @@ module TestHelper::Utility
   #
   def fixtures_of: (Symbol|String|Class|ApplicationRecord model) -> (ActiveRecord::FixtureSet | nil)
 
+  # Generate a string of random hex digits.
+  #
+  # @return [String]
+  #
+  def hex_rand: () -> String
+
   # Extract the EMMA index entry identifier from the item.
   #
   # @param [SearchResult, nil] item
@@ -190,13 +196,23 @@ module TestHelper::Utility
     : ( SearchResult item, ?repo: String|nil, ?rid: String|nil, ?format: String|nil, ?ver: String|nil) -> String
     | (?nil          item,  repo: String,      rid: String,      format: String,     ?ver: String|nil) -> String
 
+  # Note in the output that a test was skipped.
+  #
+  # @param [Array,nil] msg            Message part(s).
+  # @param [Hash]      opt            Passed to #show_item.
+  #
+  # @return [void]
+  #
+  def show_skipped: (*untyped msg, **untyped opt) -> void
+
   # Note in the output that a test was skipped because it was not applicable.
   #
   # @param [String, nil] note         Additional annotation.
+  # @param [Hash]        opt          Passed to #show_skipped.
   #
   # @return [true]
   #
-  def not_applicable: (?(String|nil) note) -> true
+  def not_applicable: (?(String|nil) note, **untyped opt) -> true
 
   # Note in the output that a test was skipped because the given format was not
   # applicable (or if none was given whether any of the currently configured

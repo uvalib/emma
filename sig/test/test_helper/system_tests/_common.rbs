@@ -12,8 +12,6 @@ module TestHelper::SystemTests::Common
 
   include Emma::Json
 
-  include ParamsHelper
-
   #include Minitest::Assertions
 
   #include Capybara::Node::Actions
@@ -121,4 +119,12 @@ module TestHelper::SystemTests::Common
   # @return [Capybara::Node::Element]
   #
   def item_menu_select: (String value, String name, **untyped opt) -> Capybara::Node::Element
+
+  # Return the variant of the action which indicates generation of a menu.
+  #
+  # @param [Symbol, String] action
+  #
+  # @return [Symbol]
+  #
+  def menu_action: (Symbol|String action) -> Symbol
 end

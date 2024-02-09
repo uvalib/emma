@@ -34,12 +34,12 @@ module TestHelper::SystemTests::Cookies
   # @note Currently unused
   #
   def show_cookies
-    cookies =
-      get_cookies.map { |k, v|
+    show_item('COOKIES:') do
+      get_cookies.map do |k, v|
         value = v[:value] || ''
         "#{k.inspect} = #{v.inspect} [#{value.size} bytes]"
-      }.join("\n")
-    show "COOKIES:\n#{cookies}"
+      end
+    end
   end
 
   # Get the current cookies from the last response.

@@ -10,7 +10,7 @@ class UserTest < ActiveSupport::TestCase
   test 'model - valid user' do
     run_test(__method__) do
       item = users(:example)
-      show item
+      show_item(item)
       assert item.valid?
     end
   end
@@ -20,7 +20,7 @@ class UserTest < ActiveSupport::TestCase
       item = users(:example)
       data = item.attributes.except('email')
       item = User.new(data)
-      show item
+      show_item(item)
       refute item.valid?
     end
   end
@@ -30,7 +30,7 @@ class UserTest < ActiveSupport::TestCase
       item = users(:example)
       data = item.attributes.tap { |u| u['email'].sub!(/@.*/, '') }
       item = User.new(data)
-      show item
+      show_item(item)
       refute item.valid?
     end
   end

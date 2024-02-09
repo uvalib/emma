@@ -11,6 +11,8 @@ module SearchTermsHelper
 
   include ParamsHelper
 
+  extend ::SearchTermsHelper
+
   # Table of search types for each controller.
   #
   # Each entry may have:

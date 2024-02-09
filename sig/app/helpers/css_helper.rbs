@@ -5,6 +5,8 @@ module CssHelper
 
   include Emma::Unicode
 
+  extend ::CssHelper
+
   # Indicate whether the HTML options include any of the given CSS classes.
   #
   # @param [Hash, nil]          html_opt  The target options hash.

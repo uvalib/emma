@@ -11,6 +11,8 @@ module ParamsHelper
 
   include Emma::Common
 
+  extend self
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -139,7 +141,7 @@ module ParamsHelper
   # @return [Hash]
   #
   def request_parameters(prm = nil)
-    normalize_hash(prm || try(:params))
+    normalize_hash(prm || try(:params) || {})
   end
 
   # The meaningful request URL parameters as a Hash (not including :controller

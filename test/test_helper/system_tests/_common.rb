@@ -16,7 +16,6 @@ module TestHelper::SystemTests::Common
 
   include TestHelper::Common
   include Emma::Json
-  include ParamsHelper
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
@@ -88,16 +87,15 @@ module TestHelper::SystemTests::Common
   def assert_json(value = nil, exact: nil, **pairs)
     if value.nil?
       value = pairs
-    elsif value.is_a?(String) || value.is_a?(Array)
+    elsif value.is_a?(String)
       value = json_parse(value, symbolize_keys: false) || {}
-    elsif exact.nil? && value.key?(:exact)
-      exact = value[:exact]
-      value = value.except(:exact)
+    elsif value.is_a?(Hash) && exact.nil? && value.key?(:exact)
+      value = value.dup
+      exact = value.delete(:exact)
     end
     text = value.to_json
     text = text[1...-1] unless exact
-    assert false if text.blank?
-    assert text, exact: !!exact
+    assert text.present?
   end
 
   # ===========================================================================
@@ -211,6 +209,22 @@ module TestHelper::SystemTests::Common
 
   public
 
+  # Return the variant of the action which indicates generation of a menu.
+  #
+  # @param [Symbol, String] action
+  #
+  # @return [Symbol]
+  #
+  def menu_action(action)
+    ParamsHelper.menu_action(action)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # If DEBUG_TESTS is true, this will take a screenshot (ignoring an error that
   # has been observed [in rare cases] since these are informational-only).
   #
@@ -219,7 +233,7 @@ module TestHelper::SystemTests::Common
   def screenshot
     take_screenshot
   rescue Selenium::WebDriver::Error::UnknownError => error
-    show "[Screenshot Image]: #{error.class} - #{error.message}"
+    show_item("[Screenshot Image]: #{error.class} - #{error.message}")
   end
     .tap { |meth| neutralize(meth) unless DEBUG_TESTS && TESTING_JAVASCRIPT }
 

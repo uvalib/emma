@@ -3,6 +3,8 @@
 module ParamsHelper
   include Emma::Common
 
+  extend ::ParamsHelper
+
   # The URL :id term which indicates the target is the identifier of the
   # current record (depending on the context).
   #

@@ -83,8 +83,7 @@ module TestHelper::IntegrationTests::Authentication
   # @return [void]
   #
   def get_sign_in_as(user, follow_redirect: true, trace: true)
-    user = find_user(user)
-    return unless user.present?
+    user = find_user(user).presence or return
     url  = sign_in_as_url(id: user.to_s)
     meth = trace ? :get : :original_get
     send(meth, url)
@@ -123,7 +122,7 @@ module TestHelper::IntegrationTests::Authentication
   def as_user(user, **opt, &blk)
     user &&= find_user(user)
     unless opt.key?(:part)
-      opt[:part] = 'USER %s' % show_user(user, output: false, indent: false)
+      opt[:part] = 'USER %s' % show_user(user, indent: false, output: false)
     end
     test_name = opt.delete(:test)
     if user.nil?

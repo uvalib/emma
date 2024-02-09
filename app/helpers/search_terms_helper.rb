@@ -16,6 +16,8 @@ module SearchTermsHelper
   include ConfigurationHelper
   include ParamsHelper
 
+  extend self
+
   # ===========================================================================
   # :section:
   # ===========================================================================

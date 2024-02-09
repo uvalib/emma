@@ -1,108 +1,124 @@
 # Support for debugging tests.
 #
 module TestHelper::Debugging
-  TEST_DEBUG_FRAME: String
+  TEST_START: String
 
-  TEST_DEBUG_INDENT: String
+  TEST_END: String
 
-  # Options for #show_test_start and #show_test_end.
+  TEST_DEFAULT: String
+
+  # Produce the top frame of debug output for a test.
+  #
+  # @param [String, Symbol, nil] test
+  # @param [String, nil]         part
+  # @param [Hash]                opt  Passed to #emit_lines.
+  #
+  # @return [void]
+  #
+  def show_test_start: (?test: String|Symbol|nil, ?part: String|nil, **untyped opt) -> void
+
+  # Produce the bottom frame of debug output for a test.
+  #
+  # @param [String, Symbol, nil] test
+  # @param [String, nil]         part
+  # @param [Hash]                opt  Passed to #emit_lines.
+  #
+  # @return [void]
+  #
+  def show_test_end: (?test: String|Symbol|nil, ?part: String|nil, **untyped opt) -> void
+
+  # Produce a framing line for debug test output.
+  #
+  # @param [String]              tag
+  # @param [String, Symbol, nil] test
+  # @param [String, nil]         part
+  #
+  # @return [String]
+  #
+  def show_test_part: (String tag, ?test: String|Symbol|nil, ?part: String|nil, **untyped _ignored) -> void
+
+  # Local options for #show_test_start and #show_test_end.
   #
   # @private
   # @type [Array<Symbol>]
   #
   SHOW_TEST_OPT: symArray
 
-  # Produce the top frame of debug output for a test.
-  #
-  # @param [String, Symbol, nil] test_name
-  # @param [Symbol]              test       Overrides *test_name* if given.
-  # @param [String]              part
-  # @param [String]              frame      Default: #TEST_DEBUG_FRAME.
-  #
-  # @return [void]
-  #
-  def show_test_start: (String|Symbol|nil test_name, ?test: Symbol|nil, ?part: String|nil, ?frame: String|nil, **untyped _ignored) -> void
-
-  # Produce the bottom frame of debug output for a test.
-  #
-  # @param [String, Symbol, nil] test_name
-  # @param [Symbol]              test       Overrides *test_name* if given.
-  # @param [String]              part
-  # @param [String]              frame      Default: #TEST_DEBUG_FRAME.
-  #
-  # @return [void]
-  #
-  def show_test_end: (String|Symbol|nil test_name, ?test: Symbol|nil, ?part: String|nil, ?frame: String|nil, **untyped _ignored) -> void
-
   # Display item model in output.
   #
   # @param [ActiveRecord::Base] item
-  # @param [Boolean, String]    indent
   # @param [Boolean]            reflections
-  # @param [Hash]               opt           Passed to #show.
+  # @param [Hash]               opt           Passed to #show_item.
   #
   # @return [String]
   #
-  def show_model: (ActiveRecord::Base item, ?indent: bool|String, ?reflections: bool, **untyped opt) -> String
+  def show_model: (ActiveRecord::Base item, ?reflections: bool, **untyped opt) -> String
 
   # Display item model associations in output.
   #
   # @param [ActiveRecord::Base] item
-  # @param [Boolean, String]    indent  Default: #TEST_DEBUG_INDENT
-  # @param [Hash]               opt     Passed to #show.
+  # @param [Hash]               opt   Passed to #show_item.
   #
-  # @return [String]
+  # @return [String, nil]
   #
-  def show_reflections: (ActiveRecord::Base item, ?indent: bool|String, **untyped opt) -> String
+  def show_reflections: (ActiveRecord::Base item, **untyped opt) -> (String | nil)
 
   # Display a URL in output.
   #
   # @param [URI, String, nil] url     Default: `#current_url`.
-  # @param [Hash]             opt     Passed to #show.
+  # @param [Array]            note    Additional text on the line.
+  # @param [Hash]             opt     Passed to #show_item.
   #
   # @return [String]
   #
-  def show_url: (?(String|URI|nil) url, **untyped opt) -> String
+  def show_url: (?(String|URI|nil) url, *untyped note, **untyped opt) -> String
 
   # Display a user in output.
   #
   # @param [String, Symbol, User, nil] user   Default: `#current_user`.
-  # @param [Hash]                      opt    Passed to #show.
+  # @param [Hash]                      opt    Passed to #show_item.
   #
   # @return [String]
   #
   def show_user: (?(String|Symbol|User|nil) user, **untyped opt) -> String
 
+  TEST_INDENT: String
+
   # Display item contents in output.
   #
-  # @param [Array<*>]        items
-  # @param [Boolean, String] indent
-  # @param [Boolean]         output   If *false* the result is only returned.
-  # @param [Hash]            opt      Passed to #show_model.
+  # If *join* results a multi-line value then *indent* is applied to each line.
+  # If *join* is overridden to be *nil* or a string without a newline then
+  # *indent* is applied only to the resulting line itself.
   #
-  # @return [String]                  The displayable result.
+  # @param [Array<*>]                   items
+  # @param [String,nil]                 join
+  # @param [String,Integer,Boolean,nil] indent  Default: #TEST_INDENT
+  # @param [Boolean]                    output  If *false* just return result.
+  # @param [Hash]                       opt     Passed to #show_model except
+  #                                               #EMIT_LINES_OPT to
+  #                                               #emit_lines.
+  #
+  # @return [String]                            The displayable result.
   #
   # @yield To supply additional items.
   # @yieldreturn [Array, String, any, nil]
   #
-  def show: (*untyped items, ?indent: bool|String, ?output: bool, **untyped opt) ?{ () -> untyped } -> String
+  def show_item: (*untyped items, ?join: String|nil, ?indent: String|Integer|bool|nil, ?output: bool, **untyped opt) ?{ () -> untyped } -> String
 
-  # Generate a line prefix string for #show output.
-  #
-  # @param [Boolean, Integer, String, nil] indent
-  # @param [Integer, String, nil]          default    If *indent* is *true*.
-  #
-  # @return [String, nil]
-  #
-  def show_prefix: (bool|Integer|String|nil indent, default: Integer|String|nil) -> (String | nil)
+  # @private
+  EMIT_LINES_OPT: symArray
 
   # Send one or more lines to $stderr.
   #
-  # @param [Array,nil] lines          Nil elements are interpreted as newlines.
+  # @param [Array, nil]  lines        Nil elements are interpreted as newlines.
+  # @param [String, nil] prefix       Prepended to each line.
+  # @param [String, nil] suffix       Appended to each line.
+  # @param [String, nil] start        Prepended to the first line.
+  # @param [String, nil] finish       Appended to the last line.
   #
   # @return [void]
   #
-  def show_lines: (*untyped lines) -> void
+  def emit_lines: (*untyped lines, ?prefix: String|nil, ?suffix: String|nil, ?start: String|nil, ?finish: String|nil, **untyped _ignored) -> void
 
   TRACE_NL: String
 
@@ -141,16 +157,15 @@ module TestHelper::Debugging
 
   # show_trace
   #
-  # @param [String, Integer] indent
-  # @param [Boolean, nil]    trace
-  # @param [Hash] opt                 Passed to #show.
+  # @param [Boolean, nil] trace
+  # @param [Hash]         opt         Passed to #show_item.
   #
   # @return [String, nil]             The displayable result.
   #
   # @yield To supply pairs to be displayed.
   # @yieldreturn [Hash]
   #
-  def show_trace: (?indent: String|Integer, ?trace: bool|nil, **untyped opt) ?{ () -> anyHash } -> (String | nil)
+  def show_trace: (?trace: bool|nil, **untyped opt) ?{ () -> anyHash } -> (String | nil)
 
   # Execute the provided block with tracing turned off to allow for executions
   # which do not clutter the output.

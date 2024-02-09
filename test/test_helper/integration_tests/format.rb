@@ -38,11 +38,8 @@ module TestHelper::IntegrationTests::Format
   # @return [Symbol, nil]
   #
   def format_type(type)
-    if type.is_a?(String) && type.include?('/')
-      REVERSE_MEDIA_TYPE[type.downcase]
-    else
-      type&.to_sym&.downcase
-    end
+    type &&= type.to_s.downcase or return
+    type.include?('/') ? REVERSE_MEDIA_TYPE[type] : type.to_sym
   end
 
   # Indicate whether *type* is HTML.
@@ -89,8 +86,7 @@ module TestHelper::IntegrationTests::Format
   # @return [true]
   #
   def assert_html_result(status, **opt)
-    opt[:format] = :html unless opt.key?(:format)
-    assert_result(status, **opt)
+    assert_result(status, format: :html, **opt)
   end
 
   # Assert that the response is 'application/json'.
@@ -105,8 +101,7 @@ module TestHelper::IntegrationTests::Format
   # @note Currently unused
   #
   def assert_json_result(status, **opt)
-    opt[:format] = :json unless opt.key?(:format)
-    assert_result(status, **opt)
+    assert_result(status, format: :json, **opt)
   end
 
   # Assert that the response is 'application/xml'.
@@ -121,8 +116,7 @@ module TestHelper::IntegrationTests::Format
   # @note Currently unused
   #
   def assert_xml_result(status, **opt)
-    opt[:format] = :xml unless opt.key?(:format)
-    assert_result(status, **opt)
+    assert_result(status, format: :xml, **opt)
   end
 
   # Assert that the response is 'text/plain'.
@@ -137,8 +131,7 @@ module TestHelper::IntegrationTests::Format
   # @note Currently unused
   #
   def assert_text_result(status, **opt)
-    opt[:format] = :text unless opt.key?(:format)
-    assert_result(status, **opt)
+    assert_result(status, format: :text, **opt)
   end
 
   # Assert that the response matches the given criteria.

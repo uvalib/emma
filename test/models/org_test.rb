@@ -10,7 +10,7 @@ class OrgTest < ActiveSupport::TestCase
   test 'model - valid org' do
     run_test(__method__) do
       item = orgs(:one)
-      show item
+      show_item(item)
       assert item.valid?
     end
   end
@@ -19,7 +19,7 @@ class OrgTest < ActiveSupport::TestCase
     run_test(__method__) do
       item = orgs(:two)
       item.users += find_users(org: orgs(:one))
-      show item
+      show_item(item)
       assert item.valid?
     end
   end

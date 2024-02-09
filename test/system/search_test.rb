@@ -82,22 +82,23 @@ class SearchTest < ApplicationSystemTestCase
     expected_url ||= make_path(base_url, page: page)
 
     links = {}
-    while links.values.all?(&:nil?) && (max -= 1).positive?
+    while links.compact.blank? && (max -= 1).positive?
       next unless wait_for_page(expected_url, fatal: false)
       links = { PREV: PREV_LABEL, NEXT: NEXT_LABEL }
       links.transform_values! { |label| first(:link, label, minimum: 0) }
     end
 
     current = url_without_port(current_url)
-    if links.values.all?(&:nil?)
+    if links.compact.blank?
       flunk "Browser on page #{current} and not on #{expected_url}"
-    else
-      links.transform_values! do |link|
+    end
+
+    show_item("PAGE #{page || 1} = #{current}", join: ' | ') do
+      links.map do |name, link|
         link = link[:href] if link.is_a?(Capybara::Node::Element)
-        link&.include?('/') ? url_without_port(link) : link.inspect
+        link = link&.include?('/') ? url_without_port(link) : link.inspect
+        "#{name} = #{link}"
       end
-      links = links.map { |name, link| "#{name} = #{link}" }
-      show ["PAGE #{page || 1} = #{current}", *links].join(' | ')
     end
   end
 

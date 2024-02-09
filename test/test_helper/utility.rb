@@ -35,10 +35,10 @@ module TestHelper::Utility
   def run_test(test_name, format: nil, only: nil, wait: nil, **opt, &blk)
     error = nil
     prime_tests
-    if format && !html?(format)
-      opt[:part] = [opt[:part], "[#{format.to_s.upcase}]"].compact.join(' - ')
-    end
-    show_test_start(test_name, **opt)
+    note  = (format.to_s.upcase unless format.nil? || html?(format))
+    opt[:part]   = [opt[:part], "[#{note}]"].compact.join(' - ') if note
+    opt[:test] ||= test_name
+    show_test_start(**opt)
     if allowed_format(format, only: only)
       if wait
         using_wait_time(wait, &blk)
@@ -47,9 +47,9 @@ module TestHelper::Utility
       end
     end
   rescue Exception => error
-    show "[#{error.class}: #{error}]"
+    show_item("[#{error.class}: #{error}]")
   ensure
-    show_test_end(test_name, **opt)
+    show_test_end(**opt)
     # noinspection RubyMismatchedArgumentType
     raise error if error
   end
@@ -275,7 +275,7 @@ module TestHelper::Utility
   # @return [Integer]
   #
   def fixture_count_for_user(model, user, **constraints)
-    user = uid(user) and constraints.merge!(user_id: user)
+    constraints.merge!(user_id: user) if (user &&= uid(user))
     fixture_count(model, **constraints)
   end
 
@@ -325,7 +325,7 @@ module TestHelper::Utility
   # @note Currently unused
   #
   def fixture_values_for_user(model, user, **constraints)
-    user = uid(user) and constraints.merge!(user_id: user)
+    constraints.merge!(user_id: user) if (user &&= uid(user))
     fixture_values(model, **constraints)
   end
 
@@ -338,6 +338,7 @@ module TestHelper::Utility
   # @return [Hash{Symbol=>Hash}]
   #
   def fixture_values(model, **constraints)
+    fixtures = fixtures_of(model)&.fixtures&.presence or return {}
     constraints =
       constraints.map { |k, v|
         if v.is_a?(ApplicationRecord)
@@ -346,7 +347,7 @@ module TestHelper::Utility
         end
         [k, v]
       }.to_h
-    fixtures_of(model)&.fixtures&.map { |key, rec|
+    fixtures.map { |key, rec|
       key = key.to_sym if key.is_a?(String)
       rec = rec.fixture.transform_keys(&:to_sym)
       use =
@@ -360,7 +361,7 @@ module TestHelper::Utility
       # noinspection RubyMismatchedArgumentType
       use &&= yield(key, rec) if block_given?
       [key, rec] if use
-    }&.compact&.to_h || {}
+    }.compact.to_h
   end
 
   # Fixture set for the indicated model type.
@@ -379,6 +380,14 @@ module TestHelper::Utility
   # ===========================================================================
 
   public
+
+  # Generate a string of random hex digits.
+  #
+  # @return [String]
+  #
+  def hex_rand
+    CssHelper.hex_rand
+  end
 
   # Extract the EMMA index entry identifier from the item.
   #
@@ -402,14 +411,26 @@ module TestHelper::Utility
     }.join('-')
   end
 
+  # Note in the output that a test was skipped.
+  #
+  # @param [Array,nil] msg            Message part(s).
+  # @param [Hash]      opt            Passed to #show_item.
+  #
+  # @return [void]
+  #
+  def show_skipped(*msg, **opt)
+    show_item('TEST SKIPPED', join: ' - ', **opt) { msg.compact }
+  end
+
   # Note in the output that a test was skipped because it was not applicable.
   #
   # @param [String, nil] note         Additional annotation.
+  # @param [Hash]        opt          Passed to #show_skipped.
   #
   # @return [true]
   #
-  def not_applicable(note = nil)
-    show ['TEST SKIPPED', 'NOT APPLICABLE', note].compact.join(' - ')
+  def not_applicable(note = nil, **opt)
+    show_skipped(note, indent: false, **opt)
     true
   end
 

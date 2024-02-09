@@ -1,8 +1,6 @@
 # Access to sample models.
 #
 module TestHelper::Samples
-  include CssHelper
-
   # A string added to the start of each title created on a non-production
   # instance to help distinguish it from other index results.
   #
