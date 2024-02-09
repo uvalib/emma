@@ -19,7 +19,7 @@ class MetricsControllerTest < ActionDispatch::IntegrationTest
     opt = OPTIONS.merge(format: :text)
     url = '/metrics'
     run_test(__method__) do
-      get url, as: :text
+      get(url, as: :text)
       assert_result :success, **opt
     end
   end
@@ -30,8 +30,8 @@ class MetricsControllerTest < ActionDispatch::IntegrationTest
     url = metrics_test_url
     url = "#{url}.json" if opt[:json]
     run_test(__method__) do
-      get url
-      assert_result :success, **opt
+      get(url)
+      assert_result(:success, **opt)
     end
   end
 

@@ -33,7 +33,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
       url = home_url(format: fmt)
 
       run_test(__method__, format: fmt, only: READ_FORMATS) do
-        get url
+        get(url)
         assert_redirected_to welcome_url
       end
     end
@@ -48,7 +48,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
 
       run_test(__method__, format: fmt, only: READ_FORMATS) do
         get_sign_in_as(TEST_USER, follow_redirect: false)
-        get url
+        get(url)
         assert_redirected_to dashboard_url
       end
     end
@@ -63,8 +63,8 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
       opt = options.merge(format: fmt)
 
       run_test(__method__, format: fmt, only: READ_FORMATS) do
-        get url
-        assert_result :success, **opt
+        get(url)
+        assert_result(:success, **opt)
       end
     end
   end

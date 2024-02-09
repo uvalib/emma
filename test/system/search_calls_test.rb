@@ -31,12 +31,12 @@ class SearchCallsTest < ApplicationSystemTestCase
 
       # Not available anonymously.
       visit start_url
-      assert_flash alert: AUTH_FAILURE
-      sign_in_as @user
+      assert_flash(alert: AUTH_FAILURE)
+      sign_in_as(@user)
 
       # Successful sign-in should redirect back.
       show_url
-      assert_current_url final_url
+      assert_current_url(final_url)
 
       # The listing should be the first of one or more results pages.
       assert_valid_index_page(CONTROLLER, page: 0)

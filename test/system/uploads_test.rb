@@ -34,18 +34,18 @@ class UploadsTest < ApplicationSystemTestCase
   end
 
   test 'uploads - list_all' do
-    if @user.can?(:list_all, MODEL)
-      action = :list_all
-      params = PARAMS.merge(action: action, meth: __method__)
-      title  = page_title(**params)
-      total  = fixture_count(MODEL)
-      list_test(title: title, total: total, **params)
-    else
-      # NOTE: There's an issue with looping in attempting to sign-in which
-      #   causes this to fail inexplicably.  Since this test user can't
-      #   perform this action this test needs to be skipped for now.
-      not_applicable "#{TEST_USER} is not an administrator"
+    # NOTE: There's an issue with looping in attempting to sign-in which causes
+    #   this to fail inexplicably. Since this test user can't perform this
+    #   action anyway, this test needs to be skipped for now.
+    unless @user.can?(:list_all, MODEL)
+      # noinspection RubyJumpError
+      return not_applicable("#{@user} is not an administrator")
     end
+    action = :list_all
+    params = PARAMS.merge(action: action, meth: __method__)
+    title  = page_title(**params)
+    total  = fixture_count(MODEL)
+    list_test(title: title, total: total, **params)
   end
 
   test 'uploads - list_org' do
@@ -80,8 +80,8 @@ class UploadsTest < ApplicationSystemTestCase
 
       # The page should show the details of the item.
       show_url
-      assert_current_url final_url
-      assert_valid_page  heading: title
+      assert_current_url(final_url)
+      assert_valid_page(heading: title)
       screenshot
 
     end
@@ -143,14 +143,14 @@ class UploadsTest < ApplicationSystemTestCase
 
       # Not available anonymously; successful sign-in should redirect back.
       visit start_url
-      assert_flash alert: AUTH_FAILURE
-      sign_in_as @user
+      assert_flash(alert: AUTH_FAILURE)
+      sign_in_as(@user)
 
       # The listing should be the first of one or more results pages with as
       # many entries as there are fixture records.
       show_url
-      assert_current_url final_url
-      assert_valid_page  heading: title
+      assert_current_url(final_url)
+      assert_valid_page(heading: title)
       assert_search_count(CONTROLLER, total: total) if total
       screenshot
 
@@ -187,8 +187,8 @@ class UploadsTest < ApplicationSystemTestCase
 
       # Not available anonymously; successful sign-in should redirect back.
       visit start_url
-      assert_flash alert: AUTH_FAILURE
-      sign_in_as @user
+      assert_flash(alert: AUTH_FAILURE)
+      sign_in_as(@user)
 
       # Change to the form page if coming in from the index page.
       unless direct
@@ -220,9 +220,11 @@ class UploadsTest < ApplicationSystemTestCase
       # After submitting should be back on the index page with one more record
       # than before.
       form_submit
-      wait_for_page final_url
-      assert_flash 'SUCCESS'
-      assert_valid_page heading: INDEX_TITLE
+
+      # We should be back on the index page with one more record than before.
+      wait_for_page(final_url)
+      assert_flash('SUCCESS')
+      assert_valid_page(heading: INDEX_TITLE)
       assert_search_count(CONTROLLER, total: (total += 1))
 
     end
@@ -263,8 +265,8 @@ class UploadsTest < ApplicationSystemTestCase
 
       # Not available anonymously; successful sign-in should redirect back.
       visit start_url
-      assert_flash alert: AUTH_FAILURE
-      sign_in_as @user
+      assert_flash(alert: AUTH_FAILURE)
+      sign_in_as(@user)
 
       # Change to the select menu if coming in from the index page.
       unless direct
@@ -287,14 +289,16 @@ class UploadsTest < ApplicationSystemTestCase
       # After submitting should be back on the index page with the same number
       # of records.
       form_submit
-      assert_flash 'SUCCESS'
+      assert_flash('SUCCESS')
+
+      # We should be back on the index page with the same number of records.
       if direct
         visit index_url
         screenshot
       else
-        wait_for_page final_url
+        wait_for_page(final_url)
       end
-      assert_valid_page heading: INDEX_TITLE
+      assert_valid_page(heading: INDEX_TITLE)
       assert_search_count(CONTROLLER, total: total)
 
     end
@@ -341,8 +345,8 @@ class UploadsTest < ApplicationSystemTestCase
 
       # Verify added copies on the index page.
       visit index_url
-      assert_flash alert: AUTH_FAILURE
-      sign_in_as @user
+      assert_flash(alert: AUTH_FAILURE)
+      sign_in_as(@user)
       assert_search_count(CONTROLLER, total: (total += 1))
 
       # Change to the select menu if coming in from the index page.
@@ -358,14 +362,14 @@ class UploadsTest < ApplicationSystemTestCase
       screenshot
       click_on 'Delete', match: :first, exact: true
 
-      # Should be back on the menu page.
-      wait_for_page menu_url
-      assert_flash 'SUCCESS'
+      # After deletion we should be back on the menu page.
+      wait_for_page(menu_url)
+      assert_flash('SUCCESS')
 
       # On the index page, there should be one less record than before.
       visit index_url
-      wait_for_page final_url
-      assert_valid_page heading: INDEX_TITLE
+      wait_for_page(final_url)
+      assert_valid_page(heading: INDEX_TITLE)
       assert_search_count(CONTROLLER, total: (total -= 1))
 
     end

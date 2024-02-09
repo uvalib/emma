@@ -16,7 +16,7 @@ class MetricsTest < ApplicationSystemTestCase
     run_test(__method__) do
       visit url
       assert_text 'TYPE http_server_requests_total counter'
-    end unless not_applicable "'/metrics' is handled within Rack"
+    end unless not_applicable("'/metrics' is handled within Rack")
   end
 
   test 'metrics - visit test metrics' do
@@ -25,7 +25,7 @@ class MetricsTest < ApplicationSystemTestCase
       visit url
       assert_response :success
       assert_text '{"message":"Success"}'
-    end unless not_applicable 'Capybara can only deal with HTML results'
+    end unless not_applicable('Capybara can only deal with HTML results')
   end
 
 end

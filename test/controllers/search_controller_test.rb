@@ -71,7 +71,7 @@ class SearchControllerTest < ActionDispatch::IntegrationTest
         opt = u_opt.merge(format: fmt)
         get_as(user, url, **opt, only: READ_FORMATS)
       end
-    end unless not_applicable 'EMMA Unified Search API does not support this'
+    end unless not_applicable('EMMA Unified Search API does not support this')
     # NOTE: Per SearchController#show, this endpoint can't be implemented.
   end
 

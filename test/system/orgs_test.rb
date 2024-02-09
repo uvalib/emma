@@ -49,13 +49,13 @@ class OrgsTest < ApplicationSystemTestCase
 
       # Not available anonymously; successful sign-in should redirect back.
       visit start_url
-      assert_flash alert: AUTH_FAILURE
-      sign_in_as @user
+      assert_flash(alert: AUTH_FAILURE)
+      sign_in_as(@user)
 
       # The page should show the details of the item.
       show_url
-      assert_current_url final_url
-      assert_valid_page  heading: title
+      assert_current_url(final_url)
+      assert_valid_page(heading: title)
       screenshot
 
     end
@@ -116,14 +116,14 @@ class OrgsTest < ApplicationSystemTestCase
 
       # Not available anonymously; successful sign-in should redirect back.
       visit start_url
-      assert_flash alert: AUTH_FAILURE
-      sign_in_as @user
+      assert_flash(alert: AUTH_FAILURE)
+      sign_in_as(@user)
 
       # The listing should be the first of one or more results pages with as
       # many entries as there are fixture records.
       show_url
-      assert_current_url final_url
-      assert_valid_page  heading: title
+      assert_current_url(final_url)
+      assert_valid_page(heading: title)
       screenshot
 
     end
@@ -157,8 +157,8 @@ class OrgsTest < ApplicationSystemTestCase
 
       # Not available anonymously; successful sign-in should redirect back.
       visit start_url
-      assert_flash alert: AUTH_FAILURE
-      sign_in_as @user
+      assert_flash(alert: AUTH_FAILURE)
+      sign_in_as(@user)
 
       # Change to the form page if coming in from the index page.
       unless direct
@@ -184,9 +184,11 @@ class OrgsTest < ApplicationSystemTestCase
       # After submitting should be back on the index page with one more record
       # than before.
       form_submit
-      wait_for_page final_url
-      assert_flash 'SUCCESS'
-      assert_valid_page heading: INDEX_TITLE
+
+      # We should be back on the index page with one more record than before.
+      wait_for_page(final_url)
+      assert_flash('SUCCESS')
+      assert_valid_page(heading: INDEX_TITLE)
 
     end
   end
@@ -220,8 +222,8 @@ class OrgsTest < ApplicationSystemTestCase
 
       # Not available anonymously; successful sign-in should redirect back.
       visit start_url
-      assert_flash alert: AUTH_FAILURE
-      sign_in_as @user
+      assert_flash(alert: AUTH_FAILURE)
+      sign_in_as(@user)
 
       # Change to the select menu if coming in from the index page.
       unless direct
@@ -238,14 +240,16 @@ class OrgsTest < ApplicationSystemTestCase
       # After submitting should be back on the index page with the same number
       # of records.
       form_submit
-      assert_flash 'SUCCESS'
+      assert_flash('SUCCESS')
+
+      # We should be back on the index page with the same number of records.
       if direct
         visit index_url
         screenshot
       else
-        wait_for_page final_url
+        wait_for_page(final_url)
       end
-      assert_valid_page heading: INDEX_TITLE
+      assert_valid_page(heading: INDEX_TITLE)
 
     end
   end
@@ -287,8 +291,8 @@ class OrgsTest < ApplicationSystemTestCase
 
       # Not available anonymously; successful sign-in should redirect back.
       visit start_url
-      assert_flash alert: AUTH_FAILURE
-      sign_in_as @user
+      assert_flash(alert: AUTH_FAILURE)
+      sign_in_as(@user)
 
       # Change to the select menu if coming in from the index page.
       unless direct
@@ -303,12 +307,14 @@ class OrgsTest < ApplicationSystemTestCase
 
       # After deletion we should be back on the previous page.
       click_on class: 'submit-button', match: :first
-      wait_for_page menu_url
-      assert_flash 'SUCCESS'
+
+      # After deletion we should be back on the previous page.
+      wait_for_page(menu_url)
+      assert_flash('SUCCESS')
 
       # On the index page, there should be one less record than before.
       visit index_url
-      assert_valid_page heading: INDEX_TITLE
+      assert_valid_page(heading: INDEX_TITLE)
 
     end
   end

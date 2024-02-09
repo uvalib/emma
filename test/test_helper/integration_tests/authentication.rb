@@ -192,8 +192,8 @@ module TestHelper::IntegrationTests::Authentication
       case
         when expect           then assert_html_result(expect, **opt)
         when signed_in?       then assert_html_result(:success, **opt)
-        when url_opt[:format] then assert_response(:unauthorized)
-        else                       assert_response(:redirect)
+        when url_opt[:format] then assert_response :unauthorized
+        else                       assert_response :redirect
       end
 
       # Any additional assertions provided by the caller.

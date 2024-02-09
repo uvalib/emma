@@ -12,7 +12,7 @@ class HelpControllerTest < ActionDispatch::IntegrationTest
   # ===========================================================================
 
   test 'help index' do
-    get help_index_url
+    get(help_index_url)
     assert_response :success
   end
 

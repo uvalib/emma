@@ -29,14 +29,14 @@ class UserSessionsTest < ApplicationSystemTestCase
 
       # On sign-in page '/users/sign_in' (#new_user_session_path).
       show_url
-      assert_valid_page 'Sign in'
+      assert_valid_page('Sign in')
       assert_link href: user_shibboleth_omniauth_authorize_path if SHIBBOLETH
       click_on "Sign in as #{@user}"
 
       # On dashboard page '/dashboard' (#dashboard_path).
       show_url
-      assert_valid_page 'EMMA Account Dashboard'
-      assert_flash notice: 'Signed in'
+      assert_valid_page('EMMA Account Dashboard')
+      assert_flash(notice: 'Signed in')
 
     end
   end
@@ -49,7 +49,7 @@ class UserSessionsTest < ApplicationSystemTestCase
 
       # Sign in.
       visit start_url
-      sign_in_as @user
+      sign_in_as(@user)
 
       # Go to a new page.
       visit_index :search, title: 'Advanced'

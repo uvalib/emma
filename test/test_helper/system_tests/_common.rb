@@ -67,7 +67,7 @@ module TestHelper::SystemTests::Common
   def assert_valid_page(text = nil, heading: nil, title: nil, **)
     assert_selector 'h1', text: heading if (heading ||= text)
     assert_title title                  if (title   ||= text)
-    assert_no_flash 'service error'
+    assert_no_flash('service error')
   end
 
   # Assert that the current output is JSON with the given key/value pairs.

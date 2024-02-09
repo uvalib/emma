@@ -19,7 +19,7 @@ class HomeTest < ApplicationSystemTestCase
     url = home_url
     run_test(__method__) do
       visit url
-      assert_valid_page heading: INDEX_TITLE
+      assert_valid_page(heading: INDEX_TITLE)
       screenshot
     end
   end
@@ -28,7 +28,7 @@ class HomeTest < ApplicationSystemTestCase
     url = welcome_url
     run_test(__method__) do
       visit url
-      assert_valid_page heading: INDEX_TITLE
+      assert_valid_page(heading: INDEX_TITLE)
       screenshot
     end
   end
@@ -37,7 +37,7 @@ class HomeTest < ApplicationSystemTestCase
     url = dashboard_url
     run_test(__method__) do
       visit url
-      assert_flash alert: AUTH_FAILURE
+      assert_flash(alert: AUTH_FAILURE)
       screenshot
     end
   end

@@ -23,24 +23,24 @@ class UserSessionsControllerTest < ActionDispatch::IntegrationTest
   # ===========================================================================
 
   test 'user session new - sign-in page' do
-    options = OPTIONS.merge(action: :new)
+    opt = OPTIONS.merge(action: :new)
     run_test(__method__, only: READ_FORMATS) do
-      get new_user_session_url
-      assert_result :success, **options
+      get(new_user_session_url)
+      assert_result(:success, **opt)
     end
   end
 
   test 'user session create - signing-in' do
-    options = OPTIONS
+    opt = OPTIONS
     run_test(__method__, only: READ_FORMATS) do
-      post new_user_session_url
-      assert_result :success, **options
+      post(new_user_session_url)
+      assert_result(:success, **opt)
       get_sign_out # Ensure the session is again anonymous.
     end
   end
 
   test 'user session destroy - sign-out as anonymous' do
-    # options = OPTIONS
+    # opt = OPTIONS
     run_test(__method__, only: READ_FORMATS) do
       get_sign_out(follow_redirect: false)
       assert_redirected_to welcome_url
@@ -48,7 +48,7 @@ class UserSessionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'user session - sign in and out test_dso_1' do
-    options = {}
+    opt = {}
     run_test(__method__, only: READ_FORMATS) do
 
       # The session should start as anonymous.
@@ -58,21 +58,21 @@ class UserSessionsControllerTest < ActionDispatch::IntegrationTest
       get_sign_in_as(@user, follow_redirect: false)
       assert_redirected_to dashboard_url
       follow_redirect!
-      assert_result :success, **options
+      assert_result(:success, **opt)
       assert signed_in?
 
       # Sign out.
       get_sign_out(follow_redirect: false)
       assert_redirected_to welcome_url
       follow_redirect!
-      assert_result :success, **options
+      assert_result(:success, **opt)
       assert not_signed_in?
 
     end
   end
 
   test 'user session create - double sign-in' do
-    options = {}
+    opt = {}
     run_test(__method__, only: READ_FORMATS) do
 
       # The session should start as anonymous.
@@ -80,12 +80,12 @@ class UserSessionsControllerTest < ActionDispatch::IntegrationTest
 
       # Sign in.
       get_sign_in_as(@user)
-      assert_result :success, **options
+      assert_result(:success, **opt)
       assert signed_in?
 
       # Attempt a second sign-in.
       get_sign_in_as(@user)
-      assert_result :forbidden, **options
+      assert_result(:forbidden, **opt)
       assert signed_in?
 
       # Ensure the session is again anonymous.

@@ -38,7 +38,7 @@ module TestHelper::SystemTests::Form
     screenshot
 
     # If all required fields have been filled then submit will be visible.
-    click_on(label, class: 'submit-button', match: :first, exact: true, **opt)
+    click_on label, class: 'submit-button', match: :first, exact: true, **opt
   end
 
 end
