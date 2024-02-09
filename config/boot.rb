@@ -399,7 +399,13 @@ end
 
 ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../Gemfile', __dir__)
 
-require 'bundler/setup' # Set up gems listed in the Gemfile.
-require 'bootsnap/setup' if not_deployed?
+# Set up gems listed in the Gemfile.
+require 'bundler/setup'
 
-STDERR.puts 'Starting Rails...' if rails_application?
+# Set up bootsnap caching on the desktop.
+if not_deployed?
+  ENV['BOOTSNAP_CACHE_DIR'] = CACHE_DIR
+  require 'bootsnap/setup'
+end
+
+STDERR.puts "Starting #{ENV['RAILS_ENV']} Rails..." if rails_application?

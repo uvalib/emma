@@ -1,10 +1,12 @@
-# Temporary directory.
+# Cache directory for the current execution environment.
 #
-# If provided as a relative path it will be expanded to the full absolute path.
+# @note Currently this does not affect precompiled assets (tmp/cache/assets)
+#   because extra work would be need in lib/tasks to support selectively
+#   updating public/assets according to the current execution environment.
 #
 # @type [String]
 #
-TMPDIR: String
+CACHE_DIR: String
 
 # Indicate whether Shibboleth authorization is in use.
 #

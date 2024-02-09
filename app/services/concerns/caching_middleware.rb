@@ -15,11 +15,8 @@ module CachingMiddleware
   #
   module Defaults
 
-    # Directory for caching.
-    CACHE_ROOT_DIR = File.join(TMPDIR, 'cache').freeze
-
     # Faraday cache directory for :file_store.
-    FARADAY_CACHE_DIR = File.join(CACHE_ROOT_DIR, 'faraday').freeze
+    FARADAY_CACHE_DIR = File.join(CACHE_DIR, 'faraday').freeze
 
     # Logging progname.
     LOG_NAME = 'COMM'
@@ -311,10 +308,13 @@ module CachingMiddleware
     # @return [void]
     #
     def initialize_logger
-      return                      if (log = @logger).is_a?(Logger)
-      log = log.to_s              if log.is_a?(Pathname)
-      log = File.join(TMPDIR,log) if log.is_a?(String) && !log.start_with?('/')
-      raise "expected String, got #{log.inspect}" if log && !log.is_a?(String)
+      return            if (log = @logger).is_a?(Logger)
+      log = log.to_path if log.respond_to?(:to_path)
+      if log.is_a?(String)
+        log = File.join(Dir.tmpdir, log) unless log.start_with?('/')
+      else
+        raise "expected String, got #{log.inspect}" unless log.nil?
+      end
       @logger = Log.new(log, progname: LOG_NAME)
     end
 

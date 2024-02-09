@@ -37,8 +37,9 @@ config =
     '/mnt/environment.rb'.then { |f| f if File.exist?(f) && in_local_docker? }
   end
 
-config && require(config) &&
-  rails_application? && $stderr.puts("DESKTOP ENVIRONMENT #{config.inspect}")
+if config && require(config)
+  $stderr.puts("DESKTOP ENVIRONMENT #{config.inspect}") if rails_application?
+end
 
 # =============================================================================
 # Database properties
@@ -109,18 +110,23 @@ end
 # Operational properties
 # =============================================================================
 
-# Temporary directory.
+# Cache directory for the current execution environment.
 #
-# If provided as a relative path it will be expanded to the full absolute path.
+# @note Currently this does not affect precompiled assets (tmp/cache/assets)
+#   because extra work would be need in lib/tasks to support selectively
+#   updating public/assets according to the current execution environment.
 #
 # @type [String]
 #
-TMPDIR =
-  if defined?(Rails)
-    Dir.tmpdir.sub(%r{^([^/])}, Rails.root.join('\1').to_path)
-  else
-    File.expand_path(Dir.tmpdir, File.absolute_path('..'))
-  end.freeze
+CACHE_DIR =
+  [ENV['CACHE_DIR'], ENV['BOOTSNAP_CACHE_DIR'], 'tmp/cache']
+    .compact.map(&:strip).reject(&:empty?).first.then { |path|
+      case ENV['RAILS_ENV']
+        when 'development' then "#{path}-dev"
+        when 'test'        then "#{path}-test"
+        else                    path
+      end
+    }.freeze
 
 # =============================================================================
 # Authorization properties

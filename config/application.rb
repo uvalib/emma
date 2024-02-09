@@ -51,7 +51,7 @@ module Emma
     # Caching
     # =========================================================================
 
-    # See config/environments/*.rb
+    config.cache_store = [:file_store, CACHE_DIR]
 
     # =========================================================================
     # Mailer

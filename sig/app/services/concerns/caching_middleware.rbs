@@ -2,9 +2,6 @@ module CachingMiddleware
   # Common middleware default values.
   #
   module Defaults
-    # Directory for caching.
-    CACHE_ROOT_DIR: String
-
     # Faraday cache directory for :file_store.
     FARADAY_CACHE_DIR: String
 

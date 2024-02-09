@@ -47,9 +47,7 @@ Rails.application.configure do
   # Caching
   # ===========================================================================
 
-  # Disable caching.
-  config.action_controller.perform_caching = false
-  config.cache_store = :null_store
+  # See config/application.rb
 
   # ===========================================================================
   # Mailer
