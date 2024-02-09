@@ -87,7 +87,7 @@ class Upload < ApplicationRecord
   #
   # @type [Array<Symbol>]
   #
-  ASSIGN_CONTROL_OPTIONS: symArray
+  ASSIGN_CONTROL_OPT: symArray
 
   # Update database fields, including the structured contents of the :emma_data
   # field.

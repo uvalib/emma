@@ -70,7 +70,7 @@ module AccountConcern
   public
 
   def find_or_match_keys
-    [*super, *User.field_names, *PASSWORD_KEYS].uniq
+    super(*User.field_names, *PASSWORD_KEYS)
   end
 
   # Start a new (un-persisted) User.
@@ -171,7 +171,7 @@ module AccountConcern
   def get_accounts(*terms, columns: ACCT_MATCH_KEYS, **hash_terms)
     keys  = Record::Searchable::MAKE_RELATION_OPTIONS
     opt   = normalize_sort_order!(hash_terms.extract!(*keys))
-    terms = [*terms, hash_terms].flatten.compact_blank!
+    terms = terms.push(hash_terms).flatten.compact_blank!
     terms.map! { |t| t.is_a?(Hash) ? normalize_predicates!(t) : t }
     case
       when terms.present?           then opt[:columns] = columns

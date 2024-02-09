@@ -436,10 +436,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @type [Hash{Symbol=>String}]
   #
-  BULK_LABEL = config_text_section(:upload, :bulk_options).deep_freeze
-
-  # @private
-  BULK_OPTIONS = BULK_LABEL.keys.freeze
+  BULK_OPTIONS = config_text_section(:upload, :bulk_options).deep_freeze
 
   # Generate a form with controls for uploading a file, entering metadata, and
   # submitting.
@@ -492,7 +489,7 @@ class UploadsDecorator < BaseCollectionDecorator
       cancel   = opt.delete(:cancel)
       ctrl_opt = { class: 'bulk' }
       btn_opt  = ctrl_opt.merge(action: action)
-      bulk_opt = opt.extract!(*BULK_OPTIONS)
+      bulk_opt = opt.extract!(*BULK_OPTIONS.keys)
       bulk_opt[:prefix] ||= options.title_prefix
       bulk_opt[:batch]  ||= options.batch_size
 
@@ -547,7 +544,7 @@ class UploadsDecorator < BaseCollectionDecorator
   # @see #bulk_option
   #
   def bulk_op_option(f, param, value = nil, **opt)
-    opt[:labels] ||= BULK_LABEL
+    opt[:labels] ||= BULK_OPTIONS
     bulk_option(f, param, value, **opt)
   end
 
@@ -563,7 +560,7 @@ class UploadsDecorator < BaseCollectionDecorator
   # @see #bulk_input
   #
   def bulk_op_input(f, param, value = nil, **opt)
-    opt[:labels] ||= BULK_LABEL
+    opt[:labels] ||= BULK_OPTIONS
     bulk_input(f, param, value, **opt)
   end
 

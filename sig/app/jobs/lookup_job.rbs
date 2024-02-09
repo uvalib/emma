@@ -36,7 +36,7 @@ class LookupJob < ApplicationJob
 
   JOB_TYPES: symArray
 
-  JOB_OPTIONS: symArray
+  JOB_OPT: symArray
 
   # If *true*, each worker will send a response back to the client.  Otherwise,
   # the only response the client should expect is the one from the waiter task

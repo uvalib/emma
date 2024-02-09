@@ -392,7 +392,7 @@ module BaseDecorator::List
     if field == :emma_retrievalLink
       url   = extract_url(value)
       topic = repository_for(url)
-      help  = help.many? ? [*help[0...-1], topic] : [*help, topic] if topic
+      help  = help.many? ? [*help[...-1], topic] : [*help, topic] if topic
     end
     h.help_popup(*help)
   end

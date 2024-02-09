@@ -34,25 +34,25 @@ class Paginator
   #
   # @type [Array<Symbol>]
   #
-  PAGE_KEYS = [*OFFSET_KEYS, :limit].freeze
+  PAGE_KEYS = %i[limit].concat(OFFSET_KEYS).freeze
 
   # URL parameters that are search-related but "out-of-band".
   #
   # @type [Array<Symbol>]
   #
-  PAGE_OFFSET_KEYS = [*OFFSET_KEYS, :prev_id, :prev_value].freeze
+  PAGE_OFFSET_KEYS = %i[prev_id prev_value].concat(OFFSET_KEYS).freeze
 
   # URL parameters that are search-related but "out-of-band" including :limit.
   #
   # @type [Array<Symbol>]
   #
-  PAGINATION_KEYS = [*PAGE_OFFSET_KEYS, :limit].freeze
+  PAGINATION_KEYS = %i[limit].concat(PAGE_OFFSET_KEYS).freeze
 
   # URL parameters that are not directly used in searches.
   #
   # @type [Array<Symbol>]
   #
-  NON_SEARCH_KEYS = [*PAGINATION_KEYS, :api_key, :format, :modal].freeze
+  NON_SEARCH_KEYS = %i[api_key format modal].concat(PAGINATION_KEYS).freeze
 
   # URL parameters involved in form submission.
   #
@@ -65,7 +65,7 @@ class Paginator
   #
   # @type [Array<Symbol>]
   #
-  IGNORED_FORM_KEYS = [*PAGE_KEYS, *FORM_KEYS].freeze
+  IGNORED_FORM_KEYS = (PAGE_KEYS + FORM_KEYS).freeze
 
   # ===========================================================================
   # :section:

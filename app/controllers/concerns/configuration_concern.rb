@@ -24,7 +24,7 @@ module ConfigurationConcern
   # @return [Symbol]
   #
   def config_key
-    self_class.name.underscore.split('_')[0...-1].join('_').to_sym
+    self_class.name.underscore.split('_')[...-1].join('_').to_sym
   end
 
   # Labels for item units operated on by this controller.

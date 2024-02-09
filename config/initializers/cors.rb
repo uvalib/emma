@@ -9,9 +9,13 @@
 # Handle Cross-Origin Resource Sharing (CORS) in order to accept cross-origin
 # AJAX requests. Read more: https://github.com/cyu/rack-cors
 
-CORS_OPT = { debug: DEBUG_CORS }
+# Options supplied to Rack::Cors#initialize.
+#
+# @type [Hash]
+#
+CORS_OPTIONS = { debug: DEBUG_CORS }
 
-Rails.configuration.middleware.insert_before 0, Rack::Cors, CORS_OPT do
+Rails.configuration.middleware.insert_before 0, Rack::Cors, CORS_OPTIONS do
 
   # === UVA clients
   allow do

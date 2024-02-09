@@ -123,7 +123,7 @@ class SubmissionService < ApiService
 
   public
 
-  REQUEST_OPTIONS = %i[service batch slice no_job no_async].freeze
+  REQUEST_OPT = %i[service batch slice no_job no_async].freeze
 
   # Process submitted items.
   #

@@ -95,7 +95,7 @@ module ApplicationCable::Payload
     store[:class]     ||= store.class.name
     store[:status]    ||= default_status if default_status
     store[:thread_id] ||= thread_name
-    store.except!(SubmissionService::REQUEST_OPTIONS)
+    store.except!(SubmissionService::REQUEST_OPT)
   end
 
   # payload_normalize

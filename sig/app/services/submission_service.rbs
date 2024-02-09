@@ -73,7 +73,7 @@ class SubmissionService < ApiService
     | ( Symbol                     request, ?meth: nil,    manifest: Manifest|String, **untyped opt) -> (Array[SubmissionService::Response] | Array[symHash] | Array[SubmitJob|nil] | SubmissionService::Response | symHash | SubmitJob | nil)
     | (?nil                        request,  meth: Symbol, manifest: Manifest|String, **untyped opt) -> (Array[SubmissionService::Response] | Array[symHash] | Array[SubmitJob|nil] | SubmissionService::Response | symHash | SubmitJob | nil)
 
-  REQUEST_OPTIONS: symArray
+  REQUEST_OPT: symArray
 
   # Process submitted items.
   #

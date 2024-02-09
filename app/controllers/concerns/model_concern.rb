@@ -37,19 +37,20 @@ module ModelConcern
   delegate :model_class, :model_key, :model_id_key, to: :model_options
 
   def search_records_keys
-    model_class.const_get(:SEARCH_RECORDS_OPTIONS)
+    model_class.const_get(:SEARCH_RECORDS_OPT)
   end
 
   def search_only_keys
     search_records_keys.excluding(:offset, :limit)
   end
 
-  def find_or_match_keys
-    result = [*search_records_keys, model_key, model_id_key]
-    result << :org   << :org_id
-    result << :user  << :user_id
-    result << :group << :state
-    result.uniq
+  def find_or_match_keys(*added)
+    search_records_keys.dup.push(
+      model_key, model_id_key,
+      :org,      :org_id,
+      :user,     :user_id,
+      :group,    :state
+    ).concat(added).uniq
   end
 
   # ===========================================================================
@@ -249,9 +250,10 @@ module ModelConcern
     normalize_sort_order!(opt)
 
     # Disallow experimental database WHERE predicates unless privileged.
-    filters = administrator? ? [*filters] : [:filter_predicates!, *filters]
-    filters << :filter_by_user! if opt.include?(:user_id)
-    filters << :filter_by_org!  if opt.include?(:org_id)
+    filters = filters.dup
+    filters.prepend(:filter_predicates!)  if administrator?
+    filters.append(:filter_by_user!)      if opt.include?(:user_id)
+    filters.append(:filter_by_org!)       if opt.include?(:org_id)
     filters.uniq.each do |filter|
       if respond_to?(filter)
         send(filter, opt)
@@ -406,7 +408,7 @@ module ModelConcern
     states.map!(&:to_s)
     Array.wrap(state).each do |k|
       opt_k  = opt[k] && Array.wrap(opt[k]).compact.presence
-      opt[k] = opt_k&.map!(&:to_s)&.concat(states)&.uniq || states
+      opt[k] = opt_k&.map(&:to_s)&.concat(states)&.uniq || states
     end
     opt
   end

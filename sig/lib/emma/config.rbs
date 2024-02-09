@@ -130,7 +130,7 @@ module Emma::Config
   #
   # @param [any]  key                 I18n path(s) (Symbol, String, Array)
   # @param [Hash] opt                 To #config_deep_interpolate except for
-  #                                     #CONFIG_ITEM_OPTIONS to #config_item.
+  #                                     #CONFIG_ITEM_OPT to #config_item.
   #
   # @return [Hash]                    Or the type of *fallback*.
   #

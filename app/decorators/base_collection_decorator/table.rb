@@ -180,14 +180,14 @@ module BaseCollectionDecorator::Table
   def table_heading(dark: DARK_HEAD, **opt)
     trace_attrs!(opt)
     item  = object.first || object_class.new
-    arg   = opt.extract!(*MODEL_TABLE_DATA_OPT)
+    local = opt.extract!(*MODEL_TABLE_DATA_OPT)
     inner = opt[:inner_opt] = { tag: :th, role: 'columnheader' }
-    append_css!(inner, 'pageable') if arg[:pageable]
-    append_css!(inner, 'sortable') if arg[:sortable]
-    append_css!(inner, 'partial')  if arg[:partial]
+    append_css!(inner, 'pageable') if local[:pageable]
+    append_css!(inner, 'sortable') if local[:sortable]
+    append_css!(inner, 'partial')  if local[:partial]
     # noinspection RubyMismatchedArgumentType
     decorate(item).render_table_row(**opt) { |field, prop, **f_opt|
-      sortable = arg[:sortable] && (field != :actions)
+      sortable = local[:sortable] && (field != :actions)
       table_column_label(field, prop, **f_opt, sortable: sortable)
     }.tap { |line|
       line.prepend(table_spanner(**trace_attrs_from(opt))) if dark

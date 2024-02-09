@@ -96,9 +96,9 @@ class SubmitJob < ApplicationJob
     }
   }.deep_freeze
 
-  JOB_TYPES   = JOB_STATUS.keys.freeze
+  JOB_TYPES = JOB_STATUS.keys.freeze
 
-  JOB_OPTIONS = %i[meth start status timeout deadline job_type].freeze
+  JOB_OPT   = %i[meth start status timeout deadline job_type].freeze
 
   # ===========================================================================
   # :section:
@@ -118,7 +118,7 @@ class SubmitJob < ApplicationJob
   # @see SubmitChannel::Response#TEMPLATE
   #
   def worker_task(record, request, service:, **opt)
-    job_opt  = opt.extract!(*JOB_OPTIONS)
+    job_opt  = opt.extract!(*JOB_OPT)
     meth     = job_opt[:meth]     || __method__
     start    = job_opt[:start]    || timestamp
     timeout  = job_opt[:timeout]
@@ -188,7 +188,7 @@ class SubmitJob < ApplicationJob
 
     # Extract job-related options.
     opt.except!(:meth, :job_type)
-    job_opt  = opt.extract!(*JOB_OPTIONS)
+    job_opt  = opt.extract!(*JOB_OPT)
     start    = job_opt[:start]       ||= timestamp
     job_type = job_opt[:job_type]    ||= :waiter
     manifest = job_opt[:manifest_id] ||= request.manifest_id
@@ -274,7 +274,7 @@ class SubmitJobCallbackJob < ApplicationJob
     end
     opt        = batch.properties
     opt, prop  = partition_hash(opt,  *ApplicationCable::CHANNEL_PARAMS)
-    job, resp  = partition_hash(prop, *SubmitJob::JOB_OPTIONS)
+    job, resp  = partition_hash(prop, *SubmitJob::JOB_OPT)
     end_time   = timestamp
     start_time = job[:start]    || end_time
     timeout    = job[:timeout]

@@ -188,11 +188,11 @@ end
 module TestHelper::Debugging::Trace
   include TestHelper::Debugging
 
-  PRE_OPTIONS: symArray
+  PRE_OPT: symArray
 
-  POST_OPTIONS: symArray
+  POST_OPT: symArray
 
-  TRACE_OPTIONS: symArray
+  TRACE_OPT: symArray
 
   # Override HTTP methods defined in ActionDispatch::Integration::Runner in
   # order to surround the method calls with trace debugging information.

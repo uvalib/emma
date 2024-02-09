@@ -95,9 +95,9 @@ class LookupJob < ApplicationJob
     }
   }.deep_freeze
 
-  JOB_TYPES   = JOB_STATUS.keys.freeze
+  JOB_TYPES = JOB_STATUS.keys.freeze
 
-  JOB_OPTIONS = %i[meth start status timeout deadline job_type].freeze
+  JOB_OPT   = %i[meth start status timeout deadline job_type].freeze
 
   # ===========================================================================
   # :section:
@@ -125,7 +125,7 @@ class LookupJob < ApplicationJob
   # @see LookupService::Response#TEMPLATE
   #
   def worker_task(record, service, request, **opt)
-    job_opt  = opt.extract!(*JOB_OPTIONS)
+    job_opt  = opt.extract!(*JOB_OPT)
     meth     = job_opt[:meth] ||= __method__
 
     # Perform lookup on the external service.
@@ -186,7 +186,7 @@ class LookupJob < ApplicationJob
   #
   def waiter_task(record, services, request, **opt)
     services  = Array.wrap(services)
-    job_opt   = opt.extract!(*JOB_OPTIONS)
+    job_opt   = opt.extract!(*JOB_OPT)
     timeout   = job_opt.delete(:timeout)
     meth      = job_opt[:meth]     ||= __method__
     start     = job_opt[:start]    ||= timestamp
@@ -249,7 +249,7 @@ class LookupJob < ApplicationJob
   # noinspection RubyMismatchedArgumentType
   #++
   def worker_task_completion(job_table, data, request, **opt)
-    job_opt   = opt.extract!(:job_id, :waiter_id, *JOB_OPTIONS)
+    job_opt   = opt.extract!(:job_id, :waiter_id, *JOB_OPT)
     job_id    = job_opt[:job_id]
     timeout   = job_opt[:timeout]
     start     = job_opt[:start]    || timestamp

@@ -162,9 +162,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @type [Hash{Symbol=>String}]
   #
-  BULK_LABEL: Hash[Symbol,String]
-
-  BULK_OPTIONS: symArray
+  BULK_OPTIONS: Hash[Symbol,String]
 
   # Generate a form with controls for uploading a file, entering metadata, and
   # submitting.

@@ -1,1 +1,5 @@
-CORS_OPT: symHash
+# Options supplied to Rack::Cors#initialize.
+#
+# @type [Hash]
+#
+CORS_OPTIONS: symHash

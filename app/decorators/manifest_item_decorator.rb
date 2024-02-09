@@ -616,7 +616,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     # @type [Array<Symbol>]
     #
-    SUBMIT_COLUMNS = [:controls, :item_name, *SUBMIT_STEPS.keys].freeze
+    SUBMIT_COLUMNS = %i[controls item_name].concat(SUBMIT_STEPS.keys).freeze
 
     # Submission status value CSS classes and labels.
     #

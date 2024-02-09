@@ -330,9 +330,9 @@ module TestHelper::Debugging::Trace
 
     include TestHelper::Debugging
 
-    PRE_OPTIONS   = [*SHOW_TRACE_OPT, *SHOW_PRE_SEND_OPT].freeze
-    POST_OPTIONS  = [*SHOW_TRACE_OPT, *SHOW_POST_SEND_OPT].freeze
-    TRACE_OPTIONS = [*PRE_OPTIONS, *POST_OPTIONS].uniq.freeze
+    PRE_OPT   = (SHOW_TRACE_OPT + SHOW_PRE_SEND_OPT).freeze
+    POST_OPT  = (SHOW_TRACE_OPT + SHOW_POST_SEND_OPT).freeze
+    TRACE_OPT = (PRE_OPT + POST_OPT).uniq.freeze
 
     # Override HTTP methods defined in ActionDispatch::Integration::Runner in
     # order to surround the method calls with trace debugging information.
@@ -350,9 +350,9 @@ module TestHelper::Debugging::Trace
           define_method(meth) do |*args, **opt|
             # Extract any options specific to the tracing methods.  Remaining
             # options are passed to the underlying HTTP method call.
-            trace_opt = opt.extract!(*TRACE_OPTIONS)
-            post_opt  = trace_opt.slice(*POST_OPTIONS)
-            pre_opt   = trace_opt.slice(*PRE_OPTIONS)
+            trace_opt = opt.extract!(*TRACE_OPT)
+            post_opt  = trace_opt.slice(*POST_OPT)
+            pre_opt   = trace_opt.slice(*PRE_OPT)
             # Call the underlying HTTP method between tracing output calls.
             show_pre_send(meth, args.first, **pre_opt)
             super(*args, **opt)

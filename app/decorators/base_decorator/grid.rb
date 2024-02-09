@@ -404,7 +404,7 @@ module BaseDecorator::Grid
   #
   # @type [Array<Symbol>]
   #
-  FIELD_PROPERTIES = [:max, :min, :role, *Field::SYNTHETIC_KEYS].freeze
+  FIELD_PROPERTIES = %i[max min role].concat(Field::SYNTHETIC_KEYS).freeze
 
   # grid_head_headers
   #
@@ -416,11 +416,11 @@ module BaseDecorator::Grid
     trace_attrs!(opt)
     t_opt = trace_attrs_from(opt)
     col   = positive(opt[:'aria-colindex']) || 1
-    ctls  = opt.slice(:row, :tag).merge!('aria-colindex': col)
-    ctls  = grid_head_control_headers(**ctls, **t_opt)
-    data  = opt.merge('aria-colindex': col.next)
-    data  = grid_head_data_headers(**data, **t_opt)
-    [*ctls, *data]
+    c_opt = opt.slice(:row, :tag).merge!('aria-colindex': col)
+    ctls  = grid_head_control_headers(**c_opt, **t_opt)
+    d_opt = opt.merge('aria-colindex': col.next)
+    data  = grid_head_data_headers(**d_opt, **t_opt)
+    ctls + data
   end
 
   # Render the control column header (the top left grid cell).

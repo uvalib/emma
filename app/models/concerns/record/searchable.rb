@@ -88,14 +88,14 @@ module Record::Searchable
   #
   # @type [Array<Symbol>]
   #
-  SEARCH_RECORDS_OPTIONS = %i[offset limit page groups sort].freeze
+  SEARCH_RECORDS_OPT = %i[offset limit page groups sort].freeze
 
   # URL parameters that are not directly used in searches.
   #
   # @type [Array<Symbol>]
   #
   NON_SEARCH_PARAMS =
-    (SEARCH_RECORDS_OPTIONS + Paginator::NON_SEARCH_KEYS)
+    (SEARCH_RECORDS_OPT + Paginator::NON_SEARCH_KEYS)
       .excluding(:sort).uniq.freeze
 
   # Get the records specified by either :id or :submission_id.
@@ -105,8 +105,8 @@ module Record::Searchable
   # returns the matching records.
   #
   # @param [Array<Model, String, Integer, Array>] items
-  # @param [Hash]                                 opt  To #get_relation except
-  #                                                    #SEARCH_RECORDS_OPTIONS:
+  # @param [Hash]                                 opt   To #get_relation except
+  #                                                       #SEARCH_RECORDS_OPT:
   #
   # @option opt [String,Symbol,Hash,Boolean,nil] :sort No sort if nil or false.
   # @option opt [Integer,nil]    :offset
@@ -132,7 +132,7 @@ module Record::Searchable
 
     # Define a relation for all matches (without :limit or :offset).
     opt[:meth] ||= "#{self_class}.#{__method__}"
-    arg = opt.extract!(*SEARCH_RECORDS_OPTIONS)
+    arg = opt.extract!(*SEARCH_RECORDS_OPT)
     all = get_relation(*items, **opt, sort: :id)
 
     # Generate a :groups summary if requested, returning if that was the only
@@ -179,7 +179,7 @@ module Record::Searchable
   #
   # @type [Array<Symbol>]
   #
-  GET_RELATION_OPTIONS = %i[id_key sid_key].freeze
+  GET_RELATION_OPT = %i[id_key sid_key].freeze
 
   # Generate an ActiveRecord relation for records specified by either
   # :id or :submission_id.
@@ -201,7 +201,7 @@ module Record::Searchable
   def get_relation(*items, **opt)
     terms  = []
     _meth  = opt[:meth] ||= "#{self_class}.#{__method__}"
-    arg    = opt.extract!(*GET_RELATION_OPTIONS)
+    arg    = opt.extract!(*GET_RELATION_OPT)
 
     # === Record specifiers
     id_opt = arg.compact.transform_values(&:to_sym)

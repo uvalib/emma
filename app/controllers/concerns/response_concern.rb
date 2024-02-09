@@ -76,7 +76,7 @@ module ResponseConcern
   #
   def response_tag
     @response_tag ||=
-      self.class.name.underscore.split('_')[0...-1].join('_').upcase
+      self.class.name.underscore.split('_')[...-1].join('_').upcase
   end
 
   # Display the failure on the screen -- immediately if modal, or after a

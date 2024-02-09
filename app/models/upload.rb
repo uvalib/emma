@@ -202,8 +202,8 @@ class Upload < ApplicationRecord
   #
   # @type [Array<Symbol>]
   #
-  ASSIGN_CONTROL_OPTIONS =
-    (ASSIGN_MODES + %i[base_url importer defer options]).freeze
+  ASSIGN_CONTROL_OPT =
+    %i[base_url importer defer options].concat(ASSIGN_MODES).freeze
 
   # Update database fields, including the structured contents of the :emma_data
   # field.
@@ -259,7 +259,7 @@ class Upload < ApplicationRecord
   def assign_attributes(attributes)
     __debug_items(binding)
     attributes  = attributes.fields if attributes.is_a?(Upload)
-    opt, fields = partition_hash(attributes, *ASSIGN_CONTROL_OPTIONS)
+    opt, fields = partition_hash(attributes, *ASSIGN_CONTROL_OPT)
     op_mode     = opt.slice(*ASSIGN_MODES).compact_blank!.keys.first
 
     set_model_options(opt)

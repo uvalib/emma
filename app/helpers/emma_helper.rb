@@ -71,22 +71,19 @@ module EmmaHelper
     final:      'and',
     **
   )
+    separator   = "#{separator} " if %w[ , ; ].include?(separator)
+    separator ||= ' '
     list =
       emma_partners(type).map { |key, partner|
         name = partner&.dig(:name) || partner&.dig(:tag) || key.to_s.upcase
         name.try(:dig, mode) || name
       }.compact
-    separator += ' ' if %w[ , ; ].include?(separator)
-    separator ||= ' '
-    if mode == :brief
+    if (mode == :brief) || !final || !list.many?
       list.join(separator)
-    elsif list.size < 3
-      final = ' ' + final if final && !final.start_with?(/\s/)
-      final = final + ' ' if final && !final.match?(/\s$/)
-      list.join(final || separator)
+    elsif list.size == 2
+      list.join(" #{final.strip} ")
     else
-      final += ' ' if final && !final.end_with?(' ')
-      list[0...-1].join(separator) << separator << final << list[-1]
+      list[...-1].join(separator) << "#{separator}#{final.strip} " << list[-1]
     end
   end
 

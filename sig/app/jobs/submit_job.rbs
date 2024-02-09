@@ -27,7 +27,7 @@ class SubmitJob < ApplicationJob
 
   JOB_TYPES: symArray
 
-  JOB_OPTIONS: symArray
+  JOB_OPT: symArray
 
   # worker_task
   #

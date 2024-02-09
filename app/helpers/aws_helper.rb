@@ -418,7 +418,8 @@ module AwsHelper
 
   protected
 
-  NUM_SIZE_OPT = { precision: 1, significant: false, delimiter: ',' }.freeze
+  # @private
+  NUMBER_OPTIONS = { precision: 1, significant: false, delimiter: ',' }.freeze
 
   # Format a value for display.
   #
@@ -431,7 +432,7 @@ module AwsHelper
     if item.is_a?(Array)
       item.map { |v| send(__method__, v, hint) }.join(', ')
     elsif item.is_a?(Integer) && (hint == :size)
-      number_to_human_size(item, **NUM_SIZE_OPT)
+      number_to_human_size(item, **NUMBER_OPTIONS)
     elsif item.is_a?(Integer)
       number_with_delimiter(item)
     elsif item.respond_to?(:getlocal) && hint
@@ -450,14 +451,7 @@ module AwsHelper
   # @return [String]
   #
   def prefix_of(key)
-    key = key.to_s
-    if key.end_with?('/')
-      key
-    elsif key.include?('/')
-      key.split('/').tap { |a| a[-1] = nil }.join('/')
-    else
-      ''
-    end
+    key.to_s.remove(/[^\/]+$/)
   end
 
   # Sort an array of hashes based on the sort keys and their direction (forward

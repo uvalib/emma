@@ -132,10 +132,10 @@ module Emma::Config
   public
 
   # @private
-  CONFIG_ITEM_OPTIONS = %i[fallback default cfg_warn cfg_fatal].freeze
+  CONFIG_ITEM_OPT = %i[fallback default cfg_warn cfg_fatal].freeze
 
   # @private
-  I18N_OPTIONS = %i[throw raise locale].freeze
+  I18N_OPT = %i[throw raise locale].freeze
 
   # The configuration item specified by *key* or alternate *default* locations.
   #
@@ -158,8 +158,8 @@ module Emma::Config
     other = default && Array.wrap(default).compact.presence
     key   = key.to_s
     key   = "#{root}.#{key}" unless key.split('.').first == root
-    c_opt = opt.extract!(*CONFIG_ITEM_OPTIONS)
-    i_opt = opt.extract!(*I18N_OPTIONS)
+    c_opt = opt.extract!(*CONFIG_ITEM_OPT)
+    i_opt = opt.extract!(*I18N_OPT)
     if c_opt[:cfg_fatal] || c_opt[:cfg_warn] || i_opt[:raise]
       c_opt[:cfg_fatal] = false if c_opt[:cfg_warn]
       item = config_item_fetch(key, other, **c_opt, **i_opt, **opt)
@@ -185,7 +185,7 @@ module Emma::Config
       raise ArgumentError, "#{__method__}: disallowed key #{key.inspect}"
     end
     fatal = opt[:raise]
-    c_opt = opt.extract!(*CONFIG_ITEM_OPTIONS)
+    c_opt = opt.extract!(*CONFIG_ITEM_OPT)
     keys, vals = [], []
     Array.wrap(c_opt[:default]).each do |v|
       break vals << v unless v.is_a?(Symbol) # A literal (non-key) value.
@@ -231,7 +231,7 @@ module Emma::Config
   #
   def config_item_fetch(key, other = nil, **opt)
     default = ([*other, *opt[:default]].compact if other || opt[:default])
-    c_opt   = opt.extract!(*CONFIG_ITEM_OPTIONS)
+    c_opt   = opt.extract!(*CONFIG_ITEM_OPT)
     Log.warn { "#{__method__}: fallback not allowed" } if c_opt.key?(:fallback)
     opt[:default] = default if default.present?
     config_item_get(key, raise: true, **opt)
@@ -245,12 +245,12 @@ module Emma::Config
   #
   # @param [any]  key                 I18n path(s) (Symbol, String, Array)
   # @param [Hash] opt                 To #config_deep_interpolate except for
-  #                                     #CONFIG_ITEM_OPTIONS to #config_item.
+  #                                     #CONFIG_ITEM_OPT to #config_item.
   #
   # @return [Hash]                    Or the type of *fallback*.
   #
   def config_section(key, **opt)
-    c_opt = opt.extract!(*CONFIG_ITEM_OPTIONS, *I18N_OPTIONS)
+    c_opt = opt.extract!(*CONFIG_ITEM_OPT, *I18N_OPT)
     item  = config_item(key, **c_opt)
     opt.presence && config_deep_interpolate(item, **opt) || item || {}
   end
@@ -284,13 +284,13 @@ module Emma::Config
   # @param [Array<Symbol>] base
   # @param [Symbol]        item
   # @param [Hash]          opt        Optional interpolation values except
-  #                                     #CONFIG_ITEM_OPTIONS to #config_section
+  #                                     #CONFIG_ITEM_OPT to #config_section
   #
   # @return [Hash]
   #
   def config_text_section(*base, item, **opt)
     base, item = [[item], nil] if base.empty?
-    c_opt = opt.extract!(*CONFIG_ITEM_OPTIONS, *I18N_OPTIONS)
+    c_opt = opt.extract!(*CONFIG_ITEM_OPT, *I18N_OPT)
     keys  = config_text_keys(*base, item)
     vals  = keys.reverse.map { |k| config_section(k, **c_opt) }.compact_blank!
     hash  = vals.select { |v| v.is_a?(Hash) }.prepend({}).reduce(&:rmerge!)

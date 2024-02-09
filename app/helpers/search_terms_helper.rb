@@ -70,7 +70,7 @@ module SearchTermsHelper
   # @type [Array<Symbol>]
   #
   NON_SEARCH_PARAMS =
-    [*NON_SEARCH_KEYS, *Record::Searchable::SEARCH_RECORDS_OPTIONS].uniq.freeze
+    (NON_SEARCH_KEYS + Record::Searchable::SEARCH_RECORDS_OPT).uniq.freeze
 
   # Term separator for #list_search_terms.
   #

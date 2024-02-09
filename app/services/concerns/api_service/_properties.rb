@@ -43,7 +43,7 @@ module ApiService::Properties
   #
   # @type [Array<Symbol>]
   #
-  IGNORED_PARAMETERS = (ParamsHelper::IGNORED_PARAMETERS + %i[offset]).freeze
+  IGNORED_PARAMETERS = [*ParamsHelper::IGNORED_PARAMETERS, :offset].freeze
 
   # HTTP methods used by the API.
   #

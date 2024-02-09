@@ -111,11 +111,11 @@ module UploadConcern
   public
 
   def search_records_keys
-    model_class.const_get(:SEARCH_RECORDS_OPTIONS)
+    model_class.const_get(:SEARCH_RECORDS_OPT)
   end
 
   def find_or_match_keys
-    [*super, :edit_state, :edit_user].uniq
+    super(:edit_state, :edit_user)
   end
 
   # Locate and filter Upload records.

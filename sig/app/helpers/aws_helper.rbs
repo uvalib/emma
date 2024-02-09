@@ -188,7 +188,8 @@ module AwsHelper
   #
   def value_hash: (untyped item, symArray methods) -> symHash
 
-  NUM_SIZE_OPT: symHash
+  # @private
+  NUMBER_OPTIONS: symHash
 
   # Format a value for display.
   #

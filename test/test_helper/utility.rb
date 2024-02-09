@@ -467,13 +467,13 @@ module TestHelper::Utility
   #
   # @type [Array<Symbol>]
   #
-  TEST_OPT = [:expect, :meth, *RUN_TEST_OPT].freeze
+  TEST_OPT = %i[expect meth].concat(RUN_TEST_OPT).freeze
 
   # Option keys which are not URL parameters.
   #
   # @type [Array<Symbol>]
   #
-  NON_URL_PARAMETER_KEYS = [*REQUEST_OPT, *TEST_OPT].uniq.freeze
+  NON_URL_PARAMETER_KEYS = (REQUEST_OPT + TEST_OPT).uniq.freeze
 
   # For controllers whose "/index" action is actually a redirect to one or more
   # possible list actions.

@@ -63,10 +63,10 @@ module Serializable
     ].freeze
 
     # @type [Array<Module>]
-    WORK_REQUIRED = [*ENUMERABLE_TYPES, *OTHER_TYPES].freeze
+    WORK_REQUIRED = (ENUMERABLE_TYPES + OTHER_TYPES).freeze
 
     # @type [Array<Module>]
-    BASIC_TYPES = [*PERMITTED_TYPES, *ENUMERABLE_TYPES, *OTHER_TYPES].freeze
+    BASIC_TYPES = (PERMITTED_TYPES + ENUMERABLE_TYPES + OTHER_TYPES).freeze
 
     # =========================================================================
     # :section: ActiveJob::Serializers::ObjectSerializer overrides
