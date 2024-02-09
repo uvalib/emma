@@ -122,8 +122,8 @@ en:
         - upload_count:   { label: 'Submissions' }
         - manifest_count: { label: 'Manifests' }
         - role
-        - org
-        # org_id
+#       - org
+        - org_id
         - preferred_email
         - phone
         - address

@@ -17,6 +17,8 @@ module AccountConcern
 
   extend ActiveSupport::Concern
 
+  include Emma::Common
+
   include SerializationConcern
   include ModelConcern
 
