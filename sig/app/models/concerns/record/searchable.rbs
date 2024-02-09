@@ -110,14 +110,6 @@ module Record::Searchable
   #
   def get_relation: (*(String|Integer|Model|Array[String|Integer|Model]|nil) items, **untyped opt) -> ActiveRecord::Relation
 
-  # Local options consumed by #make_relation.
-  #
-  # @type [Array<Symbol>]
-  #
-  # @note From Upload::SearchMethods#MAKE_RELATION_OPTIONS
-  #
-  MAKE_RELATION_OPTIONS: symArray
-
   # make_relation
   #
   # @param [Array<String,Array,Hash>] terms
@@ -137,6 +129,12 @@ module Record::Searchable
   # @note From Upload::SearchMethods#make_relation
   #
   def make_relation: (*(String|strArray|symHash|nil) terms, sort: symHash|String|bool|nil, **untyped opt) -> ActiveRecord::Relation
+
+  # Local options consumed by #make_relation.
+  #
+  # @type [Array<Symbol>]
+  #
+  MAKE_RELATION_OPT: symArray
 
   # A table of counts for items in each state group.
   #

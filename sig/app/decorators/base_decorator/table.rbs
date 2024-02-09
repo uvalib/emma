@@ -135,7 +135,7 @@ module BaseDecorator::Table
   #
   # @param [Boolean] limited          Do not include fields that are :ignored
   #                                     or have the wrong :role.
-  # @param [Hash]    opt              Passed to #field_property_pairs and
+  # @param [Hash]    opt              Passed to #property_pairs and
   #                                     #list_field_value.
   #
   # @return [Hash{Symbol=>FieldConfig}]

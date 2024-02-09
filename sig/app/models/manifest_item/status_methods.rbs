@@ -1,7 +1,4 @@
 module ManifestItem::StatusMethods
-  # @private
-  UPDATE_STATUS_OPTS: symArray
-
   # Update status field values.
   #
   # @param [ManifestItem, Hash, nil] item   Default: self.
@@ -16,6 +13,9 @@ module ManifestItem::StatusMethods
   def update_status!
     : ( (symHash)          item, file: bool|nil, data: bool|nil, ready: bool|nil, overwrite: bool, **untyped added) -> symHash
     | (?(ManifestItem|nil) item, file: bool|nil, data: bool|nil, ready: bool|nil, overwrite: bool, **untyped added) -> ManifestItem
+
+  # @private
+  UPDATE_STATUS_OPT: symArray
 
   # Evaluate the readiness of ManifestItem for being included in a submission.
   #

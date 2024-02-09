@@ -154,9 +154,9 @@ module ManifestItemConcern
 
   # Update the indicated ManifestItem.
   #
-  # @param [*]       item             Def.: record for ModelConcern#identifier.
-  # @param [Boolean] fatal            If *false* use #update not #update!.
-  # @param [Hash]    prm              Field values except #UPDATE_STATUS_OPTS
+  # @param [any, nil] item            Def.: record for ModelConcern#identifier.
+  # @param [Boolean]  fatal           If *false* use #update not #update!.
+  # @param [Hash]     prm             Field values except #UPDATE_STATUS_OPT
   #
   # @raise [Record::NotFound]               Record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.

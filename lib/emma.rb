@@ -94,12 +94,6 @@ def require_subclasses(filename)
   require_submodules(filename)
 end
 
-# =============================================================================
-# Loader methods - include
-# =============================================================================
-
-public
-
 # Include submodules.
 #
 # @param [Class, Module] base         The class or module into which the
@@ -142,6 +136,35 @@ end
 #
 def include_and_extend_submodules(base, filename = nil, &blk)
   include_submodules(base, filename, and_extend: true, &blk)
+end
+
+# =============================================================================
+# Loader methods - metaprogramming
+# =============================================================================
+
+public
+
+# Get the named parameters of the given method.
+#
+# @param [Symbol meth
+# @param [Array<Symbol>] types
+#
+# @return [Array<Symbol>]
+#
+# == Usage Notes
+# In principle this should work in any context, but it's only been used for
+# the purpose of creating constants within module definitions.
+#
+def method_key_params(meth, types: %i[key keyreq])
+  [self, self.class].each do |tgt|
+    %i[method instance_method].each do |op|
+      if tgt.try(op.to_s.pluralize)&.include?(meth)
+        parameters = tgt.send(op, meth).parameters
+        return parameters.map { |(t, name)| name if types.include?(t) }.compact
+      end
+    end
+  end
+  raise "no #{meth.inspect} for class #{self.class} or self #{self}"
 end
 
 # =============================================================================

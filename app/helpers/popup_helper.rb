@@ -92,9 +92,6 @@ module PopupHelper
 
   protected
 
-  # @private
-  POPUP_TOGGLE_OPT = %i[title button text label]
-
   # Create a modal popup activation toggle control.
   #
   # @param [Hash, String, nil] button
@@ -125,9 +122,6 @@ module PopupHelper
       icon_button(**opt)
     end
   end
-
-  # @private
-  POPUP_PANEL_OPT = %i[hidden resize left_grab closer close controls]
 
   # Render a popup control and popup element.
   #
@@ -205,6 +199,12 @@ module PopupHelper
       close_icon << panel_content << panel_controls
     end
   end
+
+  # @private
+  POPUP_TOGGLE_OPT = method_key_params(:make_popup_toggle).freeze
+
+  # @private
+  POPUP_PANEL_OPT = method_key_params(:make_popup_panel).freeze
 
   # ===========================================================================
   # :section:

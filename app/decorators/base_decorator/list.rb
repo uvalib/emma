@@ -60,7 +60,7 @@ module BaseDecorator::List
   # Render field/value pairs.
   #
   # @param [String, nil] separator    Default: #DEFAULT_ELEMENT_SEPARATOR.
-  # @param [Hash]        opt          To #render_pair or #field_property_pairs.
+  # @param [Hash]        opt          To #render_pair or #property_pairs.
   #
   # @option opt [Integer] :index      Offset to make unique element IDs passed
   #                                     to #render_pair.
@@ -68,18 +68,17 @@ module BaseDecorator::List
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_field_values(separator: nil, **opt)
-    fvp_opt = opt.extract!(*FIELD_VALUE_PAIRS_OPT).compact_blank!
-    return ''.html_safe if blank? && fvp_opt.blank?
+    vp_opt = opt.extract!(*VALUE_PAIRS_OPT).compact_blank!
+    return ''.html_safe if blank? && vp_opt.blank?
     opt.delete(:level) # Not propagated in the general case.
 
     trace_attrs!(opt)
-    t_opt = trace_attrs_from(opt)
-
-    v_opt = opt.slice(:index, :no_fmt)
-    f_opt = opt.extract!(*FIELD_PROPERTY_PAIRS_OPT)
+    t_opt  = trace_attrs_from(opt)
+    fv_opt = opt.slice(:index, :no_fmt)
+    pp_opt = opt.extract!(*PROPERTY_PAIRS_OPT)
     separator ||= DEFAULT_ELEMENT_SEPARATOR
 
-    pairs = list_field_values(**fvp_opt, **f_opt, **v_opt, **t_opt)
+    pairs  = list_field_values(**vp_opt, **pp_opt, **fv_opt, **t_opt)
     # noinspection RubyMismatchedArgumentType
     pairs.map.with_index(1) { |(field, prop), pos|
       label = prop[:label] || labelize(field)
@@ -426,7 +425,7 @@ module BaseDecorator::List
   #
   # @param [Boolean] limited          Do not include fields that are :ignored
   #                                     or have the wrong :role.
-  # @param [Hash]    opt              Passed to #field_property_pairs and
+  # @param [Hash]    opt              Passed to #property_pairs and
   #                                     #list_field_value.
   #
   # @return [Hash{Symbol=>FieldConfig}]
@@ -435,7 +434,7 @@ module BaseDecorator::List
     trace_attrs!(opt)
     t_opt = trace_attrs_from(opt)
     v_opt = opt.extract!(:index, :no_fmt).merge!(t_opt)
-    field_property_pairs(**opt).map { |field, prop|
+    property_pairs(**opt).map { |field, prop|
       next if limited && (prop[:ignored] || !user_has_role?(prop[:role]))
       prop[:value] = list_field_value(prop[:value], field: field, **v_opt)
       [field, prop]

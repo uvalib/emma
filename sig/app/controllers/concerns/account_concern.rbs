@@ -81,7 +81,7 @@ module AccountConcern
   # @param [Array<String,Hash,Array,nil>] terms
   # @param [Array<Symbol>]                columns
   # @param [Hash]                         hash_terms  Added to *terms* except
-  #                                                     #MAKE_RELATION_OPTIONS
+  #                                                     #MAKE_RELATION_OPT
   #
   # @return [ActiveRecord::Relation<User>]
   #

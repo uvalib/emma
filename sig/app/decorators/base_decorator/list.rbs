@@ -30,7 +30,7 @@ module BaseDecorator::List
   # Render field/value pairs.
   #
   # @param [String, nil] separator    Default: #DEFAULT_ELEMENT_SEPARATOR.
-  # @param [Hash]        opt          To #render_pair or #field_property_pairs.
+  # @param [Hash]        opt          To #render_pair or #property_pairs.
   #
   # @option opt [Integer] :index      Offset to make unique element IDs passed
   #                                     to #render_pair.
@@ -154,7 +154,7 @@ module BaseDecorator::List
   #
   # @param [Boolean] limited          Do not include fields that are :ignored
   #                                     or have the wrong :role.
-  # @param [Hash]    opt              Passed to #field_property_pairs and
+  # @param [Hash]    opt              Passed to #property_pairs and
   #                                     #list_field_value.
   #
   # @return [Hash{Symbol=>FieldConfig}]

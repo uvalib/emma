@@ -88,4 +88,17 @@ class Object
   # @see #include_submodules
   #
   def include_and_extend_submodules: (Module base, ?(String|nil) filename) ?{ (Symbol, Module) -> bool } -> Array[Module]
+
+  # Get the named parameters of the given method.
+  #
+  # @param [Symbol meth
+  # @param [Array<Symbol>] types
+  #
+  # @return [Array<Symbol>]
+  #
+  # == Usage Notes
+  # In principle this should work in any context, but it's only been used for
+  # the purpose of creating constants within module definitions.
+  #
+  def method_key_params: (Symbol meth, ?types: symArray) -> symArray
 end

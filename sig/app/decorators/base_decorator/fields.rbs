@@ -55,12 +55,6 @@ module BaseDecorator::Fields
   #
   def render_json_data: ((String|anyHash|nil) value, ?outer: symHash|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # Options for #field_value_pairs.
-  #
-  # @type [Array<Symbol>]
-  #
-  FIELD_VALUE_PAIRS_OPT: symArray
-
   # Field/value pairs.
   #
   # @param [Model, Hash, nil]  item     Default: *pairs*.
@@ -71,13 +65,7 @@ module BaseDecorator::Fields
   #
   # @return [Hash]
   #
-  def field_value_pairs: (?(Model|anyHash|nil) item, ?pairs: Model|anyHash|nil, ?before: anyHash|nil, ?after: anyHash|nil, ?config: ActionConfig|nil, **untyped _ignored) -> anyHash
-
-  # Local options for #field_property_pairs.
-  #
-  # @type [Array<Symbol>]
-  #
-  FIELD_PROPERTY_PAIRS_OPT: symArray
+  def value_pairs: (?(Model|anyHash|nil) item, ?pairs: Model|anyHash|nil, ?before: anyHash|nil, ?after: anyHash|nil, ?config: ActionConfig|nil, **untyped _ignored) -> anyHash
 
   # A table of fields with their property objects.
   #
@@ -85,7 +73,7 @@ module BaseDecorator::Fields
   # @param [Array<Symbol>, nil]         only        Only matching fields.
   # @param [Array<Symbol>, nil]         except      Not matching fields.
   # @param [Symbol, Array<Symbol>, nil] field_root  Limits field configuration.
-  # @param [Hash]                       opt         To #field_value_pairs.
+  # @param [Hash]                       opt         To #value_pairs.
   #
   # @return [Hash{Symbol=>FieldConfig}]
   #
@@ -96,7 +84,19 @@ module BaseDecorator::Fields
   # the configuration for :file_data.  (This allows [:file_data][:id] to be
   # associated with the proper field configuration.)
   #
-  def field_property_pairs: (?action: String|Symbol|nil, ?only: symArray|nil, ?except: symArray|nil, ?field_root: Symbol|symArray|nil, **untyped opt) -> Hash[Symbol,FieldConfig]
+  def property_pairs: (?action: String|Symbol|nil, ?only: symArray|nil, ?except: symArray|nil, ?field_root: Symbol|symArray|nil, **untyped opt) -> Hash[Symbol,FieldConfig]
+
+  # Local options for #value_pairs.
+  #
+  # @type [Array<Symbol>]
+  #
+  VALUE_PAIRS_OPT: symArray
+
+  # Local options for #property_pairs.
+  #
+  # @type [Array<Symbol>]
+  #
+  PROPERTY_PAIRS_OPT: symArray
 
   # Field type indicators mapped on to related class(es).
   #

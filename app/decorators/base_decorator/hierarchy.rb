@@ -328,7 +328,7 @@ module BaseDecorator::Hierarchy
   # @see "en.emma.search.field_hierarchy.**.accessibility"
   #
   def field_lines(pairs, field_prop, opt)
-    field_property_pairs(pairs: pairs, **opt).map { |_field, prop|
+    property_pairs(pairs: pairs, **opt).map { |_field, prop|
       prop.merge(field_prop, row: (opt[:row] += 1))
     }.compact_blank!
   end

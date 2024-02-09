@@ -637,7 +637,7 @@ module BaseDecorator::Grid
   # @param [Symbol]      tag          Potential alternative to :td.
   # @param [String, nil] separator    Default: #DEFAULT_ELEMENT_SEPARATOR.
   # @param [String]      css          Characteristic CSS class/selector.
-  # @param [Hash]        opt          To #render_pair or #field_property_pairs.
+  # @param [Hash]        opt          To #render_pair or #property_pairs.
   #
   # @option opt [Integer] :index      Offset to make unique element IDs passed
   #                                     to #render_pair.
@@ -649,8 +649,8 @@ module BaseDecorator::Grid
   # @return [ActiveSupport::SafeBuffer]
   #
   def grid_data_cell(tag: nil, separator: nil, css: '.cell', **opt)
-    fvp_opt = opt.extract!(*FIELD_VALUE_PAIRS_OPT).compact_blank!
-    return ''.html_safe if blank? && fvp_opt.blank?
+    vp_opt = opt.extract!(*VALUE_PAIRS_OPT).compact_blank!
+    return ''.html_safe if blank? && vp_opt.blank?
 
     trace_attrs!(opt)
     t_opt = trace_attrs_from(opt)
@@ -664,16 +664,16 @@ module BaseDecorator::Grid
     opt[:index] ||= paginator.first_index
     separator   ||= DEFAULT_ELEMENT_SEPARATOR
     template      = opt.delete(:template)
-    v_opt         = opt.slice(:index, :no_fmt)
-    f_opt         = opt.extract!(*FIELD_PROPERTY_PAIRS_OPT)
+    fv_opt        = opt.slice(:index, :no_fmt)
+    pp_opt        = opt.extract!(*PROPERTY_PAIRS_OPT)
     col           = (positive(opt.delete(:'aria-colindex')) || 1) - 1
 
-    grid_field_values(**fvp_opt, **f_opt, **v_opt, **t_opt).map { |field, prop|
+    grid_field_values(**vp_opt, **pp_opt, **fv_opt, **t_opt).map { |fld, prop|
       prop.delete(:required) if template
-      hidden = undisplayed?(field)
-      label  = prop[:label] || labelize(field)
+      hidden = undisplayed?(fld)
+      label  = prop[:label] || labelize(fld)
       value  = prop[:value]
-      c_opt  = { field: field, prop: prop, col: (col += 1) }
+      c_opt  = { field: fld, prop: prop, col: (col += 1) }
       c_opt.merge!(class: 'undisplayed', 'aria-hidden': true) if hidden
       grid_data_cell_render_pair(label, value, **opt, **c_opt)
     }.compact.unshift(nil).join(separator).html_safe
@@ -682,7 +682,7 @@ module BaseDecorator::Grid
   # Fields and configurations augmented with a :value entry containing the
   # current field value.
   #
-  # @param [Hash] opt   Passed to #field_property_pairs and #grid_field_value.
+  # @param [Hash] opt         Passed to #property_pairs and #grid_field_value.
   #
   # @return [Hash{Symbol=>FieldConfig}]
   #
@@ -690,7 +690,7 @@ module BaseDecorator::Grid
     trace_attrs!(opt)
     t_opt = trace_attrs_from(opt)
     v_opt = opt.extract!(:index, :no_fmt).merge!(t_opt)
-    field_property_pairs(**opt).map { |field, prop|
+    property_pairs(**opt).map { |field, prop|
       prop[:value] = grid_field_value(prop[:value], field: field, **v_opt)
       [field, prop]
     }.to_h

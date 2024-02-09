@@ -80,8 +80,8 @@ module BaseDecorator::Form
   # @param [String, Symbol, nil] action
   # @param [String, nil]         separator    Def: #DEFAULT_ELEMENT_SEPARATOR.
   # @param [Hash]                opt          Passed to #render_form_pair
-  #                                             except #FIELD_VALUE_PAIRS_OPT
-  #                                             to #field_value_pairs.
+  #                                             except #VALUE_PAIRS_OPT
+  #                                             to #value_pairs.
   #
   # @option opt [Integer] :index              Offset to make unique element IDs
   #                                             passed to #render_form_pair.
@@ -92,15 +92,15 @@ module BaseDecorator::Form
   # Compare with BaseDecorator::List#render_field_values
   #
   def render_form_fields(action: nil, separator: nil, **opt)
-    fvp_opt = opt.extract!(*FIELD_VALUE_PAIRS_OPT).compact_blank!
-    return ''.html_safe if blank? && fvp_opt.blank?
+    vp_opt = opt.extract!(*VALUE_PAIRS_OPT).compact_blank!
+    return ''.html_safe if blank? && vp_opt.blank?
 
     action    ||= context[:action]
     separator ||= DEFAULT_ELEMENT_SEPARATOR
-    trace_attrs!(opt)
     opt[:row]   = 0
+    trace_attrs!(opt)
 
-    field_value_pairs(**fvp_opt).map { |label, value|
+    value_pairs(**vp_opt).map { |label, value|
       next if %i[file_data emma_data].include?(label)
 
       if label.is_a?(Symbol)
@@ -773,7 +773,7 @@ module BaseDecorator::Form
   # @param [String, Symbol] action    Either :new or :edit.
   # @param [String]         css       Characteristic CSS class/selector.
   # @param [Hash]           opt       Passed to #form_with except
-  #                                     #FIELD_VALUE_PAIRS_OPT passed to
+  #                                     #VALUE_PAIRS_OPT passed to
   #                                     #render_form_fields.
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -783,11 +783,11 @@ module BaseDecorator::Form
     prepend_css!(opt, css)
     trace_attrs!(opt)
     t_opt   = trace_attrs_from(opt)
-    fvp_opt = opt.extract!(*FIELD_VALUE_PAIRS_OPT)
+    vp_opt  = opt.extract!(*VALUE_PAIRS_OPT)
     rff_opt = { action: action, no_label: true }
     form_with(model: object, **opt) do |f|
       parts  = form_hidden_fields(f)
-      parts << render_form_fields(**rff_opt, **fvp_opt, **t_opt)
+      parts << render_form_fields(**rff_opt, **vp_opt, **t_opt)
       parts << html_button(UPDATE_LABEL, class: UPDATE_CSS, **t_opt)
       parts << html_button(CANCEL_LABEL, class: CANCEL_CSS, **t_opt)
       safe_join(parts)
@@ -832,9 +832,6 @@ module BaseDecorator::Form
   # ===========================================================================
 
   public
-
-  # @private
-  FORM_BUTTON_OPTIONS = %i[action cancel label]
 
   # Control elements always visible at the top of the input form.
   #
@@ -929,7 +926,7 @@ module BaseDecorator::Form
   def form_button_tray(f = nil, *buttons, css: '.button-tray', **opt)
     trace_attrs!(opt)
     t_opt  = trace_attrs_from(opt)
-    fb_opt = opt.extract!(*FORM_BUTTON_OPTIONS)
+    fb_opt = opt.extract!(*FORM_BUTTONS_OPT)
     # noinspection RubyMismatchedArgumentType
     buttons.unshift(f) if f && !f.is_a?(ActionView::Helpers::FormBuilder)
     buttons = form_buttons(**fb_opt, **t_opt) if buttons.blank?
@@ -1055,6 +1052,13 @@ module BaseDecorator::Form
       else                              html_button(label, **opt)
     end
   end
+
+  # @private
+  FORM_BUTTON_OPT =
+    method_key_params(:form_button).append(:type).excluding(:css).freeze
+
+  # @private
+  FORM_BUTTONS_OPT = [:cancel, *FORM_BUTTON_OPT].freeze
 
   # file_input_button
   #

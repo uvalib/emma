@@ -232,15 +232,6 @@ module Record::Searchable
     make_relation(*terms, **opt)
   end
 
-  # Local options consumed by #make_relation.
-  #
-  # @type [Array<Symbol>]
-  #
-  # @note From Upload::SearchMethods#MAKE_RELATION_OPTIONS
-  #
-  MAKE_RELATION_OPTIONS =
-    %i[sort offset limit start_date end_date after before].freeze
-
   # make_relation
   #
   # @param [Array<String,Array,Hash>] terms
@@ -368,6 +359,15 @@ module Record::Searchable
       end
     end
   end
+
+  # Local options consumed by #make_relation.
+  #
+  # @type [Array<Symbol>]
+  #
+  MAKE_RELATION_OPT =
+    method_key_params(:make_relation)
+      .concat(%i[offset limit start_date end_date after before])
+      .freeze
 
   # ===========================================================================
   # :section:

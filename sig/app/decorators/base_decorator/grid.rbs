@@ -334,7 +334,7 @@ module BaseDecorator::Grid
   # @param [Symbol]      tag          Potential alternative to :td.
   # @param [String, nil] separator    Default: #DEFAULT_ELEMENT_SEPARATOR.
   # @param [String]      css          Characteristic CSS class/selector.
-  # @param [Hash]        opt          To #render_pair or #field_property_pairs.
+  # @param [Hash]        opt          To #render_pair or #property_pairs.
   #
   # @option opt [Integer] :index      Offset to make unique element IDs passed
   #                                     to #render_pair.
@@ -350,7 +350,7 @@ module BaseDecorator::Grid
   # Fields and configurations augmented with a :value entry containing the
   # current field value.
   #
-  # @param [Hash] opt   Passed to #field_property_pairs and #table_field_value.
+  # @param [Hash] opt         Passed to #property_pairs and #grid_field_value.
   #
   # @return [Hash{Symbol=>FieldConfig}]
   #

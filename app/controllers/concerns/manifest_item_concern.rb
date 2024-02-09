@@ -258,9 +258,9 @@ module ManifestItemConcern
 
   # Update the indicated ManifestItem.
   #
-  # @param [*]       item             Def.: record for ModelConcern#identifier.
-  # @param [Boolean] fatal            If *false* use #update not #update!.
-  # @param [Hash]    prm              Field values except #UPDATE_STATUS_OPTS
+  # @param [any, nil] item            Def.: record for ModelConcern#identifier.
+  # @param [Boolean]  fatal           If *false* use #update not #update!.
+  # @param [Hash]     prm             Field values except #UPDATE_STATUS_OPT
   #
   # @raise [Record::NotFound]               Record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
@@ -272,7 +272,7 @@ module ManifestItemConcern
     keep_date = updated_at = old_values = nil
     # noinspection RubyMismatchedReturnType
     super { |record, attr|
-      opt        = attr.extract!(*ManifestItem::UPDATE_STATUS_OPTS)
+      opt        = attr.extract!(*ManifestItem::UPDATE_STATUS_OPT)
       keep_date  = !opt[:overwrite] unless opt[:overwrite].nil?
       new_fields = keep_date.nil? && attr.except(*NON_EDIT_KEYS).keys.presence
       old_values = new_fields && record.fields.slice(*new_fields)

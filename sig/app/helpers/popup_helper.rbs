@@ -52,9 +52,6 @@ module PopupHelper
   #
   def inline_popup: (?control: symHash|nil, ?panel: symHash|nil, ?css: String|nil, **untyped opt) ?{ () -> (String|strArray) } -> ActiveSupport::SafeBuffer
 
-  # @private
-  POPUP_TOGGLE_OPT: symArray
-
   # Create a modal popup activation toggle control.
   #
   # @param [Hash, String, nil] button
@@ -66,9 +63,6 @@ module PopupHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def make_popup_toggle: (?button: symHash|String|nil, ?text: String|nil, ?label: String|nil, ?type: Symbol|nil, **untyped opt) -> ActiveSupport::SafeBuffer
-
-  # @private
-  POPUP_PANEL_OPT: symArray
 
   # Render a popup control and popup element.
   #
@@ -85,6 +79,12 @@ module PopupHelper
   # @yieldreturn [String,Array<String>]
   #
   def make_popup_panel: (?hidden: bool, ?resize: bool, ?left_grab: bool, ?closer: symHash|nil, ?close: symHash|nil, **untyped opt) ?{ () -> (String|strArray) } -> ActiveSupport::SafeBuffer
+
+  # @private
+  POPUP_TOGGLE_OPT: symArray
+
+  # @private
+  POPUP_PANEL_OPT: symArray
 
   private
 

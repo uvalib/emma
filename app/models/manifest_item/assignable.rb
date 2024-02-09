@@ -40,7 +40,7 @@ module ManifestItem::Assignable
     super.tap do |result|
       unless opt[:re_validate]
         result[:field_error] = opt[:errors]
-        update_status!(result, **opt.slice(*UPDATE_STATUS_OPTS))
+        update_status!(result, **opt.slice(*UPDATE_STATUS_OPT))
       end
     end
   end

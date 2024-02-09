@@ -164,12 +164,12 @@ module AccountConcern
   # @param [Array<String,Hash,Array,nil>] terms
   # @param [Array<Symbol>]                columns
   # @param [Hash]                         hash_terms  Added to *terms* except
-  #                                                     #MAKE_RELATION_OPTIONS
+  #                                                     #MAKE_RELATION_OPT
   #
   # @return [ActiveRecord::Relation<User>]
   #
   def get_accounts(*terms, columns: ACCT_MATCH_KEYS, **hash_terms)
-    keys  = Record::Searchable::MAKE_RELATION_OPTIONS
+    keys  = Record::Searchable::MAKE_RELATION_OPT
     opt   = normalize_sort_order!(hash_terms.extract!(*keys))
     terms = terms.push(hash_terms).flatten.compact_blank!
     terms.map! { |t| t.is_a?(Hash) ? normalize_predicates!(t) : t }

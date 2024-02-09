@@ -191,7 +191,7 @@ class ManifestItem < ApplicationRecord
       data_columns = fields.except(*NON_BACKUP_COLS)
       data_values  = normalize_attributes(data_columns)
       self.field_error = data_values[:field_error]
-      update_status!(**opt.slice(*UPDATE_STATUS_OPTS))
+      update_status!(**opt.slice(*UPDATE_STATUS_OPT))
     end
   end
 

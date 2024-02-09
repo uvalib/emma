@@ -118,12 +118,6 @@ module BaseDecorator::Fields
 
   public
 
-  # Options for #field_value_pairs.
-  #
-  # @type [Array<Symbol>]
-  #
-  FIELD_VALUE_PAIRS_OPT = %i[pairs before after].freeze
-
   # Field/value pairs.
   #
   # @param [Model, Hash, nil]  item     Default: *pairs*.
@@ -134,7 +128,7 @@ module BaseDecorator::Fields
   #
   # @return [Hash]
   #
-  def field_value_pairs(
+  def value_pairs(
     item =  nil,
     pairs:  nil,
     before: nil,
@@ -177,20 +171,13 @@ module BaseDecorator::Fields
     {}.merge!(*parts)
   end
 
-  # Local options for #field_property_pairs.
-  #
-  # @type [Array<Symbol>]
-  #
-  FIELD_PROPERTY_PAIRS_OPT =
-    (%i[action only except field_root] + FIELD_VALUE_PAIRS_OPT).freeze
-
   # A table of fields with their property objects.
   #
   # @param [String, Symbol, nil]        action
   # @param [Array<Symbol>, nil]         only        Only matching fields.
   # @param [Array<Symbol>, nil]         except      Not matching fields.
   # @param [Symbol, Array<Symbol>, nil] field_root  Limits field configuration.
-  # @param [Hash]                       opt         To #field_value_pairs.
+  # @param [Hash]                       opt         To #value_pairs.
   #
   # @return [Hash{Symbol=>FieldConfig}]
   #
@@ -204,7 +191,7 @@ module BaseDecorator::Fields
   #--
   # noinspection RubyMismatchedArgumentType
   #++
-  def field_property_pairs(
+  def property_pairs(
     action:     nil,
     only:       nil,
     except:     nil,
@@ -214,7 +201,7 @@ module BaseDecorator::Fields
     action &&= action.to_sym
     only   &&= Array.wrap(only).presence
     except &&= Array.wrap(except).presence
-    field_value_pairs(**opt).map { |k, v|
+    value_pairs(**opt).map { |k, v|
 
       field, value, prop = k, v, nil
       if v.is_a?(Symbol)
@@ -246,6 +233,19 @@ module BaseDecorator::Fields
 
     }.compact.to_h
   end
+
+  # Local options for #value_pairs.
+  #
+  # @type [Array<Symbol>]
+  #
+  VALUE_PAIRS_OPT = method_key_params(:value_pairs).freeze
+
+  # Local options for #property_pairs.
+  #
+  # @type [Array<Symbol>]
+  #
+  PROPERTY_PAIRS_OPT =
+    method_key_params(:property_pairs).concat(VALUE_PAIRS_OPT).freeze
 
   # ===========================================================================
   # :section:

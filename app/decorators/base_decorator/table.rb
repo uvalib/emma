@@ -222,7 +222,7 @@ module BaseDecorator::Table
   #
   # @param [Boolean] limited          Do not include fields that are :ignored
   #                                     or have the wrong :role.
-  # @param [Hash]    opt              Passed to #field_property_pairs and
+  # @param [Hash]    opt              Passed to #property_pairs and
   #                                     #table_field_value.
   #
   # @return [Hash{Symbol=>FieldConfig}]
@@ -232,7 +232,7 @@ module BaseDecorator::Table
     t_opt = trace_attrs_from(opt)
     v_opt = opt.extract!(:index, :no_fmt).merge!(t_opt)
     opt[:config] ||= model_table_fields
-    field_property_pairs(**opt).map { |field, prop|
+    property_pairs(**opt).map { |field, prop|
       next if limited && (prop[:ignored] || !user_has_role?(prop[:role]))
       prop[:value] = table_field_value(prop[:value], field: field, **v_opt)
       [field, prop]

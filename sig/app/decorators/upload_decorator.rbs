@@ -310,7 +310,7 @@ class UploadDecorator
   # Fields and configurations augmented with a :value entry containing the
   # current field value.
   #
-  # @param [Hash] opt   Passed to #field_property_pairs and #table_field_value.
+  # @param [Hash] opt   Passed to #property_pairs and #table_field_value.
   #
   # @return [Hash{Symbol=>FieldConfig}]
   #

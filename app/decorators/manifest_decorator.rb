@@ -535,6 +535,7 @@ class ManifestDecorator
   #
   def form_buttons(**opt)
     trace_attrs!(opt)
+    opt[:action]          ||= context[:action] || DEFAULT_FORM_ACTION
     opt[:'data-manifest'] ||= object.id
     buttons = super
     buttons << submission_button(**opt)
@@ -670,6 +671,7 @@ class ManifestDecorator
   #
   def comm_status(css: '.comm-status', status: nil, **opt)
     opt[:role] = 'status' unless opt.key?(:role)
+    opt.except!(*FORM_BUTTON_OPT)
     prepend_css!(opt, css, status)
     html_div(**opt) do
       STATUS_MESSAGE.map { |type, text| html_span(text, class: type) }

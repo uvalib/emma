@@ -16,9 +16,6 @@ module ManifestItem::StatusMethods
 
   public
 
-  # @private
-  UPDATE_STATUS_OPTS = %i[file data ready overwrite].freeze
-
   # Update status field values.
   #
   # @param [ManifestItem, Hash, nil] item   Default: self.
@@ -48,6 +45,9 @@ module ManifestItem::StatusMethods
     # noinspection RubyMismatchedReturnType
     item
   end
+
+  # @private
+  UPDATE_STATUS_OPT = method_key_params(:update_status!).freeze
 
   # Evaluate the readiness of ManifestItem for being included in a submission.
   #
