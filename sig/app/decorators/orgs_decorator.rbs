@@ -5,4 +5,12 @@
 #   @return [Array<Org>]
 #
 class OrgsDecorator < BaseCollectionDecorator
+  # By default, organization listings are not :pageable -- that is, all items
+  # matching the search criteria are expected to be rendered in a table which
+  # is client-side sortable.
+  #
+  # @param [ActiveRecord::Relation, Paginator, Array, nil] obj
+  # @param [Hash]                                          opt
+  #
+  def initialize: (?(ActiveRecord::Relation|Paginator|Array[ActiveRecord::Base]|ActiveRecord::Base|nil) obj, **untyped opt) -> void
 end

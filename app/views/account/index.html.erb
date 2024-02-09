@@ -4,7 +4,7 @@
 
   view_debug(__FILE__)
 
-  dec     = AccountsDecorator.new(**context, pageable: false)
+  dec     = AccountsDecorator.new(**context)
   list    = dec.object
 
   help  ||= dec.help_topic

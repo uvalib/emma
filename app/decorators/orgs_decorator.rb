@@ -19,6 +19,24 @@ class OrgsDecorator < BaseCollectionDecorator
 
   collection_of OrgDecorator
 
+  # ===========================================================================
+  # :section: BaseCollectionDecorator overrides
+  # ===========================================================================
+
+  public
+
+  # By default, organization listings are not :pageable -- that is, all items
+  # matching the search criteria are expected to be rendered in a table which
+  # is client-side sortable.
+  #
+  # @param [ActiveRecord::Relation, Paginator, Array, nil] obj
+  # @param [Hash]                                          opt
+  #
+  def initialize(obj = nil, **opt)
+    opt[:pageable] = false unless opt.key?(:pageable)
+    super
+  end
+
 end
 
 __loading_end(__FILE__)

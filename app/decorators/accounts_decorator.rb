@@ -20,6 +20,24 @@ class AccountsDecorator < BaseCollectionDecorator
   collection_of AccountDecorator
 
   # ===========================================================================
+  # :section: BaseCollectionDecorator overrides
+  # ===========================================================================
+
+  public
+
+  # By default, account listings are not :pageable -- that is, all items
+  # matching the search criteria are expected to be rendered in a table which
+  # is client-side sortable.
+  #
+  # @param [ActiveRecord::Relation, Paginator, Array, nil] obj
+  # @param [Hash]                                          opt
+  #
+  def initialize(obj = nil, **opt)
+    opt[:pageable] = false unless opt.key?(:pageable)
+    super
+  end
+
+  # ===========================================================================
   # :section: BaseCollectionDecorator::Form overrides
   # ===========================================================================
 
