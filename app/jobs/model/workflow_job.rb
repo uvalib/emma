@@ -57,7 +57,7 @@ class Model::WorkflowJob < ApplicationJob
 
   public
 
-  PERFORM_OPTS = %i[receiver meth callback].freeze
+  PERFORM_OPT = %i[receiver meth callback].freeze
 
   # Run the command(s) specified by the model.
   #
@@ -99,25 +99,26 @@ class Model::WorkflowJob < ApplicationJob
   def perform(*args)
     __debug_items(binding)
 
-    opt, meth_opt = partition_hash(args.extract_options!, *PERFORM_OPTS)
-    model    = args.shift || opt[:receiver] # TODO: :receiver?
-    meth     = args.shift || opt[:meth]
-    callback = args.shift || opt[:callback]
+    opt   = args.extract_options!.dup
+    local = opt.extract!(*PERFORM_OPT)
+    model = args.shift || local[:receiver] # TODO: :receiver?
+    meth  = args.shift || local[:meth]
+    cb    = args.shift || local[:callback]
 
     warn = fail = nil
     if model && meth
       __debug_job('START') do
-        { model: model, meth: meth, callback: callback, from: meth_opt[:from] }
+        { model: model, meth: meth, callback: cb, from: opt[:from] }
           .transform_values { |v| item_inspect(v) }
       end
-      __output "..................... perform | BEFORE #{model.class}.#{meth}(#{meth_opt.inspect}) | callback = #{callback.inspect}"
-      result = model.send(meth, **meth_opt)
-      __output "..................... perform | AFTER  #{model.class}.#{meth}(#{meth_opt.inspect}) | callback = #{callback.inspect}"
-      perform_callback(callback, from: model) if callback && result
+      __output "..................... perform | BEFORE #{model.class}.#{meth}(#{opt.inspect}) | callback = #{cb.inspect}"
+      result = model.send(meth, **opt)
+      __output "..................... perform | AFTER  #{model.class}.#{meth}(#{opt.inspect}) | callback = #{cb.inspect}"
+      perform_callback(cb, from: model) if cb && result
       __debug_job('END') do
         { result: item_inspect(result) }
       end
-    elsif callback
+    elsif cb
       warn = 'no model/method; only callback'
     elsif model && !meth
       fail = "missing method for model #{model.inspect}"

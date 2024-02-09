@@ -91,11 +91,10 @@ module AwsHelper
   #
   def html_s3_bucket_table(table, **opt)
     opt.except!(:erb, :html)
-    render_opt = remainder_hash!(opt, *AWS_RENDER_OPT)
-    render_opt = s3_bucket_params if render_opt.blank?
-    render_opt.merge!(opt)
+    bucket_opt = opt.slice!(*AWS_RENDER_OPT).presence || s3_bucket_params
+    bucket_opt.merge!(opt)
     table.map { |bucket, objects|
-      render_s3_bucket(bucket, objects, **render_opt)
+      render_s3_bucket(bucket, objects, **bucket_opt)
     }.join("\n").html_safe
   end
 
@@ -113,12 +112,11 @@ module AwsHelper
   #
   def json_s3_bucket_table(table, **opt)
     for_erb    = opt.delete(:erb)
-    render_opt = remainder_hash!(opt, *AWS_RENDER_OPT)
-    render_opt = s3_bucket_params if render_opt.blank?
-    render_opt.merge!(opt).merge!(html: false)
+    bucket_opt = opt.slice!(*AWS_RENDER_OPT).presence || s3_bucket_params
+    bucket_opt.merge!(opt).merge!(html: false)
     result =
       table.map { |bucket, objects|
-        [bucket, render_s3_bucket(bucket, objects, **render_opt)]
+        [bucket, render_s3_bucket(bucket, objects, **bucket_opt)]
       }.to_h.to_json
     for_erb ? result.delete_prefix('{').delete_suffix('}').html_safe : result
   end
@@ -139,13 +137,12 @@ module AwsHelper
     serializer = opt.delete(:serializer) || AwsS3::Api::Serializer::Xml.new
     xml_opt    = { serializer: serializer }
     for_erb    = opt.delete(:erb)
-    render_opt = remainder_hash!(opt, *AWS_RENDER_OPT)
-    render_opt = s3_bucket_params if render_opt.blank?
-    render_opt.merge!(opt).merge!(html: false)
+    bucket_opt = opt.slice!(*AWS_RENDER_OPT).presence || s3_bucket_params
+    bucket_opt.merge!(opt).merge!(html: false)
     result =
       table.map do |bucket, objects|
         html_tag(:bucket, name: bucket) do
-          render_s3_bucket(bucket, objects, **render_opt).map do |object|
+          render_s3_bucket(bucket, objects, **bucket_opt).map do |object|
             html_tag(:object, name: object[:key]) do
               make_xml(object, **xml_opt).html_safe
             end
@@ -200,99 +197,82 @@ module AwsHelper
   # @return [Array<Hash>]                           If *html* is *false*.
   #
   #--
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+  # noinspection RubyMismatchedArgumentType
   #++
   def render_s3_bucket(bucket, objects, css: '.aws-bucket', **opt)
-    html_opt = remainder_hash!(opt, *AWS_BUCKET_OPT)
-    after    = opt[:after]&.to_datetime
-    before   = opt[:before]&.to_datetime
-    prefix   = opt[:prefix]&.to_s
-    prefix   = "#{prefix}/" if prefix && !prefix.end_with?('/')
-    limit    = opt[:prefix_limit]&.to_i
-    limit    = S3_PREFIX_LIMIT if limit.nil? || limit.is_a?(TrueClass)
-    limit    = nil if limit.is_a?(Numeric) && limit.negative?
-    title    = opt[:heading]
-    html     = !false?(opt[:html])
-    obj_opt  = (opt[:object] || {}).merge(html: html)
-    parts    = []
-
-    # Generate a heading if a bucket (name) was provided.
-    if html && (title || bucket)
-      name    = bucket.is_a?(Aws::S3::Bucket) ? bucket.name : bucket
-      title ||= name
-      parts <<
-        html_h3(class: 'aws-bucket-hdg', id: "##{name}") do
-          html_span(title) << s3_bucket_link(name)
-        end
-      skip_nav_append(title => name)
-    end
+    local  = opt.extract!(*AWS_BUCKET_OPT)
+    after  = local[:after].try(:to_datetime)
+    before = local[:before].try(:to_datetime)
+    prefix = local[:prefix]&.to_s
+    prefix = "#{prefix}/" if prefix && !prefix.end_with?('/')
+    limit  = local[:prefix_limit]
+    limit  = S3_PREFIX_LIMIT if limit.nil? || limit.is_a?(TrueClass)
+    limit  = positive(limit)
+    html   = !false?(local[:html])
+    o_opt  = (local[:object] || {}).merge(html: html)
 
     # Transform object instances into value hashes and eliminate non-matches.
-    objects.map! { |obj| s3_object_values(obj) }
-    objects.reject! do |obj|
-      m = obj[:last_modified]
-      (m.nil? || (m < after)  if after)  ||
-      (m.nil? || (m > before) if before) ||
-      (obj[:prefix] != prefix if prefix)
-    end
-    objects.compact!
+    objects.map! { |obj|
+      obj = s3_object_values(obj)
+      p, date = obj.values_at(:prefix, :last_modified)
+      next if prefix && (p != prefix)
+      next if after  && (date.nil? || (date < after))
+      next if before && (date.nil? || (date > before))
+      obj
+    }.compact!
 
     # Transform the object instances into a sorted array of value hashes.
-    sort_objects!(objects, opt[:sort])
-
-    # Prepare for per-prefix limits.
-    total = {}
-    if limit
-      objects.each do |obj|
-        p = obj[:prefix]
-        total[p] = total[p].to_i + 1
-      end
-    end
+    sort_objects!(objects, local[:sort])
 
     # Render each object as HTML.
-    prev    = nil
-    count   = 0
-    objects.map! do |obj|
-      start = ((obj[:prefix] != prev) if prev)
-      prev  = obj[:prefix] || ''
-      count = 0 if start
-      count += 1
-      if limit && (count > limit)
-        more = (count == (limit + 1)) ? (total[obj[:prefix]] - count + 1) : 0
+    total = limit ? objects.map { |obj| obj[:prefix] }.tally : {}
+    prev  = nil
+    row   = 0
+    objects.map! { |obj|
+      p     = obj[:prefix]
+      start = ((p != prev) if prev)
+      prev  = p || ''
+      row   = start ? 0 : row.succ
+      if limit && (row > limit)
+        more = (row == limit.succ) ? (total[p] - row + 1) : 0
         next unless more.positive?
         more = config_text(:aws, :bucket, :more, count: more)
         more = link_to(more, '#') if html # TODO: JavaScript
         obj  = { prefix: more }
       end
-      render_s3_object_row(obj, section: start, row: count, **obj_opt)
-    end
-    objects.compact!
+      render_s3_object_row(obj, section: start, row: row, **o_opt)
+    }.compact!
 
     # Produce a placeholder if no objects are present at this point.
     if objects.blank?
-      after  &&= after.to_date
-      before &&= before.to_date
       label =
-        if after && before
-          "NONE BETWEEN #{after} and #{before}"
-        elsif after
-          "NONE AFTER #{after}"
-        elsif before
-          "NONE BEFORE #{before}"
+        case
+          when after && before then "NONE BETWEEN #{after} and #{before}"
+          when after           then "NONE AFTER #{after}"
+          when before          then "NONE BEFORE #{before}"
         end
       objects << render_s3_object_placeholder(label: label, html: html)
     end
 
     # Return the hashes themselves if not rendering HTML.
+    # noinspection RubyMismatchedReturnType
     return objects unless html
 
-    # Prepend column headings.
-    column_headings = render_s3_object_headings(**obj_opt)
-    objects.unshift(column_headings)
+    # Generate a heading if a bucket (name) was provided.
+    parts = []
+    title = local[:heading]
+    if title || bucket
+      name  = bucket.is_a?(Aws::S3::Bucket) ? bucket.name : bucket
+      title = name if title.blank?
+      skip_nav_append(title => name)
+      title = html_span(title) << s3_bucket_link(name)
+      parts << html_h3(title, class: 'aws-bucket-hdg', id: "##{name}")
+    end
 
-    # Generate the table of objects.
-    prepend_css!(html_opt, css)
-    parts << html_div(objects, **html_opt)
+    # Generate the table of objects with column headings.
+    column_headings = render_s3_object_headings(**o_opt)
+    prepend_css!(opt, css)
+    parts << html_div(column_headings, *objects, **opt)
 
     safe_join(parts, "\n")
   end

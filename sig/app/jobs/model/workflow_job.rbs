@@ -5,7 +5,7 @@ class Model::WorkflowJob < ApplicationJob
   # @private
   CLASS: Class
 
-  PERFORM_OPTS: symArray
+  PERFORM_OPT: symArray
 
   def initialize: (*untyped args, **untyped opt) -> void
 

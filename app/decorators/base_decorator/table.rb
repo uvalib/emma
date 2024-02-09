@@ -40,7 +40,7 @@ module BaseDecorator::Table
   #
   # @type [Array<Symbol>]
   #
-  MODEL_TABLE_OPTIONS = [
+  MODEL_TABLE_OPT = [
     :model,
     MODEL_TABLE_DATA_OPT  = %i[partial pageable sortable],
     MODEL_TABLE_HEAD_OPT  = %i[sticky dark],
@@ -148,7 +148,7 @@ module BaseDecorator::Table
   #
   # @type [Array<Symbol>]
   #
-  RENDER_TABLE_OPTIONS = [*MODEL_TABLE_OPTIONS, :except, :sort].freeze
+  RENDER_TABLE_OPT = %i[except sort].concat(MODEL_TABLE_OPT).freeze
 
   # Render the object for use within a table of items.
   #
@@ -168,25 +168,24 @@ module BaseDecorator::Table
   def render_table_row(row: 1, col: 1, **opt, &blk)
     trace_attrs!(opt)
     t_opt = trace_attrs_from(opt)
-    arg   = opt.extract!(:tag, :outer_tag, :inner_tag, :outer_opt, :inner_opt)
+    local = opt.extract!(:tag, :outer_tag, :inner_tag, :outer_opt, :inner_opt)
+    table = for_html_table?(local[:tag]) # If not rendering HTML table.
 
     # Get options for outer (row) and inner (column cell) elements.
-    o_opt = (arg[:outer_opt] || {}).merge('aria-rowindex': row)
-    i_opt = (arg[:inner_opt] || {})
+    o_opt = (local[:outer_opt] || {}).merge('aria-rowindex': row)
+    i_opt = (local[:inner_opt] || {}).merge(opt.except!(*RENDER_TABLE_OPT))
 
     # Get outer and inner element tags.
-    table = for_html_table?(arg[:tag]) # If not rendering HTML table.
     o_tag = o_opt.delete(:tag)
-    o_tag = arg[:outer_tag] || o_tag || (table ? :tr : :div)
+    o_tag = local[:outer_tag] || o_tag || (table ? :tr : :div)
     i_tag = i_opt.delete(:tag)
-    i_tag = arg[:inner_tag] || i_tag || (table ? :td : :div)
+    i_tag = local[:inner_tag] || i_tag || (table ? :td : :div)
 
     pairs = table_field_values(**opt)
     first = col
     last  = first + pairs.size - 1
 
     html_tag(o_tag, **o_opt, **t_opt) do
-      i_opt.merge!(opt.except!(*RENDER_TABLE_OPTIONS))
       pairs.map.with_index(first) do |(field, prop), c|
         # noinspection RubyMismatchedArgumentType
         rc_opt = model_rc_options(field, row, c, i_opt)

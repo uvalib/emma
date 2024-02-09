@@ -37,7 +37,7 @@ module ApiService::Properties
   #
   # @type [Array<Symbol>]
   #
-  SERVICE_OPTIONS = %i[fatal no_exception no_redirect].freeze
+  SERVICE_OPT = %i[fatal no_exception no_redirect].freeze
 
   # Original request parameters which should not be passed on to the API.
   #

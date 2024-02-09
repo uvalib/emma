@@ -34,7 +34,7 @@ module BaseCollectionDecorator::Form
   def delete_form(label: nil, outer: nil, css: '.model-form.delete', **opt)
     trace_attrs!(opt)
     t_opt     = trace_attrs_from(opt)
-    inner_opt = remainder_hash!(opt, :cancel, *delete_submit_option_keys)
+    inner_opt = opt.slice!(:cancel, *delete_submit_option_keys)
 
     cancel    = delete_cancel_button(url: opt[:cancel], **t_opt)
     submit    = delete_submit_button(label: label, **opt, **t_opt)

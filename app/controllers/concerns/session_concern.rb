@@ -224,7 +224,7 @@ module SessionConcern
     k_chars = 6 # extra characters for JSON key representation ('"" => ')
     v_chars = 4 # extra characters for JSON value representation ('"", ')
     h_chars = 2 # extra characters for JSON hash representation ('{}')
-    result  = extract_hash!(h, *LAST_OP_NO_ABBREV).stringify_keys!
+    result  = h.extract!(*LAST_OP_NO_ABBREV).stringify_keys!
     size    = escaped_value(result).size
     h.transform_keys! { |k| abbreviate_param(k, p_max: (p_max - k_chars)) }
     while (size - h_chars + escaped_value(h).size) > max do

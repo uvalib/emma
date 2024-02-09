@@ -524,9 +524,9 @@ module LayoutHelper::SearchFilters
   #
   # @type [Array<Symbol>]
   #
-  # @see GridHelper#GRID_OPTS
+  # @see GridHelper#GRID_OPT
   #
-  MENU_OPTS = [:target, :label, :selected, *GRID_OPTS].freeze
+  MENU_OPT = %i[target label selected].concat(GRID_OPT).freeze
 
   # An empty placeholder for a menu position.
   #
@@ -688,7 +688,7 @@ module LayoutHelper::SearchFilters
   # @param [Boolean, nil]        disabled
   # @param [String]              css        Characteristic CSS class/selector.
   # @param [Hash]                opt        Passed to #search_form except for
-  #                                           #MENU_OPTS and:
+  #                                           #MENU_OPT and:
   #
   # @option opt [any, nil] :default         Provided default value.
   # @option opt [Hash]     :config          Pre-fetched menu configuration.
@@ -707,22 +707,20 @@ module LayoutHelper::SearchFilters
     css:      '.menu-control',
     **opt
   )
-    target    = search_target(target) or return
-    html_opt  = remainder_hash!(opt, :config, :default, *MENU_OPTS)
-    config    = opt[:config]  || current_menu_config(menu_name, target: target)
-    pairs     = config[:menu] || []
-    default   = opt.key?(:default) ? opt[:default] : config[:default]
-    url_param = (config[:url_param] || menu_name).to_sym
-    multiple  = config[:multiple]
-    mode      = multiple ? 'multiple' : 'single'
-    any_value = ''
-    any_label =
-      config[:placeholder] || config_text(:search_filters, :placeholder)
+    target   = search_target(target) or return
+    local    = opt.slice!(:config, :default, *MENU_OPT)
+    config   = local[:config] || current_menu_config(menu_name, target: target)
+    default  = local.key?(:default) ? local[:default] : config[:default]
+    url_prm  = (config[:url_param] || menu_name).to_sym
+    pairs    = config[:menu]  || []
+    multiple = config[:multiple]
+    mode     = multiple ? 'multiple' : 'single'
 
     # If any of the selected values are not already present in the menu, append
     # them now.
-    selected ||= request_parameters[url_param] || default
-    selected = Array.wrap(selected).map(&:to_s).uniq
+    any_value  = ''
+    selected ||= request_parameters[url_prm] || default
+    selected   = Array.wrap(selected).map(&:to_s).uniq
     if selected.blank?
       selected = any_value
     else
@@ -736,6 +734,8 @@ module LayoutHelper::SearchFilters
     end
 
     # Prepend a placeholder if not present.
+    any_label =
+      config[:placeholder] || config_text(:search_filters, :placeholder)
     if default.blank? && pairs.none? { |_, value| value == any_value }
       pairs = [[any_label, any_value]] + pairs unless multiple
     end
@@ -747,14 +747,14 @@ module LayoutHelper::SearchFilters
     select_opt[:multiple]          = multiple              if multiple
     select_opt[:disabled]          = disabled              if disabled
     select_opt[:onchange]          = 'this.form.submit();' if immediate_search?
-    menu = select_tag(url_param, option_tags, select_opt)
+    menu = select_tag(url_prm, option_tags, select_opt)
 
     # Add CSS classes which indicate the position of the control.
-    prepend_grid_cell_classes!(html_opt, css, mode, **opt)
+    prepend_grid_cell_classes!(opt, css, mode, **local)
     if immediate_search?
-      search_form(target, url_param, **html_opt) { menu }
+      search_form(target, url_prm, **opt) { menu }
     else
-      html_div(**html_opt) { menu }
+      html_div(**opt) { menu }
     end
   end
 
@@ -854,8 +854,9 @@ module LayoutHelper::SearchFilters
   # @param [String, Symbol, nil] target     Search target controller.
   # @param [String, Date, nil]   selected   Date value.
   # @param [String, Symbol, nil] label_id   ID of associated label element.
+  # @param [String]              css        Characteristic CSS class/selector.
   # @param [Hash]                opt        Passed to #search_form except for
-  #                                           #MENU_OPTS and:
+  #                                           #MENU_OPT and:
   #
   # @option opt [Date, String]   :selected  Initial value.
   # @option opt [Hash]           :config    Pre-fetched configuration info.
@@ -865,24 +866,30 @@ module LayoutHelper::SearchFilters
   #
   # @see GridHelper#grid_cell_classes
   #
-  def date_control(menu_name, target: nil, selected: nil, label_id: nil, **opt)
-    css       = '.date-control'
-    target    = search_target(target) or return
-    html_opt  = remainder_hash!(opt, :config, :default, *MENU_OPTS)
-    config    = opt[:config] || current_menu_config(menu_name, target: target)
-    default   = opt.key?(:default) ? opt[:default] : config[:default]
-    url_param = (config[:url_param] || menu_name).to_sym
+  def date_control(
+    menu_name,
+    target:   nil,
+    selected: nil,
+    label_id: nil,
+    css:      '.date-control',
+    **opt
+  )
+    target  = search_target(target) or return
+    local   = opt.slice!(:config, :default, *MENU_OPT)
+    config  = local[:config] || current_menu_config(menu_name, target: target)
+    default = local.key?(:default) ? local[:default] : config[:default]
+    url_prm = (config[:url_param] || menu_name).to_sym
 
     # Get the initial value for the field.
-    value     = selected || request_parameters[url_param] || default
+    value   = selected || request_parameters[url_prm] || default
 
     # Setup the <input> element.
-    date_opt  = { 'aria-labelledby': label_id, 'data-default': default }
-    input     = date_field_tag(url_param, value, reject_blanks!(date_opt))
+    d_opt   = { 'aria-labelledby': label_id, 'data-default': default }
+    input   = date_field_tag(url_prm, value, d_opt.compact_blank!)
 
     # Add CSS classes which indicate the position of the control.
-    prepend_grid_cell_classes!(html_opt, css, **opt)
-    html_div(**html_opt) { input }
+    prepend_grid_cell_classes!(opt, css, **local)
+    html_div(**opt) { input }
   end
 
   # A label associated with a dropdown menu element.
@@ -929,7 +936,7 @@ module LayoutHelper::SearchFilters
   # A button to reset all filter menu selections to their default state.
   #
   # @param [String] css           Characteristic CSS class/selector.
-  # @param [Hash]   opt           Passed to #link_to except for #GRID_OPTS and:
+  # @param [Hash]   opt           Passed to #link_to except for #MENU_OPT and:
   #
   # @option opt [String] :url     Default from #request_parameters.
   # @option opt [String] :class   CSS classes for both spacer and button.
@@ -942,14 +949,13 @@ module LayoutHelper::SearchFilters
   # @see GridHelper#grid_cell_classes
   #
   def reset_button(css: '.menu-button.reset.preserve-width', **opt)
-    html_opt = remainder_hash!(opt, :url, :class, :label, *MENU_OPTS)
-    label    = opt[:label] || SEARCH_RESET_CONTROL[:label]
-    label    = non_breaking(label)
-    url      = opt[:url] || reset_parameters
-    url      = url_for(url) if url.is_a?(Hash)
-    html_opt[:title] ||= SEARCH_RESET_CONTROL[:tooltip]
-    prepend_grid_cell_classes!(html_opt, css, **opt)
-    link_to(label, url, **html_opt)
+    local = opt.slice!(:url, :class, :label, *MENU_OPT)
+    label = non_breaking(local[:label] || SEARCH_RESET_CONTROL[:label])
+    url   = local[:url] || reset_parameters
+    url   = url_for(url) if url.is_a?(Hash)
+    opt[:title] ||= SEARCH_RESET_CONTROL[:tooltip]
+    prepend_grid_cell_classes!(opt, css, **local)
+    link_to(label, url, **opt)
   end
 
   # URL parameters that should be cleared for the current search target.
@@ -975,8 +981,7 @@ module LayoutHelper::SearchFilters
   # A blank element used for occupying "voids" in the search control panel.
   #
   # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to #html_div except for #GRID_OPTS
-  #                                     and:
+  # @param [Hash]   opt               Passed to #html_div except #MENU_OPT and:
   #
   # @option opt [String] :class       CSS classes for both spacer and button.
   #
@@ -985,13 +990,10 @@ module LayoutHelper::SearchFilters
   # @see GridHelper#grid_cell_classes
   #
   def menu_spacer(css: '.menu-spacer', **opt)
-    html_opt = remainder_hash!(opt, :class, *MENU_OPTS)
-    html_opt[:'aria-hidden'] = true
-    opt.delete(:col_max) # Spacers shouldn't have the 'col-last' CSS class.
-
-    # Add CSS classes which indicate the position of the control.
-    prepend_grid_cell_classes!(html_opt, css, **opt)
-    html_div(HTML_SPACE, **html_opt)
+    # Spacers shouldn't have the 'col-last' CSS class.
+    local = opt.slice!(:class, *MENU_OPT).except!(:col_max)
+    prepend_grid_cell_classes!(opt, css, **local)
+    html_div(HTML_SPACE, **opt, 'aria-hidden': true)
   end
 
   # A label associated with a dropdown menu element.
@@ -1001,7 +1003,7 @@ module LayoutHelper::SearchFilters
   # @param [String, nil]         label    Label text override.
   # @param [String]              css      Characteristic CSS class/selector.
   # @param [Hash]                opt      Passed to #label_tag except for
-  #                                         #MENU_OPTS and:
+  #                                         #MENU_OPT and:
   #
   # @option opt [Hash] :config            Pre-fetched configuration info.
   #
@@ -1010,23 +1012,23 @@ module LayoutHelper::SearchFilters
   # @see GridHelper#grid_cell_classes
   #
   def control_label(name, target: nil, label: nil, css: '.menu-label', **opt)
-    html_opt = remainder_hash!(opt, :config, *MENU_OPTS)
-    config   = opt[:config] || current_menu_config(name, target: target)
-    label  ||= config[:label]
-    return ''.html_safe if label.blank?
+    # Labels shouldn't have the 'col-last' CSS class.
+    local   = opt.slice!(:config, *MENU_OPT).except!(:col_max)
+    config  = local[:config] || current_menu_config(name, target: target)
+    url_prm = (config[:url_param] || name).to_sym
 
     # Adjust label appearance.
-    if html_opt.delete(:sr_only) || false?(config[:label_visible])
-      opt[:sr_only] = true
+    label ||= config[:label]
+    return ''.html_safe if label.blank?
+    if opt.delete(:sr_only) || false?(config[:label_visible])
+      local[:sr_only] = true
     else
       label = non_breaking(label)
     end
-    opt.delete(:col_max) # Labels shouldn't have the 'col-last' CSS class.
 
     # Add CSS classes which indicate the position of the control.
-    prepend_grid_cell_classes!(html_opt, css, **opt)
-    url_param = (config[:url_param] || name).to_sym
-    label_tag(url_param, label, html_opt)
+    prepend_grid_cell_classes!(opt, css, **local)
+    label_tag(url_prm, label, opt)
   end
 
   # ===========================================================================

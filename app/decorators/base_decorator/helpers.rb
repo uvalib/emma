@@ -140,7 +140,7 @@ module BaseDecorator::Helpers
   end
 
   # @private
-  FORM_WITH_OPTIONS = %i[
+  FORM_WITH_OPT = %i[
     allow_method_names_outside_object
     authenticity_token
     builder
@@ -187,7 +187,7 @@ module BaseDecorator::Helpers
       data_opt.transform_keys! { |k| k.to_s.delete_prefix('data-').to_sym }
       opt[:data] = opt[:data]&.merge(data_opt) || data_opt
     end
-    if (html_opt = remainder_hash!(opt, *FORM_WITH_OPTIONS)).present?
+    if (html_opt = opt.slice!(*FORM_WITH_OPT)).present?
       opt[:html] = opt[:html]&.merge(html_opt) || html_opt
     end
     opt.merge!(model: model, scope: scope, url: url, format: format)

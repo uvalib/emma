@@ -22,7 +22,7 @@ module GridHelper
   #
   # @see #grid_cell_classes
   #
-  GRID_OPTS = %i[row col row_max col_max].freeze
+  GRID_OPT = %i[row col row_max col_max].freeze
 
   # ===========================================================================
   # :section:
@@ -34,7 +34,7 @@ module GridHelper
   #
   # @param [Hash] pairs               Key-value pairs to display.
   # @param [Hash] opt                 Passed to outer #html_div except for:
-  #                                     #GRID_OPTS and :wrap to #grid_table_row
+  #                                     #GRID_OPT and :wrap to #grid_table_row
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -43,7 +43,7 @@ module GridHelper
     opt[:col]     ||= 0
     opt[:row_max] ||= pairs.size
     opt[:col_max] ||= 2
-    outer_opt = remainder_hash!(opt, :wrap, :sr_only, *GRID_OPTS)
+    outer_opt = opt.slice!(:wrap, :sr_only, *GRID_OPT)
     html_div(**outer_opt) do
       pairs.map do |key, value|
         opt[:col] = 0  if opt[:col] == opt[:col_max]

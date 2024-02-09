@@ -44,41 +44,6 @@ module Emma::Common::HashMethods
     return matching, remainder
   end
 
-  # Retain the elements identified by *keys* in *hash* (that is, extract all
-  # elements except the ones matching those keys).
-  #
-  # @param [ActionController::Parameters, Hash, nil] hash
-  # @param [Array<Symbol,String,Array,nil>]          keys
-  #
-  # @return [Hash]                    The elements removed from *hash*.
-  #
-  # === Usage Notes
-  # If *hash* is something other than a ::Hash, the original item will not be
-  # changed by this method.
-  #
-  def remainder_hash!(hash, *keys)
-    keys = keys.flatten.compact_blank!.map!(&:to_sym)
-    hash = normalize_hash!(hash)
-    hash.slice!(*keys)
-  end
-
-  # Extract the elements identified by *keys* from *hash*.
-  #
-  # @param [ActionController::Parameters, Hash, nil] hash
-  # @param [Array<Symbol,String,Array,nil>]          keys
-  #
-  # @return [Hash]                    The elements removed from *hash*.
-  #
-  # === Usage Notes
-  # If *hash* is something other than a ::Hash, the original item will not be
-  # changed by this method.
-  #
-  def extract_hash!(hash, *keys)
-    keys = keys.flatten.compact_blank!.map!(&:to_sym)
-    hash = normalize_hash!(hash)
-    hash.slice(*keys).tap { |matching| hash.except!(*matching.keys) }
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -109,6 +74,8 @@ module Emma::Common::HashMethods
   # @param [ActionController::Parameters, Hash, nil] item
   #
   # @return [Hash{Symbol=>any,nil}]   Modified item itself if *item* is a Hash.
+  #
+  # @note Currently unused.
   #
   def normalize_hash!(item)
     # noinspection RubyMismatchedReturnType

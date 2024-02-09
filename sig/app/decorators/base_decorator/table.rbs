@@ -28,7 +28,7 @@ module BaseDecorator::Table
   #
   # @type [Array<Symbol>]
   #
-  MODEL_TABLE_OPTIONS:    symArray
+  MODEL_TABLE_OPT:        symArray
   MODEL_TABLE_DATA_OPT:   symArray
   MODEL_TABLE_HEAD_OPT:   symArray
   MODEL_TABLE_ENTRY_OPT:  symArray
@@ -103,7 +103,7 @@ module BaseDecorator::Table
   #
   # @type [Array<Symbol>]
   #
-  RENDER_TABLE_OPTIONS: symArray
+  RENDER_TABLE_OPT: symArray
 
   # Render the object for use within a table of items.
   #

@@ -237,7 +237,7 @@ module LayoutHelper::SearchBar
   #
   # @param [String] css                     Characteristic CSS class/selector.
   # @param [Hash]   opt                     Passed to #select_tag except for
-  #                                           #MENU_OPTS and:
+  #                                           #MENU_OPT and:
   #
   # @option opt [String, Symbol]  :target
   # @option opt [String, Boolean] :unique   Passed to #unique_id.
@@ -254,8 +254,8 @@ module LayoutHelper::SearchBar
     selected = Array.wrap(opt.delete(:selected)).map(&:to_s).uniq
     option_tags = options_for_select(pairs, selected)
 
-    opt.except!(:field, *MENU_OPTS)
     id_opt = opt.extract!(:unique, :index)
+    opt.except!(:field, *MENU_OPT)
 
     prepend_css!(opt, css)
     opt[:id]           ||= unique_id(css, **id_opt) if id_opt.present?
@@ -547,7 +547,7 @@ module LayoutHelper::SearchBar
   #
   def search_clear_button(css: '.search-clear', **opt)
     id_opt = opt.extract!(:unique, :index)
-    opt.except!(:field, *MENU_OPTS)
+    opt.except!(:field, *MENU_OPT)
     prepend_css!(opt, css)
     opt[:title] ||= config_text(:search_bar, :search_clear, :tooltip)
     opt[:icon]  ||= CLEAR_SEARCH_ICON

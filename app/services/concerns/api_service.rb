@@ -36,7 +36,7 @@ class ApiService
   #
   # @return [Hash]
   #
-  # @see ApiService::Common#SERVICE_OPTIONS
+  # @see ApiService::Common#SERVICE_OPT
   # @see ApiService::Common#make_connection
   #
   attr_reader :options

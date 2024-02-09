@@ -270,9 +270,9 @@ module LayoutHelper::SearchFilters
   #
   # @type [Array<Symbol>]
   #
-  # @see GridHelper#GRID_OPTS
+  # @see GridHelper#GRID_OPT
   #
-  MENU_OPTS: symArray
+  MENU_OPT: symArray
 
   # An empty placeholder for a menu position.
   #
@@ -380,7 +380,7 @@ module LayoutHelper::SearchFilters
   # @param [Boolean, nil]        disabled
   # @param [String]              css        Characteristic CSS class/selector.
   # @param [Hash]                opt        Passed to #search_form except for
-  #                                           #MENU_OPTS and:
+  #                                           #MENU_OPT and:
   #
   # @option opt [any, nil] :default         Provided default value.
   # @option opt [Hash]     :config          Pre-fetched menu configuration.
@@ -458,8 +458,9 @@ module LayoutHelper::SearchFilters
   # @param [String, Symbol, nil] target     Search target controller.
   # @param [String, Date, nil]   selected   Date value.
   # @param [String, Symbol, nil] label_id   ID of associated label element.
+  # @param [String]              css        Characteristic CSS class/selector.
   # @param [Hash]                opt        Passed to #search_form except for
-  #                                           #MENU_OPTS and:
+  #                                           #MENU_OPT and:
   #
   # @option opt [Date, String]   :selected  Initial value.
   # @option opt [Hash]           :config    Pre-fetched configuration info.
@@ -469,7 +470,7 @@ module LayoutHelper::SearchFilters
   #
   # @see GridHelper#grid_cell_classes
   #
-  def date_control: (Symbol menu_name, ?label: String|nil, ?target: String|Symbol|nil, ?selected: String|Date|nil, ?label_id: String|Symbol|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def date_control: (Symbol menu_name, ?label: String|nil, ?target: String|Symbol|nil, ?selected: String|Date|nil, ?label_id: String|Symbol|nil, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # A label associated with a dropdown menu element.
   #
@@ -502,7 +503,7 @@ module LayoutHelper::SearchFilters
   # A button to reset all filter menu selections to their default state.
   #
   # @param [String] css           Characteristic CSS class/selector.
-  # @param [Hash]   opt           Passed to #link_to except for #GRID_OPTS and:
+  # @param [Hash]   opt           Passed to #link_to except for #MENU_OPT and:
   #
   # @option opt [String] :url     Default from #request_parameters.
   # @option opt [String] :class   CSS classes for both spacer and button.
@@ -527,8 +528,7 @@ module LayoutHelper::SearchFilters
   # A blank element used for occupying "voids" in the search control panel.
   #
   # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to #html_div except for #GRID_OPTS
-  #                                     and:
+  # @param [Hash]   opt               Passed to #html_div except #MENU_OPT and:
   #
   # @option opt [String] :class       CSS classes for both spacer and button.
   #
@@ -545,7 +545,7 @@ module LayoutHelper::SearchFilters
   # @param [String, nil]         label    Label text override.
   # @param [String]              css      Characteristic CSS class/selector.
   # @param [Hash]                opt      Passed to #label_tag except for
-  #                                         #MENU_OPTS and:
+  #                                         #MENU_OPT and:
   #
   # @option opt [Hash] :config            Pre-fetched configuration info.
   #

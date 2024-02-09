@@ -134,7 +134,7 @@ module BaseDecorator::Fields
   #
   # @type [Array<Symbol>]
   #
-  CHECK_OPTIONS: symArray
+  CHECK_OPT: symArray
 
   # render_check_box
   #

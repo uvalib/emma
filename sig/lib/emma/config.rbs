@@ -76,10 +76,10 @@ module Emma::Config
   @config_all: symHash
 
   # @private
-  CONFIG_ITEM_OPTIONS: symArray
+  CONFIG_ITEM_OPT: symArray
 
   # @private
-  I18N_OPTIONS: symArray
+  I18N_OPT: symArray
 
   # The configuration item specified by *key* or alternate *default* locations.
   #
@@ -156,7 +156,7 @@ module Emma::Config
   # @param [Array<Symbol>] base
   # @param [Symbol]        item
   # @param [Hash]          opt        Optional interpolation values except
-  #                                     #CONFIG_ITEM_OPTIONS to #config_section
+  #                                     #CONFIG_ITEM_OPT to #config_section
   #
   # @return [Hash]
   #

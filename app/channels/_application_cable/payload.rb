@@ -82,8 +82,7 @@ module ApplicationCable::Payload
   def set_payload(target = nil, values = nil, **opt)
     store, values = values ? [target, values] : [nil, target]
     store ||= {}
-    opt     = payload_normalize(opt, except: [])
-    payload = extract_hash!(opt, *template.keys)
+    payload = payload_normalize(opt, except: []).extract!(*template.keys)
     if values.is_a?(store.class)
       # noinspection RubyMismatchedArgumentType
       store.update(values)

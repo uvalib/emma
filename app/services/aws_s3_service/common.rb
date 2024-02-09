@@ -57,7 +57,7 @@ module AwsS3Service::Common
     error = nil
 
     # Set internal options from parameters or service options.
-    local        = opt.extract!(:meth, *SERVICE_OPTIONS)
+    local        = opt.extract!(:meth, *SERVICE_OPT)
     no_exception = local[:no_exception] || options[:no_exception]
     fatal        = local[:fatal]        || options[:fatal] || !no_exception
     meth         = local[:meth]         || calling_method

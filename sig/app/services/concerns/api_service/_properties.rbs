@@ -23,7 +23,7 @@ module ApiService::Properties
   #
   # @type [Array<Symbol>]
   #
-  SERVICE_OPTIONS: symArray
+  SERVICE_OPT: symArray
 
   # Original request parameters which should not be passed on to the API.
   #

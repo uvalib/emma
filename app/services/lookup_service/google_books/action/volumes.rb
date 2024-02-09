@@ -64,12 +64,11 @@ module LookupService::GoogleBooks::Action::Volumes
   # @see https://cloud.google.com/apis/docs/system-parameters
   #
   def get_volumes(terms, **opt)
-    terms = query_terms(terms, opt)
-    lccns = terms.select { |v| v.start_with?('lccn:') }.presence
-    ids   = terms.map { |v| v.split(':', 2).first }.intersect?(ID_TYPES)
+    query = query_terms(terms, opt)
+    lccns = query.select { |v| v.start_with?('lccn:') }.presence
+    ids   = query.map { |v| v.split(':', 2).first }.intersect?(ID_TYPES)
     opt[:foreign] = false unless ids
-    # noinspection RubyMismatchedArgumentType
-    opt[:q] = make_query(terms)
+    opt[:q] = make_query(query)
 
     opt = get_parameters(__method__, **opt)
 
@@ -136,8 +135,8 @@ module LookupService::GoogleBooks::Action::Volumes
   # @return [Array<String>]
   #
   def query_terms(terms, opt)
-    query = [*opt.delete(:q), *opt.delete(:query)].compact.presence
-    other = extract_hash!(opt, *QUERY_ALIAS).presence
+    query = opt.extract!(:q, :query).compact_blank!.presence&.values&.first
+    other = opt.extract!(*QUERY_ALIAS).compact_blank!.presence
     if terms.is_a?(LookupService::Request)
       req = (query || other) ? terms.dup : terms
     else

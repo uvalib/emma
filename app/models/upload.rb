@@ -310,7 +310,7 @@ class Upload < ApplicationRecord
     end
     allowed << :created_at if new_record
     allowed << :id         if new_record && self[:id].nil?
-    rejected = remainder_hash!(attr, *allowed)
+    rejected = attr.slice!(*allowed)
     log_ignored('rejected attributes', rejected) if rejected.present?
 
     # For :user_id, normalize to a 'user' table reference.  If editing,

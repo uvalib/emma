@@ -347,7 +347,7 @@ module BaseDecorator::Fields
   #
   # @type [Array<Symbol>]
   #
-  CHECK_OPTIONS =
+  CHECK_OPT =
     %i[id checked disabled readonly required data-required label].freeze
 
   # render_check_box
@@ -363,22 +363,22 @@ module BaseDecorator::Fields
   def render_check_box(name, value, tag: :li, css: '.checkbox.single', **opt)
     normalize_attributes!(opt)
     trace_attrs!(opt)
-    outer    = remainder_hash!(opt, *CHECK_OPTIONS)
-    t_opt    = trace_attrs_from(outer)
-    checked  = opt.delete(:checked)
-    label    = opt.delete(:label) || value
+    t_opt    = trace_attrs_from(opt)
+    local    = opt.extract!(*CHECK_OPT)
+    checked  = local.delete(:checked)
+    label    = local.delete(:label) || value
 
     # Checkbox control.
-    cb_opt   = t_opt.merge(opt)
+    cb_opt   = t_opt.merge(local)
     checkbox = h.check_box_tag(name, value, checked, cb_opt)
 
     # Label for checkbox.
-    lbl_opt  = t_opt.merge(for: opt[:id]).compact
+    lbl_opt  = t_opt.merge(for: local[:id]).compact
     label    = h.label_tag(name, label, lbl_opt)
 
     # Checkbox/label combination.
-    prepend_css!(outer, css)
-    html_tag(tag, **outer) do
+    prepend_css!(opt, css)
+    html_tag(tag, **opt) do
       checkbox << label
     end
   end

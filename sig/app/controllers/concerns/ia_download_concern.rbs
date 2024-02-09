@@ -18,14 +18,14 @@ module IaDownloadConcern
   #
   # @type [Array<Symbol>]
   #
-  SEND_DATA_OPTIONS: symArray
+  SEND_DATA_OPT: symArray
 
   # Send a copy of a file downloaded from Internet Archive.
   #
   # @param [String]       url
   # @param [Boolean, nil] new_tab     If *true* show in a new browser tab.
   # @param [Hash]         opt         To IaDownloadService#download, except
-  #                                     #SEND_DATA_OPTIONS to #send_data.
+  #                                     #SEND_DATA_OPT to #send_data.
   #
   # @raise [ExecError]                @see IaDownloadService#download
   #

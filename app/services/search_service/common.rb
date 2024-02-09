@@ -40,7 +40,7 @@ module SearchService::Common
 
   protected
 
-  NON_SEARCH = (%i[
+  NON_SEARCH = %i[
     accessibilityFeature
     collection
     formatFeature
@@ -55,7 +55,7 @@ module SearchService::Common
     size
     sort
     sortDate
-  ] + SERVICE_OPTIONS).freeze
+  ].concat(SERVICE_OPT).freeze
 
   NON_PUBLISHER_SEARCH = [*NON_SEARCH, :publisher].freeze
 

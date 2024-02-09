@@ -809,22 +809,22 @@ module BaseDecorator::List
   # noinspection RubyAssignmentExpressionInConditionalInspection
   #++
   def thumbnail(link: false, placeholder: true, css: '.thumbnail', **opt)
-    ph       = placeholder.presence
-    html_opt = remainder_hash!(opt, :meth, :alt, *ITEM_ENTRY_OPT)
-    prepend_css!(html_opt, css)
-    if (url = get_thumbnail_image(**opt))
+    ph    = placeholder.presence
+    local = opt.extract!(:meth, :alt, *ITEM_ENTRY_OPT)
+    prepend_css!(opt, css)
+    if (url = get_thumbnail_image(**local))
       id   = object.identifier
       link = show_path(id: id) if link.is_a?(TrueClass)
       link = nil               if link.is_a?(FalseClass)
-      alt  = opt[:alt] || config_lookup('thumbnail.image.alt', item: id)
-      row  = positive(opt[:row])
-      html_opt[:id] = "container-img-#{id}"
-      html_opt[:'data-group'] = opt[:group] if opt[:group].present?
-      html_opt[:'data-turbolinks-permanent'] = true
+      alt  = local[:alt] || config_lookup('thumbnail.image.alt', item: id)
+      row  = positive(local[:row])
+      opt[:id] = "container-img-#{id}"
+      opt[:'data-group'] = local[:group] if local[:group].present?
+      opt[:'data-turbolinks-permanent'] = true
       # noinspection RubyMismatchedArgumentType
-      image_element(url, link: link, alt: alt, row: row, **html_opt)
+      image_element(url, link: link, alt: alt, row: row, **opt)
     end ||
-      (ph && placeholder_element(comment: 'no thumbnail', **html_opt))
+      (ph && placeholder_element(comment: 'no thumbnail', **opt))
   end
 
   # Cover image element for the given catalog title.
@@ -844,20 +844,20 @@ module BaseDecorator::List
   # noinspection RubyAssignmentExpressionInConditionalInspection
   #++
   def cover(link: false, placeholder: true, css: '.cover-image', **opt)
-    ph       = placeholder.presence
-    html_opt = remainder_hash!(opt, :meth, :alt, *ITEM_ENTRY_OPT)
-    prepend_css!(html_opt, css)
-    html_opt[:'data-group'] = opt[:group] if opt[:group].present?
-    if (url = get_cover_image(**opt))
+    ph    = placeholder.presence
+    local = opt.extract!(:meth, :alt, *ITEM_ENTRY_OPT)
+    prepend_css!(opt, css)
+    if (url = get_cover_image(**local))
       id   = object.identifier
       link = show_path(id: id) if link.is_a?(TrueClass)
       link = nil               if link.is_a?(FalseClass)
-      alt  = opt[:alt] || config_lookup('cover.image.alt', item: id)
-      row  = positive(opt[:row])
+      alt  = local[:alt] || config_lookup('cover.image.alt', item: id)
+      row  = positive(local[:row])
+      opt[:'data-group'] = local[:group] if local[:group].present?
       # noinspection RubyMismatchedArgumentType
-      image_element(url, link: link, alt: alt, row: row, **html_opt)
+      image_element(url, link: link, alt: alt, row: row, **opt)
     end ||
-      (ph && placeholder_element(comment: 'no cover image', **html_opt))
+      (ph && placeholder_element(comment: 'no cover image', **opt))
   end
 
   # ===========================================================================

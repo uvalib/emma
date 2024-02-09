@@ -16,7 +16,7 @@ module BaseDecorator::Links
   DEFAULT_ELEMENT_SEPARATOR: ActiveSupport::SafeBuffer
 
   # @type [Array<Symbol>]
-  MODEL_LINK_OPTIONS: symArray
+  MODEL_LINK_OPT: symArray
 
   # Create a link to the details show page for the given model instance.
   #

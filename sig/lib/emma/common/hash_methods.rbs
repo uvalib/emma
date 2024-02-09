@@ -18,33 +18,6 @@ module Emma::Common::HashMethods
   #
   def partition_hash: ((prmHash|nil) hash, *(Symbol|String|Array[Symbol|String]|nil) keys) -> [symHash, symHash]
 
-  # Retain the elements identified by *keys* in *hash* (that is, extract all
-  # elements except the ones matching those keys).
-  #
-  # @param [ActionController::Parameters, Hash, nil] hash
-  # @param [Array<Symbol,String,Array,nil>]          keys
-  #
-  # @return [Hash]                    The elements removed from *hash*.
-  #
-  # === Usage Notes
-  # If *hash* is something other than a ::Hash, the original item will not be
-  # changed by this method.
-  #
-  def remainder_hash!: ((prmHash|nil) hash, *(Symbol|String|Array[Symbol|String]|nil) keys) -> symHash
-
-  # Extract the elements identified by *keys* from *hash*.
-  #
-  # @param [ActionController::Parameters, Hash, nil] hash
-  # @param [Array<Symbol,String,Array,nil>]          keys
-  #
-  # @return [Hash]                    The elements removed from *hash*.
-  #
-  # === Usage Notes
-  # If *hash* is something other than a ::Hash, the original item will not be
-  # changed by this method.
-  #
-  def extract_hash!: ((prmHash|nil) hash, *(Symbol|String|Array[Symbol|String]|nil) keys) -> symHash
-
   # normalize_hash
   #
   # @param [ActionController::Parameters, Hash, nil] item
@@ -59,6 +32,8 @@ module Emma::Common::HashMethods
   # @param [ActionController::Parameters, Hash, nil] item
   #
   # @return [Hash{Symbol=>any,nil}]   Modified item itself if *item* is a Hash.
+  #
+  # @note Currently unused.
   #
   def normalize_hash!: ((prmHash|nil) item) -> symHash
 

@@ -379,19 +379,19 @@ module BaseDecorator::Form
   def render_form_menu_single(name, value, range:, css: '.menu.single', **opt)
     range.is_a?(Array) or valid_range?(range, fatal: true)
     normalize_attributes!(opt)
-    html_opt = remainder_hash!(opt, *MENU_SINGLE_OPT)
-    field    = html_opt[:'data-field']
-    name     = opt[:name] || name || opt[:base] || field
-    selected = Array.wrap(value).compact.presence || ['']
+    local = opt.extract!(*MENU_SINGLE_OPT)
+    field = opt[:'data-field']
+    name  = local[:name] || name || local[:base] || field
 
     pairs =
       if range.is_a?(Class)
-        p_opt = opt[:constraints]&.dup || {}
+        p_opt = local[:constraints]&.dup || {}
         skip  = Array.wrap(p_opt.delete(:except)).map(&:to_s)
         range.pairs(**p_opt).except(*skip)
       end
     pairs ||= range.dup
 
+    selected = Array.wrap(value).compact.presence || ['']
     menu =
       pairs.map do |item_value, item_label|
         item_value = item_value.to_s
@@ -401,10 +401,10 @@ module BaseDecorator::Form
     menu.unshift([UNSET_MENU_ITEM, '']) unless menu.first.last.blank?
     menu = h.options_for_select(menu, selected)
 
-    html_opt[:disabled] = true     if opt[:readonly]
-    append_css!(html_opt, 'fixed') if opt[:fixed]
-    prepend_css!(html_opt, css)
-    h.select_tag(name, menu, html_opt)
+    opt[:disabled] = true     if local[:readonly]
+    append_css!(opt, 'fixed') if local[:fixed]
+    prepend_css!(opt, css)
+    h.select_tag(name, menu, opt)
   end
 
   # @private
@@ -436,42 +436,42 @@ module BaseDecorator::Form
   def render_form_menu_multi(name, value, range:, css: '.menu.multi', **opt)
     valid_range?(range, fatal: true)
     normalize_attributes!(opt)
-    field    = opt[:'data-field']
-    name     = opt[:name] || name || opt[:base] || field
-    html_opt = remainder_hash!(opt, *MENU_MULTI_OPT)
-    trace_attrs!(html_opt)
+    trace_attrs!(opt)
+    local = opt.extract!(*MENU_MULTI_OPT)
+    field = opt[:'data-field']
+    name  = local[:name] || name || local[:base] || field
 
     # Checkbox elements.
-    cb_opt   = trace_attrs_from(html_opt).merge!(role: 'option')
+    cb_opt   = trace_attrs_from(opt).merge!(role: 'option')
     selected = Array.wrap(value).compact.presence
     checkboxes =
       range.pairs.map do |item_value, item_label|
         cb_name          = "[#{field}][]"
         cb_value         = item_value
-        cb_opt[:id]      = [item_value, field, opt[:id]].compact.join('-')
+        cb_opt[:id]      = [item_value, field, local[:id]].compact.join('-')
         cb_opt[:label]   = item_label
         cb_opt[:checked] = selected&.include?(item_value)
         render_check_box(cb_name, cb_value, **cb_opt)
       end
 
     # Grouped checkboxes.
-    gr_opt = html_opt.except(:'data-field', :'data-required')
+    gr_opt = opt.except(:'data-field', :'data-required')
     gr_opt[:role]     = 'listbox'
     gr_opt[:name]     = name
     gr_opt[:multiple] = true
     gr_opt[:tabindex] = 0
-    gr_opt.merge!(opt[:inner]) if opt[:inner].is_a?(Hash)
+    gr_opt.merge!(local[:inner]) if local[:inner].is_a?(Hash)
     group = html_ul(*checkboxes, **gr_opt)
 
-    html_opt.delete(:'aria-labelledby')
-    html_opt[:id]       = opt[:id]
-    html_opt[:name]     = name
-    html_opt[:role]     = 'group'
-    html_opt[:disabled] = true     if opt[:readonly]
-    html_opt.merge!(opt[:outer])   if opt[:outer].is_a?(Hash)
-    append_css!(html_opt, 'fixed') if opt[:fixed]
-    prepend_css!(html_opt, css)
-    html_div(**html_opt) { group }
+    opt.delete(:'aria-labelledby')
+    opt[:id]       = local[:id]
+    opt[:name]     = name
+    opt[:role]     = 'group'
+    opt[:disabled] = true     if local[:readonly]
+    opt.merge!(local[:outer]) if local[:outer].is_a?(Hash)
+    append_css!(opt, 'fixed') if local[:fixed]
+    prepend_css!(opt, css)
+    html_div(**opt) { group }
   end
 
   # Multiple single-line inputs.

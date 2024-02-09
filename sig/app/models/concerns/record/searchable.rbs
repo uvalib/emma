@@ -89,7 +89,7 @@ module Record::Searchable
   #
   # @type [Array<Symbol>]
   #
-  GET_RELATION_OPTIONS: symArray
+  GET_RELATION_OPT: symArray
 
   # Generate an ActiveRecord relation for records specified by either
   # :id or :submission_id.

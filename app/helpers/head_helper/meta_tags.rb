@@ -122,19 +122,16 @@ module HeadHelper::MetaTags
 
   # Emit the '<meta>' tag(s) appropriate for the current page.
   #
-  # @param [Hash] opt                 Passed to #emit_meta_tag except for:
-  #
-  # @option opt [String] :tag_separator   Default: #META_TAG_SEPARATOR
+  # @param [String] separator
+  # @param [Hash]   opt               Passed to #emit_meta_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def emit_page_meta_tags(**opt)
-    opt, html_opt     = partition_hash(opt, :tag_separator)
-    tag_separator     = opt[:tag_separator] || META_TAG_SEPARATOR
+  def emit_page_meta_tags(separator: META_TAG_SEPARATOR, **opt)
     @page_meta_tags ||= DEFAULT_PAGE_META_TAGS.dup
     @page_meta_tags.map { |key, value|
-      emit_meta_tag(key, value, **html_opt)
-    }.compact.join(tag_separator).html_safe
+      emit_meta_tag(key, value, **opt)
+    }.compact.join(separator).html_safe
   end
 
   # ===========================================================================
@@ -159,17 +156,13 @@ module HeadHelper::MetaTags
     end
   end
 
-  # @type [Array<Symbol>]
-  EMIT_META_TAG_OPTIONS =
-    %i[content_separator list_separator pair_separator sanitize quote].freeze
-
   # Generate a '<meta>' tag with special handling for :robots.
   #
   # @param [Symbol]                key
   # @param [String, Symbol, Array] value
+  # @param [String]                separator  Content separator.
   # @param [Hash]                  opt        Passed to #tag except for:
   #
-  # @option opt [String]  :content_separator  Def.: #META_TAG_CONTENT_SEPARATOR
   # @option opt [String]  :list_separator     Passed to #normalized_list.
   # @option opt [String]  :pair_separator     Passed to #normalized_list.
   # @option opt [Boolean] :sanitize           Passed to #normalized_list.
@@ -178,13 +171,7 @@ module HeadHelper::MetaTags
   # @return [ActiveSupport::SafeBuffer]       If valid.
   # @return [nil]                             If the tag would be a "no-op".
   #
-  def emit_meta_tag(key, value, **opt)
-    opt, html_opt = partition_hash(opt, *EMIT_META_TAG_OPTIONS)
-    separator = opt.delete(:content_separator) || META_TAG_CONTENT_SEPARATOR
-
-    # The tag name comes from the provided *key*.
-    html_opt[:name] = key.to_s
-
+  def emit_meta_tag(key, value, separator: META_TAG_CONTENT_SEPARATOR, **opt)
     # If *value* is one or more Symbols, *key* is assumed to be :robots (or a
     # variant like :googlebot); if the tag is determined to be non-functional
     # then the result will be *nil*.
@@ -196,8 +183,9 @@ module HeadHelper::MetaTags
     end
 
     # The tag content is formed from the value(s) accumulated for this item.
-    html_opt[:content] =
-      normalized_list(value, **opt).join(separator).tap do |content|
+    nl_opt = opt.slice!(:list_separator, :pair_separator, :sanitize, :quote)
+    opt[:content] =
+      normalized_list(value, **nl_opt).join(separator).tap do |content|
         # noinspection RubyMismatchedArgumentType
         if (prefix = META_TAG_PREFIX[key]) && !content.start_with?(prefix)
           prefix = "#{prefix} - " unless prefix.end_with?(' ')
@@ -210,7 +198,8 @@ module HeadHelper::MetaTags
       end
 
     # Return with the <meta> tag element.
-    tag(:meta, html_opt)
+    opt[:name] = key.to_s
+    tag(:meta, opt)
   end
 
   # ===========================================================================

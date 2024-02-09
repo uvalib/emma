@@ -157,7 +157,7 @@ module ApiService::Common
     @verb   = verb.to_s.downcase.to_sym
 
     # Set internal options from parameters or service options.
-    @params      = remainder_hash!(opt, :meth, *SERVICE_OPTIONS)
+    @params      = opt.slice!(:meth, *SERVICE_OPT)
     no_exception = opt[:no_exception] || options[:no_exception]
     fatal        = opt[:fatal]        || options[:fatal] || !no_exception
     meth         = opt[:meth]         || calling_method
@@ -443,7 +443,7 @@ module ApiService::Common
     required_keys  = required_parameters(meth)
     optional_keys  = optional_parameters(meth)
     specified_keys =
-      [].concat(required_keys, optional_keys, key_alias.keys, SERVICE_OPTIONS)
+      [].concat(required_keys, optional_keys, key_alias.keys, SERVICE_OPT)
 
     # Validate the keys provided.
     if check_req && (missing_keys = required_keys - opt.keys).present?

@@ -25,7 +25,7 @@ module BaseCollectionDecorator::Table
   # @param [Symbol] tag               Potential alternative to :table.
   # @param [String] css               Default: `#table_css_class`.
   # @param [Hash]   opt               Passed to outer #html_tag except
-  #                                     #MODEL_TABLE_OPTIONS to render methods.
+  #                                     #RENDER_TABLE_OPT to render methods.
   #
   # @option opt [ActiveSupport::SafeBuffer] :thead  Pre-generated *thead*.
   # @option opt [ActiveSupport::SafeBuffer] :tbody  Pre-generated *tbody*.
@@ -41,17 +41,17 @@ module BaseCollectionDecorator::Table
     css ||= table_css_class
     table = for_html_table?(tag)
     tag   = table && :table || tag || :div
-    outer = remainder_hash!(opt, *RENDER_TABLE_OPTIONS)
-    t_opt = trace_attrs_from(outer)
-    opt   = context.slice(*MODEL_TABLE_DATA_OPT).merge!(opt)
+    local = opt.extract!(*RENDER_TABLE_OPT)
+    t_opt = trace_attrs_from(opt)
+    local = context.slice(*MODEL_TABLE_DATA_OPT).merge!(local)
 
-    opt[:sticky] = STICKY_HEAD unless opt.key?(:sticky)
-    opt[:dark]   = DARK_HEAD   unless opt.key?(:dark)
-    opt[:tag]    = tag         unless table
+    local[:sticky] = STICKY_HEAD unless local.key?(:sticky)
+    local[:dark]   = DARK_HEAD   unless local.key?(:dark)
+    local[:tag]    = tag         unless table
 
-    parts = opt.extract!(*MODEL_TABLE_PART_OPT).compact
-    thead = parts[:thead] || table_heading(**opt, **t_opt)
-    tbody = parts[:tbody] || table_entries(**opt, **t_opt, separator: nil)
+    parts = local.extract!(*MODEL_TABLE_PART_OPT).compact
+    thead = parts[:thead] || table_heading(**local, **t_opt)
+    tbody = parts[:tbody] || table_entries(**local, **t_opt, separator: nil)
     if thead.is_a?(Array)
       cols, parts[:thead] = thead.size, safe_join(thead)
     else
@@ -63,23 +63,25 @@ module BaseCollectionDecorator::Table
       rows, parts[:tbody] = tbody.scan(/<tr[>\s]/).size, tbody
     end
 
-    limit = positive(opt[:partial])
+    limit = positive(local[:partial])
     full  = (rows < (limit || table_page_size))
 
-    prepend_css!(outer, css, model_type)
-    append_css!(outer, "columns-#{cols}")       if cols.positive?
-    append_css!(outer, 'sticky-head')           if opt[:sticky]
-    append_css!(outer, 'dark-head')             if opt[:dark]
-    append_css!(outer, 'pageable')              if opt[:pageable]
-    append_css!(outer, 'sortable')              if opt[:sortable]
-    append_css!(outer, 'partial')               if opt[:partial]
-    append_css!(outer, 'complete')              if full
-    outer[:role] = table_role                   if table
-    outer[:'data-turbolinks-permanent'] = true  if opt[:sortable]
+    prepend_css!(opt, css, model_type)
+    append_css!(opt, "columns-#{cols}")       if cols.positive?
+    append_css!(opt, 'sticky-head')           if local[:sticky]
+    append_css!(opt, 'dark-head')             if local[:dark]
+    append_css!(opt, 'pageable')              if local[:pageable]
+    append_css!(opt, 'sortable')              if local[:sortable]
+    append_css!(opt, 'partial')               if local[:partial]
+    append_css!(opt, 'complete')              if full
+    opt[:role] = table_role                   if table
+    opt[:'aria-rowcount'] = rows              if rows.positive?
+    opt[:'aria-colcount'] = cols              if cols.positive?
+    opt[:'data-turbolinks-permanent'] = true  if local[:sortable]
 
     # Generate the table, preceded by a link to access the full table if only
     # displaying a partial table here.
-    html_tag(tag, **outer, 'data-path': table_path(sort: opt[:sort])) {
+    html_tag(tag, **opt, 'data-path': table_path(sort: local[:sort])) {
       table ? parts.map { |k, part| html_tag(k, part, **t_opt) } : parts.values
     }.tap { |result|
       result.prepend(render_full_table_link(rows: rows)) if limit && !full

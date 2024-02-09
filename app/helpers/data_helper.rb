@@ -52,8 +52,7 @@ module DataHelper
   # @return [Array<String>]
   #
   def sorted_table_names(names = nil)
-    names &&= names.map(&:to_s)
-    names ||= table_names
+    names = (names || table_names).map(&:to_s)
     later =
       LATER_TABLES.flat_map { |match|
         if match.is_a?(Regexp)

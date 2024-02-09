@@ -109,12 +109,12 @@ module LookupService::Crossref::Action::Work
   # @see https://api.crossref.org/swagger-ui/index.html#operations-Works-get_works
   #
   def get_work_list(terms, **opt)
-    terms = query_terms(terms, opt)
-    ids   = extract_hash!(terms, *ID_TYPES)
+    query = query_terms(terms, opt)
+    ids   = query.extract!(*ID_TYPES)
     opt[:filter] = [*opt[:filter], *ids.values] if ids.present?
     opt[:filter] &&= Array.wrap(opt[:filter]).compact.join(',')
     opt = get_parameters(__method__, **opt)
-    api(:get, 'works', **terms, **opt)
+    api(:get, 'works', **query, **opt)
     api_return(Lookup::Crossref::Message::WorkResults)
   end
     .tap do |method|
@@ -160,8 +160,8 @@ module LookupService::Crossref::Action::Work
   # @return [Hash]
   #
   def query_terms(terms, opt)
-    query = [*opt.delete(:q), *opt.delete(:query)].compact.presence
-    other = extract_hash!(opt, *QUERY_ALIAS).presence
+    query = opt.extract!(:q, :query).compact_blank!.presence&.values&.first
+    other = opt.extract!(*QUERY_ALIAS).compact_blank!.presence
     if terms.is_a?(LookupService::Request)
       req = (query || other) ? terms.dup : terms
     else

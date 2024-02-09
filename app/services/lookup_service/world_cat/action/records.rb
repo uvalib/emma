@@ -277,7 +277,7 @@ module LookupService::WorldCat::Action::Records
     end
 
     groups.each do |group|
-      extract_hash!(opt, *group.allowed_prefixes).each do |param, value|
+      opt.extract!(*group.allowed_prefixes).each_pair do |param, value|
         group.add_terms(param, value)
       end
     end

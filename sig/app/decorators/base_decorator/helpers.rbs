@@ -76,7 +76,7 @@ module BaseDecorator::Helpers
   def retrieval_path: (*untyped args) -> String
 
   # @private
-  FORM_WITH_OPTIONS: symArray
+  FORM_WITH_OPT: symArray
 
   # Due to #html_options_for_form_with only certain #form_with options are
   # actually passed on to the <form> element.

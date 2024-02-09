@@ -331,29 +331,28 @@ module UploadConcern
   #
   # @option opt [Boolean] :atomic           Passed to #reindex_record.
   # @option opt [Boolean] :dryrun           Passed to #reindex_record.
-  # @option opt [Symbol]  :meth             Passed to #reindex_record.
+  # @option opt [Integer] :size             Default: `#DEFAULT_REINDEX_BATCH`.
   #
   # @return [Array<(Array<String>, Array<String>)>]  Succeeded/failed
   #
   def reindex_submissions(*entries, **opt)
-    sql_opt = remainder_hash!(opt, :atomic, :meth, :dryrun, :size)
     opt[:meth] ||= __method__
+    local = opt.extract!(:atomic, :dryrun, :size)
+    size  = positive(local[:size]) || DEFAULT_REINDEX_BATCH
     if entries.blank?
-      update_null_state_records unless opt[:dryrun]
-      sql_opt[:repository] ||= EmmaRepository.default
-      sql_opt[:state]      ||= [:completed, nil]
-      relation = Upload.get_relation(**sql_opt)
+      update_null_state_records unless local[:dryrun]
+      opt[:repository] ||= EmmaRepository.default
+      opt[:state]      ||= [:completed, nil]
     else
-      relation = Upload.get_relation(*entries)
+      opt.slice!(:meth)
     end
     successes = []
     failures  = []
-    size      = positive(opt[:size]) || DEFAULT_REINDEX_BATCH
-    relation.each_slice(size) do |items|
-      sids, fails = reindex_record(items, **opt)
+    Upload.get_relation(*entries, **opt).each_slice(size) do |items|
+      sids, fails = reindex_record(items, **local, meth: opt[:meth])
       successes.concat(sids)
       failures.concat(fails)
-      break if opt[:atomic] && failures.present?
+      break if local[:atomic] && failures.present?
     end
     return successes, failures
   end

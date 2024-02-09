@@ -47,19 +47,18 @@ module LogoHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def repository_source_logo(item = nil, css: '.repository.logo', **opt)
-    html_opt = remainder_hash!(opt, :source, :name, :logo, :type, :alt)
-    repo = normalize_repository(opt[:source] || item)
-    name = opt[:name] || repository_name(repo)
-    logo = opt[:logo] || repository_logo(repo, opt[:type])
-    alt  = opt[:alt]  || ''
+    local = opt.extract!(:source, :name, :logo, :type, :alt)
+    repo  = normalize_repository(local[:source] || item)
+    name  = local[:name] || repository_name(repo)
+    logo  = local[:logo] || repository_logo(repo, local[:type])
+    alt   = local[:alt]  || ''
     if logo.present?
-      html_opt[:role]  ||= 'presentation' if alt.blank?
-      html_opt[:title] ||= repository_tooltip(item, name)
-      prepend_css!(html_opt, css, repo)
-      html_span(**html_opt) { image_tag(asset_path(logo), alt: alt) }
+      opt[:role]  ||= 'presentation' if alt.blank?
+      opt[:title] ||= repository_tooltip(item, name)
+      prepend_css!(opt, css, repo)
+      html_span(**opt) { image_tag(asset_path(logo), alt: alt) }
     else
-      html_opt.merge!(source: repo, name: name)
-      repository_source(repo, **html_opt)
+      repository_source(repo, source: repo, name: name, **opt)
     end
   end
 
@@ -75,13 +74,13 @@ module LogoHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def repository_source(item, css: '.repository.name', **opt)
-    opt, html_opt = partition_hash(opt, :source, :name)
-    repo = normalize_repository(opt[:source] || item)
-    name = opt[:name] || repository_name(repo)
+    local = opt.extract!(:source, :name)
+    repo  = normalize_repository(local[:source] || item)
+    name  = local[:name] || repository_name(repo)
     if name.present?
-      html_opt[:title] ||= repository_tooltip(item, name)
-      prepend_css!(html_opt, css, repo)
-      html_div(**html_opt) { html_div(name) }
+      opt[:title] ||= repository_tooltip(item, name)
+      prepend_css!(opt, css, repo)
+      html_div(**opt) { html_div(name) }
     else
       ''.html_safe
     end

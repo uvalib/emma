@@ -92,13 +92,12 @@ module HeadHelper::MetaTags
 
   # Emit the '<meta>' tag(s) appropriate for the current page.
   #
-  # @param [Hash] opt                 Passed to #emit_meta_tag except for:
-  #
-  # @option opt [String] :tag_separator   Default: #META_TAG_SEPARATOR
+  # @param [String] separator
+  # @param [Hash]   opt               Passed to #emit_meta_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def emit_page_meta_tags: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def emit_page_meta_tags: (?separator: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Merge hashes, accumulating values as arrays for overlapping keys.
   #
@@ -107,9 +106,6 @@ module HeadHelper::MetaTags
   # @return [Hash]                    The updated @page_meta_tags contents.
   #
   def merge_meta_tags!: (symHash? src) -> symHash
-
-  # @type [Array<Symbol>]
-  EMIT_META_TAG_OPTIONS: symArray
 
   # Generate a '<meta>' tag with special handling for :robots.
   #

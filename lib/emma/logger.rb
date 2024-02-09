@@ -73,11 +73,11 @@ module Emma
     # @return [Emma::Logger]
     #
     def initialize(src = nil, *args, **opt)
-      local_opt = opt.extract!(*EMMA_LOGGER_OPT)
-      bad_opt   = remainder_hash!(opt, *STD_LOGGER_OPT)
-      if bad_opt.present? && Log.debug? && (stack = caller.join("\n"))
+      local   = opt.extract!(*EMMA_LOGGER_OPT)
+      invalid = opt.slice!(*STD_LOGGER_OPT)
+      if invalid.present? && Log.debug? && (stack = caller.join("\n"))
         Log.debug do
-          "#{self.class}: ignoring invalid: #{bad_opt.inspect} at\n#{stack}"
+          "#{self.class}: ignoring invalid: #{invalid.inspect} at\n#{stack}"
         end
       end
 
@@ -95,7 +95,7 @@ module Emma
 
       super(logdev, *args, **opt)
 
-      @default_formatter   = local_opt[:default_formatter]
+      @default_formatter   = local[:default_formatter]
       @default_formatter ||= Emma::Logger::Formatter.new
       @formatter = @default_formatter unless opt[:formatter]
     end

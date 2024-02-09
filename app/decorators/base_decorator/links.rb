@@ -39,7 +39,7 @@ module BaseDecorator::Links
   public
 
   # @type [Array<Symbol>]
-  MODEL_LINK_OPTIONS =
+  MODEL_LINK_OPT =
     %i[label no_link path path_method tooltip scope controller].freeze
 
   # Create a link to the details show page for the given model instance.
@@ -61,26 +61,28 @@ module BaseDecorator::Links
   # @yieldparam  [String] terms
   # @yieldreturn [String]
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def model_link(item, **opt)
     trace_attrs!(opt)
-    html_opt = remainder_hash!(opt, *MODEL_LINK_OPTIONS)
-    type     = (model_type unless item)
-    item   ||= object
-    label    = opt[:label] || :label
-    label    = item.send(label) if label.is_a?(Symbol)
-    if opt[:no_link]
-      html_span(label, **html_opt)
+    local  = opt.extract!(*MODEL_LINK_OPT)
+    type   = (model_type unless item)
+    item ||= object
+    label  = local[:label] || :label
+    label  = item.send(label) if label.is_a?(Symbol)
+    if local[:no_link]
+      html_span(label, **opt)
     else
-      # noinspection RubyMismatchedArgumentType
-      path = (yield(label) if block_given?) || opt[:path] || opt[:path_method]
-      path = path.call(item, label) if path.is_a?(Proc)
-      html_opt[:title] ||= opt[:tooltip]
-      html_opt[:title] ||=
-        if (type ||= opt[:scope] || opt[:controller] || Model.for(item))
+      path   = (yield(label) if block_given?)
+      path ||= local[:path] || local[:path_method]
+      path   = path.call(item, label) if path.is_a?(Proc)
+      opt[:title] ||= local[:tooltip]
+      opt[:title] ||=
+        if (type ||= local[:scope] || local[:controller] || Model.for(item))
           config_item("emma.#{type}.show.tooltip", fallback: '')
         end
-      # noinspection RubyMismatchedArgumentType
-      make_link(label, path, **html_opt)
+      make_link(label, path, **opt)
     end
   end
 

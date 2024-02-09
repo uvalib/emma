@@ -8,13 +8,13 @@ module GridHelper
   #
   # @see #grid_cell_classes
   #
-  GRID_OPTS: symArray
+  GRID_OPT: symArray
 
   # Render a table of values.
   #
   # @param [Hash] pairs               Key-value pairs to display.
   # @param [Hash] opt                 Passed to outer #html_div except for:
-  #                                     #GRID_OPTS and :wrap to #grid_table_row
+  #                                     #GRID_OPT and :wrap to #grid_table_row
   #
   # @return [ActiveSupport::SafeBuffer]
   #

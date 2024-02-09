@@ -84,9 +84,9 @@ module ImageHelper
     row = positive(row)
     append_css!(opt, "row-#{row}") if row
     if link.present?
-      link_opt = remainder_hash!(opt, :class, :style)
-      opt[:'aria-hidden'] ||= true
+      link_opt = opt.slice!(:class, :style)
       link_opt[:tabindex] ||= -1
+      opt[:'aria-hidden'] ||= true
       image = make_link(image, link, **link_opt)
     end
     html_div(image, **opt)
