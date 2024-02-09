@@ -40,7 +40,7 @@ class ApplicationJob::Table < Concurrent::Hash
   # @param [String]    job_id
   # @param [Hash, nil] data
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def []=(job_id, data)
     data &&= data.except(:active_job_id)

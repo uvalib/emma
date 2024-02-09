@@ -70,8 +70,23 @@ class ManifestItem < ApplicationRecord
 
   def oid: (?untyped item) -> (Integer | nil)
 
+  # Produce a relation for selecting records associated with the given user.
+  #
+  # @param [any, nil] user            User, Hash, Symbol, String, Integer
+  # @param [Hash]     opt
+  #
+  # @return [ActiveRecord::Relation]
+  #
   def self.for_user: (?untyped user, **untyped opt) -> ActiveRecord::Relation
 
+  # Produce a relation for selecting records associated with the given
+  # organization.
+  #
+  # @param [any, nil] org             Org, Hash, Symbol, String, Integer
+  # @param [Hash]     opt
+  #
+  # @return [ActiveRecord::Relation]
+  #
   def self.for_org: (?untyped org, **untyped opt) -> ActiveRecord::Relation
 
   # Override to regenerate the :field_error field if indicated.

@@ -57,7 +57,7 @@ module SysHelper::Settings
   # Create a radio button and label for an EMMA flag.
   #
   # @param [Symbol, String] flag
-  # @param [*]              value     Current value of the flag.
+  # @param [any, nil]       value     Current value of the flag.
   # @param [Boolean, nil]   on        Whether this is the 'ON' or 'OFF' control
   #
   # @return [ActiveSupport::SafeBuffer]

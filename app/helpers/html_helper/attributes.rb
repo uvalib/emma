@@ -57,8 +57,8 @@ module HtmlHelper::Attributes
   # Augment with options that should be set/unset according to the context
   # (e.g. CSS classes present).
   #
-  # @param [Symbol, String]  tag
-  # @param [Hash{Symbol=>*}] options
+  # @param [Symbol, String] tag
+  # @param [Hash]           options
   #
   # @return [Hash]
   #
@@ -97,7 +97,7 @@ module HtmlHelper::Attributes
   # Attributes that are expected for a given HTML tag and can be added
   # automatically.
   #
-  # @param[Hash{Symbol=>Hash}]
+  # @type [Hash{Symbol=>Hash}]
   #
   # @see https://developer.mozilla.org/en-US/docs/Web/CSS/display#tables
   #
@@ -114,8 +114,8 @@ module HtmlHelper::Attributes
 
   # Augment with default options.
   #
-  # @param [Symbol, String]  tag
-  # @param [Hash{Symbol=>*}] options
+  # @param [Symbol, String] tag
+  # @param [Hash]           options
   #
   # @return [Hash]
   #
@@ -126,7 +126,7 @@ module HtmlHelper::Attributes
 
   # Attributes that are expected for a given HTML tag.
   #
-  # @param[Hash{Symbol=>Array<Symbol>}]
+  # @type [Hash{Symbol=>Array<Symbol>}]
   #
   REQUIRED_HTML_ATTRIBUTES = {
     table: %i[role aria-rowcount aria-colcount],
@@ -137,7 +137,7 @@ module HtmlHelper::Attributes
 
   # Expected :role values for a given HTML tag.
   #
-  # @param[Hash{Symbol=>Array<String>}]
+  # @type [Hash{Symbol=>Array<String>}]
   #
   EXPECTED_ROLES = {
     table: %w[grid table],
@@ -147,9 +147,9 @@ module HtmlHelper::Attributes
 
   # Verify that options have been included unless 'aria-hidden'.
   #
-  # @param [Symbol, String]  tag
-  # @param [Hash{Symbol=>*}] options
-  # @param [Symbol, nil]     meth     Calling method for diagnostics.
+  # @param [Symbol, String] tag
+  # @param [Hash]           options
+  # @param [Symbol, nil]    meth      Calling method for diagnostics.
   #
   # @return [Boolean]                 If *false* at least one was missing.
   #

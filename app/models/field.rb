@@ -29,11 +29,10 @@ module Field
 
   # Generate an appropriate field subclass instance if possible.
   #
-  # @param [Symbol, String, Class, Model, *] item
-  # @param [Symbol]                          field
-  # @param [Symbol, String, nil]             model
-  # @param [*]                               value
-  # @param [FieldConfig, nil]                prop
+  # @param [any, nil]         item    Symbol, String, Class, Model
+  # @param [Symbol, nil]      field
+  # @param [any, nil]         value
+  # @param [FieldConfig, nil] prop
   #
   # @return [Field::Type]             Instance based on *item* and *field*.
   # @return [nil]                     If *field* is not valid.

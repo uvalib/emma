@@ -61,7 +61,7 @@ module TestHelper::Utility
 
   # The "/test/fixtures/users.yml" entry associated with the argument.
   #
-  # @param [String, Symbol, *] arg
+  # @param [any, nil] arg             String, Symbol
   #
   # @return [Symbol, nil]
   #
@@ -69,7 +69,7 @@ module TestHelper::Utility
 
   # Return a User instance from the given identification.
   #
-  # @param [String, Symbol, User, *] user
+  # @param [any, nil] user            String, Symbol, User
   #
   # @return [User]
   # @return [nil]                     If *user* could not be converted.
@@ -87,7 +87,7 @@ module TestHelper::Utility
 
   # Extract the User ID indicated by *item*.
   #
-  # @param [*] item
+  # @param [any, nil] item
   #
   # @return [Integer, nil]
   #
@@ -95,7 +95,7 @@ module TestHelper::Utility
 
   # Extract the Organization ID indicated by *item*.
   #
-  # @param [*] item
+  # @param [any, nil] item
   #
   # @return [Integer, nil]
   #
@@ -139,7 +139,9 @@ module TestHelper::Utility
   # @param [Org, User, Integer, nil]                  org
   # @param [Hash]                                     constraints
   #
-  # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+  # @return [Hash{Symbol=>Hash}]
+  #
+  # @note Currently unused
   #
   def fixture_values_for_org: (Symbol|String|Class|ApplicationRecord model, Org|User|Integer|nil org, **untyped constraints) -> Hash[Symbol, symHash]
 
@@ -150,7 +152,9 @@ module TestHelper::Utility
   # @param [User, Integer, nil]                       user
   # @param [Hash]                                     constraints
   #
-  # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+  # @return [Hash{Symbol=>Hash}]
+  #
+  # @note Currently unused
   #
   def fixture_values_for_user: (Symbol|String|Class|ApplicationRecord model, User|Integer|nil user, **untyped constraints) -> Hash[Symbol, symHash]
 
@@ -160,7 +164,7 @@ module TestHelper::Utility
   # @param [Symbol, String, Class, ApplicationRecord] model
   # @param [Hash]                                     constraints
   #
-  # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+  # @return [Hash{Symbol=>Hash}]
   #
   def fixture_values: (Symbol|String|Class|ApplicationRecord model, **untyped constraints) ?{ (Symbol,ApplicationRecord) -> bool } -> Hash[Symbol, symHash]
 
@@ -232,7 +236,7 @@ module TestHelper::Utility
   # possible list actions.
   #
   # @param [Symbol, String, Proc, nil] dst
-  # @param [String, Symbol, User, *]   user
+  # @param [any, nil]                  user   String, Symbol, User
   # @param [Hash]                      opt
   #
   # @return [String]                  The redirection path.

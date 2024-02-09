@@ -136,7 +136,7 @@ module ParamsHelper
   #
   # @param [ActionController::Parameters, Hash, nil] prm  Default: `params`.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def request_parameters(prm = nil)
     normalize_hash(prm || try(:params))
@@ -250,7 +250,7 @@ module ParamsHelper
   # Translate an item into the URL parameter for the controller with which it
   # is associated.
   #
-  # @param [Symbol, String, Hash, Module, *] v  Def: `params[:controller]`.
+  # @param [any, nil] v   Symbol,String,Hash,Module; def: `params[:controller]`
   #
   # @return [String]
   # @return [nil]
@@ -269,7 +269,7 @@ module ParamsHelper
   # Translate an item into the URL parameter for the controller with which it
   # is associated.
   #
-  # @param [Symbol, String, Hash, *] v  Def: `params[:action]`.
+  # @param [any, nil] v   Symbol, String, Hash; def: `params[:action]`.
   #
   # @return [String]
   # @return [nil]
@@ -316,8 +316,8 @@ module ParamsHelper
   #   @return [Array<(String,nil)>]
   #
   # @overload ctrlr_action_to_names(ctrlr, action)
-  #   @param [Symbol, String, Hash, Module, *] ctrlr
-  #   @param [Symbol, String]                  action
+  #   @param [any, nil]       ctrlr   Symbol, String, Hash, Module
+  #   @param [Symbol, String] action
   #   @return [Array<(String,String)>]
   #
   def ctrlr_action_to_names(ctrlr = nil, action = nil)

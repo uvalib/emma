@@ -24,7 +24,7 @@ module EncodingHelper
   # Encode a string for use in HTTP message headers passed back to the client
   # as flash messages.
   #
-  # @param [ActiveSupport::SafeBuffer, String, *] value
+  # @param [any, nil] value           ActiveSupport::SafeBuffer, String
   #
   # @return [ActiveSupport::SafeBuffer, String]
   #

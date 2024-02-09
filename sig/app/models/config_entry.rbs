@@ -14,16 +14,16 @@ class ConfigEntry[U] < Hash[Symbol,U]
   # Transform an item into the expected value type (if one is defined by the
   # subclass).
   #
-  # @param [*] item
+  # @param [any, nil] item
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def config_value: [T] (T item) -> (U | T)
 
   # Return *item* if it is already an instance of the subclass; if not, use it
   # to initialize a new subclass instance.
   #
-  # @param [*] item
+  # @param [any, nil] item
   #
   # @return [ConfigEntry]
   #
@@ -39,7 +39,7 @@ class ConfigEntry[U] < Hash[Symbol,U]
   #
   # (Always *true* if the subclass does not define a value type.)
   #
-  # @param [*] item
+  # @param [any, nil] item
   #
   def self.value_type?: (untyped item) -> bool
 
@@ -125,8 +125,8 @@ class ModelConfig < ConfigEntry[ActionConfig]
 
   # Report on anomalies.
   #
-  # @param [*]       type
-  # @param [Boolean] fatal            If *true*, raise if there are error(s).
+  # @param [any, nil] type
+  # @param [Boolean]  fatal           If *true*, raise if there are error(s).
   #
   # @return [Boolean]                 If *fatal* is not *true*.
   #

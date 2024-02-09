@@ -13,7 +13,7 @@ __loading_begin(__FILE__)
 #
 # @!attribute [r] context
 #   Set in Draper::CollectionDecorator#initialize
-#   @return [Hash{Symbol=>*}]
+#   @return [Hash]
 #
 module BaseCollectionDecorator::Common
 end

@@ -33,7 +33,7 @@ class Shrine
     #
     # @raise [Record::SubmitError]    @see #extract_file_metadata
     #
-    # @return [Hash{Symbol=>Any}]
+    # @return [Hash{Symbol=>any}]
     #
     def emma_metadata
       @emma_metadata ||= extract_file_metadata
@@ -44,7 +44,7 @@ class Shrine
     #
     # @raise [Record::SubmitError]    If metadata was malformed.
     #
-    # @return [Hash{Symbol=>Any}]
+    # @return [Hash{Symbol=>any}]
     #
     def extract_file_metadata
       mime  = fmt = fmt_class = fmt_instance = fmt_parser = fmt_metadata = nil
@@ -124,7 +124,7 @@ class Shrine
       # @param [Hash] options
       #
       # @return [IO]
-      # @return [Any]                 Return from block if block given.
+      # @return [any]                 Return from block if block given.
       #
       def open(**options)
         __ext_debug { options }
@@ -137,7 +137,7 @@ class Shrine
       # @param [Hash] options
       #
       # @return [Tempfile]
-      # @return [Any]                 Return from block if block given.
+      # @return [any]                 Return from block if block given.
       #
       def download(**options)
         __ext_debug { options }
@@ -216,7 +216,7 @@ class Shrine
 
       # extract_file_metadata
       #
-      # @return [Hash{Symbol=>Any}]
+      # @return [Hash{Symbol=>any}]
       #
       def extract_file_metadata
         __ext_debug

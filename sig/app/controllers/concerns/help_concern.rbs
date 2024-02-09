@@ -11,7 +11,7 @@ module HelpConcern
   #
   # @param [Symbol, nil] topic
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def get_help_entry: ((Symbol|nil) topic) -> symHash
 
@@ -38,7 +38,7 @@ module HelpConcern
   # @param [Symbol] topic
   # @param [Hash]   opt
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def show_values: (?(Symbol|nil) topic, **untyped opt) -> symHash
 

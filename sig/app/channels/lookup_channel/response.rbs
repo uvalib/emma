@@ -13,8 +13,8 @@ end
 class LookupChannel::StatusResponse < LookupChannel::Response
   # Create a new instance.
   #
-  # @param [*]    values
-  # @param [Hash] opt
+  # @param [any, nil] values
+  # @param [Hash]     opt
   #
   def initialize: (?untyped values, **untyped opt) -> void
 

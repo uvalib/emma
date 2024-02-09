@@ -15,7 +15,7 @@ class OrgsTest < ApplicationSystemTestCase
 
   @user: User
 
-  # list_test
+  # Perform a test to list organizations visible to the test user.
   #
   # @param [Symbol]      action
   # @param [String, nil] title        Default: #INDEX_TITLE.
@@ -27,7 +27,7 @@ class OrgsTest < ApplicationSystemTestCase
   #
   def list_test: (action: Symbol, ?title: String|nil, ?redir_url: String|nil, ?meth: Symbol|nil, **untyped opt) -> void
 
-  # new_test
+  # Perform a test to create a new organization.
   #
   # @param [Boolean] direct
   # @param [Symbol]  meth             Calling test method.
@@ -37,7 +37,7 @@ class OrgsTest < ApplicationSystemTestCase
   #
   def new_test: (direct: bool, ?meth: Symbol|nil, **untyped opt) -> void
 
-  # edit_select_test
+  # Perform a test to select then modify an organization.
   #
   # @param [Boolean] direct
   # @param [Symbol]  meth             Calling test method.
@@ -47,7 +47,7 @@ class OrgsTest < ApplicationSystemTestCase
   #
   def edit_select_test: (direct: bool, ?meth: Symbol|nil, **untyped opt) -> void
 
-  # delete_select_test
+  # Perform a test to select then remove an organization.
   #
   # @param [Boolean] direct
   # @param [Symbol]  meth             Calling test method.
@@ -57,7 +57,7 @@ class OrgsTest < ApplicationSystemTestCase
   #
   def delete_select_test: (direct: bool, ?meth: Symbol|nil, **untyped opt) -> void
 
-  # Generate an Org :long_name.
+  # Generate a distinct organization name.
   #
   # @param [Hash] opt                 Test options
   #

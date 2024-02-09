@@ -56,7 +56,7 @@ module AwsConcern
   #
   # @param [Hash, nil] opt            Default: `#url_parameters`.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def aws_params: (?(anyHash|nil) opt) -> symHash
 

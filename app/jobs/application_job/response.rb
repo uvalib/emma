@@ -57,10 +57,10 @@ class ApplicationJob::Response
 
   # Create a new instance.
   #
-  # @param [ApplicationJob::Response, Hash, *] values
-  # @param [Hash, nil]                         error
-  # @param [Hash, nil]                         diagnostic
-  # @param [Hash]                              opt
+  # @param [any, nil]  values         ApplicationJob::Response, Hash
+  # @param [Hash, nil] error
+  # @param [Hash, nil] diagnostic
+  # @param [Hash]      opt
   #
   def initialize(values = nil, error: nil, diagnostic: nil, **opt)
     if values.is_a?(self.class)
@@ -93,7 +93,7 @@ class ApplicationJob::Response
   #
   # @param [Symbol] key
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def [](key)
     case key
@@ -106,10 +106,10 @@ class ApplicationJob::Response
   # Update a stored value, allowing access to #error and #diagnostic as
   # :error and :diagnostic, respectively.
   #
-  # @param [Symbol] key
-  # @param [*]      value
+  # @param [Symbol]   key
+  # @param [any, nil] value
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def []=(key, value)
     case key
@@ -129,11 +129,12 @@ class ApplicationJob::Response
 
   # Create a new instance from *item* if it is not already an instance.
   #
-  # @param [ApplicationJob::Response, *] item
+  # @param [any, nil] item          ApplicationJob::Response or initializer arg
   #
   # @return [ApplicationJob::Response]
   #
   def self.wrap(item)
+    # noinspection RubyMismatchedReturnType
     item.is_a?(self) ? item : new(item)
   end
 

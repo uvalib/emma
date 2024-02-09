@@ -24,7 +24,7 @@ module SubmissionService::Properties
 
   # Configuration for all submission services.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash]
   #
   CONFIGURATION =
     config_section('emma.service.submission').transform_values { |config|
@@ -40,7 +40,7 @@ module SubmissionService::Properties
 
   # Service default property configuration.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash]
   #
   SERVICE_PROPERTY =
     CONFIGURATION
@@ -225,7 +225,7 @@ module SubmissionService::Properties
 
   # Configuration for the API service.
   #
-  # @type [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def configuration
     CONFIGURATION[service_key]
@@ -337,8 +337,8 @@ module SubmissionService::Properties
 
   # extract_manifest_id
   #
-  # @param [*]    arg
-  # @param [Hash] opt
+  # @param [any, nil] arg
+  # @param [Hash]     opt
   #
   # @return [String, nil]
   #
@@ -360,7 +360,7 @@ module SubmissionService::Properties
 
   # extract_items
   #
-  # @param [*]           arg
+  # @param [any, nil]    arg
   # @param [Symbol, nil] scope
   # @param [Hash]        opt
   #

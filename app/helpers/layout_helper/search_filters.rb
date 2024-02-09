@@ -289,13 +289,13 @@ module LayoutHelper::SearchFilters
   # that can be expressed for a menu.  If a property there has a non-nil value,
   # then that value is used as the default for that property.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash]
   #
   SEARCH_MENU_DEFAULT = SEARCH_FILTERS_ROOT[:_default].compact.deep_freeze
 
   # Properties for the "filter reset" button.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash]
   #
   # @see #reset_menu
   #
@@ -304,7 +304,7 @@ module LayoutHelper::SearchFilters
 
   # The names and base properties of all of the search control menus.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash]
   #
   SEARCH_MENU_BASE =
     SEARCH_FILTERS_ROOT.map { |menu_name, menu_config|
@@ -690,8 +690,8 @@ module LayoutHelper::SearchFilters
   # @param [Hash]                opt        Passed to #search_form except for
   #                                           #MENU_OPTS and:
   #
-  # @option opt [*]    :default             Provided default value.
-  # @option opt [Hash] :config              Pre-fetched menu configuration.
+  # @option opt [any, nil] :default         Provided default value.
+  # @option opt [Hash]     :config          Pre-fetched menu configuration.
   #
   # @return [ActiveSupport::SafeBuffer]     HTML menu element.
   # @return [nil]                           If menu unavailable for *target*.

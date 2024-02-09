@@ -641,10 +641,10 @@ module BaseDecorator::Grid
   #
   # @option opt [Integer] :index      Offset to make unique element IDs passed
   #                                     to #render_pair.
-  # @option opt [*]       :row        Deleted to avoid propagation so that
+  # @option opt [any,nil] :row        Deleted to avoid propagation so that
   #                                     individual elements don't have CSS
   #                                     class "row-*".
-  # @option opt [*]       :unique     Deleted to avoid propagation.
+  # @option opt [any,nil] :unique     Deleted to avoid propagation.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -698,11 +698,11 @@ module BaseDecorator::Grid
 
   # Transform a field value for rendering in a grid.
   #
-  # @param [*]         value          Passed to #list_field_value.
-  # @param [Symbol, *] field          Passed to #list_field_value.
-  # @param [Hash]      opt            Passed to #list_field_value.
+  # @param [any, nil]    value        Passed to #list_field_value.
+  # @param [Symbol, nil] field        Passed to #list_field_value.
+  # @param [Hash]        opt          Passed to #list_field_value.
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def grid_field_value(value, field:, **opt)
     list_field_value(value, field: field, **opt)
@@ -711,7 +711,7 @@ module BaseDecorator::Grid
   # Render a single label/value pair in a grid cell.
   #
   # @param [String, Symbol, nil] label
-  # @param [*]                   value
+  # @param [any, nil]            value
   # @param [Symbol]              field
   # @param [FieldConfig]         prop
   # @param [Integer, nil]        col
@@ -738,7 +738,7 @@ module BaseDecorator::Grid
   # The edit element for a grid data cell.
   #
   # @param [Symbol]           field   For 'data-field' attribute.
-  # @param [*]                value
+  # @param [any, nil]         value
   # @param [FieldConfig, nil] prop    Default: from field/model.
   # @param [String]           css     Characteristic CSS class/selector.
   # @param [Hash]             opt
@@ -775,7 +775,7 @@ module BaseDecorator::Grid
 
   # Indicate whether the field is one whose elements should be invisible.
   #
-  # @param [*] field
+  # @param [any, nil] field
   #
   def undisplayed?(field)
     grid_row_undisplayed_columns.include?(field)
@@ -812,9 +812,9 @@ module BaseDecorator::Grid
   # not contribute to the width of the invisible edit element, so the grid
   # column does not get created wide enough to see the whole placeholder text.)
   #
-  # @param [String] name
-  # @param [*]      value
-  # @param [Hash]   opt               Passed to #render_form_input.
+  # @param [String]   name
+  # @param [any, nil] value
+  # @param [Hash]     opt             Passed to #render_form_input.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

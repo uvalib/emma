@@ -247,7 +247,7 @@ module Record::Uploadable
   #
   # @option opt [Rack::Request::Env] :env
   #
-  # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
+  # @return [Array<(Integer, Hash{String=>any,nil}, Array<String>)>]
   #
   # @see Shrine::Plugins::UploadEndpoint::ClassMethods#upload_response
   #

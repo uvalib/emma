@@ -135,11 +135,12 @@ class SubmissionService::Request
 
   # Create a new instance from *item* if it is not already an instance.
   #
-  # @param [SubmissionService::Request, *] item
+  # @param [any, nil] item            SubmissionService::Request
   #
   # @return [SubmissionService::Request]
   #
   def self.wrap(item)
+    # noinspection RubyMismatchedReturnType
     item.is_a?(self) ? item : new(item)
   end
 

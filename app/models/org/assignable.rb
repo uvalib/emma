@@ -25,7 +25,7 @@ module Org::Assignable
   # @param [Model, Hash, ActionController::Parameters, nil] attr
   # @param [Hash]                                           opt
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def normalize_attributes(attr, **opt)
     opt.reverse_merge!(key_norm: true, compact: false)

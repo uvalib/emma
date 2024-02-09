@@ -91,7 +91,7 @@ module BaseDecorator::List
   # Render a single label/value pair in a list item.
   #
   # @param [String, Symbol, nil] label
-  # @param [*]                   value
+  # @param [any, nil]            value
   # @param [Symbol]              field
   # @param [FieldConfig]         prop
   # @param [Hash]                opt
@@ -125,7 +125,7 @@ module BaseDecorator::List
   # Render a single label/value pair.
   #
   # @param [String, Symbol, nil]  label
-  # @param [*]                    value
+  # @param [any, nil]             value
   # @param [FieldConfig, nil]     prop      Default: from field/model.
   # @param [Symbol, nil]          field
   # @param [String, Integer]      index     Offset to make unique element IDs.
@@ -152,7 +152,7 @@ module BaseDecorator::List
   #
   # @yield [fld, val, prp, **o] To supply part(s) after the .value element.
   # @yieldparam [Symbol]      fld     The field.
-  # @yieldparam [*]           val     The raw value.
+  # @yieldparam [any, nil]    val     The raw value.
   # @yieldparam [FieldConfig] prp     The adjusted field properties.
   # @yieldparam [Hash]        o       Options for #html_div.
   # @yieldreturn [Array, ActiveSupport::SafeBuffer, nil]
@@ -355,7 +355,7 @@ module BaseDecorator::List
   # Apply formatting appropriate to *field*.
   #
   # @param [Symbol]      field
-  # @param [*]           value
+  # @param [any, nil]    value
   # @param [Hash]        opt          Options for #mark_invalid_languages.
   #
   # @return [Array<String>, String, nil]
@@ -378,7 +378,7 @@ module BaseDecorator::List
   # Generate a help icon relevant to *field*.
   #
   # @param [Symbol]               field
-  # @param [*]                    value
+  # @param [any, nil]             value
   # @param [Array<Symbol,String>] help    Help topic(s).
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -444,14 +444,15 @@ module BaseDecorator::List
 
   # Transform a field value for HTML rendering.
   #
-  # @param [*]         value
-  # @param [Symbol, *] field
-  # @param [Hash]      opt            Passed to #access.
+  # @param [any, nil]    value
+  # @param [Symbol, nil] field
+  # @param [Hash]        opt          Passed to #access.
   #
-  # @return [Any]                     HTML or scalar value.
+  # @return [any]                     HTML or scalar value.
   # @return [nil]                     If *value* or *object* is *nil*.
   #
   def list_field_value(value, field:, **opt)
+    # noinspection RubyMismatchedArgumentType
     value = field_value(nil, field, opt) if value.nil? && field.is_a?(Symbol)
     value = value.value                  if value.is_a?(Field::Type)
     value = value.to_s                   if value.is_a?(FalseClass)
@@ -477,7 +478,7 @@ module BaseDecorator::List
   # @param [Symbol]           m
   # @param [Hash, nil]        opt     Options (used only if appropriate).
   #
-  # @return [Any]                     HTML or scalar value.
+  # @return [any]                     HTML or scalar value.
   # @return [nil]                     If executed method returned *nil*.
   #
   def field_value(item, m, opt = nil)
@@ -778,7 +779,7 @@ module BaseDecorator::List
 
   # The number of columns needed if *item* will be displayed horizontally.
   #
-  # @param [Model, Hash, Array, *] item   Default: object.
+  # @param [any, nil] item            Model, Hash, Array; default: `#object`.
   #
   # @return [Integer]
   #

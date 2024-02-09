@@ -297,9 +297,9 @@ module BaseDecorator::Fields
 
   # Render a value for use on an input form.
   #
-  # @param [String] name
-  # @param [*]      value
-  # @param [Hash]   opt               Passed to render method except for:
+  # @param [String]   name
+  # @param [any, nil] value
+  # @param [Hash]     opt             Passed to render method except for:
   #
   # @option opt [String] :base
   # @option opt [String] :name
@@ -353,7 +353,7 @@ module BaseDecorator::Fields
   # render_check_box
   #
   # @param [String]      name
-  # @param [*]           value
+  # @param [any, nil]    value
   # @param [Symbol, nil] tag
   # @param [String]      css          Characteristic CSS class/selector.
   # @param [Hash]        opt
@@ -391,8 +391,8 @@ module BaseDecorator::Fields
 
   # Indicate whether the value is a valid range type.
   #
-  # @param [*]       range
-  # @param [Boolean] fatal            If *true*, raise an exception if invalid.
+  # @param [any, nil] range
+  # @param [Boolean]  fatal           If *true*, raise an exception if invalid.
   #
   # @raise [RuntimeError]             If not valid and *fatal* is *true*.
   #
@@ -545,7 +545,7 @@ module BaseDecorator::Fields
 
   # format_org
   #
-  # @param [*] value
+  # @param [any, nil] value
   #
   # @return [String, nil]
   #
@@ -555,7 +555,7 @@ module BaseDecorator::Fields
 
   # format_user
   #
-  # @param [*] value
+  # @param [any, nil] value
   #
   # @return [String, nil]
   #
@@ -571,7 +571,7 @@ module BaseDecorator::Fields
 
   # Render a value into ISO 8601 format if possible.
   #
-  # @param [*] value
+  # @param [any, nil] value
   #
   # @return [String, nil]
   #
@@ -682,7 +682,7 @@ module BaseDecorator::Fields
 
   # Seen in some IA records.
   #
-  # @param [String]
+  # @param [String] text
   #
   # @return [String]
   #
@@ -692,7 +692,7 @@ module BaseDecorator::Fields
 
   # Seen in some IA records.
   #
-  # @param [String]
+  # @param [String] text
   #
   # @return [String]
   #
@@ -726,7 +726,7 @@ module BaseDecorator::Fields
 
   # Wrap invalid language values in a *span*.
   #
-  # @param [Any]     value            Value to check.
+  # @param [any]     value            Value to check.
   # @param [Boolean] code             If *true* display the ISO 639 code.
   #
   # @return [ActiveSupport::SafeBuffer, String, Array]
@@ -763,7 +763,7 @@ module BaseDecorator::Fields
 
   # Wrap invalid identifier values in a *span*.
   #
-  # @param [Any] value                Value to check.
+  # @param [any] value                Value to check.
   #
   # @return [ActiveSupport::SafeBuffer, String, Array]
   #

@@ -422,7 +422,7 @@ class AccountController < ApplicationController
   #
   # @param [User, Array<User>, nil] subject
   # @param [Symbol, String, nil]    action
-  # @param [*]                      args
+  # @param [any, nil]               args
   #
   def user_authorize!(subject = nil, action = nil, *args)
     action  ||= request_parameters[:action]

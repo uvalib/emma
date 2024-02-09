@@ -9,8 +9,8 @@ class ApplicationJob < ActiveJob::Base
 
   # initialize
   #
-  # @param [*]    args                Assigned to ActiveJob::Core#arguments.
-  # @param [Hash] opt                 Appended to ActiveJob::Core#arguments.
+  # @param [any, nil] args            Assigned to ActiveJob::Core#arguments.
+  # @param [Hash]     opt             Appended to ActiveJob::Core#arguments.
   #
   def initialize: (*untyped args, **untyped opt) -> void
 
@@ -19,7 +19,7 @@ class ApplicationJob < ActiveJob::Base
   # @param [Array] args               Assigned to ActiveJob::Core#arguments.
   # @param [Hash]  opt
   #
-  # @return [Any]                     Return value of #perform.
+  # @return [any]                     Return value of #perform.
   #
   def perform_now: (*untyped args, **untyped opt) -> untyped
 

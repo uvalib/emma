@@ -114,7 +114,7 @@ module SubmissionService::Action::Submit
   #
   # (For use in contexts where *item* may already be an identifier.)
   #
-  # @param [ManifestItem, Hash, Integer, String, *] item
+  # @param [any, nil] item            ManifestItem, Hash, Integer, String
   #
   # @return [String]    If valid
   # @return [Hash]      If invalid
@@ -238,7 +238,7 @@ module SubmissionService::Action::Submit
 
   # Return the indicated user record ID.
   #
-  # @param [User, String, Integer, *] user
+  # @param [any, nil] user            User, String, Integer
   #
   # @return [Integer, nil]
   #
@@ -268,7 +268,7 @@ module SubmissionService::Action::Submit
   # @yield [id, rec] Apply step-specific logic to the given record.
   # @yieldparam  [String]       id    The hash key for the record.
   # @yieldparam  [ManifestItem] rec   The record itself.
-  # @yieldreturn [*]                  False or *nil* to indicate failure.
+  # @yieldreturn [any, nil]           False or *nil* to indicate failure.
   #
   def run_step: (Array[ManifestItem] records, ?wait: Integer|Float|nil, **untyped opt) -> StepResult
 

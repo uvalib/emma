@@ -105,7 +105,7 @@ class LookupService::Data
   #
   # @yield [item]
   # @yieldparam [LookupService::Data::Item] item
-  # @yieldreturn [*]
+  # @yieldreturn [any, nil]
   #
   def transform_table_items(&blk)
     raise ArgumentError, 'no block given' unless blk
@@ -120,11 +120,12 @@ class LookupService::Data
 
   # Create a new instance from *item* if it is not already an instance.
   #
-  # @param [LookupService::Data, *] item
+  # @param [any, nil] item            LookupService::Data or arg to initializer
   #
   # @return [LookupService::Data]
   #
   def self.wrap(item)
+    # noinspection RubyMismatchedReturnType
     item.is_a?(self) ? item : new(item)
   end
 
@@ -203,7 +204,7 @@ class LookupService::Data::Item < Search::Record::MetadataRecord
 
   # Return only the fields which are not blank.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def item_values
     reject_blanks(fields)
@@ -277,11 +278,12 @@ class LookupService::Data::Item < Search::Record::MetadataRecord
 
   # Create a new instance from *item* if it is not already an instance.
   #
-  # @param [LookupService::Data::Item, *] item
+  # @param [any, nil] item            LookupService::Data::Item
   #
   # @return [LookupService::Data::Item]
   #
   def self.wrap(item)
+    # noinspection RubyMismatchedReturnType
     item.is_a?(self) ? item : new(item)
   end
 

@@ -45,7 +45,7 @@ class Field::Type
 
   # The raw value for this field instance.
   #
-  # @return [*]
+  # @return [any, nil]
   #
   attr_reader :value
 
@@ -63,11 +63,11 @@ class Field::Type
 
   # Initialize a new instance.
   #
-  # @param [Symbol, Model, *]    src
+  # @param [any, nil]            src    Symbol, Model
   # @param [Symbol, nil]         field
   # @param [FieldConfig, nil]    prop
   # @param [Symbol, String, nil] model  (Only used if *prop* is missing.)
-  # @param [*]                   value
+  # @param [any, nil]            value
   #
   #--
   # noinspection RubyMismatchedVariableType
@@ -115,9 +115,9 @@ class Field::Type
 
   # Give the instance a value.
   #
-  # @param [*] new_value
+  # @param [any, nil] new_value
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def set(new_value)
     new_value = clean(new_value)
@@ -156,9 +156,9 @@ class Field::Type
 
   # Resolve an item into its value.
   #
-  # @param [*] v
+  # @param [any, nil] v
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def clean(v)
     v = v[:value]            if v.is_a?(FieldConfig)
@@ -237,10 +237,10 @@ class Field::Range < Field::Type
 
   # Give the instance a value.
   #
-  # @param [*] new_value
+  # @param [any, nil] new_value
   #
   # @return [Array]                 If mode == :multiple
-  # @return [*]                     If mode == :single
+  # @return [any, nil]              If mode == :single
   #
   def set(new_value)
     new_value = clean(new_value)

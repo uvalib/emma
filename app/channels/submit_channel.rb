@@ -49,7 +49,7 @@ class SubmitChannel < ApplicationCable::Channel
 
   # Receive a submission request from the client.
   #
-  # @param [Hash{String=>*}] payload
+  # @param [Hash{String=>any,nil}] payload
   #
   # @return [void]
   #
@@ -64,7 +64,7 @@ class SubmitChannel < ApplicationCable::Channel
 
   # Receive a submission control request from the client.
   #
-  # @param [Hash{String=>*}] payload
+  # @param [Hash{String=>any,nil}] payload
   #
   # @return [void]
   #
@@ -85,25 +85,25 @@ class SubmitChannel < ApplicationCable::Channel
 
   # Invoked from another thread to push an initial response back to the client.
   #
-  # @param [Hash{Symbol=>*}, Array<Class>] payload
-  # @param [Hash]                          opt
+  # @param [Hash, Array<Class>] data  Payload data
+  # @param [Hash]               opt
   #
   # @option opt [Symbol]  :meth       Passed to #stream_send.
   # @option opt [Boolean] :fatal      Passed to #stream_send.
   #
   # @return [void]
   #
-  def self.initial_response(payload, **opt)
+  def self.initial_response(data, **opt)
     str_opt = opt.extract!(:meth, :fatal)
-    payload = SubmitChannel::InitialResponse.wrap(payload, **opt)
+    payload = SubmitChannel::InitialResponse.wrap(data, **opt)
     payload.convert_to_data_url! if invalid_payload_size(payload)
     stream_send(payload, meth: __method__, **str_opt, **opt)
   end
 
   # Invoked from another thread to push acquired data back to the client.
   #
-  # @param [Hash{Symbol=>*}] payload
-  # @param [Hash]            opt
+  # @param [Hash] data                Payload data
+  # @param [Hash] opt
   #
   # @option opt [Symbol]  :meth       Passed to #stream_send.
   # @option opt [Boolean] :fatal      Passed to #stream_send.
@@ -113,17 +113,17 @@ class SubmitChannel < ApplicationCable::Channel
   # @see file:javascripts/shared/cable-channel.js    *response()*
   # @see file:javascripts/channels/submit-channel.js *_createResponse()*
   #
-  def self.final_response(payload, **opt)
+  def self.final_response(data, **opt)
     str_opt = opt.extract!(:meth, :fatal)
-    payload = SubmitChannel::FinalResponse.wrap(payload, **opt)
+    payload = SubmitChannel::FinalResponse.wrap(data, **opt)
     payload.convert_to_data_url! if invalid_payload_size(payload)
     stream_send(payload, meth: __method__, **str_opt, **opt)
   end
 
   # Invoked from another thread to push intermediate data back to the client.
   #
-  # @param [Hash{Symbol=>*}] payload
-  # @param [Hash]            opt
+  # @param [Hash] data                Payload data.
+  # @param [Hash] opt
   #
   # @option opt [Symbol]  :meth       Passed to #stream_send.
   # @option opt [Boolean] :fatal      Passed to #stream_send.
@@ -133,17 +133,17 @@ class SubmitChannel < ApplicationCable::Channel
   # @see file:javascripts/shared/cable-channel.js    *response()*
   # @see file:javascripts/channels/submit-channel.js *_createResponse()*
   #
-  def self.step_response(payload, **opt)
+  def self.step_response(data, **opt)
     str_opt = opt.extract!(:meth, :fatal)
-    payload = SubmitChannel::StepResponse.wrap(payload, **opt)
+    payload = SubmitChannel::StepResponse.wrap(data, **opt)
     payload.convert_to_data_url! if invalid_payload_size(payload)
     stream_send(payload, meth: __method__, **str_opt, **opt)
   end
 
   # Invoked from another thread to push acquired data back to the client.
   #
-  # @param [Hash{Symbol=>*}] payload
-  # @param [Hash]            opt
+  # @param [Hash] data                Payload data.
+  # @param [Hash] opt
   #
   # @option opt [Symbol]  :meth       Passed to #stream_send.
   # @option opt [Boolean] :fatal      Passed to #stream_send.
@@ -153,9 +153,9 @@ class SubmitChannel < ApplicationCable::Channel
   # @see file:javascripts/shared/cable-channel.js    *response()*
   # @see file:javascripts/channels/submit-channel.js *_createResponse()*
   #
-  def self.control_response(payload, **opt)
+  def self.control_response(data, **opt)
     str_opt = opt.extract!(:meth, :fatal)
-    payload = SubmitChannel::ControlResponse.wrap(payload, **opt)
+    payload = SubmitChannel::ControlResponse.wrap(data, **opt)
     payload.convert_to_data_url! if invalid_payload_size(payload)
     stream_send(payload, meth: __method__, **str_opt, **opt)
   end

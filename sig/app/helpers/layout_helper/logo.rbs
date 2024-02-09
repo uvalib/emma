@@ -7,7 +7,7 @@ module LayoutHelper::Logo
 
   # Configuration for logo properties.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash]
   #
   LOGO_CONFIG: symHash
 

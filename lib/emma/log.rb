@@ -263,7 +263,7 @@ module Emma::Log
 
   # Replace the configured logger.
   #
-  # @param [Any]    config
+  # @param [any]    config
   # @param [String] progname
   # @param [Hash]   opt
   #

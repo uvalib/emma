@@ -73,7 +73,7 @@ module ArrayExt
   # value then a duplicate of *other* is appended to *self* unless it is
   # already present.
   #
-  # @param [Array, *] other
+  # @param [any, nil] other           Array
   #
   # @return [self]
   #

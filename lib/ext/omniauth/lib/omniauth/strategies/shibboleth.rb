@@ -49,7 +49,7 @@ module OmniAuth
       # be hijacked by mod rewrite and shibboleth apache module.
       #
       # @return [(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)]
-      # @return [(Integer, Hash{String=>*}, Array<String>)]
+      # @return [(Integer, Hash{String=>any,nil}, Array<String>)]
       #
       def request_phase
         redirect options.callback_path
@@ -62,7 +62,7 @@ module OmniAuth
       # @raise [SocketError]
       #
       # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
-      # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
+      # @return [Array<(Integer, Hash{String=>any,nil}, Array<String>)>]
       #
       def callback_phase
         raise 'No request' unless request
@@ -135,7 +135,7 @@ module OmniAuth
       # This also converts the "(null)" value set by the Apache module to an
       # actual *nil*.
       #
-      # @return [Hash{String=>*}]
+      # @return [Hash{String=>any,nil}]
       #
       def request_env
         request.env.select { |k, v|

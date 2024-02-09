@@ -57,8 +57,8 @@ class ApplicationJob < ActiveJob::Base
 
   # initialize
   #
-  # @param [*]    args                Assigned to ActiveJob::Core#arguments.
-  # @param [Hash] opt                 Appended to ActiveJob::Core#arguments.
+  # @param [any, nil] args            Assigned to ActiveJob::Core#arguments.
+  # @param [Hash]     opt             Appended to ActiveJob::Core#arguments.
   #
   def initialize(*args, **opt)
     __debug_job(__method__) { { args: args, opt: opt } }

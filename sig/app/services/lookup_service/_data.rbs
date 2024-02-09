@@ -53,13 +53,13 @@ class LookupService::Data
   #
   # @yield [item]
   # @yieldparam [LookupService::Data::Item] item
-  # @yieldreturn [*]
+  # @yieldreturn [any, nil]
   #
   def transform_table_items: [T] () { (LookupService::Data::Item item) -> [T] } -> Hash[Symbol,Array[T]]
 
   # Create a new instance from *item* if it is not already an instance.
   #
-  # @param [LookupService::Data, *] item
+  # @param [any, nil] item            LookupService::Data or arg to initializer
   #
   # @return [LookupService::Data]
   #
@@ -94,7 +94,7 @@ class LookupService::Data::Item < Search::Record::MetadataRecord
 
   # Return only the fields which are not blank.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def item_values: () -> symHash
 
@@ -121,7 +121,7 @@ class LookupService::Data::Item < Search::Record::MetadataRecord
 
   # Create a new instance from *item* if it is not already an instance.
   #
-  # @param [LookupService::Data::Item, *] item
+  # @param [any, nil] item            LookupService::Data::Item
   #
   # @return [LookupService::Data::Item]
   #

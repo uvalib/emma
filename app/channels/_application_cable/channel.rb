@@ -108,10 +108,10 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
 
   # Receive data from the client.
   #
-  # @param [*]    payload
-  # @param [Hash] opt
+  # @param [any, nil] payload
+  # @param [Hash]     opt
   #
-  # @param [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def stream_recv(payload, **opt)
     opt[:stream_name] ||= stream_name

@@ -72,7 +72,7 @@ en:
         label:          'Account Filter'
 
       search_filters:
-        #enabled:        [index]
+#       enabled:        [index]
         enabled:        false
 
         layout:
@@ -85,9 +85,9 @@ en:
           - edit_current
           - list_org
           - list_all
-         #- new
-         #- edit_select
-         #- delete_select
+#         - new
+#         - edit_select
+#         - delete_select
 
       # =======================================================================
       # Controls
@@ -171,8 +171,8 @@ en:
           if_disabled:
             tooltip:    'Not able to cancel at this point'
 
-        #success:        'EMMA user account was successfully %{actioned}.'
-        #failure:        'Failed to %{action} EMMA user account.'
+#       success:        'EMMA user account was successfully %{actioned}.'
+#       failure:        'Failed to %{action} EMMA user account.'
 
       # =======================================================================
 
@@ -253,8 +253,8 @@ en:
           if_enabled:
             tooltip:    'Do not create this entry (or start over)'
 
-        #success:        'EMMA user account %{user} created.'
-        #failure:        'Could not create EMMA user account.'
+#       success:        'EMMA user account %{user} created.'
+#       failure:        'Could not create EMMA user account.'
 
         role:           manager
         _endpoint:      true
@@ -296,8 +296,8 @@ en:
           if_enabled:
             tooltip:    'Discard these changes'
 
-        #success:        'EMMA user account %{user} updated.'
-        #failure:        'Could not update EMMA user account.'
+#       success:        'EMMA user account %{user} updated.'
+#       failure:        'Could not update EMMA user account.'
 
         _endpoint:      true
 
@@ -351,8 +351,8 @@ en:
           if_enabled:
             tooltip:    'Keep this EMMA user account'
 
-        #success:        'EMMA user account %{user} deleted.'
-        #failure:        'Could not delete EMMA user account.'
+#       success:        'EMMA user account %{user} deleted.'
+#       failure:        'Could not delete EMMA user account.'
 
         role:           manager
         _endpoint:      true

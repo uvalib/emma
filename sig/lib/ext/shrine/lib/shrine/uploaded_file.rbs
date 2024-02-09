@@ -11,7 +11,7 @@ class Shrine
     #
     # @raise [Record::SubmitError]    @see #extract_file_metadata
     #
-    # @return [Hash{Symbol=>Any}]
+    # @return [Hash{Symbol=>any}]
     #
     def emma_metadata: () -> symHash
 
@@ -22,7 +22,7 @@ class Shrine
     #
     # @raise [Record::SubmitError]    If metadata was malformed.
     #
-    # @return [Hash{Symbol=>Any}]
+    # @return [Hash{Symbol=>any}]
     #
     def extract_file_metadata: () -> symHash
   end
@@ -46,7 +46,7 @@ class Shrine
     # @param [Hash] options
     #
     # @return [IO]
-    # @return [Any]                 Return from block if block given.
+    # @return [any]                 Return from block if block given.
     #
     def open: (**untyped options) -> IO
 
@@ -55,7 +55,7 @@ class Shrine
     # @param [Hash] options
     #
     # @return [Tempfile]
-    # @return [Any]                 Return from block if block given.
+    # @return [any]                 Return from block if block given.
     #
     def download: (**untyped options) -> Tempfile
 
@@ -105,7 +105,7 @@ class Shrine
 
     # extract_file_metadata
     #
-    # @return [Hash{Symbol=>Any}]
+    # @return [Hash{Symbol=>any}]
     #
     def extract_file_metadata: () -> symHash
   end

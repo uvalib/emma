@@ -14,8 +14,8 @@ class LookupService::Response < ApplicationJob::Response
 
   # Create a new instance.
   #
-  # @param [LookupService::Response, Hash, *] items
-  # @param [Hash, nil]                        opt
+  # @param [any, nil] values          LookupService::Response, Hash
+  # @param [Hash]     opt
   #
   def initialize: ((LookupService::Response|symHash|nil) items, **untyped opt) -> void
 

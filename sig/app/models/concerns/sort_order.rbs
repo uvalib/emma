@@ -59,8 +59,8 @@ class SortOrder < Hash[Symbol,Symbol]
 
   # Initialize a new instance.
   #
-  # @param [SortOrder, Hash, Array, *] value
-  # @param [Hash]                      opt    Passed to #parse.
+  # @param [any, nil] value           SortOrder, Hash, Array
+  # @param [Hash]     opt             Passed to #parse.
   #
   def initialize: (?untyped? value, **untyped opt) -> void
 
@@ -104,7 +104,7 @@ class SortOrder < Hash[Symbol,Symbol]
 
   # Create a new instance from *item* if it is not already an instance.
   #
-  # @param [SortOrder, Hash, *] item
+  # @param [any, nil] item            Expected SortOrder or Hash.
   #
   # @return [SortOrder]
   #
@@ -114,7 +114,7 @@ class SortOrder < Hash[Symbol,Symbol]
 
   # Interpret a value as a raw SQL sort or order/direction pair(s).
   #
-  # @param [SortOrder, Hash, *]  value
+  # @param [any, nil]            value  SortOrder, Hash
   # @param [Symbol, String, nil] dir
   # @param [Symbol, String, nil] col
   # @param [Symbol, String, nil] meth
@@ -143,8 +143,8 @@ class SortOrder < Hash[Symbol,Symbol]
 
   # Report an error or raise an exception if *fatal* is *true*.
   #
-  # @param [*]            msg
-  # @param [*]            field
+  # @param [any, nil]     msg
+  # @param [any, nil]     field
   # @param [Boolean, nil] fatal
   # @param [Symbol, nil]  meth
   #

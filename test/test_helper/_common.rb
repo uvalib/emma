@@ -66,7 +66,7 @@ module TestHelper::Common
 
   # Properties which drive parameterized system tests.
   #
-  # @type [Hash{Symbol=>Hash{Symbol=>*}}]
+  # @type [Hash{Symbol=>Hash}]
   #
   PROPERTY =
     SYSTEM_CONTROLLERS.map { |model|
@@ -104,9 +104,9 @@ module TestHelper::Common
   #
   # @param [Symbol, String, Class, Model, nil] model
   # @param [Array<Symbol>]                     traversal
-  # @param [*]                                 default
+  # @param [any, nil]                          default
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def property(model, *traversal, default: nil)
     ctrlr = controller_name(model || self)
@@ -158,7 +158,7 @@ module TestHelper::Common
 
   # Derive the name of the model/controller from the given source.
   #
-  # @param [Symbol, String, Class, Model, *] value
+  # @param [any, nil] value           Symbol, String, Class, Model
   #
   # @return [Symbol, nil]
   #

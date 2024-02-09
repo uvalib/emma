@@ -14,7 +14,7 @@ module ManifestItem::Assignable
   # @option opt [Boolean] :invalid    Allow invalid values.
   # @option opt [Symbol]  :meth       Caller (for diagnostics).
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def normalize_attributes: ((Model|prmHash|nil) attr, **untyped opt) -> symHash
 

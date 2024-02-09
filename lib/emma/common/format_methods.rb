@@ -106,9 +106,9 @@ module Emma::Common::FormatMethods
   #
   # If the term is already quoted, those quotation marks are preserved.
   #
-  # @param [*]      term
-  # @param [String] quote
-  # @param [String] separator
+  # @param [any, nil] term
+  # @param [String]   quote
+  # @param [String]   separator
   #
   # @return [ActiveSupport::SafeBuffer, String]
   #
@@ -135,9 +135,9 @@ module Emma::Common::FormatMethods
   #   @return [String]
   #
   # @overload quote(term, quote: '"', separator: ', ')
-  #   @param [*]      term
-  #   @param [String] quote
-  #   @param [String] separator
+  #   @param [any, nil] term
+  #   @param [String]   quote
+  #   @param [String]   separator
   #   @return [String]
   #
   def quote(term, quote: '"', separator: ', ')
@@ -166,8 +166,8 @@ module Emma::Common::FormatMethods
 
   # Remove pairs of surrounding quotation marks from a term.
   #
-  # @param [*]      term
-  # @param [String] separator
+  # @param [any, nil] term
+  # @param [String]   separator
   #
   # @return [ActiveSupport::SafeBuffer, String]
   #
@@ -191,8 +191,8 @@ module Emma::Common::FormatMethods
   #   @return [String]
   #
   # @overload strip_quotes(term, separator: ', ')
-  #   @param [*]      term
-  #   @param [String] separator
+  #   @param [any, nil] term
+  #   @param [String]   separator
   #   @return [String]
   #
   def strip_quotes(term, separator: ', ')
@@ -241,7 +241,7 @@ module Emma::Common::FormatMethods
 
   # Extract the named references in a format string.
   #
-  # @param [String, *]             text   String with #sprintf formatting.
+  # @param [any, nil]              text   String with #sprintf formatting.
   # @param [Array<Regexp>, Regexp] match  Default: #NAMED_REFERENCES
   #
   # @return [Array<Symbol>]
@@ -311,7 +311,7 @@ module Emma::Common::FormatMethods
   # respective sprintf formats.  Each "%{name}" reference is paired with "%s";
   # each "%<name>" reference is paired with the format which follows it.
   #
-  # @param [String, *]   text         String with #sprintf formatting.
+  # @param [any, nil]    text         String with #sprintf formatting.
   # @param [String, nil] default_fmt  Format value for "%{name}" matches.
   #
   # @return [Hash{Symbol=>String}]
@@ -398,10 +398,10 @@ module Emma::Common::FormatMethods
 
   # Attempt to apply interpolations to all strings in *item*.
   #
-  # @param [Hash, Array, String, *] item
-  # @param [Hash]                   opt
+  # @param [any, nil] item            Hash, Array, String
+  # @param [Hash]     opt
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def deep_interpolate_named_references(item, **opt)
     case item
@@ -419,7 +419,7 @@ module Emma::Common::FormatMethods
   # If the name is capitalized or all uppercase (e.g. "%{Name}" or "%{NAME}")
   # then the interpolated value will follow the same case.
   #
-  # @param [String, *]           text
+  # @param [any, nil]            text
   # @param [Array<Hash,Model,*>] src
   # @param [Hash]                opt
   #
@@ -440,7 +440,7 @@ module Emma::Common::FormatMethods
   # If possible, make a copy of *text* with #sprintf named references replaced
   # by the matching values extracted from *src* or *opt*.
   #
-  # @param [String, *]           text
+  # @param [any, nil]            text
   # @param [Array<Hash,Model,*>] src
   # @param [Hash]                opt
   #

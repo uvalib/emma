@@ -34,7 +34,7 @@ module BaseDecorator::Controls
 
   # Control icon definitions.
   #
-  # @type [Hash{Symbol=>Hash{Symbol=>*}}]
+  # @type [Hash{Symbol=>Hash}]
   #
   # @see BaseDecorator::Controls#ICON_PROPERTIES
   #
@@ -54,7 +54,7 @@ module BaseDecorator::Controls
 
   # Icon definitions relative to the decorator subclass.
   #
-  # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+  # @return [Hash{Symbol=>Hash}]
   #
   def icon_definitions
     ICONS
@@ -74,7 +74,7 @@ module BaseDecorator::Controls
   #
   # @param [Boolean] authorized       If *true* show all enabled icons.
   #
-  # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+  # @return [Hash{Symbol=>Hash}]
   #
   # @see #icon_definitions
   #
@@ -169,8 +169,8 @@ module BaseDecorator::Controls
   # Make a Unicode character (sequence) into a decorative element that is not
   # pronounced by screen readers.
   #
-  # @param [String, Symbol, *] icon   Unicode character or #ICON key.
-  # @param [Hash]              opt    Passed to HtmlHelper#symbol_icon.
+  # @param [any, nil] icon            Unicode character or #ICON key.
+  # @param [Hash]     opt             Passed to HtmlHelper#symbol_icon.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

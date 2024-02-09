@@ -102,6 +102,8 @@ module TestHelper::IntegrationTests::Format
   #
   # @return [true]
   #
+  # @note Currently unused
+  #
   def assert_json_result(status, **opt)
     opt[:format] = :json unless opt.key?(:format)
     assert_result(status, **opt)
@@ -116,6 +118,8 @@ module TestHelper::IntegrationTests::Format
   #
   # @return [true]
   #
+  # @note Currently unused
+  #
   def assert_xml_result(status, **opt)
     opt[:format] = :xml unless opt.key?(:format)
     assert_result(status, **opt)
@@ -129,6 +133,8 @@ module TestHelper::IntegrationTests::Format
   # @raise [Minitest::Assertion]
   #
   # @return [true]
+  #
+  # @note Currently unused
   #
   def assert_text_result(status, **opt)
     opt[:format] = :text unless opt.key?(:format)

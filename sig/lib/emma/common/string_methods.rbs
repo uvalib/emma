@@ -69,7 +69,7 @@ module Emma::Common::StringMethods
 
   # Indicate whether item is a UUID value.
   #
-  # @param [*] item
+  # @param [any, nil] item
   #
   def uuid?: (untyped item) -> bool
 end

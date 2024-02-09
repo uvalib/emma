@@ -222,7 +222,7 @@ module Record::EmmaData
     #
     # @param [Boolean] refresh        If *true*, force regeneration.
     #
-    # @return [Hash{Symbol=>*}]
+    # @return [Hash]
     #
     # @note From Upload::EmmaDataMethods#emma_metadata
     #
@@ -236,7 +236,7 @@ module Record::EmmaData
     # @param [Search::Record::MetadataRecord, Hash, String, nil] data
     # @param [Boolean]                                           allow_blank
     #
-    # @return [*]                     New value of :emma_data
+    # @return [any]                   New value of :emma_data
     # @return [nil]                   ...if *data* is *nil*.
     #
     # @note From Upload::EmmaDataMethods#set_emma_data
@@ -252,7 +252,7 @@ module Record::EmmaData
     # @param [Hash]    data
     # @param [Boolean] allow_blank
     #
-    # @return [*]                     New value of :emma_data
+    # @return [any]                   New value of :emma_data
     # @return [nil]                   If no change and :emma_data was *nil*.
     #
     # @note From Upload::EmmaDataMethods#modify_emma_data
@@ -268,9 +268,9 @@ module Record::EmmaData
 
     # init_emma_data_value
     #
-    # @param [*] data
+    # @param [any, nil] data
     #
-    # @return [Hash{String=>*}, String, nil]
+    # @return [Hash{String=>any,nil}, String, nil]
     #
     def init_emma_data_value(data)
       must_be_overridden
@@ -278,7 +278,7 @@ module Record::EmmaData
 
     # curr_emma_data_value
     #
-    # @return [Hash{String=>*}, String, nil]
+    # @return [Hash{String=>any,nil}, String, nil]
     #
     def curr_emma_data_value
       must_be_overridden
@@ -302,7 +302,7 @@ module Record::EmmaData
     # @param [Search::Record::MetadataRecord, Hash, String, nil] data
     # @param [Boolean]                                           allow_blank
     #
-    # @return [Hash{String=>*}]       New value of :emma_data
+    # @return [Hash{String=>any,nil}] New value of :emma_data
     # @return [nil]                   ...if *data* is *nil*.
     #
     def set_emma_data(data, allow_blank = true)
@@ -314,7 +314,7 @@ module Record::EmmaData
     # @param [Hash]    data
     # @param [Boolean] allow_blank
     #
-    # @return [Hash{String=>*}]       New value of :emma_data
+    # @return [Hash{String=>any,nil}] New value of :emma_data
     # @return [nil]                   If no change and :emma_data was *nil*.
     #
     def modify_emma_data(data, allow_blank = true)
@@ -323,9 +323,9 @@ module Record::EmmaData
 
     # init_emma_data_value
     #
-    # @param [*] data
+    # @param [any, nil] data
     #
-    # @return [Hash{String=>*}, nil]
+    # @return [Hash{String=>any,nil}, nil]
     #
     def init_emma_data_value(data)
       data.presence && curr_emma_data_value
@@ -333,10 +333,9 @@ module Record::EmmaData
 
     # curr_emma_data_value
     #
-    # @return [Hash{String=>*}, nil]
+    # @return [Hash{String=>any,nil}, nil]
     #
     def curr_emma_data_value
-      # noinspection RubyMismatchedReturnType
       @emma_metadata&.deep_stringify_keys
     end
 
@@ -379,7 +378,7 @@ module Record::EmmaData
 
     # init_emma_data_value
     #
-    # @param [*] data
+    # @param [any, nil] data
     #
     # @return [String, nil]
     #

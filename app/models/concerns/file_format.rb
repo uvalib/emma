@@ -117,7 +117,7 @@ module FileFormat
 
   # parser_metadata
   #
-  # @return [Any]                     Type is specific to the subclass.
+  # @return [any]                     Type is specific to the subclass.
   #
   def parser_metadata
     @parser_metadata ||= parser.metadata
@@ -125,7 +125,7 @@ module FileFormat
 
   # Metadata extracted from the file format instance.
   #
-  # @return [Hash{String=>Any}]
+  # @return [Hash{String=>any}]
   #
   def metadata
     @metadata ||= format_metadata(parser_metadata)
@@ -133,7 +133,7 @@ module FileFormat
 
   # Extracted metadata mapped to common metadata fields.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>any}]
   #
   def common_metadata
     @common_metadata ||= mapped_metadata(parser_metadata)
@@ -147,9 +147,9 @@ module FileFormat
 
   # Metadata extracted from the file format instance.
   #
-  # @param [*] info                   Information supplied by the subclass.
+  # @param [any, nil] info            Information supplied by the subclass.
   #
-  # @return [Hash{String=>Any}]
+  # @return [Hash{String=>any}]
   #
   # @yield [field, accessor, label, value]  Per-field processing by caller.
   # @yieldparam [Symbol]              field
@@ -177,9 +177,9 @@ module FileFormat
   # Map metadata extracted from the file format instance into common metadata
   # fields.
   #
-  # @param [*] info                   Information supplied by the subclass.
+  # @param [any, nil] info            Information supplied by the subclass.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>any}]
   #
   def mapped_metadata(info)
     return {} if info.blank?
@@ -200,7 +200,7 @@ module FileFormat
 
   # apply_field_accessor
   #
-  # @param [*]                   info
+  # @param [any, nil]            info
   # @param [Symbol, Proc, Array] accessor
   #
   # @return [Array<String>]

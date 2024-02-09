@@ -24,7 +24,7 @@ module Manifest::EmmaIdentification
 
   # Indicate whether the value could be a valid #id_column value.
   #
-  # @param [*] value
+  # @param [any, nil] value
   #
   def valid_id?(value)
     value.is_a?(String) && value.match?(UUID_PATTERN)

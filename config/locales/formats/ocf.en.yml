@@ -24,7 +24,7 @@ en:
 
         CoverImage:           'cover_image'
 
-        # Dublin Core
+        # == Dublin Core
 
         Title:                'title'
         Author:               'author'            # Not Dublin Core
@@ -45,7 +45,7 @@ en:
         Description:          'description'
         Identifier:           'identifier'
 
-        # Schema.org
+        # == Schema.org
 
         AccessibilityFeature: 'accessibility_feature'
         AccessibilityHazard:  'accessibility_hazard'
@@ -54,7 +54,7 @@ en:
         AccessModeSufficient: 'access_mode_sufficient'
         AccessibilitySummary: 'accessibility_summary'
 
-        # DTBook x-metadata
+        # == DTBook x-metadata
 
         Synopsis:             'synopsis'          # not in DTBook
         RunningTime:          'total_time'        # 0 for type == 'textNCX'
@@ -74,7 +74,7 @@ en:
         RevisionDescription:  'revision_description'
         ModifiedDate:         'modified'          # not in DTBook
 
-        # From *.ncx file
+        # == From *.ncx file
 
         Uid:                  'uid'
         Depth:                'depth'
@@ -89,30 +89,30 @@ en:
 
       map:
 
-        # cover_image:          'cover_image'
+#       cover_image:            'cover_image'
 
-        # Dublin Core
+        # == Dublin Core
 
         title:                  'dc_title'
         author:                 'dc_creator'
         editor:                 'dc_creator'
         creator:                'dc_creator'
-        # contributor:          'dc_contributor'
+#       contributor:            'dc_contributor'
         language:               'dc_language'
         date:                   'dc_date'
         publisher:              'dc_publisher'
         publication_date:       'dc_date'
         subject:                'dc_subject'
         type:                   'dc_type'
-        # rights:               'dc_rights'
-        # formats:              'dc_format'
-        # source:               'dc_source'
-        # coverage:             'dc_coverage'
+#       rights:                 'dc_rights'
+#       formats:                'dc_format'
+#       source:                 'dc_source'
+#       coverage:               'dc_coverage'
         relation:               'dc_relation'
         description:            'dc_description'
         identifier:             'dc_identifier'
 
-        # Schema.org
+        # == Schema.org
 
         accessibility_feature:  's_accessibilityFeature'
         accessibility_hazard:   's_accessibilityHazard'
@@ -121,30 +121,30 @@ en:
         access_mode_sufficient: 's_accessModeSufficient'
         accessibility_summary:  's_accessibilitySummary'
 
-        # DTBook x-metadata
+        # == DTBook x-metadata
 
         synopsis:               'dc_description'
-        # total_time:           'total_time'
-        # audio_format:         'audio_format'
-        # narrator:             'narrator'
-        # multimedia_type:      'multimedia_type'
-        # multimedia_content:   'multimedia_content'
+#       total_time:             'total_time'
+#       audio_format:           'audio_format'
+#       narrator:               'narrator'
+#       multimedia_type:        'multimedia_type'
+#       multimedia_content:     'multimedia_content'
         source_title:           'dc_title'
         source_rights:          'dc_rights'
-        # source_edition:       'source_edition'
+#       source_edition:         'source_edition'
         source_date:            'dc_date'
         source_publisher:       'dc_publisher'
-        # producer:             'producer'
+#       producer:               'producer'
         produced_date:          'rem_remediationDate'
-        # revision:             'revision'
+#       revision:               'revision'
         revision_date:          'rem_remediationDate'
         revision_description:   'rem_comments'
         modified:               'rem_remediationDate'
 
-        # From *.ncx file
+        # == From *.ncx file
 
-        # Uid:                  'uid'
-        # Depth:                'depth'
-        # Generator:            'generator'
-        # Pages:                'total_page_count'
-        # MaxPageNumber:        'max_page_number'
+#       Uid:                    'uid'
+#       Depth:                  'depth'
+#       Generator:              'generator'
+#       Pages:                  'total_page_count'
+#       MaxPageNumber:          'max_page_number'

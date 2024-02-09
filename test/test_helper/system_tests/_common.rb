@@ -83,6 +83,8 @@ module TestHelper::SystemTests::Common
   #
   # @return [true]
   #
+  # @note Currently unused
+  #
   def assert_json(value = nil, exact: nil, **pairs)
     if value.nil?
       value = pairs

@@ -39,7 +39,7 @@ module ConfigurationHelper
   # @param [String, Symbol, nil] ctrlr
   # @param [String, Symbol, nil] action
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def controller_configuration(ctrlr = nil, action = nil)
     result = ApplicationHelper::CONTROLLER_CONFIGURATION
@@ -75,7 +75,7 @@ module ConfigurationHelper
   # @param [String, Array]       path       Partial I18n path.
   # @param [Symbol, String, nil] ctrlr
   # @param [Symbol, String, nil] action
-  # @param [*]                   default  Returned on failure.
+  # @param [any, nil]            default  Returned on failure.
   # @param [Boolean]             fatal    If *true* then raise exceptions.
   # @param [Hash]                opt      To #config_interpolations except:
   #
@@ -87,7 +87,7 @@ module ConfigurationHelper
   #
   # @raise [RuntimeError]             If *fatal* and configuration not found.
   #
-  # @return [*]                       The specified value or *default*.
+  # @return [any, nil]                The specified value or *default*.
   #
   # @example Simple path - [:button, :label]
   # Returns the most specific configuration match from the list:
@@ -224,10 +224,10 @@ module ConfigurationHelper
 
   # Recursively apply supplied unit interpolations.
   #
-  # @param [Hash, Array, String, Integer, Boolean, *] item
-  # @param [Hash]                                     opt
+  # @param [any, nil] item            Hash, Array, String, Integer, Boolean
+  # @param [Hash]     opt
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def apply_config_interpolations(item, **opt)
     units = config_interpolations(**opt)

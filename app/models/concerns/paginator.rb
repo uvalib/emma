@@ -94,7 +94,7 @@ class Paginator
 
     # Empty copy of data values in the preferred order (for debug output).
     #
-    # @type [Hash{Symbol=>*}]
+    # @type [Hash]
     #
     TEMPLATE = {
       page_number:      nil,
@@ -290,7 +290,7 @@ class Paginator
   #
   # @note Defined to support use of external routing methods like #url_for.
   #
-  # @return [Hash{String=>*}]
+  # @return [Hash{String=>any,nil}]
   #
   def env
     request.env
@@ -374,8 +374,8 @@ class Paginator
 
     # Determine the number of records reported by an object.
     #
-    # @param [Paginator, Api::Record, Model, Array, Hash, *] value
-    # @param [Integer]                                       default
+    # @param [any, nil] value         Paginator,Api::Record,Model,Array,Hash
+    # @param [Integer]  default
     #
     # @return [Integer]               Zero indicates unknown count.
     #
@@ -394,8 +394,8 @@ class Paginator
     # (For aggregate items, this is the number of aggregates as opposed to the
     # number of records from which they are composed.)
     #
-    # @param [Paginator, Api::Record, Model, Array, Hash, *] value
-    # @param [Integer]                                       default
+    # @param [any, nil] value         Paginator,Api::Record,Model,Array,Hash
+    # @param [Integer]  default
     #
     # @return [Integer]               Zero indicates unknown count.
     #
@@ -507,10 +507,10 @@ class Paginator
 
   # Determine the number of records reported by an object.
   #
-  # @param [Paginator, Api::Record, Model, Array, Hash, *] value  Default: self
-  # @param [Hash]                                          opt
+  # @param [any, nil] value           Default: `self`.
+  # @param [Hash]     opt
   #
-  # @return [Integer]               Zero indicates unknown count.
+  # @return [Integer]                 Zero indicates unknown count.
   #
   def record_count(value = nil, **opt)
     value ||= self
@@ -519,10 +519,10 @@ class Paginator
 
   # Extract the number of "items" reported by an object.
   #
-  # @param [Paginator, Api::Record, Model, Array, Hash, *] value  Default: self
-  # @param [Hash]                                          opt
+  # @param [any, nil] value           Default: `self`.
+  # @param [Hash]     opt
   #
-  # @return [Integer]               Zero indicates unknown count.
+  # @return [Integer]                 Zero indicates unknown count.
   #
   def item_count(value = nil, **opt)
     value ||= self
@@ -1028,7 +1028,7 @@ class Paginator
   # @param [Array<*>]       args
   # @param [Proc]           blk
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def method_missing(name, *args, &blk)
     var = [@page_items, @page_source].find { |v| v&.respond_to?(name) }

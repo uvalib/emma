@@ -144,8 +144,8 @@ class ManifestItem < ApplicationRecord
 
   # Produce a relation for selecting records associated with the given user.
   #
-  # @param [*]    user
-  # @param [Hash] opt
+  # @param [any, nil] user            User, Hash, Symbol, String, Integer
+  # @param [Hash]     opt
   #
   # @return [ActiveRecord::Relation]
   #
@@ -158,8 +158,8 @@ class ManifestItem < ApplicationRecord
   # Produce a relation for selecting records associated with the given
   # organization.
   #
-  # @param [Org, Hash, Symbol, String, Integer, nil] org
-  # @param [Hash]                                    opt
+  # @param [any, nil] org             Org, Hash, Symbol, String, Integer
+  # @param [Hash]     opt
   #
   # @return [ActiveRecord::Relation]
   #

@@ -29,7 +29,7 @@ module Record::Assignable
   #
   # @raise [RuntimeError]             If the type of *attr* is invalid.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def normalize_attributes: ((Model|prmHash|nil) attr, **untyped opt) -> symHash
 
@@ -85,11 +85,11 @@ module Record::Assignable
   # Normalize a specific field value.
   #
   # @param [Symbol]        key
-  # @param [*]             value
+  # @param [any, nil]      value
   # @param [String, Class] type
   # @param [Hash, nil]     errors
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def normalize_field: (Symbol key, untyped value, String|Class `type`, ?(symHash|nil) errors) -> untyped
 
@@ -113,8 +113,8 @@ module Record::Assignable
 
   # Indicate whether the value is valid for *type*.
   #
-  # @param [*] v
-  # @param [*] type
+  # @param [any, nil] v
+  # @param [any, nil] type
   #
   def is_invalid?: (untyped v, String|Class `type`) -> bool
 
@@ -132,7 +132,7 @@ module Record::Assignable
 
   # normalize_file
   #
-  # @param [Hash, String, *] data
+  # @param [any, nil] data            Hash, String
   #
   # @return [Hash, nil]
   #
@@ -142,17 +142,17 @@ module Record::Assignable
 
   # normalize_single
   #
-  # @param [*]            v
+  # @param [any, nil]     v
   # @param [String,Class] type
   # @param [Hash]         opt         Passed to normalization method.
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def normalize_single: (untyped v, String|Class `type`, **untyped opt) -> (untyped | nil)
 
   # normalize_bool
   #
-  # @param [BoolType, String, *] v
+  # @param [any, nil] v               BoolType, String
   #
   # @return [true, false, nil]
   #
@@ -163,7 +163,7 @@ module Record::Assignable
 
   # normalize_number
   #
-  # @param [String, Numeric, *] v
+  # @param [any, nil] v               String, Numeric
   #
   # @return [Numeric, nil]
   #
@@ -174,7 +174,7 @@ module Record::Assignable
 
   # normalize_date
   #
-  # @param [Date, String, Numeric, *] v
+  # @param [any, nil] v               Date, String, Numeric
   #
   # @return [Date, String, nil]
   #
@@ -185,7 +185,7 @@ module Record::Assignable
 
   # normalize_datetime
   #
-  # @param [Date, String, Numeric, *] v
+  # @param [any, nil] v               Date, String, Numeric
   #
   # @return [DateTime, String, nil]
   #
@@ -196,9 +196,9 @@ module Record::Assignable
 
   # normalize_class
   #
-  # @param [*]     v
-  # @param [Class] type               EnumType or ApplicationRecord subclass
-  # @param [Hash]  opt                Passed to EnumType#cast method.
+  # @param [any, nil] v
+  # @param [Class]    type            EnumType or ApplicationRecord subclass
+  # @param [Hash]     opt             Passed to EnumType#cast method.
   #
   # @return [ApplicationRecord, EnumType, nil]
   #
@@ -212,8 +212,8 @@ module Record::Assignable
 
   # normalize_record
   #
-  # @param [*]     v
-  # @param [Class] type               EnumType subclass
+  # @param [any, nil] v
+  # @param [Class]    type            EnumType subclass
   #
   # @return [ApplicationRecord, nil]
   #
@@ -224,9 +224,9 @@ module Record::Assignable
 
   # normalize_enum
   #
-  # @param [*]     v
-  # @param [Class] type               EnumType subclass
-  # @param [Hash]  opt                Passed to #cast method.
+  # @param [any, nil] v
+  # @param [Class]    type            EnumType subclass
+  # @param [Hash]     opt             Passed to #cast method.
   #
   # @return [EnumType, nil]
   #
@@ -237,7 +237,7 @@ module Record::Assignable
 
   # normalize_json
   #
-  # @param [Array<Hash,String>, Hash, String, *] v
+  # @param [any, nil] v               Array<Hash,String>, Hash, String
   #
   # @return [Array<Hash>, Hash, nil]
   #
@@ -248,9 +248,9 @@ module Record::Assignable
 
   # normalize_text
   #
-  # @param [Array, String, Symbol, *] v
+  # @param [any, nil] v               Array, String, Symbol
   #
-  # @return [String, *]
+  # @return [String, any, nil]
   #
   def normalize_text
     :     (anyArray|String|Symbol v, **untyped _ignored) -> String
@@ -258,7 +258,7 @@ module Record::Assignable
 
   # normalize_copyright
   #
-  # @param [Date, String, Numeric, *] v
+  # @param [any, nil] v               Date, String, Numeric
   #
   # @return [String, nil]
   #

@@ -13,7 +13,7 @@ module Emma::Common::ObjectMethods
 
   # Translate a item into a class.
   #
-  # @param [Symbol, String, Class, *] item
+  # @param [any, nil] item            Symbol, String, Class
   #
   # @return [Class, nil]
   #

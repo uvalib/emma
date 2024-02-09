@@ -79,7 +79,7 @@ module Serializable
     # associated with the base class of that hierarchy rather than the
     # serializer for the specific subclass.
     #
-    # @param [*] argument
+    # @param [any, nil] argument
     #
     def serialize?(argument)
       argument.class == klass
@@ -88,13 +88,13 @@ module Serializable
     # To be consistent, serialized values will always be rooted at the same
     # place in the serialization hash.
     #
-    # @param [*] item
+    # @param [any, nil] item
     #
     # @return [Hash]
     #
     # @yield [item] Return data from *item* that will be needed to recreate it.
     # @yieldparam [self] item An instance of the class.
-    # @yieldreturn [*]        The data from *item*.
+    # @yieldreturn [any, nil] The data from *item*.
     #
     def serialize(item)
       item = yield(item)              if block_given?
@@ -107,11 +107,11 @@ module Serializable
     #
     # @param [Hash] hash        Generated via serialization.
     #
-    # @return [*]               An instance of the associated class.
+    # @return [any, nil]        An instance of the associated class.
     #
     # @yield [value]
-    # @yieldparam [*] value     Data produced by #serialize.
-    # @yieldreturn [self,*]     An item instance or data to create a new one.
+    # @yieldparam [any,nil] value Data produced by #serialize.
+    # @yieldreturn [self,any,nil] An item instance or data to create a new one.
     #
     def deserialize(hash)
       item = hash.values_at(*VALUE_KEYS).first
@@ -144,7 +144,7 @@ module Serializable
 
       # Deep symbolize all keys except for ActiveJob reserved keys.
       #
-      # @return [Hash{String,Symbol=>*}]
+      # @return [Hash{String,Symbol=>any,nil}]
       #
       def re_symbolize_keys(hash)
         hash.deep_transform_keys do |key|

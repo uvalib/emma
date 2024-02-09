@@ -43,11 +43,11 @@ module ApplicationCable::Common
 
   # Normalize received stream data.
   #
-  # @param [*]           payload
+  # @param [any, nil]    payload
   # @param [Symbol, nil] meth         Calling method (for diagnostics).
   # @param [Hash]        opt
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def normalize_inbound(payload, meth: nil, **opt)
     __debug_cable_data((meth || __method__), payload)
@@ -58,11 +58,11 @@ module ApplicationCable::Common
 
   # Normalize stream payload data.
   #
-  # @param [*]           payload
+  # @param [any, nil]    payload
   # @param [Symbol, nil] meth         Calling method (for diagnostics).
   # @param [Hash]        opt
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def normalize_outbound(payload, meth: nil, **opt)
     __debug_cable_data((meth || __method__), payload)

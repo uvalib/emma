@@ -48,7 +48,7 @@ module UploadConcern
 
   # Get URL parameters relevant to the current operation.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def current_get_params
     super do |prm|
@@ -60,7 +60,7 @@ module UploadConcern
   # Extract POST parameters that are usable for creating/updating a Manifest
   # instance.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def current_post_params
     super do |prm|
@@ -80,7 +80,7 @@ module UploadConcern
   #
   # @raise [RuntimeError]             If both :src and :data are present.
   #
-  # @return [Array<Hash{Symbol=>*}>]
+  # @return [Array<Hash>]
   #
   # @see ImportConcern#fetch_data
   #
@@ -95,7 +95,7 @@ module UploadConcern
 
   # workflow_parameters
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def workflow_parameters
     result = { id: db_id, user_id: @user&.id }
@@ -208,7 +208,7 @@ module UploadConcern
   # @option opt [Symbol] :from        Default: `#calling_method`.
   # @option opt [Symbol] :event
   #
-  # @return [*]                       @see UploadWorkflow::Single#results
+  # @return [any, nil]                @see UploadWorkflow::Single#results
   #
   # @see UploadWorkflow::Single#generate
   #
@@ -441,7 +441,7 @@ module UploadConcern
 
   # Render an item for display in a message.
   #
-  # @param [Model, Hash, String, *] item
+  # @param [any, nil] item            Model, Hash, String
   #
   # @return [String]
   #
@@ -493,8 +493,8 @@ module UploadConcern
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [*]    list                Default: `paginator.page_items`
-  # @param [Hash] opt
+  # @param [any, nil] list            Default: `paginator.page_items`
+  # @param [Hash]     opt
   #
   # @return [Hash{Symbol=>Hash}]
   #
@@ -508,7 +508,7 @@ module UploadConcern
   # @param [Upload, Hash] item
   # @param [Hash]         opt
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def show_values(item = @item, **opt)
     item = item.try(:to_h) || {} unless item.is_a?(Hash)

@@ -45,6 +45,7 @@ module SqlMethods
   # @param [ApplicationRecord] rec_2
   #
   def match?(rec_1, rec_2)
+    # noinspection RailsParamDefResolve
     (rec_1.is_a?(ApplicationRecord) || rec_2.is_a?(ApplicationRecord)) &&
       (rec_1.class.try(:base_class) == rec_2.class.try(:base_class)) &&
       (rec_1.attributes == rec_2.attributes)
@@ -136,7 +137,7 @@ module SqlMethods
   # Translate a key and value into a SQL condition.
   #
   # @param [String, Symbol, Hash] k
-  # @param [*]                    v
+  # @param [any, nil]             v
   #
   # @return [String, nil]
   #
@@ -146,7 +147,7 @@ module SqlMethods
   #
   # @overload sql_clause(k, v)
   #   @param [String, Symbol] k
-  #   @param [*]              v
+  #   @param [any, nil]       v
   #
   # @overload sql_clause(hash)
   #   @param [Hash] hash              Only the first pair is used.
@@ -226,7 +227,7 @@ module SqlMethods
   # Look for a value in a standard database field.
   #
   # @param [Symbol, String] column
-  # @param [*]              value
+  # @param [any, nil]       value
   # @param [Hash]           opt       Passed to #sql_test
   #
   # @return [String]
@@ -361,9 +362,9 @@ module SqlMethods
 
   # Generate the SQL fragment which is the test of a name against a value.
   #
-  # @param [*]    name
-  # @param [*]    value
-  # @param [Hash] opt                 Passed to #sql_name_value
+  # @param [any, nil] name
+  # @param [any, nil] value
+  # @param [Hash]     opt             Passed to #sql_name_value
   #
   # @return [String]
   #
@@ -373,9 +374,9 @@ module SqlMethods
 
   # Generate the SQL fragment elements for testing a name against a value.
   #
-  # @param [*]    name
-  # @param [*]    value
-  # @param [Hash] opt                 Passed to #sql_match_term
+  # @param [any, nil] name
+  # @param [any, nil] value
+  # @param [Hash]     opt             Passed to #sql_match_term
   #
   # @return [Array<(String,String,String)>]
   #
@@ -390,9 +391,9 @@ module SqlMethods
 
   # Generate the SQL operator and value from a term.
   #
-  # @param [*]       term
-  # @param [Boolean] exact
-  # @param [Boolean] match_case
+  # @param [any, nil] term
+  # @param [Boolean]  exact
+  # @param [Boolean]  match_case
   #
   # @return [Array<(String,String)>]
   #
@@ -489,7 +490,7 @@ module SqlMethods
 
   # Return a list of SQL values.
   #
-  # @param [*]           value
+  # @param [any, nil]    value
   # @param [String, nil] null
   #
   # @return [String]

@@ -60,13 +60,13 @@ module Record::EmmaIdentification
 
   # Extract the submission ID from the given item.
   #
-  # @param [Model, Hash, String, *] item
-  # @param [Hash]                   opt
+  # @param [any, nil] item            Model, Hash, String
+  # @param [Hash]     opt
   #
-  # @option opt [Symbol] :sid_key         Default: `#sid_column`.
+  # @option opt [Symbol] :sid_key     Default: `#sid_column`.
   #
-  # @return [String]                      The submission ID.
-  # @return [nil]                         No submission ID could be determined.
+  # @return [String]                  The submission ID.
+  # @return [nil]                     No submission ID could be determined.
   #
   def sid_value(item, **opt)
     item = item.is_a?(Hash) ? item.merge(opt) : opt unless item.is_a?(Model)
@@ -81,7 +81,7 @@ module Record::EmmaIdentification
 
   # Indicate whether *value* could be an EMMA submission ID.
   #
-  # @param [String, *] value
+  # @param [any, nil] value           String
   #
   def valid_sid?(value)
     match_sid?(value)
@@ -98,7 +98,7 @@ module Record::EmmaIdentification
   # (Unlike #valid_sid? this is not overridden in InstanceMethods so it is not
   # subject to problems with recursive definitions.)
   #
-  # @param [String, *] value
+  # @param [any, nil] value
   #
   def match_sid?(value)
     value.is_a?(String) && value.match?(SID_PATTERN)
@@ -112,7 +112,7 @@ module Record::EmmaIdentification
 
   # Indicate whether the record is an EMMA-native item.
   #
-  # @param [Model, Hash, String, Symbol, *] item
+  # @param [any, nil] item            Model, Hash, String, Symbol
   #
   # @note From Upload#emma_native?
   #
@@ -122,7 +122,7 @@ module Record::EmmaIdentification
 
   # Extract the repository associated with the item.
   #
-  # @param [Model, Hash, String, Symbol, *] item
+  # @param [any, nil] item            Model, Hash, String, Symbol
   #
   # @return [String]                  One of EmmaRepository#values.
   # @return [nil]                     If *item* did not indicate a repository.
@@ -143,7 +143,7 @@ module Record::EmmaIdentification
 
   # The full name of the indicated repository.
   #
-  # @param [Model, Hash, String, Symbol, *] item
+  # @param [any, nil] item            Model, Hash, String, Symbol
   #
   # @return [String]                  The name of the associated repository.
   # @return [nil]                     If *src* did not indicate a repository.
@@ -156,7 +156,7 @@ module Record::EmmaIdentification
 
   # Extract the EMMA index entry identifier from the item.
   #
-  # @param [Model, Hash, String, Symbol, *] item
+  # @param [any, nil] item            Model, Hash, String, Symbol
   #
   # @return [String]
   # @return [nil]
@@ -185,9 +185,9 @@ module Record::EmmaIdentification
 
   # Indicate whether *item* is or contains a valid EMMA index record ID.
   #
-  # @param [Model, Hash, String, Symbol, *] item
-  # @param [String, Array<String>]          add_repo
-  # @param [String, Array<String>]          add_fmt
+  # @param [any, nil]              item       Model, Hash, String, Symbol
+  # @param [String, Array<String>] add_repo
+  # @param [String, Array<String>] add_fmt
   #
   # @note From Upload#valid_record_id?
   #
@@ -260,7 +260,7 @@ module Record::EmmaIdentification
 
   # Return with the specified record or *nil* if one could not be found.
   #
-  # @param [String, Integer, Hash, Model, *] item
+  # @param [any, nil]    item         String, Integer, Hash, Model
   # @param [Boolean]     fatal        If *false*, do not raise exceptions.
   # @param [Symbol, nil] meth         Calling method (for logging).
   # @param [Hash]        opt          Used if *item* is *nil* except for:
@@ -277,6 +277,9 @@ module Record::EmmaIdentification
   #
   # @note From UploadWorkflow::External#find_record
   #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
   def find_record(item, fatal: true, meth: nil, **opt)
     return item if item.is_a?(record_class)
     meth  ||= __method__
@@ -285,6 +288,7 @@ module Record::EmmaIdentification
     id_key  = opt.key?(:id_key)  ? opt[:id_key]  : id_column
     sid_key = opt.key?(:sid_key) ? opt[:sid_key] : sid_column
     if id_key || sid_key
+      # noinspection RubyMismatchedArgumentType
       opt.merge!(item) if item.is_a?(Hash)
       alt = id_key && alt_id_key(opt)
       opt = id_term(item, **opt).merge!(opt.slice(alt))
@@ -315,7 +319,6 @@ module Record::EmmaIdentification
     end
 
     if record
-      # noinspection RubyMismatchedReturnType
       record
     elsif !id && !sid
       Log.info { "#{meth}: #{error} (no record specified)" }

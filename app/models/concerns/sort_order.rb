@@ -83,8 +83,8 @@ class SortOrder < Hash
 
   # Initialize a new instance.
   #
-  # @param [SortOrder, Hash, Array, *] value
-  # @param [Hash]                      opt    Passed to #parse.
+  # @param [any, nil] value           SortOrder, Hash, Array
+  # @param [Hash]     opt             Passed to #parse.
   #
   def initialize(value = nil, **opt)
     case (value &&= parse(value, meth: 'SortOrder', fatal: true, **opt))
@@ -189,11 +189,12 @@ class SortOrder < Hash
 
   # Create a new instance from *item* if it is not already an instance.
   #
-  # @param [SortOrder, Hash, *] item
+  # @param [any, nil] item            Expected SortOrder or Hash.
   #
   # @return [SortOrder]
   #
   def self.wrap(item, **opt)
+    # noinspection RubyMismatchedReturnType
     item.is_a?(self) ? item : new(item, **opt)
   end
 
@@ -201,7 +202,7 @@ class SortOrder < Hash
 
   # Interpret a value as a raw SQL sort or order/direction pair(s).
   #
-  # @param [SortOrder, Hash, *]  value
+  # @param [any, nil]            value  SortOrder, Hash
   # @param [Symbol, String, nil] dir
   # @param [Symbol, String, nil] col
   # @param [Symbol, String, nil] meth
@@ -311,8 +312,8 @@ class SortOrder < Hash
 
   # Report an error or raise an exception if *fatal* is *true*.
   #
-  # @param [*]            msg
-  # @param [*]            field
+  # @param [any, nil]     msg
+  # @param [any, nil]     field
   # @param [Boolean, nil] fatal
   # @param [Symbol, nil]  meth
   #
@@ -321,6 +322,7 @@ class SortOrder < Hash
   def self.error(msg = nil, field: nil, fatal: nil, meth: nil, **)
     msg = Array.wrap(msg || yield).join('; ')
     msg = [meth, field, msg].compact.join(': ')
+    # noinspection RubyMismatchedArgumentType
     fatal and raise(msg) or Log.error(msg)
   end
 

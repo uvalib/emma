@@ -10,14 +10,14 @@ module Field
 
   # Generate an appropriate field subclass instance if possible.
   #
-  # @param [Symbol, String, Class, Model, *] item
-  # @param [Symbol]                          field
-  # @param [FieldConfig, nil]                prop
-  # @param [*]                               value
+  # @param [any, nil]         item    Symbol, String, Class, Model
+  # @param [Symbol, nil]      field
+  # @param [any, nil]         value
+  # @param [FieldConfig, nil] prop
   #
   # @return [Field::Type]             Instance based on *item* and *field*.
   # @return [nil]                     If *field* is not valid.
   #
-  def self.for: (untyped item, Symbol field, ?prop: FieldConfig|nil, ?value: untyped) -> (Field::Type | nil)
+  def self.for: (untyped item, Symbol|nil field, ?value: untyped, ?prop: FieldConfig|nil) -> (Field::Type | nil)
 
 end

@@ -58,19 +58,19 @@ FALSE_VALUES: strArray
 class Object
   # Indicate whether the item represents an explicit *true* value.
   #
-  # @param [Boolean, String, Symbol, *] value
+  # @param [any, nil] value             Boolean, String, Symbol
   #
   def true?: (untyped value) -> bool
 
   # Indicate whether the item represents an explicit *false* value.
   #
-  # @param [Boolean, String, Symbol, *] value
+  # @param [any, nil] value             Boolean, String, Symbol
   #
   def false?: (untyped value) -> bool
 
   # Produce JSON for use with "assets.js.erb".
   #
-  # @param [String, Hash, Array, *] arg
+  # @param [any, nil] arg               String, Hash, Array
   #
   # @return [String]
   #

@@ -47,7 +47,7 @@ class LookupChannel < ApplicationCable::Channel
 
   # Receive a lookup request from the client.
   #
-  # @param [Hash{String=>*}] payload
+  # @param [Hash{String=>any,nil}] payload
   #
   # @return [void]
   #
@@ -68,8 +68,8 @@ class LookupChannel < ApplicationCable::Channel
 
   # Invoked from another thread to push an initial response back to the client.
   #
-  # @param [Hash{Symbol=>*}, Array<Class>] payload
-  # @param [Hash]                          opt
+  # @param [Hash, Array<Class>] data   Payload data.
+  # @param [Hash]               opt
   #
   # @option opt [Symbol]  :meth       Passed to #stream_send.
   # @option opt [Boolean] :fatal      Passed to #stream_send.
@@ -80,16 +80,16 @@ class LookupChannel < ApplicationCable::Channel
   # This response is intentionally small; payload size is not checked to avoid
   # masking an exception due to an unexpected condition.
   #
-  def self.initial_response(payload, **opt)
+  def self.initial_response(data, **opt)
     str_opt = opt.extract!(:meth, :fatal)
-    payload = LookupChannel::InitialResponse.wrap(payload, **opt)
+    payload = LookupChannel::InitialResponse.wrap(data, **opt)
     stream_send(payload, meth: __method__, **str_opt, **opt)
   end
 
   # Invoked from another thread to push acquired data back to the client.
   #
-  # @param [Hash{Symbol=>*}] payload
-  # @param [Hash]            opt
+  # @param [Hash] data                Payload data.
+  # @param [Hash] opt
   #
   # @option opt [Symbol]  :meth       Passed to #stream_send.
   # @option opt [Boolean] :fatal      Passed to #stream_send.
@@ -99,9 +99,9 @@ class LookupChannel < ApplicationCable::Channel
   # @see file:javascripts/shared/cable-channel.js    *response()*
   # @see file:javascripts/channels/lookup-channel.js *_createResponse()*
   #
-  def self.lookup_response(payload, **opt)
+  def self.lookup_response(data, **opt)
     str_opt = opt.extract!(:meth, :fatal)
-    payload = LookupChannel::LookupResponse.wrap(payload, **opt)
+    payload = LookupChannel::LookupResponse.wrap(data, **opt)
     payload.convert_to_data_url! if invalid_payload_size(payload)
     stream_send(payload, meth: __method__, **str_opt, **opt)
   end

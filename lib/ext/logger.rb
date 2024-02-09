@@ -60,9 +60,9 @@ class Logger
 
     # Override to avoid logging if suppressed.
     #
-    # @param [Integer] severity
-    # @param [*]       message
-    # @param [*]       progname       Default @progname
+    # @param [Integer]  severity
+    # @param [any, nil] message
+    # @param [any, nil] progname      Default @progname
     #
     # @return [TrueClass]
     #

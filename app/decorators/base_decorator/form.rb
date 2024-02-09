@@ -131,7 +131,7 @@ module BaseDecorator::Form
   # Render a single label/value pair.
   #
   # @param [String, Symbol]   label
-  # @param [*]                value
+  # @param [any, nil]         value
   # @param [FieldConfig, nil] prop        Default: from field/model.
   # @param [Symbol, nil]      field       For 'data-field' attribute.
   # @param [Integer, nil]     index       Offset for making unique element IDs.
@@ -497,10 +497,10 @@ module BaseDecorator::Form
 
   # render_form_input
   #
-  # @param [String] name
-  # @param [*]      value
-  # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt
+  # @param [String]   name
+  # @param [any, nil] value
+  # @param [String]   css             Characteristic CSS class/selector.
+  # @param [Hash]     opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -515,9 +515,9 @@ module BaseDecorator::Form
 
   # render_form_email
   #
-  # @param [String] name
-  # @param [*]      value
-  # @param [Hash]   opt
+  # @param [String]   name
+  # @param [any, nil] value
+  # @param [Hash]     opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -528,9 +528,9 @@ module BaseDecorator::Form
 
   # render_form_password
   #
-  # @param [String] name
-  # @param [*]      value
-  # @param [Hash]   opt
+  # @param [String]   name
+  # @param [any, nil] value
+  # @param [Hash]     opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -549,7 +549,7 @@ module BaseDecorator::Form
   # of the user.
   #
   # @param [Hash]     opt
-  # @param [Class, *] range           Default: `opt[:range]`.
+  # @param [any, nil] range           Class; default: `opt[:range]`.
   #
   # @return [Hash]                    The possibly-modified *opt* argument.
   #
@@ -1085,7 +1085,7 @@ module BaseDecorator::Form
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   # @yield [result] Add field value attributes.
   # @yieldparam [Hash] result

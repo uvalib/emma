@@ -13,7 +13,7 @@ module Model
 
   # Indicate whether *name* is a field defined by this model.
   #
-  # @param [Symbol, String, *]
+  # @param [any, nil] name            Symbol, String
   #
   def include?: (untyped name) -> bool
 
@@ -39,36 +39,36 @@ module Model
   #
   # @param [Array<Symbol>] only       Only these names if provided.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash]
   #
-  def fields: (*Symbol only) -> symHash
+  def fields: (*(Symbol|nil) only) -> symHash
 
   # The data and synthetic fields/values for this model instance.
   #
   # @param [Array<Symbol>] only       Only these names if provided.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
-  def synthetic_fields: (*Symbol only) -> symHash
+  def synthetic_fields: (*(Symbol|nil) only) -> symHash
 
   # The data and synthetic fields/values for this model instance.
   #
   # @param [Array<Symbol>] only       Only these names if provided.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
-  def extended_fields: (*Symbol only) -> symHash
+  def extended_fields: (*(Symbol|nil) only) -> symHash
 
   # The fields and values for this instance as a Hash.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def to_h: () -> symHash
 
   # Get configured record fields for a model/controller.
   #
-  # @param [Symbol, String, Class, Model, *] type   Model/controller type
-  # @param [Boolean]                         fatal
+  # @param [any, nil] type    Model/controller type (Symbol,String,Class,Model)
+  # @param [Boolean]  fatal
   #
   # @raise [RuntimeError]             If *type* does not map on to a model.
   #
@@ -139,7 +139,7 @@ module Model
 
   # Return the model class associated with *item*.
   #
-  # @param [Any, nil] item             Symbol, String, Class, Model
+  # @param [any, nil] item             Symbol, String, Class, Model
   #
   # @return [Class, nil]
   #
@@ -147,7 +147,7 @@ module Model
 
   # Return the name of the model associated with *item*.
   #
-  # @param [Any, nil] item             Symbol, String, Class, Model
+  # @param [any, nil] item            Symbol, String, Class, Model
   #
   # @return [Symbol, nil]
   #
@@ -155,7 +155,7 @@ module Model
 
   # Return the name of the model associated with *item*.
   #
-  # @param [Symbol, String, Class, Model, *] item
+  # @param [any, nil] item            Symbol, String, Class, Model
   #
   # @return [Symbol, nil]
   #
@@ -171,7 +171,7 @@ module Model
 
   # Get configured record fields for the indicated model/controller.
   #
-  # @param [Symbol, String, Class, Model, *] item
+  # @param [any, nil] item            Symbol, String, Class, Model
   #
   # @return [ModelConfig]             Frozen result.
   # @return [nil]
@@ -181,8 +181,8 @@ module Model
   # Get configured record fields relevant to the given context for the
   # indicated model/controller.
   #
-  # @param [Symbol, String, Class, Model, *] item
-  # @param [Symbol]                          action
+  # @param [any, nil] item            Symbol, String, Class, Model
+  # @param [Symbol]   action
   #
   # @return [ActionConfig, nil]
   #
@@ -191,7 +191,7 @@ module Model
   # Get configured record fields relevant to an :index action for the indicated
   # model/controller.
   #
-  # @param [Symbol, String, Class, Model, *] item
+  # @param [any, nil] item            Symbol, String, Class, Model
   #
   # @return [ActionConfig]            Frozen result.
   #
@@ -200,7 +200,7 @@ module Model
   # Get configured record fields relevant to a :show action for the indicated
   # model/controller.
   #
-  # @param [Symbol, String, Class, Model, *] item
+  # @param [any, nil] item            Symbol, String, Class, Model
   #
   # @return [ActionConfig]            Frozen result.
   #
@@ -208,7 +208,7 @@ module Model
 
   # Get all configured record fields for the indicated model.
   #
-  # @param [Symbol, String, Class, Model, *] item
+  # @param [any, nil] item            Symbol, String, Class, Model
   #
   # @return [ActionConfig]            Frozen result.
   #
@@ -217,7 +217,7 @@ module Model
   # Get all configured record fields relevant to a create/update form for the
   # indicated model.
   #
-  # @param [Symbol, String, Class, Model, *] item
+  # @param [any, nil] item            Symbol, String, Class, Model
   #
   # @return [ActionConfig]            Frozen result.
   #
@@ -275,34 +275,34 @@ module Model
 
     # Get configured record fields relevant to an :index action for the model.
     #
-    # @param [Symbol, String, Class, Model, *] item   Default: self
+    # @param [any, nil] item          Symbol,String,Class,Model; def.: `self`.
     #
-    # @return [ActionConfig]            Frozen result.
+    # @return [ActionConfig]          Frozen result.
     #
     def index_fields: (?untyped? item) -> ActionConfig
 
     # Get configured record fields relevant to a :show action for the model.
     #
-    # @param [Symbol, String, Class, Model, *] item   Default: self
+    # @param [any, nil] item          Symbol,String,Class,Model; def.: `self`.
     #
-    # @return [ActionConfig]            Frozen result.
+    # @return [ActionConfig]          Frozen result.
     #
     def show_fields: (?untyped? item) -> ActionConfig
 
     # Get all configured record fields for the model.
     #
-    # @param [Symbol, String, Class, Model, *] item   Default: self
+    # @param [any, nil] item          Symbol,String,Class,Model; def.: `self`.
     #
-    # @return [ActionConfig]            Frozen result.
+    # @return [ActionConfig]          Frozen result.
     #
     def database_fields: (?untyped? item) -> ActionConfig
 
     # Get all configured record fields relevant to a create/update form for the
     # model.
     #
-    # @param [Symbol, String, Class, Model, *] item   Default: self
+    # @param [any, nil] item          Symbol,String,Class,Model; def.: `self`.
     #
-    # @return [ActionConfig]            Frozen result.
+    # @return [ActionConfig]          Frozen result.
     #
     def form_fields: (?untyped? item) -> ActionConfig
   end

@@ -17,7 +17,7 @@ module ImportConcern
   #
   # @raise [RuntimeError]             If both *src* and *data* are present.
   #
-  # @return [Array<Hash{Symbol=>*}>]
+  # @return [Array<Hash>]
   # @return [nil]                     If both *src* and *data* are missing.
   #
   # === Usage Notes
@@ -33,8 +33,7 @@ module ImportConcern
   #
   # @param [String, IO, StringIO, IO::Like] data
   #
-  # @return [Array<Hash{Symbol=>*}>]
-  # @return [nil]
+  # @return [Array<Hash>, nil]
   #
   def from_json: (String|IO|StringIO|IO::Like data) -> (Array[symHash] | nil)
 
@@ -42,14 +41,13 @@ module ImportConcern
   #
   # @param [String, IO, StringIO, IO::Like] data
   #
-  # @return [Array<Hash{Symbol=>*}>]
-  # @return [nil]
+  # @return [Array<Hash>, nil]
   #
   def from_csv: (String|IO|StringIO|IO::Like data) -> (Array[symHash] | nil)
 
   # Get data and source name in a usable form.
   #
-  # @param [*] src
+  # @param [any] src
   #
   # @return [Array<(IO, String)>]
   # @return [Array<(String, String)>]
@@ -60,6 +58,7 @@ module ImportConcern
     : (ActionDispatch::Http::UploadedFile        src) ->  [IO,         String]
     | (ActionDispatch::Request|Faraday::Response src) ->  [String|nil, nil]
     | (String                                    src) -> ([String|nil, String] | [IO, String])
+    | (untyped                                   src) ->  [nil,        nil]
 
   private
 

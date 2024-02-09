@@ -29,7 +29,7 @@ module Emma::Common::BooleanMethods
 
   # Indicate whether the item represents a true or false value.
   #
-  # @param [Boolean, String, Symbol, *] value
+  # @param [any, nil] value           Boolean, String, Symbol
   #
   def boolean?(value)
     case (arg = value)

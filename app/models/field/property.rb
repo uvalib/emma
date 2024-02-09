@@ -119,10 +119,10 @@ module Field::Property
 
   # Generate derived fields for an entry.
   #
-  # @param [Hash{Symbol=>*}] prop
-  # @param [Symbol, nil]     field
+  # @param [Hash]        prop
+  # @param [Symbol, nil] field
   #
-  # @return [Hash{Symbol=>*}]         The modified *prop* entry.
+  # @return [Hash]                    The modified *prop* entry.
   #
   def finalize!(prop, field = nil)
     sub = prop.except(:cond).select { |_, v| v.is_a?(Hash) }
@@ -221,7 +221,7 @@ module Field::Property
 
   # Return an enumeration or model class expressed or implied by *value*.
   #
-  # @param [String, Symbol, Class, *] value
+  # @param [any, nil] value           String, Symbol, Class
   #
   # @return [Class, nil]
   #

@@ -65,8 +65,8 @@ module ApplicationCable::Logging
 
   # Send sent/received WebSocket data to the console.
   #
-  # @param [Symbol] meth
-  # @param [*]      data
+  # @param [Symbol]   meth
+  # @param [any, nil] data
   #
   # @return [nil]
   #

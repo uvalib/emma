@@ -9,7 +9,7 @@ module Emma::Common::BooleanMethods
 
   # Indicate whether the item represents a true or false value.
   #
-  # @param [Boolean, String, Symbol, *] value
+  # @param [any, nil] value           Boolean, String, Symbol
   #
   def boolean?: (untyped value) -> bool
 end

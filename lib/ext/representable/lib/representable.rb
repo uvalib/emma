@@ -59,7 +59,7 @@ module Representable
 
       # __debug_show
       #
-      # @param [Symbol, Any, nil] mode
+      # @param [Symbol, any, nil] mode
       # @param [Array]            args
       # @param [String]           leader      Included after #LEADER.
       # @param [String]           separator   Default: #SEPARATOR.
@@ -68,7 +68,7 @@ module Representable
       # @return [nil]
       #
       # @yield To supply additional items to show.
-      # @yieldreturn [Array, Any]
+      # @yieldreturn [Array, any]
       #
       #--
       # === Variations
@@ -141,7 +141,7 @@ module Representable
       # If *mode* is not compatible with the value of #DEBUG_REPRESENTABLE then
       # no overrides are performed.
       #
-      # @param [Symbol, Any, nil] mode
+      # @param [Symbol, any, nil] mode
       # @param [Array<Symbol>]    constants
       #
       # @return [nil]
@@ -200,7 +200,7 @@ module Representable
       # If *mode* is not compatible with the value of #DEBUG_REPRESENTABLE then
       # no overrides are performed.
       #
-      # @param [Symbol, Any, nil] mode
+      # @param [Symbol, any, nil] mode
       # @param [String, nil]      label
       # @param [Array<Symbol>]    methods
       #

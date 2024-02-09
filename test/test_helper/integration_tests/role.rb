@@ -20,7 +20,7 @@ module TestHelper::IntegrationTests::Role
   # @param [String, Symbol, User, nil] user
   # @param [Symbol, String]            action
   # @param [Class]                     subject
-  # @param [*]                         extra_args
+  # @param [any, nil]                  extra_args
   #
   def can?(user, action, subject, *extra_args)
     ability = find_user(user)&.ability || Ability.new

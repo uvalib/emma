@@ -395,7 +395,7 @@ class OrgController < ApplicationController
   #
   # @param [Org, Array<Org>, nil] subject
   # @param [Symbol, String, nil]  action
-  # @param [*]                    args
+  # @param [any, nil]             args
   #
   def org_authorize!(subject = nil, action = nil, *args)
     action  ||= request_parameters[:action]

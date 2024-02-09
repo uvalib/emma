@@ -138,7 +138,7 @@ module HeadHelper::Scripts
 
   # The set of overrides to JavaScript client settings.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   # @see #SCRIPT_SETTINGS_OVERRIDES
   #
@@ -150,7 +150,7 @@ module HeadHelper::Scripts
   #
   # @param [Hash] opt                 Settings override values.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   # @see #script_settings
   #

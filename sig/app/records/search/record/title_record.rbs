@@ -84,7 +84,7 @@ class Search::Record::TitleRecord < Search::Api::Record
 
     # Normalize a level numbering name.
     #
-    # @param [String]
+    # @param [String, nil] name
     #
     # @return [String]
     #
@@ -92,7 +92,7 @@ class Search::Record::TitleRecord < Search::Api::Record
 
     # Reduce a hierarchy of numbering levels to a single value.
     #
-    # @param [Number, Hash{Any=>Number::Level}, nil] item
+    # @param [Number, Hash{any=>Number::Level}, nil] item
     #
     # @return [Float]
     #
@@ -100,7 +100,7 @@ class Search::Record::TitleRecord < Search::Api::Record
 
     # Reduce a hierarchy of numbering levels to a pair of single values.
     #
-    # @param [Number, Hash{Any=>Number::Level}] item
+    # @param [Number, Hash{any=>Number::Level}] item
     #
     # @return [Array<(Float,Float)>]         Min and max level numbers.
     #
@@ -195,7 +195,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @param [Search::Record::MetadataRecord, Hash, nil] rec
     #
-    # @return [Hash{Symbol=>Any}]
+    # @return [Hash{Symbol=>any}]
     #
     def match_fields: ((Search::Record::MetadataRecord|symHash|nil) rec) -> symHash
 
@@ -203,7 +203,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @param [Search::Record::MetadataRecord, Hash, nil] rec
     #
-    # @return [Hash{Symbol=>Any}]
+    # @return [Hash{Symbol=>any}]
     #
     def sort_fields: ((Search::Record::MetadataRecord|symHash|nil) rec) -> symHash
 
@@ -221,7 +221,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     # @param [Search::Record::MetadataRecord, Hash, nil] rec
     # @param [Array<Symbol,Array>]                       fields
     #
-    # @return [Hash{Symbol=>Any}]
+    # @return [Hash{Symbol=>any}]
     #
     def field_values: ((Search::Record::MetadataRecord|symHash|nil) rec, *(Symbol|symArray) fields) -> symHash
 
@@ -230,17 +230,17 @@ class Search::Record::TitleRecord < Search::Api::Record
     # @param [Search::Record::MetadataRecord, Hash, nil] rec
     # @param [Array<Symbol,Array>]                       fields
     #
-    # @return [Hash{Symbol=>Any}]
+    # @return [Hash{Symbol=>any}]
     #
     def comparison_values: ((Search::Record::MetadataRecord|symHash|nil) rec, *(Symbol|symArray) fields) -> symHash
 
     # Transform a value into one whose elements are prepared for comparison
     # with a similar value.
     #
-    # @param [Hash, Array, String, Any, nil] value
-    # @param [Symbol, nil]                   field
+    # @param [any, nil]    value      Hash, Array, String
+    # @param [Symbol, nil] field
     #
-    # @return [Hash, Array, String, Any]  Same type as original type of *value*
+    # @return [Hash, Array, String, any]
     #
     def make_comparable: (untyped value, ?(Symbol|nil) field) -> untyped
 
@@ -255,12 +255,12 @@ class Search::Record::TitleRecord < Search::Api::Record
 
     # Normalize a value for use as a sort key value.
     #
-    # @param [Any, nil] item
+    # @param [any, nil] item
     # @param [Hash]     opt
     #
     # @option opt [Boolean] :lax
     #
-    # @return [Any]
+    # @return [any]
     #
     def sort_key_value: (untyped item, **untyped opt) -> untyped
 
@@ -269,7 +269,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     # @param [Search::Record::MetadataRecord, Hash] rec
     # @param [Symbol, String]                       field
     #
-    # @return [Any, nil]
+    # @return [any, nil]
     #
     def field_value: ((Search::Record::MetadataRecord|symHash) rec, (Symbol|String) field) -> (untyped | nil)
 
@@ -282,7 +282,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     # @param [Array<Search::Record::MetadataRecord>] recs
     # @param [Array<Symbol>]                         fields
     #
-    # @return [Hash{Symbol=>Any}]
+    # @return [Hash{Symbol=>any}]
     #
     def field_union: (Array[Search::Record::MetadataRecord] recs, symArray fields) -> symHash
 
@@ -362,13 +362,13 @@ class Search::Record::TitleRecord < Search::Api::Record
 
       # Operator needed to make instances usable from Enumerable#group_by.
       #
-      # @param [*] other
+      # @param [any, nil] other
       #
       def eql?: (untyped other) -> bool
 
       # Comparison operator required by the Comparable mixin.
       #
-      # @param [*] other
+      # @param [any, nil] other
       #
       # @return [Integer]   -1 if self is later, 1 if self is earlier
       #
@@ -393,7 +393,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     # Add to #level.
     #
     # @param [String, nil] name
-    # @param [*]           value
+    # @param [any, nil]    value
     # @param [Hash]        opt        Passed to Level initializer.
     #
     # @return [void]
@@ -438,13 +438,13 @@ class Search::Record::TitleRecord < Search::Api::Record
 
     # Operator needed to make instances usable from Enumerable#group_by.
     #
-    # @param [*] other
+    # @param [any, nil] other
     #
     def eql?: (untyped other) -> bool
 
     # Comparison operator required by the Comparable mixin.
     #
-    # @param [*] other
+    # @param [any, nil] other
     #
     # @return [Integer]   -1 if self is later, 1 if self is earlier
     #
@@ -559,7 +559,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   # @param [Array<Search::Record::MetadataRecord>] recs
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>any}]
   #
   def title_field_union: (?Array[Search::Record::MetadataRecord] recs) -> symHash
 
@@ -582,9 +582,9 @@ class Search::Record::TitleRecord < Search::Api::Record
 
   # Recursively convert configuration items from String to Symbol.
   #
-  # @param [Hash, Array, String, Symbol, Any] item
+  # @param [any, nil] item            Hash, Array, String, Symbol
   #
-  # @return [Hash, Array, Symbol, Any]
+  # @return [any, nil]
   #
   # -
   # === Variations
@@ -606,8 +606,8 @@ class Search::Record::TitleRecord < Search::Api::Record
 
   # hierarchy_paths
   #
-  # @param [Hash, Array, Any] item
-  # @param [Array<Symbol>]    path
+  # @param [Hash, Array]   item
+  # @param [Array<Symbol>] path
   #
   # @return [Array<Array<(Symbol,Array<Symbol,Integer>)>>]
   #
@@ -659,7 +659,7 @@ class Search::Record::TitleRecord < Search::Api::Record
 
   # get_part_fields
   #
-  # @param [Array<Search::Record::MetadataRecord>]
+  # @param [Array<Search::Record::MetadataRecord>] recs
   #
   # @return [Array<Hash>]
   #
@@ -693,12 +693,14 @@ class Search::Record::TitleRecord < Search::Api::Record
 
   # To support XML rendering...
   #
-  # @param [Hash, Any, nil] value
-  # @param [Array<Symbol>]  keys
+  # @param [Hash, any]     value
+  # @param [Array<Symbol>] keys
   #
-  # @return [Hash, Any]               The (possibly modified) *value*.
+  # @return [Hash, any]               The (possibly modified) *value*.
   #
-  def wrap_array!: (untyped value, *Symbol keys) -> untyped
+  def wrap_array!
+    :     (anyHash value, *Symbol keys) -> symHash
+    | [T] (T       value, *Symbol keys) -> T
 
   private
 
@@ -725,11 +727,12 @@ class Search::Record::TitleRecord < Search::Api::Record
 
   # The fields and values for this instance as a Hash.
   #
-  # @param [*] item   Presence used as an indicator that individual records
-  #                   should be wrapped (i.e., that the intended output format
-  #                   is XML).
+  # If *item* is not blank this is used as an indicator that individual records
+  # should be wrapped (i.e., that the intended output format is XML).
   #
-  # @return [Hash{Symbol=>*}]
+  # @param [any, nil] item
+  #
+  # @return [Hash]
   #
   def to_h: (?item: untyped, **untyped _ignored) -> symHash
 end

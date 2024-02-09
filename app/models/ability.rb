@@ -637,8 +637,8 @@ class Ability
   # Always *false* if *action* is *nil*.
   #
   # @param [Symbol, String, nil] action
-  # @param [Object, Class, *]    subject
-  # @param [*]                   extra_args
+  # @param [any, nil]            subject      Object, Class
+  # @param [any, nil]            extra_args
   #
   def can?(action, subject, *extra_args)
     return false if action.blank?
@@ -651,8 +651,8 @@ class Ability
   # Always *true* if *action* is *nil*.
   #
   # @param [Symbol, String, nil] action
-  # @param [Object, Class, *]    subject
-  # @param [*]                   extra_args
+  # @param [any, nil]            subject      Object, Class
+  # @param [any, nil]            extra_args
   #
   def cannot?(action, subject, *extra_args)
     return true if action.blank?
@@ -663,7 +663,7 @@ class Ability
   # Add a rule allowing an action.
   #
   # @param [Symbol,String,Array,nil] action
-  # @param [*]                       subject
+  # @param [any, nil]                subject
   # @param [Array]                   conditions
   #
   # @return [void]
@@ -677,7 +677,7 @@ class Ability
   # Add a rule forbidding an action.
   #
   # @param [Symbol,String,Array,nil] action
-  # @param [*]                       subject
+  # @param [any, nil]                subject
   # @param [Array]                   conditions
   #
   # @return [void]
@@ -702,7 +702,7 @@ class Ability
   # able to operate on records that match the constraint criteria.
   #
   # @param [Symbol, String, nil] action
-  # @param [*]                   subject
+  # @param [any, nil]            subject
   #
   # @return [ActiveRecord::Relation, Hash, Proc, nil]
   #
@@ -726,7 +726,7 @@ class Ability
   # Normalize values for use with #can? and #cannot?.
   #
   # @param [Symbol,String,Array,nil] action
-  # @param [*]                       subject
+  # @param [any, nil]                subject
   # @param [Array]                   conditions
   #
   # @return [Array<(*,*,*)>]
@@ -828,7 +828,7 @@ class Ability
 
   # The URL parameters which imply operations on a specific model instance.
   #
-  # @param [Object, Class, *] model
+  # @param [any, nil] model           Object, Class
   #
   # @return [Array<Symbol>]
   #
@@ -838,7 +838,7 @@ class Ability
 
   # Return the organization represented by *rec*.
   #
-  # @param [*]           rec
+  # @param [any, nil]    rec
   # @param [Symbol, nil] caller       For diagnostics.
   #
   # @return [Integer, nil]

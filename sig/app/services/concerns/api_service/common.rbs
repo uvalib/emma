@@ -166,9 +166,9 @@ module ApiService::Common
 
   # Process a message body component into a form ready for conversion to JSON.
   #
-  # @param [Hash, String, *] obj
+  # @param [any, nil] obj             Hash, String
   #
-  # @return [Hash, String, *]
+  # @return [Hash, String, any, nil]
   #
   def api_body: (untyped obj) -> untyped
 

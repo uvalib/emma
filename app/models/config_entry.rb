@@ -42,9 +42,9 @@ class ConfigEntry < Hash
   # Transform an item into the expected value type (if one is defined by the
   # subclass).
   #
-  # @param [*] item
+  # @param [any, nil] item
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def config_value(item)
     value_type&.wrap(item) || item.dup
@@ -59,7 +59,7 @@ class ConfigEntry < Hash
   # Return *item* if it is already an instance of the subclass; if not, use it
   # to initialize a new subclass instance.
   #
-  # @param [*] item
+  # @param [any, nil] item
   #
   # @return [ConfigEntry]
   #
@@ -79,7 +79,7 @@ class ConfigEntry < Hash
   #
   # (Always *true* if the subclass does not define a value type.)
   #
-  # @param [*] item
+  # @param [any, nil] item
   #
   def self.value_type?(item)
     value_type.nil? || item.is_a?(value_type)
@@ -250,8 +250,8 @@ class ModelConfig < ConfigEntry
 
   # Report on anomalies.
   #
-  # @param [*]       type
-  # @param [Boolean] fatal            If *true*, raise if there are error(s).
+  # @param [any, nil] type
+  # @param [Boolean]  fatal           If *true*, raise if there are error(s).
   #
   # @return [Boolean]                 If *fatal* is not *true*.
   #

@@ -25,8 +25,8 @@ module SerializationConcern
 
   # Render an item in JSON format.
   #
-  # @param [*]    item
-  # @param [Hash] opt                 Passed to #render.
+  # @param [any, nil] item
+  # @param [Hash]     opt             Passed to #render.
   #
   def render_json(item, **opt)
     item = { response: item } unless item.is_a?(Hash) && (item.size == 1)
@@ -37,8 +37,8 @@ module SerializationConcern
 
   # Render an item in XML format.
   #
-  # @param [*]    item
-  # @param [Hash] opt                 Passed to #render except for:
+  # @param [any, nil] item
+  # @param [Hash]     opt             Passed to #render except for:
   #
   # @option opt [String] :separator   Passed to #make_xml.
   # @option opt [String] :name        Passed to #make_xml.
@@ -66,13 +66,13 @@ module SerializationConcern
 
   # Response values for serializing the index page to JSON or XML.
   #
-  # @param [*]    list                Default: `paginator.page_items`
-  # @param [Hash] opt
+  # @param [any, nil] list            Default: `paginator.page_items`
+  # @param [Hash]     opt
   #
   # @option opt [Symbol, String] :wrap
   # @option opt [Symbol, String] :name  Default: :list
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def index_values(list = nil, **opt)
     wrap_name = opt.key?(:wrap) ? opt.delete(:wrap) : :response
@@ -107,16 +107,17 @@ module SerializationConcern
     items.try(:map!) { |v| { item_name => v } }       if item_name
     items = { properties: prop, list_name => items }  if list_name
     items = { wrap_name => items }                    if wrap_name
+    # noinspection RubyMismatchedReturnType
     items
   end
 
   # Response values for serializing the show page to JSON or XML.
   #
-  # @param [*]              item
+  # @param [any, nil]       item
   # @param [Symbol, nil]    as        Either :hash or :array if given.
   # @param [Symbol, String] name
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def show_values(item, as: nil, name: nil, **)
     case

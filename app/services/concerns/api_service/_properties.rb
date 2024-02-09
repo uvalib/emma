@@ -83,7 +83,7 @@ module ApiService::Properties
 
   # The service identified by the given value.
   #
-  # @param [*] target
+  # @param [any, nil] target
   #
   # @return [String]
   #
@@ -99,7 +99,7 @@ module ApiService::Properties
 
   # Configuration for the API service.
   #
-  # @type [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def configuration
     config_section("emma.service.#{service_name}")
@@ -213,7 +213,7 @@ module ApiService::Properties
 
   # engine_url
   #
-  # @param [Symbol, String, *] value  Engine name or URL.
+  # @param [any, nil] value           Engine name or URL (String, Symbol)
   #
   # @return [String, nil]
   #

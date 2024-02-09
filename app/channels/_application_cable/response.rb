@@ -46,8 +46,8 @@ class ApplicationCable::Response < Hash
 
   # Create a new instance.
   #
-  # @param [*]    values
-  # @param [Hash] opt
+  # @param [any, nil] values
+  # @param [Hash]     opt
   #
   def initialize(values = nil, **opt)
     set_payload(self, values, **opt)
@@ -117,12 +117,13 @@ class ApplicationCable::Response < Hash
   # Create a new instance unless *payload* is already an instance of the class
   # and there are no *opt* additions.
   #
-  # @param [*]    payload
-  # @param [Hash] opt
+  # @param [any, nil] payload
+  # @param [Hash]     opt
   #
   # @return [ApplicationCable::Response]
   #
   def self.wrap(payload, **opt)
+    # noinspection RubyMismatchedReturnType
     if payload.is_a?(self) && opt.except(*ignored_keys).blank?
       payload
     else

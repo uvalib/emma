@@ -19,7 +19,7 @@ module HeadHelper::Common
 
   # Configuration for '<head>' properties.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash]
   #
   HEAD_CONFIG = config_section('emma.head').deep_freeze
 

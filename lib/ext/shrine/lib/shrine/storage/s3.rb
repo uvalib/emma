@@ -34,8 +34,8 @@ class Shrine
         # @param [String, nil]          prefix
         # @param [Hash]                 upload_options
         # @param [Hash]                 multipart_threshold
-        # @param [Any]                  signer
-        # @param [Any]                  public
+        # @param [any]                  signer
+        # @param [any]                  public
         # @param [Hash]                 s3_options
         #
         def initialize(
@@ -175,7 +175,7 @@ class Shrine
 
         # get_object
         #
-        # @param [Any]  object
+        # @param [any]  object
         # @param [Hash] params
         #
         # @return [Array<(Array,Integer)>]

@@ -23,7 +23,7 @@ class Attachment::DestroyJob < ApplicationJob
 
   # perform
   #
-  # @param [*] data
+  # @param [any, nil] data
   #
   # @return [void]
   #

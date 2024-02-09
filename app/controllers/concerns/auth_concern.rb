@@ -84,7 +84,7 @@ module AuthConcern
   # Returns *true* if *obj* cannot be interpreted as a scope or resource since
   # user scope is the assumed default.
   #
-  # @param [User, Symbol, *] obj
+  # @param [any, nil] obj             User, Symbol
   #
   # @see Devise::Mapping#find_scope!
   #

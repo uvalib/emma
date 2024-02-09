@@ -19,7 +19,7 @@ module LayoutHelper::Logo
 
   # Configuration for logo properties.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash]
   #
   LOGO_CONFIG = config_section('emma.logo').deep_freeze
 

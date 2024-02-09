@@ -97,7 +97,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
 
     # Indicate whether the other value is similar to the current value.
     #
-    # @param [Any, nil] other
+    # @param [any, nil] other
     #
     def match?
       : (GroupingCriteria other) -> bool
@@ -124,9 +124,9 @@ class Search::Message::SearchTitleList < Search::Api::Message
   # Recursively group records.
   #
   # @param [Array<Search::Record::MetadataRecord>] recs
-  # @param [Integer] level            Incremented via recursion.
-  # @param [*]       fields           Supplied via recursion.
-  # @param [Proc]    blk              Executed at the bottom-level.
+  # @param [Integer]  level           Incremented via recursion.
+  # @param [any, nil] fields          Supplied via recursion.
+  # @param [Proc]     blk             Executed at the bottom-level.
   #
   # @return [Array<Search::Record::TitleRecord>]
   # @return [Search::Record::TitleRecord, nil]
@@ -155,11 +155,12 @@ class Search::Message::SearchTitleList < Search::Api::Message
 
   # The fields and values for this instance as a Hash.
   #
-  # @param [*] item   Presence used as an indicator that individual records
-  #                   should be wrapped (i.e., that the intended output format
-  #                   is XML).
+  # If *item* is not blank this is used as an indicator that individual records
+  # should be wrapped (i.e., that the intended output format is XML).
   #
-  # @return [Hash{Symbol=>*}]
+  # @param [any, nil] item
+  #
+  # @return [Hash]
   #
   def to_h: (?item: untyped, **untyped _ignored) -> symHash
 end

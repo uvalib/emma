@@ -5,7 +5,7 @@ module PanelHelper
 
   # Configuration for panel control properties.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash]
   #
   PANEL_CTRL_CFG: symHash
 

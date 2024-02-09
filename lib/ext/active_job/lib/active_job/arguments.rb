@@ -31,7 +31,7 @@ module ActiveJob
     # will be a hash containing an '_aj_serialized' entry, which is flagged as
     # an error.
     #
-    # @param [*] key
+    # @param [any, nil] key
     #
     # @return [String]
     #

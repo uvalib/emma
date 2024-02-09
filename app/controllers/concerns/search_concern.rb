@@ -150,9 +150,9 @@ module SearchConcern
   # Eliminate values from keys that would be problematic when rendering the
   # hash as JSON or XML.
   #
-  # @param [*] value
+  # @param [any, nil] value
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def sanitize_keys(value)
     if value.is_a?(Hash)
@@ -335,7 +335,7 @@ module SearchConcern
   # set_search_feature
   #
   # @param [Symbol]               param_key
-  # @param [*]                    value
+  # @param [any, nil]             value
   # @param [Array<Symbol>,Symbol] valid_values
   # @param [String]               session_key
   # @param [Symbol]               meth

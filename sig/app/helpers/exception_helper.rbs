@@ -21,7 +21,7 @@ module ExceptionHelper
   # Otherwise, error message(s) are extracted from *problem*.
   #
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
-  # @param [*]                                                         value
+  # @param [any, nil]                                                  value
   # @param [Symbol]                                                    model
   #
   # @raise [Record::SubmitError]

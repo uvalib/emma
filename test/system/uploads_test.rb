@@ -121,7 +121,7 @@ class UploadsTest < ApplicationSystemTestCase
 
   public
 
-  # list_test
+  # Perform a test to list EMMA submissions visible to the test user.
   #
   # @param [Symbol]       action
   # @param [String]       title
@@ -157,7 +157,7 @@ class UploadsTest < ApplicationSystemTestCase
     end
   end
 
-  # new_test
+  # Perform a test to create a new EMMA submission.
   #
   # @param [Boolean] direct
   # @param [Symbol]  meth             Calling test method.
@@ -228,7 +228,7 @@ class UploadsTest < ApplicationSystemTestCase
     end
   end
 
-  # edit_select_test
+  # Perform a test to select then modify an EMMA submission.
   #
   # @param [Boolean] direct
   # @param [Symbol]  meth             Calling test method.
@@ -300,7 +300,7 @@ class UploadsTest < ApplicationSystemTestCase
     end
   end
 
-  # delete_select_test
+  # Perform a test to select then remove an EMMA submission.
   #
   # @param [Boolean] direct
   # @param [Symbol]  meth             Calling test method.
@@ -377,7 +377,7 @@ class UploadsTest < ApplicationSystemTestCase
 
   protected
 
-  # Generate an Upload :dc_title.
+  # Generate a distinct submission title.
   #
   # @param [Hash] opt                 Test options
   #

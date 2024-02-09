@@ -25,7 +25,7 @@ module HelpConcern
   #
   # @param [Symbol, nil] topic
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def get_help_entry(topic)
     entry = HELP_ENTRY[topic]&.except(:content_html)
@@ -76,7 +76,7 @@ module HelpConcern
   # @param [Symbol] topic
   # @param [Hash]   opt
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def show_values(topic = @topic, **opt)
     entry = get_help_entry(topic)

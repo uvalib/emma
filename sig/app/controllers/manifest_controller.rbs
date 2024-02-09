@@ -233,7 +233,7 @@ class ManifestController < ApplicationController
   #
   # @param [Manifest, Array<Manifest>, nil] subject
   # @param [Symbol, String, nil]            action
-  # @param [*]                              args
+  # @param [any, nil]                       args
   #
   def manifest_authorize!: (?(Manifest|Array[Manifest]|nil) subject, ?(Symbol|String|nil) action, *untyped args) -> void
 end

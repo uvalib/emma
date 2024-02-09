@@ -226,9 +226,9 @@ class ExecReport
 
     # Prepare an error report value for assignment to a database column.
     #
-    # @param [ExecReport, ExecReport::Part, Exception, Hash, String, *] src
+    # @param [any, nil] src   ExecReport,ExecReport::Part,Exception,Hash,String
     #
-    # @return [String, nil]           *nil* if *src* was blank.
+    # @return [String, nil]   *nil* if *src* was blank.
     #
     def serialize(src)
       data = deserialize(src)
@@ -238,7 +238,7 @@ class ExecReport
 
     # Interpret an error report value from a database column.
     #
-    # @param [ExecReport, ExecReport::Part, Exception, Hash, String, *] src
+    # @param [any, nil] src   ExecReport,ExecReport::Part,Exception,Hash,String
     #
     # @return [Array<Hash{Symbol=>String,Array<String>}>, nil]
     #
@@ -284,7 +284,7 @@ class ExecReport
 
     # Get topic/details from *src*.
     #
-    # @param [ExecReport, ExecReport::Part, Exception, Hash, String, *] src
+    # @param [any, nil] src   ExecReport,ExecReport::Part,Exception,Hash,String
     #
     # @return [Array<Hash{Symbol=>String,Array<String>}>]
     #
@@ -296,7 +296,7 @@ class ExecReport
 
     # Get topic/details from *src*.
     #
-    # @param [ExecReport, ExecReport::Part, Exception, Hash, String, *] src
+    # @param [any, nil] src   ExecReport,ExecReport::Part,Exception,Hash,String
     #
     # @return [Hash{Symbol=>String,Array<String>}]
     #
@@ -328,9 +328,9 @@ class ExecReport
 
     # normalized_value
     #
-    # @param [*] value
+    # @param [any, nil] value
     #
-    # @return [*]
+    # @return [any, nil]
     #
     def normalized_value(value)
       case value
@@ -355,7 +355,7 @@ class ExecReport
 
     # Attempt to get an HTTP status value from *src*.
     #
-    # @param [ExecReport, Exception, Faraday::Response, *] src
+    # @param [any, nil] src           ExecReport, Exception, Faraday::Response
     #
     # @return [Integer, Symbol, nil]
     #
@@ -369,8 +369,8 @@ class ExecReport
 
     # Attempt to get topic/details from *src*.
     #
-    # @param [ExecReport, ExecReport::Part, Exception, Hash, String, *] src
-    # @param [Symbol, nil]                                              meth
+    # @param [any, nil] src   ExecReport,ExecReport::Part,Exception,Hash,String
+    # @param [Symbol, nil] meth
     #
     # @return [Array<Hash{Symbol=>Array}>]
     #
@@ -389,8 +389,8 @@ class ExecReport
 
     # Attempt to get topic/details from *src*.
     #
-    # @param [ExecReport, ExecReport::Part, Exception, Hash, String, *] src
-    # @param [Symbol, nil]                                              meth
+    # @param [any, nil] src   ExecReport,ExecReport::Part,Exception,Hash,String
+    # @param [Symbol, nil] meth
     #
     # @return [Hash{Symbol=>Array<String>}]
     #
@@ -422,8 +422,8 @@ class ExecReport
 
     # Create message hash values from *src*.
     #
-    # @param [ExecReport::Part, Exception, Hash, String, *] src
-    # @param [Symbol, nil]                                  meth
+    # @param [any, nil]    src        ExecReport::Part, Exception, Hash, String
+    # @param [Symbol, nil] meth
     #
     # @return [Hash{Symbol=>Array}]
     #
@@ -607,7 +607,7 @@ class ExecReport
 
     # Get the HTTP status value from *src*.
     #
-    # @param [ExecReport, Exception, Faraday::Response, *] src
+    # @param [any, nil] src           ExecReport, Exception, Faraday::Response
     #
     # @return [Integer, Symbol, nil]
     #
@@ -634,9 +634,9 @@ class ExecReport
 
     # Return workflow error messages as multiple string(s).
     #
-    # @param [ExecReport, Model, Exception, Hash, Array, *] src
-    # @param [Boolean, nil]                                 html
-    # @param [Hash]                                         opt
+    # @param [any, nil]     src       ExecReport, Model, Exception, Hash, Array
+    # @param [Boolean, nil] html
+    # @param [Hash]         opt
     #
     # @return [Array<String>]
     #
@@ -745,9 +745,9 @@ class ExecReport
 
   # Prepare the error report value for assignment to a database column.
   #
-  # @param [ExecReport, ActiveModel::Errors, Exception, Hash, *] src  Def: self
+  # @param [any, nil] src             Default: `self`
   #
-  # @return [String, nil]           *nil* if *src* was blank.
+  # @return [String, nil]             *nil* if *src* was blank.
   #
   def serialize(src = nil)
     src and super or @serialize ||= super(self)&.freeze
@@ -755,7 +755,7 @@ class ExecReport
 
   # Interpret the error report value from a database column.
   #
-  # @param [ExecReport, ActiveModel::Errors, Exception, Hash, *] src  Def: self
+  # @param [any, nil] src             Default: `self`
   #
   # @return [Array<Hash{Symbol=>String,Array<String>}>, nil]
   #
@@ -789,9 +789,9 @@ class ExecReport
 
   # Return error messages from the instance as multiple string(s).
   #
-  # @param [ExecReport, Model, Exception, Hash, Array, *] src   Def.: `self`.
-  # @param [Boolean, nil]                                 html
-  # @param [Hash]                                         opt   To super
+  # @param [any, nil]     src         Default: `self`
+  # @param [Boolean, nil] html
+  # @param [Hash]         opt         To super
   #
   # @return [Array<String>]
   #
@@ -807,7 +807,7 @@ class ExecReport
 
   # Return the HTTP status value from the instance.
   #
-  # @param [ExecReport, Exception, Faraday::Response, *] src
+  # @param [any, nil] src             ExecReport, Exception, Faraday::Response
   #
   # @return [Integer, Symbol, nil]
   #
@@ -817,7 +817,7 @@ class ExecReport
 
   # Get topic/details from *src*.
   #
-  # @param [ExecReport, Exception, Hash, Array, String, *] src  Def.: `self`.
+  # @param [any, nil] src             Default: `self`.
   #
   # @return [Array<Hash{Symbol=>String,Array<String>}>]
   #
@@ -827,7 +827,7 @@ class ExecReport
 
   # Get topic/details from *src*.
   #
-  # @param [ExecReport, Exception, Hash, String, *] src  Def.: `self.exception`
+  # @param [any, nil] src             Default: `self`.
   #
   # @return [Hash{Symbol=>String,Array<String>}]
   #
@@ -844,7 +844,7 @@ class ExecReport
 
   # Attempt to get an HTTP status value from *src*.
   #
-  # @param [ExecReport, ActiveModel::Errors, Exception, *] src  Def.: `self`.
+  # @param [any, nil] src             Default: `self`.
   #
   # @return [Integer, Symbol, nil]
   #
@@ -855,8 +855,8 @@ class ExecReport
 
   # Attempt to get topic/details from *src*.
   #
-  # @param [ExecReport, ExecReport::Part, Exception, *] src  Def.: `self`.
-  # @param [Symbol, nil]                                meth
+  # @param [any, nil]    src          Default: `self`.
+  # @param [Symbol, nil] meth
   #
   # @return [Array<Hash{Symbol=>Array<String>}>]
   #
@@ -868,8 +868,8 @@ class ExecReport
 
   # Attempt to get topic/details from *src*.
   #
-  # @param [ExecReport, ExecReport::Part, Exception, *] src  Def.: `self`.
-  # @param [Symbol, nil]                                meth
+  # @param [any, nil]    src          Default: `self`.
+  # @param [Symbol, nil] meth
   #
   # @return [Hash{Symbol=>Array<String>}]
   #
@@ -887,11 +887,12 @@ class ExecReport
 
   # Generate an ExecReport if necessary.
   #
-  # @param [ExecReport, *] src
+  # @param [any, nil] src             ExecReport or arg to initializer.
   #
   # @return [ExecReport]
   #
   def self.[](src)
+    # noinspection RubyMismatchedReturnType
     src.is_a?(self) ? src : new(src)
   end
 
@@ -949,15 +950,12 @@ class ExecReport::Part
 
   # Initialize a new instance.
   #
-  # @param [ExecReport::Part, Hash, Array, String, *] src
+  # @param [any, nil] src             ExecReport::Part, Hash, Array, String
   #
   # === Implementation Notes
   # Member variables are initialized in the order which optimizes display when
   # the instance is inspected.
   #
-  #--
-  # noinspection RubyMismatchedVariableType
-  #++
   def initialize(src)
     hash         = src.presence ? message_hash(src) : {}
     ex           = hash.delete(EXCEPTION_KEY)
@@ -1071,7 +1069,7 @@ class ExecReport::Part
 
     # Interpret an error report value from a database column.
     #
-    # @param [ExecReport::Part, Exception, Hash, Array, String, *] src
+    # @param [any, nil] src   ExecReport::Part, Exception, Hash, Array, String
     #
     # @return [Array<Hash{Symbol=>String,Array<String>}>, nil]
     #
@@ -1087,7 +1085,7 @@ class ExecReport::Part
 
     # extract_topic
     #
-    # @param [*] src
+    # @param [any, nil] src
     #
     # @return [String, nil]
     #
@@ -1097,7 +1095,7 @@ class ExecReport::Part
 
     # extract_details
     #
-    # @param [*] src
+    # @param [any, nil] src
     #
     # @return [Array<String>]
     #
@@ -1134,8 +1132,8 @@ class ExecReport::Part
 
     # Generate a rendering of the error report part.
     #
-    # @param [ExecReport::Part, Hash, *] src
-    # @param [Hash]                      opt  Passed to #render_line
+    # @param [any, nil] src           ExecReport::Part, Hash, Array, String
+    # @param [Hash]     opt           Passed to #render_line
     #
     # @option opt [String, nil]  :separator
     # @option opt [Boolean, nil] :html
@@ -1155,9 +1153,9 @@ class ExecReport::Part
 
     # Generate a rendering of the error report part.
     #
-    # @param [ExecReport::Part, Hash, Array, *] src
-    # @param [String, nil]                      separator
-    # @param [Hash]                             opt
+    # @param [any, nil]    src        ExecReport::Part, Hash, Array, String
+    # @param [String, nil] separator
+    # @param [Hash]        opt
     #
     # @option opt [Boolean, nil] :html
     #
@@ -1176,8 +1174,8 @@ class ExecReport::Part
 
     # Render the leading topic portion of the report part.
     #
-    # @param [ExecReport::Part, Hash, Array, String, *] src
-    # @param [Hash]                                     opt
+    # @param [any, nil] src           ExecReport::Part, Hash, Array, String
+    # @param [Hash]     opt
     #
     # @option opt [String, nil] :separator  Default: `opt[:t_sep]`.
     # @option opt [String, nil] :t_sep      Default: #TOPIC_SEP.
@@ -1189,13 +1187,14 @@ class ExecReport::Part
     def render_topic(src, **opt)
       opt[:separator] ||= opt[:t_sep] || TOPIC_SEP
       src = extract_topic(src)   unless src.is_a?(String)
+      # noinspection RubyMismatchedArgumentType
       render_portion(src, **opt) if src.present?
     end
 
     # Render the trailing details portion of the report part.
     #
-    # @param [ExecReport::Part, Hash, Array, String, *] src
-    # @param [Hash]                                     opt
+    # @param [any, nil] src           ExecReport::Part, Hash, Array, String
+    # @param [Hash]     opt
     #
     # @option opt [String, nil] :separator  Default: `opt[:d_sep]`.
     # @option opt [String, nil] :d_sep      Default: #DETAILS_SEP.
@@ -1208,13 +1207,14 @@ class ExecReport::Part
       opt[:separator] ||= opt[:d_sep] || DETAILS_SEP
       src = [src]                if src.is_a?(String)
       src = extract_details(src) unless src.is_a?(Array)
+      # noinspection RubyMismatchedArgumentType
       render_portion(src, **opt) if src.present?
     end
 
     # Render either the topic or details portion of the report part.
     #
-    # @param [String, Array<String>] src
-    # @param [Hash]                  opt
+    # @param [String, Array<String>, nil] src
+    # @param [Hash]                       opt
     #
     # @return [String, ActiveSupport::SafeBuffer, nil]
     #
@@ -1264,9 +1264,9 @@ class ExecReport::Part
 
   # Prepare an error report part for assignment to a database column.
   #
-  # @param [ExecReport::Part, Exception, Hash, Array, *] src  Def: `self`
+  # @param [any, nil] src             Default: `self`
   #
-  # @return [String, nil]           *nil* if *src* was blank.
+  # @return [String, nil]             *nil* if *src* was blank.
   #
   def serialize(src = nil)
     src ||= self
@@ -1275,7 +1275,7 @@ class ExecReport::Part
 
   # Interpret an error report part from a database column.
   #
-  # @param [ExecReport::Part, Exception, Hash, Array, *] src  Def: `self`
+  # @param [any, nil] src             Default: `self`
   #
   # @return [Array<Hash{Symbol=>String,Array<String>}>, nil]
   #
@@ -1292,7 +1292,7 @@ class ExecReport::Part
 
   # Get topic/details from *src*.
   #
-  # @param [ExecReport, ExecReport::Part, Exception, Hash, *] src  Def.: `self`
+  # @param [any, nil] src             Default: `self`
   #
   # @return [Array<Hash{Symbol=>String,Array<String>}>]
   #
@@ -1302,7 +1302,7 @@ class ExecReport::Part
 
   # Get topic/details from *src*.
   #
-  # @param [ExecReport, ExecReport::Part, Exception, Hash, *] src  Def.: `self`
+  # @param [any, nil] src             Default: `self`
   #
   # @return [Hash{Symbol=>String,Array<String>}]
   #
@@ -1318,8 +1318,8 @@ class ExecReport::Part
 
   # Generate a rendering of the error report part.
   #
-  # @param [ExecReport::Part, Hash, *] src  Default: `self`.
-  # @param [Hash]                      opt
+  # @param [any, nil] src             Default: `self`
+  # @param [Hash]     opt
   #
   # @option opt [String, nil]  :separator
   # @option opt [Boolean, nil] :html          Default: `#render_html`.
@@ -1354,11 +1354,12 @@ class ExecReport::Part
 
   # Generate an ExecReport::Part if necessary.
   #
-  # @param [ExecReport::Part, *] src
+  # @param [any, nil] src             ExecReport::Part or arg to initializer
   #
   # @return [ExecReport::Part]
   #
   def self.[](src)
+    # noinspection RubyMismatchedReturnType
     src.is_a?(self) ? src : new(src)
   end
 
@@ -1376,8 +1377,8 @@ class ExecReport::FlashPart < ExecReport::Part
 
   # Create a new instance.
   #
-  # @param [ExecReport::Part, Hash, String, Integer, Array, *] topic
-  # @param [ExecReport::Part, Hash, String, Array, *]          details
+  # @param [any, nil] topic     ExecReport::Part, Hash, String, Integer, Array
+  # @param [any, nil] details   ExecReport::Part, Hash, String, Array
   #
   #--
   # === Variations
@@ -1421,8 +1422,8 @@ class ExecReport::FlashPart < ExecReport::Part
 
     # Generate a rendering of the error report part.
     #
-    # @param [ExecReport::Part, Hash, *] src
-    # @param [Hash]                      opt
+    # @param [any, nil] src           ExecReport::Part, Hash
+    # @param [Hash]     opt
     #
     # @option opt [Integer, nil] :first       Index of the first column.
     # @option opt [Integer, nil] :last        Index of the last column.
@@ -1447,8 +1448,8 @@ class ExecReport::FlashPart < ExecReport::Part
 
     # Render the leading topic portion of the report part.
     #
-    # @param [ExecReport::Part, Hash, Array, String, *] src
-    # @param [Hash]                                     opt
+    # @param [any, nil] src           ExecReport::Part, Hash, Array, String
+    # @param [Hash]     opt
     #
     # @return [ActiveSupport::SafeBuffer, String, nil]
     #
@@ -1459,8 +1460,8 @@ class ExecReport::FlashPart < ExecReport::Part
 
     # Render the trailing details portion of the report part.
     #
-    # @param [ExecReport::Part, Hash, Array, String, *] src
-    # @param [Hash]                                     opt
+    # @param [any, nil] src           ExecReport::Part, Hash, Array, String
+    # @param [Hash]     opt
     #
     # @option opt [Integer, nil] :start
     #
@@ -1513,8 +1514,8 @@ class ExecReport::FlashPart < ExecReport::Part
 
   # Generate a rendering of the parts of the entry.
   #
-  # @param [ExecReport::Part, Hash, *] src   Default: `self`.
-  # @param [Hash]                      opt
+  # @param [any, nil] src             ExecReport::Part, Hash; default: `self`.
+  # @param [Hash]     opt
   #
   # @return [String, ActiveSupport::SafeBuffer, nil]
   #
@@ -1533,11 +1534,12 @@ class ExecReport::FlashPart < ExecReport::Part
 
   # A short-cut for creating a FlashPart only if required.
   #
-  # @param [FlashPart, *] other
+  # @param [any, nil] src             FlashPart or arg to initializer
   #
   # @return [FlashPart]
   #
   def self.[](other)
+    # noinspection RubyMismatchedReturnType
     other.is_a?(self) ? other : new(other)
   end
 

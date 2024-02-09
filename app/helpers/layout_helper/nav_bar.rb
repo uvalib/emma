@@ -61,7 +61,7 @@ module LayoutHelper::NavBar
 
   # Configuration for dashboard page properties.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash]
   #
   DASHBOARD_CONFIG = config_section('emma.home.dashboard').deep_freeze
 

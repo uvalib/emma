@@ -290,7 +290,7 @@ module Workflow::Base::Transitions
   # Redefine :workflow for a Workflow subclass in order to apply the methods
   # defined here to the matching workflow transition handlers.
   #
-  # @param [Workflow, Any] base
+  # @param [Workflow] base
   #
   # @see Workflow::ClassMethods#workflow
   #

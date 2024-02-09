@@ -77,9 +77,9 @@ module SysHelper::Common
 
   # Format a name.
   #
-  # @param [*]      name
-  # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt
+  # @param [any, nil] name
+  # @param [String]   css             Characteristic CSS class/selector.
+  # @param [Hash]     opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -91,10 +91,10 @@ module SysHelper::Common
 
   # Format a value.
   #
-  # @param [*]       value
-  # @param [Integer] object_wrap
-  # @param [String]  css              Characteristic CSS class/selector.
-  # @param [Hash]    opt
+  # @param [any, nil] value
+  # @param [Integer]  object_wrap
+  # @param [String]   css             Characteristic CSS class/selector.
+  # @param [Hash]     opt
   #
   #
   # @return [ActiveSupport::SafeBuffer]

@@ -23,9 +23,9 @@ class Attachment::PromoteJob < ApplicationJob
 
   # perform
   #
-  # @param [Model]  record
-  # @param [Symbol] name              Should be :file.
-  # @param [*]      data              :file_data
+  # @param [Model]    record
+  # @param [Symbol]   name            Should be :file.
+  # @param [any, nil] data            :file_data
   #
   # @return [void]
   #

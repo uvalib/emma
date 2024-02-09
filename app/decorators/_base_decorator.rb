@@ -176,8 +176,8 @@ class BaseDecorator < Draper::Decorator
     # given operation.
     #
     # @param [Symbol, String, nil] action
-    # @param [*]                   subject      Default: `#object_class`.
-    # @param [*]                   extra_args
+    # @param [any, nil]            subject      Default: `#object_class`.
+    # @param [any, nil]            extra_args
     #
     # @see Ability#can?
     #
@@ -271,7 +271,7 @@ class BaseDecorator < Draper::Decorator
     # @param [String, Array] path     Partial I18n path.
     # @param [Hash]          opt      To ConfigurationHelper#config_lookup
     #
-    # @return [*]
+    # @return [any, nil]
     #
     def config_lookup(*path, **opt)
       opt[:action] ||= context[:action]
@@ -353,7 +353,7 @@ class BaseDecorator < Draper::Decorator
     #
     # @param [Array<Symbol>] keys
     #
-    # @return [*]
+    # @return [any, nil]
     #
     def context_value(*keys)
       keys = keys.flatten.map!(&:to_s)
@@ -744,8 +744,8 @@ class BaseDecorator
 
   # initialize
   #
-  # @param [*]    obj
-  # @param [Hash] opt
+  # @param [any, nil] obj
+  # @param [Hash]     opt
   #
   def initialize(obj = nil, **opt)
     unless opt.delete(:from_internal)
@@ -885,7 +885,7 @@ class BaseDecorator
 
   # to_class
   #
-  # @param [*]              c
+  # @param [any, nil]       c
   # @param [String, Symbol] meth
   #
   # @return [Class, nil]
@@ -923,7 +923,7 @@ class BaseDecorator
 
     # A table of keys and their associated decorator classes.
     #
-    # @return [Hash{Any=>Class}]
+    # @return [Hash{any=>Class}]
     #
     def table
       @table ||= {}
@@ -931,7 +931,7 @@ class BaseDecorator
 
     # Get the matching decorator class.
     #
-    # @param [*] key
+    # @param [any, nil] key
     #
     # @return [Class, nil]            The associated decorator class.
     #
@@ -942,11 +942,11 @@ class BaseDecorator
 
     # Set the matching decorator class.
     #
-    # @param [*]       key
-    # @param [Class]   dec            Decorator class
-    # @param [Boolean] force          Update the #table entry unconditionally.
+    # @param [any, nil] key
+    # @param [Class]    dec           Decorator class
+    # @param [Boolean]  force         Update the #table entry unconditionally.
     #
-    # @return [Any, nil]              The normalize key if added to the table.
+    # @return [any, nil]              The normalize key if added to the table.
     #
     def set(key, dec, force: false)
       key = normalize(key) or return
@@ -966,9 +966,9 @@ class BaseDecorator
 
     # Normalize the provided value as a valid key or *nil*.
     #
-    # @param [*] key
+    # @param [any, nil] key
     #
-    # @return [*]
+    # @return [any, nil]
     #
     def normalize(key)
       key.presence
@@ -983,10 +983,9 @@ class BaseDecorator
     include Mapper
 
     def normalize(mod)
-      mod = mod.first      if mod.is_a?(Array)
-      mod = Model.for(mod) if mod && !mod.is_a?(Symbol)
-      # noinspection RubyMismatchedReturnType
-      mod
+      mod = mod.first if mod.is_a?(Array)
+      # noinspection RubyMismatchedArgumentType
+      mod.is_a?(Symbol) ? mod : Model.for(mod) if mod
     end
 
   end
@@ -1061,7 +1060,7 @@ class BaseDecorator
 
   # Client-side scripting which are supplied via 'assets:precompile'.
   #
-  # @param [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   # @see file:app/assets/javascripts/shared/assets.js.erb
   #
@@ -1123,10 +1122,13 @@ class BaseDecorator
 
   # fetch_property
   #
-  # @param [*] item
+  # @param [any, nil] item
   #
-  # @return [*]
+  # @return [any, nil]
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def self.fetch_property(item)
     return fetch_properties(item) if item.is_a?(Hash)
     item = safe_const_get(item)   if item.is_a?(Symbol)

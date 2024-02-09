@@ -110,20 +110,20 @@ en:
         dc_provenance:
           delete_field:             true
 
-       #dc_rights:
-       #  translate:
-       #    copyright:              ~ # 'copyright'
-       #    cc0:                    'creativeCommons'
-       #    ccBy:                   ~
-       #    ccBySa:                 ~
-       #    ccByNc:                 ~
-       #    ccByNcSa:               ~
-       #    ccByNd:                 ~
-       #    ccByNcNd:               ~
-       #    license:                ~
-       #    embargo:                ~
-       #    publicDomain:           ~ # 'publicDomain'
-       #    other:                  ~ # 'other'
+#       dc_rights:
+#         translate:
+#           copyright:              ~ # 'copyright'
+#           cc0:                    'creativeCommons'
+#           ccBy:                   ~
+#           ccBySa:                 ~
+#           ccByNc:                 ~
+#           ccByNcSa:               ~
+#           ccByNd:                 ~
+#           ccByNcNd:               ~
+#           license:                ~
+#           embargo:                ~
+#           publicDomain:           ~ # 'publicDomain'
+#           other:                  ~ # 'other'
 
         emma_lastRemediationDate:
           new_name:                 'rem_remediationDate'

@@ -161,7 +161,7 @@ module Record::Properties
 
   # URL parameter names and default values.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>any}]
   #
   OPTION_PARAMETER_DEFAULT = {
     prefix:       TITLE_PREFIX,
@@ -322,7 +322,7 @@ module Record::Properties
   # EntryConcern) or in the context of the workflow instance (through the
   # parameters saved from the :params initializer option).
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   # @see ::Options#model_params
   #

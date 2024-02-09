@@ -15,21 +15,21 @@ module ApplicationCable::Common
 
   # Normalize received stream data.
   #
-  # @param [*]           payload
+  # @param [any, nil]    payload
   # @param [Symbol, nil] meth         Calling method (for diagnostics).
   # @param [Hash]        opt
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def normalize_inbound: (untyped payload, ?meth: Symbol|nil, **untyped opt) -> symHash
 
   # Normalize stream payload data.
   #
-  # @param [*]           payload
+  # @param [any, nil]    payload
   # @param [Symbol, nil] meth         Calling method (for diagnostics).
   # @param [Hash]        opt
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def normalize_outbound: (untyped payload, ?meth: Symbol|nil, **untyped opt) -> symHash
 

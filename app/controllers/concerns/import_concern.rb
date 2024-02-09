@@ -29,7 +29,7 @@ module ImportConcern
   #
   # @raise [RuntimeError]             If both *src* and *data* are present.
   #
-  # @return [Array<Hash{Symbol=>*}>]
+  # @return [Array<Hash>]
   # @return [nil]                     If both *src* and *data* are missing.
   #
   # === Usage Notes
@@ -60,8 +60,7 @@ module ImportConcern
   #
   # @param [String, IO, StringIO, IO::Like] data
   #
-  # @return [Array<Hash{Symbol=>*}>]
-  # @return [nil]
+  # @return [Array<Hash>, nil]
   #
   def from_json(data)
     result = json_parse(data)
@@ -73,8 +72,7 @@ module ImportConcern
   #
   # @param [String, IO, StringIO, IO::Like] data
   #
-  # @return [Array<Hash{Symbol=>*}>]
-  # @return [nil]
+  # @return [Array<Hash>, nil]
   #
   def from_csv(data)
     result = csv_parse(data)
@@ -90,7 +88,7 @@ module ImportConcern
 
   # Get data and source name in a usable form.
   #
-  # @param [*] src
+  # @param [any] src
   #
   # @return [Array<(IO, String)>]
   # @return [Array<(String, String)>]

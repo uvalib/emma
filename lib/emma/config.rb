@@ -54,7 +54,7 @@ module Emma::Config
 
   # All "en.emma.*" configuration values.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def config_all
     Emma::Config::Data.all
@@ -80,8 +80,8 @@ module Emma::Config
   # The first returned element should be used as the key for I18n#translate and
   # the remaining elements should be used passed as the :default option.
   #
-  # @param [*]     base
-  # @param [Array] path
+  # @param [any, nil] base
+  # @param [Array]    path
   #
   # @return [Array<Symbol>]
   #
@@ -142,16 +142,16 @@ module Emma::Config
   # If *path* is an array, the first element is used as the I18n#translate key
   # and the remaining elements are passed as the :default option.
   #
-  # @param [*]             key        I18n path(s).
-  # @param [*]             fallback   Returned if the item is not found.
-  # @param [*]             default    Passed to I18n#translate.
+  # @param [any]           key        I18n path(s) (Symbol, String, Array)
+  # @param [any, nil]      fallback   Returned if the item is not found.
+  # @param [any, nil]      default    Passed to I18n#translate.
   # @param [Symbol,String] root
   # @param [Hash]          opt        Passed to I18n#translate except:
   #
   # @option opt [Boolean] :cfg_fatal  Raise if the item is not found.
   # @option opt [Boolean] :cfg_warn   Log a warning if the item is not found.
   #
-  # @return [*]                       Or the type of *fallback*.
+  # @return [any, nil]                Or the type of *fallback*.
   #
   def config_item(key, fallback: nil, default: nil, root: CONFIG_ROOT, **opt)
     key, default = key.first, [*key[1..-1], *default] if key.is_a?(Array)
@@ -172,13 +172,13 @@ module Emma::Config
 
   # Get an item from configuration.
   #
-  # @param [String|Symbol] key        I18n path.
-  # @param [Symbol,String] root
-  # @param [Hash]          opt        Passed to I18n#translate.
+  # @param [String, Symbol] key       I18n path.
+  # @param [Symbol, String] root
+  # @param [Hash]           opt       Passed to I18n#translate.
   #
   # @option opt [Boolean] :raise      Raise exception if item not found.
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def config_item_get(key, root: CONFIG_ROOT, **opt)
     unless key.is_a?(String) || key.is_a?(Symbol)
@@ -220,14 +220,14 @@ module Emma::Config
 
   # Fetch a configuration item and raise an exception if not found.
   #
-  # @param [String|Symbol] key        I18n path.
-  # @param [Array, *]      other      Alternate location(s)
-  # @param [Hash]          opt        Passed to I18n#translate except:
+  # @param [Symbol, String]  key      I18n path.
+  # @param [Array, any, nil] other    Alternate location(s)
+  # @param [Hash]            opt      Passed to I18n#translate except:
   #
   # @option opt [Boolean] :cfg_fatal  If *false* do not raise if item not found
   # @option opt [Boolean] :cfg_warn   If *false* do not log a warning.
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def config_item_fetch(key, other = nil, **opt)
     default = ([*other, *opt[:default]].compact if other || opt[:default])
@@ -243,11 +243,11 @@ module Emma::Config
 
   # The configuration section specified by *key* or *default* locations.
   #
-  # @param [*]    key                 I18n path(s).
+  # @param [any]  key                 I18n path(s) (Symbol, String, Array)
   # @param [Hash] opt                 To #config_deep_interpolate except for
   #                                     #CONFIG_ITEM_OPTIONS to #config_item.
   #
-  # @return [Hash{Symbol=>*}]         Or the type of *fallback*.
+  # @return [Hash]                    Or the type of *fallback*.
   #
   def config_section(key, **opt)
     c_opt = opt.extract!(*CONFIG_ITEM_OPTIONS, *I18N_OPTIONS)
@@ -308,7 +308,7 @@ module Emma::Config
   # @param [String, *] item
   # @param [Hash]      opt            Passed to #interpolate_named_references
   #
-  # @return [String, *]
+  # @return [String, any, nil]
   #
   def config_interpolate(item, **opt)
     return item unless item.is_a?(String) && opt.present?
@@ -318,10 +318,10 @@ module Emma::Config
 
   # Attempt to apply interpolations to all strings in *item*.
   #
-  # @param [Hash, Array, String, *] item
-  # @param [Hash]                   opt
+  # @param [any, nil] item           Hash, Array, String
+  # @param [Hash]     opt
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def config_deep_interpolate(item, **opt)
     return item unless opt.present?

@@ -49,11 +49,12 @@ module Record::Identification
 
   # The type of record for the given item.
   #
-  # @param [*] item
+  # @param [any, nil] item
   #
   # @return [Class<ApplicationRecord>]
   #
   def record_class_for(item)
+    # noinspection RubyMismatchedReturnType
     case
       when Record.model_class?(item)       then item
       when Record.model_class?(item.class) then item.class
@@ -63,7 +64,7 @@ module Record::Identification
 
   # Name of the type of record for the given item.
   #
-  # @param [*] item
+  # @param [any, nil] item
   #
   # @return [String]
   #
@@ -87,7 +88,7 @@ module Record::Identification
 
   # Indicate whether the value could be a valid #id_column value.
   #
-  # @param [*] value
+  # @param [any, nil] value
   #
   def valid_id?(value)
     digits_only?(value)
@@ -95,8 +96,8 @@ module Record::Identification
 
   # Extract the database ID from the given item.
   #
-  # @param [Model, Hash, String, *] item
-  # @param [Hash]                   opt
+  # @param [any, nil] item            Model, Hash, String
+  # @param [Hash]     opt
   #
   # @option opt [Symbol] :id_key      Default: `#id_column`.
   #
@@ -136,11 +137,11 @@ module Record::Identification
   #
   # The value of *default* is returned if *item* doesn't respond to *key*.
   #
-  # @param [Model, Hash, String, Symbol, *]       item
-  # @param [Symbol, String, Array<Symbol,String>] key
-  # @param [*]                                    default
+  # @param [any, nil]                           item  Model,Hash,String,Symbol
+  # @param [Symbol,String,Array<Symbol,String>] key
+  # @param [any, nil]                           default
   #
-  # @return [*]
+  # @return [any, nil]
   #
   # @note From Upload#get_value
   #
@@ -166,7 +167,7 @@ module Record::Identification
 
   # A foreign-key reference to the current record.
   #
-  # @param [Hash{Symbol=>*}] opt
+  # @param [Hash] opt
   #
   # E.g., :entry_id would indicate an Entry ID.
   #
@@ -180,7 +181,7 @@ module Record::Identification
 
   # Return with the specified record or *nil* if one could not be found.
   #
-  # @param [String, Integer, Hash, Model, *] item
+  # @param [any, nil]    item         String, Integer, Hash, Model
   # @param [Boolean]     fatal        If *false*, do not raise exceptions.
   # @param [Symbol, nil] meth         Calling method (for logging).
   # @param [Hash]        opt          Used if *item* is *nil* except for:
@@ -196,6 +197,9 @@ module Record::Identification
   #
   # @note From UploadWorkflow::External#find_record
   #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
   def find_record(item, fatal: true, meth: nil, **opt)
     return item if item.is_a?(record_class)
     meth ||= __method__
@@ -203,6 +207,7 @@ module Record::Identification
 
     id_key = opt.key?(:id_key) ? opt[:id_key] : id_column
     if id_key
+      # noinspection RubyMismatchedArgumentType
       opt.merge!(item) if item.is_a?(Hash)
       alt = alt_id_key(opt)
       opt = id_term(item, **opt).merge!(opt.slice(alt))
@@ -219,7 +224,6 @@ module Record::Identification
     end
 
     if record
-      # noinspection RubyMismatchedReturnType
       record
     elsif !id
       Log.info { "#{meth}: #{error} (no record specified)" }
@@ -332,8 +336,8 @@ module Record::Identification
   # If :sid_key set to *nil* then the result will always be in terms of :id_key
   # (which cannot be set to *nil*).
   #
-  # @param [String, Symbol, Integer, Hash, Model, nil] v
-  # @param [Hash]                                      opt
+  # @param [any, nil] v               String, Symbol, Integer, Hash, Model
+  # @param [Hash]     opt
   #
   # @option opt [Symbol] :id_key      Default: `#id_column`.
   # @option opt [Symbol] :sid_key     Default: nil.

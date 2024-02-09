@@ -50,7 +50,7 @@ module Record::FileData
   # @param [Hash, String, nil] data
   # @param [Hash]              opt    Passed to #json_parse
   #
-  # @return [Hash{String=>*}]
+  # @return [Hash{String=>any,nil}]
   #
   # @note Only used by #file_attacher_load
   #
@@ -63,7 +63,7 @@ module Record::FileData
   # @param [String, Hash, nil] data
   # @param [Boolean]           allow_blank
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   # @note Invoked only from methods which are currently unused.
   #
@@ -87,7 +87,7 @@ module Record::FileData
   # @param [Hash, String, nil] data
   # @param [Hash, String, nil] attr
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   # @note Currently unused.
   #
@@ -145,7 +145,7 @@ module Record::FileData
 
     # Present :file_data as a hash (if it is present).
     #
-    # @return [Hash{Symbol=>*}]
+    # @return [Hash]
     #
     # @note Invoked only from methods which are currently unused.
     #
@@ -202,7 +202,7 @@ module Record::FileData
     # @param [Hash, String, nil] data
     # @param [Boolean]           allow_blank
     #
-    # @return [Hash{String=>*}]       New value of :file_data
+    # @return [Hash{String=>any,nil}] New value of :file_data
     # @return [nil]                   ...if *data* is *nil*.
     #
     # @note Currently unused.
@@ -218,7 +218,7 @@ module Record::FileData
     # @param [Hash]    data
     # @param [Boolean] allow_blank
     #
-    # @return [Hash{String=>*}]       New value of :file_data
+    # @return [Hash{String=>any,nil}] New value of :file_data
     # @return [nil]                   If no change and :file_data was *nil*.
     #
     # @note Currently unused.

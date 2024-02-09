@@ -90,7 +90,7 @@ module Emma::Common::HashMethods
   # @param [ActionController::Parameters, Hash, nil] item
   # @param [Boolean]                                 debug
   #
-  # @return [Hash{Symbol=>*}]         A new normalized Hash.
+  # @return [Hash{Symbol=>any,nil}]   A new normalized Hash.
   #
   def normalize_hash(item, debug: false)
     item  = item.params      if item.respond_to?(:params)
@@ -108,7 +108,7 @@ module Emma::Common::HashMethods
   #
   # @param [ActionController::Parameters, Hash, nil] item
   #
-  # @return [Hash{Symbol=>*}]     The modified item itself if *item* is a Hash.
+  # @return [Hash{Symbol=>any,nil}]   Modified item itself if *item* is a Hash.
   #
   def normalize_hash!(item)
     # noinspection RubyMismatchedReturnType
@@ -177,10 +177,10 @@ module Emma::Common::HashMethods
 
   # Recursively remove blank items from a copy of a hash.
   #
-  # @param [Hash, *] item
-  # @param [Boolean] squeeze          If *true* transform arrays with a single
+  # @param [any, nil] item            Hash
+  # @param [Boolean]  squeeze         If *true* transform arrays with a single
   #                                     element into scalars.
-  # @param [Boolean] dup              Ensure that the result is completely
+  # @param [Boolean]  dup             Ensure that the result is completely
   #                                     disentangled with the original.
   #
   # @return [Hash]                    A copy of *item*, possibly modified.
@@ -193,8 +193,8 @@ module Emma::Common::HashMethods
 
   # Recursively remove blank items from a hash.
   #
-  # @param [Hash, *] item
-  # @param [Boolean] squeeze          If *true* transform arrays with a single
+  # @param [any, nil] item            Hash
+  # @param [Boolean]  squeeze         If *true* transform arrays with a single
   #                                     element into scalars.
   #
   # @return [Hash]                    *item*, possibly modified.
@@ -213,13 +213,13 @@ module Emma::Common::HashMethods
 
   # Recursively remove blank items from an object copy.
   #
-  # @param [Hash, Array, *] item
-  # @param [Boolean]        squeeze   If *true* transform arrays with a single
+  # @param [any, nil] item            Hash, Array
+  # @param [Boolean]  squeeze         If *true* transform arrays with a single
   #                                     element into scalars.
-  # @param [Boolean]        dup       Ensure that the result is completely
+  # @param [Boolean]  dup             Ensure that the result is completely
   #                                     disentangled with the original.
   #
-  # @return [*]
+  # @return [any, nil]
   #
   # === Usage Notes
   # * Empty strings and nils are considered blank, however an item or element
@@ -256,12 +256,12 @@ module Emma::Common::HashMethods
 
   # Recursively remove blank items from an object.
   #
-  # @param [Hash, Array, *] item
-  # @param [Boolean]        squeeze   If *true* transform arrays with a single
+  # @param [any, nil] item            Hash, Array
+  # @param [Boolean]  squeeze         If *true* transform arrays with a single
   #                                     element into scalars.
-  # @param [Boolean]        nil_hash  *true* except at the top-level.
+  # @param [Boolean]  nil_hash        *true* except at the top-level.
   #
-  # @return [*]
+  # @return [any, nil]
   #
   # === Usage Notes
   # * Empty strings and nils are considered blank, however an item or element

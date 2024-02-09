@@ -156,8 +156,8 @@ class User < ApplicationRecord
 
   # Value of :id for the indicated record.
   #
-  # @param [User, String, Integer, *] user  Default: self
-  # @param [Hash]                     opt
+  # @param [any, nil] user            User, String, Integer; default: `self`
+  # @param [Hash]     opt
   #
   # @return [String]
   # @return [nil]                     If no matching record was found.
@@ -169,8 +169,8 @@ class User < ApplicationRecord
 
   # Value of :id for the indicated record.
   #
-  # @param [User, String, Integer, *] user
-  # @param [Hash]                     opt
+  # @param [any, nil] user            User, String, Integer
+  # @param [Hash]     opt
   #
   # @return [String]
   # @return [nil]                     If no matching record was found.
@@ -198,8 +198,8 @@ class User < ApplicationRecord
 
   # Return with the specified User record or *nil* if one could not be found.
   #
-  # @param [String, Integer, Hash, Model, *] item
-  # @param [Hash]                            opt
+  # @param [any, nil] item            String, Integer, Hash, Model
+  # @param [Hash]     opt
   #
   # @return [User, nil]
   #
@@ -209,8 +209,8 @@ class User < ApplicationRecord
 
   # Return with the specified User record or *nil* if one could not be found.
   #
-  # @param [String, Symbol, Integer, Hash, Model, *] item
-  # @param [Hash]                                    opt
+  # @param [any, nil] item            String, Symbol, Integer, Hash, Model
+  # @param [Hash]     opt
   #
   # @option opt [Boolean] :fatal      False by default.
   #
@@ -245,7 +245,7 @@ class User < ApplicationRecord
 
   # Return the account ID of *user*.
   #
-  # @param [User, String, Symbol, Integer, *] user  Default: self.
+  # @param [any, nil] user            User, String, Symbol, Integer; def: self.
   #
   # @return [String, nil]
   #
@@ -258,7 +258,7 @@ class User < ApplicationRecord
   # @note This method assumes that if *user* is a String or Symbol it already
   #   represents an account name unless it resolves to a user ID.
   #
-  # @param [User, String, Symbol, Integer, *] user
+  # @param [any, nil] user            User, String, Symbol, Integer
   #
   # @return [String, nil]
   #
@@ -431,15 +431,17 @@ class User < ApplicationRecord
 
   # Return the User instance indicated by the argument.
   #
-  # @param [Model, Hash, String, Integer, *] v
+  # @param [any, nil] v               Model, Hash, String, Integer
   #
   # @return [User, nil]               A fresh record unless *v* is a User.
   #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
   def self.instance_for(v)
     return v if v.is_a?(self) || v.nil?
     v = try_key(v, model_key) || v
     return v if v.is_a?(self)
-    # noinspection RubyMismatchedReturnType
     case (v = uid(v) || v)
       when Integer then find_by(id: v)
       when String  then where(email: v).or(where(preferred_email: v)).first

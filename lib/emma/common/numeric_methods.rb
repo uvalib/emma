@@ -26,7 +26,7 @@ module Emma::Common::NumericMethods
 
   # Interpret *value* as an integer.
   #
-  # @param [String, Symbol, Numeric, *] value
+  # @param [any, nil] value           String, Symbol, Numeric
   #
   # @return [Integer]
   # @return [nil]                     If *value* does not represent a number.
@@ -39,7 +39,7 @@ module Emma::Common::NumericMethods
 
   # Interpret *value* as a positive integer.
   #
-  # @param [String, Symbol, Numeric, *] value
+  # @param [any, nil] value           String, Symbol, Numeric
   #
   # @return [Integer]
   # @return [nil]                     If *value* <= 0 or not a number.
@@ -51,7 +51,7 @@ module Emma::Common::NumericMethods
 
   # Interpret *value* as zero or a positive integer.
   #
-  # @param [String, Symbol, Numeric, *] value
+  # @param [any, nil] value           String, Symbol, Numeric
   #
   # @return [Integer]
   # @return [nil]                     If *value* < 0 or not a number.
@@ -69,7 +69,7 @@ module Emma::Common::NumericMethods
 
   # Interpret *value* as a positive floating-point number.
   #
-  # @param [String, Symbol, Numeric, *] value
+  # @param [any, nil] value           String, Symbol, Numeric
   #
   # @return [Float]
   # @return [nil]                     If *value* does not represent a number.
@@ -82,8 +82,8 @@ module Emma::Common::NumericMethods
 
   # Interpret *value* as a positive floating-point number.
   #
-  # @param [String, Symbol, Numeric, *] value
-  # @param [Float]                      epsilon
+  # @param [any, nil] value           String, Symbol, Numeric
+  # @param [Float]    epsilon
   #
   # @return [Float]
   # @return [nil]                     If *value* <= 0 or not a number.
@@ -95,8 +95,8 @@ module Emma::Common::NumericMethods
 
   # Interpret *value* as zero or a positive floating-point number.
   #
-  # @param [String, Symbol, Numeric, *] value
-  # @param [Float]                      epsilon
+  # @param [any, nil] value           String, Symbol, Numeric
+  # @param [Float]    epsilon
   #
   # @return [Float]
   # @return [nil]                     If *value* <= 0 or not a number.
@@ -114,7 +114,7 @@ module Emma::Common::NumericMethods
 
   # Indicate whether the given string value contains only decimal digits.
   #
-  # @param [*] value
+  # @param [any, nil] value
   #
   def digits_only?(value)
     case value

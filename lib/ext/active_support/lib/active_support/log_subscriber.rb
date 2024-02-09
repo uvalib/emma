@@ -13,7 +13,7 @@ module ActiveSupport
 
     # Also check whether log output is globally suppressed.
     #
-    # @param [*] event
+    # @param [any, nil] event
     #
     def silenced?(event)
       super || ::Logger.suppressed?

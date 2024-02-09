@@ -56,7 +56,7 @@ class AccountDecorator < BaseDecorator
 
     # Control icon definitions.
     #
-    # @type [Hash{Symbol=>Hash{Symbol=>*}}]
+    # @type [Hash{Symbol=>Hash}]
     #
     # @see BaseDecorator::Controls#ICON_PROPERTIES
     #
@@ -68,7 +68,7 @@ class AccountDecorator < BaseDecorator
 
     # Icon definitions for this decorator.
     #
-    # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+    # @return [Hash{Symbol=>Hash}]
     #
     def icon_definitions
       ICONS
@@ -78,7 +78,7 @@ class AccountDecorator < BaseDecorator
     #
     # @param [Boolean] authorized       If *true* show all enabled icons.
     #
-    # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+    # @return [Hash{Symbol=>Hash}]
     #
     # @see #icon_definitions
     #
@@ -101,7 +101,7 @@ class AccountDecorator < BaseDecorator
     # the user's own account.
     #
     # @param [String, Symbol] label
-    # @param [*]              value
+    # @param [any, nil]       value
     # @param [Hash]           opt     Passed to super
     #
     # @return [ActiveSupport::SafeBuffer, nil]
@@ -318,9 +318,9 @@ class AccountDecorator
 
   # render_form_email
   #
-  # @param [String] name
-  # @param [*]      value
-  # @param [Hash]   opt
+  # @param [String]   name
+  # @param [any, nil] value
+  # @param [Hash]     opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -337,9 +337,9 @@ class AccountDecorator
 
   # render_form_password
   #
-  # @param [String] name
-  # @param [*]      value
-  # @param [Hash]   opt
+  # @param [String]   name
+  # @param [any, nil] value
+  # @param [Hash]     opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #

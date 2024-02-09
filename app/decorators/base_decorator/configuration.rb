@@ -166,8 +166,8 @@ module BaseDecorator::Configuration
 
   # Configuration properties for a field.
   #
-  # @param [Symbol] field
-  # @param [Hash]   opt               Passed to Field#for.
+  # @param [Symbol, nil] field
+  # @param [Hash]        opt          Passed to Field#for.
   #
   # @return [Field::Type, nil]
   #
@@ -210,7 +210,7 @@ module BaseDecorator::Configuration
   # @param [String, Array] path       Partial I18n path.
   # @param [Hash]          opt        To ConfigurationHelper#config_lookup
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def config_lookup(*path, **opt)
     opt[:ctrlr]  ||= opt.delete(:controller) || controller_config_key

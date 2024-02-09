@@ -259,7 +259,7 @@ module HtmlHelper::Tags
   # then it defaults to 'div'.
   #
   # @param [Symbol, String, Integer, nil] tag
-  # @param [*]                            args
+  # @param [any, nil]                     args
   # @param [String, nil]                  separator   Between *args*.
   # @param [Hash]                         opt         Passed to #content_tag.
   #
@@ -295,7 +295,7 @@ module HtmlHelper::Tags
   # parameter list and/or the block.
   #
   # @param [String, Hash] url_or_path
-  # @param [*]            args
+  # @param [any, nil]     args
   # @param [String, nil]  separator   Between *args*.
   # @param [Hash]         opt         Passed to #form_tag.
   #
@@ -315,9 +315,9 @@ module HtmlHelper::Tags
   # Make a Unicode character (sequence) into a decorative element that is not
   # pronounced by screen readers.
   #
-  # @param [String, Symbol, *] icon   Character(s) that should match #SYMBOLS.
-  # @param [String]            css    Characteristic CSS class/selector.
-  # @param [Hash]              opt    Passed to #html_span.
+  # @param [any, nil] icon            Char(s) that should match #SYMBOLS.
+  # @param [String]   css             Characteristic CSS class/selector.
+  # @param [Hash]     opt             Passed to #html_span.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

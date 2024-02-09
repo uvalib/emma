@@ -19,7 +19,7 @@ module SessionsHelper
 
   # Configuration for login session properties.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash]
   #
   SESSIONS_CONFIG = config_section('emma.user.sessions').deep_freeze
 

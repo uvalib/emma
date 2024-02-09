@@ -250,6 +250,8 @@ module LookupService::WorldCat::Action::Records
 
   # Aggregate terms into groups of similar search behavior.
   #
+  # All query-related keys are removed from *opt*.
+  #
   # @param [LookupService::Request, Array<String>, String] terms
   # @param [Hash]                                          opt
   #
@@ -359,9 +361,9 @@ module LookupService::WorldCat::Action::Records
 
     # Add one or more term values of the same kind.
     #
-    # @param [Symbol] prefix
-    # @param [*]      item
-    # @param [Proc]   blk             Applied to each term value.
+    # @param [Symbol]   prefix
+    # @param [any, nil] item
+    # @param [Proc]     blk           Applied to each term value.
     #
     # @return [self, nil]
     #
@@ -571,8 +573,8 @@ module LookupService::WorldCat::Action::Records
 
     # Add one or more term values of the same kind.
     #
-    # @param [Symbol] prefix
-    # @param [*]      item
+    # @param [Symbol]   prefix
+    # @param [any, nil] item
     #
     # @return [self, nil]
     #

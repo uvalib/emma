@@ -31,7 +31,7 @@ module HelpHelper
 
   # Configuration for help pages properties.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash]
   #
   HELP_CONFIG = config_section('emma.help').deep_freeze
 
@@ -147,7 +147,7 @@ module HelpHelper
   #
   # @param [Symbol, String] topic
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def help_topic_entry(topic)
     HELP_ENTRY[topic&.to_sym] || {}
@@ -475,7 +475,7 @@ module HelpHelper
   #
   # @param [BaseDecorator, Class] decorator
   #
-  # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+  # @return [Hash{Symbol=>Hash}]
   #
   def help_shortcut_icons(decorator, actions: %i[show edit delete])
     actions.map { |action|
@@ -528,8 +528,8 @@ module HelpHelper
 
     # Create a new instance.
     #
-    # @param [*]    base
-    # @param [Hash] cfg
+    # @param [any, nil] base
+    # @param [Hash]     cfg
     #
     def initialize(base: nil, **cfg)
       @field  = cfg[:field]
@@ -574,9 +574,9 @@ module HelpHelper
 
   # help_field_entries
   #
-  # @param [Symbol, String, Class, Model, *] model
-  # @param [Array<Symbol>]                   names
-  # @param [*]                               base
+  # @param [any, nil]      model      Symbol, String, Class, Model
+  # @param [Array<Symbol>] names
+  # @param [any, nil]      base
   #
   # @return [Hash{Symbol=>FieldEntry}]
   #

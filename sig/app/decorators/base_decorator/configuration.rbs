@@ -98,12 +98,12 @@ module BaseDecorator::Configuration
 
   # Configuration properties for a field.
   #
-  # @param [Symbol] field
-  # @param [Hash]   opt               Passed to Field#for.
+  # @param [Symbol, nil] field
+  # @param [Hash]        opt          Passed to Field#for.
   #
   # @return [Field::Type, nil]
   #
-  def field_for: (Symbol field, **untyped opt) -> (Field::Type | nil)
+  def field_for: ((Symbol|nil) field, **untyped opt) -> (Field::Type | nil)
 
   # A working copy of the configuration properties for a field.
   #
@@ -129,7 +129,7 @@ module BaseDecorator::Configuration
   # @param [String, Array] path       Partial I18n path.
   # @param [Hash]          opt        To ConfigurationHelper#config_lookup
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def config_lookup: (*(String|strArray) path, **untyped opt) -> untyped
 

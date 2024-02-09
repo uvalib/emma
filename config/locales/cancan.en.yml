@@ -12,10 +12,10 @@ en:
 
     manage:           &TEMPLATE
       all:            'You are not authorized to %{action} %{subject}.'
-    # account:        'You are not authorized to %{action} EMMA accounts.'
-    # data:           'You are not authorized to %{action} EMMA data.'
+#     account:        'You are not authorized to %{action} EMMA accounts.'
+#     data:           'You are not authorized to %{action} EMMA data.'
       org:            'You are not authorized to %{action} EMMA organizations.'
-    # search:         'You are not authorized to %{action} EMMA searches.'
+#     search:         'You are not authorized to %{action} EMMA searches.'
       search_call:    'You are not authorized to %{action} EMMA statistics.'
       upload:         'You are not authorized to %{action} EMMA submissions.'
       user:           'You are not authorized to %{action} EMMA user accounts.'

@@ -5,7 +5,7 @@ module HeadHelper::Common
 
   # Configuration for '<head>' properties.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash]
   #
   HEAD_CONFIG: symHash
 end

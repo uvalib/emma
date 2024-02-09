@@ -216,7 +216,7 @@ en:
             - dc_rights
           repository:
             - emma_repository
-            # emma_collection     # NOTE: only shown if the same for all files
+#           - emma_collection     # NOTE: only shown if the same for all files
           index:
             - emma_titleId        # NOTE: only shown if the same for all files
 
@@ -231,7 +231,7 @@ en:
             files:
               remediation:
                 - rem_status
-                # rem_complete folded into rem_coverage
+#               - rem_complete    # NOTE: folded into rem_coverage
                 - rem_coverage
                 - rem_comments
                 - rem_remediationComments
@@ -250,7 +250,7 @@ en:
               bibliographic:
                 - emma_formatFeature
               repository:
-                # emma_collection # NOTE: shown when not the same for all files
+#               - emma_collection # NOTE: shown when not the same for all files
                 - emma_retrievalLink
                 - rem_source
                 - rem_metadataSource
@@ -261,7 +261,7 @@ en:
                 - emma_repositoryUpdateDate
                 - emma_repositoryMetadataUpdateDate
                 - emma_repositoryRecordId
-                # emma_webPageLink used as the href for emma_repositoryRecordId
+#               - emma_webPageLink used as the href for emma_repositoryRecordId
               index:
                 - emma_formatVersion
                 - emma_recordId

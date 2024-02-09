@@ -63,6 +63,8 @@ module TestHelper::IntegrationTests::Format
   #
   # @return [true]
   #
+  # @note Currently unused
+  #
   def assert_json_result: (Symbol status, **untyped opt) -> true
 
   # Assert that the response is 'application/xml'.
@@ -74,6 +76,8 @@ module TestHelper::IntegrationTests::Format
   #
   # @return [true]
   #
+  # @note Currently unused
+  #
   def assert_xml_result: (Symbol status, **untyped opt) -> true
 
   # Assert that the response is 'text/plain'.
@@ -84,6 +88,8 @@ module TestHelper::IntegrationTests::Format
   # @raise [Minitest::Assertion]
   #
   # @return [true]
+  #
+  # @note Currently unused
   #
   def assert_text_result: (Symbol status, **untyped opt) -> true
 

@@ -19,7 +19,7 @@ module Emma::Common::ExceptionMethods
 
   # Report on the class associated with "self".
   #
-  # @param [*] this                   Default: self.
+  # @param [any, nil] this            Default: self.
   #
   # @return [Class]
   #
@@ -28,14 +28,14 @@ module Emma::Common::ExceptionMethods
   # Indicate whether *error* is an exception which matches or is derived from
   # one of the exceptions listed in #INTERNAL_EXCEPTION.
   #
-  # @param [Exception, *] error
+  # @param [any, nil] error           Exception
   #
   def internal_exception?: (untyped error) -> bool
 
   # Indicate whether *error* is an exception which is not (derived from) one of
   # the exceptions listed in #INTERNAL_EXCEPTION.
   #
-  # @param [Exception, *] error
+  # @param [any, nil] error           Exception
   #
   # @note Currently unused.
   #
@@ -43,7 +43,7 @@ module Emma::Common::ExceptionMethods
 
   # Re-raise an exception which indicates a likely programming error.
   #
-  # @param [Exception, *] error
+  # @param [any, nil] error           Exception
   #
   # @return [nil]
   #

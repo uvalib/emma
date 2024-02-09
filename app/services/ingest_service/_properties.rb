@@ -19,7 +19,7 @@ module IngestService::Properties
 
   # Configuration values from config/locales/service.en.yml
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash]
   #
   CONFIGURATION = config_section('emma.service.ingest').deep_freeze
 
@@ -37,7 +37,7 @@ module IngestService::Properties
 
   # Configuration for the EMMA Unified Ingest service.
   #
-  # @type [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def configuration
     CONFIGURATION

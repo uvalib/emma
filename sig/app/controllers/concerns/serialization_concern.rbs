@@ -13,15 +13,15 @@ module SerializationConcern
 
   # Render an item in JSON format.
   #
-  # @param [*]    item
-  # @param [Hash] opt                 Passed to #render.
+  # @param [any, nil] item
+  # @param [Hash]     opt             Passed to #render.
   #
   def render_json: (untyped item, **untyped opt) -> void
 
   # Render an item in XML format.
   #
-  # @param [*]    item
-  # @param [Hash] opt                 Passed to #render except for:
+  # @param [any, nil] item
+  # @param [Hash]     opt             Passed to #render except for:
   #
   # @option opt [String] :separator   Passed to #make_xml.
   # @option opt [String] :name        Passed to #make_xml.
@@ -30,23 +30,23 @@ module SerializationConcern
 
   # Response values for serializing the index page to JSON or XML.
   #
-  # @param [*]    list                Default: `paginator.page_items`
-  # @param [Hash] opt
+  # @param [any, nil] list            Default: `paginator.page_items`
+  # @param [Hash]     opt
   #
   # @option opt [Symbol, String] :wrap
   # @option opt [Symbol, String] :name  Default: :list
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def index_values: (?untyped list, **untyped opt) -> symHash
 
   # Response values for serializing the show page to JSON or XML.
   #
-  # @param [*]              item
+  # @param [any, nil]       item
   # @param [Symbol, nil]    as        Either :hash or :array if given.
   # @param [Symbol, String] name
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def show_values: (untyped item, ?as: :hash|:array|nil, ?name: String|Symbol|nil, **untyped _ignored) -> symHash
 

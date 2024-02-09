@@ -32,8 +32,8 @@ class LookupService::Response < ApplicationJob::Response
 
   # Create a new instance.
   #
-  # @param [LookupService::Response, Hash, *] values
-  # @param [Hash]                             opt
+  # @param [any, nil] values          LookupService::Response, Hash
+  # @param [Hash]     opt
   #
   def initialize(values = nil, **opt)
     super

@@ -26,7 +26,7 @@ class AwsS3::Api::Record < Api::Record
   # - Converts to *nil* instances of #EMPTY_VALUE.
   # - Returns *nil* if the entire object was empty.
   #
-  # @param [*] item
+  # @param [any, nil] item
   #
   def remove_empty_values(item)
     case item

@@ -213,7 +213,7 @@ class Api::Record
 
   # Default data used to initialize an instance.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>any}]
   #
   # @see Api::Record::Associations#property_defaults
   #
@@ -223,7 +223,7 @@ class Api::Record
 
   # The field definitions in the schema for this record.
   #
-  # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+  # @return [Hash{Symbol=>Hash}]
   #
   def field_definitions
     @field_definitions ||=
@@ -261,7 +261,7 @@ class Api::Record
 
   # Recursively generate a Hash of fields and values.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def field_hierarchy
     fields.transform_values do |v|
@@ -277,9 +277,9 @@ class Api::Record
 
   # Recursively generate hierarchical values.
   #
-  # @param [*] value
+  # @param [any, nil] value
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def make_hierarchy(value)
     # noinspection RailsParamDefResolve

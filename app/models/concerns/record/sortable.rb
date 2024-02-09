@@ -37,8 +37,8 @@ module Record::Sortable
 
   # Generate an object to specify sorting.
   #
-  # @param [*]    value
-  # @param [Hash] opt                 To SortOrder#initialize.
+  # @param [any, nil] value
+  # @param [Hash]     opt             To SortOrder#initialize.
   #
   # @return [SortOrder, nil]
   #

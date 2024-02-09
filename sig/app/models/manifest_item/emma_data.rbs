@@ -20,7 +20,7 @@ module ManifestItem::EmmaData
     #
     # @param [Boolean, nil] refresh   If *false* avoid regeneration.
     #
-    # @return [Hash{Symbol=>*}]
+    # @return [Hash]
     #
     def emma_metadata: (?refresh: bool|nil) -> symHash
 

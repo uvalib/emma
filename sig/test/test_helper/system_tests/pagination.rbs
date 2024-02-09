@@ -24,6 +24,8 @@ module TestHelper::SystemTests::Pagination
   #
   # @return [true]
   #
+  # @note Currently unused
+  #
   def assert_last_page: () -> true
 
   # Assert that this is not the first page of search results.
@@ -40,6 +42,8 @@ module TestHelper::SystemTests::Pagination
   #
   # @return [true]
   #
+  # @note Currently unused
+  #
   def assert_not_last_page: () -> true
 
   # Visit the next page of search results.
@@ -54,6 +58,8 @@ module TestHelper::SystemTests::Pagination
   # @yield Test code to run while on the page.
   # @yieldreturn [void]
   #
+  # @note Currently unused
+  #
   def visit_next_page: (Symbol model, **untyped opt) ?{ () -> void } -> true
 
   # Visit the previous page of search results.
@@ -67,6 +73,8 @@ module TestHelper::SystemTests::Pagination
   #
   # @yield Test code to run while on the page.
   # @yieldreturn [void]
+  #
+  # @note Currently unused
   #
   def visit_prev_page: (Symbol model, **untyped opt) ?{ () -> void } -> true
 end

@@ -76,7 +76,7 @@ module Upload::EmmaDataMethods
 
   # init_emma_data_value
   #
-  # @param [*] _data
+  # @param [any, nil] _data
   #
   # @return [String, nil]
   #
@@ -139,7 +139,7 @@ module Upload::EmmaDataMethods
 
   # init_edit_emma_data_value
   #
-  # @param [*] _data
+  # @param [any, nil] _data
   #
   # @return [String, nil]
   #

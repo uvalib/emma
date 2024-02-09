@@ -85,7 +85,7 @@ class UploadController < ApplicationController
   # Results for :index.
   #
   # @return [Array<Upload,String>]
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   # @return [nil]
   #
   attr_reader :list
@@ -944,7 +944,7 @@ class UploadController < ApplicationController
   #
   # @param [Upload, Array<Upload>, nil] subject
   # @param [Symbol, String, nil]        action
-  # @param [*]                          args
+  # @param [any, nil]                   args
   #
   def upload_authorize!(subject = nil, action = nil, *args)
     action  ||= request_parameters[:action]

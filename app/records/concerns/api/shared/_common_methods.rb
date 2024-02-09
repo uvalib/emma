@@ -125,11 +125,11 @@ module Api::Shared::CommonMethods
 
   # Strip surrounding spaces and terminal punctuation.
   #
-  # @param [String, *] value
-  # @param [String]    allowed    Default: #CLEAN_EXCEPT
-  # @param [Regexp]    regexp     Default: #CLEAN_REGEXP
+  # @param [any, nil] value           String
+  # @param [String]   allowed         Default: #CLEAN_EXCEPT
+  # @param [Regexp]   regexp          Default: #CLEAN_REGEXP
   #
-  # @return [String, *]
+  # @return [String, any, nil]
   #
   def clean(value, allowed: nil, regexp: nil, **)
     return value unless value.is_a?(String)
@@ -346,7 +346,7 @@ module Api::Shared::CommonMethods
   # @param [Hash, nil] data           Default: *self*.
   # @param [Symbol]    field
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def get_field_value(data, field)
     data.is_a?(Hash) ? data[field] : try(field)
@@ -356,7 +356,7 @@ module Api::Shared::CommonMethods
   #
   # @param [Hash, nil] data           Default: *self*.
   # @param [Symbol]    field
-  # @param [*]         value
+  # @param [any, nil]  value
   #
   # @return [void]
   #
@@ -380,8 +380,8 @@ module Api::Shared::CommonMethods
   # @return [void]
   #
   # @yield [value] Generate a replacement value
-  # @yieldparam [*] value     The current field value.
-  # @yieldreturn [Array]      The new field value(s).
+  # @yieldparam [any, nil] value      The current field value.
+  # @yieldreturn [Array]              The new field value(s).
   #
   def update_field_value!(data, field, mode = nil)
     value = get_field_value(data, field)

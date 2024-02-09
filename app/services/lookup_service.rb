@@ -212,9 +212,9 @@ class LookupService
   #
   # Each top level *table* entry is a hash returned by #post_fight.
   #
-  # @param [Array<Hash{Symbol=>*}>] entries
+  # @param [Array<Hash>] entries
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def self.blend_data(*entries)
     LookupService::Data::Item::FIELDS.map { |field|

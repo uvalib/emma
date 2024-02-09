@@ -11,11 +11,11 @@ module ResponseConcern
 
   # Generate a flash message if there is an error.
   #
-  # @param [Exception, String, *] error
-  # @param [Integer, Symbol]      status
-  # @param [Boolean]              xhr
-  # @param [String, Symbol]       action
-  # @param [Symbol]               meth
+  # @param [any, nil]        error    Exception, String
+  # @param [Integer, Symbol] status
+  # @param [Boolean]         xhr
+  # @param [String, Symbol]  action
+  # @param [Symbol]          meth
   #
   # @return [Integer, Symbol]         HTTP status.
   # @return [nil]                     If *error* is nil.
@@ -52,7 +52,7 @@ module ResponseConcern
   # Generate a response to a POST.
   #
   # @param [Symbol, Integer, Exception, nil] status
-  # @param [Array, *]                        item
+  # @param [any, nil]                        item       Array
   # @param [String, FalseClass]              redirect
   # @param [Boolean]                         xhr        Override `request.xhr?`
   # @param [Symbol]                          meth       Calling method.
@@ -74,7 +74,7 @@ module ResponseConcern
   #
   # @overload post_response(status, items, ...)
   #   @param [Symbol, Integer]  status
-  #   @param [Array, *]         items
+  #   @param [any, nil]         items   Array
   #
   def post_response
     : ((Symbol|Integer|nil) status, ?untyped   item, ?redirect: String|bool|nil, ?xhr: bool|nil, ?meth: Symbol|nil, ?tag: String|nil, ?fallback: String|nil) -> void
@@ -82,7 +82,7 @@ module ResponseConcern
 
   # Render an item for display in a message.
   #
-  # @param [Model, Hash, String, *] item
+  # @param [any, nil] item            Model, Hash, String
   #
   # @return [String]
   #

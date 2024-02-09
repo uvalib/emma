@@ -31,7 +31,7 @@ module SessionConcern
   #
   # @param [String, nil] path         Default: `#after_sign_in_path_for`.
   # @param [User, nil]   user         Default: `#resource`.
-  # @param [*]           message      Passed to #set_flash_notice.
+  # @param [any, nil]    message      Passed to #set_flash_notice.
   # @param [Hash]        opt          Passed to #set_flash_notice.
   #
   def auth_success_redirect: (?(String|nil) path, ?user: User|nil, ?message: flashArgs, **untyped opt) -> void
@@ -40,14 +40,14 @@ module SessionConcern
   #
   # @param [String, nil] path         Default: `#after_sign_out_path_for`.
   # @param [User, nil]   user         Default: `#resource`.
-  # @param [*]           message      Passed to #set_flash_notice.
+  # @param [any, nil]    message      Passed to #set_flash_notice.
   # @param [Hash]        opt          Passed to #set_flash_alert.
   #
   def auth_failure_redirect: (?(String|nil) path, ?user: User|nil, ?message: flashArgs, **untyped opt) -> void
 
   # Set `flash[:notice]` based on the current action and user name.
   #
-  # @param [String, *]               message
+  # @param [any, nil]                message  String
   # @param [Symbol, nil]             action   Default: `params[:action]`.
   # @param [String, Hash, User, nil] user     Default: `current_user`.
   # @param [Hash]                    opt      Passed to #flash_notice.
@@ -58,7 +58,7 @@ module SessionConcern
 
   # Set `flash[:alert]` based on the current action and user name.
   #
-  # @param [String, *]               message
+  # @param [any, nil]                message  String
   # @param [Symbol, nil]             action   Default: `params[:action]`.
   # @param [String, Hash, User, nil] user     Default: `current_user`.
   # @param [Hash]                    opt      Passed to #flash_alert.
@@ -82,7 +82,7 @@ module SessionConcern
   # @param [Time]   time              Default: `Time.now`.
   # @param [String] path              Default: `request.path`.
   #
-  # @return [Hash{String=>*}, nil]
+  # @return [Hash{String=>any,nil}, nil]
   #
   def last_operation_update: (?time: Time|nil, ?path: String|nil) -> (strHash | nil)
 
@@ -118,33 +118,33 @@ module SessionConcern
 
   # Substitution for a Hash-valued parameter in #last_operation['params'].
   #
-  # @param [String]
+  # @type [String]
   #
   HASH_PLACEHOLDER: String
 
   # Substitution for an Array-valued parameter in #last_operation['params'].
   #
-  # @param [String]
+  # @type [String]
   #
   ARRAY_PLACEHOLDER: String
 
   # Since #last_operation parameters are only for dev purposes, this method is
   # used to reduce the reported value in order to avoid CookieOverflow.
   #
-  # @param [Hash{Symbol=>*}] h
-  # @param [Integer]         max      Maximum size of representation.
-  # @param [Integer]         p_max    Max representation of individual param.
+  # @param [Hash]    h
+  # @param [Integer] max              Maximum size of representation.
+  # @param [Integer] p_max            Max representation of individual param.
   #
-  # @return [Hash{String=>*}]
+  # @return [Hash{String=>any,nil}]
   #
   def abbreviate_params!: (symHash h, ?max: Integer, ?p_max: Integer) -> strHash
 
   # abbreviate_param
   #
-  # @param [*]       item
-  # @param [Integer] p_max            Maximum size of representation.
+  # @param [any, nil] item
+  # @param [Integer]  p_max           Maximum size of representation.
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def abbreviate_param: (untyped item, ?p_max: Integer) -> untyped
 
@@ -162,7 +162,7 @@ module SessionConcern
   # @param [CanCan::AccessDenied] exception
   #
   # @return [nil]                     If not handled.
-  # @return [*]                       Otherwise.
+  # @return [any, nil]                Otherwise.
   #
   def access_denied_handler: (CanCan::AccessDenied exception) -> (untyped | nil)
 
@@ -172,7 +172,7 @@ module SessionConcern
   # @param [ExecError, Faraday::Error] exception
   #
   # @return [nil]                     If not handled.
-  # @return [*]                       Otherwise.
+  # @return [any, nil]                Otherwise.
   #
   def connection_error_handler: (ExecError|Faraday::Error exception) -> (untyped | nil)
 
@@ -181,7 +181,7 @@ module SessionConcern
   # @param [Exception] exception
   #
   # @return [nil]                     If not handled.
-  # @return [*]                       Otherwise.
+  # @return [any, nil]                Otherwise.
   #
   def fallback_error_handler: (Exception exception) -> (untyped | nil)
 

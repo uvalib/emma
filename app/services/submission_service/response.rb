@@ -29,8 +29,8 @@ class SubmissionService::Response < ApplicationJob::Response
 
   # Create a new instance.
   #
-  # @param [SubmissionService::Response, Hash, Array, *] values
-  # @param [Hash]                                        opt
+  # @param [any, nil] values          SubmissionService::Response, Hash, Array
+  # @param [Hash]     opt
   #
   def initialize(values = nil, **opt)
     if values.is_a?(Array)

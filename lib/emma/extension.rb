@@ -41,7 +41,7 @@ module Emma::Extension
       # @return [nil]
       #
       # @yield Generate additional parts.
-      # @yieldreturn [Array, Any] Appended to *args*.
+      # @yieldreturn [Array, any] Appended to *args*.
       #
       #--
       # === Variations

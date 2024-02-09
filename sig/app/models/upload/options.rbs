@@ -8,7 +8,9 @@ class Upload::Options < Options
 
   def option_keys: () -> symArray
 
-  def option_method: ((Symbol|String) key) -> (Symbol | nil)
+  def option_method
+    : ((Symbol|String) key) -> (Symbol | nil)
+    | (untyped         key) -> nil
 
   # MODEL_DATA_PARAMS
   #

@@ -95,9 +95,9 @@ class Object
 
   # Convert a string to UTF-8 encoding.
   #
-  # @param [String, *] v
+  # @param [any, nil] v                 String
   #
-  # @return [String, *]
+  # @return [String, any, nil]
   #
   def to_utf8
     :     (String v) -> String

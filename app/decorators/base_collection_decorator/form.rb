@@ -62,7 +62,7 @@ module BaseCollectionDecorator::Form
   #
   # @param [Hash] opt                 Optional option value overrides.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def delete_submit_options(**opt)
     keys = delete_submit_option_keys

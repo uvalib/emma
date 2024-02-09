@@ -29,8 +29,8 @@ module Manifest::ItemMethods
 
   # Return a table of all pending ManifestItem ID's and their status values.
   #
-  # @param [Manifest, String, nil] manifest   Default: self
-  # @param [Array<Symbol>]         columns    ManifestItem status columns.
+  # @param [any, nil]      manifest   Manifest, String; default: self
+  # @param [Array<Symbol>] columns    ManifestItem status columns.
   #
   # @return [Hash{Integer=>Hash}]
   #
@@ -42,8 +42,8 @@ module Manifest::ItemMethods
 
   # Return a table of pending ManifestItem ID with incomplete status(es).
   #
-  # @param [Manifest, String, nil] manifest   Default: self
-  # @param [Array<Symbol>]         columns    ManifestItem status columns.
+  # @param [any, nil]      manifest   Manifest, String; default: self
+  # @param [Array<Symbol>] columns    ManifestItem status columns.
   #
   # @return [Hash{Integer=>Hash}]
   #
@@ -59,8 +59,8 @@ module Manifest::ItemMethods
 
   # Return a table of ManifestItem values keyed on identifier.
   #
-  # @param [Manifest, String, *]        manifest  Default: self
-  # @param [Array<Symbol>, Symbol, nil] columns
+  # @param [any, nil]                 manifest  Manifest, String; default: self
+  # @param [Array<Symbol>,Symbol,nil] columns
   #
   # @return [Hash{Integer=>Hash}]
   #
@@ -86,7 +86,7 @@ module Manifest::ItemMethods
   # The number of ManifestItems for the given Manifest (not including records
   # marked for deletion).
   #
-  # @param [Manifest, String, *] manifest   Default: self
+  # @param [any, nil] manifest        Manifest, String; default: self
   #
   # @return [Integer]
   #
@@ -98,7 +98,7 @@ module Manifest::ItemMethods
 
   # The number of ManifestItems for the given Manifest that are valid.
   #
-  # @param [Manifest, String, *] manifest   Default: self
+  # @param [any, nil] manifest        Manifest, String; default: self
   #
   # @return [Integer]
   #
@@ -111,7 +111,7 @@ module Manifest::ItemMethods
   # The number of ManifestItems for the given Manifest that have been created
   # or changed but not yet saved.
   #
-  # @param [Manifest, String, *] manifest   Default: self
+  # @param [any, nil] manifest        Manifest, String; default: self
   #
   # @return [Integer]
   #
@@ -149,7 +149,7 @@ module Manifest::ItemMethods
 
   # Items for the indicated Manifest.
   #
-  # @param [Manifest, String, *] manifest   Default: self
+  # @param [any, nil] manifest        Manifest, String; default: self
   #
   # @return [ActiveRecord::Associations::Association<ManifestItem>, nil]
   #
@@ -161,8 +161,8 @@ module Manifest::ItemMethods
   # The number of ManifestItems for the given Manifest that are included in the
   # given scope.
   #
-  # @param [Manifest, String, *] manifest   Default: self
-  # @param [Symbol]              scope
+  # @param [any, nil] manifest        Manifest, String; default: self
+  # @param [Symbol]   scope
   #
   # @return [Integer]
   #

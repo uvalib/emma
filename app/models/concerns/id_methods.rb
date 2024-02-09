@@ -39,8 +39,8 @@ module IdMethods
   # by the record to derive the ID of the User associated with the record
   # instance.
   #
-  # @param [*]      item
-  # @param [Symbol] key
+  # @param [any, nil] item
+  # @param [Symbol]   key
   #
   # @return [Integer, nil]
   #
@@ -52,8 +52,8 @@ module IdMethods
   # by the record to derive the ID of the Organization associated with the
   # record instance.
   #
-  # @param [*]      item
-  # @param [Symbol] key
+  # @param [any, nil] item
+  # @param [Symbol]   key
   #
   # @return [Integer, nil]
   #
@@ -63,9 +63,9 @@ module IdMethods
 
   # Get the specified identity value from *item*.
   #
-  # @param [*]       item
-  # @param [Symbol]  key
-  # @param [Boolean] allow_zero
+  # @param [any, nil] item
+  # @param [Symbol]   key
+  # @param [Boolean]  allow_zero
   #
   # @return [Integer, nil]
   #
@@ -76,10 +76,10 @@ module IdMethods
 
   # Get the specified value from *item*.
   #
-  # @param [*]      item
-  # @param [Symbol] key
+  # @param [any, nil] item
+  # @param [Symbol]   key
   #
-  # @return [Any, nil]
+  # @return [any, nil]
   #
   def try_key(item, key)
     case item
@@ -184,8 +184,8 @@ module IdMethods
 
     # Produce a relation for selecting records associated with the given user.
     #
-    # @param [*]    user
-    # @param [Hash] opt
+    # @param [any, nil] user
+    # @param [Hash]     opt
     #
     # @return [ActiveRecord::Relation]
     #
@@ -199,8 +199,8 @@ module IdMethods
     # Produce a relation for selecting records associated with the given
     # organization.
     #
-    # @param [*]    org
-    # @param [Hash] opt
+    # @param [any, nil] org
+    # @param [Hash]     opt
     #
     # @return [ActiveRecord::Relation]
     #

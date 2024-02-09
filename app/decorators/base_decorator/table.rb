@@ -242,11 +242,11 @@ module BaseDecorator::Table
 
   # Transform a field value for rendering in a table.
   #
-  # @param [*]         value          Passed to #list_field_value.
-  # @param [Symbol, *] field          Passed to #list_field_value.
-  # @param [Hash]      opt            Passed to #list_field_value.
+  # @param [any, nil]    value        Passed to #list_field_value.
+  # @param [Symbol, nil] field        Passed to #list_field_value.
+  # @param [Hash]        opt          Passed to #list_field_value.
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def table_field_value(value, field:, **opt)
     list_field_value(value, field: field, **opt)

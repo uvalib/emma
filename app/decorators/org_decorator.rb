@@ -44,9 +44,9 @@ class OrgDecorator < BaseDecorator
 
     # Render a value for use on an input form.
     #
-    # @param [String] name
-    # @param [*]      value
-    # @param [Hash]   opt               Passed to super
+    # @param [String]   name
+    # @param [any, nil] value
+    # @param [Hash]     opt           Passed to super
     #
     # @return [ActiveSupport::SafeBuffer]
     #
@@ -65,7 +65,7 @@ class OrgDecorator < BaseDecorator
     # input field.
     #
     # @param [String, Symbol] label
-    # @param [*]              value
+    # @param [any, nil]       value
     # @param [Hash]           opt     Passed to super
     #
     # @return [ActiveSupport::SafeBuffer, nil]

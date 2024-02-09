@@ -129,7 +129,7 @@ class PublicationIdentifier < ScalarType
 
     # The name of the represented identifier type.
     #
-    # @param [*] v
+    # @param [any, nil] v
     #
     # @return [Symbol]
     #
@@ -139,7 +139,7 @@ class PublicationIdentifier < ScalarType
 
     # The identifier type portion of the value.
     #
-    # @param [*] v
+    # @param [any, nil] v
     #
     # @return [String]
     #
@@ -149,7 +149,7 @@ class PublicationIdentifier < ScalarType
 
     # The identifier number portion of the value.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # @return [String]
     #
@@ -159,7 +159,7 @@ class PublicationIdentifier < ScalarType
 
     # Split a value into a type prefix and a number.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # @return [Array<(String, String)>]
     #
@@ -178,7 +178,7 @@ class PublicationIdentifier < ScalarType
 
     # Indicate whether *v* would be a valid value for an item of this type.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     def valid?(v)
       normalize(v).present?
@@ -186,7 +186,7 @@ class PublicationIdentifier < ScalarType
 
     # Transform *v* into a valid form.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # @return [String]
     #
@@ -196,8 +196,8 @@ class PublicationIdentifier < ScalarType
 
     # Type-cast a value to a PublicationIdentifier.
     #
-    # @param [*]       v              Value to use or transform.
-    # @param [Boolean] invalid        If *true* allow invalid value.
+    # @param [any, nil] v             Value to use or transform.
+    # @param [Boolean]  invalid       If *true* allow invalid value.
     #
     # @return [PublicationIdentifier] Possibly invalid identifier.
     # @return [nil]                   If *v* is not any kind of identifier.
@@ -209,7 +209,7 @@ class PublicationIdentifier < ScalarType
 
     # Create a new instance.
     #
-    # @param [String, nil]    v       Identifier number.
+    # @param [any, nil]       v       Identifier number.
     # @param [Symbol, String] type    Determined from *v* if missing.
     #
     # @return [PublicationIdentifier] Possibly invalid identifier.
@@ -230,7 +230,7 @@ class PublicationIdentifier < ScalarType
 
     # Indicate whether a value could be used as a PublicationIdentifier.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     def candidate?(v)
       identifier(v).present?
@@ -238,7 +238,7 @@ class PublicationIdentifier < ScalarType
 
     # Extract the base identifier of a possible PublicationIdentifier.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # @return [String, nil]
     #
@@ -248,7 +248,7 @@ class PublicationIdentifier < ScalarType
 
     # Strip the characteristic prefix of the including class.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # @return [String]
     #
@@ -258,7 +258,7 @@ class PublicationIdentifier < ScalarType
 
     # Indicate whether the given value has the characteristic prefix.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     def prefix?(v)
       v != remove_prefix(v)
@@ -286,7 +286,7 @@ class PublicationIdentifier < ScalarType
 
   # The identifier number portion of the value.
   #
-  # @param [String, *] v              Default: #value.
+  # @param [any, nil] v               Default: #value.
   #
   # @return [String, nil]
   #
@@ -296,7 +296,7 @@ class PublicationIdentifier < ScalarType
 
   # Split a value into a type prefix and a number.
   #
-  # @param [String, *] v              Default: #value.
+  # @param [any, nil] v               Default: #value.
   #
   # @return [Array<(String, String)>]
   #
@@ -306,7 +306,7 @@ class PublicationIdentifier < ScalarType
 
   # Indicate whether the instance is valid.
   #
-  # @param [String, *] v              Default: #value.
+  # @param [any, nil] v               Default: #value.
   #
   def valid?(v = nil)
     v ||= value
@@ -325,7 +325,7 @@ class PublicationIdentifier < ScalarType
   # If *v* has the wrong kind of prefix then the result will be blank (and
   # therefore invalid).
   #
-  # @param [*] v
+  # @param [any, nil] v
   #
   # @return [String]
   #
@@ -514,7 +514,7 @@ class Isbn < PublicationIdentifier
 
     # Indicate whether *v* would be a valid value for an item of this type.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     def valid?(v)
       isbn?(v)
@@ -522,7 +522,7 @@ class Isbn < PublicationIdentifier
 
     # Transform *v* into a valid form.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # @return [String]
     #
@@ -538,7 +538,7 @@ class Isbn < PublicationIdentifier
 
     # Indicate whether the given value appears to include an ISBN.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # === Usage Notes
     # If *v* matches #ISBN_PREFIX then the method returns *true* even if the
@@ -552,7 +552,7 @@ class Isbn < PublicationIdentifier
 
     # Extract the base identifier of a possible ISBN.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # @return [String, nil]
     #
@@ -563,7 +563,7 @@ class Isbn < PublicationIdentifier
 
     # Strip the characteristic prefix of the including class.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # @return [String]
     #
@@ -579,7 +579,7 @@ class Isbn < PublicationIdentifier
 
     # Indicate whether the value is a valid ISBN.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     def isbn?(v)
       isbn = identifier(v) or return false
@@ -588,7 +588,7 @@ class Isbn < PublicationIdentifier
 
     # Indicate whether the string is a valid ISBN-13.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     def isbn13?(v)
       isbn   = identifier(v) or return false
@@ -602,7 +602,7 @@ class Isbn < PublicationIdentifier
 
     # Indicate whether the value is a valid ISBN-10.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     def isbn10?(v)
       isbn   = identifier(v) or return false
@@ -620,8 +620,8 @@ class Isbn < PublicationIdentifier
 
     # If the value is an ISBN return it in a normalized form.
     #
-    # @param [String]  v
-    # @param [Hash]    opt              Passed to #to_isbn13.
+    # @param [any, nil] v
+    # @param [Hash]     opt             Passed to #to_isbn13.
     #
     # @return [String, nil]
     #
@@ -632,8 +632,8 @@ class Isbn < PublicationIdentifier
     # If the value is an ISBN-13; if it is an ISBN-10, convert it to the
     # equivalent ISBN-13; otherwise return *nil*.
     #
-    # @param [String]  v
-    # @param [Boolean] log
+    # @param [any, nil] v
+    # @param [Boolean]  log
     #
     # @return [String, nil]
     #
@@ -661,8 +661,8 @@ class Isbn < PublicationIdentifier
     # If the value is an ISBN-10 return it; if it is an ISBN-13 that starts
     # with "978", convert it to the equivalent ISBN-10; otherwise return *nil*.
     #
-    # @param [String]  v
-    # @param [Boolean] log
+    # @param [any, nil] v
+    # @param [Boolean]  log
     #
     # @return [String, nil]
     #
@@ -798,7 +798,7 @@ class Isbn < PublicationIdentifier
 
   # Indicate whether the instance is valid.
   #
-  # @param [String, *] v              Default: #value.
+  # @param [any, nil] v               Default: #value.
   #
   def valid?(v = nil)
     v ||= value
@@ -807,7 +807,7 @@ class Isbn < PublicationIdentifier
 
   # Indicate whether the instance is a valid ISBN-13.
   #
-  # @param [String, *] v              Default: #value.
+  # @param [any, nil] v               Default: #value.
   #
   def isbn13?(v = nil)
     v ||= value
@@ -816,7 +816,7 @@ class Isbn < PublicationIdentifier
 
   # Indicate whether the instance is a valid ISBN-10.
   #
-  # @param [String, *] v              Default: #value.
+  # @param [any, nil] v               Default: #value.
   #
   def isbn10?(v = nil)
     v ||= value
@@ -898,7 +898,7 @@ class Issn < PublicationIdentifier
 
     # Indicate whether *v* would be a valid value for an item of this type.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     def valid?(v)
       issn?(v)
@@ -906,7 +906,7 @@ class Issn < PublicationIdentifier
 
     # Transform *v* into a valid form.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # @return [String]
     #
@@ -922,7 +922,7 @@ class Issn < PublicationIdentifier
 
     # Indicate whether the given value appears to include an ISSN.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     def candidate?(v)
       v = v.to_s.strip
@@ -931,7 +931,7 @@ class Issn < PublicationIdentifier
 
     # Extract the base identifier of a possible ISSN.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # @return [String, nil]
     #
@@ -942,7 +942,7 @@ class Issn < PublicationIdentifier
 
     # Strip the characteristic prefix of the including class.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # @return [String]
     #
@@ -958,7 +958,7 @@ class Issn < PublicationIdentifier
 
     # Indicate whether the value is a valid ISSN.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     def issn?(v)
       to_issn(v, log: false, validate: true).present?
@@ -966,10 +966,10 @@ class Issn < PublicationIdentifier
 
     # If the value is an ISSN return it in a normalized form or *nil* otherwise
     #
-    # @param [String]  v
-    # @param [Boolean] log
-    # @param [Boolean] validate         If *true*, return *nil* if the
-    #                                     checksum provided in *v* is invalid.
+    # @param [any, nil] v
+    # @param [Boolean]  log
+    # @param [Boolean]  validate      If *true*, return *nil* if the checksum
+    #                                   provided in *v* is invalid.
     #
     # @return [String, nil]
     #
@@ -1039,7 +1039,7 @@ class Issn < PublicationIdentifier
 
   # Indicate whether the instance is valid.
   #
-  # @param [String, *] v              Default: #value.
+  # @param [any, nil] v               Default: #value.
   #
   def valid?(v = nil)
     v ||= value
@@ -1136,7 +1136,7 @@ class Oclc < PublicationIdentifier
 
     # Indicate whether *v* would be a valid value for an item of this type.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     def valid?(v)
       oclc?(v)
@@ -1144,7 +1144,7 @@ class Oclc < PublicationIdentifier
 
     # Transform *v* into a valid form.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # @return [String]
     #
@@ -1160,7 +1160,7 @@ class Oclc < PublicationIdentifier
 
     # Indicate whether the given value appears to include an OCN.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # === Usage Notes
     # If *v* matches #OCLC_PREFIX then the method returns *true* even if the
@@ -1177,7 +1177,7 @@ class Oclc < PublicationIdentifier
 
     # Extract the base identifier of a possible OCN.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # @return [String, nil]
     #
@@ -1188,7 +1188,7 @@ class Oclc < PublicationIdentifier
 
     # Strip the characteristic prefix of the including class.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # @return [String]
     #
@@ -1204,7 +1204,7 @@ class Oclc < PublicationIdentifier
 
     # Indicate whether the value is a valid OCN.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     def oclc?(v)
       to_oclc(v, log: false).present?
@@ -1216,8 +1216,8 @@ class Oclc < PublicationIdentifier
     # the number specified by the prefix.  If the string is only digits then it
     # will be zero-filled on the left to make a valid OCN.
     #
-    # @param [String, *] v
-    # @param [Boolean]   log
+    # @param [any, nil] v
+    # @param [Boolean]  log
     #
     # @return [String, nil]
     #
@@ -1258,7 +1258,7 @@ class Oclc < PublicationIdentifier
 
   # Indicate whether the instance is valid.
   #
-  # @param [String, *] v              Default: #value.
+  # @param [any, nil] v               Default: #value.
   #
   def valid?(v = nil)
     v ||= value
@@ -1347,7 +1347,7 @@ class Lccn < PublicationIdentifier
 
     # Indicate whether *v* would be a valid value for an item of this type.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     def valid?(v)
       lccn?(v)
@@ -1355,7 +1355,7 @@ class Lccn < PublicationIdentifier
 
     # Transform *v* into a valid form.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # @return [String]
     #
@@ -1371,7 +1371,7 @@ class Lccn < PublicationIdentifier
 
     # Indicate whether the given value appears to include an LCCN.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     def candidate?(v)
       v = v.to_s.strip
@@ -1380,7 +1380,7 @@ class Lccn < PublicationIdentifier
 
     # Extract the base identifier of a possible LCCN.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # @return [String, nil]
     #
@@ -1391,7 +1391,7 @@ class Lccn < PublicationIdentifier
 
     # Strip the characteristic prefix of the including class.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # @return [String]
     #
@@ -1407,7 +1407,7 @@ class Lccn < PublicationIdentifier
 
     # Indicate whether the value is a valid LCCN.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     def lccn?(v)
       to_lccn(v, log: false).present?
@@ -1415,7 +1415,7 @@ class Lccn < PublicationIdentifier
 
     # If the value is a LCCN return it in a normalized form or *nil* otherwise.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     # @param [Boolean]  log
     #
     # @return [String, nil]
@@ -1452,7 +1452,7 @@ class Lccn < PublicationIdentifier
 
   # Indicate whether the instance is valid.
   #
-  # @param [String, *] v              Default: #value.
+  # @param [any, nil] v               Default: #value.
   #
   def valid?(v = nil)
     v ||= value
@@ -1533,7 +1533,7 @@ class Upc < PublicationIdentifier
 
     # Indicate whether *v* would be a valid value for an item of this type.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     def valid?(v)
       upc?(v)
@@ -1541,7 +1541,7 @@ class Upc < PublicationIdentifier
 
     # Transform *v* into a valid form.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # @return [String]
     #
@@ -1557,7 +1557,7 @@ class Upc < PublicationIdentifier
 
     # Indicate whether the given value appears to include a UPC.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     def candidate?(v)
       v = v.to_s.strip
@@ -1566,7 +1566,7 @@ class Upc < PublicationIdentifier
 
     # Extract the base identifier of a possible UPC.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # @return [String, nil]
     #
@@ -1577,7 +1577,7 @@ class Upc < PublicationIdentifier
 
     # Strip the characteristic prefix of the including class.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # @return [String]
     #
@@ -1593,7 +1593,7 @@ class Upc < PublicationIdentifier
 
     # Indicate whether the value is a valid UPC.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     def upc?(v)
       to_upc(v, log: false, validate: true).present?
@@ -1601,10 +1601,10 @@ class Upc < PublicationIdentifier
 
     # If the value is a UPC return it in a normalized form or *nil* otherwise.
     #
-    # @param [String, *] v
-    # @param [Boolean]   log
-    # @param [Boolean]   validate       If *true*, return *nil* if the
-    #                                     checksum provided in *v* is invalid.
+    # @param [any, nil] v
+    # @param [Boolean]  log
+    # @param [Boolean]  validate      If *true*, return *nil* if the checksum
+    #                                   provided in *v* is invalid.
     #
     # @return [String, nil]
     #
@@ -1674,7 +1674,7 @@ class Upc < PublicationIdentifier
 
   # Indicate whether the instance is valid.
   #
-  # @param [String, nil] v            Default: #value.
+  # @param [any, nil] v               Default: #value.
   #
   def valid?(v = nil)
     v ||= value
@@ -1742,7 +1742,7 @@ class Doi < PublicationIdentifier
 
     # Indicate whether *v* would be a valid value for an item of this type.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     def valid?(v)
       doi?(v)
@@ -1750,7 +1750,7 @@ class Doi < PublicationIdentifier
 
     # Transform *v* into a valid form.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # @return [String]
     #
@@ -1766,7 +1766,7 @@ class Doi < PublicationIdentifier
 
     # Indicate whether the given value appears to include a DOI.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # === Usage Notes
     # If *v* matches #DOI_PREFIX then the method returns *true* even if the
@@ -1780,7 +1780,7 @@ class Doi < PublicationIdentifier
 
     # Extract the base identifier of a possible DOI.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # @return [String, nil]
     #
@@ -1791,7 +1791,7 @@ class Doi < PublicationIdentifier
 
     # Strip the characteristic prefix of the including class.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     # @return [String]
     #
@@ -1811,7 +1811,7 @@ class Doi < PublicationIdentifier
 
     # Indicate whether the value is a valid DOI.
     #
-    # @param [String, *] v
+    # @param [any, nil] v
     #
     def doi?(v)
       to_doi(v, log: false).present?
@@ -1819,8 +1819,8 @@ class Doi < PublicationIdentifier
 
     # If the value is a DOI return it in a normalized form or *nil* otherwise.
     #
-    # @param [String]  v
-    # @param [Boolean] log
+    # @param [any, nil] v
+    # @param [Boolean]  log
     #
     # @return [String, nil]
     #
@@ -1851,7 +1851,7 @@ class Doi < PublicationIdentifier
 
   # Indicate whether the instance is valid.
   #
-  # @param [String, *] v              Default: #value.
+  # @param [any, nil] v               Default: #value.
   #
   def valid?(v = nil)
     v ||= value

@@ -20,7 +20,7 @@ module TreeHelper
 
   # Configuration for tree control properties.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash]
   #
   TREE_CTRL_CFG = config_section('emma.tree.control').deep_freeze
 

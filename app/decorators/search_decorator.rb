@@ -47,7 +47,7 @@ class SearchDecorator < BaseDecorator
     # Render a single label/value pair.
     #
     # @param [String, Symbol, nil] label
-    # @param [*]                   value
+    # @param [any, nil]            value
     # @param [Hash]                opt        Passed to super.
     #
     # @return [ActiveSupport::SafeBuffer, nil]
@@ -307,9 +307,9 @@ class SearchDecorator
 
   # Transform a field value for HTML rendering.
   #
-  # @param [*]         value
-  # @param [Symbol, *] field
-  # @param [Hash]      opt            Passed to the render method or super.
+  # @param [any, nil]    value
+  # @param [Symbol, nil] field
+  # @param [Hash]        opt          Passed to the render method or super.
   #
   # @return [Field::Type]
   # @return [String]
@@ -690,7 +690,7 @@ class SearchDecorator
 
   # Values supporting search result analysis of relevancy scoring.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   #--
   # noinspection RailsParamDefResolve

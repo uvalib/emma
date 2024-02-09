@@ -289,8 +289,8 @@ class BaseDecorator < Draper::Decorator
 
   # initialize
   #
-  # @param [*]    obj
-  # @param [Hash] opt
+  # @param [any, nil] obj
+  # @param [Hash]     opt
   #
   def initialize: (?untyped obj, **untyped opt) -> void
 
@@ -351,7 +351,7 @@ class BaseDecorator < Draper::Decorator
 
   # to_class
   #
-  # @param [*]              c
+  # @param [any, nil]       c
   # @param [String, Symbol] meth
   #
   # @return [Class, nil]
@@ -374,7 +374,7 @@ class BaseDecorator < Draper::Decorator
 
     alias [] get
 
-    def normalize: (untyped key) -> untyped
+    def normalize: [T] (T key) -> (T | nil)
   end
 
   # Methods for mapping model types to decorator classes.
@@ -382,7 +382,7 @@ class BaseDecorator < Draper::Decorator
   module TypeMapper
     include Mapper
 
-    def normalize: (untyped key) -> (Symbol | nil)
+    def normalize: (untyped mod) -> (Symbol | nil)
   end
 
   # Methods for mapping classes to decorator classes.
@@ -390,7 +390,7 @@ class BaseDecorator < Draper::Decorator
   module ClassMapper
     include Mapper
 
-    def normalize: (untyped key) -> (Class | nil)
+    def normalize: (untyped obj) -> (Class | nil)
   end
 
   public
@@ -430,7 +430,7 @@ class BaseDecorator < Draper::Decorator
 
   # Client-side scripting which are supplied via 'assets:precompile'.
   #
-  # @param [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   # @see file:app/assets/javascripts/shared/assets.js.erb
   #
@@ -438,9 +438,9 @@ class BaseDecorator < Draper::Decorator
 
   # fetch_property
   #
-  # @param [*] item
+  # @param [any, nil] item
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def self.fetch_property: (untyped item) -> untyped
 

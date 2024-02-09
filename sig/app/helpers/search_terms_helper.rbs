@@ -121,7 +121,7 @@ module SearchTermsHelper
 
   # Produce a text-only listing of search terms.
   #
-  # @param [Hash{Symbol=>*}, nil] term_list  Default: `#search_terms`.
+  # @param [Hash, nil] term_list            Default: `#search_terms`.
   #
   # @option term_list [String] :separator   Default: #LIST_SEARCH_SEPARATOR.
   #

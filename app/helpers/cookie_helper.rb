@@ -19,7 +19,7 @@ module CookieHelper
   #
   # @param [Symbol, String] key
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def get_cookie(key)
     cookies.encrypted[key.to_s]
@@ -28,9 +28,9 @@ module CookieHelper
   # Set the cookie in the request and the response.
   #
   # @param [Symbol, String] key
-  # @param [*]              value     Defaults to *true*.
+  # @param [any, nil]       value     Defaults to *true*.
   #
-  # @return [Any]                     The cookie value.
+  # @return [any]                     The cookie value.
   # @return [nil]                     If the cookie could not be set.
   #
   def set_cookie(key, value = nil)

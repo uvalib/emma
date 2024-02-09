@@ -41,13 +41,14 @@ end
 
 # Convert a string to UTF-8 encoding.
 #
-# @param [String, *] v
+# @param [any, nil] v                 String
 #
-# @return [String, *]
+# @return [String, any, nil]
 #
 def to_utf8(v)
   return v unless v.is_a?(String)
   return v if (enc = v.encoding) == (utf = Encoding::UTF_8)
+  # noinspection RubyMismatchedArgumentType
   Encoding::Converter.new(enc, utf).convert(v) rescue v.dup.force_encoding(utf)
 end
 

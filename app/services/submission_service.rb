@@ -203,6 +203,7 @@ class SubmissionService < ApiService
   # @return [Hash]
   #
   def self.schedule_sync(request, **opt)
+    # noinspection RubyMismatchedReturnType
     SubmitJob.perform_now(request, **opt)
   end
 

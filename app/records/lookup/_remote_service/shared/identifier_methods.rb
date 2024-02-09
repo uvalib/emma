@@ -60,7 +60,7 @@ module Lookup::RemoteService::Shared::IdentifierMethods
 
   # id_sort_key
   #
-  # @param [PublicationIdentifier]
+  # @param [PublicationIdentifier] id
   #
   # @return [Array<String>]
   #

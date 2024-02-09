@@ -125,6 +125,7 @@ class User::SessionsController < Devise::SessionsController
     __debug_route
   end
 
+  # === GET /users/sign_in_as?id=NAME&token=AUTH_TOKEN
   # === GET /users/sign_in_as?uid=NAME&token=AUTH_TOKEN
   # === GET /users/sign_in_as?auth=(OmniAuth::AuthHash)
   #

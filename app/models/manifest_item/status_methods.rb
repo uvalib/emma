@@ -204,8 +204,8 @@ module ManifestItem::StatusMethods
 
   # Indicate whether the given status is OK.
   #
-  # @param [*]      item     Field values, or a value to check (default: self).
-  # @param [Symbol] column   Field name.
+  # @param [any, nil] item      Field values, or a value to check (def.: self).
+  # @param [Symbol]   column    Field name.
   #
   def status_ok?(item = nil, column:)
     item ||= default_to_self

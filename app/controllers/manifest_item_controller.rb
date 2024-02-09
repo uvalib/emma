@@ -439,8 +439,8 @@ class ManifestItemController < ApplicationController
 
   # A list of ManifestItems plus validity information.
   #
-  # @param [*]       list
-  # @param [Hash]    opt              Passed to #index_values.
+  # @param [any, nil] list
+  # @param [Hash]     opt             Passed to #index_values.
   #
   # @return [Hash{Symbol=>Hash}]
   #
@@ -452,7 +452,7 @@ class ManifestItemController < ApplicationController
 
   # A list of ManifestItem IDs.
   #
-  # @param [*] list
+  # @param [any, nil] list
   #
   # @return [Hash{Symbol=>Hash}]
   #
@@ -472,7 +472,7 @@ class ManifestItemController < ApplicationController
   #
   # @param [ManifestItem, Array<ManifestItem>, nil] subject
   # @param [Symbol, String, nil]                    action
-  # @param [*]                                      args
+  # @param [any, nil]                               args
   #
   def manifest_item_authorize!(subject = nil, action = nil, *args)
     action  ||= request_parameters[:action]

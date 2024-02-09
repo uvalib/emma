@@ -39,10 +39,10 @@ module ApiService::Exceptions
 
   # Set the latest API error.
   #
-  # @param [Exception, Class<ApiService::Error>, Symbol, *] error
-  # @param [Hash] opt   Passed to initializer if *error* is a class.
+  # @param [any, nil] error         Exception, Class<ApiService::Error>, Symbol
+  # @param [Hash]     opt           Passed to initializer if *error* is a class
   #
-  # @return [ApiService::Error]       New value of @exception.
+  # @return [ApiService::Error]     New value of @exception.
   #
   def set_error: (untyped error, **untyped opt) -> ApiService::Error
 

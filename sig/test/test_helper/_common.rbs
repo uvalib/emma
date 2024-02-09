@@ -39,7 +39,7 @@ module TestHelper::Common
 
   # Properties which drive parameterized system tests.
   #
-  # @type [Hash{Symbol=>Hash{Symbol=>*}}]
+  # @type [Hash{Symbol=>Hash}]
   #
   PROPERTY: Hash[Symbol,symHash]
 
@@ -47,9 +47,9 @@ module TestHelper::Common
   #
   # @param [Symbol, String, Class, Model, nil] model
   # @param [Array<Symbol>]                     traversal
-  # @param [*]                                 default
+  # @param [any, nil]                          default
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def property
     : [T] (Symbol|String|Class|Model|nil model, *Symbol traversal,  default: T)   -> T
@@ -78,13 +78,13 @@ module TestHelper::Common
 
   # Derive the name of the model/controller from the given source.
   #
-  # @param [Symbol, String, Class, Model, nil] src
+  # @param [any, nil] value           Symbol, String, Class, Model
   #
   # @return [Symbol, nil]
   #
   def controller_name
-    : (nil     src) -> nil
-    | (untyped src) -> Symbol
+    : (nil     value) -> nil
+    | (untyped value) -> Symbol
 
   # Fixture accessor defined by ActiveRecord::TestFixtures#fixtures.
   # @param [Array<Symbol|String>] name

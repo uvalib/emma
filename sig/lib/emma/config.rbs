@@ -29,7 +29,7 @@ module Emma::Config
 
   # All "en.emma.*" configuration values.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def config_all: () -> symHash
 
@@ -47,8 +47,8 @@ module Emma::Config
   # The first returned element should be used as the key for I18n#translate and
   # the remaining elements should be used passed as the :default option.
   #
-  # @param [*]     base
-  # @param [Array] path
+  # @param [any, nil] base
+  # @param [Array]    path
   #
   # @return [Array<Symbol>]
   #
@@ -69,7 +69,7 @@ module Emma::Config
 
   # All "en.emma.*" configuration values.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def config_all: () -> symHash
 
@@ -86,55 +86,53 @@ module Emma::Config
   # If *path* is an array, the first element is used as the I18n#translate key
   # and the remaining elements are passed as the :default option.
   #
-  # @param [*]             key        I18n path(s).
-  # @param [*]             fallback   Returned if the item is not found.
-  # @param [*]             default    Passed to I18n#translate.
+  # @param [any]           key        I18n path(s) (Symbol, String, Array)
+  # @param [any, nil]      fallback   Returned if the item is not found.
+  # @param [any, nil]      default    Passed to I18n#translate.
   # @param [Symbol,String] root
   # @param [Hash]          opt        Passed to I18n#translate except:
   #
   # @option opt [Boolean] :cfg_fatal  Raise if the item is not found.
   # @option opt [Boolean] :cfg_warn   Log a warning if the item is not found.
   #
-  # @return [*]                       Or the type of *fallback*.
+  # @return [any, nil]                Or the type of *fallback*.
   #
   def config_item
     :     ((String|Symbol|Array[String|Symbol]) key, ?fallback: nil, ?default: String|Symbol|Array[String|Symbol]|nil, ?root: Symbol|String, **untyped opt) -> (untyped | nil)
-    | [T] ((String|Symbol|Array[String|Symbol]) key,  fallback: T,   ?default: String|Symbol|Array[String|Symbol]|nil, ?root: Symbol|String, **untyped opt) -> (untyped | T)
+    | [T] ((String|Symbol|Array[String|Symbol]) key,  fallback: T,   ?default: String|Symbol|Array[String|Symbol]|nil, ?root: Symbol|String, **untyped opt) -> (untyped | T | nil)
 
   # Get an item from configuration.
   #
-  # @param [String|Symbol] key        I18n path.
-  # @param [Symbol,String] root
-  # @param [Hash]          opt        Passed to I18n#translate.
+  # @param [String, Symbol] key       I18n path.
+  # @param [Symbol, String] root
+  # @param [Hash]           opt       Passed to I18n#translate.
   #
   # @option opt [Boolean] :raise      Raise exception if item not found.
   #
-  # @return [*]
+  # @return [any, nil]
   #
-  def config_item_get
-    : (?(String|Symbol|nil) key, ?root: Symbol|String, **untyped options) -> (untyped | nil)
-    | (Array[String|Symbol] key, ?root: Symbol|String, **untyped options) -> Array[untyped|nil]
+  def config_item_get: ((String|Symbol) key, ?root: Symbol|String, **untyped options) -> (untyped | nil)
 
   # Fetch a configuration item and raise an exception if not found.
   #
-  # @param [String|Symbol] key        I18n path.
-  # @param [Array, *]      other      Alternate location(s)
-  # @param [Hash]          opt        Passed to I18n#translate except:
+  # @param [Symbol, String]  key      I18n path.
+  # @param [Array, any, nil] other    Alternate location(s)
+  # @param [Hash]            opt      Passed to I18n#translate except:
   #
   # @option opt [Boolean] :cfg_fatal  If *false* do not raise if item not found
   # @option opt [Boolean] :cfg_warn   If *false* do not log a warning.
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def config_item_fetch: ((String|Symbol) key, ?(String|Symbol|Array[String|Symbol]|nil) other, **untyped opt) -> (untyped | nil)
 
   # The configuration section specified by *key* or *default* locations.
   #
-  # @param [*]    key                 I18n path(s).
+  # @param [any]  key                 I18n path(s) (Symbol, String, Array)
   # @param [Hash] opt                 To #config_deep_interpolate except for
   #                                     #CONFIG_ITEM_OPTIONS to #config_item.
   #
-  # @return [Hash{Symbol=>*}]         Or the type of *fallback*.
+  # @return [Hash]                    Or the type of *fallback*.
   #
   def config_section: ((String|Symbol|Array[String|Symbol]) key, **untyped opt) -> symHash
 
@@ -169,16 +167,16 @@ module Emma::Config
   # @param [String, *] item
   # @param [Hash]      opt            Passed to #interpolate_named_references
   #
-  # @return [String, *]
+  # @return [String, any, nil]
   #
   def config_interpolate: [T] (T item, **untyped opt) -> T
 
   # Attempt to apply interpolations to all strings in *item*.
   #
-  # @param [Hash, Array, String, *] item
-  # @param [Hash]                   opt
+  # @param [any, nil] item            Hash, Array, String
+  # @param [Hash]     opt
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def config_deep_interpolate: [T] (T item, **untyped opt) -> T
 

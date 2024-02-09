@@ -41,7 +41,7 @@ module Record::Submittable
     # Indicate whether the item represents an EMMA repository entry (as opposed
     # to a partner repository entry).
     #
-    # @param [Model, String, *] item
+    # @param [any, nil] item          Model, String
     #
     # @see Record::EmmaIdentification#valid_sid?
     # @see Record::EmmaIdentification#emma_native?
@@ -54,7 +54,7 @@ module Record::Submittable
 
     # Indicate whether the item does not represent an existing EMMA entry.
     #
-    # @param [Model, String, *] item
+    # @param [any, nil] item          Model, String
     #
     # @note From UploadWorkflow::External#incomplete?
     #
@@ -189,7 +189,7 @@ module Record::Submittable
     # @raise [Record::NotFound]                   If *item* was not found.
     # @raise [ActiveRecord::RecordNotDestroyed]   Halted due to callbacks.
     #
-    # @return [Any]
+    # @return [any]
     # @return [nil]                   If the record was not found or removed.
     #
     # @note From UploadWorkflow::External#db_delete
@@ -639,13 +639,13 @@ module Record::Submittable
     #++
     #
     # @overload repository_removals(requests, **opt)
-    #   @param [Hash{Symbol=>Array}]              requests
-    #   @param [Hash]                             opt
+    #   @param [Hash{Symbol=>Array}] requests
+    #   @param [Hash]                opt
     #   @return [Array<(Array,Array)>]
     #
     # @overload repository_removals(items, **opt)
-    #   @param [Array<String,#emma_recordId,Any>] items
-    #   @param [Hash]                             opt
+    #   @param [Array]               items
+    #   @param [Hash]                opt
     #   @return [Array<(Array,Array)>]
     #
     def repository_removals(items, **opt)
@@ -672,13 +672,13 @@ module Record::Submittable
     #++
     #
     # @overload repository_dequeues(requests, **opt)
-    #   @param [Hash{Symbol=>Array}]              requests
-    #   @param [Hash]                             opt
+    #   @param [Hash{Symbol=>Array}] requests
+    #   @param [Hash]                opt
     #   @return [Array<(Array,Array)>]
     #
     # @overload repository_dequeues(items, **opt)
-    #   @param [Array<String,#emma_recordId,Any>] items
-    #   @param [Hash]                             opt
+    #   @param [Array]               items
+    #   @param [Hash]                opt
     #   @return [Array<(Array,Array)>]
     #
     def repository_dequeues(items, **opt)
@@ -710,7 +710,7 @@ module Record::Submittable
     #   @return [Hash{String=>Array<Model>}]
     #
     # @overload repository_requests(requests, empty_key: false)
-    #   @param [Array<String,Model,Any>]          requests
+    #   @param [Array<String,Model,any>]          requests
     #   @param [Boolean]                          empty_key
     #   @return [Hash{String=>Array<Model>}]
     #

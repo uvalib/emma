@@ -32,7 +32,7 @@ en:
           epub:         'epub'
           braille:      'braille'
           pdf:          'pdf'
-          #grayscalePdf: 'grayscalePdf' # NOTE: deprecated with API 0.0.5
+#         grayscalePdf: 'grayscalePdf' # NOTE: deprecated with API 0.0.5
           word:         'word'
           tactile:      'tactile'
           kurzweil:     'kurzweil'
@@ -72,43 +72,43 @@ en:
           default:      'ACE-logo-300x100-72.png'
           wide:         'ACE-logo-300x100-72.png'
 
-     #bookshare:        # @see "en.emma.grant.partner.commercial.bookshare"
-     #  <<:             *REPOSITORY_TEMPLATE
-     #  name:           'Bookshare'
-     #  symbol:         'bs'
-     #  logo:
-     #    default:      'Bookshare-300x100.png'
-     #    wide:         'Bookshare-300x100.png'
-     #    thumb:        'thumb-Bookshare_logo.png'
-     #    base:         'thumb-Bookshare_logo.png'
-     #  title_path:     'https://www.bookshare.org/browse/book'
-     #  download_path:  'https://www.bookshare.org/downloadSponsor/book'
-     #  download_fmt:
-     #    brf:          'BRF'
-     #    daisy:        'DAISY'
-     #    daisyAudio:   'DAISY_AUDIO'
-     #    epub:         'EPUB3'
-     #    braille:      'BRF'                 # TODO: Bookshare braille
-     #    pdf:          'PDF'
-     #    word:         'DOCX'
-     #    tactile:      'BRF'                 # TODO: Bookshare tactile
-     #    kurzweil:     'BRF'                 # TODO: Bookshare kurzweil
-     #    rtf:          'TEXT'                # TODO: Bookshare rtf
-     #    '???':        'HTML'                # NOTE: not in schema
-     #  download_url:   '%{download_path}/%{id}'
+#     bookshare:        # @see "en.emma.grant.partner.commercial.bookshare"
+#       <<:             *REPOSITORY_TEMPLATE
+#       name:           'Bookshare'
+#       symbol:         'bs'
+#       logo:
+#         default:      'Bookshare-300x100.png'
+#         wide:         'Bookshare-300x100.png'
+#         thumb:        'thumb-Bookshare_logo.png'
+#         base:         'thumb-Bookshare_logo.png'
+#       title_path:     'https://www.bookshare.org/browse/book'
+#       download_path:  'https://www.bookshare.org/downloadSponsor/book'
+#       download_fmt:
+#         brf:          'BRF'
+#         daisy:        'DAISY'
+#         daisyAudio:   'DAISY_AUDIO'
+#         epub:         'EPUB3'
+#         braille:      'BRF'                 # TODO: Bookshare braille
+#         pdf:          'PDF'
+#         word:         'DOCX'
+#         tactile:      'BRF'                 # TODO: Bookshare tactile
+#         kurzweil:     'BRF'                 # TODO: Bookshare kurzweil
+#         rtf:          'TEXT'                # TODO: Bookshare rtf
+#         '???':        'HTML'                # NOTE: not in schema
+#       download_url:   '%{download_path}/%{id}'
 
-     #hathiTrust:       # @see "en.emma.grant.partner.commercial.hathiTrust"
-     #  <<:             *REPOSITORY_TEMPLATE  # TODO: HT download formats
-     #  name:           'HathiTrust'
-     #  symbol:         'ht'
-     #  logo:
-     #    default:      'HathiTrust-300x100.png'
-     #    wide:         'HathiTrust-300x100.png'
-     #    thumb:        'thumb-HathiTrust_logo.png'
-     #    base:         'thumb-HathiTrust_logo.png'
-     #  title_path:     'https://catalog.hathitrust.org/Record'
-     #  download_path:  'https://babel.hathitrust.org/cgi/imgsrv/download'
-     #  download_url:   '%{download_path}/%{fmt}?id=%{id};orient=0;size=100'
+#     hathiTrust:       # @see "en.emma.grant.partner.commercial.hathiTrust"
+#       <<:             *REPOSITORY_TEMPLATE  # TODO: HT download formats
+#       name:           'HathiTrust'
+#       symbol:         'ht'
+#       logo:
+#         default:      'HathiTrust-300x100.png'
+#         wide:         'HathiTrust-300x100.png'
+#         thumb:        'thumb-HathiTrust_logo.png'
+#         base:         'thumb-HathiTrust_logo.png'
+#       title_path:     'https://catalog.hathitrust.org/Record'
+#       download_path:  'https://babel.hathitrust.org/cgi/imgsrv/download'
+#       download_url:   '%{download_path}/%{fmt}?id=%{id};orient=0;size=100'
 
       internetArchive:  # @see "en.emma.grant.partner.commercial.internetArchive"
         <<:             *REPOSITORY_TEMPLATE  # TODO: IA download formats

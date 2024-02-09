@@ -122,7 +122,7 @@ class ManifestsTest < ApplicationSystemTestCase
 
   public
 
-  # list_test
+  # Perform a test to list bulk operation manifests visible to the test user.
   #
   # @param [Symbol]       action
   # @param [String]       title
@@ -157,7 +157,7 @@ class ManifestsTest < ApplicationSystemTestCase
     end
   end
 
-  # new_test
+  # Perform a test to create a new bulk operation manifest.
   #
   # @param [Boolean] direct
   # @param [Symbol]  meth             Calling test method.
@@ -205,7 +205,7 @@ class ManifestsTest < ApplicationSystemTestCase
       screenshot
       click_on 'Save', match: :first, exact: true
 
-      # Should be back on the index page with one more record than before.
+      # We should be back on the index page with one more record than before.
       wait_for_page final_url
       assert_flash 'SUCCESS'
       assert_valid_page heading: INDEX_TITLE
@@ -215,7 +215,7 @@ class ManifestsTest < ApplicationSystemTestCase
     end
   end
 
-  # edit_select_test
+  # Perform a test to select then modify a bulk operation manifest.
   #
   # @param [Boolean] direct
   # @param [Symbol]  meth             Calling test method.
@@ -268,7 +268,7 @@ class ManifestsTest < ApplicationSystemTestCase
       screenshot
       click_on 'Save', match: :first, exact: true
 
-      # The index page should still show the same number of records.
+      # We should be back on the index page with the same number of records.
       wait_for_page final_url
       assert_flash 'SUCCESS'
       assert_valid_page heading: INDEX_TITLE
@@ -278,7 +278,7 @@ class ManifestsTest < ApplicationSystemTestCase
     end
   end
 
-  # delete_select_test
+  # Perform a test to select then remove a bulk operation manifest.
   #
   # @param [Boolean] direct
   # @param [Symbol]  meth             Calling test method.
@@ -350,7 +350,7 @@ class ManifestsTest < ApplicationSystemTestCase
 
   protected
 
-  # Generate a Manifest :name.
+  # Generate a distinct Manifest name.
   #
   # @param [Hash] opt                 Test options
   #

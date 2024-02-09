@@ -115,7 +115,7 @@ module TestHelper::Utility
 
   # The "/test/fixtures/users.yml" entry associated with the argument.
   #
-  # @param [String, Symbol, *] arg
+  # @param [any, nil] arg             String, Symbol
   #
   # @return [Symbol, nil]
   #
@@ -127,13 +127,14 @@ module TestHelper::Utility
 
   # Return a User instance from the given identification.
   #
-  # @param [String, Symbol, User, *] user
+  # @param [any, nil] user            String, Symbol, User
   #
   # @return [User]
   # @return [nil]                     If *user* could not be converted.
   #
   def find_user(user)
     user = user_entry(user) if user.is_a?(String)
+    # noinspection RubyMismatchedArgumentType
     case user
       when :anonymous then nil
       when Symbol     then users(user)
@@ -191,13 +192,13 @@ module TestHelper::Utility
 
   # Extract the User ID indicated by *item*.
   #
-  # @param [*] item
+  # @param [any, nil] item
   #
   # @return [Integer, nil]
   #
   def uid(item)
     user_id = ->(rec) { rec[:user_id] || rec.try(:user_id) }
-    # noinspection RailsParamDefResolve
+    # noinspection RubyMismatchedArgumentType
     user =
       case item
         when User    then item
@@ -215,14 +216,14 @@ module TestHelper::Utility
 
   # Extract the Organization ID indicated by *item*.
   #
-  # @param [*] item
+  # @param [any, nil] item
   #
   # @return [Integer, nil]
   #
   def oid(item)
     return if item.nil?
     org_id = ->(rec) { rec.try(:org_id) || rec[:org_id] }
-    # noinspection RailsParamDefResolve
+    # noinspection RubyMismatchedArgumentType
     org =
       case item
         when Org     then item
@@ -294,7 +295,9 @@ module TestHelper::Utility
   # @param [Org, User, Integer, nil]                  org
   # @param [Hash]                                     constraints
   #
-  # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+  # @return [Hash{Symbol=>Hash}]
+  #
+  # @note Currently unused
   #
   def fixture_values_for_org(model, org, **constraints)
     if (org = oid(org))
@@ -311,7 +314,9 @@ module TestHelper::Utility
   # @param [User, Integer, nil]                       user
   # @param [Hash]                                     constraints
   #
-  # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+  # @return [Hash{Symbol=>Hash}]
+  #
+  # @note Currently unused
   #
   def fixture_values_for_user(model, user, **constraints)
     user = uid(user) and constraints.merge!(user_id: user)
@@ -324,7 +329,7 @@ module TestHelper::Utility
   # @param [Symbol, String, Class, ApplicationRecord] model
   # @param [Hash]                                     constraints
   #
-  # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+  # @return [Hash{Symbol=>Hash}]
   #
   def fixture_values(model, **constraints)
     constraints =
@@ -380,7 +385,6 @@ module TestHelper::Utility
   # @return [String]
   #
   def record_id(item = nil, repo: nil, rid: nil, format: nil, ver: nil)
-    # noinspection RubyArgCount
     if item.is_a?(SearchResult)
       repo   ||= item.repository
       rid    ||= item.repositoryRecordId
@@ -475,7 +479,7 @@ module TestHelper::Utility
   # possible list actions.
   #
   # @param [Symbol, String, Proc, nil] dst
-  # @param [String, Symbol, User, *]   user
+  # @param [any, nil]                  user   String, Symbol, User
   # @param [Hash]                      opt
   #
   # @return [String]                  The redirection path.

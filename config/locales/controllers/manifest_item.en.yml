@@ -68,7 +68,7 @@ en:
           - new
           - edit_select
           - delete_select
-         #- admin
+#         - admin
 
       # =======================================================================
       # Controls
@@ -344,9 +344,9 @@ en:
 
       upload:
 
-        #select:
-        #  <<: *GENERIC_SELECT
-        #  label:        'Select file'
+#       select:
+#         <<: *GENERIC_SELECT
+#         label:        'Select file'
 
         role:           submitter
         _endpoint:      true

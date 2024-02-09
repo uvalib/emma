@@ -203,11 +203,12 @@ module FlashHelper
 
     # A short-cut for creating a FlashHelper::FlashPart only if required.
     #
-    # @param [FlashPart, *] other
+    # @param [any, nil] other         FlashPart or arg to initializer.
     #
     # @return [FlashPart]
     #
     def self.[](other)
+      # noinspection RubyMismatchedReturnType
       other.is_a?(self) ? other : new(other)
     end
 
@@ -492,7 +493,7 @@ module FlashHelper
   # @param [Hash]        opt          To #flash_template except for:
   #
   # @option opt [Boolean] :inspect    If *true* apply #inspect to messages.
-  # @option opt [Any]     :status     Override reported exception status.
+  # @option opt [any]     :status     Override reported exception status.
   # @option opt [Boolean] :log        If *false* do not log exceptions.
   # @option opt [Boolean] :trace      If *true* always log exception trace.
   # @option opt [Symbol]  :meth       Calling method.

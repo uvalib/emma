@@ -19,7 +19,7 @@ module SearchService::Properties
 
   # Configuration values from config/locales/service.en.yml
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash]
   #
   CONFIGURATION = config_section('emma.service.search').deep_freeze
 
@@ -37,7 +37,7 @@ module SearchService::Properties
 
   # Configuration for the API service.
   #
-  # @type [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def configuration
     CONFIGURATION

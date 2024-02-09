@@ -32,7 +32,7 @@ module Emma::Unicode
   # Indicate whether the string contains only characters that fall outside the
   # normal text range.  Always `false` if *text* is not a string.
   #
-  # @param [String, *] text
+  # @param [any, nil] text            String
   #
   def only_symbols?(text)
     text.is_a?(String) && text.present? && text.remove(SYMBOLS).blank?

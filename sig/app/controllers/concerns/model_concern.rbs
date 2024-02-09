@@ -33,7 +33,7 @@ module ModelConcern
 
   def search_only_keys: () -> symArray
 
-  def find_or_match_keys: () -> symArray
+  def find_or_match_keys: (*Symbol added) -> symArray
 
   # The model record identified in URL parameters either as :selected or :id.
   #
@@ -61,24 +61,24 @@ module ModelConcern
 
   # Get URL parameters relevant to the current operation.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def current_get_params: () ?{ (symHash) -> void } -> symHash
 
   # Extract POST parameters that are usable for creating/updating a model
   # record instance.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def current_post_params: () ?{ (symHash) -> void } -> symHash
 
   # model_request_params
   #
-  # @param [Model, Hash{Symbol=>*}, *] item
-  # @param [Hash{Symbol=>*}, nil]      prm
+  # @param [any, nil]  item           Model, Hash
+  # @param [Hash, nil] prm
   #
-  # @return [Array<(Model, Hash{Symbol=>*})>]
-  # @return [Array<(*,     Hash{Symbol=>*})>]
+  # @return [Array<(Model, Hash)>]
+  # @return [Array<(*,     Hash)>]
   #
   def model_request_params
     :     (Model item, ?(symHash|nil) prm) -> [Model, symHash]
@@ -124,8 +124,8 @@ module ModelConcern
 
   # Return with the specified model record.
   #
-  # @param [String, Integer, Hash, Model, *] item   Default: #identifier.
-  # @param [Hash]                            opt    To Model#find_record.
+  # @param [any, nil] item      String, Integer, Hash, Model; def: #identifier.
+  # @param [Hash]     opt       To Model#find_record.
   #
   # @raise [Record::StatementInvalid] If :id not given.
   # @raise [Record::NotFound]         If *item* was not found.
@@ -235,7 +235,7 @@ module ModelConcern
 
   # Start editing an existing model record.
   #
-  # @param [*]    item
+  # @param [any, nil]    item
   # @param [Hash] opt                 Passed to ModelConcern#find_record.
   #
   # @raise [Record::StatementInvalid]   If :id not given.
@@ -247,9 +247,9 @@ module ModelConcern
 
   # Persist changes to an existing model record.
   #
-  # @param [*]       item
-  # @param [Boolean] fatal            If *false* use #update not #update!.
-  # @param [Hash]    prm              Field values (default: `#current_params`)
+  # @param [any, nil] item
+  # @param [Boolean]  fatal           If *false* use #update not #update!.
+  # @param [Hash]     prm             Field values (default: `#current_params`)
   #
   # @raise [Record::NotFound]               If the record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Model record update failed.
@@ -261,8 +261,8 @@ module ModelConcern
 
   # Retrieve the indicated record(s) for the '/delete' page.
   #
-  # @param [*]    items               To #search_records
-  # @param [Hash] prm                 Default: `#current_params`
+  # @param [any, nil] items           To #search_records
+  # @param [Hash]     prm             Default: `#current_params`
   #
   # @raise [RangeError]               If :page is not valid.
   #
@@ -272,9 +272,9 @@ module ModelConcern
 
   # Remove the indicated record(s).
   #
-  # @param [*]       items
-  # @param [Boolean] fatal            If *false* do not #raise_failure.
-  # @param [Hash]    prm              Default: `#current_params`
+  # @param [any, nil] items
+  # @param [Boolean]  fatal           If *false* do not #raise_failure.
+  # @param [Hash]     prm             Default: `#current_params`
   #
   # @raise [Record::SubmitError]      If there were failure(s).
   #
@@ -285,7 +285,7 @@ module ModelConcern
   # Raise an exception.
   #
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
-  # @param [*]                                                         value
+  # @param [any, nil]                                                  value
   #
   # @raise [Record::SubmitError]
   # @raise [ExecError]

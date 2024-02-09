@@ -30,7 +30,7 @@ module Devise
 
     # Replace "user_return_to" with "app.current_path".
     #
-    # @param [Any] resource_or_scope
+    # @param [any] resource_or_scope
     #
     def stored_location_key_for(resource_or_scope)
       scope = resource_or_scope.presence

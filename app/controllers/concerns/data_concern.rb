@@ -48,7 +48,7 @@ module DataConcern
 
   # URL parameters for DataController.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   # === Usage Notes
   # Rails will set `params[:format]` if the URL is given with an extension

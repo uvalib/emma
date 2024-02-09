@@ -83,9 +83,9 @@ module ManifestConcern
   # Update the indicated User, ensuring that :email is not changed unless
   # authorized.
   #
-  # @param [*]       item             Def.: record for ModelConcern#identifier.
-  # @param [Boolean] fatal            If *false* use #update not #update!.
-  # @param [Hash]    prm              Field values (default: `#current_params`)
+  # @param [any, nil] item            Def.: record for ModelConcern#identifier.
+  # @param [Boolean]  fatal           If *false* use #update not #update!.
+  # @param [Hash]     prm             Field values (default: `#current_params`)
   #
   # @raise [Record::NotFound]               Record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.

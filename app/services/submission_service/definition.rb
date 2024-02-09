@@ -57,8 +57,8 @@ module SubmissionService::Definition
 
   # Extract results from the remote response.
   #
-  # @param [SubmissionService::Response, SubmissionService::Request, *] obj
-  # @param [Boolean] extended         If *true*, include :diagnostic.
+  # @param [any, nil] obj       SubmissionService::Response, SubmissionService::Request
+  # @param [Boolean]  extended  If *true*, include :diagnostic.
   #
   # @return [SubmissionService::Response] The value for @result.
   #
@@ -78,6 +78,7 @@ module SubmissionService::Definition
     rsp[:manifest_id] ||= opt[:manifest_id]
     rsp[:diagnostic]    = rsp.diagnostic if extended
     rsp[:error]         = rsp.error      if extended
+    # noinspection RubyMismatchedReturnType
     rsp
   end
 

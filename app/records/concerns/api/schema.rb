@@ -40,7 +40,7 @@ module Api::Schema
   # A table of schema property scalar types mapped to literals which are their
   # default values.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>any}]
   #
   SCALAR_DEFAULTS = {
     '':          '',
@@ -160,7 +160,7 @@ module Api::Schema
   #
   # @param [Symbol] type
   #
-  # @return [Any]
+  # @return [any]
   #
   def enumeration_default(type)
     enumeration_defaults[type]
@@ -189,7 +189,7 @@ module Api::Schema
   # A table of schema property scalar types mapped to literals which are their
   # default values.
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>any}]
   #
   def scalar_defaults
     SCALAR_DEFAULTS
@@ -265,7 +265,7 @@ module Api::Schema
   #
   # @param [Class, String, Symbol, nil] type
   #
-  # @return [Any]
+  # @return [any]
   #
   def scalar_default(type)
     type &&= type.to_s.demodulize.to_sym
@@ -286,7 +286,7 @@ module Api::Schema
   #
   # @param [Hash, nil] opt
   #
-  # @return [Any]
+  # @return [any]
   #
   def extract_type_option(opt)
     type_options(opt).values.first
@@ -296,7 +296,7 @@ module Api::Schema
   #
   # @param [Hash] opt                 Will have #TYPE_OPTION_KEYS removed.
   #
-  # @return [Any]
+  # @return [any]
   #
   def extract_type_option!(opt)
     return unless opt.is_a?(Hash)

@@ -9,7 +9,7 @@ module LayoutHelper::Footer
 
   # Footer elements.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash]
   #
   FOOT_CONFIG: symHash
 

@@ -57,8 +57,8 @@ module Emma::Common::MethodMethods
   # Return the indicated method.  If *meth* is something other than a Symbol or
   # a Method then *nil* is returned.
   #
-  # @param [Symbol, Method, *] meth
-  # @param [Binding, *]        bind
+  # @param [any, nil] meth            Symbol, Method
+  # @param [any, nil] bind            Binding
   #
   # @return [Method, nil]
   #
@@ -91,12 +91,12 @@ module Emma::Common::MethodMethods
   # Return a table of a method's parameters and their values given a Binding
   # from that method invocation.
   #
-  # @param [Symbol, Method, *]     meth
-  # @param [Binding, *]            bind
+  # @param [any, nil]              meth   Symbol, Method
+  # @param [any, nil]              bind   Binding
   # @param [Symbol, Array<Symbol>] only
   # @param [Symbol, Array<Symbol>] except
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>any}]
   #
   #--
   # === Variations
@@ -107,13 +107,13 @@ module Emma::Common::MethodMethods
   #   @param [Binding]               bind
   #   @param [Symbol, Array<Symbol>] only
   #   @param [Symbol, Array<Symbol>] except
-  #   @return [Hash{Symbol=>Any}]
+  #   @return [Hash{Symbol=>any}]
   #
   # @overload get_params(bind, only: [], except: [], **)
   #   @param [Binding]               bind
   #   @param [Symbol, Array<Symbol>] only
   #   @param [Symbol, Array<Symbol>] except
-  #   @return [Hash{Symbol=>Any}]
+  #   @return [Hash{Symbol=>any}]
   #
   def get_params(meth, bind, *, only: [], except: [], **)
     meth, bind = [nil, meth] if meth.is_a?(Binding)

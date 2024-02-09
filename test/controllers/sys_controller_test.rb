@@ -65,7 +65,7 @@ class SysControllerTest < ActionDispatch::IntegrationTest
 
   public
 
-  # read_test
+  # Perform a SysController test for #TEST_READERS in all #TEST_FORMATS.
   #
   # @param [Symbol]  action
   # @param [Boolean] redirect         Will always redirect.

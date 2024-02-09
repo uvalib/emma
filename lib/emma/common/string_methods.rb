@@ -128,7 +128,7 @@ module Emma::Common::StringMethods
 
   # Indicate whether item is a UUID value.
   #
-  # @param [*] item
+  # @param [any, nil] item
   #
   def uuid?(item)
     item.to_s.match?(UUID_FORMAT)

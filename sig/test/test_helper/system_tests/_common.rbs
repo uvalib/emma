@@ -56,6 +56,8 @@ module TestHelper::SystemTests::Common
   #
   # @return [true]
   #
+  # @note Currently unused
+  #
   def assert_json
     : (anyHash|anyArray|String value, ?exact: bool|nil, **untyped _ignored) -> true
     | (?nil _ignored,                 ?exact: bool|nil, **untyped pairs)    -> true

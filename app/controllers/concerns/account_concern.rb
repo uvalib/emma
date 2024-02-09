@@ -111,9 +111,9 @@ module AccountConcern
   # Update the indicated User, ensuring that :email and :org_id are not changed
   # unless authorized.
   #
-  # @param [*]       item             Def.: record for ModelConcern#identifier.
-  # @param [Boolean] fatal            If *false* use #update not #update!.
-  # @param [Hash]    prm              Field values (default: `#current_params`)
+  # @param [any, nil] item            Def.: record for ModelConcern#identifier.
+  # @param [Boolean]  fatal           If *false* use #update not #update!.
+  # @param [Hash]     prm             Field values (default: `#current_params`)
   #
   # @raise [Record::NotFound]               Record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
@@ -280,7 +280,7 @@ module AccountConcern
   # @param [Symbol]       action
   # @param [ActionConfig] config
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def interpolation_terms(action, config = account_fields)
     result = config.dig(action, :terms) || config.dig(action, :term) || {}

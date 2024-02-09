@@ -289,7 +289,7 @@ class UploadDecorator < BaseDecorator
 
     # Control icon definitions.
     #
-    # @type [Hash{Symbol=>Hash{Symbol=>*}}]
+    # @type [Hash{Symbol=>Hash}]
     #
     # @see BaseDecorator::Controls#ICON_PROPERTIES
     #
@@ -307,7 +307,7 @@ class UploadDecorator < BaseDecorator
 
     # Icon definitions for this decorator.
     #
-    # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+    # @return [Hash{Symbol=>Hash}]
     #
     def icon_definitions
       ICONS
@@ -334,7 +334,7 @@ class UploadDecorator < BaseDecorator
 
     # The number of columns needed if *item* will be displayed horizontally.
     #
-    # @param [Model, Hash, Array, *] item   Default: object.
+    # @param [any, nil] item          Model, Hash, Array; default: object.
     #
     # @return [Integer]
     #
@@ -559,9 +559,9 @@ class UploadDecorator
 
   # Transform a field value for HTML rendering.
   #
-  # @param [*]         value
-  # @param [Symbol, *] field
-  # @param [Hash]      opt            Passed to the render method or super.
+  # @param [any, nil]    value
+  # @param [Symbol, nil] field
+  # @param [Hash]        opt          Passed to the render method or super.
   #
   # @return [Field::Type]
   # @return [String]
@@ -625,11 +625,11 @@ class UploadDecorator
 
   # Transform a field value for rendering in a table.
   #
-  # @param [*]         value
-  # @param [Symbol, *] field
-  # @param [Hash]      opt            Passed to super.
+  # @param [any, nil]    value
+  # @param [Symbol, nil] field
+  # @param [Hash]        opt          Passed to super.
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def table_field_value(value, field:, **opt)
     return value if value.is_a?(ActiveSupport::SafeBuffer)
@@ -649,7 +649,7 @@ class UploadDecorator
 
   # Rendered table value for a :file_data field.
   #
-  # @param [*] value
+  # @param [any, nil] value
   #
   # @return [String, nil]
   #
@@ -659,7 +659,7 @@ class UploadDecorator
 
   # Rendered table value for an :emma_data field.
   #
-  # @param [*] value
+  # @param [any, nil] value
   #
   # @return [String, nil]
   #
@@ -849,7 +849,7 @@ class UploadDecorator
   #
   # @param [Hash] opt
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def form_hidden(**opt)
     # Extra information to support reverting the record when canceled.
@@ -927,7 +927,7 @@ class UploadDecorator
 
   # Client-side scripting which are supplied via 'assets:precompile'.
   #
-  # @param [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   # @see file:app/assets/javascripts/shared/assets.js.erb  *Emma.Upload*
   #

@@ -103,9 +103,9 @@ module Emma
     # Prefix all lines with the same leading log information, and reduce log
     # entries if #FILTERING is true.
     #
-    # @param [Integer] severity
-    # @param [*]       message
-    # @param [*]       progname       Default @progname
+    # @param [Integer]  severity
+    # @param [any, nil] message
+    # @param [any, nil] progname      Default @progname
     #
     # @return [TrueClass]
     #
@@ -133,7 +133,7 @@ module Emma
     #
     # @param [Integer, Symbol, nil] severity
     #
-    # return [*]
+    # return [any, nil]
     #
     def silence(severity = Logger::ERROR)
       ::Logger.suppressed? ? yield(self) : super
@@ -171,7 +171,7 @@ module Emma
     # Indicate whether the given log entry should be skipped if log output is
     # going to AWS CloudWatch.
     #
-    # @param [*] message
+    # @param [any, nil] message
     #
     def filter_out?(message)
       message.is_a?(String) && FILTER_OUT.any? { |expr| expr.match?(message) }
@@ -230,8 +230,8 @@ module Emma
       #
       # @param [String, Integer] severity
       # @param [Time]            time
-      # @param [*]               progname
-      # @param [*]               msg
+      # @param [any, nil]        progname
+      # @param [any, nil]        msg
       #
       # @return [String]
       #
@@ -256,7 +256,7 @@ module Emma
       #
       # @param [String, Integer] severity
       # @param [Time]            _time
-      # @param [*]               progname
+      # @param [any, nil]        progname
       #
       # @return [String]
       #
@@ -272,7 +272,7 @@ module Emma
       #
       # @param [String, Integer] severity
       # @param [Time]            time
-      # @param [*]               progname
+      # @param [any, nil]        progname
       #
       # @return [String]
       #
@@ -295,9 +295,9 @@ module Emma
       # Right-fill *item* if necessary so that its representation has at least
       # *width* characters.
       #
-      # @param [*]       item
-      # @param [Integer] width
-      # @param [String]  char
+      # @param [any, nil] item
+      # @param [Integer]  width
+      # @param [String]   char
       #
       # @return [String]
       #

@@ -133,7 +133,7 @@ class UploadDecorator < BaseDecorator
 
     # Control icon definitions.
     #
-    # @type [Hash{Symbol=>Hash{Symbol=>*}}]
+    # @type [Hash{Symbol=>Hash}]
     #
     # @see BaseDecorator::Controls#ICON_PROPERTIES
     #
@@ -141,7 +141,7 @@ class UploadDecorator < BaseDecorator
 
     # Icon definitions for this decorator.
     #
-    # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+    # @return [Hash{Symbol=>Hash}]
     #
     def icon_definitions: () -> Hash[Symbol,Hash[Symbol,(String|Symbol|Proc|bool|nil)]]
 
@@ -155,7 +155,7 @@ class UploadDecorator < BaseDecorator
 
     # The number of columns needed if *item* will be displayed horizontally.
     #
-    # @param [Model, Hash, Array, *] item   Default: object.
+    # @param [any, nil] item          Model, Hash, Array; default: object.
     #
     # @return [Integer]
     #
@@ -286,15 +286,15 @@ class UploadDecorator
 
   # Transform a field value for HTML rendering.
   #
-  # @param [*]         value
-  # @param [Symbol, *] field
-  # @param [Hash]      opt            Passed to the render method or super.
+  # @param [any, nil]    value
+  # @param [Symbol, nil] field
+  # @param [Hash]        opt          Passed to the render method or super.
   #
   # @return [Field::Type]
   # @return [String]
   # @return [nil]
   #
-  def list_field_value: (untyped value, field: Symbol|String|Array[Symbol|String]|nil, **untyped opt) -> (Field::Type | String | nil)
+  def list_field_value: (untyped value, field: Symbol|nil, **untyped opt) -> (Field::Type | String | nil)
 
   # details_container
   #
@@ -318,17 +318,17 @@ class UploadDecorator
 
   # Transform a field value for rendering in a table.
   #
-  # @param [*]         value
-  # @param [Symbol, *] field
-  # @param [Hash]      opt            Passed to super.
+  # @param [any, nil]    value
+  # @param [Symbol, nil] field
+  # @param [Hash]        opt          Passed to super.
   #
-  # @return [*]
+  # @return [any, nil]
   #
-  def table_field_value: (untyped value, field: untyped, **untyped opt) -> (Field::Type | String | nil)
+  def table_field_value: (untyped value, field: Symbol|nil, **untyped opt) -> (Field::Type | String | nil)
 
   # Rendered table value for a :file_data field.
   #
-  # @param [*] value
+  # @param [any, nil] value
   #
   # @return [String, nil]
   #
@@ -336,7 +336,7 @@ class UploadDecorator
 
   # Rendered table value for an :emma_data field.
   #
-  # @param [*] value
+  # @param [any, nil] value
   #
   # @return [String, nil]
   #
@@ -436,7 +436,7 @@ class UploadDecorator
   #
   # @param [Hash] opt
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def form_hidden: (**untyped opt) -> symHash
 
@@ -456,7 +456,7 @@ class UploadDecorator
 
   # Client-side scripting which are supplied via 'assets:precompile'.
   #
-  # @param [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   # @see file:app/assets/javascripts/shared/assets.js.erb  *Emma.Upload*
   #

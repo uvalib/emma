@@ -117,7 +117,7 @@ class Options
   # @param [Symbol, String] key
   # @param [Boolean]        log   If *false* do not warn about bad keys.
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def get(key, log: true)
     key = key&.to_sym
@@ -133,9 +133,9 @@ class Options
   # Set an option value.
   #
   # @param [Symbol, String] key
-  # @param [*]              value
+  # @param [any, nil]       value
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def set(key, value)
     @value[key.to_sym] = value if key
@@ -147,7 +147,7 @@ class Options
   #                                     the local copy of URL parameters.
   # @param [Hash]    opt              Passed to #get.
   #
-  # @return [Hash{Symbol=>*}]         Updated option values.
+  # @return [Hash]                    Updated option values.
   #
   def all(clean: false, **opt)
     keys = option_keys.each { |key| get(key, **opt) }
@@ -190,12 +190,13 @@ class Options
 
   # The method associated with the given option key.
   #
-  # @param [Symbol, String]
+  # @param [any, nil] key             String, Symbol
   #
   # @return [Symbol, nil]
   #
   def option_method(key)
-    key.to_sym if key && respond_to?(key)
+    # noinspection RubyMismatchedArgumentType
+    key.to_sym if (key.is_a?(Symbol) || key.is_a?(String)) && respond_to?(key)
   end
 
   # ===========================================================================
@@ -208,7 +209,7 @@ class Options
   #
   # @note This method is expected by ParamsHelper.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def params
     @params
@@ -218,7 +219,7 @@ class Options
   #
   # @note This method is expected by Record::Properties#parameters.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def model_params
     @model_params ||= get_model_params
@@ -226,7 +227,7 @@ class Options
 
   # Get URL parameters relevant to the current operation.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def get_model_params
     prm = url_parameters(params)
@@ -238,7 +239,7 @@ class Options
   # Extract POST parameters that are usable for creating/updating a new model
   # instance.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def model_post_params
     prm = model_params
@@ -270,11 +271,11 @@ class Options
   # Extract POST parameters that are usable for creating/updating an Upload
   # instance.
   #
-  # @param [Hash{Symbol=>*}] prm      Parameters to update
-  # @param [Boolean]         compact  If *false*, allow blanks.
-  # @param [Hash]            opt      Options to #json_parse.
+  # @param [Hash]    prm              Parameters to update
+  # @param [Boolean] compact          If *false*, allow blanks.
+  # @param [Hash]    opt              Options to #json_parse.
   #
-  # @return [Hash{Symbol=>*}]         The possibly-modified *prm*.
+  # @return [Hash]                    The possibly-modified *prm*.
   #
   def extract_model_data!(prm, compact: true, **opt)
     opt[:log] = false unless opt.key?(:log)

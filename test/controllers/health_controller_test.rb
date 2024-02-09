@@ -66,7 +66,7 @@ class HealthControllerTest < ActionDispatch::IntegrationTest
 
   public
 
-  # check_url_test
+  # Perform a HealthController test.
   #
   # @param [Symbol] action
   # @param [String] url

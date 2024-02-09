@@ -128,6 +128,8 @@ module LookupService::GoogleBooks::Action::Volumes
 
   # Aggregate terms into groups of similar search behavior.
   #
+  # All query-related keys are removed from *opt*.
+  #
   # @param [LookupService::Request, Array<String>, String] terms
   # @param [Hash]                                          opt
   #

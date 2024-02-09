@@ -157,7 +157,7 @@ class Upload < ApplicationRecord
   # Allow :file_data and :emma_data to be seen fully when inspecting.
   #
   # @param [Symbol, String] name      Attribute name.
-  # @param [*]              value     Attribute value.
+  # @param [any, nil]       value     Attribute value.
   #
   # @return [String]
   #
@@ -187,13 +187,13 @@ class Upload < ApplicationRecord
 
   # Indicate whether the record is an EMMA-native item.
   #
-  # @param [Upload, Hash, String, #repository, #emma_repository] item
+  # @param [any, nil] item      Upload,Hash,String,#repository,#emma_repository
   #
-  def self.emma_native?: ((Upload|symHash|String) item) -> bool
+  def self.emma_native?: (untyped item) -> bool
 
   # Extract the repository associated with the item.
   #
-  # @param [Upload, Hash, String, *] item
+  # @param [any, nil] item            Upload, Hash, String
   #
   # @return [String]                  One of EmmaRepository#values.
   # @return [nil]
@@ -206,7 +206,7 @@ class Upload < ApplicationRecord
 
   # The full name of the indicated repository
   #
-  # @param [Upload, Hash, String, *] item
+  # @param [any, nil] item            Upload, Hash, String
   #
   # @return [String]                  The name of the associated repository.
   # @return [nil]                     If *src* did not indicate a repository.
@@ -215,7 +215,7 @@ class Upload < ApplicationRecord
 
   # Extract the EMMA index entry identifier from the item.
   #
-  # @param [Upload, Hash, String, *] item
+  # @param [any, nil] item            Upload, Hash, String
   #
   # @return [String]
   # @return [nil]
@@ -228,9 +228,9 @@ class Upload < ApplicationRecord
 
   # Indicate whether *item* is or contains a valid EMMA index record ID.
   #
-  # @param [Upload, Hash, String, *] item
-  # @param [String, Array<String>]   add_repo
-  # @param [String, Array<String>]   add_fmt
+  # @param [any, nil]              item       Upload, Hash, String
+  # @param [String, Array<String>] add_repo
+  # @param [String, Array<String>] add_fmt
   #
   def self.valid_record_id?: (untyped item, ?add_repo: String|strArray|nil, ?add_fmt: String|strArray|nil) -> bool
 
@@ -239,11 +239,11 @@ class Upload < ApplicationRecord
   #
   # The value of *default* is returned if *item* doesn't respond to *key*.
   #
-  # @param [Model, Hash, String, Symbol, *]       item
-  # @param [Symbol, String, Array<Symbol,String>] key
-  # @param [*]                                    default
+  # @param [any, nil]                           item  Model,Hash,String,Symbol
+  # @param [Symbol,String,Array<Symbol,String>] key
+  # @param [any, nil]                           default
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def self.get_value: (untyped item, (Symbol|String|Array[Symbol|String]) key, ?default: untyped) -> untyped?
 
@@ -304,7 +304,7 @@ class Upload < ApplicationRecord
 
   # Return the Upload instance indicated by the argument.
   #
-  # @param [Model, Hash, String, Integer, *] v
+  # @param [any, nil] v               Model, Hash, String, Integer
   #
   # @return [Upload, nil]             A fresh record unless *v* is an Upload.
   #

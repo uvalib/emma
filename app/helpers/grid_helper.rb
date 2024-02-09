@@ -56,11 +56,11 @@ module GridHelper
 
   # Render a key/value row.
   #
-  # @param [*]       key
-  # @param [*]       value
-  # @param [Boolean] wrap             If *true* then key/value pairs are joined
+  # @param [any, nil] key
+  # @param [any, nil] value
+  # @param [Boolean]  wrap            If *true* then key/value pairs are joined
   #                                     within a wrapper element.
-  # @param [Hash]    opt
+  # @param [Hash]     opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #

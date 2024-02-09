@@ -83,7 +83,7 @@ module TestHelper::Debugging
   # @return [String]                  The displayable result.
   #
   # @yield To supply additional items.
-  # @yieldreturn [Array, String, *]
+  # @yieldreturn [Array, String, any, nil]
   #
   def show: (*untyped items, ?indent: bool|String, ?output: bool, **untyped opt) ?{ () -> untyped } -> String
 

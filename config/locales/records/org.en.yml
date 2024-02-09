@@ -59,7 +59,7 @@ en:
             NOTE: This is not marked as "required" in order to simplify
             creating new organization entries, but it *will* have to have a
             value before users from this organization can login to EMMA.
-          #type:         textarea
+#         type:         textarea
 
         provider:
           min:          0

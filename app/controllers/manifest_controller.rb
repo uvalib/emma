@@ -558,7 +558,7 @@ class ManifestController < ApplicationController
   #
   # @param [Manifest, Array<Manifest>, nil] subject
   # @param [Symbol, String, nil]            action
-  # @param [*]                              args
+  # @param [any, nil]                       args
   #
   def manifest_authorize!(subject = nil, action = nil, *args)
     action  ||= request_parameters[:action]

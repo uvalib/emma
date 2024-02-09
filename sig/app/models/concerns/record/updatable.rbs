@@ -74,7 +74,7 @@ module Record::Updatable
     #
     # @param [Symbol, String] column  Database field name.
     #
-    # @return [*]
+    # @return [any, nil]
     #
     # @note From Upload::WorkflowMethods#get_field_direct
     #
@@ -84,7 +84,7 @@ module Record::Updatable
     # callbacks.
     #
     # @param [String, Symbol] column
-    # @param [*]              new_value
+    # @param [any, nil]       new_value
     #
     # @raise [ActiveRecord::ReadOnlyRecord]   If the record is not writable.
     #
@@ -101,7 +101,7 @@ module Record::Updatable
     # is updated.  If the record does exist then it is updated dynamically in
     # the database as well.
     #
-    # @param [Hash{Symbol=>*}] pairs
+    # @param [Hash] pairs
     #
     # @raise [ActiveRecord::ReadOnlyRecord]   If the record is not writable.
     #

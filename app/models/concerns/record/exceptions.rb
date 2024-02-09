@@ -22,7 +22,7 @@ module Record::Exceptions
   # Raise an exception.
   #
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
-  # @param [*]                                                         value
+  # @param [any, nil]                                                  value
   #
   # @raise [Record::SubmitError]
   # @raise [ExecError]
@@ -130,8 +130,8 @@ class Record::Exceptions::FlashPart < FlashHelper::FlashPart
 
   # A hook for treating the first part of a entry as special.
   #
-  # @param [*]    src
-  # @param [Hash] opt
+  # @param [any, nil] src
+  # @param [Hash]     opt
   #
   # @return [ActiveSupport::SafeBuffer, String, nil]
   #

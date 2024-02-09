@@ -37,8 +37,8 @@ module Record::Rendering
 
   # Show the submission ID if it can be determined for the given item(s).
   #
-  # @param [Model, Hash, String, *] item
-  # @param [String]                 default
+  # @param [any, nil] item            Model, Hash, String
+  # @param [String]   default
   #
   # @return [String]
   #
@@ -62,7 +62,7 @@ module Record::Rendering
 
   # SID or ID of *item*
   #
-  # @param [Model, Hash, String, *] item
+  # @param [any, nil] item            Model, Hash, String
   #
   # @return [String, nil]
   #

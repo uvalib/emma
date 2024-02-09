@@ -36,7 +36,7 @@ module OrgConcern
 
   # Get URL parameters relevant to the current operation.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def current_get_params
     super do |prm|
@@ -47,7 +47,7 @@ module OrgConcern
   # Extract POST parameters that are usable for creating/updating a Manifest
   # instance.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def current_post_params
     super do |prm|
@@ -71,9 +71,9 @@ module OrgConcern
 
   # Update the indicated Org.
   #
-  # @param [*]       item             Def.: record for ModelConcern#identifier.
-  # @param [Boolean] fatal            If *false* use #update not #update!.
-  # @param [Hash]    prm              Field values (default: `#current_params`)
+  # @param [any, nil] item            Def.: record for ModelConcern#identifier.
+  # @param [Boolean]  fatal           If *false* use #update not #update!.
+  # @param [Hash]     prm             Field values (default: `#current_params`)
   #
   # @raise [Record::NotFound]               Record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
@@ -89,9 +89,9 @@ module OrgConcern
 
   # Remove the indicated record(s).
   #
-  # @param [*]       items
-  # @param [Boolean] fatal            If *false* do not #raise_failure.
-  # @param [Hash]    prm              Default: `#current_params`
+  # @param [any, nil] items
+  # @param [Boolean]  fatal           If *false* do not #raise_failure.
+  # @param [Hash]     prm             Default: `#current_params`
   #
   # @raise [Record::SubmitError]      If there were failure(s).
   #

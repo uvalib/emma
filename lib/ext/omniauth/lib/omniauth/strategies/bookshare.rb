@@ -70,7 +70,7 @@ module OmniAuth
       # Performs the steps necessary to run the request phase of a strategy.
       #
       # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
-      # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
+      # @return [Array<(Integer, Hash{String=>any,nil}, Array<String>)>]
       #
       def request_call
         __ext_debug
@@ -184,7 +184,7 @@ module OmniAuth
 
       # Information about the user account.
       #
-      # @return [Hash{Symbol=>Any}]
+      # @return [Hash{Symbol=>any}]
       #
       def account_info
         @account_info ||= get_account_info
@@ -256,7 +256,7 @@ module OmniAuth
       # request_phase
       #
       # @return [(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)]
-      # @return [(Integer, Hash{String=>*}, Array<String>)]
+      # @return [(Integer, Hash{String=>any,nil}, Array<String>)]
       #
       # @see ::OAuth2::ClientExt#request
       #
@@ -278,7 +278,7 @@ module OmniAuth
       # @raise [SocketError]
       #
       # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
-      # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
+      # @return [Array<(Integer, Hash{String=>any,nil}, Array<String>)>]
       #
       #--
       # noinspection RubyScope
@@ -365,7 +365,7 @@ module OmniAuth
       # @param [String] location
       # @param [Hash]   log_extra
       #
-      # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
+      # @return [Array<(Integer, Hash{String=>any,nil}, Array<String>)>]
       #
       #--
       # noinspection RubyStringKeysInHashInspection
@@ -432,7 +432,7 @@ module OmniAuth
       #
       # @param [ActionController::Parameters, Hash, Rack::Request, nil] params
       #
-      # @return [Hash{Symbol=>Any}]
+      # @return [Hash{Symbol=>any}]
       #
       def url_parameters(params = nil)
         params ||= request
@@ -674,7 +674,7 @@ module OmniAuth
 
         # call_app!
         #
-        # @return [Any]
+        # @return [any]
         #
         def call_app!(env = @env)
           __ext_debug { env }

@@ -95,7 +95,7 @@ class OrgsTest < ApplicationSystemTestCase
 
   public
 
-  # list_test
+  # Perform a test to list organizations visible to the test user.
   #
   # @param [Symbol]      action
   # @param [String, nil] title        Default: #INDEX_TITLE.
@@ -129,7 +129,7 @@ class OrgsTest < ApplicationSystemTestCase
     end
   end
 
-  # new_test
+  # Perform a test to create a new organization.
   #
   # @param [Boolean] direct
   # @param [Symbol]  meth             Calling test method.
@@ -191,7 +191,7 @@ class OrgsTest < ApplicationSystemTestCase
     end
   end
 
-  # edit_select_test
+  # Perform a test to select then modify an organization.
   #
   # @param [Boolean] direct
   # @param [Symbol]  meth             Calling test method.
@@ -250,7 +250,7 @@ class OrgsTest < ApplicationSystemTestCase
     end
   end
 
-  # delete_select_test
+  # Perform a test to select then remove an organization.
   #
   # @param [Boolean] direct
   # @param [Symbol]  meth             Calling test method.
@@ -319,7 +319,7 @@ class OrgsTest < ApplicationSystemTestCase
 
   protected
 
-  # Generate an Org :long_name.
+  # Generate a distinct organization name.
   #
   # @param [Hash] opt                 Test options
   #

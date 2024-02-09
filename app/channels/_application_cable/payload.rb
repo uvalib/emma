@@ -30,7 +30,7 @@ module ApplicationCable::Payload
 
   # Determine the serialized size of the given item.
   #
-  # @param [*] payload
+  # @param [any, nil] payload
   #
   # @return [Integer]
   #
@@ -40,7 +40,7 @@ module ApplicationCable::Payload
 
   # If the payload would cause a PG::InvalidValueException return its size.
   #
-  # @param [*] payload
+  # @param [any, nil] payload
   #
   # @return [Integer]                 The size that would result in failure.
   # @return [nil]                     The payload is not too large.
@@ -58,7 +58,7 @@ module ApplicationCable::Payload
 
   # template
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def template
     must_be_overridden
@@ -74,10 +74,10 @@ module ApplicationCable::Payload
   # Setup stored request values.
   #
   # @param [Hash, nil] target
-  # @param [*]         values
+  # @param [any, nil]  values
   # @param [Hash]      opt
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def set_payload(target = nil, values = nil, **opt)
     store, values = values ? [target, values] : [nil, target]
@@ -85,6 +85,7 @@ module ApplicationCable::Payload
     opt     = payload_normalize(opt, except: [])
     payload = extract_hash!(opt, *template.keys)
     if values.is_a?(store.class)
+      # noinspection RubyMismatchedArgumentType
       store.update(values)
     else
       store.update(template)
@@ -100,10 +101,10 @@ module ApplicationCable::Payload
 
   # payload_normalize
   #
-  # @param [*]                  value
+  # @param [any, nil]           value
   # @param [Array, Symbol, nil] except    Default: `#ignored_keys`.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   # === Implementation Notes
   # Message classes based on a Hash data item require #to_h in order to avoid

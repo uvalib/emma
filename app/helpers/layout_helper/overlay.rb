@@ -19,7 +19,7 @@ module LayoutHelper::Overlay
 
   # HTML elements common to all overlays.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash]
   #
   OVERLAY_ATTRIBUTES = {
     role:                         'none',

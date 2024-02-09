@@ -173,7 +173,7 @@ class LookupService::Request
 
   # Identifiers to lookup grouped by type.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def request
     table[:request]
@@ -225,11 +225,12 @@ class LookupService::Request
 
   # Create a new instance from *item* if it is not already an instance.
   #
-  # @param [LookupService::Request, *] item
+  # @param [any, nil] item            LookupService::Request or initializer arg
   #
   # @return [LookupService::Request]
   #
   def self.wrap(item)
+    # noinspection RubyMismatchedReturnType
     item.is_a?(self) ? item : new(item)
   end
 

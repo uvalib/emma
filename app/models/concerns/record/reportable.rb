@@ -108,7 +108,7 @@ module Record::Reportable
   #
   # @param [Symbol] col               Default: `#REPORT_COLUMN`.
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def get_report_column(*, col: REPORT_COLUMN, **)
     get_field_direct(col)
@@ -116,7 +116,7 @@ module Record::Reportable
 
   # Directly update the contents of the current record's #REPORT_COLUMN.
   #
-  # @param [*]           value
+  # @param [any, nil]    value
   # @param [Symbol, nil] meth         Default: `#calling_method`.
   # @param [Boolean]     fatal        If *true* raise on error.
   # @param [Symbol]      col          Default: `#REPORT_COLUMN`.

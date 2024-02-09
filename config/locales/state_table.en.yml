@@ -585,8 +585,8 @@ en:
 
           unretrieved:
             meth:       ~
-            #note_proc:  |
-            #  ->(action, **opt) { action.check_retrieved(**opt) }
+#           note_proc:  |
+#             ->(action, **opt) { action.check_retrieved(**opt) }
             next:       [retrieved, canceled, aborted]
 
           retrieved:

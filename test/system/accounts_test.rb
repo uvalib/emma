@@ -142,7 +142,7 @@ class AccountsTest < ApplicationSystemTestCase
 
   public
 
-  # list_test
+  # Perform a test to list accounts visible to the test user.
   #
   # @param [Symbol]      action
   # @param [String, nil] title        Default: #INDEX_TITLE.
@@ -176,7 +176,7 @@ class AccountsTest < ApplicationSystemTestCase
     end
   end
 
-  # new_test
+  # Perform a test to create a new account.
   #
   # @param [Boolean] direct
   # @param [Symbol]  meth             Calling test method.
@@ -241,7 +241,7 @@ class AccountsTest < ApplicationSystemTestCase
     end
   end
 
-  # edit_select_test
+  # Perform a test to select then modify an account.
   #
   # @param [Boolean] direct
   # @param [Symbol]  meth             Calling test method.
@@ -308,7 +308,7 @@ class AccountsTest < ApplicationSystemTestCase
     end
   end
 
-  # delete_select_test
+  # Perform a test to select then remove an account.
   #
   # @param [Boolean] direct
   # @param [Symbol]  meth             Calling test method.
@@ -374,7 +374,7 @@ class AccountsTest < ApplicationSystemTestCase
       wait_for_page menu_url
       assert_flash 'SUCCESS'
 
-      # The index page should still show one less record than before.
+      # On the index page, there should be one less record than before.
       visit index_url
       wait_for_page final_url
       assert_valid_page heading: INDEX_TITLE

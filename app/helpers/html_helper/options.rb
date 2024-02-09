@@ -97,8 +97,8 @@ module HtmlHelper::Options
 
   # Append additional line(s) options[:title].
   #
-  # @param [Hash{Symbol=>*}] options
-  # @param [Array<String>]   lines
+  # @param [Hash]          options
+  # @param [Array<String>] lines
   #
   # @return [Hash]                    The modified *options*.
   #

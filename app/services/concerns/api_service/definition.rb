@@ -22,7 +22,7 @@ module ApiService::Definition
   # method exposes it to the modules containing the methods which implement
   # individual API endpoints.
   #
-  # @param [Hash{Symbol=>Hash{Symbol=>Any}}] prop
+  # @param [Hash{Symbol=>Hash{Symbol=>any}}] prop
   #
   # @return [void]
   #

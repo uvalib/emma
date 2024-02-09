@@ -30,13 +30,13 @@ class AppSettings < AppGlobal
 
     # The value if acquired from ENV.
     #
-    # @return [*]
+    # @return [any, nil]
     #
     attr_reader env: untyped?
 
     # The value if acquired from a constant.
     #
-    # @return [*]
+    # @return [any, nil]
     #
     attr_reader obj: untyped?
 
@@ -60,8 +60,8 @@ class AppSettings < AppGlobal
     # @param [Hash]                opt
     #
     # @option opt [Symbol, String] :type
-    # @option opt [*]              :env
-    # @option opt [*]              :obj
+    # @option opt [any, nil]       :env
+    # @option opt [any, nil]       :obj
     # @option opt [Boolean]        :null
     # @option opt [Boolean]        :spacer
     #
@@ -162,7 +162,7 @@ class AppSettings < AppGlobal
 
     # Get global application settings values.
     #
-    # @return [Hash{Symbol=>*}]
+    # @return [Hash]
     #
     def get_item: (**untyped opt) -> symHash
 
@@ -171,7 +171,7 @@ class AppSettings < AppGlobal
     # @param [Hash]    values
     # @param [Boolean] replace        If *true* erase current settings first.
     #
-    # @return [Hash{Symbol=>*}]       The new settings.
+    # @return [Hash]                  The new settings.
     # @return [nil]                   If the write failed.
     #
     def set_item: (symHash values, ?replace: bool, **untyped opt) -> (symHash | nil)
@@ -180,7 +180,7 @@ class AppSettings < AppGlobal
     #
     # @param [Hash, nil] values
     #
-    # @return [Hash{Symbol=>*}]       The new settings.
+    # @return [Hash]                  The new settings.
     # @return [nil]                   If the write failed.
     #
     def reset_item: (?(symHash|nil) values) -> (symHash | nil)
@@ -213,9 +213,9 @@ class AppSettings < AppGlobal
 
     # Recursively prepare a single item.
     #
-    # @param [*] item
+    # @param [any, nil] item
     #
-    # @return [*]
+    # @return [any, nil]
     #
     def prepare
       :     (anyHash  item) -> symHash
@@ -237,9 +237,9 @@ class AppSettings < AppGlobal
 
     # Preserve symbols for resolution with #decode_symbols.
     #
-    # @param [*] item
+    # @param [any, nil] item
     #
-    # @return [*]
+    # @return [any, nil]
     #
     def encode_symbols
       :     (Symbol item) -> String
@@ -274,16 +274,16 @@ class AppSettings < AppGlobal
     #
     # @param [Symbol, String] name
     #
-    # @return [*]
+    # @return [any, nil]
     #
     def []: (Symbol|String name) -> (untyped | nil)
 
     # Assign an individual setting.
     #
     # @param [Symbol, String] name
-    # @param [*]              value
+    # @param [any, nil]       value
     #
-    # @return [*]
+    # @return [any, nil]
     #
     def []=: [T] (Symbol|String name, T value) -> T
 
@@ -304,8 +304,8 @@ class AppSettings < AppGlobal
     # @param [Hash] opt               Passed to #get_item.
     #
     # @yield [name, value] Operate on a configuration value.
-    # @yieldparam [Symbol] name
-    # @yieldparam [*]      value
+    # @yieldparam [Symbol]   name
+    # @yieldparam [any, nil] value
     #
     def each_pair: (**untyped opt) { (Symbol name, untyped value) -> void } -> void
 

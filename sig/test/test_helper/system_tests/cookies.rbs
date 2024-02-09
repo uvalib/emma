@@ -13,6 +13,8 @@ module TestHelper::SystemTests::Cookies
   #
   # @return [void]
   #
+  # @note Currently unused
+  #
   def show_cookies: () -> void
 
   # Get the current cookies from the last response.

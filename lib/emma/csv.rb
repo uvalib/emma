@@ -35,7 +35,7 @@ module Emma::Csv
 
   # Default CSV options used by #csv_parse.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash]
   #
   # @see CSV#DEFAULT_OPTIONS
   #
@@ -96,9 +96,9 @@ module Emma::Csv
 
   # force_utf8
   #
-  # @param [String, Array, Hash, *] item
+  # @param [any, nil] item            String, Array, Hash
   #
-  # @return [String, Array, Hash, *]  Replacement for *item*.
+  # @return [String, Array, Hash, any, nil]  Replacement for *item*.
   #
   def force_utf8(item)
     case item

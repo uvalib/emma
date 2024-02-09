@@ -50,7 +50,7 @@ module Record::Assignable
   #
   # @raise [RuntimeError]             If the type of *attr* is invalid.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   #--
   # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
@@ -219,11 +219,11 @@ module Record::Assignable
   # Normalize a specific field value.
   #
   # @param [Symbol]        key
-  # @param [*]             value
+  # @param [any, nil]      value
   # @param [String, Class] type
   # @param [Hash, nil]     errors
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def normalize_field(key, value, type, errors = nil)
     result =
@@ -267,7 +267,7 @@ module Record::Assignable
 
   # Indicate whether the value is valid for *type*.
   #
-  # @param [*]             v
+  # @param [any, nil]      v
   # @param [String, Class] type
   #
   def is_invalid?(v, type)
@@ -315,11 +315,11 @@ module Record::Assignable
 
   # normalize_single
   #
-  # @param [*]            v
+  # @param [any, nil]     v
   # @param [String,Class] type
   # @param [Hash]         opt         Passed to normalization method.
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def normalize_single(v, type, **opt)
     # noinspection RubyMismatchedArgumentType
@@ -336,7 +336,7 @@ module Record::Assignable
 
   # normalize_bool
   #
-  # @param [BoolType, String, *] v
+  # @param [any, nil] v               BoolType, String
   #
   # @return [true, false, nil]
   #
@@ -346,7 +346,7 @@ module Record::Assignable
 
   # normalize_number
   #
-  # @param [String, Numeric, *] v
+  # @param [any, nil] v               String, Numeric
   #
   # @return [Numeric, nil]
   #
@@ -358,7 +358,7 @@ module Record::Assignable
 
   # normalize_date
   #
-  # @param [Date, String, Numeric, *] v
+  # @param [any, nil] v               Date, String, Numeric
   #
   # @return [Date, String, nil]
   #
@@ -369,7 +369,7 @@ module Record::Assignable
 
   # normalize_datetime
   #
-  # @param [Date, String, Numeric, *] v
+  # @param [any, nil] v               Date, String, Numeric
   #
   # @return [DateTime, String, nil]
   #
@@ -380,9 +380,9 @@ module Record::Assignable
 
   # normalize_class
   #
-  # @param [*]     v
-  # @param [Class] type               EnumType or ApplicationRecord subclass
-  # @param [Hash]  opt                Passed to EnumType#cast method.
+  # @param [any, nil] v
+  # @param [Class]    type            EnumType or ApplicationRecord subclass
+  # @param [Hash]     opt             Passed to EnumType#cast method.
   #
   # @return [ApplicationRecord, EnumType, nil]
   #
@@ -399,8 +399,8 @@ module Record::Assignable
 
   # normalize_record
   #
-  # @param [*]     v
-  # @param [Class] type               EnumType subclass
+  # @param [any, nil] v
+  # @param [Class]    type            EnumType subclass
   #
   # @return [ApplicationRecord, nil]
   #
@@ -410,9 +410,9 @@ module Record::Assignable
 
   # normalize_enum
   #
-  # @param [*]     v
-  # @param [Class] type               EnumType subclass
-  # @param [Hash]  opt                Passed to #cast method.
+  # @param [any, nil] v
+  # @param [Class]    type            EnumType subclass
+  # @param [Hash]     opt             Passed to #cast method.
   #
   # @return [EnumType, nil]
   #
@@ -422,7 +422,7 @@ module Record::Assignable
 
   # normalize_json
   #
-  # @param [Array<Hash,String>, Hash, String, *] v
+  # @param [any, nil] v               Array<Hash,String>, Hash, String
   #
   # @return [Array<Hash>, Hash, nil]
   #
@@ -432,9 +432,9 @@ module Record::Assignable
 
   # normalize_text
   #
-  # @param [Array, String, Symbol, *] v
+  # @param [any, nil] v               Array, String, Symbol
   #
-  # @return [String, *]
+  # @return [String, any, nil]
   #
   def normalize_text(v, **)
     # noinspection RubyMismatchedReturnType
@@ -448,7 +448,7 @@ module Record::Assignable
 
   # normalize_copyright
   #
-  # @param [Date, String, Numeric, *] v
+  # @param [any, nil] v               Date, String, Numeric
   #
   # @return [String, nil]
   #
@@ -461,7 +461,7 @@ module Record::Assignable
 
   # normalize_file
   #
-  # @param [Hash, String, *] data
+  # @param [any, nil] data            Hash, String
   #
   # @return [Hash, nil]
   #

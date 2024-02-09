@@ -19,7 +19,7 @@ module SearchService::Status
 
   # A sample ISBN search and minimum number of expected results.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>any}]
   #
   SAMPLE_ISBN_SEARCH = {
     parameters: { q: 'interdimensional' },

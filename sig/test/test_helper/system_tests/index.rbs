@@ -90,5 +90,7 @@ module TestHelper::SystemTests::Index
   # @yieldparam [String]  title
   # @yieldreturn [void]
   #
+  # @note Currently unused
+  #
   def visit_each_show_page: (Symbol|String|Class|Model|nil model, ?entry_css: String|nil) ?{ (Integer, String) -> void } -> void
 end

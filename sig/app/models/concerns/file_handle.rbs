@@ -68,7 +68,7 @@ class FileHandle
   # @param [Array<*>]       args
   # @param [Proc]           blk
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def method_missing: ((Symbol|String) name, *untyped args) ?{ () -> untyped } -> untyped
 end

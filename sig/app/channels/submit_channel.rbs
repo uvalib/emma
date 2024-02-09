@@ -20,7 +20,7 @@ class SubmitChannel < ApplicationCable::Channel
 
   # Receive a submission request from the client.
   #
-  # @param [Hash{String=>*}] payload
+  # @param [Hash{String=>any,nil}] payload
   #
   # @return [void]
   #
@@ -31,7 +31,7 @@ class SubmitChannel < ApplicationCable::Channel
 
   # Receive a submission control request from the client.
   #
-  # @param [Hash{String=>*}] payload
+  # @param [Hash{String=>any,nil}] payload
   #
   # @return [void]
   #
@@ -42,20 +42,20 @@ class SubmitChannel < ApplicationCable::Channel
 
   # Invoked from another thread to push an initial response back to the client.
   #
-  # @param [Hash{Symbol=>*}, Array<Class>] payload
-  # @param [Hash]                          opt
+  # @param [Hash, Array<Class>] data  Payload data
+  # @param [Hash]               opt
   #
   # @option opt [Symbol]  :meth       Passed to #stream_send.
   # @option opt [Boolean] :fatal      Passed to #stream_send.
   #
   # @return [void]
   #
-  def self.initial_response: ((symHash|Array[Class]) payload, **untyped opt) -> void
+  def self.initial_response: ((symHash|Array[Class]) data, **untyped opt) -> void
 
   # Invoked from another thread to push acquired data back to the client.
   #
-  # @param [Hash{Symbol=>*}] payload
-  # @param [Hash]            opt
+  # @param [Hash] data                Payload data.
+  # @param [Hash] opt
   #
   # @option opt [Symbol]  :meth       Passed to #stream_send.
   # @option opt [Boolean] :fatal      Passed to #stream_send.
@@ -65,12 +65,12 @@ class SubmitChannel < ApplicationCable::Channel
   # @see file:javascripts/shared/cable-channel.js    *response()*
   # @see file:javascripts/channels/submit-channel.js *_createResponse()*
   #
-  def self.final_response: (symHash payload, **untyped opt) -> void
+  def self.final_response: (symHash data, **untyped opt) -> void
 
   # Invoked from another thread to push acquired data back to the client.
   #
-  # @param [Hash{Symbol=>*}] payload
-  # @param [Hash]            opt
+  # @param [Hash] data                Payload data
+  # @param [Hash] opt
   #
   # @option opt [Symbol]  :meth       Passed to #stream_send.
   # @option opt [Boolean] :fatal      Passed to #stream_send.
@@ -80,12 +80,12 @@ class SubmitChannel < ApplicationCable::Channel
   # @see file:javascripts/shared/cable-channel.js    *response()*
   # @see file:javascripts/channels/submit-channel.js *_createResponse()*
   #
-  def self.step_response: (symHash payload, **untyped opt) -> void
+  def self.step_response: (symHash data, **untyped opt) -> void
 
   # Invoked from another thread to push acquired data back to the client.
   #
-  # @param [Hash{Symbol=>*}] payload
-  # @param [Hash]            opt
+  # @param [Hash] data                Payload data.
+  # @param [Hash] opt
   #
   # @option opt [Symbol]  :meth       Passed to #stream_send.
   # @option opt [Boolean] :fatal      Passed to #stream_send.
@@ -95,5 +95,5 @@ class SubmitChannel < ApplicationCable::Channel
   # @see file:javascripts/shared/cable-channel.js    *response()*
   # @see file:javascripts/channels/submit-channel.js *_createResponse()*
   #
-  def self.control_response: (symHash payload, **untyped opt) -> void
+  def self.control_response: (symHash data, **untyped opt) -> void
 end

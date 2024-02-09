@@ -109,7 +109,7 @@ module LookupService::Crossref::Properties
 
   # select_list
   #
-  # @param [Array<Symbol>]
+  # @param [Array<Symbol>] attribute
   #
   # @return [Array<String>]
   #

@@ -121,7 +121,7 @@ class FileHandle
     # @param [Array<*>]       args
     # @param [Proc]           blk
     #
-    # @return [*]
+    # @return [any, nil]
     #
     def method_missing(name, *args, &blk)
       __debug_handle(*args, leader: ("#{@handle.class} %-4s" % name))

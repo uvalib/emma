@@ -376,7 +376,7 @@ class SearchCall < ApplicationRecord
   # @param [SearchCall, Hash, ActionController::Parameters, nil] attr
   # @param [Hash]                                                opt
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   # @see #map_parameters
   #

@@ -46,7 +46,7 @@ module ManifestItemConcern
   #
   # @raise [RuntimeError]             If both :src and :data are present.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   # @see ImportConcern#fetch_data
   #
@@ -67,7 +67,7 @@ module ManifestItemConcern
 
   # Get URL parameters relevant to the current operation.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def current_get_params
     super do |prm|
@@ -79,7 +79,7 @@ module ManifestItemConcern
   # Extract POST parameters that are usable for creating/updating a Manifest
   # instance.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def current_post_params
     super do |prm|
@@ -128,8 +128,7 @@ module ManifestItemConcern
   #
   # @param [String, ActionDispatch::Request, nil] data
   #
-  # @return [Array<Hash{Symbol=>*}>]
-  # @return [nil]
+  # @return [Array<Hash>, nil]
   #
   def from_json(data)
     super&.map! { |item| import_transform!(item) }
@@ -139,8 +138,7 @@ module ManifestItemConcern
   #
   # @param [String, ActionDispatch::Request, nil] data
   #
-  # @return [Array<Hash{Symbol=>*}>]
-  # @return [nil]
+  # @return [Array<Hash>, nil]
   #
   def from_csv(data)
     super&.map! { |item| import_transform!(item) }
@@ -154,9 +152,9 @@ module ManifestItemConcern
 
   # Transform import data into ManifestItem field values.
   #
-  # @param [Hash{Symbol=>*}] item
+  # @param [Hash] item
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def import_transform!(item)
     normalize_import_name!(item)
@@ -165,9 +163,9 @@ module ManifestItemConcern
 
   # Transform ManifestItem field values for export.
   #
-  # @param [Hash{Symbol=>*}] item
+  # @param [Hash] item
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def export_transform!(item)
     normalize_export_name!(item)
@@ -192,9 +190,9 @@ module ManifestItemConcern
   # Transform received data to allow some flexibility in the naming of import
   # columns by mapping into the expected field names.
   #
-  # @param [Hash{Symbol=>*}] item
+  # @param [Hash] item
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def normalize_import_name!(item)
     item.transform_keys! { |k| IMPORT_FIELD[k] || k }
@@ -214,9 +212,9 @@ module ManifestItemConcern
   # to clash if exported data is intermingled with fields from other systems
   # and then re-imported.
   #
-  # @param [Hash{Symbol=>*}] item
+  # @param [Hash] item
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def normalize_export_name!(item)
     item.transform_keys! { |k| EXPORT_FIELD[k] || k }
@@ -246,12 +244,12 @@ module ManifestItemConcern
 
   # Retrieve the indicated ManifestItem for the '/edit' model form.
   #
-  # @param [ManifestItem, *] item     Def.: record for ModelConcern#identifier.
-  # @param [Hash]            opt      Passed to super
+  # @param [ManifestItem,any,nil] item  Def.: rec for ModelConcern#identifier.
+  # @param [Hash]                 opt   Passed to super
   #
-  # @raise [Record::SubmitError]      Record could not be found.
+  # @raise [Record::SubmitError]        Record could not be found.
   #
-  # @return [ManifestItem, nil]       An existing persisted ManifestItem.
+  # @return [ManifestItem, nil]         An existing persisted ManifestItem.
   #
   def edit_record(item = nil, **opt)
     # noinspection RubyMismatchedReturnType
@@ -289,8 +287,8 @@ module ManifestItemConcern
 
   # Retrieve the indicated record(s) for the '/delete' page.
   #
-  # @param [*]    items               To #search_records
-  # @param [Hash] prm                 Default: `#current_params`
+  # @param [any, nil] items           To #search_records
+  # @param [Hash]     prm             Default: `#current_params`
   #
   # @raise [RangeError]               If :page is not valid.
   #
@@ -419,7 +417,7 @@ module ManifestItemConcern
   # @param [Symbol, nil]       meth         Caller (for diagnostics).
   # @param [Hash]              opt          Field values.
   #
-  # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
+  # @return [Array<(Integer, Hash{String=>any,nil}, Array<String>)>]
   #
   # @note If update_time is *false* the associated record must already exist.
   #
@@ -485,7 +483,7 @@ module ManifestItemConcern
 
   # bulk_new_manifest_items
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def bulk_new_manifest_items
     prm = current_params
@@ -515,7 +513,7 @@ module ManifestItemConcern
 
   # bulk_edit_manifest_items
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def bulk_edit_manifest_items
     prm = current_params
@@ -545,7 +543,7 @@ module ManifestItemConcern
 
   # bulk_delete_manifest_items
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def bulk_delete_manifest_items
     prm = current_params
@@ -634,7 +632,7 @@ module ManifestItemConcern
   #
   # @param [ActiveRecord::Result] result
   #
-  # @return [Array<Hash{Symbol=>*}>]
+  # @return [Array<Hash>]
   #
   def bulk_returning(result)
     types = result.column_types
@@ -658,7 +656,7 @@ module ManifestItemConcern
   # Generate a response to a POST.
   #
   # @param [Symbol, Integer, Exception, nil] status
-  # @param [*]                               item
+  # @param [any, nil]                        item
   # @param [Hash]                            opt
   #
   # @return [void]
@@ -717,8 +715,8 @@ module ManifestItemConcern
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [*]    list                Default: `paginator.page_items`
-  # @param [Hash] opt
+  # @param [any, nil] list            Default: `paginator.page_items`
+  # @param [Hash]     opt
   #
   # @return [Hash{Symbol=>Hash}]
   #
@@ -729,10 +727,10 @@ module ManifestItemConcern
 
   # Response values for de-serializing the show page to JSON or XML.
   #
-  # @param [Model, Hash, *] item
-  # @param [Hash]           opt
+  # @param [any, nil] item            Model, Hash
+  # @param [Hash]     opt
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def show_values(item = @item, **opt)
     if item.is_a?(Model) || item.is_a?(Hash)

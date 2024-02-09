@@ -54,7 +54,7 @@ module LookupService::Common
 
   # Analyze a string into individual items.
   #
-  # @param [Array, String, PublicationIdentifier, *] item
+  # @param [any, nil] item            Array, String, PublicationIdentifier
   #
   # @return [Array<String,PublicationIdentifier>]
   #

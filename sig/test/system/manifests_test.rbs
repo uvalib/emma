@@ -13,7 +13,7 @@ class ManifestsTest < ApplicationSystemTestCase
 
   @user: User
 
-  # list_test
+  # Perform a test to list bulk operation manifests visible to the test user.
   #
   # @param [Symbol]       action
   # @param [String]       title
@@ -26,7 +26,7 @@ class ManifestsTest < ApplicationSystemTestCase
   #
   def list_test: (action: Symbol, title: String, total: Integer|nil, ?redir_url: String|nil, ?meth: Symbol|nil, **untyped opt) -> void
 
-  # new_test
+  # Perform a test to create a new bulk operation manifest.
   #
   # @param [Boolean] direct
   # @param [Symbol]  meth             Calling test method.
@@ -36,7 +36,7 @@ class ManifestsTest < ApplicationSystemTestCase
   #
   def new_test: (direct: bool, ?meth: Symbol|nil, **untyped opt) -> void
 
-  # edit_select_test
+  # Perform a test to select then modify a bulk operation manifest.
   #
   # @param [Boolean] direct
   # @param [Symbol]  meth             Calling test method.
@@ -46,7 +46,7 @@ class ManifestsTest < ApplicationSystemTestCase
   #
   def edit_select_test: (direct: bool, ?meth: Symbol|nil, **untyped opt) -> void
 
-  # delete_select_test
+  # Perform a test to select then remove a bulk operation manifest.
   #
   # @param [Boolean] direct
   # @param [Symbol]  meth             Calling test method.
@@ -56,7 +56,7 @@ class ManifestsTest < ApplicationSystemTestCase
   #
   def delete_select_test: (direct: bool, ?meth: Symbol|nil, **untyped opt) -> void
 
-  # Generate a Manifest :name.
+  # Generate a distinct Manifest name.
   #
   # @param [Hash] opt                 Test options
   #

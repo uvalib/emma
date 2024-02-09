@@ -39,9 +39,9 @@ module Record::Describable
   # If the name is capitalized or all uppercase (e.g. "%{Name}" or "%{NAME}")
   # then the interpolated value will follow the same case.
   #
-  # @param [String, *] text
-  # @param [Model, *]  model
-  # @param [Hash]      opt
+  # @param [any, nil] text
+  # @param [any, nil] model           Model
+  # @param [Hash]     opt
   #
   # @return [String]                  A (possibly modified) copy of *text*.
   #
@@ -68,13 +68,14 @@ module Record::Describable
         value %= format if format
         [key, value]
       }.compact.to_h.presence
+    # noinspection RubyMismatchedReturnType
     terms ? (text % terms) : text
   end
 
   # Process a lambda or method reference and return a final result string.
   #
   # @param [String, Symbol, Proc, nil] note
-  # @param [Model, *]                  model
+  # @param [any, nil]                  model  Model
   # @param [Hash]                      opt
   #
   # @option opt [String, Symbol, Proc] :note  Only used if *note* is *nil*.
@@ -86,6 +87,7 @@ module Record::Describable
   #
   def process_note(note = nil, model, **opt)
     opt_note = opt.delete(:note)
+    # noinspection RubyMismatchedArgumentType
     case (note ||= opt_note)
       when nil    then return
       when String then # Use *note* as-is.
@@ -107,7 +109,7 @@ module Record::Describable
   #
   # E.g.: The method #describe_repo is added as { repo: :describe_repo }.
   #
-  # @param [Class, Module, *] mod     Default self or self.class.
+  # @param [any, nil] mod             Default self or self.class.
   #
   # @return [Hash{Symbol=>Symbol}]
   #
@@ -152,7 +154,7 @@ module Record::Describable
 
     # A replacement value for '%{id}' in #sprintf formats.
     #
-    # @param [Model, *] model
+    # @param [any, nil] model         Model
     # @param [Hash]     opt
     #
     # @return [String, nil]
@@ -166,7 +168,7 @@ module Record::Describable
 
     # A replacement value for '%{repo}' or '%{repository}' in #sprintf formats.
     #
-    # @param [Model, *] model
+    # @param [any, nil] model         Model
     # @param [Hash]     opt
     #
     # @return [String, nil]
@@ -181,7 +183,7 @@ module Record::Describable
 
     # A replacement value for '%{sid}' in #sprintf formats.
     #
-    # @param [Model, *] model
+    # @param [any, nil] model         Model
     # @param [Hash]     opt
     #
     # @return [String, nil]
@@ -195,7 +197,7 @@ module Record::Describable
 
     # A replacement value for '%{submission}' in #sprintf formats.
     #
-    # @param [Model, *] model
+    # @param [any, nil] model         Model
     # @param [Hash]     opt
     #
     # @return [String, nil]
@@ -210,7 +212,7 @@ module Record::Describable
 
     # A replacement value for '%{user}' in #sprintf formats.
     #
-    # @param [Model, *] model
+    # @param [any, nil] model         Model
     # @param [Hash]     _opt          Unused.
     #
     # @return [String, nil]
@@ -223,7 +225,7 @@ module Record::Describable
 
     # A replacement value for '%{user_id}' in #sprintf formats.
     #
-    # @param [Model, *] model
+    # @param [any, nil] model         Model
     # @param [Hash]     _opt          Unused.
     #
     # @return [String, nil]
@@ -245,7 +247,7 @@ module Record::Describable
     # A textual description of the type of the Model instance for use as a
     # replacement value for '%{text}' in #sprintf formats.
     #
-    # @param [Model, *] model
+    # @param [any, nil] model         Model
     # @param [Hash]     opt
     #
     # @return [String]
@@ -260,7 +262,7 @@ module Record::Describable
 
     # A textual description of the status of the Model instance.
     #
-    # @param [Model, *] model
+    # @param [any, nil] model         Model
     # @param [Hash]     opt
     #
     # @return [String]

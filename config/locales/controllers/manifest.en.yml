@@ -65,7 +65,7 @@ en:
           - edit_select
           - delete_select
           - remit_select
-         #- admin
+#         - admin
 
       # =======================================================================
       # Controls

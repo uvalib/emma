@@ -51,15 +51,11 @@ module Record::Searchable
   #
   # @type [Array<Symbol>]
   #
-  # @note From Upload::SearchMethods#SEARCH_RECORDS_OPTIONS
-  #
   SEARCH_RECORDS_OPTIONS: symArray
 
   # URL parameters that are not directly used in searches.
   #
   # @type [Array<Symbol>]
-  #
-  # @note From Upload::SearchMethods#NON_SEARCH_PARAMS
   #
   NON_SEARCH_PARAMS: symArray
 
@@ -87,15 +83,11 @@ module Record::Searchable
   #
   # @see ActiveRecord::Relation#where
   #
-  # @note From Upload::SearchMethods#search_records
-  #
   def search_records: (*(String|Integer|Model|Array[String|Integer|Model]|nil) items, **untyped opt) -> Paginator::Result
 
   # Local options consumed by #get_relation.
   #
   # @type [Array<Symbol>]
-  #
-  # @note From Upload::SearchMethods#GET_RELATION_OPTIONS
   #
   GET_RELATION_OPTIONS: symArray
 
@@ -115,8 +107,6 @@ module Record::Searchable
   # @return [ActiveRecord::Relation]
   #
   # @see Record::EmmaIdentification#expand_ids
-  #
-  # @note From Upload::SearchMethods#get_relation
   #
   def get_relation: (*(String|Integer|Model|Array[String|Integer|Model]|nil) items, **untyped opt) -> ActiveRecord::Relation
 
@@ -165,14 +155,12 @@ module Record::Searchable
   # (YYYYMMDD), a month (YYYYMM), or a year (YYYY) -- with or without date
   # separator punctuation.
   #
-  # @param [*] value
+  # @param [any, nil] value
   #
   # @return [nil,    false, false]    If *value* is not a date string.
   # @return [String, false, false]    If *value* specifies a day.
   # @return [String, true,  false]    If *value* specifies a month.
   # @return [String, false, true]     If *value* specifies a year
-  #
-  # @note From Upload::SearchMethods#day_string
   #
   def day_string
     : (String  value) -> ([String, bool, bool] | [nil, false, false])

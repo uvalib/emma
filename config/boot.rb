@@ -73,7 +73,7 @@ FALSE_VALUES = ['false', 'off', 'no', FALSE_DIGIT].compact.freeze
 
 # Indicate whether the item represents an explicit *true* value.
 #
-# @param [Boolean, String, Symbol, *] value
+# @param [any, nil] value             Boolean, String, Symbol
 #
 def true?(value)
   case (arg = value)
@@ -89,7 +89,7 @@ end
 
 # Indicate whether the item represents an explicit *false* value.
 #
-# @param [Boolean, String, Symbol, *] value
+# @param [any, nil] value             Boolean, String, Symbol
 #
 def false?(value)
   case (arg = value)
@@ -105,7 +105,7 @@ end
 
 # Produce JSON for use with "assets.js.erb".
 #
-# @param [String, Hash, Array, *] arg
+# @param [any, nil] arg               String, Hash, Array
 #
 # @return [String]
 #
@@ -210,7 +210,7 @@ module GlobalProperty
     v ||= !!ENV['IN_PASSENGER']
     v ||= $0.to_s.start_with?('spring app')
     v ||= $0.to_s.end_with?('rails', 'spring') &&
-      $*.intersect?(%w[-b -p server runner])
+          $*.intersect?(%w[-b -p server runner])
     v &&= !$*.intersect?(INFO_ARGS)
     v &&= !!defined?(APP_PATH) unless ENV['RAILS_ENV'] == 'test'
     @in_rails = v
@@ -221,7 +221,7 @@ module GlobalProperty
     v   = (ENV['RUBYMINE_CONFIG'] == 'rake') # desktop only
     v ||= $0.to_s.end_with?('rake')
     v ||= $0.to_s.end_with?('rails') && !rails_application? &&
-      !$*.reject { |arg| arg.match(/^(-.*|new|console|generate)$/) }.empty?
+          !$*.reject { |arg| arg.match(/^(-.*|new|console|generate)$/) }.empty?
     v &&= !$*.intersect?(INFO_ARGS)
     @in_rake = v
   end

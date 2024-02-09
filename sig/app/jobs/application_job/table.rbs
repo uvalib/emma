@@ -16,7 +16,7 @@ class ApplicationJob::Table < Concurrent::Hash
   # @param [String]    job_id
   # @param [Hash, nil] data
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def []=
     : (String job_id, nil     data) -> nil

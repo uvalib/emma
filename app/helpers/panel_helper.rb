@@ -19,7 +19,7 @@ module PanelHelper
 
   # Configuration for panel control properties.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash]
   #
   PANEL_CTRL_CFG = config_section('emma.panel.control').deep_freeze
 

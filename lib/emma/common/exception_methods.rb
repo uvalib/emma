@@ -54,7 +54,7 @@ module Emma::Common::ExceptionMethods
 
   # Report on the class associated with "self".
   #
-  # @param [*] this                   Default: self.
+  # @param [any, nil] this            Default: self.
   #
   # @return [Class]
   #
@@ -67,7 +67,7 @@ module Emma::Common::ExceptionMethods
   # Indicate whether *error* is an exception which matches or is derived from
   # one of the exceptions listed in #INTERNAL_EXCEPTION.
   #
-  # @param [Exception, *] error
+  # @param [any, nil] error           Exception
   #
   def internal_exception?(error)
     ancestors = self_class(error).ancestors || []
@@ -77,7 +77,7 @@ module Emma::Common::ExceptionMethods
   # Indicate whether *error* is an exception which is not (derived from) one of
   # the exceptions listed in #INTERNAL_EXCEPTION.
   #
-  # @param [Exception, *] error
+  # @param [any, nil] error           Exception
   #
   # @note Currently unused.
   #
@@ -88,7 +88,7 @@ module Emma::Common::ExceptionMethods
 
   # Re-raise an exception which indicates a likely programming error.
   #
-  # @param [Exception, *] error
+  # @param [any, nil] error           Exception
   #
   # @return [nil]
   #
@@ -97,7 +97,7 @@ module Emma::Common::ExceptionMethods
   #
   def re_raise_if_internal_exception(error)
     return unless internal_exception?(error)
-    # noinspection RailsParamDefResolve
+    # noinspection RailsParamDefResolve, RubyMismatchedArgumentType
     if application_deployed? && try(:request)&.format&.html?
       Log.warn { "CREATING INTERNAL EXCEPTION #{error}" }
     else

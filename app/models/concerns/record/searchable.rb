@@ -88,15 +88,11 @@ module Record::Searchable
   #
   # @type [Array<Symbol>]
   #
-  # @note From Upload::SearchMethods#SEARCH_RECORDS_OPTIONS
-  #
   SEARCH_RECORDS_OPTIONS = %i[offset limit page groups sort].freeze
 
   # URL parameters that are not directly used in searches.
   #
   # @type [Array<Symbol>]
-  #
-  # @note From Upload::SearchMethods#NON_SEARCH_PARAMS
   #
   NON_SEARCH_PARAMS =
     (SEARCH_RECORDS_OPTIONS + Paginator::NON_SEARCH_KEYS)
@@ -125,8 +121,6 @@ module Record::Searchable
   # @return [Paginator::Result]
   #
   # @see ActiveRecord::Relation#where
-  #
-  # @note From Upload::SearchMethods#search_records
   #
   def search_records(*items, **opt)
     result = Paginator::Result.new
@@ -185,8 +179,6 @@ module Record::Searchable
   #
   # @type [Array<Symbol>]
   #
-  # @note From Upload::SearchMethods#GET_RELATION_OPTIONS
-  #
   GET_RELATION_OPTIONS = %i[id_key sid_key].freeze
 
   # Generate an ActiveRecord relation for records specified by either
@@ -205,8 +197,6 @@ module Record::Searchable
   # @return [ActiveRecord::Relation]
   #
   # @see Record::EmmaIdentification#expand_ids
-  #
-  # @note From Upload::SearchMethods#get_relation
   #
   def get_relation(*items, **opt)
     terms  = []
@@ -411,14 +401,12 @@ module Record::Searchable
   # (YYYYMMDD), a month (YYYYMM), or a year (YYYY) -- with or without date
   # separator punctuation.
   #
-  # @param [*] value
+  # @param [any, nil] value
   #
   # @return [nil,    false, false]    If *value* is not a date string.
   # @return [String, false, false]    If *value* specifies a day.
   # @return [String, true,  false]    If *value* specifies a month.
   # @return [String, false, true]     If *value* specifies a year
-  #
-  # @note From Upload::SearchMethods#day_string
   #
   def day_string(value)
     day = month = year = nil

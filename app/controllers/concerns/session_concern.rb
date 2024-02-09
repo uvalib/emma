@@ -59,7 +59,7 @@ module SessionConcern
   #
   # @param [String, nil] path         Default: `#after_sign_in_path_for`.
   # @param [User, nil]   user         Default: `#resource`.
-  # @param [*]           message      Passed to #set_flash_notice.
+  # @param [any, nil]    message      Passed to #set_flash_notice.
   # @param [Hash]        opt          Passed to #set_flash_notice.
   #
   def auth_success_redirect(path = nil, user: nil, message: nil, **opt)
@@ -72,7 +72,7 @@ module SessionConcern
   #
   # @param [String, nil] path         Default: `#after_sign_out_path_for`.
   # @param [User, nil]   user         Default: `#resource`.
-  # @param [*]           message      Passed to #set_flash_notice.
+  # @param [any, nil]    message      Passed to #set_flash_notice.
   # @param [Hash]        opt          Passed to #set_flash_alert.
   #
   def auth_failure_redirect(path = nil, user: nil, message: nil, **opt)
@@ -86,7 +86,7 @@ module SessionConcern
 
   # Set `flash[:notice]` based on the current action and user name.
   #
-  # @param [String, *]               message
+  # @param [any, nil]                message  String
   # @param [Symbol, nil]             action   Default: `params[:action]`.
   # @param [String, Hash, User, nil] user     Default: `current_user`.
   # @param [Hash]                    opt      Passed to #flash_notice.
@@ -100,7 +100,7 @@ module SessionConcern
 
   # Set `flash[:alert]` based on the current action and user name.
   #
-  # @param [String, *]               message
+  # @param [any, nil]                message  String
   # @param [Symbol, nil]             action   Default: `params[:action]`.
   # @param [String, Hash, User, nil] user     Default: `current_user`.
   # @param [Hash]                    opt      Passed to #flash_alert.
@@ -141,7 +141,7 @@ module SessionConcern
   # @param [Time]   time              Default: `Time.now`.
   # @param [String] path              Default: `request.path`.
   #
-  # @return [Hash{String=>*}, nil]
+  # @return [Hash{String=>any,nil}, nil]
   #
   def last_operation_update(time: nil, path: nil)
     return if (params[:controller] == 'search') && (params[:action] == 'image')
@@ -201,24 +201,24 @@ module SessionConcern
 
   # Substitution for a Hash-valued parameter in #last_operation['params'].
   #
-  # @param [String]
+  # @type [String]
   #
   HASH_PLACEHOLDER = '{...}'
 
   # Substitution for an Array-valued parameter in #last_operation['params'].
   #
-  # @param [String]
+  # @type [String]
   #
   ARRAY_PLACEHOLDER = '[...]'
 
   # Since #last_operation parameters are only for dev purposes, this method is
   # used to reduce the reported value in order to avoid CookieOverflow.
   #
-  # @param [Hash{Symbol=>*}] h
-  # @param [Integer]         max      Maximum size of representation.
-  # @param [Integer]         p_max    Max representation of individual param.
+  # @param [Hash]    h
+  # @param [Integer] max              Maximum size of representation.
+  # @param [Integer] p_max            Max representation of individual param.
   #
-  # @return [Hash{String=>*}]
+  # @return [Hash{String=>any,nil}]
   #
   def abbreviate_params!(h, max: MAX_LAST_OP_PARAMS, p_max: MAX_LAST_OP_PARAM)
     k_chars = 6 # extra characters for JSON key representation ('"" => ')
@@ -241,11 +241,14 @@ module SessionConcern
 
   # abbreviate_param
   #
-  # @param [*]       item
-  # @param [Integer] p_max            Maximum size of representation.
+  # @param [any, nil] item
+  # @param [Integer]  p_max           Maximum size of representation.
   #
-  # @return [*]
+  # @return [any, nil]
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def abbreviate_param(item, p_max: MAX_LAST_OP_PARAM)
     item = item.to_s if item.is_a?(Symbol)
     case item
@@ -288,7 +291,7 @@ module SessionConcern
   # @param [CanCan::AccessDenied] exception
   #
   # @return [nil]                     If not handled.
-  # @return [*]                       Otherwise.
+  # @return [any, nil]                Otherwise.
   #
   def access_denied_handler(exception)
     __debug_exception('RESCUE_FROM', exception)
@@ -308,7 +311,7 @@ module SessionConcern
   # @param [ExecError, Faraday::Error] exception
   #
   # @return [nil]                     If not handled.
-  # @return [*]                       Otherwise.
+  # @return [any, nil]                Otherwise.
   #
   def connection_error_handler(exception)
     __debug_exception('RESCUE_FROM', exception)
@@ -326,7 +329,7 @@ module SessionConcern
   # @param [Exception] exception
   #
   # @return [nil]                     If not handled.
-  # @return [*]                       Otherwise.
+  # @return [any, nil]                Otherwise.
   #
   def fallback_error_handler(exception)
     __debug_exception('RESCUE_FROM', exception, trace: true)

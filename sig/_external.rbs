@@ -505,9 +505,9 @@ class Hash[unchecked out K, unchecked out V] < Object
     : ()                    -> Enumerator[V, self]
     | () { (V) -> untyped } -> Hash[K, untyped]
 
-  def slice!: (*untyped keys) -> self
+  def slice!: (*untyped keys) -> Hash[K, V]
 
-  def extract!: (*untyped keys) -> self
+  def extract!: (*untyped keys) -> Hash[K, V]
 end
 
 module Hashie
@@ -546,7 +546,10 @@ end
 module Kernel
 
   def self?.__dir__: () -> String
+
   def self?.__method__: () -> Symbol
+
+  def class: () -> Class
 
 end
 

@@ -31,10 +31,10 @@ class IngestService::Error < ApiService::Error
     # Extract message(s) from a response body that has been determined to be
     # JSON.
     #
-    # @param [Hash, *] src
+    # @param [any, nil] src           Hash
     #
     # @return [Array<String>]         If *json* was a Hash.
-    # @return [Array<Any>]            Otherwise.
+    # @return [Array<any>]            Otherwise.
     #
     # @see #parse_create_errors
     # @see #parse_delete_errors

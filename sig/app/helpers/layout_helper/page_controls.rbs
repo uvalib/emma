@@ -95,7 +95,7 @@ module LayoutHelper::PageControls
 
   # model_class
   #
-  # @param [Symbol, String, Class, *] ctrlr
+  # @param [any, nil] ctrlr           Symbol, String, Class
   #
   # @return [Class]
   # @return [nil]

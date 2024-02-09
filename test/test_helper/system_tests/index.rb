@@ -186,6 +186,8 @@ module TestHelper::SystemTests::Index
   # @yieldparam [String]  title
   # @yieldreturn [void]
   #
+  # @note Currently unused
+  #
   def visit_each_show_page(model, entry_css: nil, &blk)
     ctrlr       = controller_name(model)
     entry_css ||= property(ctrlr, :index, :entry_css)

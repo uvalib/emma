@@ -2,7 +2,7 @@ module ActiveSupport
   module LogSubscriberExt
     # Also check whether log output is globally suppressed.
     #
-    # @param [*] event
+    # @param [any, nil] event
     #
     def silenced?: (untyped event) -> bool
   end

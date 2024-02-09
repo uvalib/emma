@@ -339,8 +339,8 @@ class Ability
   # Always *false* if *action* is *nil*.
   #
   # @param [Symbol, String, nil] action
-  # @param [Object, Class, *]    subject
-  # @param [*]                   extra_args
+  # @param [any, nil]            subject      Object, Class
+  # @param [any, nil]            extra_args
   #
   def can?
     : (nil           action, Object|Class|untyped subject, *untyped extra_args) -> false
@@ -351,8 +351,8 @@ class Ability
   # Always *true* if *action* is *nil*.
   #
   # @param [Symbol, String, nil] action
-  # @param [Object, Class, *]    subject
-  # @param [*]                   extra_args
+  # @param [any, nil]            subject      Object, Class
+  # @param [any, nil]            extra_args
   #
   def cannot?
     : (nil           action, Object|Class|untyped subject, *untyped extra_args) -> true
@@ -361,7 +361,7 @@ class Ability
   # Add a rule allowing an action.
   #
   # @param [Symbol,String,Array,nil] action
-  # @param [*]                       subject
+  # @param [any, nil]                subject
   # @param [Array]                   conditions
   #
   # @return [void]
@@ -371,7 +371,7 @@ class Ability
   # Add a rule forbidding an action.
   #
   # @param [Symbol,String,Array,nil] action
-  # @param [*]                       subject
+  # @param [any, nil]                subject
   # @param [Array]                   conditions
   #
   # @return [void]
@@ -386,7 +386,7 @@ class Ability
   # only able to operate on records that match the constraint criteria.
   #
   # @param [Symbol, String, nil] action
-  # @param [*]                   subject
+  # @param [any, nil]            subject
   #
   # @return [ActiveRecord::Relation, Hash, Proc, nil]
   #
@@ -397,7 +397,7 @@ class Ability
   # Normalize values for use with #can? and #cannot?.
   #
   # @param [Symbol,String,Array,nil] action
-  # @param [*]                       subject
+  # @param [any, nil]                subject
   # @param [Array]                   conditions
   #
   # @return [Array<(*,*,*)>]
@@ -442,7 +442,7 @@ class Ability
 
   # The URL parameters which imply operations on a specific model instance.
   #
-  # @param [Object, Class, *] model
+  # @param [any, nil] model           Object, Class
   #
   # @return [Array<Symbol>]
   #
@@ -452,7 +452,7 @@ class Ability
 
   # Return the organization represented by *rec*.
   #
-  # @param [*]           rec
+  # @param [any, nil]    rec
   # @param [Symbol, nil] caller       For diagnostics.
   #
   # @return [Integer, nil]

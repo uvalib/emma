@@ -21,7 +21,7 @@ class ApiCachingMiddleware < Faraday::Middleware
 
   # Default options.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>any}]
   #
   DEFAULT_OPTIONS =
     CachingMiddleware::Defaults::DEFAULT_OPTIONS.merge(

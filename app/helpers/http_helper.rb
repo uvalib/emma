@@ -49,8 +49,8 @@ module HttpHelper
   # Indicate whether the value represents an HTTP status code which is part of
   # the given named range.
   #
-  # @param [Symbol]             range
-  # @param [Symbol, Integer, *] code
+  # @param [Symbol]   range
+  # @param [any, nil] code            Symbol, Integer
   #
   def http_status?(range, code)
     entry = error = nil
@@ -71,7 +71,7 @@ module HttpHelper
 
   # Indicate whether the value represents an HTTP 1xx status.
   #
-  # @param [Symbol, Integer, *] code
+  # @param [any, nil] code            Symbol, Integer
   #
   # @note Currently unused.
   #
@@ -81,7 +81,7 @@ module HttpHelper
 
   # Indicate whether the value represents an HTTP 2xx status.
   #
-  # @param [Symbol, Integer, *] code
+  # @param [any, nil] code            Symbol, Integer
   #
   def http_success?(code)
     http_status?(:success, code)
@@ -89,7 +89,7 @@ module HttpHelper
 
   # Indicate whether the value represents an HTTP 3xx status.
   #
-  # @param [Symbol, Integer, *] code
+  # @param [any, nil] code            Symbol, Integer
   #
   def http_redirect?(code)
     http_status?(:redirect, code)
@@ -97,7 +97,7 @@ module HttpHelper
 
   # Indicate whether the value represents an HTTP 301, 303 or 308 status.
   #
-  # @param [Symbol, Integer, *] code
+  # @param [any, nil] code            Symbol, Integer
   #
   # @note Currently unused.
   #
@@ -107,7 +107,7 @@ module HttpHelper
 
   # Indicate whether the value represents an HTTP 302 or 307 status.
   #
-  # @param [Symbol, Integer, *] code
+  # @param [any, nil] code            Symbol, Integer
   #
   def http_temporary_redirect?(code)
     http_status?(:temp_redirect, code)
@@ -115,7 +115,7 @@ module HttpHelper
 
   # Indicate whether the value represents a failure HTTP status.
   #
-  # @param [Symbol, Integer, *] code
+  # @param [any, nil] code            Symbol, Integer
   #
   # @note Currently unused.
   #
@@ -125,7 +125,7 @@ module HttpHelper
 
   # Indicate whether the value represents an HTTP 4xx status.
   #
-  # @param [Symbol, Integer, *] code
+  # @param [any, nil] code            Symbol, Integer
   #
   # @note Currently unused.
   #
@@ -135,7 +135,7 @@ module HttpHelper
 
   # Indicate whether the value represents an HTTP 5xx status.
   #
-  # @param [Symbol, Integer, *] code
+  # @param [any, nil] code            Symbol, Integer
   #
   # @note Currently unused.
   #

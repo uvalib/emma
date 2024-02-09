@@ -59,13 +59,13 @@ module SysHelper::Config
 
   # A rendering of a configuration table value.
   #
-  # @param [*]    val
-  # @param [Hash] opt
+  # @param [any, nil] val
+  # @param [Hash]     opt
   #
   # @option opt [Boolean] :escape     Avoid quote marks around certain values
   # @option opt [Boolean] :inspect    Return inspections of #DIRECT type values
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def config_entry(val, **opt)
     if opt[:escape]
@@ -90,7 +90,7 @@ module SysHelper::Config
 
   # A rendering of a `Rails.configuration` entry value.
   #
-  # @param [*] val
+  # @param [any, nil] val
   #
   # @return [String]
   #
@@ -102,7 +102,7 @@ module SysHelper::Config
 
   # The current `Rails.configuration` entries.
   #
-  # @return [Hash{String=>*}]
+  # @return [Hash{String=>any,nil}]
   #
   def rails_config_entries
     cfg   = Rails.configuration

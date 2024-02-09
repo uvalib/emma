@@ -273,13 +273,13 @@ class AppSettings < AppGlobal
 
     # The value if acquired from ENV.
     #
-    # @return [*]
+    # @return [any, nil]
     #
     attr_reader :env
 
     # The value if acquired from a constant.
     #
-    # @return [*]
+    # @return [any, nil]
     #
     attr_reader :obj
 
@@ -303,8 +303,8 @@ class AppSettings < AppGlobal
     # @param [Hash]                opt
     #
     # @option opt [Symbol, String] :type
-    # @option opt [*]              :env
-    # @option opt [*]              :obj
+    # @option opt [any, nil]       :env
+    # @option opt [any, nil]       :obj
     # @option opt [Boolean]        :null
     # @option opt [Boolean]        :spacer
     #
@@ -474,7 +474,7 @@ class AppSettings < AppGlobal
 
     # Get global application settings values.
     #
-    # @return [Hash{Symbol=>*}]
+    # @return [Hash]
     #
     def get_item(**opt)
       filter_all(super, **opt)
@@ -485,7 +485,7 @@ class AppSettings < AppGlobal
     # @param [Hash]    values
     # @param [Boolean] replace        If *true* erase current settings first.
     #
-    # @return [Hash{Symbol=>*}]       The new settings.
+    # @return [Hash]                  The new settings.
     # @return [nil]                   If the write failed.
     #
     def set_item(values, replace: false, **opt)
@@ -498,7 +498,7 @@ class AppSettings < AppGlobal
     #
     # @param [Hash, nil] values
     #
-    # @return [Hash{Symbol=>*}]       The new settings.
+    # @return [Hash]                  The new settings.
     # @return [nil]                   If the write failed.
     #
     def reset_item(values = nil)
@@ -567,9 +567,9 @@ class AppSettings < AppGlobal
 
     # Recursively prepare a single item.
     #
-    # @param [*] item
+    # @param [any, nil] item
     #
-    # @return [*]
+    # @return [any, nil]
     #
     def prepare(item)
       case item
@@ -619,11 +619,12 @@ class AppSettings < AppGlobal
 
     # Preserve symbols for resolution with #decode_symbols.
     #
-    # @param [*] item
+    # @param [any, nil] item
     #
-    # @return [*]
+    # @return [any, nil]
     #
     def encode_symbols(item)
+      # noinspection RubyMismatchedArgumentType
       case item
         when Hash   then item.transform_values { |v| encode_symbols(v) }
         when Array  then item.map { |v| encode_symbols(v) }
@@ -667,7 +668,7 @@ class AppSettings < AppGlobal
     #
     # @param [Symbol, String] name
     #
-    # @return [*]
+    # @return [any, nil]
     #
     def [](name)
       get_item[name.to_sym] if name
@@ -676,9 +677,9 @@ class AppSettings < AppGlobal
     # Assign an individual setting.
     #
     # @param [Symbol, String] name
-    # @param [*]              value
+    # @param [any, nil]       value
     #
-    # @return [*]
+    # @return [any, nil]
     #
     def []=(name, value)
       name   = name.to_sym
@@ -707,8 +708,8 @@ class AppSettings < AppGlobal
     # @param [Hash] opt               Passed to #get_item.
     #
     # @yield [name, value] Operate on a configuration value.
-    # @yieldparam [Symbol] name
-    # @yieldparam [*]      value
+    # @yieldparam [Symbol]   name
+    # @yieldparam [any, nil] value
     #
     def each_pair(**opt, &blk)
       get_item(**opt).each_pair(&blk)

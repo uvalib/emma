@@ -145,7 +145,7 @@ class Org < ApplicationRecord
 
   # Return the common name of *org*.
   #
-  # @param [User, String, Symbol, Integer, *] org   Default: self.
+  # @param [any, nil] org             User, String, Symbol, Integer; def: self
   #
   # @return [String, nil]
   #
@@ -164,7 +164,7 @@ class Org < ApplicationRecord
   # @note This method assumes that if *org* is a String or Symbol it already
   #   represents an organization name unless it resolves to an org ID.
   #
-  # @param [User, String, Symbol, Integer, *] org
+  # @param [any, nil] org             User, String, Symbol, Integer
   #
   # @return [String, nil]
   #
@@ -201,7 +201,7 @@ class Org < ApplicationRecord
 
   # Return the Org instance indicated by the argument.
   #
-  # @param [Model, Hash, String, Integer, *] v
+  # @param [any, nil] v               Model, Hash, String, Integer
   #
   # @return [Org, nil]                A fresh record unless *v* is an Org.
   #

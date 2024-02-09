@@ -52,7 +52,7 @@ class ScalarType
 
     # Indicate whether *v* would be a valid value for an item of this type.
     #
-    # @param [*] v
+    # @param [any, nil] v
     #
     def valid?(v)
       !v.nil?
@@ -60,7 +60,7 @@ class ScalarType
 
     # Transform *v* into a valid form.
     #
-    # @param [*] v
+    # @param [any, nil] v
     #
     # @return [String]
     #
@@ -71,9 +71,9 @@ class ScalarType
 
     # Resolve an item into its value.
     #
-    # @param [*] v
+    # @param [any, nil] v
     #
-    # @return [*]
+    # @return [any, nil]
     #
     def clean(v)
       v = v.value if v.is_a?(Field::Type)
@@ -84,8 +84,8 @@ class ScalarType
 
     # Type-cast an object to an instance of this type.
     #
-    # @param [*]    v                 Value to use or transform.
-    # @param [Hash] opt               Options passed to #create.
+    # @param [any, nil] v             Value to use or transform.
+    # @param [Hash]     opt           Options passed to #create.
     #
     # @return [superclass, nil]
     #
@@ -96,8 +96,8 @@ class ScalarType
 
     # Create a new instance of this type.
     #
-    # @param [*]    v
-    # @param [Hash] opt               Options passed to #initialize.
+    # @param [any, nil] v             Value to use or transform.
+    # @param [Hash]     opt           Options passed to #initialize.
     #
     # @return [superclass, nil]
     #
@@ -146,8 +146,8 @@ class ScalarType
 
   # Initialize a new instance.
   #
-  # @param [*]    v                   Optional initial value.
-  # @param [Hash] opt                 Options passed to #set.
+  # @param [any, nil] v               Optional initial value.
+  # @param [Hash]     opt             Options passed to #set.
   #
   def initialize(v = nil, **opt)
     set(v, **opt)
@@ -155,7 +155,7 @@ class ScalarType
 
   # Assign a new value to the instance.
   #
-  # @param [*] v
+  # @param [any, nil] v
   #
   # @return [String, nil]
   #
@@ -165,10 +165,10 @@ class ScalarType
 
   # Assign a new value to the instance.
   #
-  # @param [*]       v
-  # @param [Boolean] invalid          If *true* allow invalid value.
-  # @param [Boolean] allow_nil        If *false* use #default if necessary.
-  # @param [Boolean] warn             If *true* log invalid.
+  # @param [any, nil] v
+  # @param [Boolean]  invalid         If *true* allow invalid value.
+  # @param [Boolean]  allow_nil       If *false* use #default if necessary.
+  # @param [Boolean]  warn            If *true* log invalid.
   #
   # @return [String, nil]
   #
@@ -191,7 +191,7 @@ class ScalarType
   # Indicate whether the instance is valid, or indicate whether *v* would be a
   # valid value.
   #
-  # @param [*] v
+  # @param [any, nil] v
   #
   def valid?(v = nil)
     v ||= value
@@ -200,7 +200,7 @@ class ScalarType
 
   # Transform value into a valid form.
   #
-  # @param [*] v
+  # @param [any, nil] v
   #
   # @return [String]
   #
@@ -247,7 +247,7 @@ class ScalarType
 
   # Value needed to make instances comparable.
   #
-  # @param [*] other
+  # @param [any, nil] other
   #
   def eql?(other)
     to_s == other.to_s
@@ -277,7 +277,7 @@ class ScalarType
 
   # Comparison operator required by the Comparable mixin.
   #
-  # @param [*] other
+  # @param [any, nil] other
   #
   # @return [Integer]   -1 if self is later, 1 if self is earlier
   #
@@ -399,7 +399,7 @@ class IsoDuration < ScalarType
 
     # Indicate whether *v* would be a valid value for an item of this type.
     #
-    # @param [*] v
+    # @param [any, nil] v
     #
     def valid?(v)
       normalize(v).present?
@@ -407,13 +407,14 @@ class IsoDuration < ScalarType
 
     # Transform *v* into a valid form.
     #
-    # @param [String, Date, Time, IsoDate, *] v
+    # @param [any, nil] v             String, Date, Time, IsoDate
     #
     # @return [String]
     #
     def normalize(v)
       v = clean(v)
       v = nil if v.is_a?(String) && !MATCH_PATTERN.any? { |_, p| v.match?(p) }
+      # noinspection RubyMismatchedArgumentType
       v.is_a?(ActiveSupport::Duration) ? from_duration(v) : v.to_s
     end
 
@@ -474,7 +475,7 @@ class IsoDuration < ScalarType
     # @param [Float, Integer, nil] value2
     # @param [Integer]             multiplier
     #
-    # @return [Array<(Float, Any)>]
+    # @return [Array<(Float, any)>]
     #
     def fractional(value1, value2, multiplier)
       value1, fraction = value1.divmod(1)
@@ -509,7 +510,7 @@ class IsoDuration < ScalarType
 
   # Indicate whether the instance is valid.
   #
-  # @param [*] v                      Default: #value.
+  # @param [any, nil] v               Default: #value.
   #
   def valid?(v = nil)
     v ||= value
@@ -583,7 +584,7 @@ class IsoDate < ScalarType
 
     # Indicate whether *v* would be a valid value for an item of this type.
     #
-    # @param [*] v
+    # @param [any, nil] v
     #
     def valid?(v)
       normalize(v).present?
@@ -591,7 +592,7 @@ class IsoDate < ScalarType
 
     # Transform *v* into a valid form.
     #
-    # @param [String, IsoDate, IsoDay, IsoYear, DateTime, Date, Time, *] v
+    # @param [any, nil] v   String,IsoDate,IsoDay,IsoYear,DateTime,Date,Time
     #
     # @return [String, nil]
     #
@@ -604,8 +605,8 @@ class IsoDate < ScalarType
 
     # Type-cast an object to an instance of this type.
     #
-    # @param [*]    v                 Value to use or transform.
-    # @param [Hash] opt               Options passed to #create.
+    # @param [any, nil] v             Value to use or transform.
+    # @param [Hash]     opt           Options passed to #create.
     #
     # @return [IsoDate, nil]
     #
@@ -616,8 +617,8 @@ class IsoDate < ScalarType
 
     # Create a new instance of this type.
     #
-    # @param [*]    v
-    # @param [Hash] opt               Options passed to #initialize.
+    # @param [any, nil] v
+    # @param [Hash]     opt           Options passed to #initialize.
     #
     # @return [IsoDate, nil]
     #
@@ -638,9 +639,9 @@ class IsoDate < ScalarType
 
     # Prepare a date string for normalization.
     #
-    # @param [*] v
+    # @param [any, nil] v   String,IsoDate,IsoDay,IsoYear,DateTime,Date,Time
     #
-    # @return [*]
+    # @return [any, nil]
     #
     def strip_copyright(v)
       return v unless v.is_a?(String)
@@ -649,7 +650,7 @@ class IsoDate < ScalarType
 
     # Transform *v* into a ISO 8601 form.
     #
-    # @param [String, IsoDate, IsoDay, IsoYear, DateTime, Date, Time, *] v
+    # @param [any, nil] v   String,IsoDate,IsoDay,IsoYear,DateTime,Date,Time
     #
     # @return [String, nil]
     #
@@ -669,7 +670,7 @@ class IsoDate < ScalarType
 
     # Transform *v* into "YYYY-MM-DD" form.
     #
-    # @param [String, IsoDate, IsoDay, IsoYear, DateTime, Date, Time, *] v
+    # @param [any, nil] v   String,IsoDate,IsoDay,IsoYear,DateTime,Date,Time
     #
     # @return [String, nil]
     #
@@ -689,7 +690,7 @@ class IsoDate < ScalarType
 
     # Transform *v* into a 4-digit year.
     #
-    # @param [String, IsoDate, IsoDay, IsoYear, DateTime, Date, Time, *] v
+    # @param [any, nil] v   String,IsoDate,IsoDay,IsoYear,DateTime,Date,Time
     #
     # @return [String, nil]
     #
@@ -715,7 +716,7 @@ class IsoDate < ScalarType
 
     # Transform a value into ISO 8601 form.
     #
-    # @param [String, Date, Time, IsoDate, *] value
+    # @param [any, nil] value         String, Date, Time, IsoDate
     #
     # @return [String, nil]
     #
@@ -728,7 +729,7 @@ class IsoDate < ScalarType
 
     # Transform a value into "YYYY-MM-DD" form.
     #
-    # @param [String, Date, Time, IsoDate, *] value
+    # @param [any, nil] value         String, Date, Time, IsoDate
     #
     # @return [String, nil]
     #
@@ -747,9 +748,9 @@ class IsoDate < ScalarType
     # Note that "YYYY/DD/MM" will still be a problem because "DD" will be
     # interpreted as month and "MM" will be interpreted as day.
     #
-    # @param [String, Date, Time, IsoDate, *] value
+    # @param [any, nil] value         String, Date, Time, IsoDate
     #
-    # @return [String, Date, Time, IsoDate, *]
+    # @return [String, Date, Time, IsoDate, any, nil]
     #
     #--
     # noinspection RubyMismatchedArgumentType
@@ -833,7 +834,7 @@ class IsoDate < ScalarType
 
     # Transform an ISO/IEC 8824 (ASN.1) date string into a usable form.
     #
-    # @param [String, *] value
+    # @param [any, nil] value         String
     #
     # @return [String]
     #
@@ -879,7 +880,7 @@ class IsoDate < ScalarType
 
     # Indicate whether *v* represents a year value.
     #
-    # @param [*] v
+    # @param [any, nil] v
     #
     def year?(v)
       normalize(v).to_s.match?(MATCH_PATTERN[:year])
@@ -887,7 +888,7 @@ class IsoDate < ScalarType
 
     # Indicate whether *v* represents a day value.
     #
-    # @param [*] v
+    # @param [any, nil] v
     #
     def day?(v)
       normalize(v).to_s.match?(MATCH_PATTERN[:day])
@@ -895,7 +896,7 @@ class IsoDate < ScalarType
 
     # Indicate whether *v* represents a full ISO 8601 date value.
     #
-    # @param [*] v
+    # @param [any, nil] v
     #
     def complete?(v)
       normalize(v).to_s.match?(MATCH_PATTERN[:complete])
@@ -923,7 +924,7 @@ class IsoDate < ScalarType
 
   # Indicate whether the instance is valid.
   #
-  # @param [String, *] v              Default: #value.
+  # @param [String, any, nil] v       Default: #value.
   #
   def valid?(v = nil)
     v ||= value
@@ -933,7 +934,7 @@ class IsoDate < ScalarType
   # Indicate whether the instance represents a year value, or indicate whether
   # *v* represents a year value.
   #
-  # @param [*] v
+  # @param [any, nil] v
   #
   def year?(v = nil)
     v ||= value
@@ -943,7 +944,7 @@ class IsoDate < ScalarType
   # Indicate whether the instance represents a day value, or indicate whether
   # *v* represents a day value.
   #
-  # @param [*] v
+  # @param [any, nil] v
   #
   def day?(v = nil)
     v ||= value
@@ -953,7 +954,7 @@ class IsoDate < ScalarType
   # Indicate whether the instance represents a full ISO 8601 date value, or
   # indicate whether *v* represents a full ISO 8601 date value.
   #
-  # @param [*] v
+  # @param [any, nil] v
   #
   def complete?(v = nil)
     v ||= value
@@ -984,7 +985,7 @@ class IsoYear < IsoDate
 
     # Indicate whether *v* would be a valid value for an item of this type.
     #
-    # @param [*] v
+    # @param [any, nil] v
     #
     def valid?(v)
       year?(v)
@@ -992,7 +993,7 @@ class IsoYear < IsoDate
 
     # Transform *v* into a valid form.
     #
-    # @param [*] v
+    # @param [any, nil] v
     #
     # @return [String, nil]
     #
@@ -1056,7 +1057,7 @@ class IsoDay < IsoDate
 
     # Indicate whether *v* would be a valid value for an item of this type.
     #
-    # @param [*] v
+    # @param [any, nil] v
     #
     def valid?(v)
       day?(v)
@@ -1064,7 +1065,7 @@ class IsoDay < IsoDate
 
     # Transform *v* into a valid form.
     #
-    # @param [String, Date, Time, IsoDate, *] v
+    # @param [any, nil] v             String, Date, Time, IsoDate
     #
     # @return [String, nil]
     #
@@ -1097,7 +1098,7 @@ class IsoDay < IsoDate
 
   # Indicate whether the instance is valid.
   #
-  # @param [*] v                      Default: #value.
+  # @param [any, nil] v               Default: #value.
   #
   def valid?(v = nil)
     v ||= value
@@ -1130,7 +1131,7 @@ class IsoLanguage < ScalarType
 
     # Indicate whether *v* would be a valid value for an item of this type.
     #
-    # @param [String, *] v
+    # @param [any, nil] v             String
     #
     def valid?(v)
       v = normalize(v)
@@ -1139,7 +1140,7 @@ class IsoLanguage < ScalarType
 
     # Transform *v* into a valid form.
     #
-    # @param [String, *] v
+    # @param [any, nil] v             String
     #
     # @return [String]
     #
@@ -1156,7 +1157,7 @@ class IsoLanguage < ScalarType
 
     # Return the associated three-letter language code.
     #
-    # @param [String, *] value
+    # @param [any, nil] value         String
     #
     # @return [String, nil]
     #
@@ -1166,7 +1167,7 @@ class IsoLanguage < ScalarType
 
     # Find a matching language entry.
     #
-    # @param [String, *] value
+    # @param [any, nil] value         String
     #
     # @return [ISO_639, nil]
     #
@@ -1208,8 +1209,8 @@ class IsoLanguage < ScalarType
 
   # Assign a new value to the instance.
   #
-  # @param [*]    v
-  # @param [Hash] opt                 Passed to ScalarType#set
+  # @param [any, nil] v
+  # @param [Hash]     opt             Passed to ScalarType#set
   #
   # @return [String, nil]
   #
@@ -1226,7 +1227,7 @@ class IsoLanguage < ScalarType
 
   # Indicate whether the instance is valid.
   #
-  # @param [String, *] v              Default: #value.
+  # @param [any, nil] v               Default: #value.
   #
   def valid?(v = nil)
     v ||= value
@@ -1235,7 +1236,7 @@ class IsoLanguage < ScalarType
 
   # Return the associated three-letter language code.
   #
-  # @param [String, *] v              Default: #value.
+  # @param [any, nil] v               Default: #value.
   #
   # @return [String, nil]
   #
@@ -1373,7 +1374,7 @@ class EnumType < ScalarType
     # Called from API record definitions to provide this base class with the
     # values that will be accessed implicitly from subclasses.
     #
-    # @param [Hash{Symbol,String=>*}] entries
+    # @param [Hash{Symbol,String=>any,nil}] entries
     #
     # @return [Hash{Symbol=>Hash}]
     #
@@ -1452,7 +1453,7 @@ class EnumType < ScalarType
     # @param [String]                   i18n_path
     # @param [Array<Symbol>,Symbol,nil] default
     #
-    # @return [Hash{Symbol=>*}, Array<String>, nil]
+    # @return [Hash, Array<String>, nil]
     #
     def get_configuration(i18n_path, default: nil)
       config_item(i18n_path, default: default).tap do |config|
@@ -1500,7 +1501,7 @@ class EnumType < ScalarType
 
     # Indicate whether *v* would be a valid value for an item of this type.
     #
-    # @param [*] v
+    # @param [any, nil] v
     #
     def valid?(v)
       values.include?(normalize(v))
@@ -1508,7 +1509,7 @@ class EnumType < ScalarType
 
     # Transform *v* into a valid form.
     #
-    # @param [*] v
+    # @param [any, nil] v
     #
     # @return [String]
     #
@@ -1580,7 +1581,7 @@ class EnumType < ScalarType
 
   # Assign a new value to the instance.
   #
-  # @param [*]    v
+  # @param [any, nil]    v
   # @param [Hash] opt                 Passed to ScalarType#set
   #
   # @return [String, nil]
@@ -1598,7 +1599,7 @@ class EnumType < ScalarType
 
   # Indicate whether the instance is valid.
   #
-  # @param [*] v                      Default: #value.
+  # @param [any, nil] v               Default: #value.
   #
   def valid?(v = nil)
     v ||= value
@@ -1712,7 +1713,7 @@ module Api::Common
 
   # Partner repository configurations.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>any}]
   #
   REPOSITORY_CONFIG = config_section('emma.repository').deep_freeze
 
@@ -1754,7 +1755,7 @@ module Api::Common
 
   # Language configuration.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>any}]
   #
   LANGUAGE_CONFIG = config_section('emma.language').deep_freeze
 
@@ -1859,7 +1860,7 @@ class LanguageType < EnumType
 
   # Indicate whether the instance is valid.
   #
-  # @param [String, *] v              Default: #value.
+  # @param [any, nil] v               Default: #value.
   #
   def valid?(v = nil)
     v ||= value
@@ -1868,7 +1869,7 @@ class LanguageType < EnumType
 
   # Return the associated three-letter language code.
   #
-  # @param [String, *] v              Default: #value.
+  # @param [any, nil] v               Default: #value.
   #
   # @return [String, nil]
   #

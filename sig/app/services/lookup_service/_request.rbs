@@ -68,7 +68,7 @@ class LookupService::Request
 
   # Identifiers to lookup grouped by type.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def request: () -> symHash
 
@@ -96,7 +96,7 @@ class LookupService::Request
 
   # Create a new instance from *item* if it is not already an instance.
   #
-  # @param [LookupService::Request, *] item
+  # @param [any, nil] item            LookupService::Request or initializer arg
   #
   # @return [LookupService::Request]
   #

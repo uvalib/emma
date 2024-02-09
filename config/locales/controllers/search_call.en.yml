@@ -50,12 +50,12 @@ en:
           placeholder:  'Enter query or filter...'
 
       search_bar:
-        #enabled:        [index]
+#       enabled:        [index]
         enabled:        false
         label:          'Search Call Filter'
 
       search_filters:
-        #enabled:        [index]
+#       enabled:        [index]
         enabled:        false
 
         layout:

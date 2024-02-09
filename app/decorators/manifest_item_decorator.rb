@@ -182,7 +182,7 @@ class ManifestItemDecorator < BaseDecorator
 
     # Control icon definitions.
     #
-    # @type [Hash{Symbol=>Hash{Symbol=>*}}]
+    # @type [Hash{Symbol=>Hash}]
     #
     # @see BaseDecorator::Controls#ICON_PROPERTIES
     #
@@ -190,7 +190,7 @@ class ManifestItemDecorator < BaseDecorator
 
     # Icon definitions for this decorator.
     #
-    # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+    # @return [Hash{Symbol=>Hash}]
     #
     def icon_definitions
       ICONS
@@ -341,7 +341,7 @@ class ManifestItemDecorator < BaseDecorator
 
     # The fields which are displayed in the expandable "Item Details" panel.
     #
-    # @param [Array<Symbol>]
+    # @type [Array<Symbol>]
     #
     DETAILS_FIELDS = %i[
       field_error
@@ -691,7 +691,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     # @param [String, nil]          ctrl
     # @param [String, ManifestItem] item
-    # @param [Hash{Symbol=>*}]      statuses
+    # @param [Hash]                 statuses
     # @param [Integer]              row
     # @param [Integer]              col
     # @param [Symbol]               tag       Default: :tr.
@@ -1239,9 +1239,9 @@ class ManifestItemDecorator
 
   # Transform a field value for HTML rendering.
   #
-  # @param [*]         value
-  # @param [Symbol, *] field
-  # @param [Hash]      opt            Passed to the render method or super.
+  # @param [any, nil]    value
+  # @param [Symbol, nil] field
+  # @param [Hash]        opt          Passed to the render method or super.
   #
   # @return [Field::Type]
   # @return [String]
@@ -1318,7 +1318,7 @@ class ManifestItemDecorator
   # Render a single label/value pair in a grid cell.
   #
   # @param [String, Symbol, nil] label
-  # @param [*]                   value
+  # @param [any, nil]            value
   # @param [Symbol]              field
   # @param [FieldConfig]         prop
   # @param [Integer, nil]        col
@@ -1352,7 +1352,7 @@ class ManifestItemDecorator
   # The edit element for a grid data cell.
   #
   # @param [Symbol]           field   For 'data-field' attribute.
-  # @param [*]                value
+  # @param [any, nil]         value
   # @param [FieldConfig, nil] prop    Default: from field/model.
   # @param [Hash]             opt
   #
@@ -1383,10 +1383,10 @@ class ManifestItemDecorator
   # This also generates a hidden container for buttons that can be added
   # client-side to .uppy-FileInput-container after it is created by Uppy.
   #
-  # @param [String] _name
-  # @param [*]      _value
-  # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt
+  # @param [String]   _name
+  # @param [any, nil] _value
+  # @param [String]   css             Characteristic CSS class/selector.
+  # @param [Hash]     opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -1548,7 +1548,7 @@ class ManifestItemDecorator
 
   # Client-side scripting which are supplied via 'assets:precompile'.
   #
-  # @param [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   # @see file:app/assets/javascripts/shared/assets.js.erb  *Emma.ManifestItem*
   #

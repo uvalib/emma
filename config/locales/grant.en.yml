@@ -70,17 +70,17 @@ en:
               long:     'ACE / Scholars Portal'
             tag:        'ACE'
 
-         #bookshare:    # @see "en.emma.repository.bookshare"
-         #  name:
-         #    short:    'Bookshare'
-         #    long:     'Bookshare'
-         #  tag:        'BS'
+#         bookshare:    # @see "en.emma.repository.bookshare"
+#           name:
+#             short:    'Bookshare'
+#             long:     'Bookshare'
+#           tag:        'BS'
 
-         #hathiTrust:    # @see "en.emma.repository.hathiTrust"
-         #  name:
-         #    short:    'Hathi'
-         #    long:     'HathiTrust'
-         #  tag:        'HT'
+#         hathiTrust:    # @see "en.emma.repository.hathiTrust"
+#           name:
+#             short:    'Hathi'
+#             long:     'HathiTrust'
+#           tag:        'HT'
 
           internetArchive: # @see "en.emma.repository.internetArchive"
             name:

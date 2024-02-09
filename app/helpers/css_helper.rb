@@ -160,6 +160,8 @@ module CssHelper
   #
   # @return [Hash]                        A new hash with :class set.
   #
+  # @note Currently unused
+  #
   def remove_css(html_opt, *classes)
     if html_opt.is_a?(Hash)
       html_opt = dup_options(html_opt)
@@ -211,9 +213,9 @@ module CssHelper
   # Recursively duplicate HTML options parts, avoiding duplication of object
   # instances and other things that may be passed via named options.
   #
-  # @param [*] item
+  # @param [any, nil] item
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def deep_dup_options(item)
     case item
@@ -237,7 +239,7 @@ module CssHelper
   # Indicate whether the item should be duplicated as part of a deep_dup of
   # HTML options.
   #
-  # @param [*] item
+  # @param [any, nil] item
   #
   def duplicable_option?(item)
     case item
@@ -294,7 +296,7 @@ module CssHelper
   # a value to make the resulting ID unique.
   #
   # @param [Array<*>]     parts
-  # @param [*]            unique      Value unique to a search unique.
+  # @param [any, nil]     unique      Value unique to a search unique.
   # @param [Integer, nil] index       Value unique to an input row.
   # @param [Hash]         opt         Passed to #html_id.
   #

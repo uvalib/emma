@@ -46,7 +46,7 @@ class AppGlobal
 
     # The value returned if the value was not present.
     #
-    # @return [*]
+    # @return [any]
     #
     def default
       nil
@@ -56,7 +56,7 @@ class AppGlobal
     #
     # @param [Hash] opt               Passed to #cache_read.
     #
-    # @return [*]
+    # @return [any]
     #
     def get_item(**opt)
       cache_read(**opt) || default
@@ -64,8 +64,8 @@ class AppGlobal
 
     # Set a global value.
     #
-    # @param [*]    value             Default: `#default`.
-    # @param [Hash] opt               Passed to #cache_write.
+    # @param [any, nil] value         Default: `#default`.
+    # @param [Hash]     opt           Passed to #cache_write.
     #
     # @return [any]                   The new current value.
     # @return [nil]                   If the write failed.
@@ -77,8 +77,8 @@ class AppGlobal
 
     # Initialize a global value.
     #
-    # @param [*]    value             Replacement value (if given).
-    # @param [Hash] opt               Passed to #cache_write.
+    # @param [any, nil] value         Replacement value (if given).
+    # @param [Hash]     opt           Passed to #cache_write.
     #
     # @return [any]                   The new current value.
     # @return [nil]                   If the write failed.
@@ -115,7 +115,7 @@ class AppGlobal
     #
     # @param [Symbol, String] key
     #
-    # @return [*]
+    # @return [any, nil]
     # @return [nil]                   If *key* is missing.
     #
     def cache_read(key: cache_key, **)
@@ -124,7 +124,7 @@ class AppGlobal
 
     # Set a Rails.cache value.
     #
-    # @param [*]              value
+    # @param [any, nil]       value
     # @param [Symbol, String] key
     #
     # @return [Boolean]
@@ -147,7 +147,7 @@ class AppGlobal
 
     # validate_key
     #
-    # @param [*] key
+    # @param [any, nil] key
     #
     # @raise [RuntimeError]             If key is missing/blank.
     #

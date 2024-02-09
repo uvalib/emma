@@ -185,7 +185,7 @@ module EmmaRake
 
   # An override to provide a mock #session.
   #
-  # @return [Hash{String=>Any}]
+  # @return [Hash{String=>any}]
   #
   def session
     @session ||= { 'app.debug' => true }

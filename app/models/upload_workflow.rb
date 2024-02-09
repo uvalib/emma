@@ -99,8 +99,8 @@ module UploadWorkflow::Errors
 
     # Show the submission ID if it can be determined for the given item(s).
     #
-    # @param [Api::Record, Upload, Hash, String, *] item
-    # @param [String]                               default
+    # @param [any, nil] item          Api::Record, Upload, Hash, String
+    # @param [String]   default
     #
     # @return [String]
     #
@@ -146,8 +146,8 @@ module UploadWorkflow::Errors
 
     # A hook for treating the first part of a entry as special.
     #
-    # @param [*]    src
-    # @param [Hash] opt
+    # @param [any, nil] src
+    # @param [Hash]     opt
     #
     # @return [String, ActiveSupport::SafeBuffer, nil]
     #
@@ -172,7 +172,7 @@ module UploadWorkflow::Errors
   # Raise an exception.
   #
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
-  # @param [*]                                                         value
+  # @param [any, nil]                                                  value
   #
   # @raise [UploadWorkflow::SubmitError]
   # @raise [ExecError]
@@ -345,7 +345,7 @@ module UploadWorkflow::Properties
 
   # URL parameter names and default values.
   #
-  # @type [Hash{Symbol=>Any}]
+  # @type [Hash{Symbol=>any}]
   #
   OPTION_PARAMETER_DEFAULT = {
     prefix:       TITLE_PREFIX,
@@ -506,7 +506,7 @@ module UploadWorkflow::Properties
   # UploadConcern) or in the context of the workflow instance (through the
   # parameters saved from the :params initializer option).
   #
-  # @return [Hash{Symbol=>Any}]
+  # @return [Hash{Symbol=>any}]
   #
   # @see Upload::Options#model_params
   # @see Workflow::Base::Properties#parameters
@@ -596,7 +596,7 @@ module UploadWorkflow::External
   # Indicate whether the item represents an EMMA repository entry (as opposed
   # to a partner repository entry).
   #
-  # @param [Upload, *] item
+  # @param [any, nil] item            Upload
   #
   # @see Upload#valid_sid?
   # @see Upload#emma_native?
@@ -608,7 +608,7 @@ module UploadWorkflow::External
 
   # Indicate whether the item does not represent an existing EMMA entry.
   #
-  # @param [Upload, *] item
+  # @param [any, nil] item            Upload
   #
   def incomplete?(item)
     item.is_a?(Upload) && !item.existing_entry?
@@ -1080,7 +1080,7 @@ module UploadWorkflow::External
   #
   # @option opt [Rack::Request::Env] :env
   #
-  # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
+  # @return [Array<(Integer, Hash{String=>any,nil}, Array<String>)>]
   #
   # @see Shrine::Plugins::UploadEndpoint::ClassMethods#upload_response
   #
@@ -1148,7 +1148,7 @@ module UploadWorkflow::External
   #
   # @param [Upload, Hash, String] data
   #
-  # @return [Any]
+  # @return [any]
   # @return [nil]                     If the record was not found or removed.
   #
   def db_delete(data)
@@ -1512,7 +1512,7 @@ module UploadWorkflow::External
   #   @return [Array<(Array,Array)>]
   #
   # @overload repository_removals(items, **opt)
-  #   @param [Array<String,#emma_recordId,Any>] items
+  #   @param [Array<String,#emma_recordId,any>] items
   #   @param [Hash]                             opt
   #   @return [Array<(Array,Array)>]
   #
@@ -1545,7 +1545,7 @@ module UploadWorkflow::External
   #   @return [Array<(Array,Array)>]
   #
   # @overload repository_dequeues(items, **opt)
-  #   @param [Array<String,#emma_recordId,Any>] items
+  #   @param [Array<String,#emma_recordId,any>] items
   #   @param [Hash]                             opt
   #   @return [Array<(Array,Array)>]
   #
@@ -1578,7 +1578,7 @@ module UploadWorkflow::External
   #   @return [Hash{String=>Array<Upload>}]
   #
   # @overload repository_requests(requests, empty_key: false)
-  #   @param [Array<String,Upload,Any>]           requests
+  #   @param [Array<String,Upload,any>]           requests
   #   @param [Boolean]                            empty_key
   #   @return [Hash{String=>Array<Upload>}]
   #

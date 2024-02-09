@@ -134,7 +134,7 @@ class ApplicationRecord < ActiveRecord::Base
 
   # Return the record instance indicated by the argument.
   #
-  # @param [Model, Hash, String, Integer, *] v
+  # @param [any, nil] v               Model, Hash, String, Integer
   #
   # @return [ApplicationRecord, nil]  A fresh record unless *v* is a *self*.
   #

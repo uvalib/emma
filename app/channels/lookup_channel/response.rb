@@ -46,8 +46,8 @@ class LookupChannel::StatusResponse < LookupChannel::Response
 
   # Create a new instance.
   #
-  # @param [*]    values
-  # @param [Hash] opt
+  # @param [any, nil] values
+  # @param [Hash]     opt
   #
   def initialize(values = nil, **opt)
     values = { service: values } unless values.nil? || values.is_a?(Hash)
@@ -64,6 +64,7 @@ class LookupChannel::StatusResponse < LookupChannel::Response
     value     = super
     service   = value.delete(:services) || value[:service]
     service &&= Array.wrap(service).map { |v| v.to_s.demodulize }
+    # noinspection RubyMismatchedReturnType
     service ? value.merge!(service: service) : value
   end
 

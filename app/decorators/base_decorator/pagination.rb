@@ -21,7 +21,7 @@ module BaseDecorator::Pagination
 
   # Configuration for pagination control properties.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash]
   #
   PAGINATION_CONFIG = config_section('emma.pagination').deep_freeze
 

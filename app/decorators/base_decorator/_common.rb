@@ -13,7 +13,7 @@ __loading_begin(__FILE__)
 #
 # @!attribute [r] context
 #   Set in Draper::Decorator#initialize
-#   @return [Hash{Symbol=>*}]
+#   @return [Hash]
 #
 module BaseDecorator::Common
 
@@ -52,11 +52,14 @@ module BaseDecorator::Common
   # Process a configuration setting to determine whether it indicates a *true*
   # value.
   #
-  # @param [*]       value
-  # @param [Boolean] default          Returned if *value* is *nil*.
+  # @param [any, nil] value
+  # @param [Boolean]  default         Returned if *value* is *nil*.
   #
   # @return [Boolean]
   #
+  #--
+  # noinspection RubyMismatchedArgumentType
+  #++
   def check_setting(value, default: true)
     case value
       when nil    then default

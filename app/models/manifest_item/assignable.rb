@@ -32,7 +32,7 @@ module ManifestItem::Assignable
   # @option opt [Symbol]  :meth         Caller (for diagnostics).
   # @option opt [Boolean] :re_validate  Caller will validate so skip that here.
   #
-  # @return [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def normalize_attributes(attr, **opt)
     opt.reverse_merge!(key_norm: true, compact: false)

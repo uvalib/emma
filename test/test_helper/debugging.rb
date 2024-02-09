@@ -144,7 +144,7 @@ module TestHelper::Debugging
   # @return [String]                  The displayable result.
   #
   # @yield To supply additional items.
-  # @yieldreturn [Array, String, *]
+  # @yieldreturn [Array, String, any, nil]
   #
   def show(*items, indent: true, output: true, **opt)
     prefix = show_prefix(indent, default: TEST_DEBUG_FRAME.size.next)

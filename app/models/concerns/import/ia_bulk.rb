@@ -170,8 +170,8 @@ module Import::IaBulk
   # Translate a format value into one or more :emma_data fields as indicated by
   # the #FORMAT mapping.
   #
-  # @param [Symbol] _k                The name of the field being imported.
-  # @param [*]      v
+  # @param [Symbol]   _k              The name of the field being imported.
+  # @param [any, nil] v
   #
   # @return [Array<(Array<Symbol>,Array)>]
   #
@@ -189,7 +189,7 @@ module Import::IaBulk
   #
   # @note This is probably no longer an appropriate mapping.
   #
-  # @param [*] v
+  # @param [any, nil] v
   #
   # @return [String, nil]
   #
@@ -199,7 +199,7 @@ module Import::IaBulk
 
   # Transform a "mediatype" into a :dc_format.
   #
-  # @param [*] v
+  # @param [any, nil] v
   #
   # @return [String, nil]
   #
@@ -212,7 +212,7 @@ module Import::IaBulk
 
   # Transform a "portion" value into a :rem_complete value.
   #
-  # @param [*] v
+  # @param [any, nil] v
   #
   # @return [Boolean, nil]
   #
@@ -223,7 +223,7 @@ module Import::IaBulk
 
   # Transform a "remediated_aspects" value into a :rem_remediatedAspects value.
   #
-  # @param [*] v
+  # @param [any, nil] v
   #
   # @return [Array<String>]
   #
@@ -233,7 +233,7 @@ module Import::IaBulk
 
   # Transform a "remediation_status" value into a :rem_status value.
   #
-  # @param [*] v
+  # @param [any, nil] v
   #
   # @return [String, nil]
   #
@@ -243,7 +243,7 @@ module Import::IaBulk
 
   # Transform a "series_type" value into a :bib_seriesType value.
   #
-  # @param [*] v
+  # @param [any, nil] v
   #
   # @return [String, nil]
   #
@@ -253,7 +253,7 @@ module Import::IaBulk
 
   # Transform a "text_quality" value into a :rem_textQuality value.
   #
-  # @param [*] v
+  # @param [any, nil] v
   #
   # @return [String, nil]
   #

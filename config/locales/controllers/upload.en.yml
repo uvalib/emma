@@ -164,9 +164,9 @@ en:
           - new
           - edit_select
           - delete_select
-         #- bulk_new    # TODO: remove related logic for Upload
-         #- bulk_edit   # TODO: remove related logic for Upload
-         #- bulk_delete # TODO: remove related logic for Upload
+#         - bulk_new    # TODO: remove related logic for Upload
+#         - bulk_edit   # TODO: remove related logic for Upload
+#         - bulk_delete # TODO: remove related logic for Upload
           - admin
 
       # =======================================================================
@@ -268,7 +268,7 @@ en:
         create:
           label:        'Creating'
           tooltip:      'New EMMA entries in the process of being created'
-         #show:         'nonzero'
+#         show:         'nonzero'
           enabled:      true
           states:
             - creating
@@ -277,7 +277,7 @@ en:
         edit:
           label:        'Modifying'
           tooltip:      'Existing EMMA entries in the process of being modifying'
-         #show:         'nonzero'
+#         show:         'nonzero'
           enabled:      true
           states:
             - editing
@@ -332,7 +332,7 @@ en:
         done:
           label:        'Complete'
           tooltip:      'Existing EMMA entries'
-         #show:         'nonzero'
+#         show:         'nonzero'
           enabled:      true
           states:
             - completed
@@ -452,10 +452,10 @@ en:
         title:          'Uploaded file %{name}'
         tooltip:        'See details about this upload'
 
-        #display_fields: # @see 'en.emma.upload.record'
-        #  - !ruby/symbol all
-        #  - fmt:        'Fmt'
-        #  - ext:        'Ext'
+#       display_fields: # @see 'en.emma.upload.record'
+#         - !ruby/symbol all
+#         - fmt:        'Fmt'
+#         - ext:        'Ext'
 
         _endpoint:      true
 
@@ -564,7 +564,7 @@ en:
 
       edit_select:
         <<:             *EDIT_ACTION
-       #label:          'Edit Menu' # TODO: ???
+#       label:          'Edit Menu' # TODO: ???
         title:          'Modify an EMMA Entry'
         directions:     ~
 
@@ -618,7 +618,7 @@ en:
 
       delete_select:
         <<:             *DELETE_ACTION
-       #label:          'Delete Menu' # TODO: ???
+#       label:          'Delete Menu' # TODO: ???
         title:          'Remove an EMMA Entry'
         directions:     ~
 

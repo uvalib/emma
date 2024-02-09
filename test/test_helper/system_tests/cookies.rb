@@ -31,6 +31,8 @@ module TestHelper::SystemTests::Cookies
   #
   # @return [void]
   #
+  # @note Currently unused
+  #
   def show_cookies
     cookies =
       get_cookies.map { |k, v|

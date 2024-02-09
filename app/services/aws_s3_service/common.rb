@@ -27,7 +27,7 @@ module AwsS3Service::Common
   #
   # @raise [AwsS3Service::RequestError]
   #
-  # @return [Any]                     Depends on *operation*.
+  # @return [any]                     Depends on *operation*.
   #
   #--
   # === Variations

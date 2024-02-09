@@ -19,7 +19,7 @@ module IaDownloadService::Properties
 
   # Configuration values from config/locales/service.en.yml
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash]
   #
   CONFIGURATION = config_section('emma.service.ia_download').deep_freeze
 
@@ -69,7 +69,7 @@ module IaDownloadService::Properties
 
   # Configuration for the API service.
   #
-  # @type [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   def configuration
     CONFIGURATION

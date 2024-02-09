@@ -101,7 +101,7 @@ class ManifestDecorator < BaseDecorator
 
     # Control icon definitions.
     #
-    # @type [Hash{Symbol=>Hash{Symbol=>*}}]
+    # @type [Hash{Symbol=>Hash}]
     #
     # @see BaseDecorator::Controls#ICON_PROPERTIES
     #
@@ -113,7 +113,7 @@ class ManifestDecorator < BaseDecorator
 
     # Icon definitions for this decorator.
     #
-    # @return [Hash{Symbol=>Hash{Symbol=>*}}]
+    # @return [Hash{Symbol=>Hash}]
     #
     def icon_definitions
       ICONS
@@ -345,9 +345,9 @@ class ManifestDecorator
 
   # Transform a field value for HTML rendering.
   #
-  # @param [*]         value
-  # @param [Symbol, *] field
-  # @param [Hash]      opt            Passed to the render method or super.
+  # @param [any, nil]    value
+  # @param [Symbol, nil] field
+  # @param [Hash]        opt          Passed to the render method or super.
   #
   # @return [Field::Type]
   # @return [String]
@@ -933,7 +933,7 @@ class ManifestDecorator
 
   # Client-side scripting which are supplied via 'assets:precompile'.
   #
-  # @param [Hash{Symbol=>*}]
+  # @return [Hash]
   #
   # @see file:app/assets/javascripts/shared/assets.js.erb  *Emma.Manifest*
   #

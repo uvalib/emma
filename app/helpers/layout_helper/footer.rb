@@ -22,7 +22,7 @@ module LayoutHelper::Footer
 
   # Footer elements.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash]
   #
   FOOT_CONFIG =
     config_section('emma.foot').select { |_, v|

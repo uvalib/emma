@@ -496,7 +496,7 @@ class Upload < ApplicationRecord
   # Allow :file_data and :emma_data to be seen fully when inspecting.
   #
   # @param [Symbol, String] name      Attribute name.
-  # @param [*]              value     Attribute value.
+  # @param [any, nil]       value     Attribute value.
   #
   # @return [String]
   #
@@ -572,7 +572,7 @@ class Upload < ApplicationRecord
 
   # Indicate whether the record is an EMMA-native item.
   #
-  # @param [Upload, Hash, String, #repository, #emma_repository] item
+  # @param [any, nil] item      Upload,Hash,String,#repository,#emma_repository
   #
   def self.emma_native?(item)
     repository_of(item) == EmmaRepository.default
@@ -580,7 +580,7 @@ class Upload < ApplicationRecord
 
   # Extract the repository associated with the item.
   #
-  # @param [Upload, Hash, String, *] item
+  # @param [any, nil] item            Upload, Hash, String
   #
   # @return [String]                  One of EmmaRepository#values.
   # @return [nil]
@@ -589,9 +589,6 @@ class Upload < ApplicationRecord
   # Depending on the context, the caller may need to validate the result with
   # EmmaRepository#valid?.
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def self.repository_of(item)
     if (item = item.presence) && !item.is_a?(String) && !item.is_a?(Symbol)
       r    = get_value(item, %i[repository emma_repository]) and return r
@@ -602,7 +599,7 @@ class Upload < ApplicationRecord
 
   # The full name of the indicated repository
   #
-  # @param [Upload, Hash, String, *] item
+  # @param [any, nil] item            Upload, Hash, String
   #
   # @return [String]                  The name of the associated repository.
   # @return [nil]                     If *src* did not indicate a repository.
@@ -614,7 +611,7 @@ class Upload < ApplicationRecord
 
   # Extract the EMMA index entry identifier from the item.
   #
-  # @param [Upload, Hash, String, *] item
+  # @param [any, nil] item            Upload, Hash, String
   #
   # @return [String]
   # @return [nil]
@@ -645,9 +642,9 @@ class Upload < ApplicationRecord
 
   # Indicate whether *item* is or contains a valid EMMA index record ID.
   #
-  # @param [Upload, Hash, String, *] item
-  # @param [String, Array<String>]   add_repo
-  # @param [String, Array<String>]   add_fmt
+  # @param [any, nil]              item       Upload, Hash, String
+  # @param [String, Array<String>] add_repo
+  # @param [String, Array<String>] add_fmt
   #
   def self.valid_record_id?(item, add_repo: nil, add_fmt: nil)
     repo, rid, fmt, _version, remainder = record_id(item).to_s.split('-')
@@ -667,11 +664,11 @@ class Upload < ApplicationRecord
   #
   # The value of *default* is returned if *item* doesn't respond to *key*.
   #
-  # @param [Model, Hash, String, Symbol, *]       item
-  # @param [Symbol, String, Array<Symbol,String>] key
-  # @param [*]                                    default
+  # @param [any, nil]                           item  Model,Hash,String,Symbol
+  # @param [Symbol,String,Array<Symbol,String>] key
+  # @param [any, nil]                           default
   #
-  # @return [*]
+  # @return [any, nil]
   #
   def self.get_value(item, key, default: nil)
     if key.blank?
@@ -786,7 +783,7 @@ class Upload < ApplicationRecord
 
   # Return the Upload instance indicated by the argument.
   #
-  # @param [Model, Hash, String, Integer, *] v
+  # @param [any, nil] v               Model, Hash, String, Integer
   #
   # @return [Upload, nil]             A fresh record unless *v* is an Upload.
   #

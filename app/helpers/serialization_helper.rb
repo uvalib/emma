@@ -79,8 +79,8 @@ module SerializationHelper
 
   # Serialize an item to JSON format.
   #
-  # @param [*]    item
-  # @param [Hash] opt                 Passed to #to_json.
+  # @param [any, nil] item
+  # @param [Hash]     opt             Passed to #to_json.
   #
   # @return [String]
   #
@@ -90,7 +90,7 @@ module SerializationHelper
 
   # Serialize an item to XML format.
   #
-  # @param [*]               item
+  # @param [any, nil]        item
   # @param [String]          separator
   # @param [String]          name       Node name if item.respond_to?(:to_xml).
   # @param [Api::Serializer] serializer
@@ -99,11 +99,11 @@ module SerializationHelper
   # @return [nil]                     If *item* is *nil* or an empty collection
   #
   def make_xml(item, separator: "\n", name: nil, serializer: nil)
+    return if item.blank?
+    # noinspection RubyMismatchedArgumentType
     if item.is_a?(Hash)
       serializer ||= Search::Api::Serializer::Xml.new
       make_opt     = { separator: separator, serializer: serializer }
-      # @type [Symbol] k
-      # @type [*]      v
       item.map { |k, v|
         value = make_xml(v, **make_opt)
         next if value.nil? && !serializer.render_nil?
@@ -118,7 +118,6 @@ module SerializationHelper
       item.map { |v| make_xml(v, **make_opt) }.compact.join(separator).presence
 
     elsif item.respond_to?(:to_xml)
-      return if item.blank?
       serializer ||= item.serializer(:xml)
       name       ||= serializer.element_render_name(item)
       remove_xml_prolog(item.to_xml(wrap: name))
@@ -133,7 +132,7 @@ module SerializationHelper
 
   # add_xml_prolog
   #
-  # @param [String, *] item
+  # @param [any, nil] item            String
   #
   # @return [String]
   #
@@ -144,8 +143,8 @@ module SerializationHelper
 
   # remove_xml_prolog
   #
-  # @param [String, *] item
-  # @param [Boolean]   aggressive     If *true*, check all lines.
+  # @param [any, nil] item            String
+  # @param [Boolean]  aggressive      If *true*, check all lines.
   #
   # @return [String]
   #

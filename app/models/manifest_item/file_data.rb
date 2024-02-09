@@ -71,7 +71,7 @@ module ManifestItem::FileData
   # @param [Hash, String, nil] data
   # @param [Hash]              opt    Passed to #json_parse
   #
-  # @return [Hash{String=>*}]
+  # @return [Hash{String=>any,nil}]
   #
   # @note Only used by #file_attacher_load
   #

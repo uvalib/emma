@@ -15,8 +15,8 @@ module ObjectExt
 
   # A stand-in for #inspect for more limited output.
   #
-  # @param [*]       item             Default: `self`.
-  # @param [Integer] max
+  # @param [any, nil] item            Default: `self`.
+  # @param [Integer]  max
   #
   # @return [String]
   #

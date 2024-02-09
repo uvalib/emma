@@ -94,12 +94,12 @@ module Emma::Json
 
   # Attempt to interpret *arg* as JSON if it is a string.
   #
-  # @param [*]    arg
-  # @param [Any]  default             On parse failure, return this if provided
+  # @param [any, nil] arg
+  # @param [any]      default         On parse failure, return this if provided
   #                                     (or return *arg* otherwise).
-  # @param [Hash] opt                 Passed to #json_parse.
+  # @param [Hash]     opt             Passed to #json_parse.
   #
-  # @return [Hash, Array<Hash>, Any, nil]
+  # @return [Hash, Array<Hash>, any, nil]
   #
   def safe_json_parse(arg, default: :original, **opt)
     json_parse(arg, **opt) || ((default == :original) ? arg : default)
@@ -146,11 +146,11 @@ module Emma::Json
 
   # pretty_json
   #
-  # @param [*]       arg
-  # @param [Boolean] align_values
-  # @param [Boolean] ruby_keys        Remove surrounding quotes from keys.
-  # @param [Boolean] fatal            If *true*, re-raise exceptions.
-  # @param [Boolean] log              If *false*, no debug logging.
+  # @param [any, nil] arg
+  # @param [Boolean]  align_values
+  # @param [Boolean]  ruby_keys       Remove surrounding quotes from keys.
+  # @param [Boolean]  fatal           If *true*, re-raise exceptions.
+  # @param [Boolean]  log             If *false*, no debug logging.
   #
   # @raise [MultiJson::ParseError]
   # @raise [RuntimeError]
@@ -213,7 +213,7 @@ module Emma::Json
 
   # Translate from Hash#to_s output to JSON.
   #
-  # @param [*] arg
+  # @param [any, nil] arg
   #
   # @return [String]
   #

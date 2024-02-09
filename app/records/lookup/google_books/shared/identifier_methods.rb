@@ -69,7 +69,7 @@ module Lookup::GoogleBooks::Shared::IdentifierMethods
 
   # id_sort_key
   #
-  # @param [Lookup::GoogleBooks::Record::Identifier]
+  # @param [Lookup::GoogleBooks::Record::Identifier] id
   #
   # @return [Array<String>]
   #

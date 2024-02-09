@@ -62,7 +62,7 @@ en:
         label:          'Organization Filter'
 
       search_filters:
-        #enabled:        [index]
+#       enabled:        [index]
         enabled:        false
 
         layout:
@@ -147,8 +147,8 @@ en:
           if_disabled:
             tooltip:    'Not able to cancel at this point'
 
-        #success:        'EMMA member organization was successfully %{actioned}.'
-        #failure:        'Failed to %{action} EMMA member organization.'
+#       success:        'EMMA member organization was successfully %{actioned}.'
+#       failure:        'Failed to %{action} EMMA member organization.'
 
       # =======================================================================
 
@@ -220,8 +220,8 @@ en:
           if_enabled:
             tooltip:    'Do not create this entry (or start over)'
 
-        #success:        'EMMA Member Organization %{name} created.'
-        #failure:        'Could not create EMMA Member Organization.'
+#       success:        'EMMA Member Organization %{name} created.'
+#       failure:        'Could not create EMMA Member Organization.'
 
         role:           administrator
         _endpoint:      true
@@ -255,8 +255,8 @@ en:
           if_enabled:
             tooltip:    'Discard these changes'
 
-        #success:        'EMMA Member Organization %{name} updated.'
-        #failure:        'Could not update EMMA Member Organization.'
+#       success:        'EMMA Member Organization %{name} updated.'
+#       failure:        'Could not update EMMA Member Organization.'
 
         role:           administrator
         _endpoint:      true
@@ -301,8 +301,8 @@ en:
           if_enabled:
             tooltip:    'Keep this EMMA Member Organization'
 
-        #success:        'EMMA Member Organization %{name} deleted.'
-        #failure:        'Could not delete EMMA Member Organization.'
+#       success:        'EMMA Member Organization %{name} deleted.'
+#       failure:        'Could not delete EMMA Member Organization.'
 
         role:           administrator
         _endpoint:      true

@@ -14,7 +14,7 @@ class SearchPaginator < Paginator
   #
   # @overload finalize(result, **opt)
   #   Generally for Record-related models.
-  #   @param [Hash{Symbol=>*}]    values
+  #   @param [Hash]               values
   #   @param [Hash]               opt     Passed to #url_for.
   #
   # @overload finalize(result, as: nil, **opt)

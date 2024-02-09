@@ -37,7 +37,7 @@ module ApplicationJob::Logging
   # @param [Array] args
   # @param [Hash]  opt
   #
-  # @return [*]                       Return value of #perform.
+  # @return [any, nil]                Return value of #perform.
   #
   def perform(*args, **opt)
     if is_a?(Class)
@@ -52,7 +52,7 @@ module ApplicationJob::Logging
   # @param [Array] args               Assigned to ActiveJob::Core#arguments.
   # @param [Hash]  opt
   #
-  # @return [*]                       Return value of #perform.
+  # @return [any, nil]                Return value of #perform.
   #
   def perform_now(*args, **opt)
     if is_a?(Class)

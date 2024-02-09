@@ -43,7 +43,7 @@ module ApplicationHelper
 
   # Configuration for application properties.
   #
-  # @type [Hash{Symbol=>*}]
+  # @type [Hash]
   #
   APP_CONFIG = config_section('emma.application').deep_freeze
 
