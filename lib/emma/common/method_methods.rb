@@ -15,11 +15,15 @@ module Emma::Common::MethodMethods
 
   public
 
+  # @private
+  # @type [Regexp]
+  BLOCK_RESCUE_RE = /^(block|rescue)\s+(\(\d+ levels?\)\s+)?in\s+(.*)$/.freeze
+
   # Return the name of the calling method.
   #
   # @param [Array<String>, Integer, nil] call_stack
   #
-  # @return [String, nil]
+  # @return [Symbol, nil]
   #
   #--
   # === Variations
@@ -27,15 +31,15 @@ module Emma::Common::MethodMethods
   #
   # @overload calling_method()
   #   Using *call_stack* defaulting to `#caller(2)`.
-  #   @return [String]
+  #   @return [Symbol]
   #
   # @overload calling_method(call_stack)
   #   @param [Array<String>] call_stack
-  #   @return [String]
+  #   @return [Symbol]
   #
   # @overload calling_method(depth)
   #   @param [Integer] depth              Call stack depth (default: 2)
-  #   @return [String]
+  #   @return [Symbol]
   #
   def calling_method(call_stack = nil)
     depth = 2
@@ -45,13 +49,11 @@ module Emma::Common::MethodMethods
     end
     # noinspection RubyMismatchedArgumentType
     call_stack ||= caller(depth)
-    call_stack&.find do |line|
-      _file_line, name = line.to_s.split(/:in\s+/)
-      name = name.to_s.sub(/^[ `]*(.*?)[' ]*$/, '\1')
-      next if name.blank?
-      next if %w[each map __output __output_impl].include?(name)
-      return name.match(/^(block|rescue)\s+in\s+(.*)$/) ? $2 : name
-    end
+    call_stack&.find { |line|
+      name = line.to_s.sub(/^.*:in `(.*?)'$/, '\1')
+      next if name.blank? || %w[each map __output __output_impl].include?(name)
+      break name.sub(BLOCK_RESCUE_RE, '\3')
+    }&.to_sym
   end
 
   # Return the indicated method.  If *meth* is something other than a Symbol or

@@ -77,7 +77,7 @@ module UploadWorkflow::Testing
       # @return [void]
       #
       def fault!(item)
-        meth = calling_method&.to_sym
+        meth = calling_method
         inject_exception(meth) or inject_fault!(meth, item)
       end
 

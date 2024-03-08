@@ -9,8 +9,8 @@ en:
     error:
 
       _default:         'unknown error'
+      success:          'SUCCESS: %{name}'
       failure:          'PROBLEM: %{error}'
-      success:          'SUCCESS: %{file}'
 
       api:
 

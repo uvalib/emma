@@ -205,7 +205,7 @@ en:
                  WARNING: This is an experimental feature and not intended for
                  general use
                </span>
-        success:        'Operation successful %{file}'
+        success:        'Operation successful %{name}'
         failure:        'Could not proceed: %{error}'
 
       # =======================================================================
@@ -282,7 +282,7 @@ en:
         submission:
           <<:           *GENERIC_SUBMISSION
 
-        success:        'Saved manifest'
+        success:        'Created manifest %{name}'
         failure:        'Could not save manifest: %{error}'
 
         role:           staff
@@ -323,7 +323,7 @@ en:
         submission:
           <<:           *GENERIC_SUBMISSION
 
-        success:        'Saved changes to the manifest'
+        success:        'Updated manifest %{name}'
         failure:        'Could not save changes: %{error}'
 
         role:           staff
@@ -360,7 +360,7 @@ en:
           if_enabled:
             tooltip:    'Keep this manifest'
 
-        success:        'Removed manifest'
+        success:        'Removed manifest %{name}'
         failure:        'Could not remove manifest: %{error}'
 
         role:           staff

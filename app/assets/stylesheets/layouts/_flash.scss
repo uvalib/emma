@@ -74,6 +74,10 @@ $flash-optimal-width: 20em;
 
         display: block;
 
+        &.single {
+            display: inline-block;
+        }
+
         .part {
             display: inline-block;
         }

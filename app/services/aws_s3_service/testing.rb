@@ -84,7 +84,7 @@ module AwsS3Service::Testing
     # @param [Hash]   opt
     #
     def api(operation, *items, **opt)
-      meth = opt[:meth] || operation || calling_method&.to_sym
+      meth = (opt[:meth] || operation || calling_method).to_sym
       inject_exception(meth) and return
       inject_fault!(meth, items)
       super

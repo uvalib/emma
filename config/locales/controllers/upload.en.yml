@@ -394,7 +394,7 @@ en:
                 WARNING: This is an experimental feature and not intended for
                 general use
               </span>
-        success:        'Operation successful %{file}'
+        success:        'Operation successful on EMMA entry %{name}'
         failure:        'Could not proceed: %{error}'
 
       # =======================================================================
@@ -506,8 +506,8 @@ en:
               As many fields as possible will be filled-in by information
               extracted from your file
 
-        success:        'Created EMMA entry for: %{file}'
-        failure:        'Could not create entry: %{error}'
+        success:        'Created EMMA entry %{name}'
+        failure:        'Could not create EMMA entry: %{error}'
 
         role:           staff
         _endpoint:      true
@@ -554,7 +554,7 @@ en:
           if_enabled:
             tooltip:    'Provide an updated version of this file'
 
-        success:        'Updated EMMA entry for %{file}'
+        success:        'Updated EMMA entry %{name}'
         failure:        'Could not update EMMA entry: %{error}'
 
         role:           staff
@@ -608,7 +608,7 @@ en:
           if_enabled:
             tooltip:    'Keep this EMMA entry'
 
-        success:        'Removed EMMA entry for %{file}'
+        success:        'Removed EMMA entry %{name}'
         failure:        'Could not remove EMMA entry: %{error}'
 
         role:           staff
@@ -662,7 +662,7 @@ en:
         select:         &BULK_SELECT
           <<:           *GENERIC_SELECT
 
-        success:        'Created EMMA entry for: %{files}'
+        success:        'Created EMMA entries: %{names}'
         failure:        'Could not create entries: %{error}'
 
         <<: *EXPERIMENTAL
@@ -693,7 +693,7 @@ en:
         select:
           <<: *BULK_SELECT
 
-        success:        'Modified EMMA entries: %{files}'
+        success:        'Modified EMMA entries: %{names}'
         failure:        'Could not modify entries: %{error}'
 
         <<: *EXPERIMENTAL
@@ -738,6 +738,9 @@ en:
 
         cancel:
           <<:           *BULK_CANCEL
+
+        success:        'Removed EMMA entries: %{names}'
+        failure:        'Could not remove entries: %{error}'
 
         <<: *EXPERIMENTAL
 

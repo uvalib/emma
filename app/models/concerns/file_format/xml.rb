@@ -303,6 +303,7 @@ module FileFormat::Xml
       meth    = args.first.is_a?(Symbol) ? args.shift : calling_method
       element = args.shift
       inner   = args.shift
+      # noinspection RubyMismatchedArgumentType
       __debug_line(*args, **opt) do
         parts = [meth, filename]
         if element

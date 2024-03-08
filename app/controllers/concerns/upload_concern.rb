@@ -213,7 +213,7 @@ module UploadConcern
   # @see UploadWorkflow::Single#generate
   #
   def wf_single(rec: nil, data: nil, **opt)
-    from  = (opt.delete(:from) || calling_method)&.to_sym
+    from  = opt.delete(:from)&.to_sym || calling_method
     event = opt.delete(:event)&.to_s&.delete_suffix('!')&.to_sym
     raise "#{__method__}: missing :from"           unless from
     raise "#{__method__}: #{from}: missing :event" unless event
@@ -277,7 +277,7 @@ module UploadConcern
   # @see UploadWorkflow::Bulk#generate
   #
   def wf_bulk(rec: nil, data: nil, **opt)
-    from  = (opt.delete(:from) || calling_method)&.to_sym
+    from  = opt.delete(:from)&.to_sym || calling_method
     event = opt.delete(:event)&.to_s&.delete_suffix('!')
     raise "#{__method__}: missing :from"           unless from
     raise "#{__method__}: #{from}: missing :event" unless event

@@ -27,9 +27,6 @@ en:
         success:        'EMMA user account was successfully %{actioned}.'
         failure:        'Could not %{action} EMMA user account.'
 
-        created:        'Account created'
-        updated:        'Account updated'
-        removed:        'Account removed'
         failed:         'FAILED'
 
         self_create:    'You already have an EMMA account'
@@ -253,8 +250,8 @@ en:
           if_enabled:
             tooltip:    'Do not create this entry (or start over)'
 
-#       success:        'EMMA user account %{user} created.'
-#       failure:        'Could not create EMMA user account.'
+        success:        'Created EMMA user account %{name}'
+        failure:        'Could not create EMMA user account: %{error}'
 
         role:           manager
         _endpoint:      true
@@ -296,8 +293,8 @@ en:
           if_enabled:
             tooltip:    'Discard these changes'
 
-#       success:        'EMMA user account %{user} updated.'
-#       failure:        'Could not update EMMA user account.'
+        success:        'Updated EMMA user account %{name}'
+        failure:        'Could not update EMMA user account: %{error}'
 
         _endpoint:      true
 
@@ -351,8 +348,8 @@ en:
           if_enabled:
             tooltip:    'Keep this EMMA user account'
 
-#       success:        'EMMA user account %{user} deleted.'
-#       failure:        'Could not delete EMMA user account.'
+        success:        'Removed EMMA user account %{name}'
+        failure:        'Could not remove EMMA user account: %{error}'
 
         role:           manager
         _endpoint:      true

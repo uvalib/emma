@@ -121,7 +121,7 @@ module Emma::Common::ExceptionMethods
   # @raise [NotImplementedError]
   #
   def not_implemented(message = nil, meth: nil, fatal: true, log: true, **)
-    meth ||= calling_method&.to_sym
+    meth ||= calling_method
     msg    = [self.class, meth, message].compact.join(': ')
     raise NotImplementedError, msg if fatal
     Log.warn(msg)                  if log
@@ -137,7 +137,7 @@ module Emma::Common::ExceptionMethods
   # @raise [NotImplementedError]
   #
   def must_be_overridden(message = nil, meth: nil, **opt)
-    meth  ||= calling_method&.to_sym
+    meth  ||= calling_method
     message = 'to be overridden %s' % (message || 'by the subclass')
     not_implemented(message, meth: meth, **opt)
   end
@@ -156,7 +156,7 @@ module Emma::Common::ExceptionMethods
   #
   def may_be_overridden(message = nil, meth: nil, fatal: false, log: false, **)
     return unless fatal || log
-    meth ||= calling_method&.to_sym
+    meth ||= calling_method
     must_be_overridden(message, meth: meth, fatal: fatal, log: log)
   end
 
@@ -175,7 +175,7 @@ module Emma::Common::ExceptionMethods
   #
   def not_applicable(message = nil, meth: nil, fatal: false, log: false, **)
     return unless fatal || log
-    meth  ||= calling_method&.to_sym
+    meth  ||= calling_method
     message = ['not applicable', message].compact.join(' ')
     message = [self.class, meth, message].compact.join(': ')
     raise RuntimeError, message if fatal

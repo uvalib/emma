@@ -129,7 +129,7 @@ module IngestService::Testing
     # @param [Hash]                     opt
     #
     def api(verb, *args, **opt)
-      meth = opt[:meth] || calling_method&.to_sym
+      meth = opt[:meth]&.to_sym || calling_method
       inject_exception(meth) and return
       item = opt[:body] || (args[1].is_a?(Array) ? args[1] : args[1..])
       # noinspection RubyMismatchedArgumentType

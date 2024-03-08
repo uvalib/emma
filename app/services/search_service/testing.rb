@@ -80,7 +80,7 @@ module SearchService::Testing
     # @param [Hash]                     opt
     #
     def api(verb, *args, **opt)
-      meth = opt[:meth] || calling_method&.to_sym
+      meth = opt[:meth]&.to_sym || calling_method
       inject_exception(meth) and return
       inject_fault!(meth, opt)
       super

@@ -144,7 +144,7 @@ en:
                  WARNING: This is an experimental feature and not intended for
                  general use
                </span>
-        success:        'Operation successful %{file}'
+        success:        'Operation successful %{name}'
         failure:        'Could not proceed: %{error}'
 
       # =======================================================================
@@ -261,7 +261,7 @@ en:
         select:         &BULK_SELECT
           <<:           *GENERIC_SELECT
 
-        success:        'Added manifest items from: %{files}'
+        success:        'Added manifest items from: %{names}'
         failure:        'Could not create items: %{error}'
 
         role:           staff
@@ -298,7 +298,7 @@ en:
         select:
           <<: *BULK_SELECT
 
-        success:        'Modified manifest items from: %{files}'
+        success:        'Modified manifest items from: %{names}'
         failure:        'Could not modify items: %{error}'
 
         role:           staff
