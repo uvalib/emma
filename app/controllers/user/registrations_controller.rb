@@ -20,8 +20,13 @@ class User::RegistrationsController < Devise::RegistrationsController
   # :section: Authentication
   # ===========================================================================
 
-  prepend_before_action :require_no_authentication, only: %i[create]
-  prepend_before_action :authenticate_scope!,       only: %i[edit edit_select update destroy]
+  ANON_OPS   = %i[create].freeze
+  NEW_OPS    = %i[new create].freeze
+  EDIT_OPS   = %i[edit update].freeze
+  SCOPED_OPS = %i[edit edit_select update destroy].freeze
+
+  prepend_before_action :require_no_authentication, only: ANON_OPS
+  prepend_before_action :authenticate_scope!,       only: SCOPED_OPS
 
   before_action :update_user
   before_action :authenticate_user!, except: %i[new]
@@ -30,8 +35,8 @@ class User::RegistrationsController < Devise::RegistrationsController
   # :section: Callbacks
   # ===========================================================================
 
-  before_action :configure_create_params, only: %i[new  create]
-  before_action :configure_update_params, only: %i[edit update]
+  before_action :configure_create_params, only: NEW_OPS
+  before_action :configure_update_params, only: EDIT_OPS
 
   # ===========================================================================
   # :section: Devise::RegistrationsController overrides

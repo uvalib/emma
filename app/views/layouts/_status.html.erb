@@ -1,0 +1,9 @@
+<%# app/views/layouts/_status.html.erb -%>
+<%-
+  controls = (render_engine_controls if show_engine_controls?)
+  return unless controls.present?
+-%>
+
+<nav class="layout-status">
+  <%= controls %>
+</nav>

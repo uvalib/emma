@@ -13,7 +13,12 @@ module EngineConcern
 
   include ParamsHelper
 
-  include FlashConcern
+  # Non-functional hints for RubyMine type checking.
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    include ActionController::Redirecting
+    # :nocov:
+  end
 
   # ===========================================================================
   # :section:
@@ -94,9 +99,6 @@ module EngineConcern
 
   public
 
-  # @private
-  RESET_KEYS = ApiService::RESET_KEYS
-
   # Process the URL parameter for setting the endpoint for the given service.
   #
   # The engine may be specified by deployment, e.g. "&engine=staging", or by
@@ -115,66 +117,31 @@ module EngineConcern
   # @return [nil]                     If not redirecting
   #
   def set_engine_callback(service)
-    opt = request_parameters
     val = url = nil
-    if (in_params = opt.key?(:engine)) && (val = opt.delete(:engine).presence)
-      if RESET_KEYS.include?(val.strip.downcase.to_sym)
+    opt = request_parameters
+    if (in_params = opt.key?(:engine))
+      if (val = opt.delete(:engine)).blank?
+        val = nil
+      elsif ApiService::RESET_KEYS.include?(val.strip.downcase.to_sym)
         val = nil
       elsif (key = service.engine_key(val))
         val = key
       elsif (url = service.engine_url(val))
         val = nil
       else
-        val = nil
         Log.warn("#{__method__}: invalid engine #{val.inspect}")
+        val = nil
       end
-    elsif !in_params && (current = get_session_engine(service))
-      if current.include?('/')
-        url = current
-      else
-        val = current
-      end
+    elsif (current = get_session_engine(service))&.include?('/')
+      url = current
+    elsif current
+      val = current
     end
     val = nil if val && (val == service.default_engine_key)
     url = nil if url && (url == service.default_engine_url)
-    if set_session_engine(service, (val || url))
-      engine_url = url || service.engine_url(val)
-      flash_reset_notice(service, engine_url)
-    end
+    # noinspection RubyMismatchedArgumentType
+    set_session_engine(service, (val || url))
     redirect_to opt if in_params
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # @private
-  FLASH_RESET_NOTICE_SPACES = 3
-
-  # Display a flash notice indicating that a service has been overridden.
-  #
-  # @param [String, Symbol, Class<ApiService>] service
-  # @param [String] url               Current service URL endpoint.
-  # @param [Hash]   opt               Passed to #flash_now_notice except:
-  #
-  # @option opt [Integer, String] :spaces
-  #
-  # @return [void]
-  #
-  def flash_reset_notice(service, url, **opt)
-    service = service_name(service)
-    engine  = "#{service} engine"
-    notice  = ERB::Util.h("#{engine.upcase} #{url.inspect}")
-    spaces  = opt.delete(:spaces) || FLASH_RESET_NOTICE_SPACES
-    spaces  = HTML_SPACE * spaces if spaces.is_a?(Integer)
-    spaces  = ERB::Util.h(spaces)
-    label   = config_text(:engine, :reset, :label)
-    tooltip = config_text(:engine, :reset, :tooltip, service: service)
-    link    = { engine: 'reset' }
-    link    = flash_link(label, link, title: tooltip)
-    flash_now_notice((notice << spaces << link), **opt)
   end
 
   # ===========================================================================
@@ -187,6 +154,7 @@ module EngineConcern
 
   included do |base|
     __included(base, THIS_MODULE)
+    base.helper(THIS_MODULE) if base.respond_to?(:helper)
   end
 
 end

@@ -5,7 +5,7 @@ module EngineConcern
 
   include ParamsHelper
 
-  include FlashConcern
+  #include ActionController::Redirecting
 
   # The service identified by the given value.
   #
@@ -48,9 +48,6 @@ module EngineConcern
   #
   def set_session_engine: ((String|Symbol|Class) service, (String|nil) new_value) -> (String | nil)
 
-  # @private
-  RESET_KEYS: symArray
-
   # Process the URL parameter for setting the endpoint for the given service.
   #
   # The engine may be specified by deployment, e.g. "&engine=staging", or by
@@ -69,21 +66,6 @@ module EngineConcern
   # @return [nil]                     If not redirecting
   #
   def set_engine_callback: (Class service) -> (untyped | nil)
-
-  # @private
-  FLASH_RESET_NOTICE_SPACES: Integer
-
-  # Display a flash notice indicating that a service has been overridden.
-  #
-  # @param [String, Symbol, Class<ApiService>] service
-  # @param [String] url               Current service URL endpoint.
-  # @param [Hash]   opt               Passed to #flash_now_notice except:
-  #
-  # @option opt [Integer, String] :spaces
-  #
-  # @return [void]
-  #
-  def flash_reset_notice: ((String|Symbol|Class) service, String url, **untyped opt) -> void
 
   private
 

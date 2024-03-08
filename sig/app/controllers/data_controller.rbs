@@ -9,6 +9,8 @@ class DataController < ApplicationController
 
   include DataConcern
 
+  ANON_OPS: symArray
+
   @list:  anyHash
   @item:  strArray
   @name:  String

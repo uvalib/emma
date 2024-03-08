@@ -361,7 +361,7 @@ module SearchConcern
       end
     end
     if (value &&= value.to_s.strip.presence&.underscore&.to_sym)
-      if EngineConcern::RESET_KEYS.include?(value)
+      if ApiService::RESET_KEYS.include?(value)
         value = nil
       elsif !valid_values.include?(value)
         Log.warn("#{meth}: invalid #{param_key} value '#{value}'")

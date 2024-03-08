@@ -17,8 +17,10 @@ class DataController < ApplicationController
   # :section: Authentication
   # ===========================================================================
 
+  ANON_OPS = %i[submissions counts].freeze
+
   before_action :update_user
-  before_action :authenticate_admin!, except: %i[submissions counts]
+  before_action :authenticate_admin!, except: ANON_OPS
 
   # ===========================================================================
   # :section: Authorization

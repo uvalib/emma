@@ -37,54 +37,6 @@ $control-height:         2.25rem;
     }
 }
 
-// Treat the including class as the top part of a visually enclosed header
-// area which is actually comprised of individual enclosures, one per layout
-// section.
-@mixin complete-shadow-enclosure {
-
-    @include header.enclosure;
-
-    border:        2px solid whitesmoke;
-    border-radius: 1rem;
-
-    $offset: 6px;
-    $x:      $offset;
-    $y:      $offset;
-    $blur:   18px;
-    $spread: 8px;
-    $color:  rgba($uva-accent-teal, 0.35);
-
-    box-shadow:
-         #{$x}  #{$y} $blur $spread $color,
-        -#{$x}  #{$y} $blur $spread $color,
-         #{$x} -#{$y} $blur $spread $color,
-        -#{$x} -#{$y} $blur $spread $color;
-}
-
-// Treat the including class as the top part of a visually enclosed header
-// area which is actually comprised of individual enclosures, one per layout
-// section.
-@mixin top-shadow-enclosure {
-
-    @include complete-shadow-enclosure;
-
-    border-bottom-left-radius:  0;
-    border-bottom-right-radius: 0;
-    border-bottom:              none;
-}
-
-// Treat the including class as the bottom part of a visually enclosed header
-// area which is actually comprised of individual enclosures, one per layout
-// section.
-@mixin bottom-shadow-enclosure {
-
-    @include complete-shadow-enclosure;
-
-    border-top-left-radius:  0;
-    border-top-right-radius: 0;
-    border-top:              none;
-}
-
 //=============================================================================
 // Sections - generic
 //=============================================================================
@@ -291,9 +243,37 @@ $control-height:         2.25rem;
 
     &.shadow {
 
-        &.top      { @include top-shadow-enclosure; }
-        &.bottom   { @include bottom-shadow-enclosure; }
-        &.complete { @include complete-shadow-enclosure; }
+        @include header.enclosure;
+
+        border:        2px solid whitesmoke;
+        border-radius: 1rem;
+
+        $offset: 6px;
+        $x:      $offset;
+        $y:      $offset;
+        $blur:   18px;
+        $spread: 8px;
+        $color:  rgba($uva-accent-teal, 0.35);
+
+        box-shadow:
+             #{$x}  #{$y} $blur $spread $color,
+            -#{$x}  #{$y} $blur $spread $color,
+             #{$x} -#{$y} $blur $spread $color,
+            -#{$x} -#{$y} $blur $spread $color;
+
+        &.top,
+        &.middle {
+            border-bottom-left-radius:  0;
+            border-bottom-right-radius: 0;
+            border-bottom:              none;
+        }
+
+        &.middle,
+        &.bottom {
+            border-top-left-radius:     0;
+            border-top-right-radius:    0;
+            border-top:                 none;
+        }
 
         &.top,
         &.complete {

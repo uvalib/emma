@@ -34,17 +34,19 @@ class UploadController < ApplicationController
 
   #extend CanCan::ControllerAdditions::ClassMethods
 
-  ADMIN_ROUTES: symArray
+  ADMIN_OPS: symArray
 
-  ANON_ROUTES: symArray
+  ANON_OPS: symArray
 
-  OPS: symArray
+  LISTS: symArray
+
+  MENUS: symArray
+
+  UNIT_OPS: symArray
 
   BULK_OPS: symArray
 
-  ALL_OPS: symArray
-
-  MENUS: symArray
+  OPS: symArray
 
   # Results for :index.
   #

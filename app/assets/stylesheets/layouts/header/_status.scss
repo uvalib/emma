@@ -1,0 +1,77 @@
+// app/assets/stylesheets/layouts/header/_status.scss
+
+@use 'shared/variables'        as *;
+@use 'shared/mixins'           as *;
+@use 'shared/controls/buttons' as button;
+@use 'shared/layouts/header'   as header;
+
+.layout-status {
+
+    @include banner;
+
+    flex-direction: column;
+    padding-top:    0 !important;
+    padding-bottom: 0 !important;
+
+    //=========================================================================
+    // Sections
+    //=========================================================================
+
+    // @see LayoutHelper::NavBar#nav_bar_links
+    .engine-controls {
+
+        display:    grid;
+        font-size:  larger;
+        row-gap:    0;      // Hidden entries take up no vertical space.
+        column-gap: 0.5rem;
+
+        grid-template-columns:
+            [service]  max-content
+            [endpoint] max-content
+            [control]  max-content;
+
+        // @see LayoutHelper::EngineControls#engine_control
+        .engine-control {
+
+            display: contents;
+
+            //=================================================================
+            // Components
+            //=================================================================
+
+            .service {
+
+                padding-bottom: $page-padding-y; // Instead of row-gap.
+
+                &::after {
+                    content: ":";
+                }
+            }
+
+            .endpoint {
+                margin-bottom: auto;
+            }
+
+            .control {
+                margin-bottom: auto;
+            }
+
+            //=================================================================
+            // Variations
+            //=================================================================
+
+            &:not(.changed):not(.fix) {
+                display: none;
+            }
+
+            &.fix {
+                .endpoint {
+                    font-weight: bold;
+                }
+                .control {
+                    color: hotpink;
+                }
+            }
+        }
+    }
+}

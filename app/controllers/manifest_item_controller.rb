@@ -47,18 +47,19 @@ class ManifestItemController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
+  MENUS    = %i[show_select edit_select delete_select].freeze
+  UNIT_OPS = %i[new edit delete].freeze
+  BULK_OPS = %i[bulk_new bulk_edit bulk_delete].freeze
+  OPS      = [*UNIT_OPS, *BULK_OPS].freeze
+
   # None
 
   # ===========================================================================
   # :section: Formats
   # ===========================================================================
 
-  OPS      = %i[new edit delete].freeze
-  BULK_OPS = %i[bulk_new bulk_edit bulk_delete].freeze
-  MENUS    = %i[show_select edit_select delete_select].freeze
-
   respond_to :html
-  respond_to :json, :xml, except: OPS + BULK_OPS + MENUS
+  respond_to :json, :xml, except: [*MENUS, *OPS]
 
   # ===========================================================================
   # :section: Values

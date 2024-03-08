@@ -19,6 +19,7 @@ class ManifestController < ApplicationController
   include SessionConcern
   include RunStateConcern
   include PaginationConcern
+  include IngestConcern
   include ManifestConcern
 
   # Non-functional hints for RubyMine type checking.
@@ -47,17 +48,19 @@ class ManifestController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  # None
+  LISTS    = %i[index bulk_index list_all list_org list_own].freeze
+  MENUS    = %i[show_select edit_select delete_select remit_select].freeze
+  UNIT_OPS = %i[new edit delete remit].freeze
+  OPS      = UNIT_OPS
+
+  before_action :set_ingest_engine, only: [*LISTS, *OPS]
 
   # ===========================================================================
   # :section: Formats
   # ===========================================================================
 
-  OPS   = %i[new edit delete remit].freeze
-  MENUS = %i[show_select edit_select delete_select remit_select].freeze
-
   respond_to :html
-  respond_to :json, :xml, except: OPS + MENUS
+  respond_to :json, :xml, except: [*MENUS, *OPS]
 
   # ===========================================================================
   # :section: Values

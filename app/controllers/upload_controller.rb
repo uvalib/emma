@@ -41,18 +41,18 @@ class UploadController < ApplicationController
   # :section: Authentication
   # ===========================================================================
 
-  ADMIN_ROUTES = %i[api_migrate bulk_reindex].freeze
-  ANON_ROUTES  = %i[show records].freeze
+  ADMIN_OPS = %i[admin api_migrate bulk_reindex].freeze
+  ANON_OPS  = %i[show records].freeze
 
   before_action :update_user
-  before_action :authenticate_admin!, only:   ADMIN_ROUTES
-  before_action :authenticate_user!,  except: ADMIN_ROUTES + ANON_ROUTES
+  before_action :authenticate_admin!, only:   ADMIN_OPS
+  before_action :authenticate_user!,  except: ADMIN_OPS + ANON_OPS
 
   # ===========================================================================
   # :section: Authorization
   # ===========================================================================
 
-  skip_authorization_check only: ANON_ROUTES
+  skip_authorization_check only: ANON_OPS
 
   authorize_resource instance_name: :item
 
@@ -60,21 +60,22 @@ class UploadController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  OPS      = %i[new edit delete].freeze
-  BULK_OPS = %i[bulk_new bulk_edit bulk_delete].freeze
-  ALL_OPS  = [*OPS, *BULK_OPS, :bulk_reindex].freeze
+  LISTS    = %i[index bulk_index list_all list_org list_own].freeze
   MENUS    = %i[show_select edit_select delete_select].freeze
+  UNIT_OPS = %i[new edit delete].freeze
+  BULK_OPS = %i[bulk_new bulk_edit bulk_delete bulk_reindex].freeze
+  OPS      = [*UNIT_OPS, *BULK_OPS].freeze
 
-  before_action :set_ingest_engine, only: [:index, :bulk_index, *ALL_OPS]
-  before_action :index_redirect,    only: :show
-  before_action :save_search_menus, only: :admin
+  before_action :set_ingest_engine, only: [*LISTS, *OPS]
+  before_action :save_search_menus, only: %i[admin]
+  before_action :index_redirect,    only: %i[show]
 
   # ===========================================================================
   # :section: Formats
   # ===========================================================================
 
   respond_to :html
-  respond_to :json, :xml, except: ALL_OPS + MENUS
+  respond_to :json, :xml, except: [*MENUS, *OPS]
 
   # ===========================================================================
   # :section: Values

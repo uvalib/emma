@@ -37,17 +37,18 @@ class OrgController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
+  MENUS    = %i[show_select edit_select delete_select].freeze
+  UNIT_OPS = %i[new edit delete].freeze
+  OPS      = UNIT_OPS
+
   # None
 
   # ===========================================================================
   # :section: Formats
   # ===========================================================================
 
-  OPS   = %i[new edit delete].freeze
-  MENUS = %i[show_select edit_select delete_select].freeze
-
   respond_to :html
-  respond_to :json, :xml, except: OPS + MENUS
+  respond_to :json, :xml, except: [*MENUS, *OPS]
 
   # ===========================================================================
   # :section: Values

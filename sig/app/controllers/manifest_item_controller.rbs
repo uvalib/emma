@@ -26,11 +26,13 @@ class ManifestItemController < ApplicationController
 
   #extend CanCan::ControllerAdditions::ClassMethods
 
-  OPS: symArray
+  MENUS: symArray
+
+  UNIT_OPS: symArray
 
   BULK_OPS: symArray
 
-  MENUS: symArray
+  OPS: symArray
 
   @list: Array[ManifestItem] | Array[Integer] | Array[String] | nil
 

@@ -17,9 +17,11 @@ class OrgController < ApplicationController
 
   include OrgConcern
 
-  OPS: symArray
-
   MENUS: symArray
+
+  UNIT_OPS: symArray
+
+  OPS: symArray
 
   @list: Array[Org] | Array[Integer] | Array[String] | nil
 

@@ -17,6 +17,8 @@ class ManifestController < ApplicationController
 
   include PaginationConcern
 
+  include IngestConcern
+
   include ManifestConcern
 
   # :nocov:
@@ -26,9 +28,13 @@ class ManifestController < ApplicationController
 
   #extend  CanCan::ControllerAdditions::ClassMethods
 
-  OPS: symArray
+  LISTS: symArray
 
   MENUS: symArray
+
+  UNIT_OPS: symArray
+
+  OPS: symArray
 
   @list: Array[Manifest] | Array[Integer] | Array[String] | nil
 

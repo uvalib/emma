@@ -221,7 +221,7 @@ class SearchDecorator < BaseDecorator
     def style_classes(suffix: '-style')
       styles = [search_style]
       styles << :dev if search_debug?
-      styles.remove(*EngineConcern::RESET_KEYS)
+      styles.remove(*ApiService::RESET_KEYS)
       styles.compact_blank!
       styles.map! { |v| v.end_with?(suffix) ? v.to_s : "#{v}#{suffix}" }
     end
@@ -236,7 +236,7 @@ class SearchDecorator < BaseDecorator
     #
     def result_classes(suffix: '_results')
       results = [results_type]
-      results.remove(*EngineConcern::RESET_KEYS)
+      results.remove(*ApiService::RESET_KEYS)
       results.compact_blank!
       results.map! { |v| v.end_with?(suffix) ? v.to_s : "#{v}#{suffix}" }
     end

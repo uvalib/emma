@@ -1,0 +1,71 @@
+# Control bar which indicates and controls selection of non-standard search
+# and ingest engines.
+#
+module LayoutHelper::Status
+  include LayoutHelper::Common
+
+  include LinkHelper
+
+  include ParamsHelper
+
+  # :nocov:
+  #include EngineConcern
+
+  # A structure for the result of #engine_status.
+  #
+  # @!attribute [r] service
+  #   The subclass of ApiService.
+  #   @return [Class]
+  #
+  # @!attribute [r] url
+  #   The non-default service endpoint.
+  #   @return [String, nil]
+  #
+  # @!attribute [r] key
+  #   The non-default :engine parameter value ("production", "staging", "qa").
+  #   @return [String, nil]
+  #
+  # @!attribute fix
+  #   A non-default :engine parameter value ("production", "staging", "qa").
+  #   @return [String, nil]
+  #
+  class EngineStatus < Struct[untyped]
+    attr_reader   service: Class
+    attr_reader   url:     String?
+    attr_reader   key:     String?
+    attr_accessor fix:     String?
+  end
+
+  # Indicate whether it is appropriate to show engine controls.
+  #
+  # @param [Hash, nil] p              Default: `#request_parameters`.
+  #
+  def show_engine_controls?: (?(symHash|nil) p) -> bool
+
+  # render_engine_controls
+  #
+  # @param [String] css             Characteristic CSS class/selector.
+  # @param [Hash]   opt             Passed to the container.
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def render_engine_controls: (?css: String, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # engine_status
+  #
+  # @param [Class<ApiService>] service
+  #
+  # @return [EngineStatus]
+  #
+  def engine_status: (Class service) -> EngineStatus
+
+  # engine_status
+  #
+  # @param [EngineStatus] engine
+  # @param [String]       css       Characteristic CSS class/selector.
+  # @param [Hash]         opt       Passed to the container.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def engine_control: (EngineStatus engine, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+end

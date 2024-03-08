@@ -11,6 +11,14 @@ class User::RegistrationsController < Devise::RegistrationsController
 
   include ParamsConcern
 
+  ANON_OPS: symArray
+
+  NEW_OPS: symArray
+
+  EDIT_OPS: symArray
+
+  SCOPED_OPS: symArray
+
   @item: User | nil
 
   # === GET /users/sign_up

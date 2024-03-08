@@ -19,7 +19,6 @@ class ApplicationController < ActionController::Base
   include ParamsHelper
 
   include ConfigurationConcern
-  include FlashConcern
   include MetricsConcern
   include ResponseConcern
 
