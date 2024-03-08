@@ -166,6 +166,15 @@ module SessionConcern
   #
   def access_denied_handler: (CanCan::AccessDenied exception) -> (untyped | nil)
 
+  # Respond to ActionController::InvalidAuthenticityToken.
+  #
+  # @param [ActionController::InvalidAuthenticityToken] exception
+  #
+  # @return [nil]                     If not handled.
+  # @return [any, nil]                Otherwise.
+  #
+  def session_expired_handler: (ActionController::InvalidAuthenticityToken exception) -> (untyped | nil)
+
   # Respond to page failures due to a failure to communicate with a remote
   # service.
   #

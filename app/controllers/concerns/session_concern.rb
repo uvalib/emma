@@ -285,6 +285,27 @@ module SessionConcern
 
   public
 
+  # Respond to ActionController::InvalidAuthenticityToken.
+  #
+  # @param [ActionController::InvalidAuthenticityToken] exception
+  #
+  # @return [nil]                     If not handled.
+  # @return [any, nil]                Otherwise.
+  #
+  def session_expired_handler(exception)
+    __debug_exception('[session expired] RESCUE_FROM', exception)
+    msg = [config_text(:session, :expired)]
+    msg << exception.message unless exception.message == exception.class.name
+    msg = msg.compact_blank.join(' - ')
+    respond_to do |format|
+      format.html { redirect_to(root_path, alert: msg) }
+      format.json { render_json({ error: msg }, status: :unauthorized) }
+      format.xml  { render_xml({ error: msg }, status: :unauthorized) }
+    end
+  rescue => error
+    error_handler_deep_fallback(__method__, error)
+  end
+
   # Respond to the situation in which an authenticated user attempted to access
   # a route that is not allowed by the user's role.
   #
@@ -294,7 +315,7 @@ module SessionConcern
   # @return [any, nil]                Otherwise.
   #
   def access_denied_handler(exception)
-    __debug_exception('RESCUE_FROM', exception)
+    __debug_exception('[access denied] RESCUE_FROM', exception)
     msg = exception.message
     respond_to do |format|
       format.html { redirect_back(fallback_location: root_path, alert: msg) }
@@ -314,7 +335,7 @@ module SessionConcern
   # @return [any, nil]                Otherwise.
   #
   def connection_error_handler(exception)
-    __debug_exception('RESCUE_FROM', exception)
+    __debug_exception('[conn error] RESCUE_FROM', exception)
     self.status = :gateway_timeout
     if rendering_html?
       flash_now_alert(exception)
@@ -332,7 +353,7 @@ module SessionConcern
   # @return [any, nil]                Otherwise.
   #
   def fallback_error_handler(exception)
-    __debug_exception('RESCUE_FROM', exception, trace: true)
+    __debug_exception('[fallback] RESCUE_FROM', exception, trace: true)
     self.status = :internal_server_error
     if rendering_html?
       flash_now_alert(exception)
@@ -426,6 +447,9 @@ module SessionConcern
     # re-raising to defer to rescue_from) the unauthorized page will get built
     # and displayed instead of redirecting.
     error = nil if access_denied_handler(error)
+
+  rescue ActionController::InvalidAuthenticityToken => error
+    error = nil if session_expired_handler(error)
 
   rescue => error
     __debug_exception('UNHANDLED EXCEPTION', error, trace: true)

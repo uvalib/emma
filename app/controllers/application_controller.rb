@@ -54,7 +54,8 @@ class ApplicationController < ActionController::Base
   # ===========================================================================
 
   rescue_from ActionController::InvalidAuthenticityToken do |exception|
-    __debug_exception('RESCUE_FROM', exception)
+    # NOTE: This will normally be caught in SessionConcern#session_update.
+    __debug_exception('ApplicationController RESCUE_FROM', exception)
     flash_alert(config_text(:session, :expired))
     redirect_to root_path
   end
