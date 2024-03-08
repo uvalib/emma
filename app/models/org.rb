@@ -23,6 +23,14 @@ class Org < ApplicationRecord
   include Org::Config
   include Org::Assignable
 
+  # Non-functional hints for RubyMine type checking.
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    include Record::Rendering
+    extend  Record::Rendering
+    # :nocov:
+  end
+
   # ===========================================================================
   # :section: ActiveRecord ModelSchema
   # ===========================================================================

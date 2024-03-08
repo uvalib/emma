@@ -27,6 +27,8 @@ class Manifest < ApplicationRecord
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
+    include Record::Rendering
+    extend  Record::Rendering
     extend  Record::Describable::ClassMethods
     # :nocov:
   end

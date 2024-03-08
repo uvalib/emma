@@ -68,7 +68,7 @@ class ApplicationRecord < ActiveRecord::Base
   #
   # @see BaseDecorator::Menu#items_menu_label
   #
-  def menu_label(item = nil)
+  def menu_label(item = nil, **)
     label(item)
   end
 

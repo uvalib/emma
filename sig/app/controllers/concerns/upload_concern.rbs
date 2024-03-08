@@ -205,14 +205,6 @@ module UploadConcern
   #
   def reindex_record: ((Upload|Array[Upload]|ActiveRecord::Relation) list, ?atomic: bool|nil, ?dryrun: bool|nil, ?meth: Symbol|nil) -> [strArray, strArray]
 
-  # Render an item for display in a message.
-  #
-  # @param [any, nil] item            Model, Hash, String
-  #
-  # @return [String]
-  #
-  def make_label: (untyped item, **untyped opt) -> String
-
   # Create an Options instance from the current parameters.
   #
   # @return [Upload::Options]

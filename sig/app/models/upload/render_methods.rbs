@@ -1,13 +1,39 @@
 # Methods to support rendering Upload records.
 #
 module Upload::RenderMethods
+  include Emma::Common
+
+  extend ::Upload::RenderMethods
+
   # menu_label
   #
   # @param [Upload, nil] item         Default: self.
+  # @param [String, nil] default      Passed to #make_label
   #
   # @return [String, nil]
   #
   # @see BaseDecorator::Menu#items_menu_label
   #
-  def menu_label: (?(Upload|nil) item) -> (String | nil)
+  def menu_label: (?(Upload|nil) item, ?default: String|nil, **untyped _ignored) -> (String | nil)
+
+  # Default label.
+  #
+  # @type [String]
+  #
+  DEFAULT_LABEL: String
+
+  # Show the submission ID if it can be determined for the given item
+  # annotated with the file associated with the submission.
+  #
+  # @param [any, nil]    item         Api::Record, Upload, Hash, String
+  # @param [Boolean]     ident        Append identifier if available.
+  # @param [String, nil] default
+  #
+  # @return [String, nil]
+  #
+  def make_label
+    : (untyped item, ?ident: bool,  default: nil,    **untyped _ignored) -> (String | nil)
+    | (untyped item, ?ident: bool, ?default: String, **untyped _ignored) -> String
+
+  def self.included: (Module base) -> void
 end

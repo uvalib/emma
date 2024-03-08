@@ -124,13 +124,9 @@ module BaseDecorator::Menu
   # @return [ActiveSupport::SafeBuffer]
   #
   def items_menu_label(item, label: nil)
-    name  = model_item_name(capitalize: true)
-    index = item.id.to_s.presence || '?'
-    align = (index.size == 1) ? ' &thinsp;&nbsp;'.html_safe : ' '
-    index = safe_join([name, align, index])
-    # noinspection RailsParamDefResolve
-    label = label&.to_s || item.try(:menu_label)
-    label ? safe_join([index, ' - ', label]) : index
+    label ||= item.menu_label
+    label ||= "#{model_item_name(capitalize: true)} #{item.id}"
+    ERB::Util.h(label)
   end
 
   # Descriptive term for an item of the given type.

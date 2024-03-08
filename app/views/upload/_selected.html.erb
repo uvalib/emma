@@ -20,7 +20,6 @@
     panel_css = 'selected-details'
     panel_id  = css_randomize(panel_css)
     toggle    = toggle_button(id: panel_id)
-    panel_css = "#{panel_css} row-#{row}"
   elsif !dec.options[:force]
     name      = html_span(item, class: 'item')
     heading   = config_text(:upload, :selected, :invalid, item: name)
@@ -43,7 +42,7 @@
   </div>
 
   <%- if toggle -%>
-    <div id="<%= panel_id -%>" class="<%= panel_css -%>">
+    <div id="<%= panel_id -%>" class="<%= panel_css -%> <%= "row-#{row}" -%>">
       <%= dec.list_row(row: (row + 1), level: level, skip: skip) %>
     </div>
   <%- end -%>

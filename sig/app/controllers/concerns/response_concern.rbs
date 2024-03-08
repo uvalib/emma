@@ -84,9 +84,9 @@ module ResponseConcern
   #
   # @param [any, nil] item            Model, Hash, String
   #
-  # @return [String]
+  # @return [String, nil]
   #
-  def make_label: (untyped item, **untyped opt) -> String
+  def make_label: (untyped item) -> (String | nil)
 
   private
 

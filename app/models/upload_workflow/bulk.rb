@@ -449,7 +449,9 @@ module UploadWorkflow::Bulk::External
   # @return [FlashPart]
   #
   def db_failed_format(item, message, pos)
-    label = make_label(item, default: config_text(:record, :item, id: pos))
+    label   = item.try(:menu_label)
+    label ||= Upload.make_label(item, default: nil)
+    label ||= config_text(:record, :item, name: pos)
     FlashPart.new(label, message)
   end
 

@@ -109,19 +109,6 @@ class OrgDecorator < BaseDecorator
       config_text(:org, :select)
     end
 
-    # Generate a label for a specific menu entry.
-    #
-    # @param [Manifest]    item
-    # @param [String, nil] label      Override label.
-    #
-    # @return [ActiveSupport::SafeBuffer]
-    #
-    def items_menu_label(item, label: nil)
-      label ||= item.menu_label
-      label ||= "#{model_item_name(capitalize: true)} #{item.id}"
-      ERB::Util.h(label)
-    end
-
     # Descriptive term for an item of the given type.
     #
     # @param [Symbol, String, nil] model        Default: `#model_type`.

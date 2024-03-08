@@ -54,8 +54,6 @@ end
 # Each instance translates to a distinct line in the flash message.
 #
 class Record::Exceptions::FlashPart < FlashHelper::FlashPart
-  include Record::Rendering
-
   # A hook for treating the first part of a entry as special.
   #
   # @param [any, nil] src

@@ -42,38 +42,9 @@ module UploadWorkflow::Errors
 
   include Emma::Debug
 
-  module RenderMethods
-    include Emma::Common
-
-    extend ::UploadWorkflow::Errors::RenderMethods
-
-    # Default label.
-    #
-    # @type [String]
-    #
-    DEFAULT_LABEL: String
-
-    # Show the submission ID if it can be determined for the given item(s).
-    #
-    # @param [any, nil] item          Api::Record, Upload, Hash, String
-    # @param [String]   default
-    #
-    # @return [String]
-    #
-    def make_label: (untyped item, ?default: String) -> String
-
-    private
-
-    def self.included: (Module base) -> void
-  end
-
-  include RenderMethods
-
   # Each instance translates to a distinct line in the flash message.
   #
   class FlashPart < FlashHelper::FlashPart
-    include UploadWorkflow::Errors::RenderMethods
-
     # A hook for treating the first part of a entry as special.
     #
     # @param [any, nil] src

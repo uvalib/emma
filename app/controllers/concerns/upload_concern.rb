@@ -433,26 +433,6 @@ module UploadConcern
   def default_fallback_location = upload_index_path
 
   # ===========================================================================
-  # :section: ResponseConcern overrides
-  # ===========================================================================
-
-  protected
-
-  # Render an item for display in a message.
-  #
-  # @param [any, nil] item            Model, Hash, String
-  #
-  # @return [String]
-  #
-  def make_label(item, **opt)
-    if item.is_a?(Upload)
-      UploadWorkflow::Errors::RenderMethods.make_label(item, **opt)
-    else
-      super
-    end
-  end
-
-  # ===========================================================================
   # :section: OptionsConcern overrides
   # ===========================================================================
 

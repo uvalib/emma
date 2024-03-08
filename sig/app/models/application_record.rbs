@@ -33,7 +33,7 @@ class ApplicationRecord < ActiveRecord::Base
   #
   # @see BaseDecorator::Menu#items_menu_label
   #
-  def menu_label: (?(ApplicationRecord|nil) item) -> (String | nil)
+  def menu_label: (?(ApplicationRecord|nil) item, **untyped _ignored) -> (String | nil)
 
   # The user associated with this record if applicable.
   #

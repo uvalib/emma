@@ -162,8 +162,11 @@ module ResponseConcern
       end
     end
 
-    message   = report&.render(html: html)&.presence
-    message ||= Array.wrap(item).flatten.map { |v| make_label(v) }.presence
+    message = report&.render(html: html)&.presence
+    unless message
+      message = (item.is_a?(Array) ? item.flatten : [item]).compact.presence
+      message&.map! { |v| make_label(v) || v.to_s }
+    end
     if message
       flash_opt = { meth: meth, status: status }
       if xhr
@@ -198,14 +201,10 @@ module ResponseConcern
   #
   # @param [any, nil] item            Model, Hash, String
   #
-  # @return [String]
+  # @return [String, nil]
   #
-  def make_label(item, **opt)
-    if item.is_a?(Model)
-      Record::Rendering.make_label(item, **opt)
-    else
-      item.try(:render) || item.to_s
-    end
+  def make_label(item)
+    item.try(:menu_label) || item.try(:render)
   end
 
   # ===========================================================================

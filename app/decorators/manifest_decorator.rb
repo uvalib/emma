@@ -195,19 +195,6 @@ class ManifestDecorator < BaseDecorator
       config_text(:manifest, (user ? :select_own : :select_any))
     end
 
-    # Generate a label for a specific menu entry.
-    #
-    # @param [Manifest]    item
-    # @param [String, nil] label      Override label.
-    #
-    # @return [ActiveSupport::SafeBuffer]
-    #
-    def items_menu_label(item, label: nil)
-      label ||= item.menu_label
-      label ||= "#{model_item_name(capitalize: true)} #{item.id}"
-      ERB::Util.h(label)
-    end
-
     # =========================================================================
     # :section: BaseDecorator::Pagination overrides
     # =========================================================================

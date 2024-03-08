@@ -21,7 +21,9 @@ class SearchCall < ApplicationRecord
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
-    extend SqlMethods::ClassMethods
+    include Record::Rendering
+    extend  Record::Rendering
+    extend  SqlMethods::ClassMethods
     # :nocov:
   end
 

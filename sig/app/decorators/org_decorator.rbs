@@ -52,15 +52,6 @@ class OrgDecorator < BaseDecorator
     #
     def items_menu_prompt: (?user: User|Symbol|nil) -> String
 
-    # Generate a label for a specific menu entry.
-    #
-    # @param [Model]       item
-    # @param [String, nil] label        Override label.
-    #
-    # @return [ActiveSupport::SafeBuffer]
-    #
-    def items_menu_label: (Model item, ?label: String|nil) -> ActiveSupport::SafeBuffer
-
     # Descriptive term for an item of the given type.
     #
     # @param [Symbol, String, nil] model        Default: `#model_type`.

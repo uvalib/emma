@@ -120,8 +120,6 @@ end
 #
 class Record::Exceptions::FlashPart < FlashHelper::FlashPart
 
-  include Record::Rendering
-
   # ===========================================================================
   # :section: FlashHelper::FlashPart overrides
   # ===========================================================================
@@ -138,7 +136,7 @@ class Record::Exceptions::FlashPart < FlashHelper::FlashPart
   # @note From UploadWorkflow::Errors::FlashPart#render_topic
   #
   def render_topic(src, **opt)
-    src = make_label(src, default: '').presence || src
+    src = Record::Rendering.make_label(src, default: nil) || src
     super
   end
 

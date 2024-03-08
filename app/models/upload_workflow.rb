@@ -74,59 +74,6 @@ module UploadWorkflow::Errors
   include Emma::Debug
 
   # ===========================================================================
-  # :section: Modules
-  # ===========================================================================
-
-  public
-
-  module RenderMethods
-
-    include Emma::Common
-
-    extend self
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    public
-
-    # Default label.
-    #
-    # @type [String]
-    #
-    DEFAULT_LABEL = config_text(:record, :missing)
-
-    # Show the submission ID if it can be determined for the given item(s).
-    #
-    # @param [any, nil] item          Api::Record, Upload, Hash, String
-    # @param [String]   default
-    #
-    # @return [String]
-    #
-    def make_label(item, default: DEFAULT_LABEL)
-      file  = (item.filename if item.is_a?(Upload))
-      ident = Upload.sid_value(item) || Upload.id_value(item) || default
-      ident = config_text(:record, :item, id: ident) if digits_only?(ident)
-      ident = "#{ident} (#{file})"                   if file.present?
-      ident
-    end
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    private
-
-    def self.included(base)
-      base.extend(self)
-    end
-
-  end
-
-  include RenderMethods
-
-  # ===========================================================================
   # :section: Classes
   # ===========================================================================
 
@@ -135,8 +82,6 @@ module UploadWorkflow::Errors
   # Each instance translates to a distinct line in the flash message.
   #
   class FlashPart < FlashHelper::FlashPart
-
-    include UploadWorkflow::Errors::RenderMethods
 
     # =========================================================================
     # :section: FlashHelper::FlashPart overrides
@@ -152,7 +97,7 @@ module UploadWorkflow::Errors
     # @return [String, ActiveSupport::SafeBuffer, nil]
     #
     def render_topic(src, **opt)
-      src = make_label(src, default: '').presence || src
+      src = Upload.make_label(src, default: nil) || src
       super
     end
 
@@ -772,7 +717,7 @@ module UploadWorkflow::External
         msg = [__method__]
         msg << 'not atomic' if atomic
         msg << 'items retained in the database that will be de-indexed'
-        msg << retained.map { |item| make_label(item) }.join(', ')
+        msg << retained.map(&:menu_label).join(', ')
         msg.join(': ')
       end
       not_removed = config_text(:upload, :record, :not_removed)

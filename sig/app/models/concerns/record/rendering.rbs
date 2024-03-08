@@ -1,35 +1,51 @@
 # Utility methods for reporting on records.
 #
-# @note From UploadWorkflow::Errors::RenderMethods
+# @note From Upload::RenderMethods
 #
 module Record::Rendering
   include Emma::Common
 
   extend ::Record::Rendering
 
+  # menu_label
+  #
+  # @param [ApplicationRecord, nil] item      Default: self.
+  # @param [String, nil]            default   Passed to #make_label
+  #
+  # @return [String, nil]
+  #
+  # @see BaseDecorator::Menu#items_menu_label
+  #
+  def menu_label: (?(ApplicationRecord|nil) item, ?default: String|nil, **untyped _ignored) -> (String | nil)
+
   # Default label.
   #
   # @type [String]
   #
+  # @note From Upload::RenderMethods#DEFAULT_LABEL
+  #
   DEFAULT_LABEL: String
 
-  # Show the submission ID if it can be determined for the given item(s).
+  # Show the label or identifier for the given item.
   #
-  # @param [any, nil] item            Model, Hash, String
-  # @param [String]   default
+  # @param [any, nil]    item         Model, Hash, String
+  # @param [Boolean]     ident        Append identifier if available.
+  # @param [String, nil] default
   #
   # @return [String]
   #
   # @note From Upload::RenderMethods#make_label
-  # @note From Upload::Errors::RenderMethods#make_label
   #
-  def make_label: (untyped item, ?default: String) -> String
+  def make_label
+    : (untyped item, ?ident: bool,  default: nil,    **untyped _ignored) -> (String | nil)
+    | (untyped item, ?ident: bool, ?default: String, **untyped _ignored) -> String
 
   private
 
   # SID or ID of *item*
   #
-  # @param [any, nil] item            Model, Hash, String
+  # @param [any, nil]      item       Model, Hash, String
+  # @param [Array<Symbol>] meths      Methods to attempt.
   #
   # @return [String, nil]
   #
@@ -37,7 +53,7 @@ module Record::Rendering
   # This exists solely to avoid a 'require' cycle by not making the module
   # dependent on Record::EmmaIdentification.
   #
-  def item_identity: (untyped item) -> (String | nil)
+  def item_identity: (untyped item, ?meths: symArray) -> (String | nil)
 
   def self.included: (Module base) -> void
 end

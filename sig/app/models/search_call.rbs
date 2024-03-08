@@ -14,7 +14,9 @@ class SearchCall < ApplicationRecord
   include Record::Sortable
 
   # :nocov:
-  #extend SqlMethods::ClassMethods
+  #include Record::Rendering
+  #extend  Record::Rendering
+  #extend  SqlMethods::ClassMethods
 
   # Each JSON-structured column of 'search_calls'.
   #

@@ -213,6 +213,7 @@ module Record
   def self.included(base)
     base.extend(self)
     return unless record_class?(base)
+    base.include(Record::Rendering)
     base.include(InstanceMethods)
     base.extend(ClassMethods)
   end

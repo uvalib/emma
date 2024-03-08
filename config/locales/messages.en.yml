@@ -198,7 +198,7 @@ en:
         invalid_data:       'INTERNAL ERROR: data class %{class}'
         invalid_field:      'illegal value'
         invalid_sid:        'Invalid EMMA submission ID %{sid}'
-        item:               'Item %{id}'
+        item:               'id: %{id}'
         missing:            '(missing)'
         no_identifier:      'No identifier provided'
         not_added:          'Not added'
@@ -263,10 +263,10 @@ en:
         remove_all:         'Remove all selected values'
 
       selected:
-        invalid:            'Item %{item} is not in the database'
+        invalid:            'Record %{item} is not in the database'
         no_match:           'No index entries match %{item}'
         removing:           'Removing index entry %{item}'
-        title:              'Selected item %{item} record details:'
+        title:              'Record %{item} details:'
 
       session:
         expired:            'Your session has expired'

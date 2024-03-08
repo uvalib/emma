@@ -46,7 +46,9 @@ class ManifestItem < ApplicationRecord
   include ManifestItem::Validatable
 
   # :nocov:
-  #extend Record::Describable::ClassMethods
+  #include Record::Rendering
+  #extend  Record::Rendering
+  #extend  Record::Describable::ClassMethods
 
   # Create a new instance.
   #

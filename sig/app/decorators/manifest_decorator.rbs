@@ -89,15 +89,6 @@ class ManifestDecorator < BaseDecorator
     #
     def items_menu_prompt: (?user: User|Symbol|nil) -> String
 
-    # Generate a label for a specific menu entry.
-    #
-    # @param [Manifest]    item
-    # @param [String, nil] label      Override label.
-    #
-    # @return [ActiveSupport::SafeBuffer]
-    #
-    def items_menu_label: (Manifest item, ?label: String|nil) -> ActiveSupport::SafeBuffer
-
     # The element displayed when the user has no Manifests to list.
     #
     # @param [String] css             Characteristic CSS class/selector.

@@ -7,13 +7,32 @@ __loading_begin(__FILE__)
 
 # Utility methods for reporting on records.
 #
-# @note From UploadWorkflow::Errors::RenderMethods
+# @note From Upload::RenderMethods
 #
 module Record::Rendering
 
   include Emma::Common
 
   extend self
+
+  # ===========================================================================
+  # :section: ApplicationRecord overrides
+  # ===========================================================================
+
+  public
+
+  # menu_label
+  #
+  # @param [ApplicationRecord, nil] item      Default: self.
+  # @param [String, nil]            default   Passed to #make_label
+  #
+  # @return [String, nil]
+  #
+  # @see BaseDecorator::Menu#items_menu_label
+  #
+  def menu_label(item = nil, default: nil, **)
+    make_label((item || self), default: default)
+  end
 
   # ===========================================================================
   # :section:
@@ -25,33 +44,27 @@ module Record::Rendering
   #
   # @type [String]
   #
-  # @note From UploadWorkflow::Errors::RenderMethods#DEFAULT_LABEL
+  # @note From Upload::RenderMethods#DEFAULT_LABEL
   #
   DEFAULT_LABEL = config_text(:record, :missing)
 
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Show the submission ID if it can be determined for the given item(s).
+  # Show the label or identifier for the given item.
   #
-  # @param [any, nil] item            Model, Hash, String
-  # @param [String]   default
+  # @param [any, nil]    item         Model, Hash, String
+  # @param [Boolean]     ident        Append identifier if available.
+  # @param [String, nil] default
   #
   # @return [String]
   #
   # @note From Upload::RenderMethods#make_label
-  # @note From Upload::Errors::RenderMethods#make_label
   #
-  def make_label(item, default: DEFAULT_LABEL)
-    # noinspection RailsParamDefResolve
-    file  = item.try(:filename)
-    ident = item.try(:identifier) || item_identity(item) || default
-    ident = "Item #{ident}"      # TODO: look for :name field...
-    ident = "#{ident} (#{file})" if file.present?
-    ident
+  def make_label(item, ident: false, default: DEFAULT_LABEL, **)
+    label   = item.try(:label)
+    ident ||= label.nil?
+    ident &&= item.try(:identifier) || item_identity(item)
+    ident &&= config_text(:record, :item, id: ident)
+    # noinspection RubyMismatchedReturnType
+    (label && ident) && "#{label} (#{ident})" || label || ident || default
   end
 
   # ===========================================================================
@@ -62,7 +75,8 @@ module Record::Rendering
 
   # SID or ID of *item*
   #
-  # @param [any, nil] item            Model, Hash, String
+  # @param [any, nil]      item       Model, Hash, String
+  # @param [Array<Symbol>] meths      Methods to attempt.
   #
   # @return [String, nil]
   #
@@ -70,13 +84,13 @@ module Record::Rendering
   # This exists solely to avoid a 'require' cycle by not making the module
   # dependent on Record::EmmaIdentification.
   #
-  def item_identity(item)
-    # noinspection RubyMismatchedReturnType
-    [self, self.class].find do |obj|
-      %i[sid_value id_value].find do |meth|
-        result = obj.try(meth, item) and return result
-      end
-    end
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
+  def item_identity(item, meths: %i[sid_value id_value])
+    meths.each { |meth| value = item.try(meth)             and return value }
+    meths.each { |meth| value = try(meth, item)            and return value }
+    meths.each { |meth| value = self.class.try(meth, item) and return value }
   end
 
   # ===========================================================================

@@ -17,6 +17,10 @@ class Org < ApplicationRecord
 
   include Org::Assignable
 
+  # :nocov:
+  #include Record::Rendering
+  #extend  Record::Rendering
+
   # A short textual representation for the record instance.
   #
   # @param [Org, nil] item            Default: self.
