@@ -638,21 +638,6 @@ module UploadWorkflow::Bulk::Actions
 
 end
 
-module UploadWorkflow::Bulk::Simulation
-
-  include UploadWorkflow::Simulation
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  attr_reader :submission # TODO: delete
-  attr_reader :record     # TODO: delete
-
-end
-
 # =============================================================================
 # :section: Event handlers
 # =============================================================================
@@ -661,7 +646,6 @@ public
 
 module UploadWorkflow::Bulk::Events
   include UploadWorkflow::Events
-  include UploadWorkflow::Bulk::Simulation
 end
 
 # Overridden state transition methods specific to bulk-upload workflows.
@@ -693,23 +677,12 @@ module UploadWorkflow::Bulk::States
     super
 
     # Determine whether this is destined for a partner repository.
-    if simulating
-      __debug_sim("[emma_items: #{submission.emma_item}]")
-      emma_items = submission.emma_item
-    else
-      emma_items = true # TODO: ???
-    end
+    emma_items = true
 
-    unless simulating
-      wf_finalize_submission(*event_args)
-    end
+    wf_finalize_submission(*event_args)
 
-    # TODO: simulation - remove
-    if emma_items
-      __debug_sim('SYSTEM determines this is an EMMA-native submission.')
-    else
-      __debug_sim('SYSTEM moves the submission into the repo staging area.')
-    end
+    #emma_items and __debug_wf 'SYSTEM determines EMMA-native submission.'
+    #emma_items or  __debug_wf 'SYSTEM moves submission to repo staging area.'
 
     # Automatically transition to the next state based on submission status.
     if emma_items
@@ -730,43 +703,7 @@ module UploadWorkflow::Bulk::States
   #
   def on_unretrieved_entry(state, event, *event_args)
     super
-
-    if simulating
-
-      task = RetrievalTask
-
-      unless event == :timeout
-        __debug_sim("Start #{task} to check for the submission.")
-        task.start
-      end
-
-      if task.check
-        __debug_sim("The #{task} is checking...")
-        timeout! # NOTE: => :unretrieved
-
-      elsif task.success
-        __debug_sim("The #{task} has detected the submission.")
-        advance! # NOTE: => :retrieved
-
-      else
-        __debug_sim("The #{task} still has NOT detected the submission.")
-        __debug_sim('SYSTEM notifies the user of submission status.')
-        __debug_sim('SYSTEM notifies an agent of the partner repository.')
-        if task.restart
-          __debug_sim("The #{task} is restarting.")
-          timeout! # NOTE: => :unretrieved
-        else
-          __debug_sim("The #{task} is terminated.")
-          fail!    # NOTE: => :failed
-        end
-      end
-
-    end
-
-    unless simulating
-      advance! # NOTE: => :retrieved
-    end
-
+    advance! # NOTE: => :retrieved
     self
   end
 
@@ -783,10 +720,8 @@ module UploadWorkflow::Bulk::States
   #
   def on_retrieved_entry(state, event, *event_args)
     super
-
-    __debug_sim('The submission has been received by the partner repository.')
-    __debug_sim('SYSTEM ensures the staging area is consistent.')
-
+    #__debug_wf 'The submission has been received by the partner repository.'
+    #__debug_wf 'SYSTEM ensures the staging area is consistent.'
     advance! # NOTE: => :indexing
     self
   end
@@ -809,49 +744,16 @@ module UploadWorkflow::Bulk::States
   #
   def on_indexing_entry(state, event, *event_args)
     super
+
     wf_set_records_state
+    wf_index_update(*event_args)
+    valid = ready?
 
-    if simulating
-
-      task = IndexTask
-
-      unless event == :timeout
-        __debug_sim("Start #{task} to check for the submission.")
-        task.start
-      end
-
-      if task.check
-        __debug_sim("The #{task} is checking...")
-        timeout! # NOTE: => :indexing
-
-      elsif task.success
-        __debug_sim("The #{task} has detected the submission.")
-        advance! # NOTE: => :indexed
-
-      else
-        __debug_sim("The #{task} still has NOT detected the submission.")
-        __debug_sim('SYSTEM notifies the user of submission status.')
-        __debug_sim('SYSTEM notifies an agent of the partner repository.')
-        if task.restart
-          __debug_sim("The #{task} is restarting.")
-          timeout! # NOTE: => :indexing
-        else
-          __debug_sim("The #{task} is terminated.")
-          fail!    # NOTE: => :failed
-        end
-      end
-
+    if valid
+      advance! # NOTE: => :indexed
+    else
+      fail!    # NOTE: => :failed
     end
-
-    unless simulating
-      wf_index_update(*event_args)
-      if ready?
-        advance! # NOTE: => :indexed
-      else
-        fail!    # NOTE: => :failed
-      end
-    end
-
     self
   end
 
@@ -867,10 +769,10 @@ module UploadWorkflow::Bulk::States
   #
   def on_indexed_entry(state, event, *event_args)
     super
+
     wf_set_records_state
 
-    __debug_sim('SYSTEM notifies the user that the submission is complete.')
-
+    #__debug_wf 'SYSTEM notifies the user that the submission is complete.'
     advance! # NOTE: => :completed
     self
   end
@@ -893,12 +795,12 @@ module UploadWorkflow::Bulk::States
   #
   def on_failed_entry(state, event, *event_args)
     super
+
     wf_set_records_state
 
-    __debug_sim("[prev_state == #{prev_state.inspect}]")
-    __debug_sim('SYSTEM has terminated the workflow.')
-    __debug_sim('Associated data will persist until this entry is pruned.')
-
+    #__debug_wf "[prev_state == #{prev_state.inspect}]"
+    #__debug_wf 'SYSTEM has terminated the workflow.'
+    #__debug_wf 'Associated data will persist until this entry is pruned.'
     self
   end
 
@@ -914,12 +816,12 @@ module UploadWorkflow::Bulk::States
   #
   def on_canceled_entry(state, event, *event_args)
     super
+
     wf_set_records_state
 
-    __debug_sim("[prev_state == #{prev_state.inspect}]")
-    __debug_sim('USER has terminated the workflow.')
-    __debug_sim('Associated data will persist until this entry is pruned.')
-
+    #__debug_wf "[prev_state == #{prev_state.inspect}]"
+    #__debug_wf 'USER has terminated the workflow.'
+    #__debug_wf 'Associated data will persist until this entry is pruned.'
     self
   end
 
@@ -935,11 +837,11 @@ module UploadWorkflow::Bulk::States
   #
   def on_completed_entry(state, event, *event_args)
     super
+
     wf_set_records_state
 
-    __debug_sim("[prev_state == #{prev_state.inspect}]")
-    __debug_sim('The submission has been completed successfully.')
-
+    #__debug_wf "[prev_state == #{prev_state.inspect}]"
+    #__debug_wf 'The submission has been completed successfully.'
     halt unless DEBUG_WORKFLOW
     self
   end
@@ -979,13 +881,12 @@ module UploadWorkflow::Bulk::States
   #
   def on_purged_entry(state, event, *event_args)
     super
+    #__debug_wf 'The submission entry is being purged.'
 
-    __debug_sim('The submission entry is being purged.')
-
-    __debug_sim('Shrine cache item is being removed from AWS S3.')
+    #__debug_wf 'Shrine cache item is being removed from AWS S3.'
     # TODO: remove Shrine cache item from AWS S3.
 
-    __debug_sim('Database entry is being removed.')
+    #__debug_wf 'Database entry is being removed.'
     # TODO: delete 'upload' table record, OR mark as purged:
     #set_workflow_phase(:purge) # TODO: what record?
 
@@ -1000,10 +901,6 @@ end
 # =============================================================================
 
 public
-
-if UploadWorkflow::Bulk::SIMULATION
-  require_relative '../../../lib/sim/models/upload_workflow/bulk'
-end
 
 # Base class for bulk-upload workflows.
 #

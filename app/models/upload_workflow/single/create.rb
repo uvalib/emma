@@ -115,10 +115,6 @@ module UploadWorkflow::Single::Create::Actions
 
 end
 
-module UploadWorkflow::Single::Create::Simulation
-  include UploadWorkflow::Single::Simulation
-end
-
 # =============================================================================
 # :section: Event handlers
 # =============================================================================
@@ -127,7 +123,6 @@ public
 
 module UploadWorkflow::Single::Create::Events
   include UploadWorkflow::Single::Events
-  include UploadWorkflow::Single::Create::Simulation
 end
 
 # Overridden state transition methods specific to single-entry submission.
@@ -157,46 +152,11 @@ module UploadWorkflow::Single::Create::States
   def on_creating_entry(state, event, *event_args)
     super
 
-    # TODO: simulation - remove
-    if simulating
-      action =
-        case existing_record
-          when false then :set_record
-          when true  then :reset_record
-          else            :create_record
-        end
-      if action == :create_record
-        # From UploadController#new:
-        # @item = new_record(user_id: @user.id, base_url: request.base_url)
-        __debug_sim('CODE') do
-          args = 'user_id: @user.id, base_url: request.base_url'
-          "@item = new_record(#{args})"
-        end
-        submission.set_item
-      else
-        action = :set_record
-      end
-    else
-      action = :create_record
-    end
+    wf_start_submission(*event_args)
 
-    unless simulating
-      wf_start_submission(*event_args)
-    end
-
-    # TODO: simulation - remove
-    __debug_sim do
-      case action
-        when :set_record   then 'Form error message displayed if present.'
-        when :reset_record then 'New-item form emptied after cancel.'
-        else                    'System presents a new-item submission form.'
-      end
-    end
-
-    # TODO: simulation - remove
-    commit = file_valid? ? 'submit' : 'upload'
-    __debug_sim('USER fills form until submit is enabled.')
-    __debug_sim("USER must `cancel!` or `#{commit}!` to advance...")
+    #__debug_wf 'USER fills form until submit is enabled.'
+    #file_valid? and __debug_wf 'USER must `cancel!` or `submit!` to advance.'
+    #file_valid? or  __debug_wf 'USER must `cancel!` or `upload!` to advance.'
 
     self
   end
@@ -213,43 +173,18 @@ module UploadWorkflow::Single::Create::States
   #
   def on_validating_entry(state, event, *event_args)
     super
-
-    __debug_sim('The uploaded file is received in the Shrine cache.')
-
-    # Verify validity of the uploaded file. # TODO: simulation - remove
-    if simulating
-      # From UploadController#upload:
-      # stat, hdrs, body = FileUploader.upload_response(:cache, request.env)
-      __debug_sim('CODE') do
-        args = ':cache, request.env'
-        "FileUploader.upload_response(#{args})"
-      end
-      __debug_sim("[invalid_file: #{submission.invalid_file}]")
-      submission.file_valid = !submission.invalid_file
-      if submission.file_valid
-        self.succeeded << submission.id
-      else
-        self.failures  << 'invalid file'
-      end
-    end
+    #__debug_wf 'The uploaded file is received in the Shrine cache.'
 
     # Verify validity of the uploaded file.
-    unless simulating
-      wf_upload_file(*event_args)
-    end
-
+    wf_upload_file(*event_args)
     valid = ready?
 
-    # TODO: simulation - remove
-    if valid
-      __debug_sim('The remediated file was determined to be VALID.')
-      __debug_sim('The form is populated with extracted metadata.')
-      __debug_sim('USER continues to fill form until submit is enabled.')
-      __debug_sim('USER must `cancel!` or `submit!` to advance...')
-    else
-      __debug_sim('The remediated file was determined to be INVALID.')
-      __debug_sim('System generates a form error message to be displayed.')
-    end
+    #valid and __debug_wf 'The remediated file was determined to be VALID.'
+    #valid and __debug_wf 'The form is populated with extracted metadata.'
+    #valid and __debug_wf 'USER continues to fill form until submit enabled.'
+    #valid and __debug_wf 'USER must `cancel!` or `submit!` to advance...'
+    #valid or  __debug_wf 'The remediated file was determined to be INVALID.'
+    #valid or  __debug_wf 'System generates a form error message for display.'
 
     # If the file is valid then the submission remains in this state until
     # the user completes and submits the form, or cancels the submission.
@@ -271,49 +206,12 @@ module UploadWorkflow::Single::Create::States
   def on_submitting_entry(state, event, *event_args)
     super
 
-    # Verify validity of the submission. # TODO: simulation - remove
-    if simulating
-      # From UploadController#create:
-      # @item, failed = upload_create(data)
-      __debug_sim('CODE') do
-        args = "data=#{submission.data.inspect}"
-        opt  = 'index: false'
-        "@item, failed = upload_create(#{args}, #{opt})"
-      end
-      bad = nil
-      if (db_fail = submission.db_failure)
-        self.failures  << 'DB create failed'
-      elsif (bad = !(submission.metadata_valid = !submission.invalid_entry))
-        self.failures  << 'bad metadata'
-      else
-        self.succeeded << submission.id
-      end
-      if db_fail
-        __debug_sim('[db_failure: true]')
-        __debug_sim('The database entry could not be created.')
-      elsif bad
-        __debug_sim('[invalid_entry: true]')
-        __debug_sim('The entry is invalid/incomplete.')
-        __debug_sim('(NOTE: PROBABLE FAILURE OF CLIENT-SIDE FORM VALIDATION)')
-      else
-        __debug_sim('[invalid_entry: false]')
-        __debug_sim('[db_failure:    false]')
-      end
-    end
-
     # Verify validity of the submission.
-    unless simulating
-      wf_validate_submission(*event_args)
-    end
-
+    wf_validate_submission(*event_args)
     valid = ready?
 
-    # TODO: simulation - remove
-    if valid
-      __debug_sim('The database entry was created.')
-    else
-      __debug_sim('System generates a form error message to be displayed.')
-    end
+    #valid and __debug_wf 'The database entry was created.'
+    #valid or  __debug_wf 'System generates a form error message for display.'
 
     # Automatically transition to the next state based on submission status.
     if valid
@@ -337,25 +235,11 @@ module UploadWorkflow::Single::Create::States
   def on_submitted_entry(state, event, *event_args)
     super
 
-    # TODO: simulation - remove
-    if simulating
-      __debug_sim("[no_review: #{submission.no_review}]")
-      must_review = !submission.no_review
-    else
-      must_review = true
-    end
-
     # Determine whether the item needs to be reviewed.
-    unless simulating
-      must_review = record.review_required? if record
-    end
+    must_review = record.present? && record.review_required?
 
-    # TODO: simulation - remove
-    if must_review
-      __debug_sim('This item requires review.')
-    else
-      __debug_sim('This item can be submitted without review.')
-    end
+    #must_review and __debug_wf 'This item requires review.'
+    #must_review or  __debug_wf 'This item can be submitted without review.'
 
     # Automatically transition to the next state based on submission status.
     if must_review

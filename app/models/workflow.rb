@@ -26,13 +26,6 @@ class Workflow::Base
   #
   DEBUG_TRANSITION = DEBUG_WORKFLOW && false
 
-  # Engage a simulated submission record instead of the actual database to
-  # simplify trials at the command line or within IRB.
-  #
-  # @type [Boolean]
-  #
-  SIMULATION = DEBUG_WORKFLOW && false
-
   # Root workflow configuration.
   #
   # @type [Hash{Symbol=>Hash}]
@@ -369,27 +362,6 @@ module Workflow::Base::Actions
   include Workflow::Base::Data
 end
 
-# Stubs for methods supporting internal workflow simulated activity.
-#
-module Workflow::Base::Simulation
-
-  # Indicate whether simulation is in effect.
-  #
-  # @return [Boolean]
-  #
-  def simulating(...)
-    false
-  end
-
-  # Neutralize debugging methods when not debugging.
-  #
-  # @return [nil]
-  #
-  def __debug_sim(...)
-  end
-
-end
-
 # =============================================================================
 # :section: Event handlers
 # =============================================================================
@@ -475,8 +447,6 @@ public
 # @see Workflow::ClassMethods#assign_workflow
 #
 module Workflow::Base::Events
-
-  include Workflow::Base::Simulation
 
   # ===========================================================================
   # :section:
@@ -932,49 +902,50 @@ module Workflow::Base::States
 
   protected
 
-  if not DEBUG_WORKFLOW
+  include Emma::Debug::OutputMethods if DEBUG_WORKFLOW
 
-    def __debug_entry(...); end
-    def __debug_exit(...);  end
-
-  else
-
-    include Emma::Debug::OutputMethods
-
-    # __debug_entry
-    #
-    # @param [any, nil] state         State that is being entered.
-    # @param [Symbol]   _event        Triggering event
-    # @param [Array]    _event_args
-    #
-    def __debug_entry(state, _event = nil, *_event_args, **)
-      __debug_line do
-        state = state_object(state)
-        trans =
-          state.events.map { |evt, entry|
-            event_label(evt, number: false) << '->' <<
-              entry.map { |e|
-                state_label(e.transitions_to, number: false)
-              }.join(',')
-          }.join('; ')
-        state = state_label(state)
-        "UPLOAD WF >>>>> ENTER #{state} => [#{trans}]"
-      end
-    end
-
-    # __debug_exit
-    #
-    # @param [any, nil] state         State that is being exited.
-    # @param [Symbol]   _event        Triggering event
-    # @param [Array]    _event_args
-    #
-    def __debug_exit(state, _event = nil, *_event_args, **)
-      __debug_line do
-        'UPLOAD WF <<<<< LEAVE ' + state_label(state)
-      end
-    end
-
+  # __debug_entry
+  #
+  # @param [any, nil] state           State that is being entered.
+  # @param [Symbol]   _event          Triggering event
+  # @param [Array]    _event_args
+  #
+  def __debug_entry(state, _event = nil, *_event_args, **)
+    state = state_object(state)
+    trans =
+      state.events.map { |evt, entry|
+        event_label(evt, number: false) << '->' <<
+          entry.map { |e|
+            state_label(e.transitions_to, number: false)
+          }.join(',')
+      }.join('; ')
+    state = state_label(state)
+    __debug_wf(">>>>> ENTER #{state} => [#{trans}]")
   end
+    .tap { |meth| neutralize(meth) unless DEBUG_WORKFLOW }
+
+  # __debug_exit
+  #
+  # @param [any, nil] state           State that is being exited.
+  # @param [Symbol]   _event          Triggering event
+  # @param [Array]    _event_args
+  #
+  def __debug_exit(state, _event = nil, *_event_args, **)
+    state = state_label(state)
+    __debug_wf("<<<<< LEAVE #{state}")
+  end
+    .tap { |meth| neutralize(meth) unless DEBUG_WORKFLOW }
+
+  # __debug_wf
+  #
+  # @param [Array<*>] args            Passed to #__debug_line.
+  # @param [Hash]     opt
+  # @param [Proc]     blk             Passed to #__debug_line.
+  #
+  def __debug_wf(*args, **opt, &blk)
+    __debug_line(*args, leader: 'UPLOAD WF', **opt, &blk)
+  end
+    .tap { |meth| neutralize(meth) unless DEBUG_WORKFLOW }
 
 end
 
@@ -993,10 +964,6 @@ end
 # =============================================================================
 
 public
-
-if Workflow::Base::SIMULATION
-  require_relative '../../lib/sim/models/workflow'
-end
 
 # Common workflow aspects.
 #
@@ -1044,12 +1011,10 @@ class Workflow::Base
   # @param [Hash]     opt             Passed to #initialize_state
   #
   # @option opt [User, String] :user
-  # @option opt [Boolean]      :no_sim
   #
   def initialize(data, **opt)
     @params        = opt[:params]  || {}
     @model_options = opt[:options] || Upload::Options.new(@params)
-    simulating(false) if opt[:no_sim] # TODO: remove?
     set_wf_user(opt[:user])
     initialize_state(data, **opt)
   end

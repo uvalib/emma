@@ -16,13 +16,6 @@ class Workflow::Base
   #
   DEBUG_TRANSITION: bool
 
-  # Engage a simulated submission record instead of the actual database to
-  # simplify trials at the command line or within IRB.
-  #
-  # @type [Boolean]
-  #
-  SIMULATION: bool
-
   # Root workflow configuration.
   #
   # @type [Hash{Symbol=>Hash}]
@@ -249,25 +242,6 @@ module Workflow::Base::Actions
   include Workflow::Base::Data
 end
 
-# Stubs for methods supporting internal workflow simulated activity.
-#
-module Workflow::Base::Simulation
-  # Indicate whether simulation is in effect.
-  #
-  # @return [Boolean]
-  #
-  def simulating: (*untyped _ignored) ?{ () -> untyped } -> bool
-
-  # Neutralize debugging methods when not debugging.
-  #
-  # @return [nil]
-  #
-  def __debug_sim: (*untyped _ignored) ?{ () -> untyped } -> nil
-
-  class SimulatedTask
-  end
-end
-
 # Methods which are executed to initiate state transitions.
 #
 # The Workflow gem dynamically creates helper methods based on the *workflow*
@@ -347,8 +321,6 @@ end
 # @see Workflow::ClassMethods#assign_workflow
 #
 module Workflow::Base::Events
-  include Workflow::Base::Simulation
-
   # All defined workflow events.
   #
   # @type [Array<Symbol>]
@@ -513,19 +485,27 @@ module Workflow::Base::States
 
   # __debug_entry
   #
-  # @param [any, nil] state         State that is being entered.
-  # @param [Symbol]   _event        Triggering event
+  # @param [any, nil] state           State that is being entered.
+  # @param [Symbol]   _event          Triggering event
   # @param [Array]    _event_args
   #
   def __debug_entry: (Workflow::State|Symbol|String state, ?(Symbol|nil) _event, *untyped _event_args) -> nil
 
   # __debug_exit
   #
-  # @param [any, nil] state         State that is being exited.
-  # @param [Symbol]   _event        Triggering event
+  # @param [any, nil] state           State that is being exited.
+  # @param [Symbol]   _event          Triggering event
   # @param [Array]    _event_args
   #
   def __debug_exit: (Workflow::State|Symbol|String state, ?(Symbol|nil) _event, *untyped _event_args) -> nil
+
+  # __debug_wf
+  #
+  # @param [Array<*>] args            Passed to #__debug_line.
+  # @param [Hash]     opt
+  # @param [Proc]     blk             Passed to #__debug_line.
+  #
+  def __debug_wf: (*untyped args, **untyped opt) ?{ () -> untyped } -> nil
 end
 
 # Hooks executed during transitions.
@@ -573,7 +553,6 @@ class Workflow::Base
   # @param [Hash]     opt             Passed to #initialize_state
   #
   # @option opt [User, String] :user
-  # @option opt [Boolean]      :no_sim
   #
   def initialize: (untyped data, **untyped opt) -> void
 

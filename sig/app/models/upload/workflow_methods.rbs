@@ -3,10 +3,6 @@
 module Upload::WorkflowMethods
   include Emma::Debug
 
-  DEFAULT_REVIEW_REQUIRED: bool
-
-  DEFAULT_AUTO_REVIEWABLE: bool
-
   # The table column associated generally associated with workflow state.
   #
   # @type [Symbol]
@@ -308,7 +304,7 @@ module Upload::WorkflowMethods
   #   fleshed out and might be irrelevant given the current approach of open
   #   collaboration across organization members.
   #
-  def review_required?: () -> bool
+  def review_required?: () -> false
 
   # Indicate whether this submission is eligible to be review automatically.
   #
@@ -318,7 +314,7 @@ module Upload::WorkflowMethods
   #   fleshed out and might be irrelevant given the current approach of open
   #   collaboration across organization members.
   #
-  def auto_reviewable?: () -> bool
+  def auto_reviewable?: () -> false
 
   # Start editing a record which is associated with an existing entry by
   # copying the current :emma_data to :edit_emma_data.

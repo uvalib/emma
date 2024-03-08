@@ -69,14 +69,8 @@ module UploadWorkflow::Bulk::Edit::Actions
   def wf_index_update: (*untyped _event_args) -> void
 end
 
-module UploadWorkflow::Bulk::Edit::Simulation
-  include UploadWorkflow::Bulk::Simulation
-end
-
 module UploadWorkflow::Bulk::Edit::Events
   include UploadWorkflow::Bulk::Events
-
-  include UploadWorkflow::Bulk::Edit::Simulation
 end
 
 # Overridden state transition methods specific to bulk update.

@@ -22,15 +22,6 @@ module Upload::WorkflowMethods
 
   public
 
-  DEFAULT_REVIEW_REQUIRED = false
-  DEFAULT_AUTO_REVIEWABLE = false
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # The table column associated generally associated with workflow state.
   #
   # @type [Symbol]
@@ -586,7 +577,7 @@ module Upload::WorkflowMethods
   #   collaboration across organization members.
   #
   def review_required?
-    DEFAULT_REVIEW_REQUIRED # TODO: review_required?
+    false
   end
 
   # Indicate whether this submission is eligible to be review automatically.
@@ -598,7 +589,7 @@ module Upload::WorkflowMethods
   #   collaboration across organization members.
   #
   def auto_reviewable?
-    DEFAULT_AUTO_REVIEWABLE # TODO: auto_reviewable?
+    false
   end
 
   # ===========================================================================

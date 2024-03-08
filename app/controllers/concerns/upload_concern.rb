@@ -407,7 +407,6 @@ module UploadConcern
     opt[:user]    ||= @user
     opt[:params]  ||= workflow_parameters
     opt[:options] ||= model_options
-    opt[:no_sim]    = true if UploadWorkflow::Single::SIMULATION # TODO: remove
     # noinspection RubyMismatchedArgumentType
     @workflow = UploadWorkflow::Single.generate(rec, **opt)
     @workflow.send("#{event}!", data)
@@ -432,7 +431,6 @@ module UploadConcern
     opt[:user]    ||= @user
     opt[:params]  ||= workflow_parameters
     opt[:options] ||= model_options
-    opt[:no_sim]    = true if UploadWorkflow::Single::SIMULATION # TODO: remove
     opt[:html]      = params[:format].blank? || (params[:format] == 'html')
     # noinspection RubyMismatchedArgumentType
     @workflow = UploadWorkflow::Single.check_status(rec, **opt)
@@ -476,7 +474,6 @@ module UploadConcern
     opt[:user]    ||= @user
     opt[:params]  ||= workflow_parameters
     opt[:options] ||= model_options
-    opt[:no_sim]    = true if UploadWorkflow::Bulk::SIMULATION # TODO: remove
     @workflow = UploadWorkflow::Bulk.generate(rec, **opt)
     @workflow.send("#{event}!", *data)
     raise_failure(from, @workflow.failures) if @workflow.failures?

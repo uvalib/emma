@@ -1677,12 +1677,6 @@ module UploadWorkflow::Actions
 
 end
 
-# Stubs for methods supporting internal workflow simulated activity.
-#
-module UploadWorkflow::Simulation
-  include Workflow::Base::Simulation
-end
-
 # =============================================================================
 # :section: Event handlers
 # =============================================================================
@@ -1693,7 +1687,6 @@ public
 #
 module UploadWorkflow::Events
   include Workflow::Base::Events
-  include UploadWorkflow::Simulation
 end
 
 # Methods executed on transition into and out of a state.
@@ -1709,10 +1702,6 @@ end
 # =============================================================================
 
 public
-
-if UploadWorkflow::SIMULATION
-  require_relative '../../lib/sim/models/upload_workflow'
-end
 
 # Standard create/update/delete workflows.
 #

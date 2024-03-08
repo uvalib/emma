@@ -236,23 +236,8 @@ module UploadWorkflow::Single::Actions
   def assert_emma_record: () -> true
 end
 
-module UploadWorkflow::Single::Simulation
-  include UploadWorkflow::Simulation
-
-  # Simulated record properties.  (Always *nil* if `#SIMULATION` is *false*.)
-  #
-  # @return [RecordProperties]
-  # @return [nil]
-  #
-  attr_reader submission: untyped
-
-  def set_submission: (*untyped _ignored) ?{ () -> untyped } -> untyped
-end
-
 module UploadWorkflow::Single::Events
   include UploadWorkflow::Events
-
-  include UploadWorkflow::Single::Simulation
 end
 
 # Overridden state transition methods specific to single-item upload workflows.

@@ -44,14 +44,8 @@ module UploadWorkflow::Single::Remove::Actions
   def wf_index_update: (*untyped _event_args) -> void
 end
 
-module UploadWorkflow::Single::Remove::Simulation
-  include UploadWorkflow::Single::Simulation
-end
-
 module UploadWorkflow::Single::Remove::Events
   include UploadWorkflow::Single::Events
-
-  include UploadWorkflow::Single::Remove::Simulation
 end
 
 # Overridden state transition methods specific to single-entry removal.

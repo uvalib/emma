@@ -884,18 +884,10 @@ module UploadWorkflow::Actions
   def wf_cancel_submission: (*untyped event_args) -> void
 end
 
-# Stubs for methods supporting internal workflow simulated activity.
-#
-module UploadWorkflow::Simulation
-  include Workflow::Base::Simulation
-end
-
 # Methods which are executed to initiate state transitions.
 #
 module UploadWorkflow::Events
   include Workflow::Base::Events
-
-  include UploadWorkflow::Simulation
 end
 
 # Methods executed on transition into and out of a state.

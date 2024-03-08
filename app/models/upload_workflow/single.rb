@@ -575,29 +575,6 @@ module UploadWorkflow::Single::Actions
 
 end
 
-module UploadWorkflow::Single::Simulation
-
-  include UploadWorkflow::Simulation
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Simulated record properties.  (Always *nil* if `#SIMULATION` is *false*.)
-  #
-  # @return [RecordProperties]
-  # @return [nil]
-  #
-  attr_reader :submission
-
-  def set_submission(...)
-    raise "#{__method__} only available if DEBUG_WORKFLOW is true"
-  end
-
-end
-
 # =============================================================================
 # :section: Event handlers
 # =============================================================================
@@ -606,7 +583,6 @@ public
 
 module UploadWorkflow::Single::Events
   include UploadWorkflow::Events
-  include UploadWorkflow::Single::Simulation
 end
 
 # Overridden state transition methods specific to single-item upload workflows.
@@ -636,9 +612,7 @@ module UploadWorkflow::Single::States
   #
   def on_starting_entry(state, event, *event_args)
     super
-
-    __debug_sim('The workflow is starting.')
-
+    #__debug_wf 'The workflow is starting.'
     self
   end
 
@@ -655,10 +629,10 @@ module UploadWorkflow::Single::States
 
     unless event == :start
 
-      __debug_sim("Using workflow #{self.class}")
-      __debug_sim("with workflow_phase: #{workflow_phase.inspect}")
-      __debug_sim("with variant_type:   #{variant_type.inspect}")
-      __debug_sim("with record:         #{record.inspect}")
+      #__debug_wf "Using workflow #{self.class}"
+      #__debug_wf "with workflow_phase: #{workflow_phase.inspect}"
+      #__debug_wf "with variant_type:   #{variant_type.inspect}"
+      #__debug_wf "with record:         #{record.inspect}"
 
       set_workflow_phase(workflow_phase)
 
@@ -686,25 +660,11 @@ module UploadWorkflow::Single::States
   def on_scheduling_entry(state, event, *event_args)
     super
 
-    # TODO: simulation - remove
-    if simulating
-      __debug_sim("[auto_review: #{submission.auto_review}]")
-      auto_review = submission.auto_review
-    else
-      auto_review = false
-    end
-
     # Determine whether the system should perform an automated review.
-    unless simulating
-      auto_review = record.auto_reviewable?
-    end
+    auto_review = record.present? && record.auto_reviewable?
 
-    # TODO: simulation - remove
-    if auto_review
-      __debug_sim('SYSTEM will perform an automated review.')
-    else
-      __debug_sim('SYSTEM will determine a pool of reviewer(s).')
-    end
+    #auto_review and __debug_wf 'SYSTEM will perform an automated review.'
+    #auto_review or  __debug_wf 'SYSTEM will determine a pool of reviewer(s).'
 
     # Automatically transition to the next state based on submission status.
     if auto_review
@@ -729,19 +689,10 @@ module UploadWorkflow::Single::States
     super
 
     # Determine availability of appropriate reviewer(s).
-    if simulating
-      __debug_sim("[no_reviewers: #{submission.no_reviewers}]")
-      can_proceed = !submission.no_reviewers
-    else
-      can_proceed = true
-    end
+    can_proceed = true
 
-    # TODO: simulation - remove
-    if can_proceed
-      __debug_sim('SYSTEM notifies the pool of available reviewer(s).')
-    else
-      __debug_sim('SYSTEM determined there are no reviewers available.')
-    end
+    #can_proceed and __debug_wf 'SYSTEM notifies pool of available reviewers.'
+    #can_proceed or  __debug_wf 'SYSTEM determined no reviewers are available.'
 
     # Automatically transition to the next state based on submission status.
     if can_proceed
@@ -767,39 +718,6 @@ module UploadWorkflow::Single::States
   #
   def on_holding_entry(state, event, *event_args)
     super
-
-    if simulating
-
-      task = ReviewerTask
-
-      if event == :hold
-        __debug_sim("Start #{task} to check for an available reviewer.")
-        task.start
-      end
-
-      if task.check
-        __debug_sim("The #{task} is checking...")
-        timeout! # NOTE: => :holding
-
-      elsif task.success
-        __debug_sim("The #{task} has found a reviewer.")
-        advance! # NOTE: => :assigning
-
-      else
-        __debug_sim("The #{task} still has NOT found a reviewer.")
-        __debug_sim('SYSTEM notifies the user of submission status.')
-        __debug_sim('SYSTEM notifies administrator of possible problem.')
-        if task.restart
-          __debug_sim("The #{task} is restarting.")
-          timeout! # NOTE: => :holding
-        else
-          __debug_sim("The #{task} is terminated.")
-          fail!    # NOTE: => :failed
-        end
-      end
-
-    end
-
     self
   end
 
@@ -817,31 +735,15 @@ module UploadWorkflow::Single::States
     super
 
     # Determine whether the system should perform an automated review.
-    auto_review = false # TODO: auto-review?
+    auto_review = record.present? && record.auto_reviewable?
 
-    # Determine whether the system should perform an automated review.
-    if simulating
-      __debug_sim("[auto_review: #{submission.auto_review}]")
-      auto_review = submission.auto_review # TODO: remove
-    end
-
-    # Determine whether the system should perform an automated review.
-    unless simulating
-      auto_review = record.auto_reviewable? if record
-    end
-
-    # TODO: simulation - remove
-    if auto_review
-      __debug_sim('SYSTEM is performing an automated review.')
-    else
-      __debug_sim('Waiting for reviewer to begin review.')
-      __debug_sim('REVIEWER must `review!` to advance...')
-    end
+    #auto_review and __debug_wf 'SYSTEM is performing an automated review.'
+    #auto_review or  __debug_wf 'Waiting for reviewer to begin review.'
+    #auto_review or  __debug_wf 'REVIEWER must `review!` to advance...'
 
     # If the submission is to be reviewed by a human then it remains in this
     # state until a review claims it (i.e. starts a review).
     review! if auto_review # NOTE: => :reviewing
-
     self
   end
 
@@ -857,13 +759,15 @@ module UploadWorkflow::Single::States
   #
   def on_assigned_exit(state, event, *event_args)
     super
-
+=begin
     unless event == :review
-      changed = 'withdrawn'
-      changed += ' pending edits' unless event == :cancel
-      __debug_sim("Reviewer(s) notified the submission was #{changed}.")
+      __debug_wf do
+        changed = 'withdrawn'
+        changed += ' pending edits' unless event == :cancel
+        "Reviewer(s) notified the submission was #{changed}."
+      end
     end
-
+=end
     self
   end
 
@@ -879,34 +783,8 @@ module UploadWorkflow::Single::States
   #
   def on_reviewing_entry(state, event, *event_args)
     super
-
-    if !simulating || !submission.auto_review
-      __debug_sim('[auto_review: false]') if simulating
-      __debug_sim('Waiting for reviewer evaluation.')
-      __debug_sim('REVIEWER must `approve!` or `reject!` to advance...')
-
-    elsif submission.auto_approve # TODO: remove
-      __debug_sim('[auto_review:  true]')
-      __debug_sim('[auto_approve: true]')
-      __debug_sim('SYSTEM review approves the submission.')
-
-      approve! # NOTE: => :approved
-
-    elsif submission.auto_reject # TODO: remove
-      __debug_sim('[auto_review: true]')
-      __debug_sim('[auto_reject: true]')
-      __debug_sim('SYSTEM review rejects the submission.')
-
-      reject! # NOTE: => :rejected
-
-    else # TODO: remove
-      __debug_sim('[auto_review:  true]')
-      __debug_sim('[auto_approve: false]')
-      __debug_sim('[auto_reject:  false]')
-      __debug_sim('SYSTEM must `approve!` or `reject!` to advance...')
-
-    end
-
+    #__debug_wf 'Waiting for reviewer evaluation.'
+    #__debug_wf 'REVIEWER must `approve!` or `reject!` to advance...'
     self
   end
 
@@ -922,10 +800,8 @@ module UploadWorkflow::Single::States
   #
   def on_rejected_entry(state, event, *event_args)
     super
-
-    __debug_sim('System notifies user of rejection.')
-    __debug_sim('USER must `edit!` or `cancel!` to advance...')
-
+    #__debug_wf 'SYSTEM notifies user of rejection.'
+    #__debug_wf 'USER must `edit!` or `cancel!` to advance...'
     self
   end
 
@@ -941,9 +817,7 @@ module UploadWorkflow::Single::States
   #
   def on_approved_entry(state, event, *event_args)
     super
-
-    __debug_sim('SYSTEM notifies user of approval.')
-
+    #__debug_wf 'SYSTEM notifies user of approval.'
     advance! # NOTE: => :staging
     self
   end
@@ -969,23 +843,12 @@ module UploadWorkflow::Single::States
     super
 
     # Determine whether this is destined for a partner repository.
-    if simulating
-      __debug_sim("[emma_items: #{submission.emma_item}]")
-      emma_items = submission.emma_item
-    else
-      emma_items = emma_item?(record)
-    end
+    emma_items = emma_item?(record)
 
-    unless simulating
-      wf_finalize_submission(*event_args)
-    end
+    wf_finalize_submission(*event_args)
 
-    # TODO: simulation - remove
-    if emma_items
-      __debug_sim('SYSTEM determines this is an EMMA-native submission.')
-    else
-      __debug_sim('SYSTEM moves the submission into the repo staging area.')
-    end
+    #emma_items and __debug_wf 'SYSTEM determines EMMA-native submission.'
+    #emma_items or  __debug_wf 'SYSTEM moves submission to repo staging area.'
 
     # Automatically transition to the next state based on submission status.
     if emma_items
@@ -1011,39 +874,6 @@ module UploadWorkflow::Single::States
   #
   def on_unretrieved_entry(state, event, *event_args)
     super
-
-    if simulating
-
-      task = RetrievalTask
-
-      unless event == :timeout
-        __debug_sim("Start #{task} to check for the submission.")
-        task.start
-      end
-
-      if task.check
-        __debug_sim("The #{task} is checking...")
-        timeout! # NOTE: => :unretrieved
-
-      elsif task.success
-        __debug_sim("The #{task} has detected the submission.")
-        advance! # NOTE: => :retrieved
-
-      else
-        __debug_sim("The #{task} still has NOT detected the submission.")
-        __debug_sim('SYSTEM notifies the user of submission status.')
-        __debug_sim('SYSTEM notifies an agent of the partner repository.')
-        if task.restart
-          __debug_sim("The #{task} is restarting.")
-          timeout! # NOTE: => :unretrieved
-        else
-          __debug_sim("The #{task} is terminated.")
-          fail!    # NOTE: => :failed
-        end
-      end
-
-    end
-
     self
   end
 
@@ -1065,10 +895,8 @@ module UploadWorkflow::Single::States
   #
   def on_retrieved_entry(state, event, *event_args)
     super
-
-    __debug_sim('The submission has been received by the partner repository.')
-    __debug_sim('SYSTEM ensures the staging area is consistent.')
-
+    #__debug_wf 'The submission has been received by the partner repository.'
+    #__debug_wf 'SYSTEM ensures the staging area is consistent.'
     advance! # NOTE: => :indexing
     self
   end
@@ -1096,46 +924,13 @@ module UploadWorkflow::Single::States
   def on_indexing_entry(state, event, *event_args)
     super
 
-    if simulating
+    wf_index_update(*event_args)
 
-      task = IndexTask
-
-      unless event == :timeout
-        __debug_sim("Start #{task} to check for the submission.")
-        task.start
-      end
-
-      if task.check
-        __debug_sim("The #{task} is checking...")
-        timeout! # NOTE: => :indexing
-
-      elsif task.success
-        __debug_sim("The #{task} has detected the submission.")
+    if emma_item?(record)
+      if ready?
         advance! # NOTE: => :indexed
-
       else
-        __debug_sim("The #{task} still has NOT detected the submission.")
-        __debug_sim('SYSTEM notifies the user of submission status.')
-        __debug_sim('SYSTEM notifies an agent of the partner repository.')
-        if task.restart
-          __debug_sim("The #{task} is restarting.")
-          timeout! # NOTE: => :indexing
-        else
-          __debug_sim("The #{task} is terminated.")
-          fail!    # NOTE: => :failed
-        end
-      end
-
-    end
-
-    unless simulating
-      wf_index_update(*event_args)
-      if emma_item?(record)
-        if ready?
-          advance! # NOTE: => :indexed
-        else
-          fail!    # NOTE: => :failed
-        end
+        fail!    # NOTE: => :failed
       end
     end
 
@@ -1154,9 +949,7 @@ module UploadWorkflow::Single::States
   #
   def on_indexed_entry(state, event, *event_args)
     super
-
-    __debug_sim('SYSTEM notifies the user that the submission is complete.')
-
+    #__debug_wf 'SYSTEM notifies the user that the submission is complete.'
     advance! # NOTE: => :completed
     self
   end
@@ -1179,11 +972,9 @@ module UploadWorkflow::Single::States
   #
   def on_suspended_entry(state, event, *event_args)
     super
-
-    __debug_sim("[prev_state == #{prev_state.inspect}]")
-    __debug_sim('Submission suspended until admin takes further action TBD.')
-    __debug_sim('Associated data will persist indefinitely.')
-
+    #__debug_wf "[prev_state == #{prev_state.inspect}]"
+    #__debug_wf 'Submission suspended until admin takes further action TBD.'
+    #__debug_wf 'Associated data will persist indefinitely.'
     self
   end
 
@@ -1199,11 +990,9 @@ module UploadWorkflow::Single::States
   #
   def on_failed_entry(state, event, *event_args)
     super
-
-    __debug_sim("[prev_state == #{prev_state.inspect}]")
-    __debug_sim('SYSTEM has terminated the workflow.')
-    __debug_sim('Associated data will persist until this entry is pruned.')
-
+    #__debug_wf "[prev_state == #{prev_state.inspect}]"
+    #__debug_wf 'SYSTEM has terminated the workflow.'
+    #__debug_wf 'Associated data will persist until this entry is pruned.'
     self
   end
 
@@ -1219,20 +1008,9 @@ module UploadWorkflow::Single::States
   #
   def on_canceled_entry(state, event, *event_args)
     super
-
-    __debug_sim('USER has terminated the workflow.')
-
-    if simulating
-      __debug_sim("[prev_state == #{prev_state.inspect}]")
-      __debug_sim('Associated data will persist until this entry is pruned.')
-    else
-      __debug_sim('The submission record will be removed.')
-    end
-
-    unless simulating
-      wf_cancel_submission(*event_args)
-    end
-
+    #__debug_wf 'USER has terminated the workflow.'
+    #__debug_wf 'The submission record will be removed.'
+    wf_cancel_submission(*event_args)
     self
   end
 
@@ -1248,10 +1026,8 @@ module UploadWorkflow::Single::States
   #
   def on_completed_entry(state, event, *event_args)
     super
-
-    __debug_sim("[prev_state == #{prev_state.inspect}]")
-    __debug_sim('The submission has been completed successfully.')
-
+    #__debug_wf "[prev_state == #{prev_state.inspect}]"
+    #__debug_wf 'The submission has been completed successfully.'
     halt unless DEBUG_WORKFLOW
     self
   end
@@ -1292,12 +1068,12 @@ module UploadWorkflow::Single::States
   def on_purged_entry(state, event, *event_args)
     super
 
-    __debug_sim('The submission entry is being purged.')
+    #__debug_wf 'The submission entry is being purged.'
 
-    __debug_sim('Shrine cache item is being removed from AWS S3.')
+    #__debug_wf 'Shrine cache item is being removed from AWS S3.'
     # TODO: remove Shrine cache item from AWS S3.
 
-    __debug_sim('Database entry is being removed.')
+    #__debug_wf 'Database entry is being removed.'
     # TODO: delete 'upload' table record, OR mark as purged:
     set_workflow_phase(:purge)
 
@@ -1312,10 +1088,6 @@ end
 # =============================================================================
 
 public
-
-if UploadWorkflow::Single::SIMULATION
-  require_relative '../../../lib/sim/models/upload_workflow/single'
-end
 
 # Base class for single-item upload workflows.
 #
@@ -1366,7 +1138,6 @@ class UploadWorkflow::Single < UploadWorkflow
   # @return [void]
   #
   def initialize_state(data, **opt)
-    set_submission(data) if simulating # TODO: remove - testing
     super
   end
 

@@ -327,18 +327,8 @@ module UploadWorkflow::Bulk::Actions
   def wf_set_records_state: (*Upload items, ?state: (String|Symbol|nil)) -> void
 end
 
-module UploadWorkflow::Bulk::Simulation
-  include UploadWorkflow::Simulation
-
-  attr_reader submission: untyped
-
-  attr_reader record: untyped
-end
-
 module UploadWorkflow::Bulk::Events
   include UploadWorkflow::Events
-
-  include UploadWorkflow::Bulk::Simulation
 end
 
 # Overridden state transition methods specific to bulk-upload workflows.

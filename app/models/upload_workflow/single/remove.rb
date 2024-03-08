@@ -78,10 +78,6 @@ module UploadWorkflow::Single::Remove::Actions
 
 end
 
-module UploadWorkflow::Single::Remove::Simulation
-  include UploadWorkflow::Single::Simulation
-end
-
 # =============================================================================
 # :section: Event handlers
 # =============================================================================
@@ -90,7 +86,6 @@ public
 
 module UploadWorkflow::Single::Remove::Events
   include UploadWorkflow::Single::Events
-  include UploadWorkflow::Single::Remove::Simulation
 end
 
 # Overridden state transition methods specific to single-entry removal.
@@ -124,36 +119,11 @@ module UploadWorkflow::Single::Remove::States
   #
   def on_removing_entry(state, event, *event_args)
     super
+    #__debug_wf 'System shows the list of item(s) to be removed.'
 
-    # TODO: simulation - remove
-    if simulating
-      # From UploadController#delete:
-      # ids = Upload.expand_ids(@item_id)
-      __debug_sim('CODE') do
-        args = "id=#{submission.id.inspect}"
-        "@items = Upload.expand_ids(#{args})"
-      end
-      submission.items << submission.id
-    end
+    wf_list_items(*event_args)
 
-    unless simulating
-      wf_list_items(*event_args)
-    end
-
-    # TODO: simulation - remove
-    __debug_sim('System shows the list of item(s) to be removed.')
-    if submission&.auto_cancel
-      __debug_sim('[auto_remove_cancel: true]')
-      __debug_sim('USER decides not to delete item(s).')
-      cancel! # NOTE: => :canceled
-    elsif submission&.auto_submit
-      __debug_sim('[auto_remove_submit: true]')
-      __debug_sim('USER confirms the intent to delete item(s).')
-      submit! # NOTE: => :removed
-    else
-      __debug_sim('USER must `cancel!` or `submit!` to advance...')
-    end
-
+    #__debug_wf 'USER must `cancel!` or `submit!` to advance...'
     self
   end
 
@@ -179,51 +149,27 @@ module UploadWorkflow::Single::Remove::States
   def on_removed_entry(state, event, *event_args)
     super
 
-    # TODO: simulation - remove
-    if simulating
-      __debug_sim("[remove_emma_items: #{submission.emma_item}]")
-      emma_items = submission.emma_item
-    else
-      emma_items = true
-    end
-
     # Determine whether this is destined for a partner repository.
-    unless simulating
-      emma_items = Upload.emma_native?(record) if record
-    end
+    #emma_items = true
+    #emma_items = Upload.emma_native?(record) if record
 
-    ok = nil
+    wf_remove_items(*event_args)
+    valid = ready?
 
-    if simulating
-      if emma_items
-        # From UploadController#destroy:
-        # succeeded, failed = bulk_upload_remove(items)
-        __debug_sim('CODE') do
-          args = "items=#{submission.items.inspect}"
-          opt  = 'index: false'
-          "succeeded, failed = bulk_upload_remove(#{args}, #{opt})"
-        end
-        self.succeeded.concat(submission.items)
-        ok = ready?
+=begin
+    __debug_wf do
+      if emma_items && valid
+        'The EMMA-native items were removed.'
+      elsif emma_items
+        'The EMMA-native items NOT removed due to failure(s).'
       else
-        ok = true # TODO: Simulate partner repository delete request?
+        'Generating removal request for partner repository items'
       end
     end
-
-    unless simulating
-      wf_remove_items(*event_args)
-      ok = ready?
-    end
-
-    # TODO: simulation - remove
-    __debug_sim do
-      if !emma_items; 'Generating removal request for partner repository items'
-      elsif !ok;      'The EMMA-native items NOT removed due to failure(s).'
-      else;           'The EMMA-native items were removed.'; end
-    end
+=end
 
     # Automatically transition to the next state based on submission status.
-    if ok
+    if valid
       advance! # NOTE: => :staging
     else
       fail!    # NOTE: => :failed

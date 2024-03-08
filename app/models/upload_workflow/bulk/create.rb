@@ -111,10 +111,6 @@ module UploadWorkflow::Bulk::Create::Actions
 
 end
 
-module UploadWorkflow::Bulk::Create::Simulation
-  include UploadWorkflow::Bulk::Simulation
-end
-
 # =============================================================================
 # :section: Event handlers
 # =============================================================================
@@ -123,7 +119,6 @@ public
 
 module UploadWorkflow::Bulk::Create::Events
   include UploadWorkflow::Bulk::Events
-  include UploadWorkflow::Bulk::Create::Simulation
 end
 
 # Overridden state transition methods specific to bulk submission.
@@ -152,15 +147,11 @@ module UploadWorkflow::Bulk::Create::States
   #
   def on_creating_entry(state, event, *event_args)
     super
+    #__debug_wf 'System presents a form to select control file.'
 
-    __debug_sim('System presents a form to select control file.')
+    wf_start_submission(*event_args)
 
-    unless simulating
-      wf_start_submission(*event_args)
-    end
-
-    __debug_sim('USER must `cancel!` or `submit!` to advance...')
-
+    #__debug_wf 'USER must `cancel!` or `submit!` to advance...'
     self
   end
 
@@ -177,50 +168,13 @@ module UploadWorkflow::Bulk::Create::States
   def on_submitting_entry(state, event, *event_args)
     super
 
-    # Verify validity of the submission. # TODO: simulation - remove
-    if simulating
-      # From UploadController#bulk_create:
-      #succeeded, failed = bulk_upload_create(data, base_url: url, user: @user)
-      __debug_sim('CODE') do
-        args = "data=#{submission.data.inspect}"
-        opt  = 'base_url: url, user: @user'
-        "succeeded, failed = bulk_upload_create(#{args}, #{opt})"
-      end
-      bad = nil
-      if (db_fail = submission.db_failure)
-        self.failures  << 'DB create failed'
-      elsif (bad = !(submission.metadata_valid = !submission.invalid_entry))
-        self.failures  << 'bad metadata'
-      else
-        self.succeeded << submission.id
-      end
-      if db_fail
-        __debug_sim('[db_failure: true]')
-        __debug_sim('The database entry could not be created.')
-      elsif bad
-        __debug_sim('[invalid_entry: true]')
-        __debug_sim('The entry is invalid/incomplete.')
-        __debug_sim('(NOTE: PROBABLE FAILURE OF CLIENT-SIDE FORM VALIDATION)')
-      else
-        __debug_sim('[invalid_entry: false]')
-        __debug_sim('[db_failure:    false]')
-      end
-    end
-
     # Verify validity of the submission.
-    unless simulating
-      wf_validate_submission(*event_args)
-      wf_set_records_state
-    end
-
+    wf_validate_submission(*event_args)
+    wf_set_records_state
     valid = ready?
 
-    # TODO: simulation - remove
-    if valid
-      __debug_sim('The database entry was created.')
-    else
-      __debug_sim('System generates a form error message to be displayed.')
-    end
+    #valid and __debug_wf 'The database entry was created.'
+    #valid or  __debug_wf 'System generates a form error message for display.'
 
     # Automatically transition to the next state based on submission status.
     if valid
