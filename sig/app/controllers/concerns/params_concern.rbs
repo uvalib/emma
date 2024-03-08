@@ -25,6 +25,12 @@ module ParamsConcern
   #
   SPECIAL_DEBUG_CONTROLLERS: symArray
 
+  # Indicate whether a parameter value matches #CURRENT_ID.
+  #
+  # @param [any, nil] id
+  #
+  def current_id?: (untyped id) -> bool
+
   # The identifier of the current model instance which #CURRENT_ID represents.
   #
   # This is only applicable to session-based models like User and

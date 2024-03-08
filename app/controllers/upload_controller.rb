@@ -162,12 +162,13 @@ class UploadController < ApplicationController
     __debug_route
     return redirect_to action: :show_select if identifier.blank?
     @item = find_record
-    upload_authorize!
     respond_to do |format|
       format.html
       format.json { render_json show_values }
       format.xml  { render_xml  show_values }
     end
+  rescue CanCan::AccessDenied => error
+    error_response(error, welcome_path)
   rescue UploadWorkflow::SubmitError, Record::SubmitError,
     ActiveRecord::RecordNotFound, Record::NotFound => error
     # As a convenience (for HTML only), if an index item is actually on another
@@ -207,8 +208,9 @@ class UploadController < ApplicationController
   def new
     __log_activity
     __debug_route
-    @item = wf_single(rec: (db_id || :unset), event: :create)
-    upload_authorize!
+    @item = new_record
+  rescue CanCan::AccessDenied => error
+    error_response(error, welcome_path)
   rescue => error
     failure_status(error)
   end
@@ -227,9 +229,10 @@ class UploadController < ApplicationController
   def create
     __log_activity
     __debug_route
-    @item = wf_single(event: :submit)
-    upload_authorize!
+    @item = create_record
     post_response(:ok, @item, redirect: upload_index_path)
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error
@@ -251,8 +254,9 @@ class UploadController < ApplicationController
     __log_activity
     __debug_route
     return redirect_to action: :edit_select if identifier.blank?
-    @item = wf_single(event: :edit)
-    upload_authorize!
+    @item = edit_record
+  rescue CanCan::AccessDenied => error
+    error_response(error, welcome_path)
   rescue => error
     error_response(error)
   end
@@ -270,9 +274,10 @@ class UploadController < ApplicationController
     __log_activity
     __debug_route
     __debug_request
-    @item = wf_single(event: :submit)
-    upload_authorize!
+    @item = update_record
     post_response(:ok, @item, redirect: upload_index_path)
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error
@@ -298,8 +303,9 @@ class UploadController < ApplicationController
     __log_activity
     __debug_route
     return redirect_to action: :delete_select if identifier.blank?
-    @list = wf_single(rec: :unset, data: identifier, event: :remove)
-    #upload_authorize!(@list) # TODO: authorize :delete
+    @list = delete_records
+  rescue CanCan::AccessDenied => error
+    error_response(error, welcome_path)
   rescue => error
     error_response(error)
   end
@@ -321,13 +327,11 @@ class UploadController < ApplicationController
     __log_activity
     __debug_route
     back  = delete_select_upload_path
-    rec   = :unset
-    dat   = identifier
-    opt   = { start_state: :removing, event: :submit, variant: :remove }
-    @list = wf_single(rec: rec, data: dat, **opt)
-    raise_failure(:file_id) unless @list.present?
-    #upload_authorize!(@list) # TODO: authorize :destroy
+    @list = destroy_records
+    raise_failure(:file_id) if @list.blank?
     post_response(:ok, @list, redirect: back)
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     post_response(:conflict, error, redirect: back)
   rescue => error
@@ -619,13 +623,14 @@ class UploadController < ApplicationController
   def renew
     __log_activity
     __debug_route
-    @item = wf_single(rec: :unset, event: :create)
-    upload_authorize!
+    @item = renew_record
     respond_to do |format|
       format.html
       format.json { render json: @item }
       format.xml  { render xml:  @item }
     end
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue => error
     post_response(error)
   end
@@ -640,13 +645,14 @@ class UploadController < ApplicationController
   def reedit
     __log_activity
     __debug_route
-    @item = wf_single(event: :edit)
-    upload_authorize!
+    @item = reedit_record
     respond_to do |format|
       format.html
       format.json { render json: @item }
       format.xml  { render xml:  @item }
     end
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue => error
     post_response(error)
   end
@@ -763,6 +769,8 @@ class UploadController < ApplicationController
       format.json { render_json download_values(link) }
       format.xml  { render_xml  download_values(link) }
     end
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue => error
     post_response(error, xhr: true)
   end
@@ -938,29 +946,6 @@ class UploadController < ApplicationController
   #
   def download_values(url)
     { url: url }
-  end
-
-  # This is a kludge until I can figure out the right way to express this with
-  # CanCan -- or replace CanCan with a more expressive authorization gem.
-  #
-  # @param [Upload, Array<Upload>, nil] subject
-  # @param [Symbol, String, nil]        action
-  # @param [any, nil]                   args
-  #
-  def upload_authorize!(subject = nil, action = nil, *args)
-    action  ||= request_parameters[:action]
-    action    = action.to_sym if action.is_a?(String)
-    subject ||= @item
-    subject   = subject.first if subject.is_a?(Array) # TODO: per item check
-    # noinspection RubyMismatchedArgumentType
-    authorize!(action, subject, *args) if subject
-    return if administrator?
-    return unless %i[edit update delete destroy].include?(action)
-    unless (org = current_org&.id) && (subject&.org&.id == org)
-      message = current_ability.unauthorized_message(action, subject)
-      message.sub!(/s\.?$/, " #{subject.id}") if subject
-      raise CanCan::AccessDenied.new(message, action, subject, args)
-    end
   end
 
 end

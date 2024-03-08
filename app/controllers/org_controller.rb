@@ -113,11 +113,12 @@ class OrgController < ApplicationController
   def show
     __log_activity
     __debug_route
-    return redirect_to action: :show_select  if identifier.blank?
-    return redirect_to action: :show_current if current_id?
+    return redirect_to action: :show_select              if identifier.blank?
+    return redirect_to without_id(action: :show_current) if current_id?
     @item = find_record
-    org_authorize!
-    raise config_text(:org, :not_found, id: identifier) if @item.blank?
+    raise config_text(:org, :not_found, id: identifier)  if @item.blank?
+  rescue CanCan::AccessDenied => error
+    error_response(error, welcome_path)
   rescue => error
     error_response(error, show_select_org_path)
   end
@@ -130,7 +131,8 @@ class OrgController < ApplicationController
     __log_activity
     __debug_route
     @item = new_record
-    org_authorize!
+  rescue CanCan::AccessDenied => error
+    error_response(error, welcome_path)
   rescue => error
     failure_status(error)
   end
@@ -145,12 +147,13 @@ class OrgController < ApplicationController
     __log_activity
     __debug_route
     @item = create_record
-    org_authorize!
     if request_xhr?
       render json: @item.as_json
     else
-      post_response(:ok, @item, redirect: org_index_path)
+      post_response(@item, redirect: org_index_path)
     end
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error
@@ -169,11 +172,12 @@ class OrgController < ApplicationController
   def edit
     __log_activity
     __debug_route
-    return redirect_to action: :edit_select  if identifier.blank?
-    return redirect_to action: :edit_current if current_id?
-    @item = find_record
-    org_authorize!
-    raise config_text(:org, :not_found, id: identifier) if @item.blank?
+    return redirect_to action: :edit_select              if identifier.blank?
+    return redirect_to without_id(action: :edit_current) if current_id?
+    @item = edit_record
+    raise config_text(:org, :not_found, id: identifier)  if @item.blank?
+  rescue CanCan::AccessDenied => error
+    error_response(error, welcome_path)
   rescue => error
     error_response(error, edit_select_org_path)
   end
@@ -189,12 +193,13 @@ class OrgController < ApplicationController
     __debug_route
     __debug_request
     @item = update_record
-    org_authorize!
     if request_xhr?
       render json: @item.as_json
     else
       post_response(:ok, @item, redirect: org_index_path)
     end
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error
@@ -213,10 +218,11 @@ class OrgController < ApplicationController
     return redirect_to action: :delete_select if identifier.blank?
     raise config_text(:org, :self_delete)     if current_id?
     @list = delete_records.list&.records
-    #org_authorize!(@list) # TODO: authorize :delete
     unless @list.present? || last_operation_path&.include?('/destroy')
       raise config_text(:org, :no_match, id: identifier_list)
     end
+  rescue CanCan::AccessDenied => error
+    error_response(error, welcome_path)
   rescue => error
     error_response(error, delete_select_org_path)
   end
@@ -234,8 +240,9 @@ class OrgController < ApplicationController
     back  = delete_select_org_path
     raise config_text(:org, :self_delete) if current_id?
     @list = destroy_records
-    #org_authorize!(@list) # TODO: authorize :destroy
     post_response(:ok, @list, redirect: back)
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue Record::SubmitError => error
     post_response(:conflict, error, redirect: back)
   rescue => error
@@ -303,12 +310,13 @@ class OrgController < ApplicationController
     __log_activity
     __debug_route
     @item = current_org #or redirect_to action: :show_select
-    org_authorize!
     respond_to do |format|
       format.html { render 'org/show' }
       format.json { render 'org/show' }
       format.xml  { render 'org/show' }
     end
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue => error
     if params[:format] == :html
       error_response(error, org_index_path)
@@ -328,12 +336,13 @@ class OrgController < ApplicationController
     __log_activity
     __debug_route
     @item = current_org or redirect_to action: :edit_select
-    org_authorize!
     respond_to do |format|
       format.html { render 'org/edit' }
       format.json { render 'org/edit' }
       format.xml  { render 'org/edit' }
     end
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue => error
     error_response(error, org_index_path)
   end
@@ -375,43 +384,6 @@ class OrgController < ApplicationController
   def delete_select
     __log_activity
     __debug_route
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # Indicate whether request parameters (explicitly or implicitly) reference
-  # the current user's organization.
-  #
-  def current_id?
-    id = identifier.presence&.to_s or return current_org.present?
-    CURRENT_ID.casecmp?(id) || (id == current_id.to_s)
-  end
-
-  # This is a kludge until I can figure out the right way to express this with
-  # CanCan -- or replace CanCan with a more expressive authorization gem.
-  #
-  # @param [Org, Array<Org>, nil] subject
-  # @param [Symbol, String, nil]  action
-  # @param [any, nil]             args
-  #
-  def org_authorize!(subject = nil, action = nil, *args)
-    action  ||= request_parameters[:action]
-    action    = action.to_sym if action.is_a?(String)
-    subject ||= @item
-    subject   = subject.first if subject.is_a?(Array) # TODO: per item check
-    # noinspection RubyMismatchedArgumentType
-    authorize!(action, subject, *args) if subject
-    return if administrator?
-    return unless %i[show edit update delete destroy].include?(action)
-    unless (org = current_id) && (subject&.id == org)
-      message = current_ability.unauthorized_message(action, subject)
-      message.sub!(/s\.?$/, " #{subject.id}") if subject
-      raise CanCan::AccessDenied.new(message, action, subject, args)
-    end
   end
 
 end

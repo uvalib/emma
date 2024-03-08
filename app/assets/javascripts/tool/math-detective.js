@@ -12,7 +12,7 @@ import { Api }                             from '../shared/api'
 import { Emma }                            from '../shared/assets';
 import { selector, toggleHidden }          from '../shared/css';
 import { isDefined, isMissing, isPresent } from '../shared/definitions';
-import { HTTP }                            from '../shared/http';
+import * as HTTP                           from '../shared/http';
 import { encodeImageOrUrl }                from '../shared/image';
 import { SECONDS }                         from '../shared/time';
 import {

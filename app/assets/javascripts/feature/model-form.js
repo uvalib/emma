@@ -7,7 +7,7 @@ import { arrayWrap }                       from '../shared/arrays';
 import { Emma }                            from '../shared/assets';
 import { pageController }                  from '../shared/controller';
 import { FORM_FIELD, turnOffAutocomplete } from '../shared/form';
-import { HTTP }                            from '../shared/http';
+import * as HTTP                           from '../shared/http';
 import { LOOKUP_BUTTON, LookupModal }      from '../shared/lookup-modal';
 import { LookupRequest }                   from '../shared/lookup-request';
 import { K, asSize }                       from '../shared/math';

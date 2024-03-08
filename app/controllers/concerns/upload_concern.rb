@@ -173,6 +173,190 @@ module UploadConcern
   end
 
   # ===========================================================================
+  # :section: ModelConcern overrides
+  # ===========================================================================
+
+  public
+
+  # Start a new EMMA submission Upload instance.
+  #
+  # @param [Hash, nil] prm            Field values (def: `#current_params`).
+  # @param [Hash]      opt            Added field values.
+  #
+  # @return [Upload]                  An un-persisted Upload record.
+  #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
+  def new_record(prm = nil, **opt, &blk)
+    not_implemented 'CANNOT HANDLE prm' if prm # TODO: ???
+    not_implemented 'CANNOT HANDLE blk' if blk # TODO: ???
+    return super if blk
+    authorized_session
+    opt.reverse_merge!(rec: db_id || :unset)
+    wf_single(event: :create, **opt)
+  end
+
+  # Generate a new EMMA submission by adding a new Upload record to the
+  # database and updating the EMMA Unified Index.
+  #
+  # @param [Hash, nil] prm            Field values (def: `#current_params`).
+  # @param [Boolean]   fatal          If *false*, use #save not #save!.
+  # @param [Hash]      opt            Added field values.
+  #
+  # @return [Upload]                  The new Upload record.
+  #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
+  def create_record(prm = nil, fatal: true, **opt, &blk)
+    not_implemented 'CANNOT HANDLE prm' if prm # TODO: ???
+    not_implemented 'CANNOT HANDLE blk' if blk # TODO: ???
+    return super if blk
+    authorized_session
+    wf_single(event: :submit, **opt)
+  end
+
+  # Start editing an existing EMMA submission Upload record.
+  #
+  # @param [any, nil] item            Default: the record for #identifier.
+  # @param [Hash]     opt             Passed to #wf_single.
+  #
+  # @raise [Record::StatementInvalid] If :id not given.
+  # @raise [Record::NotFound]         If *item* was not found.
+  #
+  # @return [Upload, nil]             A fresh record unless *item* is an Upload
+  #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
+  def edit_record(item = nil, **opt, &blk)
+    not_implemented 'CANNOT HANDLE item' if item # TODO: ???
+    not_implemented 'CANNOT HANDLE blk'  if blk  # TODO: ???
+    return super if blk
+    authorize_item(item)
+    wf_single(event: :edit, **opt)
+  end
+
+  # Update an EMMA submission by persisting changes to an existing Upload
+  # record and updating the EMMA Unified Index.
+  #
+  # @param [any, nil] item            Default: the record for #identifier.
+  # @param [Boolean]  fatal           If *false* use #update not #update!.
+  # @param [Hash]     opt             Passed to #wf_single.
+  #
+  # @raise [Record::NotFound]               If the record could not be found.
+  # @raise [ActiveRecord::RecordInvalid]    Model record update failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Model record update halted.
+  #
+  # @return [Upload, nil]             The updated Upload record.
+  #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
+  def update_record(item = nil, fatal: true, **opt, &blk)
+    not_implemented 'CANNOT HANDLE item' if item # TODO: ???
+    not_implemented 'CANNOT HANDLE blk'  if blk  # TODO: ???
+    return super if blk
+    authorize_item(item)
+    wf_single(event: :submit, **opt)
+  end
+
+  # Retrieve the indicated Upload record(s) for the '/delete' page.
+  #
+  # @param [any, nil] items           To #search_records
+  # @param [Hash]     opt             Passed to #wf_single.
+  #
+  # @raise [RangeError]               If :page is not valid.
+  #
+  # @return [Array<Upload,String>]    NOTE: not Paginator::Result
+  #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
+  def delete_records(items = nil, **opt, &blk)
+    not_implemented 'CANNOT HANDLE items' if items # TODO: ???
+    not_implemented 'CANNOT HANDLE blk'   if blk   # TODO: ???
+    return super if blk
+    authorized_session
+    opt.reverse_merge!(rec: :unset, data: identifier)
+    wf_single(event: :remove, **opt)
+  end
+
+  # Remove the indicated EMMA submission(s) by deleting the associated Upload
+  # records and removing the associated entries from the EMMA Unified Index.
+  #
+  # @param [any, nil] items
+  # @param [Boolean]  fatal           If *false* do not #raise_failure.
+  # @param [Hash]     opt             Passed to #wf_single.
+  #
+  # @raise [Record::SubmitError]      If there were failure(s).
+  #
+  # @return [Array]                   Destroyed Upload records.
+  #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
+  def destroy_records(items = nil, fatal: true, **opt, &blk)
+    not_implemented 'CANNOT HANDLE items' if items # TODO: ???
+    not_implemented 'CANNOT HANDLE blk'   if blk   # TODO: ???
+    return super if blk
+    authorized_session
+    opt.reverse_merge!(rec: :unset, data: identifier, start_state: :removing)
+    wf_single(event: :submit, variant: :remove, **opt)&.map do |item|
+      if !item.is_a?(Upload)
+        item
+      elsif authorized_self_or_org_manager(item, fatal: false)
+        item
+      else
+        "no authorization to remove #{item}"
+      end
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Re-create an EMMA submission that had been canceled.
+  #
+  def renew_record
+    authorize_item
+    wf_single(rec: :unset, event: :create)
+  end
+
+  # Re-start editing an EMMA submission.
+  #
+  def reedit_record
+    authorize_item
+    wf_single(event: :edit)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Refine authorization based on the specific item data.
+  #
+  # @param [Upload, Hash, nil] item
+  # @param [Hash]              opt    Field value condition(s).
+  #
+  # @return [void]
+  #
+  def authorize_item(item = nil, **opt)
+    return if administrator?
+    opt.reverse_merge!(workflow_parameters)
+    item &&= Upload.instance_for(item)
+    item ||= Upload.instance_for(opt.slice(:id, :submission_id))
+    # noinspection RubyMismatchedArgumentType
+    authorized_self_or_org_manager(item, **opt)
+  end
+
+  # ===========================================================================
   # :section:
   # ===========================================================================
 

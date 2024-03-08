@@ -41,13 +41,13 @@ module ResponseConcern
   # Display the failure on the screen -- immediately if modal, or after a
   # redirect otherwise.
   #
-  # @param [Exception] error
-  # @param [String]    fallback   Redirect fallback #default_fallback_location
-  # @param [Symbol]    meth       Calling method.
+  # @param [Exception, Model, String] error
+  # @param [String]                   redirect  Def: #default_fallback_location
+  # @param [Hash]                     opt       To #flash_failure/#flash_status
   #
   # @return [void]
   #
-  def error_response: (Exception error, ?(String|nil) fallback, ?meth: Symbol|nil) -> void
+  def error_response: (Exception|Model|String error, ?(String|nil) redirect, **untyped opt) -> void
 
   # Generate a response to a POST.
   #

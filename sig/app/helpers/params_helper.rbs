@@ -96,6 +96,14 @@ module ParamsHelper
   #
   def url_parameters: (?(prmHash|nil) prm) -> symHash
 
+  # Request parameters without :id.
+  #
+  # @param [Hash] added               Added/replaced parameter values.
+  #
+  # @return [Hash]
+  #
+  def without_id: (**untyped added) -> symHash
+
   # Get a reference to `session[section]`.
   #
   # @param [String, Symbol, nil] section

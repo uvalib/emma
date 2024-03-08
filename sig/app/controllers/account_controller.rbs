@@ -17,6 +17,10 @@ class AccountController < ApplicationController
 
   include AccountConcern
 
+  LISTS: symArray
+
+  SHOW: symArray
+
   @list: Array[User] | Array[Integer] | Array[String] | nil
 
   # Database results for :show.
@@ -62,8 +66,8 @@ class AccountController < ApplicationController
   #
   # === Usage Notes
   # In order to allow the database to auto-generate the record ID, the :id
-  # parameter will be rejected unless "force_id=true" is included in the URL
-  # parameters.
+  # parameter will be rejected unless "force=true" is included in the URL
+  # parameters (administrator only).
   #
   # @see #create_account_path         Route helper
   #
@@ -168,18 +172,4 @@ class AccountController < ApplicationController
   # @see #delete_select_account_path  Route helper
   #
   def delete_select: () -> void
-
-  # Indicate whether request parameters (explicitly or implicitly) reference
-  # the current user.
-  #
-  def current_id?: () -> bool
-
-  # This is a kludge until I can figure out the right way to express this with
-  # CanCan -- or replace CanCan with a more expressive authorization gem.
-  #
-  # @param [User, Array<User>, nil] subject
-  # @param [Symbol, String, nil]    action
-  # @param [any, nil]               args
-  #
-  def user_authorize!: (?(User|Array[User]|nil) subject, ?(Symbol|String|nil) action, *untyped args) -> void
 end

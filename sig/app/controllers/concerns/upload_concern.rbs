@@ -101,6 +101,94 @@ module UploadConcern
   #
   def filter_by_group!: (symHash opt, ?key: Symbol, ?state: Symbol|symArray) -> (symHash | nil)
 
+  # Start a new EMMA submission Upload instance.
+  #
+  # @param [Hash, nil] prm            Field values (def: `#current_params`).
+  # @param [Hash]      opt            Added field values.
+  #
+  # @return [Upload]                  An un-persisted Upload record.
+  #
+  def new_record: (?symHash? prm, **untyped opt) ?{ (symHash attr) -> void } -> Upload
+
+  # Generate a new EMMA submission by adding a new Upload record to the
+  # database and updating the EMMA Unified Index.
+  #
+  # @param [Hash, nil] prm            Field values (def: `#current_params`).
+  # @param [Boolean]   fatal          If *false*, use #save not #save!.
+  # @param [Hash]      opt            Added field values.
+  #
+  # @option opt [Boolean] force       If *true* allow setting of :id.
+  #
+  # @return [Upload]                  The new Upload record.
+  #
+  def create_record: (?symHash? prm, ?fatal: bool, **untyped opt) ?{ (symHash attr) -> void } -> Upload
+
+  # Start editing an existing EMMA submission Upload record.
+  #
+  # @param [any, nil] item            Default: the record for #identifier.
+  # @param [Hash]     opt             Passed to #wf_single.
+  #
+  # @raise [Record::StatementInvalid] If :id not given.
+  # @raise [Record::NotFound]         If *item* was not found.
+  #
+  # @return [Upload, nil]             A fresh record unless *item* is an Upload
+  #
+  def edit_record: (?(String|Integer|Model|symHash|nil) item, **untyped opt) ?{ (Upload record) -> void } -> (Upload | nil)
+
+  # Update an EMMA submission by persisting changes to an existing Upload
+  # record and updating the EMMA Unified Index.
+  #
+  # @param [any, nil] item            Default: the record for #identifier.
+  # @param [Boolean]  fatal           If *false* use #update not #update!.
+  # @param [Hash]     opt             Passed to #wf_single.
+  #
+  # @raise [Record::NotFound]               If the record could not be found.
+  # @raise [ActiveRecord::RecordInvalid]    Model record update failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Model record update halted.
+  #
+  # @return [Upload, nil]             The updated Upload record.
+  #
+  def update_record: (?(String|Integer|Model|symHash|nil) item, ?fatal: bool, **untyped opt) ?{ (Upload record, symHash attr) -> void } -> (Upload | nil)
+
+  # Retrieve the indicated Upload record(s) for the '/delete' page.
+  #
+  # @param [any, nil] items           To #search_records
+  # @param [Hash]     opt             Passed to #wf_single.
+  #
+  # @return [Array<Upload,String>]    NOTE: not Paginator::Result
+  #
+  def delete_records: (?(Model|String|Integer|Array[Model|String|Integer]|nil) items, **untyped opt) ?{ (Array[Model|String|Integer] items, symHash opt) -> void } -> Array[Upload|String]
+
+  # Remove the indicated EMMA submission(s) by deleting the associated Upload
+  # records and removing the associated entries from the EMMA Unified Index.
+  #
+  # @param [any, nil] items
+  # @param [Boolean]  fatal           If *false* do not #raise_failure.
+  # @param [Hash]     opt             Passed to #wf_single.
+  #
+  # @raise [Record::SubmitError]      If there were failure(s).
+  #
+  # @return [Array]                   Destroyed Upload records.
+  #
+  def destroy_records: (?(Model|String|Integer|Array[Model|String|Integer]|nil) items, ?fatal: bool, **untyped opt) ?{ (Upload|String item) -> (Upload | String) } -> Array[Upload]
+
+  # Re-create an EMMA submission that had been canceled.
+  #
+  def renew_record: () -> void
+
+  # Re-start editing an EMMA submission.
+  #
+  def reedit_record: () -> void
+
+  # Refine authorization based on the specific item data.
+  #
+  # @param [Upload, Hash, nil] item
+  # @param [Hash]              opt    Field value condition(s).
+  #
+  # @return [void]
+  #
+  def authorize_item: (?(Upload|symHash|nil) item, **untyped opt) -> void
+
   # Get item data from the production service.
   #
   # @param [String] sid               Submission ID of the item.

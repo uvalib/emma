@@ -46,6 +46,16 @@ module AccountConcern
 
   public
 
+  # Indicate whether request parameters (explicitly or implicitly) reference
+  # the current user's organization.
+  #
+  # @param [any, nil] id              Default: `#identifier`.
+  #
+  def current_id?(id = nil)
+    id ||= identifier.presence&.to_s
+    super || (id == current_id.to_s)
+  end
+
   # The identifier of the current model instance which #CURRENT_ID represents
   # in the context of AccountController actions.
   #
@@ -73,40 +83,115 @@ module AccountConcern
     super(*User.field_names, *PASSWORD_KEYS)
   end
 
+  # ===========================================================================
+  # :section: ModelConcern overrides
+  # ===========================================================================
+
+  public
+
+  # Return with the specified User record.
+  #
+  # @param [any, nil] item      String, Integer, Hash, Model; def: #identifier.
+  # @param [Hash]     opt       Passed to Record::Identification#find_record.
+  #
+  # @raise [Record::StatementInvalid] If :id not given.
+  # @raise [Record::NotFound]         If *item* was not found.
+  #
+  # @return [User, nil]         A fresh record unless *item* is a #model_class.
+  #
+  # @yield [record] Raise an exception if the record is not acceptable.
+  # @yieldparam [User] record
+  # @yieldreturn [void]
+  #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
+  def find_record(item = nil, **opt, &blk)
+    return super if blk
+    authorized_session
+    super do |record|
+      authorized_org_member(record)
+    end
+  end
+
   # Start a new User.
   #
-  # @param [Hash, nil]       prm        Field values (def: `#current_params`).
-  # @param [Boolean, String] force_id   If *true*, allow setting of :id.
+  # @param [Hash, nil] prm            Field values (def: `#current_params`).
+  # @param [Hash]      opt            Added field values.
+  #
+  # @option opt [Boolean] force       If *true* allow setting of :id.
   #
   # @return [User]                    An un-persisted User instance.
   #
-  def new_record(prm = nil, force_id: false, **)
-    # noinspection RubyMismatchedReturnType
+  # @yield [attr] Adjust attributes and/or raise an exception.
+  # @yieldparam [Hash] attr           Supplied attributes for the new record.
+  # @yieldreturn [void]
+  #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
+  def new_record(prm = nil, **opt, &blk)
+    return super if blk
+    authorized_session
     super do |attr|
       if administrator?
         # Allow :org_id to be nil so that it can be selected on the form.
       else
-        attr[:org_id] = current_org&.id or raise "no org for #{current_user}"
+        attr[:org_id] = current_org_id
       end
     end
   end
 
   # Add a new User record to the database.
   #
-  # @param [Hash, nil]       prm        Field values (def: `#current_params`).
-  # @param [Boolean, String] force_id   If *true*, allow setting of :id.
-  # @param [Boolean]         fatal      If *false*, use #save not #save!.
+  # @param [Hash, nil] prm            Field values (def: `#current_params`).
+  # @param [Boolean]   fatal          If *false*, use #save not #save!.
+  # @param [Hash]      opt            Added field values.
+  #
+  # @option opt [Boolean] force       If *true* allow setting of :id.
   #
   # @return [User]                    The new User record.
   #
-  def create_record(prm = nil, force_id: false, fatal: true, **)
-    # noinspection RubyMismatchedReturnType
+  # @yield [attr] Adjust attributes and/or raise an exception.
+  # @yieldparam [Hash] attr           Supplied attributes for the new record.
+  # @yieldreturn [void]
+  #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
+  def create_record(prm = nil, fatal: true, **opt, &blk)
+    return super if blk
+    authorized_session
     super do |attr|
       if administrator?
         attr[:org_id] = Org.none.id if attr[:org_id].nil?
       else
-        attr[:org_id] = current_org&.id or raise "no org for #{current_user}"
+        attr[:org_id] = current_org_id
       end
+    end
+  end
+
+  # Start editing an existing User record.
+  #
+  # @param [any, nil] item            Default: the record for #identifier.
+  # @param [Hash]     opt             Passed to #find_record.
+  #
+  # @raise [Record::StatementInvalid] If :id not given.
+  # @raise [Record::NotFound]         If *item* was not found.
+  #
+  # @return [User, nil]               A fresh instance unless *item* is a User.
+  #
+  # @yield [record] Raise an exception if the record is not acceptable.
+  # @yieldparam [User] record         May be altered by the block.
+  # @yieldreturn [void]               Block not called if *record* is *nil*.
+  #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
+  def edit_record(item = nil, **opt, &blk)
+    return super if blk
+    super do |record|
+      authorized_self_or_org_manager(record)
     end
   end
 
@@ -115,7 +200,7 @@ module AccountConcern
   #
   # @param [any, nil] item            Def.: record for ModelConcern#identifier.
   # @param [Boolean]  fatal           If *false* use #update not #update!.
-  # @param [Hash]     prm             Field values (default: `#current_params`)
+  # @param [Hash]     opt             Field values (default: `#current_params`)
   #
   # @raise [Record::NotFound]               Record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
@@ -123,32 +208,84 @@ module AccountConcern
   #
   # @return [User, nil]               The updated User record.
   #
-  def update_record(item = nil, fatal: true, **prm)
-    # noinspection RubyMismatchedReturnType
+  # @yield [record, attr] Raise an exception if the record is not acceptable.
+  # @yieldparam [User] record         May be altered by the block.
+  # @yieldparam [Hash] attr           New field(s) to be assigned to *record*.
+  # @yieldreturn [void]               Block not called if *record* is *nil*.
+  #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
+  def update_record(item = nil, fatal: true, **opt, &blk)
+    return super if blk
     super do |record, attr|
       if administrator?
         attr[:org_id] = Org.none.id if attr[:org_id].nil?
-      elsif (org = current_org&.id).blank?
-        raise "no org for #{current_user}"
       else
         discard = []
-        if attr.key?((k = :org_id)) && (attr[k] != org)
+        if attr.key?((k = :org_id)) && (attr[k] != current_org_id)
           discard << k
         end
         if attr.key?((k = :email)) && ((acct = attr[k]) != record.account)
-          if !acct.present? || !manager?
-            discard << k
-          elsif User.find_by(k => acct)&.org_id != org
+          if acct.blank? || !manager? || (User.find_by(k => acct)&.oid != org)
             discard << k
           end
         end
-        if discard.present? && attr.except!(*discard).present?
+        if discard.present?
+          attr.except!(*discard)
           Log.info do
             # noinspection RubyScope
             list = discard.map { |k, v| "#{k}=#{v.inspect}" }.join(', ')
             "#{__method__}: discarded: #{list} for #{current_user}"
           end
         end
+      end
+    end
+  end
+
+  # Retrieve the indicated User record(s) for the '/delete' page.
+  #
+  # @param [any, nil] items           To #search_records
+  # @param [Hash]     opt             Default: `#current_params`
+  #
+  # @raise [RangeError]               If :page is not valid.
+  #
+  # @return [Paginator::Result]
+  #
+  # @yield [items, opt] Raise an exception unless the *items* are acceptable.
+  # @yieldparam [Array] items         Identifiers of items to be deleted.
+  # @yieldparam [Hash]  opt           Options to #search_records.
+  # @yieldreturn [void]               Block not called if *record* is *nil*.
+  #
+  def delete_records(items = nil, **opt, &blk)
+    return super if blk
+    unauthorized unless administrator? || manager?
+    super
+  end
+
+  # Remove the indicated User record(s).
+  #
+  # @param [any, nil] items
+  # @param [Boolean]  fatal           If *false* do not #raise_failure.
+  # @param [Hash]     opt             Default: `#current_params`
+  #
+  # @raise [Record::SubmitError]      If there were failure(s).
+  #
+  # @return [Array]                   Destroyed User records.
+  #
+  # @yield [record] Called for each record before deleting.
+  # @yieldparam [User] record
+  # @yieldreturn [String,nil]         Error message if *record* unacceptable.
+  #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
+  def destroy_records(items = nil, fatal: true, **opt, &blk)
+    return super if blk
+    unauthorized unless administrator? || manager?
+    super do |record|
+      unless authorized_org_manager(record, fatal: false)
+        "no authorization to remove #{record}"
       end
     end
   end
@@ -181,71 +318,6 @@ module AccountConcern
       else                               return User.none
     end
     User.make_relation(*terms, **opt)
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # redirect_success
-  #
-  # @param [Symbol]            action
-  # @param [String, nil]       message
-  # @param [User, String, nil] redirect
-  # @param [Hash]              opt        Passed to redirect.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def redirect_success(action, message = nil, redirect: nil, **opt)
-    config    = account_fields
-    message ||= message_for(action, :success, config)
-    message &&= message % interpolation_terms(action, config)
-    message ||=
-      case base_action(action)
-        when :new,    :create  then config_text(:account, :created)
-        when :delete, :destroy then config_text(:account, :removed)
-        else                        config_text(:account, :updated)
-      end
-    opt[:notice] = message
-    if (redirect ||= params[:redirect])
-      redirect_to(redirect, opt)
-    else
-      redirect_back(fallback_location: default_fallback_location, **opt)
-    end
-  end
-
-  # redirect_failure
-  #
-  # @param [Symbol]                             action
-  # @param [String, nil]                        message
-  # @param [String, Array, ActiveModel::Errors] error
-  # @param [User, String, nil]                  redirect
-  # @param [Hash]                               opt       Passed to redirect.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def redirect_failure(action, message = nil, error: nil, redirect: nil, **opt)
-    config    = account_fields
-    message ||= message_for(action, :failure, config)
-    message &&= message % interpolation_terms(action, config)
-    message ||= config_text(:account, :failed)
-    if error
-      error   = error.full_messages if error.is_a?(ActiveModel::Errors)
-      message = message&.remove(/[[:punct:]]$/)&.concat(':') || 'ERRORS:'
-      message = [message, *Array.wrap(error)]
-      message = safe_join(message, HTML_BREAK)
-    end
-    opt[:alert] = message
-    redirect ||=
-      case action
-        when :new,    :create  then { action: :new }
-        when :edit,   :update  then { action: :edit }
-        when :delete, :destroy then { action: :index }
-        else                        default_fallback_location
-      end
-    redirect_to(redirect, opt)
   end
 
   # ===========================================================================
@@ -298,6 +370,25 @@ module AccountConcern
   public
 
   def default_fallback_location = account_index_path
+
+  # Display the failure on the screen -- immediately if modal, or after a
+  # redirect otherwise.
+  #
+  # @param [Exception, User, String] error
+  # @param [String]                  fallback
+  # @param [Symbol]                  meth
+  #
+  # @return [void]
+  #
+  def error_response(error, fallback = nil, meth: nil)
+    fallback ||=
+      case params[:action]&.to_sym
+        when :new,    :create  then { action: :new }
+        when :edit,   :update  then { action: :edit }
+        when :delete, :destroy then { action: :index }
+      end
+    super
+  end
 
   # ===========================================================================
   # :section: OptionsConcern overrides

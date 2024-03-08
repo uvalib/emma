@@ -47,6 +47,14 @@ module ParamsConcern
 
   public
 
+  # Indicate whether a parameter value matches #CURRENT_ID.
+  #
+  # @param [any, nil] id
+  #
+  def current_id?(id)
+    CURRENT_ID.casecmp?(id)
+  end
+
   # The identifier of the current model instance which #CURRENT_ID represents.
   #
   # This is only applicable to session-based models like User and

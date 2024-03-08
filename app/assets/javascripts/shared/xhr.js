@@ -3,7 +3,7 @@
 
 import { AppDebug }         from '../application/debug';
 import { isMissing }        from './definitions';
-import { HTTP }             from './http';
+import * as HTTP            from './http';
 import { fromJSON, hasKey } from './objects';
 import { secondsSince }     from './time';
 import { makeUrl }          from './url';

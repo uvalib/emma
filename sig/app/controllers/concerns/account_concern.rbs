@@ -27,6 +27,13 @@ module AccountConcern
   #
   PASSWORD_KEYS: symArray
 
+  # Indicate whether request parameters (explicitly or implicitly) reference
+  # the current user.
+  #
+  # @param [any, nil] id
+  #
+  def current_id?: (?untyped id) -> bool
+
   # The identifier of the current model instance which #CURRENT_ID represents
   # in the context of AccountController actions.
   #
@@ -42,31 +49,75 @@ module AccountConcern
 
   def find_or_match_keys: () -> symArray
 
+  # Return with the specified User record.
+  #
+  # @param [any, nil] item      String, Integer, Hash, Model; def: #identifier.
+  # @param [Hash]     opt       Passed to Record::Identification#find_record.
+  #
+  # @raise [Record::StatementInvalid] If :id not given.
+  # @raise [Record::NotFound]         If *item* was not found.
+  #
+  # @return [User, nil]         A fresh record unless *item* is a #model_class.
+  #
+  # @yield [record] Raise an exception if the record is not acceptable.
+  # @yieldparam [User] record
+  # @yieldreturn [void]
+  #
+  def find_record: (?(String|Integer|Model|symHash|nil) item, **untyped opt) ?{ (User record) -> void } -> (User | nil)
+
   # Start a new User.
   #
-  # @param [Hash, nil]       prm        Field values (def: `#current_params`).
-  # @param [Boolean, String] force_id   If *true*, allow setting of :id.
+  # @param [Hash, nil] prm            Field values (def: `#current_params`).
+  # @param [Hash]      opt            Added field values.
+  #
+  # @option opt [Boolean] force       If *true* allow setting of :id.
   #
   # @return [User]                    An un-persisted User instance.
   #
-  def new_record: (?symHash? prm, ?force_id: bool|String, **untyped _ignored) -> User
+  # @yield [attr] Adjust attributes and/or raise an exception.
+  # @yieldparam [Hash] attr           Supplied attributes for the new record.
+  # @yieldreturn [void]
+  #
+  def new_record: (?symHash? prm, **untyped opt) ?{ (symHash attr) -> void } -> User
 
   # Add a new User record to the database.
   #
-  # @param [Hash, nil]       prm        Field values (def: `#current_params`).
-  # @param [Boolean, String] force_id   If *true*, allow setting of :id.
-  # @param [Boolean]         fatal      If *false*, use #save not #save!.
+  # @param [Hash, nil] prm            Field values (def: `#current_params`).
+  # @param [Boolean]   fatal          If *false*, use #save not #save!.
+  # @param [Hash]      opt            Added field values.
+  #
+  # @option opt [Boolean] force       If *true* allow setting of :id.
   #
   # @return [User]                    The new User record.
   #
-  def create_record: (?symHash? attr, ?force_id: bool|String, ?fatal: bool, **untyped _ignored) -> User
+  # @yield [attr] Adjust attributes and/or raise an exception.
+  # @yieldparam [Hash] attr           Supplied attributes for the new record.
+  # @yieldreturn [void]
+  #
+  def create_record: (?symHash? attr, ?fatal: bool, **untyped opt) ?{ (symHash attr) -> void } -> User
+
+  # Start editing an existing User record.
+  #
+  # @param [any, nil] item            Default: the record for #identifier.
+  # @param [Hash]     opt             Passed to #find_record.
+  #
+  # @raise [Record::StatementInvalid] If :id not given.
+  # @raise [Record::NotFound]         If *item* was not found.
+  #
+  # @return [User, nil]               A fresh instance unless *item* is a User.
+  #
+  # @yield [record] Raise an exception if the record is not acceptable.
+  # @yieldparam [User] record         May be altered by the block.
+  # @yieldreturn [void]               Block not called if *record* is *nil*.
+  #
+  def edit_record: (?(String|Integer|Model|symHash|nil) item, **untyped opt) ?{ (User record) -> void } -> (User | nil)
 
   # Update the indicated User record, ensuring that :email and :org_id are not
   # changed unless authorized.
   #
   # @param [any, nil] item            Def.: record for ModelConcern#identifier.
   # @param [Boolean]  fatal           If *false* use #update not #update!.
-  # @param [Hash]     prm             Field values (default: `#current_params`)
+  # @param [Hash]     opt             Field values (default: `#current_params`)
   #
   # @raise [Record::NotFound]               Record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
@@ -74,7 +125,44 @@ module AccountConcern
   #
   # @return [User, nil]               The updated User record.
   #
-  def update_record: (?(String|Integer|Model|symHash|nil) item, ?fatal: bool, **untyped prm) -> (User | nil)
+  # @yield [record, attr] Raise an exception if the record is not acceptable.
+  # @yieldparam [User] record         May be altered by the block.
+  # @yieldparam [Hash] attr           New field(s) to be assigned to *record*.
+  # @yieldreturn [void]               Block not called if *record* is *nil*.
+  #
+  def update_record: (?(String|Integer|Model|symHash|nil) item, ?fatal: bool, **untyped opt) ?{ (User record, symHash attr) -> void } -> (User | nil)
+
+  # Retrieve the indicated User record(s) for the '/delete' page.
+  #
+  # @param [any, nil] items           To #search_records
+  # @param [Hash]     opt             Default: `#current_params`
+  #
+  # @raise [RangeError]               If :page is not valid.
+  #
+  # @return [Paginator::Result]
+  #
+  # @yield [items, opt] Raise an exception unless the *items* are acceptable.
+  # @yieldparam [Array] items         Identifiers of items to be deleted.
+  # @yieldparam [Hash]  opt           Options to #search_records.
+  # @yieldreturn [void]               Block not called if *record* is *nil*.
+  #
+  def delete_records: (?(Model|String|Integer|Array[Model|String|Integer]|nil) items, **untyped opt) ?{ (Array[Model|String|Integer] items, symHash opt) -> void } -> Paginator::Result
+
+  # Remove the indicated User record(s).
+  #
+  # @param [any, nil] items
+  # @param [Boolean]  fatal           If *false* do not #raise_failure.
+  # @param [Hash]     opt             Default: `#current_params`
+  #
+  # @raise [Record::SubmitError]      If there were failure(s).
+  #
+  # @return [Array]                   Destroyed User records.
+  #
+  # @yield [record] Called for each record before deleting.
+  # @yieldparam [User] record
+  # @yieldreturn [String,nil]         Error message if *record* unacceptable.
+  #
+  def destroy_records: (?(Model|String|Integer|Array[Model|String|Integer]|nil) items, ?fatal: bool, **untyped opt) ?{ (User record) -> (String | nil) } -> Array[User]
 
   # Get matching User account records or all records if no terms are given.
   #
@@ -86,29 +174,6 @@ module AccountConcern
   # @return [ActiveRecord::Relation<User>]
   #
   def get_accounts: (*(String|anyArray|anyHash|nil) terms, ?columns: symArray, **untyped hash_terms) -> ActiveRecord::Relation # _ActiveRecord_Relation[User, Integer]
-
-  # redirect_success
-  #
-  # @param [Symbol]            action
-  # @param [String, nil]       message
-  # @param [User, String, nil] redirect
-  # @param [Hash]              opt        Passed to redirect.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def redirect_success: (Symbol action, ?(String|nil) message, ?redirect: User|String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
-
-  # redirect_failure
-  #
-  # @param [Symbol]                             action
-  # @param [String, nil]                        message
-  # @param [String, Array, ActiveModel::Errors] error
-  # @param [User, String, nil]                  redirect
-  # @param [Hash]                               opt       Passed to redirect.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def redirect_failure: (Symbol action, ?(String|nil) message, ?error: String|anyArray|ActiveModel::Errors|nil, ?redirect: User|String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Configured account record fields.
   #
@@ -134,6 +199,17 @@ module AccountConcern
   # @return [Hash]
   #
   def interpolation_terms: (Symbol action, ?Hash[Symbol,anyHash] config) -> symHash
+
+  # Display the failure on the screen -- immediately if modal, or after a
+  # redirect otherwise.
+  #
+  # @param [Exception, User, String] error
+  # @param [String]                  fallback
+  # @param [Symbol]                  meth
+  #
+  # @return [void]
+  #
+  def error_response: (Exception|User|String error, ?(String|nil) fallback, ?meth: Symbol|nil) -> void
 
   # Create an Options instance from the current parameters.
   #

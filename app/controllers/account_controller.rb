@@ -37,6 +37,9 @@ class AccountController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
+  LISTS = %i[index list_all list_org].freeze
+  SHOW  = %i[show show_current].freeze
+
   # None
 
   # ===========================================================================
@@ -44,7 +47,7 @@ class AccountController < ApplicationController
   # ===========================================================================
 
   respond_to :html
-  respond_to :json, :xml, only: %i[index show list_all list_org]
+  respond_to :json, :xml, only: [*SHOW, *LISTS]
 
   # ===========================================================================
   # :section: Values
@@ -102,11 +105,12 @@ class AccountController < ApplicationController
   def show
     __log_activity
     __debug_route
-    return redirect_to action: :show_select  if identifier.blank?
-    return redirect_to action: :show_current if current_id?
+    return redirect_to action: :show_select              if identifier.blank?
+    return redirect_to without_id(action: :show_current) if current_id?
     @item = find_record
-    user_authorize!
     raise config_text(:account, :not_found, id: identifier) if @item.blank?
+  rescue CanCan::AccessDenied => error
+    error_response(error, welcome_path)
   rescue => error
     error_response(error, show_select_account_path)
   end
@@ -121,7 +125,8 @@ class AccountController < ApplicationController
     __log_activity
     __debug_route
     @item = new_record
-    user_authorize!
+  rescue CanCan::AccessDenied => error
+    error_response(error, welcome_path)
   rescue => error
     failure_status(error)
   end
@@ -134,26 +139,18 @@ class AccountController < ApplicationController
   #
   # === Usage Notes
   # In order to allow the database to auto-generate the record ID, the :id
-  # parameter will be rejected unless "force_id=true" is included in the URL
-  # parameters.
+  # parameter will be rejected unless "force=true" is included in the URL
+  # parameters (administrator only).
   #
   # @see #create_account_path         Route helper
   #
   def create
     __log_activity
     __debug_route
-    @item  = create_record(fatal: false)
-    errors = @item&.errors || config_text(:account, :not_created)
-    user_authorize!
-    respond_to do |format|
-      if errors.blank?
-        format.html { redirect_success(__method__) }
-        format.json { render :show, location: @item, status: :created }
-      else
-        format.html { redirect_failure(__method__, error: errors) }
-        format.json { render json: errors, status: :unprocessable_entity }
-      end
-    end
+    @item = create_record
+    post_response(:created, @item)
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error
@@ -172,11 +169,12 @@ class AccountController < ApplicationController
   def edit
     __log_activity
     __debug_route
-    return redirect_to action: :edit_select  if identifier.blank?
-    return redirect_to action: :edit_current if current_id?
+    return redirect_to action: :edit_select               if identifier.blank?
+    return redirect_to without_id(action: :edit_current)  if current_id?
     @item = edit_record
-    user_authorize!
     raise config_text(:account, :not_found, id: identifier) if @item.blank?
+  rescue CanCan::AccessDenied => error
+    error_response(error, welcome_path)
   rescue => error
     error_response(error, edit_select_account_path)
   end
@@ -192,18 +190,10 @@ class AccountController < ApplicationController
     __log_activity
     __debug_route
     __debug_request
-    @item  = update_record(fatal: false)
-    errors = @item&.errors || config_text(:account, :not_found, id: identifier)
-    user_authorize!
-    respond_to do |format|
-      if errors.blank?
-        format.html { redirect_success(__method__) }
-        format.json { render :show, location: @item, status: :ok }
-      else
-        format.html { redirect_failure(__method__, error: errors) }
-        format.json { render json: errors, status: :unprocessable_entity }
-      end
-    end
+    @item = update_record
+    post_response(:ok, @item)
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue => error
     post_response(error, redirect: edit_select_account_path)
   end
@@ -222,10 +212,11 @@ class AccountController < ApplicationController
     return redirect_to action: :delete_select if identifier.blank?
     raise config_text(:account, :self_delete) if current_id?
     @list = delete_records.list&.records
-    #user_authorize!(@list) # TODO: authorize :delete
     unless @list.present? || last_operation_path&.include?('/destroy')
       raise config_text(:account, :no_match, id: identifier_list)
     end
+  rescue CanCan::AccessDenied => error
+    error_response(error, welcome_path)
   rescue => error
     error_response(error, delete_select_account_path)
   end
@@ -245,8 +236,9 @@ class AccountController < ApplicationController
     back  = delete_select_account_path
     raise config_text(:account, :self_delete) if current_id?
     @list = destroy_records
-    #user_authorize!(@list) # TODO: authorize :destroy
     post_response(:ok, @list, redirect: back)
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue Record::SubmitError => error
     post_response(:conflict, error, redirect: back)
   rescue => error
@@ -331,13 +323,14 @@ class AccountController < ApplicationController
     __debug_route
     return redirect_to action: :show if identifier.present?
     @item = find_record(current_id)
-    user_authorize!
     raise config_text(:account, :not_found, id: identifier) if @item.blank?
     respond_to do |format|
       format.html { render 'account/show' }
       format.json { render 'account/show' }
       format.xml  { render 'account/show' }
     end
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue => error
     error_response(error, account_index_path)
   end
@@ -353,13 +346,14 @@ class AccountController < ApplicationController
     __debug_route
     return redirect_to action: :edit if identifier.present?
     @item = edit_record(current_id)
-    user_authorize!
     raise config_text(:account, :not_found, id: identifier) if @item.blank?
     respond_to do |format|
       format.html { render 'account/edit' }
       format.json { render 'account/edit' }
       format.xml  { render 'account/edit' }
     end
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue => error
     error_response(error, account_index_path)
   end
@@ -401,43 +395,6 @@ class AccountController < ApplicationController
   def delete_select
     __log_activity
     __debug_route
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # Indicate whether request parameters (explicitly or implicitly) reference
-  # the current user.
-  #
-  def current_id?
-    id = identifier.presence&.to_s
-    CURRENT_ID.casecmp?(id) || (id == current_id.to_s)
-  end
-
-  # This is a kludge until I can figure out the right way to express this with
-  # CanCan -- or replace CanCan with a more expressive authorization gem.
-  #
-  # @param [User, Array<User>, nil] subject
-  # @param [Symbol, String, nil]    action
-  # @param [any, nil]               args
-  #
-  def user_authorize!(subject = nil, action = nil, *args)
-    action  ||= request_parameters[:action]
-    action    = action.to_sym if action.is_a?(String)
-    subject ||= @item
-    subject   = subject.first if subject.is_a?(Array) # TODO: per item check
-    # noinspection RubyMismatchedArgumentType
-    authorize!(action, subject, *args) if subject
-    return if administrator?
-    return unless %i[show edit update delete destroy].include?(action)
-    unless (org = current_org&.id) && (subject&.org&.id == org)
-      message = current_ability.unauthorized_message(action, subject)
-      message.sub!(/s\.?$/, " #{subject.id}") if subject
-      raise CanCan::AccessDenied.new(message, action, subject, args)
-    end
   end
 
 end

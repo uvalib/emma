@@ -3,7 +3,7 @@
 
 import { AppDebug }  from '../application/debug';
 import { BaseClass } from './base-class';
-import { HTTP }      from './http';
+import * as HTTP     from './http';
 import { makeUrl }   from './url';
 import * as xhr      from './xhr';
 import { Rails }     from '../vendor/rails';

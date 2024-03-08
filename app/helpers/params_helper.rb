@@ -158,6 +158,16 @@ module ParamsHelper
     request_parameters(prm).except!(*IGNORED_PARAMETERS)
   end
 
+  # Request parameters without :id.
+  #
+  # @param [Hash] added               Added/replaced parameter values.
+  #
+  # @return [Hash]
+  #
+  def without_id(**added)
+    request_parameters.except(:id).merge(added)
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================

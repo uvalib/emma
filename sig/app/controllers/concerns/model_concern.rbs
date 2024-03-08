@@ -122,18 +122,6 @@ module ModelConcern
   #
   def normalize_sort_order!: (symHash prm, **untyped opt) -> symHash
 
-  # Return with the specified model record.
-  #
-  # @param [any, nil] item      String, Integer, Hash, Model; def: #identifier.
-  # @param [Hash]     opt       To Model#find_record.
-  #
-  # @raise [Record::StatementInvalid] If :id not given.
-  # @raise [Record::NotFound]         If *item* was not found.
-  #
-  # @return [Model, nil]        A fresh record unless *item* is a #model_class.
-  #
-  def find_record: (?(String|Integer|Model|symHash|nil) item, **untyped opt) -> (Model | nil)
-
   # Locate and filter model records.
   #
   # @param [Array]         items    Default: #identifier.
@@ -214,24 +202,54 @@ module ModelConcern
   #
   def filter_by_group!: (symHash opt, ?key: Symbol, ?state: Symbol|symArray) -> (symHash | nil)
 
+  # Return with the specified model record.
+  #
+  # @param [any, nil] item      String, Integer, Hash, Model; def: #identifier.
+  # @param [Hash]     opt       Passed to Record::Identification#find_record.
+  #
+  # @raise [Record::StatementInvalid] If :id not given.
+  # @raise [Record::NotFound]         If *item* was not found.
+  #
+  # @return [Model, nil]        A fresh record unless *item* is a #model_class.
+  #
+  # @yield [record] Raise an exception if the record is not acceptable.
+  # @yieldparam [Model] record
+  # @yieldreturn [void]
+  #
+  # @see Record::Identification#find_record
+  #
+  def find_record: (?(String|Integer|Model|symHash|nil) item, **untyped opt) ?{ (Model record) -> void } -> (Model | nil)
+
   # Start a new model instance.
   #
-  # @param [Hash, nil]       prm        Field values (def: `#current_params`).
-  # @param [Boolean, String] force_id   If *true*, allow setting of :id.
+  # @param [Hash, nil] prm            Field values (def: `#current_params`).
+  # @param [Hash]      opt            Added field values.
+  #
+  # @option opt [Boolean] force       If *true* allow setting of :id.
   #
   # @return [Model]                   An un-persisted model instance.
   #
-  def new_record: (?symHash? prm, ?force_id: bool|String, **untyped _ignored) ?{ (symHash attr) -> void } -> Model
+  # @yield [attr] Adjust attributes and/or raise an exception.
+  # @yieldparam [Hash] attr           Supplied attributes for the new record.
+  # @yieldreturn [void]
+  #
+  def new_record: (?symHash? prm, **untyped opt) ?{ (symHash attr) -> void } -> Model
 
   # Add a new model record to the database.
   #
-  # @param [Hash, nil]       prm        Field values (def: `#current_params`).
-  # @param [Boolean, String] force_id   If *true*, allow setting of :id.
-  # @param [Boolean]         fatal      If *false*, use #save not #save!.
+  # @param [Hash, nil] prm            Field values (def: `#current_params`).
+  # @param [Boolean]   fatal          If *false*, use #save not #save!.
+  # @param [Hash]      opt            Added field values.
+  #
+  # @option opt [Boolean] force       If *true* allow setting of :id.
   #
   # @return [Model]                   The new persisted model record.
   #
-  def create_record: (?symHash? prm, ?force_id: bool|String, ?fatal: bool, **untyped _ignored) ?{ (symHash attr) -> void } -> Model
+  # @yield [attr] Adjust attributes and/or raise an exception.
+  # @yieldparam [Hash] attr           Supplied attributes for the new record.
+  # @yieldreturn [void]
+  #
+  def create_record: (?symHash? prm, ?fatal: bool, **untyped opt) ?{ (symHash attr) -> void } -> Model
 
   # Start editing an existing model record.
   #
@@ -242,6 +260,10 @@ module ModelConcern
   # @raise [Record::NotFound]         If *item* was not found.
   #
   # @return [Model, nil]      A fresh instance unless *item* is a #model_class.
+  #
+  # @yield [record] Raise an exception if the record is not acceptable.
+  # @yieldparam [Model] record        May be altered by the block.
+  # @yieldreturn [void]               Block not called if *record* is *nil*.
   #
   def edit_record: (?(String|Integer|Model|symHash|nil) item, **untyped opt) ?{ (Model record) -> void } -> (Model | nil)
 
@@ -257,30 +279,159 @@ module ModelConcern
   #
   # @return [Model, nil]              The updated model record.
   #
+  # @yield [record, attr] Raise an exception if the record is not acceptable.
+  # @yieldparam [Model] record        May be altered by the block.
+  # @yieldparam [Hash]  attr          New field(s) to be assigned to *record*.
+  # @yieldreturn [void]               Block not called if *record* is *nil*.
+  #
   def update_record: (?(String|Integer|Model|symHash|nil) item, ?fatal: bool, **untyped prm) ?{ (Model record, symHash attr) -> void } -> (Model | nil)
 
   # Retrieve the indicated model record(s) for the '/delete' page.
   #
   # @param [any, nil] items           To #search_records
-  # @param [Hash]     prm             Default: `#current_params`
+  # @param [Hash]     opt             Default: `#current_params`
   #
   # @raise [RangeError]               If :page is not valid.
   #
   # @return [Paginator::Result]
   #
-  def delete_records: (?(String|Integer|Model|Array[String|Integer|Model]|nil) items, **untyped prm) ?{ ((String|Integer|Model|Array[String|Integer|Model]|nil) items, symHash opt) -> void } -> Paginator::Result
+  # @yield [items, opt] Raise an exception unless the *items* are acceptable.
+  # @yieldparam [Array] items         Identifiers of items to be deleted.
+  # @yieldparam [Hash]  opt           Options to #search_records.
+  # @yieldreturn [void]               Block not called if *record* is *nil*.
+  #
+  def delete_records: (?(Model|String|Integer|Array[Model|String|Integer]|nil) items, **untyped opt) ?{ (Array[Model|String|Integer] items, symHash opt) -> void } -> Paginator::Result
 
   # Remove the indicated model record(s).
   #
   # @param [any, nil] items
   # @param [Boolean]  fatal           If *false* do not #raise_failure.
-  # @param [Hash]     prm             Default: `#current_params`
+  # @param [Hash]     opt             Default: `#current_params`
   #
   # @raise [Record::SubmitError]      If there were failure(s).
   #
   # @return [Array]                   Destroyed entries.
   #
-  def destroy_records: (?(String|Integer|Model|Array[String|Integer|Model]|nil) items, ?fatal: bool, **untyped prm) ?{ ((String|Integer|Model|Array[String|Integer|Model]|nil) items, symHash opt) -> void } -> (Array[Integer]|Array[String])
+  # @yield [record] Called for each record before deleting.
+  # @yieldparam [Model] record
+  # @yieldreturn [String,nil]         Error message if *record* unacceptable.
+  #
+  def destroy_records: (?(Model|String|Integer|Array[Model|String|Integer]|nil) items, ?fatal: bool, **untyped opt) ?{ (Model record) -> (String | nil) } -> Array[Model]
+
+  # Action permitted if the current user is signed-in unless *record* is *nil*.
+  #
+  # @param [Model, Hash, nil] record
+  # @param [Hash]             opt     Passed to #unauthorized.
+  #
+  # @raise [CanCan::AccessDenied]     Only if `opt[:fatal]` is not *false*.
+  #
+  # @return [Boolean]                 *false* only if `opt[:fatal]` is *false*
+  #
+  def authorized_session: (?(Model|symHash|:ignored|nil) record, **untyped opt) -> bool
+
+  # Action permitted if the current user owns *record* or is a manager of the
+  # organization of the user that owns *record*.
+  #
+  # @param [Model, Hash, nil] record
+  # @param [Hash]             opt     Passed to #authorized.
+  #
+  # @raise [CanCan::AccessDenied]     Only if `opt[:fatal]` is not *false*.
+  #
+  # @return [Boolean]                 *false* only if `opt[:fatal]` is *false*
+  #
+  def authorized_self_or_org_manager: (Model|symHash|nil record, **untyped opt) -> bool
+
+  # Action permitted if the current user a manager of the organization of the
+  # user that owns *record*.
+  #
+  # @param [Model, Hash, nil] record
+  # @param [Hash]             opt     Passed to #authorized.
+  #
+  # @raise [CanCan::AccessDenied]     Only if `opt[:fatal]` is not *false*.
+  #
+  # @return [Boolean]                 *false* only if `opt[:fatal]` is *false*
+  #
+  def authorized_org_manager: (Model|symHash|nil record, **untyped opt) -> bool
+
+  # Action permitted if the current user owns *record* or is in the same
+  # organization as the user that owns *record*.
+  #
+  # @param [Model, Hash, nil] record
+  # @param [Hash]             opt     Passed to #authorized.
+  #
+  # @raise [CanCan::AccessDenied]     Only if `opt[:fatal]` is not *false*.
+  #
+  # @return [Boolean]                 *false* only if `opt[:fatal]` is *false*
+  #
+  # == Usage Notes
+  # Technically this yields the same result as #authorized_org_member but it is
+  # preferred in cases like ManifestItem where determining the associated user
+  # is less costly than determining the associated organization.
+  #
+  def authorized_self_or_org_member: (Model|symHash|nil record, **untyped opt) -> bool
+
+  # Action permitted if the current user is in the same organization as the
+  # user that owns *record*.
+  #
+  # @param [Model, Hash, nil] record
+  # @param [Hash]             opt     Passed to #authorized.
+  #
+  # @raise [CanCan::AccessDenied]     Only if `opt[:fatal]` is not *false*.
+  #
+  # @return [Boolean]                 *false* only if `opt[:fatal]` is *false*
+  #
+  def authorized_org_member: (Model|symHash|nil record, **untyped opt) -> bool
+
+  # Raise an exception with a tailored message.
+  #
+  # @param [Model, Hash, nil]    item
+  # @param [Symbol, String, nil] action   Default: `params[:action]`.
+  # @param [Class, nil]          subject  Default: `#model_class`.
+  # @param [Symbol, nil]         key
+  # @param [Boolean]             fatal    If *false* return *false*.
+  # @param [Hash]                attr     Added field values.
+  #
+  # @raise [CanCan::AccessDenied]     Always raised unless *fatal* is *false*.
+  #
+  # @return [Boolean]                 Always *false* iff *fatal* is *false*.
+  #
+  def unauthorized: (?(Model|symHash|:ignored|nil) item, ?action: Symbol|String|nil, ?subject: Class|nil, ?key: Symbol|nil, ?fatal: bool, **untyped attr) -> bool
+
+  # Action permitted if the current user is an administrator or *record* meets
+  # the criteria supplied by the block.
+  #
+  # @param [Model, Hash, nil] record
+  # @param [Hash]             opt     Passed to #unauthorized.
+  #
+  # @raise [CanCan::AccessDenied]     Only if `opt[:fatal]` is not *false*.
+  #
+  # @return [Boolean]                 *false* only if `opt[:fatal]` is *false*
+  #
+  # @yield [record] Determine if *record* is permitted for the current user.
+  # @yieldparam [Model, Hash, nil] record
+  # @yieldreturn [Boolean] *true* if permitted.
+  #
+  def authorized: (Model|symHash|nil record, **untyped opt) { (Model|symHash|nil record) -> bool } -> bool
+
+  # Indicate whether the current user is a manager of the organization to which
+  # the owner of *record* belongs.
+  #
+  # @param [Model, Hash, nil] record
+  #
+  def authorized_manager?: (Model|symHash|nil record) -> bool
+
+  # Indicate whether *record* is owned by someone in the current user's
+  # organization.
+  #
+  # @param [Model, Hash, nil] record
+  #
+  def authorized_org?: (Model|symHash|nil record) -> bool
+
+  # Indicate whether *record* is owned by the current user.
+  #
+  # @param [Model, Hash, nil] record
+  #
+  def authorized_user?: (Model|symHash|nil record) -> bool
 
   # Raise an exception.
   #

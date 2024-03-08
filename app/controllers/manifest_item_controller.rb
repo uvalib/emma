@@ -116,12 +116,13 @@ class ManifestItemController < ApplicationController
     __log_activity
     __debug_route
     @item = find_record
-    manifest_item_authorize!
     respond_to do |format|
       format.html
       format.json { render_json show_values }
       format.xml  { render_xml  show_values }
     end
+  rescue CanCan::AccessDenied => error
+    error_response(error, welcome_path)
   rescue => error
     error_response(error)
   end
@@ -144,7 +145,8 @@ class ManifestItemController < ApplicationController
   def new
     __debug_route
     @item = new_record
-    manifest_item_authorize!
+  rescue CanCan::AccessDenied => error
+    error_response(error, welcome_path)
   rescue => error
     failure_status(error)
   end
@@ -159,21 +161,20 @@ class ManifestItemController < ApplicationController
   def create
     __debug_route
     @item = create_record
-    manifest_item_authorize!
     #redir = (manifest_item_index_path unless request_xhr?)
     #post_response(:ok, @item, redirect: redir)
-    success = @item.errors.blank?
+    errors = @item.errors
     respond_to do |format|
-      if success
+      if errors.blank?
         format.html { redirect_to(action: :index) }
         format.json { render json: @item, status: :created }
       else
-        # @type [ActiveModel::Errors]
-        errors = @item.errors
-        format.html { redirect_failure(__method__, error: errors) }
+        format.html { error_response(@item || errors) }
         format.json { render json: errors, status: :unprocessable_entity }
       end
     end
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue => error
     post_response(error)
   end
@@ -190,7 +191,8 @@ class ManifestItemController < ApplicationController
   def edit
     __debug_route
     @item = edit_record
-    manifest_item_authorize!
+  rescue CanCan::AccessDenied => error
+    error_response(error, welcome_path)
   rescue => error
     failure_status(error)
   end
@@ -207,8 +209,9 @@ class ManifestItemController < ApplicationController
     __debug_route
     __debug_request
     @item = update_record
-    manifest_item_authorize!
     post_response(:ok, @item, redirect: manifest_item_index_path)
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue => error
     post_response(error)
   end
@@ -224,7 +227,8 @@ class ManifestItemController < ApplicationController
   def delete
     __debug_route
     @list = delete_records.list&.records
-    #manifest_item_authorize!(@list) # TODO: authorize :delete
+  rescue CanCan::AccessDenied => error
+    error_response(error, welcome_path)
   rescue => error
     failure_status(error)
   end
@@ -240,8 +244,9 @@ class ManifestItemController < ApplicationController
   def destroy
     __debug_route
     @list = destroy_records
-    #manifest_item_authorize!(@list) # TODO: authorize :destroy
     post_response(:ok, @list, redirect: :back)
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue => error
     post_response(error, redirect: :back)
   end
@@ -262,6 +267,8 @@ class ManifestItemController < ApplicationController
     __debug_route
     @item = start_editing(**current_params)
     post_response(:ok)
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue => error
     post_response(error)
   end
@@ -273,6 +280,8 @@ class ManifestItemController < ApplicationController
   def finish_edit
     __debug_route
     render_json finish_editing(**current_params)
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue => error
     post_response(error)
   end
@@ -284,6 +293,8 @@ class ManifestItemController < ApplicationController
   def row_update
     __debug_route
     render_json editing_update(**current_params)
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue => error
     post_response(error)
   end
@@ -308,6 +319,8 @@ class ManifestItemController < ApplicationController
     self.status = stat        if stat.present?
     self.headers.merge!(hdrs) if hdrs.present?
     self.response_body = body if body.present?
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue Record::SubmitError => error
     post_response(:conflict, error, xhr: true)
   rescue => error
@@ -331,6 +344,8 @@ class ManifestItemController < ApplicationController
   def bulk_new
     __debug_route
     bulk_new_manifest_items
+  rescue CanCan::AccessDenied => error
+    error_response(error, welcome_path)
   rescue => error
     failure_status(error)
   end
@@ -349,6 +364,8 @@ class ManifestItemController < ApplicationController
     __debug_request
     @list = bulk_create_manifest_items
     render_json bulk_update_response
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue => error
     post_response(error)
   end
@@ -364,6 +381,8 @@ class ManifestItemController < ApplicationController
   def bulk_edit
     __debug_route
     @list = bulk_edit_manifest_items
+  rescue CanCan::AccessDenied => error
+    error_response(error, welcome_path)
   rescue => error
     failure_status(error)
   end
@@ -383,6 +402,8 @@ class ManifestItemController < ApplicationController
     __debug_request
     @list = bulk_update_manifest_items
     render_json bulk_update_response
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue => error
     post_response(error)
   end
@@ -397,6 +418,8 @@ class ManifestItemController < ApplicationController
   def bulk_delete
     __debug_route
     @list = bulk_delete_manifest_items
+  rescue CanCan::AccessDenied => error
+    error_response(error, welcome_path)
   rescue => error
     failure_status(error)
   end
@@ -411,6 +434,8 @@ class ManifestItemController < ApplicationController
     __debug_request
     @list = bulk_destroy_manifest_items
     render_json bulk_id_response
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue => error
     post_response(error, xhr: false)
   end
@@ -428,6 +453,8 @@ class ManifestItemController < ApplicationController
     __debug_request
     @list = bulk_fields_manifest_items
     render_json bulk_update_response
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue => error
     post_response(error)
   end
@@ -460,35 +487,6 @@ class ManifestItemController < ApplicationController
   def bulk_id_response(list = @list, **)
     list = Array.wrap(list).compact_blank.map! { |v| (v.try(:id) || v).to_i }
     { RESPONSE_OUTER => { list: list } }
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # This is a kludge until I can figure out the right way to express this with
-  # CanCan -- or replace CanCan with a more expressive authorization gem.
-  #
-  # @param [ManifestItem, Array<ManifestItem>, nil] subject
-  # @param [Symbol, String, nil]                    action
-  # @param [any, nil]                               args
-  #
-  def manifest_item_authorize!(subject = nil, action = nil, *args)
-    action  ||= request_parameters[:action]
-    action    = action.to_sym if action.is_a?(String)
-    subject ||= @item
-    subject   = subject.first if subject.is_a?(Array) # TODO: per item check
-    # noinspection RubyMismatchedArgumentType
-    authorize!(action, subject, *args) if subject
-    return if administrator?
-    return unless %i[show edit update delete destroy].include?(action)
-    unless (org = current_org&.id) && (subject&.org&.id == org)
-      message = current_ability.unauthorized_message(action, subject)
-      message.sub!(/s\.?$/, " #{subject.id}") if subject
-      raise CanCan::AccessDenied.new(message, action, subject, args)
-    end
   end
 
 end

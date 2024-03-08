@@ -119,12 +119,13 @@ class ManifestController < ApplicationController
     __debug_route
     return redirect_to action: :show_select if identifier.blank?
     @item = find_record
-    manifest_authorize!
     respond_to do |format|
       format.html
       format.json #{ render_json show_values }
       format.xml  #{ render_xml  show_values }
     end
+  rescue CanCan::AccessDenied => error
+    error_response(error, welcome_path)
   rescue => error
     error_response(error, root_path)
   end
@@ -137,7 +138,8 @@ class ManifestController < ApplicationController
     __log_activity
     __debug_route
     @item = new_record
-    manifest_authorize!
+  rescue CanCan::AccessDenied => error
+    error_response(error, welcome_path)
   rescue => error
     failure_status(error)
   end
@@ -152,12 +154,13 @@ class ManifestController < ApplicationController
     __log_activity
     __debug_route
     @item = create_record
-    manifest_authorize!
     if request_xhr?
       render json: @item.as_json
     else
       post_response(:ok, @item, redirect: manifest_index_path)
     end
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error
@@ -175,10 +178,11 @@ class ManifestController < ApplicationController
     __debug_route
     return redirect_to action: :edit_select if identifier.blank?
     @item = edit_record
-    manifest_authorize!
     prm   = paginator.initial_parameters
     found = find_or_match_manifest_items(@item, **prm)
     paginator.finalize(found, **prm)
+  rescue CanCan::AccessDenied => error
+    error_response(error, welcome_path)
   rescue => error
     error_response(error, edit_select_manifest_path)
   end
@@ -194,12 +198,13 @@ class ManifestController < ApplicationController
     __debug_route
     __debug_request
     @item = update_record
-    manifest_authorize!
     if request_xhr?
       render json: @item.as_json
     else
       post_response(:ok, @item, redirect: manifest_index_path)
     end
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error
@@ -217,7 +222,8 @@ class ManifestController < ApplicationController
     __debug_route
     return redirect_to action: :delete_select if identifier.blank?
     @list = delete_records.list&.records
-    #manifest_authorize!(@list) # TODO: authorize :delete
+  rescue CanCan::AccessDenied => error
+    error_response(error, welcome_path)
   rescue => error
     error_response(error, delete_select_manifest_path)
   end
@@ -234,8 +240,9 @@ class ManifestController < ApplicationController
     __debug_route
     back  = delete_select_manifest_path
     @list = destroy_records
-    #manifest_authorize!(@list) # TODO: authorize :destroy
     post_response(:ok, @list, redirect: back)
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue Record::SubmitError => error
     post_response(:conflict, error, redirect: back)
   rescue => error
@@ -416,6 +423,8 @@ class ManifestController < ApplicationController
     rows   = @item.items_hash(columns: ITEM_SAVE_COLS)
     result = { items: rows }
     render_json result
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error
@@ -438,6 +447,8 @@ class ManifestController < ApplicationController
       # noinspection RubyMismatchedArgumentType
       redirect_to(params[:redirect] || manifest_index_path)
     end
+  rescue CanCan::AccessDenied => error
+    post_response(:forbidden, error, redirect: welcome_path)
   rescue Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error
@@ -461,7 +472,8 @@ class ManifestController < ApplicationController
     __debug_route
     return redirect_to action: :remit_select if identifier.blank?
     @item = remit_manifest
-    manifest_authorize!
+  rescue CanCan::AccessDenied => error
+    error_response(error, welcome_path)
   rescue => error
     error_response(error, remit_select_manifest_path)
   end
@@ -549,35 +561,6 @@ class ManifestController < ApplicationController
     post_response(error)
   end
 =end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # This is a kludge until I can figure out the right way to express this with
-  # CanCan -- or replace CanCan with a more expressive authorization gem.
-  #
-  # @param [Manifest, Array<Manifest>, nil] subject
-  # @param [Symbol, String, nil]            action
-  # @param [any, nil]                       args
-  #
-  def manifest_authorize!(subject = nil, action = nil, *args)
-    action  ||= request_parameters[:action]
-    action    = action.to_sym if action.is_a?(String)
-    subject ||= @item
-    subject   = subject.first if subject.is_a?(Array) # TODO: per item check
-    # noinspection RubyMismatchedArgumentType
-    authorize!(action, subject, *args) if subject
-    return if administrator?
-    return unless %i[show edit update delete destroy].include?(action)
-    unless (org = current_org&.id) && (subject&.org&.id == org)
-      message = current_ability.unauthorized_message(action, subject)
-      message.sub!(/s\.?$/, " #{subject.id}") if subject
-      raise CanCan::AccessDenied.new(message, action, subject, args)
-    end
-  end
 
 end
 

@@ -241,13 +241,4 @@ class ManifestItemController < ApplicationController
   # @return [Hash{Symbol=>Hash}]
   #
   def bulk_id_response: (?untyped list, **untyped _ignored) -> Hash[Symbol,symHash]
-
-  # This is a kludge until I can figure out the right way to express this with
-  # CanCan -- or replace CanCan with a more expressive authorization gem.
-  #
-  # @param [ManifestItem, Array<ManifestItem>, nil] subject
-  # @param [Symbol, String, nil]                    action
-  # @param [any, nil]                               args
-  #
-  def manifest_item_authorize!: (?(ManifestItem|Array[ManifestItem]|nil) subject, ?(Symbol|String|nil) action, *untyped args) -> void
 end

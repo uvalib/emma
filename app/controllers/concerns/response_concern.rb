@@ -82,20 +82,20 @@ module ResponseConcern
   # Display the failure on the screen -- immediately if modal, or after a
   # redirect otherwise.
   #
-  # @param [Exception] error
-  # @param [String]    fallback   Redirect fallback #default_fallback_location
-  # @param [Symbol]    meth       Calling method.
+  # @param [Exception, Model, String] error
+  # @param [String]                   redirect  Def: #default_fallback_location
+  # @param [Hash]                     opt       To #flash_failure/#flash_status
   #
   # @return [void]
   #
-  def error_response(error, fallback = nil, meth: nil)
-    meth ||= calling_method
+  def error_response(error, redirect = nil, **opt)
+    opt[:meth] ||= calling_method
     if request.format.html? && !modal?
-      re_raise_if_internal_exception(error)
-      flash_failure(error, meth: meth)
-      redirect_back(fallback_location: fallback || default_fallback_location)
+      re_raise_if_internal_exception(error) if error.is_a?(Exception)
+      flash_failure(error, **opt)
+      redirect_back_or_to(redirect || default_fallback_location)
     else
-      failure_status(error, meth: meth)
+      failure_status(error, **opt)
     end
   end
 
@@ -145,7 +145,8 @@ module ResponseConcern
     end
     re_raise_if_internal_exception(item) if (error = item.is_a?(Exception))
 
-    xhr      = request_xhr? if xhr.nil?
+    redirect = params[:redirect] if redirect.nil?
+    xhr      = request_xhr?      if xhr.nil?
     html     = !xhr || redirect.present?
     report   = item.presence && ExecReport[item]
     status ||= report&.http_status

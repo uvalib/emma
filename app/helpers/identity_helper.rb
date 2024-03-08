@@ -69,6 +69,18 @@ module IdentityHelper
     current_user&.org
   end
 
+  # The organization ID associated with the current user.
+  #
+  # @raise [RuntimeError]             The user should have an org and doesn't.
+  #
+  # @return [Org, nil]
+  # @return [nil]                     If no user or administrative user.
+  #
+  def current_org_id
+    return if current_user.nil? || administrator?
+    current_org&.id&.presence or raise("no org for #{current_user}")
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================

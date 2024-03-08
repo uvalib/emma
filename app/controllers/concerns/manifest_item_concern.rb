@@ -226,16 +226,73 @@ module ManifestItemConcern
 
   public
 
+  # Return with the specified model record.
+  #
+  # @param [any, nil] item      String, Integer, Hash, Model; def: #identifier.
+  # @param [Hash]     opt       Passed to Record::Identification#find_record.
+  #
+  # @raise [Record::StatementInvalid] If :id not given.
+  # @raise [Record::NotFound]         If *item* was not found.
+  #
+  # @return [ManifestItem, nil] A fresh record unless *item* is a #model_class.
+  #
+  # @yield [record] Raise an exception if the record is not acceptable.
+  # @yieldparam [ManifestItem] record
+  # @yieldreturn [void]
+  #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
+  def find_record(item = nil, **opt, &blk)
+    return super if blk
+    authorized_session
+    super do |record|
+      authorized_self_or_org_member(record)
+    end
+  end
+
+  # Start a new ManifestItem.
+  #
+  # @param [Hash, nil] prm            Field values (def: `#current_params`).
+  # @param [Hash]      opt            Added field values.
+  #
+  # @option opt [Boolean] force       If *true* allow setting of :id.
+  #
+  # @return [ManifestItem]            An un-persisted ManifestItem instance.
+  #
+  # @yield [attr] Adjust attributes and/or raise an exception.
+  # @yieldparam [Hash] attr           Supplied attributes for the new record.
+  # @yieldreturn [void]
+  #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
+  def new_record(prm = nil, **opt, &blk)
+    return super if blk
+    authorized_session
+    super
+  end
+
   # Add a new ManifestItem record to the database.
   #
-  # @param [Hash, nil]       prm        Field values (def: `#current_params`).
-  # @param [Boolean, String] force_id   If *true*, allow setting of :id.
-  # @param [Boolean]         fatal      If *false*, use #save not #save!.
+  # @param [Hash, nil] prm            Field values (def: `#current_params`).
+  # @param [Boolean]   fatal          If *false*, use #save not #save!.
+  # @param [Hash]      opt            Added field values.
+  #
+  # @option opt [Boolean] force       If *true* allow setting of :id.
   #
   # @return [ManifestItem]            The new ManifestItem record.
   #
-  def create_record(prm = nil, force_id: false, fatal: true, **)
-    # noinspection RubyMismatchedReturnType
+  # @yield [attr] Adjust attributes and/or raise an exception.
+  # @yieldparam [Hash] attr           Supplied attributes for the new record.
+  # @yieldreturn [void]
+  #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
+  def create_record(prm = nil, fatal: true, **opt, &blk)
+    return super if blk
+    authorized_session
     super do |attr|
       attr[:backup] ||= {}
       attr[:row]    ||= 1 + all_manifest_items(**attr)&.last&.row.to_i
@@ -251,16 +308,26 @@ module ManifestItemConcern
   #
   # @return [ManifestItem, nil] A fresh instance unless *item* is ManifestItem.
   #
-  def edit_record(item = nil, **opt)
-    # noinspection RubyMismatchedReturnType
-    item.is_a?(ManifestItem) ? item : super
+  # @yield [record] Raise an exception if the record is not acceptable.
+  # @yieldparam [ManifestItem] record
+  # @yieldreturn [void] Block not called if *record* is *nil*.
+  #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
+  def edit_record(item = nil, **opt, &blk)
+    return item  if item.is_a?(ManifestItem)
+    return super if blk
+    super do |record|
+      authorized_self_or_org_member(record)
+    end
   end
 
   # Update the indicated ManifestItem record.
   #
   # @param [any, nil] item            Def.: record for ModelConcern#identifier.
   # @param [Boolean]  fatal           If *false* use #update not #update!.
-  # @param [Hash]     prm             Field values except #UPDATE_STATUS_OPT
+  # @param [Hash]     opt             Field values except #UPDATE_STATUS_OPT
   #
   # @raise [Record::NotFound]               Record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
@@ -268,9 +335,17 @@ module ManifestItemConcern
   #
   # @return [ManifestItem, nil]       The updated ManifestItem record.
   #
-  def update_record(item = nil, fatal: true, **prm)
+  # @yield [record, attr] Raise an exception if the record is not acceptable.
+  # @yieldparam [ManifestItem] record
+  # @yieldparam [Hash]         attr   New field(s) to be assigned to *record*.
+  # @yieldreturn [void]               Block not called if *record* is *nil*.
+  #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
+  def update_record(item = nil, fatal: true, **opt, &blk)
+    return super if blk
     keep_date = updated_at = old_values = nil
-    # noinspection RubyMismatchedReturnType
     super { |record, attr|
       opt        = attr.extract!(*ManifestItem::UPDATE_STATUS_OPT)
       keep_date  = !opt[:overwrite] unless opt[:overwrite].nil?
@@ -288,15 +363,49 @@ module ManifestItemConcern
   # Retrieve the indicated ManifestItem record(s) for the '/delete' page.
   #
   # @param [any, nil] items           To #search_records
-  # @param [Hash]     prm             Default: `#current_params`
+  # @param [Hash]     opt             Default: `#current_params`
   #
   # @raise [RangeError]               If :page is not valid.
   #
   # @return [Paginator::Result]
   #
-  def delete_records(items = nil, **prm)
-    super.tap do |_items, opt|
+  # @yield [items, opt] Raise an exception unless the *items* are acceptable.
+  # @yieldparam [Array] items         Identifiers of items to be deleted.
+  # @yieldparam [Hash]  opt           Options to #search_records.
+  # @yieldreturn [void]               Block not called if *record* is *nil*.
+  #
+  def delete_records(items = nil, **opt, &blk)
+    return super if blk
+    authorized_session
+    super do |_item, opt|
       opt.except!(:force, :emergency, :truncate)
+    end
+  end
+
+  # Remove the indicated ManifestItem record(s).
+  #
+  # @param [any, nil] items
+  # @param [Boolean]  fatal           If *false* do not #raise_failure.
+  # @param [Hash]     opt             Default: `#current_params`
+  #
+  # @raise [Record::SubmitError]      If there were failure(s).
+  #
+  # @return [Array]                   Destroyed ManifestItem records.
+  #
+  # @yield [record] Called for each record before deleting.
+  # @yieldparam [ManifestItem] record
+  # @yieldreturn [String,nil]         Error message if *record* unacceptable.
+  #
+  #--
+  # noinspection RubyMismatchedReturnType
+  #++
+  def destroy_records(items = nil, fatal: true, **opt, &blk)
+    return super if blk
+    authorized_session
+    super do |record|
+      unless authorized_self_or_org_member(record, fatal: false)
+        "no authorization to remove #{record}"
+      end
     end
   end
 

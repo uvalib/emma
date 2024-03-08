@@ -131,15 +131,52 @@ module ManifestItemConcern
   #
   def normalize_export_name!: (symHash item) -> symHash
 
+  # Return with the specified model record.
+  #
+  # @param [any, nil] item      String, Integer, Hash, Model; def: #identifier.
+  # @param [Hash]     opt       Passed to Record::Identification#find_record.
+  #
+  # @raise [Record::StatementInvalid] If :id not given.
+  # @raise [Record::NotFound]         If *item* was not found.
+  #
+  # @return [ManifestItem, nil] A fresh record unless *item* is a #model_class.
+  #
+  # @yield [record] Raise an exception if the record is not acceptable.
+  # @yieldparam [ManifestItem] record
+  # @yieldreturn [void]
+  #
+  def find_record: (?(String|Integer|Model|symHash|nil) item, **untyped opt) ?{ (ManifestItem record) -> void } -> (ManifestItem | nil)
+
+  # Start a new ManifestItem.
+  #
+  # @param [Hash, nil] prm            Field values (def: `#current_params`).
+  # @param [Hash]      opt            Added field values.
+  #
+  # @option opt [Boolean] force       If *true* allow setting of :id.
+  #
+  # @return [ManifestItem]            An un-persisted ManifestItem instance.
+  #
+  # @yield [attr] Adjust attributes and/or raise an exception.
+  # @yieldparam [Hash] attr           Supplied attributes for the new record.
+  # @yieldreturn [void]
+  #
+  def new_record: (?symHash? prm, **untyped _ignored) ?{ (symHash attr) -> void } -> ManifestItem
+
   # Add a new ManifestItem record to the database.
   #
-  # @param [Hash, nil]       prm        Field values (def: `#current_params`).
-  # @param [Boolean, String] force_id   If *true*, allow setting of :id.
-  # @param [Boolean]         fatal      If *false*, use #save not #save!.
+  # @param [Hash, nil] prm            Field values (def: `#current_params`).
+  # @param [Boolean]   fatal          If *false*, use #save not #save!.
+  # @param [Hash]      opt            Added field values.
+  #
+  # @option opt [Boolean] force       If *true* allow setting of :id.
   #
   # @return [ManifestItem]            The new ManifestItem record.
   #
-  def create_record: (?symHash? prm, ?force_id: bool|String, ?fatal: bool, **untyped _ignored) -> ManifestItem
+  # @yield [attr] Adjust attributes and/or raise an exception.
+  # @yieldparam [Hash] attr           Supplied attributes for the new record.
+  # @yieldreturn [void]
+  #
+  def create_record: (?symHash? prm, ?fatal: bool, **untyped opt) ?{ (symHash attr) -> void } -> ManifestItem
 
   # Retrieve the indicated ManifestItem record for the '/edit' model form.
   #
@@ -150,13 +187,17 @@ module ManifestItemConcern
   #
   # @return [ManifestItem, nil] A fresh instance unless *item* is ManifestItem.
   #
-  def edit_record: (?(String|Integer|ManifestItem|symHash|nil) item, **untyped opt) -> (ManifestItem | nil)
+  # @yield [record] Raise an exception if the record is not acceptable.
+  # @yieldparam [ManifestItem] record
+  # @yieldreturn [void] Block not called if *record* is *nil*.
+  #
+  def edit_record: (?(String|Integer|ManifestItem|symHash|nil) item, **untyped opt) ?{ (ManifestItem record) -> void } -> (ManifestItem | nil)
 
   # Update the indicated ManifestItem record.
   #
   # @param [any, nil] item            Def.: record for ModelConcern#identifier.
   # @param [Boolean]  fatal           If *false* use #update not #update!.
-  # @param [Hash]     prm             Field values except #UPDATE_STATUS_OPT
+  # @param [Hash]     opt             Field values except #UPDATE_STATUS_OPT
   #
   # @raise [Record::NotFound]               Record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
@@ -164,18 +205,44 @@ module ManifestItemConcern
   #
   # @return [ManifestItem, nil]       The updated ManifestItem record.
   #
-  def update_record: (?(String|Integer|Model|symHash|nil) item, ?fatal: bool, **untyped prm) -> (ManifestItem | nil)
+  # @yield [record, attr] Raise an exception if the record is not acceptable.
+  # @yieldparam [ManifestItem] record
+  # @yieldparam [Hash]         attr   New field(s) to be assigned to *record*.
+  # @yieldreturn [void]               Block not called if *record* is *nil*.
+  #
+  def update_record: (?(String|Integer|Model|symHash|nil) item, ?fatal: bool, **untyped opt) ?{ (ManifestItem record, symHash attr) -> void } -> (ManifestItem | nil)
 
   # Retrieve the indicated ManifestItem record(s) for the '/delete' page.
   #
   # @param [any, nil] items           To #search_records
-  # @param [Hash]     prm             Default: `#current_params`
+  # @param [Hash]     opt             Default: `#current_params`
   #
   # @raise [RangeError]               If :page is not valid.
   #
   # @return [Paginator::Result]
   #
-  def delete_records: (?(String|Symbol|Integer|Model|Array[String|Symbol|Integer|Model]|nil) items, **untyped prm) -> Paginator::Result
+  # @yield [items, opt] Raise an exception unless the *items* are acceptable.
+  # @yieldparam [Array] items         Identifiers of items to be deleted.
+  # @yieldparam [Hash]  opt           Options to #search_records.
+  # @yieldreturn [void]               Block not called if *record* is *nil*.
+  #
+  def delete_records: (?(Model|String|Integer|Array[Model|String|Integer]|nil) items, **untyped opt) ?{ (Array[Model|String|Integer] items, symHash opt) -> void } -> Paginator::Result
+
+  # Remove the indicated ManifestItem record(s).
+  #
+  # @param [any, nil] items
+  # @param [Boolean]  fatal           If *false* do not #raise_failure.
+  # @param [Hash]     opt             Default: `#current_params`
+  #
+  # @raise [Record::SubmitError]      If there were failure(s).
+  #
+  # @return [Array]                   Destroyed ManifestItem records.
+  #
+  # @yield [record] Called for each record before deleting.
+  # @yieldparam [ManifestItem] record
+  # @yieldreturn [String,nil]         Error message if *record* unacceptable.
+  #
+  def destroy_records: (?(Model|String|Integer|Array[Model|String|Integer]|nil) items, ?fatal: bool, **untyped opt) ?{ (ManifestItem record) -> (String | nil) } -> Array[ManifestItem]
 
   RECORD_KEYS: symArray
 
