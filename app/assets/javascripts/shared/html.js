@@ -394,3 +394,33 @@ export function uniqAttr(value, unique, append_only) {
         return `${value}-${unique}`;
     }
 }
+
+/**
+ * Get a list of all the "data-" attributes for element and its descendents.
+ *
+ * @param {Selector} root
+ *
+ * @returns {string[]}
+ */
+export function dataAttributesWithin(root) {
+    return attributesWithin(root, /^data-/);
+}
+
+/**
+ * Get a list of all the attributes named by the element and its descendents.
+ *
+ * @param {Selector}      root
+ * @param {string|RegExp} [filter]    Limit results to matching names.
+ *
+ * @returns {string[]}
+ */
+export function attributesWithin(root, filter) {
+    const array = [];
+    const $root = $(root);
+    [...$root, ...$root.find('*')].forEach(element => {
+        let names = Array.from(element.attributes).map(a => a.name);
+        if (filter) { names = names.filter(name => name.match(filter)) }
+        array.push(...names);
+    });
+    return [...new Set(array)].sort();
+}

@@ -44,11 +44,11 @@ module GridHelper
     opt[:row_max] ||= pairs.size
     opt[:col_max] ||= 2
     outer_opt = opt.slice!(:wrap, :sr_only, *GRID_OPT)
+    outer_opt.merge!(opt.slice(:row_max, :col_max))
     html_div(**outer_opt) do
+      pair_key = opt[:wrap] ? :col : :row
       pairs.map do |key, value|
-        opt[:col] = 0  if opt[:col] == opt[:col_max]
-        opt[:row] += 1 if opt[:col].zero?
-        opt[:col] += 1
+        opt[pair_key] += 1
         grid_table_row(key, value, **opt)
       end
     end
@@ -65,16 +65,24 @@ module GridHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def grid_table_row(key, value, wrap: false, **opt)
-    opt[:class] = grid_cell_classes(**opt)
+    col = positive(opt[:col]) || 1
+    key = opt[:'data-key'] = key.to_s
     unless key.is_a?(ActiveSupport::SafeBuffer)
-      key = ERB::Util.h(key.to_s) << ':' if wrap
-      key = html_div(key, **prepend_css(opt, 'key'))
+      k_opt = opt.merge(col: col)
+      k_opt[:class] = grid_cell_classes('key', **k_opt)
+      k_opt.except!(:row_max, :col_max)
+      key = ERB::Util.h("#{key}:") if wrap
+      key = html_div(key, **k_opt)
     end
     unless value.is_a?(ActiveSupport::SafeBuffer)
-      value = html_div(value, **prepend_css(opt, 'value'))
+      v_opt = opt.merge(col: col.succ)
+      v_opt[:class] = grid_cell_classes('value', **v_opt)
+      v_opt.except!(:row_max, :col_max)
+      value = html_div(value, **v_opt)
     end
     if wrap
-      prepend_css!(opt, 'entry')
+      opt[:class] = grid_cell_classes('entry', **opt)
+      opt.except!(:row_max, :col_max)
       html_div(**opt) { key << HTML_SPACE << value }
     else
       key << value

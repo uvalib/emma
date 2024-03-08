@@ -1,6 +1,7 @@
 // app/assets/javascripts/feature/index.js
 
 import './advanced-search';
+import './client-debug';
 import './download';
 import './flash';
 import './fonts';

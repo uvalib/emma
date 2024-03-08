@@ -207,3 +207,22 @@ export function elementName(element) {
     const [name, css] = [e.localName, e.className];
     return css ? [name, ...css.split(/\s+/)].join('.') : name;
 }
+
+/**
+ * Get a list of all the CSS for the element and its descendents.
+ *
+ * @param {Selector}      root
+ * @param {string|RegExp} [filter]    Limit results to matching names.
+ *
+ * @returns {string[]}
+ */
+export function classesWithin(root, filter) {
+    const array = [];
+    const $root = $(root);
+    [...$root, ...$root.find('*')].forEach(element => {
+        let names = Array.from(element.classList);
+        if (filter) { names = names.filter(name => name.match(filter)) }
+        array.push(...names);
+    });
+    return [...new Set(array)].sort();
+}

@@ -33,11 +33,39 @@ module SessionDebugHelper
   #
   # @param [Boolean] extended         If *true* show request headers.
   # @param [String]  css              Characteristic CSS class/selector.
-  # @param [Hash]    opt              Passed to outer #html_div.
+  # @param [Hash]    opt              Passed to #debug_table.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def session_debug: (?extended: bool, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def session_debug_table: (?extended: bool, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Show data-* attributes used within the page.
+  # @private
+  DEBUG_DATA_ATTR: bool
+
+  # Show CSS classes used within the page.
+  # @private
+  DEBUG_CSS_CLASS: bool
+
+  # Footer debug values which may be filled by client-side logic.
+  #
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to #debug_table.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                     If the section would be empty.
+  #
+  def client_debug_table: (?extended: bool, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Render a table of values within the footer '.page-debug'.
+  #
+  # @param [Hash]   pairs             Key-value pairs to display.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to outer #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def debug_table: (anyHash pairs, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   private
 

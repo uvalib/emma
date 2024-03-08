@@ -63,12 +63,12 @@ module SessionDebugHelper
   #
   # @param [Boolean] extended         If *true* show request headers.
   # @param [String]  css              Characteristic CSS class/selector.
-  # @param [Hash]    opt              Passed to outer #html_div.
+  # @param [Hash]    opt              Passed to #debug_table.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def session_debug(extended: false, css: '.session-debug-table', **opt)
-    table = { SESSION: :DEBUG }
+  def session_debug_table(extended: false, css: '.session-debug', **opt)
+    table = { SESSION: :VALUE }
     table[:id] = request.session_options[:id]
     session.to_hash.except!(*SESSION_SKIP_KEYS).each do |k, v|
       if compressed_value?(v)
@@ -78,7 +78,7 @@ module SessionDebugHelper
       table[k] = v
     end
     if extended
-      table.merge!(REQUEST: :DEBUG)
+      table.merge!(REQUEST: :VALUE)
       request_headers_names.excluding(*REQUEST_SKIP_HDRS).each do |k|
         v = request.get_header(k)
         table[k] = v if v.present? || v.is_a?(FalseClass)
@@ -96,7 +96,48 @@ module SessionDebugHelper
       end
     end
     prepend_css!(opt, css)
-    grid_table(table, **opt)
+    debug_table(table, **opt)
+  end
+
+  # Show data-* attributes used within the page.
+  # @private
+  DEBUG_DATA_ATTR = true
+
+  # Show CSS classes used within the page.
+  # @private
+  DEBUG_CSS_CLASS = false
+
+  # Footer debug values which may be filled by client-side logic.
+  #
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to #debug_table.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                     If the section would be empty.
+  #
+  # @see file:javascripts/feature/client-debug.js
+  #
+  def client_debug_table(css: '.client-debug', **opt)
+    table = {}
+    table.merge!('data-*': nil) if DEBUG_DATA_ATTR
+    table.merge!(class:    nil) if DEBUG_CSS_CLASS
+    return if table.empty?
+    table.reverse_merge!(CLIENT: :VALUE)
+    prepend_css!(opt, css)
+    debug_table(table, **opt)
+  end
+
+  # Render a table of values within the footer '.page-debug'.
+  #
+  # @param [Hash]   pairs             Key-value pairs to display.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to outer #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def debug_table(pairs, css: '.debug-table', **opt)
+    prepend_css!(opt, css)
+    grid_table(pairs, **opt)
   end
 
   # ===========================================================================

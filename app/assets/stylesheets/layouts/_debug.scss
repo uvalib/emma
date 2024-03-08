@@ -14,7 +14,7 @@
     background: $debug-bg;
 }
 
-.session-debug {
+.page-debug {
 
     word-break: break-word;
 
@@ -43,8 +43,14 @@
         background:    $bg-color;
     }
 
+    // Server-side session information related to the current page.
+    .session-debug { }
+
+    // Client-side information related to the current page.
+    .client-debug { }
+
     // noinspection CssReplaceWithShorthandSafely
-    .session-debug-table {
+    .debug-table {
 
         display:     grid;
         margin:      0;
@@ -60,6 +66,17 @@
             grid-template-columns:  1fr;
             gap:                    0.5rem;
         }
+
+        .item {
+            word-break: keep-all;
+        }
+        .item:not(:last-child)::after {
+            content: ', ';
+        }
+    }
+
+    .debug-table + .debug-table {
+        margin-top: 1rem;
     }
 
     .key {
