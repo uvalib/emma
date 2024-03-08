@@ -318,7 +318,7 @@ module SessionConcern
     __debug_exception('[access denied] RESCUE_FROM', exception)
     msg = exception.message
     respond_to do |format|
-      format.html { redirect_back(fallback_location: root_path, alert: msg) }
+      format.html { redirect_back_or_to(root_path, alert: msg) }
       format.json { render_json({ error: msg }, status: :unauthorized) }
       format.xml  { render_xml({ error: msg }, status: :unauthorized) }
     end
@@ -359,7 +359,7 @@ module SessionConcern
       flash_now_alert(exception)
       render
     elsif posting_html?
-      redirect_back(fallback_location: root_path, alert: exception.message)
+      redirect_back_or_to(root_path, alert: exception.message)
     end
   rescue => error
     error_handler_deep_fallback(__method__, error)

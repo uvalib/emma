@@ -106,7 +106,7 @@ class User::RegistrationsController < Devise::RegistrationsController
     __debug_request
     update_resource(resource, account_update_params) or raise set_flash_alert
     set_flash_notice(user: resource.account)
-    redirect_back(fallback_location: dashboard_path)
+    redirect_back_or_to(dashboard_path)
   rescue => error
     auth_failure_redirect(message: error)
   end

@@ -62,7 +62,7 @@ module ResponseConcern
 
   public
 
-  # The default redirect path for #redirect_back.
+  # The default redirect path for #redirect_back_or_to.
   #
   # @return [String]
   #
@@ -102,12 +102,12 @@ module ResponseConcern
   # Generate a response to a POST.
   #
   # @param [Symbol, Integer, Exception, nil] status
-  # @param [any, nil]                        item       Array
+  # @param [any, nil]                        item      Array
   # @param [String, FalseClass]              redirect
-  # @param [Boolean]                         xhr        Override `request.xhr?`
-  # @param [Symbol]                          meth       Calling method.
-  # @param [String]                          tag        Default: #response_tag.
-  # @param [String]                          fallback   For #redirect_back.
+  # @param [Boolean]                         xhr       Override `request.xhr?`
+  # @param [Symbol]                          meth      Calling method.
+  # @param [String]                          tag       Default: #response_tag.
+  # @param [String]                          fallback  For #redirect_back_or_to
   #
   # @return [void]
   #
@@ -185,7 +185,7 @@ module ResponseConcern
       redirect_to(redirect, status: status)
     elsif redirect
       fallback ||= default_fallback_location
-      redirect_back(fallback_location: fallback, status: status)
+      redirect_back_or_to(fallback, status: status)
     elsif error
       # noinspection RubyMismatchedArgumentType
       raise(item)
