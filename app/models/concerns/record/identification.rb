@@ -146,16 +146,18 @@ module Record::Identification
   # @note From Upload#get_value
   #
   def get_value(item, key, default: nil, **)
-    if key.blank?
-      nil
-    elsif key.is_a?(Array)
+    if key.is_a?(Array)
       key.find { |k| (v = get_value(item, k)) and (break v) }
+    elsif (key = key&.to_sym).blank?
+      nil
+    elsif item.is_a?(Hash)
+      item[key] || item[key.to_s]
+    elsif item.try(:field_names)&.include?(key)
+      item[key]
     elsif item.respond_to?(key)
       item.send(key)
-    elsif item.respond_to?(:emma_metadata) # ManifestItem
-      item.emma_metadata[key.to_sym]
-    elsif item.is_a?(Hash)
-      item[key.to_sym] || item[key.to_s]
+    elsif item.respond_to?(:emma_metadata) # Upload, ManifestItem
+      item.emma_metadata[key]
     end.presence || default
   end
 

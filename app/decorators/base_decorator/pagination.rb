@@ -214,6 +214,7 @@ module BaseDecorator::Pagination
     count = positive(count).to_i
     total = positive(total)&.to_i || count
     found = get_page_count_label(count: total, item: unit)
+    found = found.pluralize(count)
     txt   = ->(t, *c) { html_span(t, class: css_classes(*c)) }
     num   = ->(n, *c) { txt.(h.number_with_delimiter(n), *c) }
     label = [

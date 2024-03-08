@@ -198,7 +198,7 @@ module TestHelper::SystemTests::Common
   # @return [Capybara::Node::Element]
   #
   def item_menu_select(value, name:, **opt)
-    menu = all(%Q(select[name="#{name}")).last
+    menu = all(%Q(select[name="#{name}"])).last
     # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
     select value, from: menu[:id], **opt
   end

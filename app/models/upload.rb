@@ -677,16 +677,18 @@ class Upload < ApplicationRecord
   # @return [any, nil]
   #
   def self.get_value(item, key, default: nil)
-    if key.blank?
-      nil
-    elsif key.is_a?(Array)
+    if key.is_a?(Array)
       key.find { |k| (v = get_value(item, k)) and (break v) }
+    elsif (key = key&.to_sym).blank?
+      nil
+    elsif item.is_a?(Hash)
+      item[key] || item[key.to_s]
+    elsif item.try(:field_names)&.include?(key)
+      item[key]
     elsif item.respond_to?(key)
       item.send(key)
-    elsif item.is_a?(Upload)
-      item.emma_metadata[key.to_sym]
-    elsif item.is_a?(Hash)
-      item[key.to_sym] || item[key.to_s]
+    elsif item.respond_to?(:emma_metadata) # Upload, ManifestItem
+      item.emma_metadata[key]
     end.presence || default
   end
 
@@ -794,10 +796,9 @@ class Upload < ApplicationRecord
   # @return [Upload, nil]             A fresh record unless *v* is an Upload.
   #
   def self.instance_for(v)
+    v &&= try_key(v, :submission) || v
     return v if v.is_a?(self) || v.nil?
-    v = try_key(v, :submission) || v
-    return v if v.is_a?(self)
-    sid = try_key(v, :submission_id)
+    sid = try_key(v, :submission_id) || v
     # noinspection RubyMismatchedReturnType
     valid_sid?(sid) ? find_by(submission_id: sid) : super
   end

@@ -643,6 +643,9 @@ class Ability
   def can?(action, subject, *extra_args)
     return false if action.blank?
     action = action.to_sym
+    if subject.is_a?(Array)
+      subject = subject.first unless subject.any? { |v| v.is_a?(Class) }
+    end
     super
   end
 
@@ -657,6 +660,9 @@ class Ability
   def cannot?(action, subject, *extra_args)
     return true if action.blank?
     action = action.to_sym
+    if subject.is_a?(Array)
+      subject = subject.first unless subject.any? { |v| v.is_a?(Class) }
+    end
     super
   end
 

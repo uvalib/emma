@@ -139,13 +139,14 @@ class ApplicationRecord < ActiveRecord::Base
   # @return [ApplicationRecord, nil]  A fresh record unless *v* is a *self*.
   #
   def self.instance_for(v)
+    v &&= try_key(v, model_key) || v
     return v if v.is_a?(self) || v.nil?
-    v = try_key(v, model_key) || v
-    return v if v.is_a?(self)
     if (id = get_id(v, model_id_key))
       find_by(id: id)
-    elsif v.is_a?(Hash) && (v = v.slice(*field_names)).present?
-      find_by(v)
+    elsif (id = try_key(v, model_id_key)).is_a?(String)
+      find_by(id: id)
+    elsif v.is_a?(Hash)
+      find_by(v) if (v = v.slice(*field_names)).present?
     end
   end
 

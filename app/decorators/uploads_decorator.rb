@@ -321,25 +321,11 @@ class UploadsDecorator < BaseCollectionDecorator
   # @return [Array<(Array<Search::Record::MetadataRecord>,Array)>]
   #
   def find_in_index(*items, **)
-    found = failed = []
-    items = items.flatten.compact
-    if items.present?
-      result = IngestService.instance.get_records(*items)
-      found  = result.records
-      sids   = found.map(&:emma_repositoryRecordId)
-      failed =
-        items.reject do |item|
-          sid =
-            if item.respond_to?(:submission_id)
-              item.submission_id
-            elsif item.is_a?(Hash)
-              item[:submission_id] || item['submission_id']
-            else
-              item
-            end
-          sids.include?(sid)
-        end
-    end
+    items  = items.flatten.compact.presence or return [], []
+    result = IngestService.instance.get_records(*items)
+    found  = result.records
+    sids   = found.map(&:emma_repositoryRecordId)
+    failed = items.reject { |i| sids.include?(Upload.sid_value(i)) }
     return found, failed
   end
 

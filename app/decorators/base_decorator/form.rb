@@ -1098,7 +1098,7 @@ module BaseDecorator::Form
   def form_hidden(css: '.hidden-field', **opt)
     prepend_css!(opt, css)
     redir  = h.last_operation_path || referrer
-    redir  = welcome_path if redir.blank? || redir.match?(%r{/sign_in[^/]*$})
+    redir  = h.welcome_path if redir.blank? || redir.match?(%r{/sign_in[^/]*$})
     result = { redirect: redir }
     result = yield(result, opt) if block_given?
     result.map { |k, v|

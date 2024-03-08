@@ -83,8 +83,8 @@ module IdMethods
   #
   def try_key(item, key)
     case item
-      when ApplicationRecord then item.try(key) || item[key]
-      when Hash              then item[key]     || item[key.to_s]
+      when Model then item.include?(key) ? item[key] : item.try(key)
+      when Hash  then item.include?(key) ? item[key] : item[key.to_s]
     end
   end
 

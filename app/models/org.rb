@@ -206,9 +206,8 @@ class Org < ApplicationRecord
   # @return [Org, nil]                A fresh record unless *v* is an Org.
   #
   def self.instance_for(v)
+    v &&= try_key(v, model_key) || v
     return v if v.is_a?(self) || v.nil?
-    v = try_key(v, model_key) || v
-    return v if v.is_a?(self)
     # noinspection RubyMismatchedReturnType
     case (v = oid(v) || v)
       when INTERNAL_ID then none

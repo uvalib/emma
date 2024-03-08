@@ -114,10 +114,12 @@ module Emma::Config
         type, subtype = base[0], base[1..-1]
         keys << [root, *type, *subtype, 'messages']
         keys << [root, *type, 'messages', *subtype]
+        keys << [root, 'messages', *type, *subtype]
+        keys << [root, 'messages', *subtype]
       else
         keys << [root, *base, 'messages']
+        keys << [root, 'messages', *base]
       end
-      keys << [root, 'messages', *base]
       base.pop
     end
     keys.map! { |key| Array.wrap(key).join('.').to_sym }

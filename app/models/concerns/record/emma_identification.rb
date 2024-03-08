@@ -53,8 +53,10 @@ module Record::EmmaIdentification
   def sid_column
     if defined?(@sid_column)
       @sid_column
+    elsif respond_to?(SID_COLUMN) || try(:field_names)&.include?(SID_COLUMN)
+      @sid_column = SID_COLUMN
     else
-      @sid_column = (SID_COLUMN if respond_to?(SID_COLUMN))
+      @sid_column = nil
     end
   end
 

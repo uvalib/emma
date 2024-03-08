@@ -435,13 +435,10 @@ class User < ApplicationRecord
   #
   # @return [User, nil]               A fresh record unless *v* is a User.
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def self.instance_for(v)
+    v &&= try_key(v, model_key) || v
     return v if v.is_a?(self) || v.nil?
-    v = try_key(v, model_key) || v
-    return v if v.is_a?(self)
+    # noinspection RubyMismatchedReturnType
     case (v = uid(v) || v)
       when Integer then find_by(id: v)
       when String  then where(email: v).or(where(preferred_email: v)).first
