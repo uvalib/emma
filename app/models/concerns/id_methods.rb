@@ -70,8 +70,8 @@ module IdMethods
   # @return [Integer, nil]
   #
   def get_id(item, key, allow_zero: false)
-    item = try_key(item, key) || item
-    allow_zero ? non_negative(item) : positive(item)
+    value = try_key(item, key) || item
+    allow_zero ? non_negative(value) : positive(value)
   end
 
   # Get the specified value from *item*.

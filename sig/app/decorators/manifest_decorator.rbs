@@ -495,9 +495,11 @@ class ManifestDecorator
   HEADER_ROW: Integer
 
   # @private
+  # @type [Integer]
   STATUS_COLUMN_COUNT: Integer
 
   # @private
+  # @type [String]
   STATUS_LABELS: String
 
   # The live table of in-progress and completed submissions.

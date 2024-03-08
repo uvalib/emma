@@ -419,12 +419,12 @@ module ModelConcern
 
   public
 
-  # Start a new (un-persisted) model instance.
+  # Start a new model instance.
   #
   # @param [Hash, nil]       prm        Field values (def: `#current_params`).
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
   #
-  # @return [Model]                     Un-persisted model record instance.
+  # @return [Model]                   An un-persisted model instance.
   #
   def new_record(prm = nil, force_id: false, **)
     prm ||= current_params
@@ -435,13 +435,13 @@ module ModelConcern
     model_class.new(prm)
   end
 
-  # Create and persist a new model record.
+  # Add a new model record to the database.
   #
   # @param [Hash, nil]       prm        Field values (def: `#current_params`).
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
   # @param [Boolean]         fatal      If *false*, use #save not #save!.
   #
-  # @return [Model]                     New persisted model record instance.
+  # @return [Model]                   The new persisted model record.
   #
   def create_record(prm = nil, force_id: false, fatal: true, **, &blk)
     __debug_items("WF #{self.class} #{__method__}") { { prm: prm } }
@@ -452,13 +452,13 @@ module ModelConcern
 
   # Start editing an existing model record.
   #
-  # @param [any, nil] item
-  # @param [Hash]     opt             Passed to ModelConcern#find_record.
+  # @param [any, nil] item            Default: the record for #identifier.
+  # @param [Hash]     opt             Passed to #find_record.
   #
-  # @raise [Record::StatementInvalid]   If :id not given.
-  # @raise [Record::NotFound]           If *item* was not found.
+  # @raise [Record::StatementInvalid] If :id not given.
+  # @raise [Record::NotFound]         If *item* was not found.
   #
-  # @return [Model, nil]        A fresh record unless *item* is a #model_class.
+  # @return [Model, nil]      A fresh instance unless *item* is a #model_class.
   #
   def edit_record(item = nil, **opt, &blk)
     item, _prm = model_request_params(item)
@@ -470,7 +470,7 @@ module ModelConcern
 
   # Persist changes to an existing model record.
   #
-  # @param [any, nil] item
+  # @param [any, nil] item            Default: the record for #identifier.
   # @param [Boolean]  fatal           If *false* use #update not #update!.
   # @param [Hash]     prm             Field values (default: `#current_params`)
   #
@@ -478,7 +478,7 @@ module ModelConcern
   # @raise [ActiveRecord::RecordInvalid]    Model record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Model record update halted.
   #
-  # @return [Model, nil]        A fresh record unless *item* is a #model_class.
+  # @return [Model, nil]              The updated model record.
   #
   def update_record(item = nil, fatal: true, **prm, &blk)
     item, attr = model_request_params(item, prm.presence)
@@ -490,7 +490,7 @@ module ModelConcern
     end
   end
 
-  # Retrieve the indicated record(s) for the '/delete' page.
+  # Retrieve the indicated model record(s) for the '/delete' page.
   #
   # @param [any, nil] items           To #search_records
   # @param [Hash]     prm             Default: `#current_params`
@@ -507,7 +507,7 @@ module ModelConcern
     model_class.search_records(*items, **opt)
   end
 
-  # Remove the indicated record(s).
+  # Remove the indicated model record(s).
   #
   # @param [any, nil] items
   # @param [Boolean]  fatal           If *false* do not #raise_failure.
@@ -515,7 +515,7 @@ module ModelConcern
   #
   # @raise [Record::SubmitError]      If there were failure(s).
   #
-  # @return [Array]                   Destroyed entries.
+  # @return [Array]                   Destroyed model records.
   #
   def destroy_records(items = nil, fatal: true, **prm)
     items, opt = model_request_params(items, prm.presence)

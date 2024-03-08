@@ -39,7 +39,6 @@ module TestHelper::Debugging
 
   # Local options for #show_test_start and #show_test_end.
   #
-  # @private
   # @type [Array<Symbol>]
   #
   SHOW_TEST_OPT: symArray

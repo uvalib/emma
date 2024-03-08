@@ -882,9 +882,11 @@ class ManifestDecorator
   HEADER_ROW = 1
 
   # @private
+  # @type [Integer]
   STATUS_COLUMN_COUNT = ManifestItemDecorator::SUBMIT_COLUMNS.size
 
   # @private
+  # @type [String]
   STATUS_LABELS = ManifestItemDecorator::SUBMIT_STATUS_LABELS.to_json.freeze
 
   # The live table of in-progress and completed submissions.

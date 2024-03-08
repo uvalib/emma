@@ -24,9 +24,8 @@ module UserConcern
     #
     # @return [User, nil]
     #
-    # @see Devise::Controllers::Helpers#define_helpers
-    #
     # @private
+    # @see Devise::Controllers::Helpers#define_helpers
     #
     #--
     # noinspection RubyUnusedLocalVariable
@@ -37,9 +36,8 @@ module UserConcern
     #
     # @return [User, nil]
     #
-    # @see Devise::Controllers::Helpers#define_helpers
-    #
     # @private
+    # @see Devise::Controllers::Helpers#define_helpers
     #
     def current_user; end
 

@@ -740,6 +740,7 @@ class BaseDecorator
   public
 
   # @private
+  # @type [Symbol, String]
   DEFAULT_ACTION = :show
 
   # initialize

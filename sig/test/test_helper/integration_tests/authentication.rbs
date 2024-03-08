@@ -46,7 +46,8 @@ module TestHelper::IntegrationTests::Authentication
   # If the request was not successful then `#current_user` will be unchanged.
   #
   # @param [String, Symbol, User, nil] user
-  # @param [Boolean]              follow_redirect
+  # @param [Boolean]                   follow_redirect
+  # @param [Boolean]                   trace
   #
   # @return [void]
   #
@@ -57,6 +58,7 @@ module TestHelper::IntegrationTests::Authentication
   # If the request was not successful then `#current_user` will be unchanged.
   #
   # @param [Boolean] follow_redirect
+  # @param [Boolean] trace
   #
   # @return [void]
   #

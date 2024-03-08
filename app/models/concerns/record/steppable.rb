@@ -13,7 +13,7 @@ __loading_begin(__FILE__)
 #   being retained in commented-out form for possible use in a refactoring of
 #   the Upload class that would include removal of the "workflow" gem.
 #
-# #@!attribute [rw] state
+# #@!attribute state
 #  #Database :state column.
 #  #@return [String]
 #

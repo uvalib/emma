@@ -103,6 +103,7 @@ class SearchDecorator < BaseDecorator
     public
 
     # @private
+    # @type [Hash]
     SEARCH_CONFIGURATION = config_section('emma.search').deep_freeze
 
     # CSS class for the colorization button tray.

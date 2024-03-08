@@ -29,7 +29,7 @@ module Record::Exceptions
   #
   # @see ExceptionHelper#raise_failure
   #
-  # @note From UploadWorkflow::Errors::RenderMethods#raise_failure
+  # @note From UploadWorkflow::Errors#raise_failure
   #
   def raise_failure(problem, value = nil)
     ExceptionHelper.raise_failure(problem, value, model: :upload)

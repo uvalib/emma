@@ -137,6 +137,7 @@ class BaseCollectionDecorator
   public
 
   # @private
+  # @type [Symbol, String]
   DEFAULT_ACTION = :index
 
   # Create a new collection decorator, by default based on the paginator passed

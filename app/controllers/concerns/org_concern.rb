@@ -55,13 +55,13 @@ module OrgConcern
     end
   end
 
-  # Create and persist a new Org.
+  # Add a new Org record to the database.
   #
   # @param [Hash, nil]       prm        Field values (def: `#current_params`).
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
   # @param [Boolean]         fatal      If *false*, use #save not #save!.
   #
-  # @return [Org]                       A new Org instance.
+  # @return [Org]                     The new Org record.
   #
   def create_record(prm = nil, force_id: true, fatal: true, **)
     raise "unavailable to user '#{current_user}'" unless administrator?
@@ -69,9 +69,9 @@ module OrgConcern
     super
   end
 
-  # Update the indicated Org.
+  # Update the indicated Org record.
   #
-  # @param [any, nil] item            Def.: record for ModelConcern#identifier.
+  # @param [any, nil] item            Default: the record for #identifier.
   # @param [Boolean]  fatal           If *false* use #update not #update!.
   # @param [Hash]     prm             Field values (default: `#current_params`)
   #
@@ -79,7 +79,7 @@ module OrgConcern
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Record update halted.
   #
-  # @return [Org, nil]                The updated Org instance.
+  # @return [Org, nil]                The updated Org record.
   #
   def update_record(item = nil, fatal: true, **prm)
     raise "unavailable to user '#{current_user}'" unless administrator?
@@ -87,7 +87,7 @@ module OrgConcern
     super
   end
 
-  # Remove the indicated record(s).
+  # Remove the indicated Org record(s).
   #
   # @param [any, nil] items
   # @param [Boolean]  fatal           If *false* do not #raise_failure.
@@ -95,7 +95,7 @@ module OrgConcern
   #
   # @raise [Record::SubmitError]      If there were failure(s).
   #
-  # @return [Array]                   Destroyed entries.
+  # @return [Array]                   Destroyed Org records.
   #
   def destroy_records(items = nil, fatal: true, **prm)
     raise "unavailable to user '#{current_user}'" unless administrator?

@@ -38,7 +38,7 @@ class HealthController < ApplicationController
   after_action :no_cache, if: :request_get?
 
   # ===========================================================================
-  # :section:
+  # :section: Routes
   # ===========================================================================
 
   public

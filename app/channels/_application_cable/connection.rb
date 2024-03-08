@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # ApplicationCable::Connection
 #
-# @!attribute [rw] current_user
+# @!attribute current_user
 #   The authenticated user defined in #identified_by and set in #connect.
 #   @return [User, nil]
 #

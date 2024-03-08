@@ -218,12 +218,11 @@ end
 unless ONLY_FOR_DOCUMENTATION
   # :nocov:
 
-  # @private
-  #
   # Devise attributes defined via Devise::Models, depending on the Devise
   # configuration.
   #
   # @see Devise::Models#config
+  # @private
   #
   class Devise::Mapping
     def authenticatable?          ; end # @see Devise::Mapping#authenticatable?

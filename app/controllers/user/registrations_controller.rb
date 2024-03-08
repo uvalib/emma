@@ -17,7 +17,7 @@ class User::RegistrationsController < Devise::RegistrationsController
   include ParamsConcern
 
   # ===========================================================================
-  # :section: Callbacks
+  # :section: Authentication
   # ===========================================================================
 
   prepend_before_action :require_no_authentication, only: %i[create]
@@ -25,6 +25,10 @@ class User::RegistrationsController < Devise::RegistrationsController
 
   before_action :update_user
   before_action :authenticate_user!, except: %i[new]
+
+  # ===========================================================================
+  # :section: Callbacks
+  # ===========================================================================
 
   before_action :configure_create_params, only: %i[new  create]
   before_action :configure_update_params, only: %i[edit update]

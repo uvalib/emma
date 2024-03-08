@@ -180,6 +180,8 @@ module Record::Identification
   end
 
   # Return with the specified record or *nil* if one could not be found.
+  # If *item* is a *self*, it is returned; otherwise an instance is generated
+  # from a database lookup.
   #
   # @param [any, nil]    item         String, Integer, Hash, Model
   # @param [Boolean]     fatal        If *false*, do not raise exceptions.
@@ -192,7 +194,7 @@ module Record::Identification
   # @raise [Record::StatementInvalid]   If :id/:sid not given.
   # @raise [Record::NotFound]           If *item* was not found.
   #
-  # @return [ApplicationRecord<Model>]  A fresh rec unless *item* is a *self*.
+  # @return [ApplicationRecord<Model>]  A new instance or *item*.
   # @return [nil]                       Only if *fatal* is *false*.
   #
   # @note From UploadWorkflow::External#find_record

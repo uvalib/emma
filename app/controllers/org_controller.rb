@@ -40,7 +40,7 @@ class OrgController < ApplicationController
   # None
 
   # ===========================================================================
-  # :section:
+  # :section: Formats
   # ===========================================================================
 
   OPS   = %i[new edit delete].freeze
@@ -50,7 +50,7 @@ class OrgController < ApplicationController
   respond_to :json, :xml, except: OPS + MENUS
 
   # ===========================================================================
-  # :section:
+  # :section: Values
   # ===========================================================================
 
   public
@@ -62,7 +62,7 @@ class OrgController < ApplicationController
   attr_reader :item
 
   # ===========================================================================
-  # :section:
+  # :section: Routes
   # ===========================================================================
 
   public
@@ -242,7 +242,7 @@ class OrgController < ApplicationController
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Routes - List
   # ===========================================================================
 
   public
@@ -267,7 +267,7 @@ class OrgController < ApplicationController
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Routes - List
   # ===========================================================================
 
   protected
@@ -287,7 +287,7 @@ class OrgController < ApplicationController
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Routes - Current
   # ===========================================================================
 
   public
@@ -338,7 +338,7 @@ class OrgController < ApplicationController
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Routes - Menu
   # ===========================================================================
 
   public

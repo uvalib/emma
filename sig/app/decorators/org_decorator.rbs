@@ -44,6 +44,14 @@ class OrgDecorator < BaseDecorator
     #
     def items_menu: (**untyped opt) -> ActiveSupport::SafeBuffer
 
+    # Generate a prompt for #items_menu.
+    #
+    # @param [User, Symbol, nil] user
+    #
+    # @return [String]
+    #
+    def items_menu_prompt: (?user: User|Symbol|nil) -> String
+
     # Generate a label for a specific menu entry.
     #
     # @param [Model]       item

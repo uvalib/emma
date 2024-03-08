@@ -15,10 +15,10 @@
   #
   # @!attribute [r] params
   #
-  # @!attribute [rw] options
+  # @!attribute options
   #   @return [Hash]
   #
-  # @!attribute [rw] refresh_token
+  # @!attribute refresh_token
   #   @return [String, nil]
   #
   #module AccessTokenExt

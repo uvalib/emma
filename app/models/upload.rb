@@ -93,21 +93,10 @@ class Upload < ApplicationRecord
   end
 
   # ===========================================================================
-  # :section: ApplicationRecord overrides
+  # :section:
   # ===========================================================================
 
   public
-
-  # A textual label for the record instance.
-  #
-  # @param [User, nil] item  Default: self.
-  #
-  # @return [String, nil]
-  #
-  def label(item = nil)
-    item ||= self
-    item.filename.presence || item.emma_metadata[:dc_title].presence
-  end
 
   # Create a new instance.
   #
@@ -121,6 +110,12 @@ class Upload < ApplicationRecord
     __debug_items(leader: 'new UPLOAD') { self }
   end
 
+  # ===========================================================================
+  # :section: ApplicationRecord overrides
+  # ===========================================================================
+
+  public
+
   # The user associated with this record.
   #
   # @return [Integer, nil]
@@ -132,6 +127,17 @@ class Upload < ApplicationRecord
   # @return [Integer, nil]
   #
   def org_id = org&.id
+
+  # A textual label for the record instance.
+  #
+  # @param [User, nil] item  Default: self.
+  #
+  # @return [String, nil]
+  #
+  def label(item = nil)
+    item ||= self
+    item.filename.presence || item.emma_metadata[:dc_title].presence
+  end
 
   # ===========================================================================
   # :section: IdMethods overrides

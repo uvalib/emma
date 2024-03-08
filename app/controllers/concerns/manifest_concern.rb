@@ -31,8 +31,8 @@ module ManifestConcern
 
   # Return with the specified Manifest record.
   #
-  # @param [Manifest, Hash, String, nil] item  Def `ModelConcern#identifier`
-  # @param [Hash]                        opt   To ModelConcern#find_record.
+  # @param [Manifest, Hash, String, nil] item  Default: `#identifier`.
+  # @param [Hash]                        opt   Passed to #find_record.
   #
   # @return [Manifest]              A fresh record unless *item* is a Manifest.
   #
@@ -65,12 +65,12 @@ module ManifestConcern
 
   public
 
-  # Start a new (un-persisted) manifest.
+  # Start a new Manifest.
   #
   # @param [Hash, nil]       prm        Field values (def: `#current_params`).
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
   #
-  # @return [Manifest]                  Un-persisted Manifest instance.
+  # @return [Manifest]                An un-persisted Manifest instance.
   #
   def new_record(prm = nil, force_id: false, **)
     # noinspection RubyMismatchedReturnType
@@ -80,8 +80,8 @@ module ManifestConcern
     end
   end
 
-  # Update the indicated User, ensuring that :email is not changed unless
-  # authorized.
+  # Update the indicated Manifest record, ensuring that the associated user is
+  # not changed unless authorized.
   #
   # @param [any, nil] item            Def.: record for ModelConcern#identifier.
   # @param [Boolean]  fatal           If *false* use #update not #update!.
@@ -91,7 +91,7 @@ module ManifestConcern
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Record update halted.
   #
-  # @return [Manifest, nil]           The updated Manifest instance.
+  # @return [Manifest, nil]           The updated Manifest record.
   #
   def update_record(item = nil, fatal: true, **prm)
     # noinspection RubyMismatchedReturnType
@@ -109,8 +109,8 @@ module ManifestConcern
   # Persist changes to an existing manifest and update the saved state of all
   # associated rows.
   #
-  # @param [Manifest, Hash, nil] item
-  # @param [Hash, nil]           attr       Default: `#current_params`
+  # @param [Manifest, Hash, nil] item       Default: `#identifier`.
+  # @param [Hash, nil]           attr       Default: `#current_params`.
   #
   # @raise [Record::NotFound]               If the Manifest could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
@@ -129,8 +129,8 @@ module ManifestConcern
 
   # Back out of provisional changes to associated rows.
   #
-  # @param [Manifest, Hash, nil] item
-  # @param [Hash, nil]           attr       Default: `#current_params`
+  # @param [Manifest, Hash, nil] item       Default: `#identifier`.
+  # @param [Hash, nil]           attr       Default: `#current_params`.
   #
   # @raise [Record::NotFound]               If the Manifest could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.
@@ -155,8 +155,8 @@ module ManifestConcern
 
   # Validate readiness of a manifest to start transmission.
   #
-  # @param [Manifest, Hash, nil] item
-  # @param [Hash, nil]           opt        Default: `#current_params`
+  # @param [Manifest, Hash, nil] item       Default: `#identifier`.
+  # @param [Hash, nil]           opt        Ignored.
   #
   # @raise [Record::NotFound]               If the Manifest could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Manifest record update failed.

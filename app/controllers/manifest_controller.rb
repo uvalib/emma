@@ -50,7 +50,7 @@ class ManifestController < ApplicationController
   # None
 
   # ===========================================================================
-  # :section:
+  # :section: Formats
   # ===========================================================================
 
   OPS   = %i[new edit delete remit].freeze
@@ -60,7 +60,7 @@ class ManifestController < ApplicationController
   respond_to :json, :xml, except: OPS + MENUS
 
   # ===========================================================================
-  # :section:
+  # :section: Values
   # ===========================================================================
 
   public
@@ -72,7 +72,7 @@ class ManifestController < ApplicationController
   attr_reader :item
 
   # ===========================================================================
-  # :section:
+  # :section: Routes
   # ===========================================================================
 
   public
@@ -240,7 +240,7 @@ class ManifestController < ApplicationController
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Routes - List
   # ===========================================================================
 
   public
@@ -305,7 +305,7 @@ class ManifestController < ApplicationController
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Routes - List
   # ===========================================================================
 
   protected
@@ -332,7 +332,7 @@ class ManifestController < ApplicationController
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Routes - Menu
   # ===========================================================================
 
   public
@@ -382,7 +382,7 @@ class ManifestController < ApplicationController
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Routes
   # ===========================================================================
 
   public
@@ -442,7 +442,7 @@ class ManifestController < ApplicationController
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Routes
   # ===========================================================================
 
   public
@@ -476,7 +476,7 @@ class ManifestController < ApplicationController
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Routes
   # ===========================================================================
 
   public

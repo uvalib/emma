@@ -247,8 +247,8 @@ appSetup(MODULE, function() {
      * @property {number} total
      * @property {number} [limit]
      * @property {array}  [links]
-     * @property {string} [list_type]   Only present with session_debug
-     * @property {string} [item_type]   Only present with session_debug
+     * @property {string} [list_type]   Only present for `#session_debug?`
+     * @property {string} [item_type]   Only present for `#session_debug?`
      */
 
     /**

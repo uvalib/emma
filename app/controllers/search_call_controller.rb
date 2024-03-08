@@ -49,7 +49,7 @@ class SearchCallController < ApplicationController
   authorize_resource
 
   # ===========================================================================
-  # :section:
+  # :section: Values
   # ===========================================================================
 
   public
@@ -67,7 +67,7 @@ class SearchCallController < ApplicationController
   attr_reader :item
 
   # ===========================================================================
-  # :section:
+  # :section: Routes
   # ===========================================================================
 
   public

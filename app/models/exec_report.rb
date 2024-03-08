@@ -11,7 +11,7 @@ __loading_begin(__FILE__)
 #   Error report parts [x].
 #   @return [Array<ExecReport::Part>]
 #
-# @!attribute [rw] render_html
+# @!attribute render_html
 #   When *true*, render methods return ActiveSupport::SafeBuffer [x].
 #   @return [Boolean]
 #

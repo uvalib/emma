@@ -73,31 +73,31 @@ module AccountConcern
     super(*User.field_names, *PASSWORD_KEYS)
   end
 
-  # Start a new (un-persisted) User.
+  # Start a new User.
   #
   # @param [Hash, nil]       prm        Field values (def: `#current_params`).
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
   #
-  # @return [User]                      Un-persisted User instance.
+  # @return [User]                    An un-persisted User instance.
   #
   def new_record(prm = nil, force_id: false, **)
     # noinspection RubyMismatchedReturnType
     super do |attr|
       if administrator?
-        # Allow :org_id to be nil to allow selection on the form.
+        # Allow :org_id to be nil so that it can be selected on the form.
       else
         attr[:org_id] = current_org&.id or raise "no org for #{current_user}"
       end
     end
   end
 
-  # Create and persist a new User.
+  # Add a new User record to the database.
   #
   # @param [Hash, nil]       prm        Field values (def: `#current_params`).
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
   # @param [Boolean]         fatal      If *false*, use #save not #save!.
   #
-  # @return [User]                      A new User instance.
+  # @return [User]                    The new User record.
   #
   def create_record(prm = nil, force_id: false, fatal: true, **)
     # noinspection RubyMismatchedReturnType
@@ -110,8 +110,8 @@ module AccountConcern
     end
   end
 
-  # Update the indicated User, ensuring that :email and :org_id are not changed
-  # unless authorized.
+  # Update the indicated User record, ensuring that :email and :org_id are not
+  # changed unless authorized.
   #
   # @param [any, nil] item            Def.: record for ModelConcern#identifier.
   # @param [Boolean]  fatal           If *false* use #update not #update!.
@@ -121,7 +121,7 @@ module AccountConcern
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Record update halted.
   #
-  # @return [User, nil]               The updated User instance.
+  # @return [User, nil]               The updated User record.
   #
   def update_record(item = nil, fatal: true, **prm)
     # noinspection RubyMismatchedReturnType

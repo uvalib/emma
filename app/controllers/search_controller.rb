@@ -53,7 +53,7 @@ class SearchController < ApplicationController
   before_action :set_record_id,               only: %i[show]
 
   # ===========================================================================
-  # :section:
+  # :section: Values
   # ===========================================================================
 
   public
@@ -72,7 +72,7 @@ class SearchController < ApplicationController
   attr_reader :item
 
   # ===========================================================================
-  # :section:
+  # :section: Routes
   # ===========================================================================
 
   public
@@ -145,7 +145,7 @@ class SearchController < ApplicationController
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Routes
   # ===========================================================================
 
   public

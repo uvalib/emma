@@ -51,6 +51,7 @@ class SearchDecorator < BaseDecorator
     def search_style: () -> Symbol
 
     # @private
+    # @type [Hash]
     SEARCH_CONFIGURATION: symHash
 
     # CSS class for the colorization button tray.

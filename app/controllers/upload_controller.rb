@@ -70,14 +70,14 @@ class UploadController < ApplicationController
   before_action :save_search_menus, only: :admin
 
   # ===========================================================================
-  # :section:
+  # :section: Formats
   # ===========================================================================
 
   respond_to :html
   respond_to :json, :xml, except: ALL_OPS + MENUS
 
   # ===========================================================================
-  # :section:
+  # :section: Values
   # ===========================================================================
 
   public
@@ -104,7 +104,7 @@ class UploadController < ApplicationController
   helper_attr :s3_object_table
 
   # ===========================================================================
-  # :section:
+  # :section: Routes
   # ===========================================================================
 
   public
@@ -185,7 +185,7 @@ class UploadController < ApplicationController
   end
 
   # ===========================================================================
-  # :section: Workflow - Single
+  # :section: Routes - Workflow - Single
   # ===========================================================================
 
   public
@@ -334,7 +334,7 @@ class UploadController < ApplicationController
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Routes - List
   # ===========================================================================
 
   public
@@ -399,7 +399,7 @@ class UploadController < ApplicationController
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Routes - List
   # ===========================================================================
 
   protected
@@ -429,7 +429,7 @@ class UploadController < ApplicationController
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Routes - Menu
   # ===========================================================================
 
   public
@@ -468,7 +468,7 @@ class UploadController < ApplicationController
   end
 
   # ===========================================================================
-  # :section: Workflow - Bulk
+  # :section: Routes - Workflow - Bulk
   # ===========================================================================
 
   public
@@ -603,7 +603,7 @@ class UploadController < ApplicationController
   end
 
   # ===========================================================================
-  # :section: Workflow - Single
+  # :section: Routes - Workflow - Single
   # ===========================================================================
 
   public
@@ -708,7 +708,7 @@ class UploadController < ApplicationController
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Routes
   # ===========================================================================
 
   public
@@ -740,7 +740,7 @@ class UploadController < ApplicationController
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Routes
   # ===========================================================================
 
   public
@@ -793,7 +793,7 @@ class UploadController < ApplicationController
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Routes
   # ===========================================================================
 
   public
@@ -841,7 +841,7 @@ class UploadController < ApplicationController
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Routes
   # ===========================================================================
 
   public

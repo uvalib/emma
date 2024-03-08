@@ -403,7 +403,7 @@ module FlashHelper
   # This does not account for any separators that would be added when
   # displaying multiple items.
   #
-  def flash_item_size: ((String|strArray) item, ?html: bool) -> Integer
+  def flash_item_size: ((String|strArray) item, ?html: bool, **untyped _ignored) -> Integer
 
   # Render an item in the intended form for addition to the flash.
   #

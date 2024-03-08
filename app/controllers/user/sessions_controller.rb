@@ -31,10 +31,6 @@ class User::SessionsController < Devise::SessionsController
   PARAM_AUTH = [:create, :sign_in_local, *SIGN_IN_AS].freeze
   NO_TIMEOUT = [:create, :destroy, *SIGN_IN_AS].freeze
 
-  # ===========================================================================
-  # :section: Callbacks
-  # ===========================================================================
-
   prepend_before_action :require_no_authentication,    only: NO_AUTH
   prepend_before_action :allow_params_authentication!, only: PARAM_AUTH
   prepend_before_action :verify_signed_out_user,       only: %i[destroy]

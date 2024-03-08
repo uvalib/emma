@@ -29,14 +29,6 @@ class Upload < ApplicationRecord
   #
   FIELD_VALIDATION: bool
 
-  # A textual label for the record instance.
-  #
-  # @param [User, nil] item  Default: self.
-  #
-  # @return [String, nil]
-  #
-  def label: (?(User|nil) item) -> (String | nil)
-
   # Create a new instance.
   #
   # @param [Upload, Hash, nil] attr   Passed to #assign_attributes via super.
@@ -54,6 +46,14 @@ class Upload < ApplicationRecord
   # @return [Integer, nil]
   #
   def org_id: () -> (Integer | nil)
+
+  # A textual label for the record instance.
+  #
+  # @param [User, nil] item  Default: self.
+  #
+  # @return [String, nil]
+  #
+  def label: (?(User|nil) item) -> (String | nil)
 
   def uid: (?untyped item) -> (Integer | nil)
 

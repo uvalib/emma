@@ -1,6 +1,10 @@
 # View helper methods supporting standalone "tools".
 #
 module ToolHelper
+  include LinkHelper
+
+  #include ActionDispatch::Routing::UrlFor
+
   # The table of standalone tool labels and paths.
   #
   # @return [Hash{Symbol=>Hash}]

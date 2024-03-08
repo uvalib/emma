@@ -50,7 +50,7 @@ class ManifestItemController < ApplicationController
   # None
 
   # ===========================================================================
-  # :section:
+  # :section: Formats
   # ===========================================================================
 
   OPS      = %i[new edit delete].freeze
@@ -61,7 +61,7 @@ class ManifestItemController < ApplicationController
   respond_to :json, :xml, except: OPS + BULK_OPS + MENUS
 
   # ===========================================================================
-  # :section:
+  # :section: Values
   # ===========================================================================
 
   public
@@ -73,7 +73,7 @@ class ManifestItemController < ApplicationController
   attr_reader :item
 
   # ===========================================================================
-  # :section:
+  # :section: Routes
   # ===========================================================================
 
   public
@@ -126,7 +126,7 @@ class ManifestItemController < ApplicationController
   end
 
   # ===========================================================================
-  # :section: Workflow - Single
+  # :section: Routes - Workflow - Single
   # ===========================================================================
 
   public
@@ -246,7 +246,7 @@ class ManifestItemController < ApplicationController
   end
 
   # ===========================================================================
-  # :section: Workflow - Single
+  # :section: Routes - Workflow - Single
   # ===========================================================================
 
   public
@@ -314,7 +314,7 @@ class ManifestItemController < ApplicationController
   end
 
   # ===========================================================================
-  # :section: Workflow - Bulk
+  # :section: Routes - Workflow - Bulk
   # ===========================================================================
 
   public
@@ -432,7 +432,7 @@ class ManifestItemController < ApplicationController
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Routes - Workflow - Bulk
   # ===========================================================================
 
   protected

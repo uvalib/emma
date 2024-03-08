@@ -25,19 +25,19 @@ module OrgConcern
   #
   def current_post_params: () -> symHash
 
-  # Create and persist a new Org.
+  # Add a new Org record to the database.
   #
   # @param [Hash, nil]       prm        Field values (def: `#current_params`).
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
   # @param [Boolean]         fatal      If *false*, use #save not #save!.
   #
-  # @return [Org]                       A new Org instance.
+  # @return [Org]                     The new Org record.
   #
   def create_record: (?symHash? prm, ?force_id: bool|String, ?fatal: bool, **untyped _ignored) -> Org
 
-  # Update the indicated Org.
+  # Update the indicated Org record.
   #
-  # @param [any, nil] item            Def.: record for ModelConcern#identifier.
+  # @param [any, nil] item            Default: the record for #identifier.
   # @param [Boolean]  fatal           If *false* use #update not #update!.
   # @param [Hash]     prm             Field values (default: `#current_params`)
   #
@@ -45,11 +45,11 @@ module OrgConcern
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Record update halted.
   #
-  # @return [Org, nil]                The updated Org instance.
+  # @return [Org, nil]                The updated Org record.
   #
   def update_record: (?(String|Integer|Model|symHash|nil) item, ?fatal: bool, **untyped prm) -> (Org | nil)
 
-  # Remove the indicated record(s).
+  # Remove the indicated Org record(s).
   #
   # @param [any, nil] items
   # @param [Boolean]  fatal           If *false* do not #raise_failure.
@@ -57,7 +57,7 @@ module OrgConcern
   #
   # @raise [Record::SubmitError]      If there were failure(s).
   #
-  # @return [Array]                   Destroyed entries.
+  # @return [Array]                   Destroyed Org records.
   #
   def destroy_records: ((String|Integer|Model|Array[String|Integer|Model]|nil) items, ?fatal: bool, **untyped prm) -> (Array[Integer]|Array[String])
 

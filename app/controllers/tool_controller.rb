@@ -45,7 +45,7 @@ class ToolController < ApplicationController
   before_action :lookup_auth, only:  %i[lookup get_job_result]
 
   # ===========================================================================
-  # :section:
+  # :section: Routes
   # ===========================================================================
 
   public
@@ -62,7 +62,7 @@ class ToolController < ApplicationController
   end
 
   # ===========================================================================
-  # :section: Math Detective API
+  # :section: Routes - Math Detective API
   # ===========================================================================
 
   public
@@ -100,7 +100,7 @@ class ToolController < ApplicationController
   end
 
   # ===========================================================================
-  # :section: Identifier Lookup
+  # :section: Routes - Identifier Lookup
   # ===========================================================================
 
   public
@@ -127,7 +127,7 @@ class ToolController < ApplicationController
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Callbacks
   # ===========================================================================
 
   protected

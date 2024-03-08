@@ -935,6 +935,7 @@ module UploadWorkflow::External
   end
 
   # Return with the specified record or *nil* if one could not be found.
+  # If *id* is an Upload, it's #id value is used to perform a database lookup.
   #
   # @param [String, Symbol, Integer, Hash, Model, nil] id
   # @param [Boolean]  fatal               If *false*, do not raise exceptions.

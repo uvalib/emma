@@ -5,7 +5,7 @@
 #
 # Support for actively redefining objects defined in the OAuth2 gem.
 
-=begin
+=begin # NOTE: OAuth2 disabled
 __loading_begin(__FILE__)
 
 require 'oauth2/access_token'
@@ -28,10 +28,10 @@ module OAuth2
   #
   # @!attribute [r] params
   #
-  # @!attribute [rw] options
+  # @!attribute options
   #   @return [Hash]
   #
-  # @!attribute [rw] refresh_token
+  # @!attribute refresh_token
   #   @return [String, nil]
   #
   module AccessTokenExt

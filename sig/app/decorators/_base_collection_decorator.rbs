@@ -97,6 +97,7 @@ class BaseCollectionDecorator
   extend  SharedClassMethods
 
   # @private
+  # @type [Symbol, String]
   DEFAULT_ACTION: Symbol
 
   # Create a new collection decorator, by default based on the paginator passed

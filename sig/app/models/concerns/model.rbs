@@ -135,6 +135,7 @@ module Model
   def self.display_config!: (symHash all_fields, (nil|:all|symHash|Array[ String | Symbol | Hash[Symbol,String] | Hash[Symbol,symHash] ]) display_fields) -> symHash
 
   # @private
+  # @type [Regexp, String]
   CONFIG_PREFIX: Regexp
 
   # Return the model class associated with *item*.

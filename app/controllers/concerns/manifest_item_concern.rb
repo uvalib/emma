@@ -226,13 +226,13 @@ module ManifestItemConcern
 
   public
 
-  # Create and persist a new ManifestItem.
+  # Add a new ManifestItem record to the database.
   #
   # @param [Hash, nil]       prm        Field values (def: `#current_params`).
   # @param [Boolean, String] force_id   If *true*, allow setting of :id.
   # @param [Boolean]         fatal      If *false*, use #save not #save!.
   #
-  # @return [ManifestItem]              A new ManifestItem instance.
+  # @return [ManifestItem]            The new ManifestItem record.
   #
   def create_record(prm = nil, force_id: false, fatal: true, **)
     # noinspection RubyMismatchedReturnType
@@ -242,21 +242,21 @@ module ManifestItemConcern
     end
   end
 
-  # Retrieve the indicated ManifestItem for the '/edit' model form.
+  # Retrieve the indicated ManifestItem record for the '/edit' model form.
   #
-  # @param [ManifestItem,any,nil] item  Def.: rec for ModelConcern#identifier.
-  # @param [Hash]                 opt   Passed to super
+  # @param [any, nil] item            Default: the record for #identifier.
+  # @param [Hash]     opt             Passed to #find_record.
   #
-  # @raise [Record::SubmitError]        Record could not be found.
+  # @raise [Record::SubmitError]      Record could not be found.
   #
-  # @return [ManifestItem, nil]         An existing persisted ManifestItem.
+  # @return [ManifestItem, nil] A fresh instance unless *item* is ManifestItem.
   #
   def edit_record(item = nil, **opt)
     # noinspection RubyMismatchedReturnType
     item.is_a?(ManifestItem) ? item : super
   end
 
-  # Update the indicated ManifestItem.
+  # Update the indicated ManifestItem record.
   #
   # @param [any, nil] item            Def.: record for ModelConcern#identifier.
   # @param [Boolean]  fatal           If *false* use #update not #update!.
@@ -266,7 +266,7 @@ module ManifestItemConcern
   # @raise [ActiveRecord::RecordInvalid]    Record update failed.
   # @raise [ActiveRecord::RecordNotSaved]   Record update halted.
   #
-  # @return [ManifestItem, nil]         The updated ManifestItem instance.
+  # @return [ManifestItem, nil]       The updated ManifestItem record.
   #
   def update_record(item = nil, fatal: true, **prm)
     keep_date = updated_at = old_values = nil
@@ -285,7 +285,7 @@ module ManifestItemConcern
     }
   end
 
-  # Retrieve the indicated record(s) for the '/delete' page.
+  # Retrieve the indicated ManifestItem record(s) for the '/delete' page.
   #
   # @param [any, nil] items           To #search_records
   # @param [Hash]     prm             Default: `#current_params`
@@ -460,7 +460,7 @@ module ManifestItemConcern
 
   # A relation for all items of the indicated Manifest ordered by row.
   #
-  # @param [String, nil] manifest_id
+  # @param [String, nil] m_id   Manifest ID.
   # @param [Hash]        opt
   #
   # @option opt [String]       :manifest_id
@@ -468,11 +468,11 @@ module ManifestItemConcern
   #
   # @return [ActiveRecord::Relation<ManifestItem>]
   #
-  def all_manifest_items(manifest_id = nil, **opt)
-    manifest_id ||= opt[:manifest_id] || opt[:manifest]
-    manifest_id = manifest_id[:id] if manifest_id.is_a?(Hash)
-    raise_failure(:no_id)          if manifest_id.blank?
-    ManifestItem.where(manifest_id: manifest_id).in_row_order
+  def all_manifest_items(m_id = nil, **opt)
+    m_id ||= opt[:manifest_id] || opt[:manifest]
+    m_id = m_id[:id]      if m_id.is_a?(Hash)
+    raise_failure(:no_id) if m_id.blank?
+    ManifestItem.where(manifest_id: m_id).in_row_order
   end
 
   # ===========================================================================
@@ -711,6 +711,7 @@ module ManifestItemConcern
   protected
 
   # @private
+  # @type [Symbol, String]
   RESPONSE_OUTER = :items
 
   # Response values for de-serializing the index page to JSON or XML.

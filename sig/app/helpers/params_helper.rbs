@@ -89,7 +89,7 @@ module ParamsHelper
   #
   # @param [ActionController::Parameters, Hash, nil] prm  Default: `params`.
   #
-  # @return [Hash{Symbol=>String}]
+  # @return [Hash]
   #
   # @see #request_parameters
   # @see #IGNORED_PARAMETERS

@@ -5,7 +5,7 @@
 #
 # Support for actively redefining objects defined in the OAuth2 gem.
 
-=begin
+=begin # NOTE: OAuth2 disabled
 __loading_begin(__FILE__)
 
 require 'oauth2/client'
@@ -23,7 +23,7 @@ module OAuth2
   # @!attribute [r] site
   #   @return [String]
   #
-  # @!attribute [rw] options
+  # @!attribute options
   #   @return [Hash]
   #
   module ClientExt

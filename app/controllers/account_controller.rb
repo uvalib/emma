@@ -40,14 +40,14 @@ class AccountController < ApplicationController
   # None
 
   # ===========================================================================
-  # :section:
+  # :section: Formats
   # ===========================================================================
 
   respond_to :html
   respond_to :json, :xml, only: %i[index show list_all list_org]
 
   # ===========================================================================
-  # :section:
+  # :section: Values
   # ===========================================================================
 
   public
@@ -59,7 +59,7 @@ class AccountController < ApplicationController
   attr_reader :item
 
   # ===========================================================================
-  # :section:
+  # :section: Routes
   # ===========================================================================
 
   public
@@ -254,7 +254,7 @@ class AccountController < ApplicationController
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Routes - List
   # ===========================================================================
 
   public
@@ -291,7 +291,7 @@ class AccountController < ApplicationController
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Routes - List
   # ===========================================================================
 
   protected
@@ -315,7 +315,7 @@ class AccountController < ApplicationController
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Routes - Current
   # ===========================================================================
 
   public
@@ -365,7 +365,7 @@ class AccountController < ApplicationController
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Routes - Menu
   # ===========================================================================
 
   public

@@ -49,6 +49,9 @@ module ParamsConcern
 
   # The identifier of the current model instance which #CURRENT_ID represents.
   #
+  # This is only applicable to session-based models like User and
+  # (by extension) Org.
+  #
   # @return [Integer, String, nil]
   #
   def current_id

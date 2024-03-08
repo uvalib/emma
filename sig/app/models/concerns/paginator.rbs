@@ -584,39 +584,39 @@ end
 
 # Results from #search_records with fields in this order:
 #
-# @!attribute [rw] offset
+# @!attribute offset
 #   The list offset for display purposes (not necessarily the SQL OFFSET).
 #   @return [Integer]
 #
-# @!attribute [rw] limit
+# @!attribute limit
 #   The page size.
 #   @return [Integer]
 #
-# @!attribute [rw] page
+# @!attribute page
 #   The ordinal number of the current page.
 #   @return [Integer]
 #
-# @!attribute [rw] first
+# @!attribute first
 #   If the given :page is the first page of the record set.
 #   @return [Boolean]
 #
-# @!attribute [rw] last
+# @!attribute last
 #   If the given :page is the last page of the record set.
 #   @return [Boolean]
 #
-# @!attribute [rw] min_id
+# @!attribute min_id
 #   The #pagination_column value of the first matching record.
 #   @return [Integer]
 #
-# @!attribute [rw] max_id
+# @!attribute max_id
 #   The #pagination_column value of the last matching record.
 #   @return [Integer]
 #
-# @!attribute [rw] groups
+# @!attribute groups
 #   The Table of counts for each state group.
 #   @return [Hash]
 #
-# @!attribute [rw] list
+# @!attribute list
 #   A relation for retrieving records.
 #   @return [ActiveRecord::Relation, nil]
 #

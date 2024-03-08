@@ -581,6 +581,10 @@ module Upload::WorkflowMethods
   #
   # (If not it can be submitted directly.)
   #
+  # @note Submission review is a potential workflow feature that was never
+  #   fleshed out and might be irrelevant given the current approach of open
+  #   collaboration across organization members.
+  #
   def review_required?
     DEFAULT_REVIEW_REQUIRED # TODO: review_required?
   end
@@ -588,6 +592,10 @@ module Upload::WorkflowMethods
   # Indicate whether this submission is eligible to be review automatically.
   #
   # (If not it a human reviewer accept it.)
+  #
+  # @note Submission review is a potential workflow feature that was never
+  #   fleshed out and might be irrelevant given the current approach of open
+  #   collaboration across organization members.
   #
   def auto_reviewable?
     DEFAULT_AUTO_REVIEWABLE # TODO: auto_reviewable?

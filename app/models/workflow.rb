@@ -1000,7 +1000,7 @@ end
 
 # Common workflow aspects.
 #
-# @!attribute [rw] prev_state
+# @!attribute prev_state
 #   @return [Symbol, nil]
 #
 class Workflow::Base

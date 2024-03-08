@@ -56,7 +56,6 @@ module TestHelper::Utility
 
   # Local options for #run_test.
   #
-  # @private
   # @type [Array<Symbol>]
   #
   RUN_TEST_OPT = method_key_params(:run_test).concat(SHOW_TEST_OPT).freeze
@@ -198,7 +197,7 @@ module TestHelper::Utility
 
   # Extract the User ID indicated by *item*.
   #
-  # @param [any, nil] item
+  # @param [any, nil] item          Symbol, String, Integer, Hash, Model, User
   #
   # @return [Integer, nil]
   #
@@ -222,7 +221,7 @@ module TestHelper::Utility
 
   # Extract the Organization ID indicated by *item*.
   #
-  # @param [any, nil] item
+  # @param [any, nil] item          Symbol, String, Integer, Hash, Model, Org
   #
   # @return [Integer, nil]
   #

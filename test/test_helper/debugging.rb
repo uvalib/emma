@@ -59,7 +59,6 @@ module TestHelper::Debugging
 
   # Local options for #show_test_start and #show_test_end.
   #
-  # @private
   # @type [Array<Symbol>]
   #
   SHOW_TEST_OPT = method_key_params(:show_test_part).freeze

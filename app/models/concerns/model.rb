@@ -326,6 +326,7 @@ module Model
   public
 
   # @private
+  # @type [Regexp, String]
   CONFIG_PREFIX = /^\s*(en\.)?emma\./
 
   # Return the model class associated with *item*.

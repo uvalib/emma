@@ -32,7 +32,7 @@ module TestHelper::SystemTests::Form
       flunk 'Failed with flash error message'
     end
 
-    # Setup screenshot to diagnose problematic fields (which also avoids the
+    # Take a screenshot showing problematic fields (which also avoids the
     # debounce delay to ensure that the submit button is enabled).
     find(:radio_button, id: 'field-group_invalid').click
     screenshot

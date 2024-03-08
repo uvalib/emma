@@ -10,7 +10,7 @@
   # @!attribute [r] site
   #   @return [String]
   #
-  # @!attribute [rw] options
+  # @!attribute options
   #   @return [Hash]
   #
   #module ClientExt
