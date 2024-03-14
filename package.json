@@ -10,9 +10,9 @@
     "@uppy/informer":     "^3.1.0",
     "@uppy/progress-bar": "^3.1.0",
     "@uppy/xhr-upload":   "^3.6.4",
-    "esbuild":            "^0.20.1",
+    "esbuild":            "^0.20.2",
     "jquery":             "^3.7.1",
-    "sass":               "^1.71.1",
+    "sass":               "^1.72.0",
     "select2":            "^4.1.0-rc.0",
     "turbolinks":         "^5.2.0"
   },
