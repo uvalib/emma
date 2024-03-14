@@ -759,7 +759,7 @@ module UploadWorkflow::Single::States
   #
   def on_assigned_exit(state, event, *event_args)
     super
-=begin
+=begin # NOTE: workflow debugging
     unless event == :review
       __debug_wf do
         changed = 'withdrawn'

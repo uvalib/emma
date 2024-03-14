@@ -224,7 +224,7 @@ module AccountConcern
   #
   # @return [User::Paginator]
   #
-  def pagination_setup: (?(ApplicationController|nil) ctrlr, **untyped opt) -> User::Paginator
+  def pagination_setup: (?paginator: Class, **untyped opt) -> User::Paginator
 
   module DeviseMethods
 

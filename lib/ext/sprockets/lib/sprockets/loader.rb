@@ -32,7 +32,7 @@ if DEBUG_SPROCKETS
 
       public
 
-=begin
+=begin # NOTE: Sprockets debugging
       def load(uri)
         __ext_log(uri.inspect, tag: "[#{self}] Loader")
         super

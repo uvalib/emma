@@ -46,7 +46,7 @@ module Puma
 
       protected
 
-=begin
+=begin # NOTE: Puma debugging
       def select_loop
         __ext_log
         super
@@ -58,7 +58,7 @@ module Puma
         super
       end
 
-=begin
+=begin # NOTE: Puma debugging
       def wakeup!(client)
         __ext_log
         super

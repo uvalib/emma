@@ -5,7 +5,7 @@
 #
 # Extensions for the OAuth2 gem.
 
-=begin
+=begin # NOTE: OAuth2 disabled
 __loading_begin(__FILE__)
 
 require 'oauth2'

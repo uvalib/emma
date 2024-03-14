@@ -124,7 +124,7 @@ class ApplicationRecord < ActiveRecord::Base
     :"#{model_key}_id"
   end
 
-  # The controller for the model/model instance.
+  # The controller class associated with the model/model instance.
   #
   # @type [Class]
   #

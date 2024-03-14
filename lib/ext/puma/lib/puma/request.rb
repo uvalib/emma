@@ -33,14 +33,14 @@ module Puma
         super
       end
 
-=begin
+=begin # NOTE: Puma debugging
       def default_server_port(env)
         super
           .tap { |result| __ext_log(result) }
       end
 =end
 
-=begin
+=begin # NOTE: Puma debugging
       def fast_write_str(socket, str)
         start = timestamp
         super
@@ -48,21 +48,21 @@ module Puma
       end
 =end
 
-=begin
+=begin # NOTE: Puma debugging
       def fetch_status_code(status)
         super
           .tap { |result| __ext_log(result) }
       end
 =end
 
-=begin
+=begin # NOTE: Puma debugging
       def normalize_env(env, client)
         __ext_log
         super
       end
 =end
 
-=begin
+=begin # NOTE: Puma debugging
       def req_env_post_parse(env)
         __ext_log
         super

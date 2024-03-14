@@ -46,11 +46,9 @@ class OrgDecorator < BaseDecorator
 
     # Generate a prompt for #items_menu.
     #
-    # @param [User, Symbol, nil] user
-    #
     # @return [String]
     #
-    def items_menu_prompt: (?user: User|Symbol|nil) -> String
+    def items_menu_prompt: (**untyped _ignored) -> String
 
     # Descriptive term for an item of the given type.
     #

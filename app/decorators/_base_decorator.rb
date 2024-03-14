@@ -855,7 +855,7 @@ class BaseDecorator
     ModelTypeMap.set(@model_type, self)
   end
 
-  # set_object_class
+  # Set @object_class and @ar_class based on *obj*.
   #
   # @param [Class, Symbol, String, nil]        obj
   # @param [Array<Class, Symbol, String, nil>] other

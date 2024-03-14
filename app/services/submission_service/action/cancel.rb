@@ -21,7 +21,7 @@ module SubmissionService::Action::Cancel
 
   public
 
-=begin
+=begin # NOTE: preserved for possible future use
   # Receive a request to stop a batch job.
   #
   # @param [SubmissionService::ControlRequest, nil] request

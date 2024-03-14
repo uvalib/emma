@@ -30,7 +30,7 @@ if DEBUG_SPROCKETS
 
       public
 
-=begin
+=begin # NOTE: Sprockets debugging
       def compose_processors(*processors)
         $stderr.puts "*** SPROCKETS [#{self}] Base #{__method__} override"
         #__ext_log(tag: "[#{self}] Base")

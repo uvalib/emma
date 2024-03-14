@@ -156,7 +156,7 @@ module UploadWorkflow::Single::Remove::States
     wf_remove_items(*event_args)
     valid = ready?
 
-=begin
+=begin # NOTE: workflow debugging
     __debug_wf do
       if emma_items && valid
         'The EMMA-native items were removed.'

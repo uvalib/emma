@@ -55,7 +55,7 @@ class ISO_639
       end
     }.deep_freeze
 
-=begin # NOTE: not currently used
+=begin # NOTE: preserved for possible future use
   # Patterns matching languages that should not be presented as choices for
   # bibliographic metadata.
   #

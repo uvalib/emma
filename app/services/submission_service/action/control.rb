@@ -21,7 +21,7 @@ module SubmissionService::Action::Control
 
   public
 
-=begin
+=begin # NOTE: preserved for possible future use
   # Receive a request to pause a batch job.
   #
   # @param [SubmissionService::ControlRequest, nil] request
@@ -47,9 +47,7 @@ module SubmissionService::Action::Control
     self.end_time     = timestamp
     self.result       = post_flight(response)
   end
-=end
 
-=begin
   # Receive a request to resume a paused batch job.
   #
   # @param [SubmissionService::ControlRequest, nil] request

@@ -536,7 +536,7 @@ class Object
 
   def sys_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
-  def sys_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
+  def sys_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def system_unavailable_path: (*untyped _ignored) ?{ () -> untyped } -> String
 

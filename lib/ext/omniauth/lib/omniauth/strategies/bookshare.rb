@@ -5,7 +5,7 @@
 #
 # A extension of OmniAuth::Strategies::OAuth2.
 
-=begin
+=begin # NOTE: OAuth2 disabled
 __loading_begin(__FILE__)
 
 require 'ext/oauth2/ext'

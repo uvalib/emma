@@ -132,7 +132,7 @@ Rails.application.routes.draw do
   get    '/manifest/get_job_result/:job_id',       to: 'manifest#get_job_result'
   get    '/manifest/get_job_result/:job_id/*path', to: 'manifest#get_job_result'
 
-=begin
+=begin # TODO: submission start/stop ?
   post   '/manifest/start/:id',     to: 'manifest#start',         as: 'start_manifest'
   post   '/manifest/stop/:id',      to: 'manifest#stop',          as: 'stop_manifest'
   post   '/manifest/pause/:id',     to: 'manifest#pause',         as: 'pause_manifest'

@@ -30,28 +30,28 @@ module Puma
         super
       end
 
-=begin
+=begin # NOTE: Puma debugging
       def inherit_binder(bind)
         __ext_log
         super
       end
 =end
 
-=begin
+=begin # NOTE: Puma debugging
       def run(background = true, thread_name: 'srv')
         __ext_log { { background: background, thread_name: thread_name } }
         super
       end
 =end
 
-=begin
+=begin # NOTE: Puma debugging
       def reactor_wakeup(client)
         __ext_log { stats }
         super
       end
 =end
 
-=begin
+=begin # NOTE: Puma debugging
       def handle_servers
         __ext_log { stats }
         super

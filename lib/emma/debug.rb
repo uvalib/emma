@@ -601,7 +601,7 @@ module Emma::Debug
     Log.info("*** ACTIVITY | #{entry}")
   end
 
-=begin
+=begin # NOTE: preserved for possible future use
   # Within the block, output to $stderr is captured and returned as a string.
   #
   # @return [String]

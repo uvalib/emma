@@ -14,7 +14,7 @@ end
 # noinspection SpellCheckingInspection
 unless ONLY_FOR_DOCUMENTATION
 # :nocov:
-=begin
+=begin # NOTE: preserved for possible future use
 # LookupService::WorldCatV2::Properties
 #
 module LookupService::WorldCatV2::Properties
