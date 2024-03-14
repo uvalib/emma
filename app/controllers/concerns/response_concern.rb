@@ -181,7 +181,7 @@ module ResponseConcern
 
     if xhr
       head status, (message || {})
-    elsif redirect.is_a?(String)
+    elsif redirect.is_a?(String) || redirect.is_a?(Hash)
       redirect_to(redirect, status: status)
     elsif redirect
       fallback ||= default_fallback_location

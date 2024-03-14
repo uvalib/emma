@@ -162,10 +162,11 @@ module GlobalProperty
 
   def application_deployed?
     return @application_deployed unless @application_deployed.nil?
-    @application_deployed =
-      ENV.fetch('AWS_DEFAULT_REGION') {
-        !ENV['DEPLOYMENT'].to_s.casecmp?('local')
-      }
+    if ENV['AWS_DEFAULT_REGION']
+      @application_deployed = true
+    else
+      @application_deployed = !ENV['DEPLOYMENT'].to_s.casecmp?('local')
+    end
   end
 
   def not_deployed?

@@ -11,6 +11,8 @@ module Record::Assignable
 
   extend ActiveSupport::Concern
 
+  include Emma::Json
+
   include Record
   include Record::Identification
 
