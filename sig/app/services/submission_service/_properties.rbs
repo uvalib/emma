@@ -120,12 +120,6 @@ module SubmissionService::Properties
   #
   def service_key: () -> Symbol
 
-  # Configuration for the API service.
-  #
-  # @return [Hash]
-  #
-  def configuration: () -> symHash
-
   # How important the external service is as an authority for the type(s) of
   # identifiers it can search.
   #

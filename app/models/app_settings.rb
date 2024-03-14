@@ -123,7 +123,6 @@ class AppSettings < AppGlobal
 
     # === EMMA Unified Search API
     :SEARCH_API_VERSION,
-    :SEARCH_BASE_URL,
     :SERVICE_SEARCH_PRODUCTION,
     :SERVICE_SEARCH_STAGING,
     :SERVICE_SEARCH_TEST,
@@ -132,7 +131,6 @@ class AppSettings < AppGlobal
     # === EMMA Unified Ingest API
     :INGEST_API_VERSION,
     :INGEST_API_KEY,
-    :INGEST_BASE_URL,
     :SERVICE_INGEST_PRODUCTION,
     :SERVICE_INGEST_STAGING,
     :SERVICE_INGEST_TEST,

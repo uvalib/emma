@@ -47,12 +47,6 @@ module IaDownloadService::Properties
   #
   def configuration: () -> symHash
 
-  # Default search engine for this deployment.
-  #
-  # @return [String]
-  #
-  def default_engine_url: () -> String
-
   # Maximum length of redirection chain.
   #
   # @type [Integer]

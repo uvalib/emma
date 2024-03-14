@@ -193,21 +193,6 @@ INGEST_API_KEY = ENV.fetch('INGEST_API_KEY', nil).freeze
 #
 INGEST_API_VERSION = ENV.fetch('INGEST_API_VERSION', '0.0.5').freeze
 
-# An override of the default EMMA Unified Ingest API request path.  If not
-# provided then IngestService#default_engine_url will be used.
-#
-# @type [String, nil]
-#
-INGEST_BASE_URL =
-  ENV['INGEST_BASE_URL'].then { |url|
-    url = url&.strip
-    url = nil if url&.empty?
-    if url&.include?('/')
-      url = url.sub(%r{^(http:)?//}, 'https://').sub(%r{/+$}, '')
-    end
-    url
-  }.freeze
-
 # =============================================================================
 # EMMA Unified Search API properties
 # =============================================================================
@@ -219,21 +204,6 @@ INGEST_BASE_URL =
 # @type [String]
 #
 SEARCH_API_VERSION = ENV.fetch('SEARCH_API_VERSION', INGEST_API_VERSION).freeze
-
-# An override of the default EMMA Unified Search API request path.  If not
-# provided then SearchService#default_engine_url will be used.
-#
-# @type [String, nil]
-#
-SEARCH_BASE_URL =
-  ENV['SEARCH_BASE_URL'].then { |url|
-    url = url&.strip
-    url = nil if url&.empty?
-    if url&.include?('/')
-      url = url.sub(%r{^(http:)?//}, 'https://').sub(%r{/+$}, '')
-    end
-    url
-  }.freeze
 
 # =============================================================================
 # Internet Archive access

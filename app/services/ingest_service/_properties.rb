@@ -59,14 +59,6 @@ module IngestService::Properties
 
   public
 
-  # Default ingest engine for this deployment.
-  #
-  # @return [String]
-  #
-  def default_engine_url
-    INGEST_BASE_URL || super
-  end
-
   # The default ingest engine API key.
   #
   # @return [Symbol]

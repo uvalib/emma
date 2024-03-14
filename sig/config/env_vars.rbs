@@ -48,13 +48,6 @@ INGEST_API_KEY: String | nil
 #
 INGEST_API_VERSION: String
 
-# An override of the default EMMA Unified Ingest API request path.  If not
-# provided then IngestService#default_engine_url will be used.
-#
-# @type [String, nil]
-#
-INGEST_BASE_URL: String | nil
-
 # Current EMMA Unified Search API version.
 #
 # This is informational only; Search API URLs do not include it.
@@ -62,13 +55,6 @@ INGEST_BASE_URL: String | nil
 # @type [String]
 #
 SEARCH_API_VERSION: String
-
-# An override of the default EMMA Unified Search API request path.  If not
-# provided then SearchService#default_engine_url will be used.
-#
-# @type [String, nil]
-#
-SEARCH_BASE_URL: String | nil
 
 # IA S3 access key generated when logged in as Internet Archive user
 # "emma_pull@archive.org".

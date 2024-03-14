@@ -21,12 +21,6 @@ module SearchService::Properties
   #
   def configuration: () -> symHash
 
-  # Default search engine for this deployment.
-  #
-  # @return [String]
-  #
-  def default_engine_url: () -> String
-
   # The default service engine key.
   #
   # @return [Symbol]

@@ -81,20 +81,6 @@ module IaDownloadService::Properties
 
   public
 
-  # Default search engine for this deployment.
-  #
-  # @return [String]
-  #
-  def default_engine_url
-    IA_DOWNLOAD_BASE_URL || super
-  end
-
-  # ===========================================================================
-  # :section: ApiService::Properties overrides
-  # ===========================================================================
-
-  public
-
   # Maximum length of redirection chain.
   #
   # @type [Integer]

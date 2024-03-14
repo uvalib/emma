@@ -187,9 +187,10 @@ module ApiService::Properties
       log = ->(msg) { Log.warn { "#{meth}: #{engine}: #{msg}" } }
       next log.('no :endpoint given') if host.blank?
       unless host.start_with?('http')
-        var = host.split(/\s*[\[\]'"]\s*/).compact_blank!.last
+        var  = host.split(/\s*[\[\]'"]\s*/).compact_blank!.last
         next log.("invalid: #{host.inspect}") if var.blank?
-        next log.("ENV[#{var}]: not present") if (host = ENV[var]).blank?
+        host = ENV[var] || safe_const_get(var)
+        next log.("ENV[#{var}]: not present") if host.blank?
       end
       [engine, host]
     }.compact.to_h

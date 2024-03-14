@@ -217,26 +217,6 @@ module SubmissionService::Properties
     (is_a?(Module) ? name : self.class.name).demodulize.underscore.to_sym
   end
 
-  # ===========================================================================
-  # :section: ApiService::Properties overrides
-  # ===========================================================================
-
-  public
-
-  # Configuration for the API service.
-  #
-  # @return [Hash]
-  #
-  def configuration
-    CONFIGURATION[service_key]
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # How important the external service is as an authority for the type(s) of
   # identifiers it can search.
   #

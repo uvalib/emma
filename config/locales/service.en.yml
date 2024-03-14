@@ -15,6 +15,7 @@ en:
 
       ia_download:
         name:           'Internet Archive download service'
+        endpoint:       ENV[IA_DOWNLOAD_BASE_URL]
         max_redirects:  10
 
       ingest:

@@ -49,14 +49,6 @@ module SearchService::Properties
 
   public
 
-  # Default search engine for this deployment.
-  #
-  # @return [String]
-  #
-  def default_engine_url
-    SEARCH_BASE_URL || super
-  end
-
   # The default service engine key.
   #
   # @return [Symbol]

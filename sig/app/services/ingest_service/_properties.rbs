@@ -29,12 +29,6 @@ module IngestService::Properties
   #
   def api_key: () -> (String | nil)
 
-  # Default ingest engine for this deployment.
-  #
-  # @return [String]
-  #
-  def default_engine_url: () -> String
-
   # The default ingest engine API key.
   #
   # @return [Symbol]
