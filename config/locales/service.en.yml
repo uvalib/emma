@@ -22,7 +22,7 @@ en:
         endpoint:       # @see IngestService::Properties#engines
           production:   ENV[SERVICE_INGEST_PRODUCTION]
           staging:      ENV[SERVICE_INGEST_STAGING]
-          qa:           ENV[SERVICE_INGEST_QA]
+          test:         ENV[SERVICE_INGEST_TEST]
 
       lookup:
 
@@ -100,7 +100,7 @@ en:
         endpoint:       # @see SearchService::Properties#engines
           production:   ENV[SERVICE_SEARCH_PRODUCTION]
           staging:      ENV[SERVICE_SEARCH_STAGING]
-          qa:           ENV[SERVICE_SEARCH_QA]
+          test:         ENV[SERVICE_SEARCH_TEST]
 
       submission:
         name:           'Batch submission service'

@@ -357,27 +357,6 @@ module UploadConcern
   end
 
   # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Get item data from the production service.
-  #
-  # @param [String] sid               Submission ID of the item.
-  # @param [String] host              Base URL of production service.
-  #
-  # @return [Upload]                  Object created from received data.
-  # @return [nil]                     Bad data and/or no object created.
-  #
-  def proxy_get_record(sid, host)
-    data = sid && Faraday.get("#{host}/upload/show/#{sid}.json").body
-    data = json_parse(data) || {}
-    data = data[:response]  || data
-    Upload.new(data) if data.present?
-  end
-
-  # ===========================================================================
   # :section: Workflow - Single
   # ===========================================================================
 

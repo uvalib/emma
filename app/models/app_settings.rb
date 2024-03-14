@@ -125,8 +125,8 @@ class AppSettings < AppGlobal
     :SEARCH_API_VERSION,
     :SEARCH_BASE_URL,
     :SERVICE_SEARCH_PRODUCTION,
-    :SERVICE_SEARCH_QA,
     :SERVICE_SEARCH_STAGING,
+    :SERVICE_SEARCH_TEST,
     nil,
 
     # === EMMA Unified Ingest API
@@ -134,8 +134,8 @@ class AppSettings < AppGlobal
     :INGEST_API_KEY,
     :INGEST_BASE_URL,
     :SERVICE_INGEST_PRODUCTION,
-    :SERVICE_INGEST_QA,
     :SERVICE_INGEST_STAGING,
+    :SERVICE_INGEST_TEST,
     nil,
 
     # === Internet Archive

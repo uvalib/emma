@@ -169,19 +169,6 @@ class UploadController < ApplicationController
     end
   rescue CanCan::AccessDenied => error
     error_response(error, welcome_path)
-  rescue UploadWorkflow::SubmitError, Record::SubmitError,
-    ActiveRecord::RecordNotFound, Record::NotFound => error
-    # As a convenience (for HTML only), if an index item is actually on another
-    # instance, fetch it from there to avoid a potentially confusing result.
-    if request.format.html?
-      # noinspection RubyMismatchedArgumentType
-      [PRODUCTION_BASE_URL, STAGING_BASE_URL].find do |base_url|
-        next if base_url.start_with?(request.base_url)
-        @host = base_url
-        @item = proxy_get_record(identifier, @host)
-      end
-    end
-    error_response(error) if @item.blank?
   rescue => error
     error_response(error)
   end
