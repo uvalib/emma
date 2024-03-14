@@ -21,7 +21,7 @@
 
   # noinspection RubyUnusedLocalVariable
   if (dual ||= false)
-    items     = dec.object_class.model_controller.unit[:Items]
+    items     = dec.object_class.controller.unit[:Items]
 
     my_title  = config_text(:layout, :menu, :my_items, items: items)
     my_title  = html_h2(my_title,  class: 'select-title')

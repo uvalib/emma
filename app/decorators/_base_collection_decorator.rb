@@ -187,6 +187,7 @@ class BaseCollectionDecorator
     end
     @decorator_class = base
     @model_type      = @decorator_class.model_type
+    @ctrlr_type      = @decorator_class.ctrlr_type
     definitions      = "#{base}::SharedDefinitions".safe_constantize
     include(definitions) if definitions.is_a?(Module)
     debug_inheritance    if DEBUG_COLLECTION_INHERITANCE

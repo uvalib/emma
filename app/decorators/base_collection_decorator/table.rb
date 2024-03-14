@@ -127,8 +127,8 @@ module BaseCollectionDecorator::Table
   #
   def table_path(prm = nil, **opt)
     prm = (prm || param_values).merge(opt)
-    unless model_type == (base = prm[:controller]&.to_sym)
-      case model_type
+    unless ctrlr_type == (base = prm[:controller]&.to_sym)
+      case ctrlr_type
         when :org            then dst, src = :id, %i[org  org_id]
         when :user, :account then dst, src = :id, %i[user user_id]
         else                      dst, src = :"#{base}_id", :id
@@ -138,7 +138,7 @@ module BaseCollectionDecorator::Table
     if (sort = prm.delete(:sort)).present?
       prm[:sort] = SortOrder.wrap(sort).param_value.presence
     end
-    path_for(**prm, controller: model_type, action: :index)
+    path_for(**prm, controller: ctrlr_type, action: :index)
   end
 
   # Render one or more entries for use within a *tbody*.

@@ -67,7 +67,7 @@ module BaseDecorator::Links
   def model_link(item, **opt)
     trace_attrs!(opt)
     local  = opt.extract!(*MODEL_LINK_OPT)
-    type   = (model_type unless item)
+    type   = (ctrlr_type unless item)
     item ||= object
     label  = local[:label] || :label
     label  = item.send(label) if label.is_a?(Symbol)

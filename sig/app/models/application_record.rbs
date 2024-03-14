@@ -83,13 +83,21 @@ class ApplicationRecord < ActiveRecord::Base
 
   def model_id_key: () -> Symbol
 
+  # Symbolic name of the controller associated with the model/model instance.
+  #
+  # @type [Symbol]
+  #
+  def self.ctrlr_type: () -> Symbol
+
+  def ctrlr_type: () -> Symbol
+
   # The controller class associated with the model/model instance.
   #
   # @type [Class]
   #
-  def self.model_controller: () -> Class
+  def self.controller: () -> Class
 
-  def model_controller: () -> Class
+  def controller: () -> Class
 
   # Return the record instance indicated by the argument.
   #

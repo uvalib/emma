@@ -126,7 +126,7 @@ class BaseDecorator < Draper::Decorator
     #
     def path_for(item = nil, **opt)
       opt.compact!
-      opt[:controller] = opt.delete(:ctrlr) || opt[:controller] || model_type
+      opt[:controller] = opt.delete(:ctrlr) || opt[:controller] || ctrlr_type
       opt[:only_path]  = true unless opt.key?(:only_path)
       opt[:id]         = opt.delete(:selected) if opt.key?(:selected)
       unless opt[:id] || opt.except(:controller, :action, :only_path).present?
@@ -205,7 +205,7 @@ class BaseDecorator < Draper::Decorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def link_to_action(label, **opt)
-      opt[:ctrlr] = opt.delete(:controller) || opt[:ctrlr] || model_type
+      opt[:ctrlr] = opt.delete(:controller) || opt[:ctrlr] || ctrlr_type
       h.link_to_action(label, **opt) || ERB::Util.h(label || '')
     end
 
@@ -248,6 +248,14 @@ class BaseDecorator < Draper::Decorator
     #
     def model_type
       self.class.model_type
+    end
+
+    # The controller associated with the decorator.
+    #
+    # @return [Symbol]
+    #
+    def ctrlr_type
+      self.class.ctrlr_type
     end
 
     # The ActiveRecord subclass associated with the decorator instance.
@@ -608,6 +616,16 @@ class BaseDecorator < Draper::Decorator
       @model_type
     end
 
+    # The controller associated with the decorator.
+    #
+    # @return [Symbol]
+    #
+    # @see BaseDecorator#decorator_for
+    #
+    def ctrlr_type
+      @ctrlr_type
+    end
+
     # The ActiveRecord subclass associated with instances of this decorator.
     #
     # @return [Class, nil]
@@ -836,22 +854,24 @@ class BaseDecorator
 
   protected
 
-  # set_model_type
+  # Set @model_type and @ctrlr_type based on *mt*.
   #
   # @param [Class, Symbol, String, nil] mt
   #
   # @return [Symbol, nil]
   #
+  #--
+  # noinspection RailsParamDefResolve, RubyMismatchedVariableType
+  #++
   def self.set_model_type(mt)
     raise 'Nil model_type' unless mt
-    # noinspection RubyMismatchedVariableType
-    @model_type =
-      case
-        when mt.is_a?(Symbol)            then mt
-        when mt.respond_to?(:model_type) then mt.model_type
-        when mt.respond_to?(:model_name) then mt.model_name.singular.to_sym
-        else mt.to_s.demodulize.underscore.to_sym
-      end
+    ct = mt.try(:ctrlr_type) || mt.try(:controller)&.name || mt.try(:name)
+    ct = ct.underscore.to_sym            if ct.is_a?(String)
+    mt = mt.model_type                   if mt.respond_to?(:model_type)
+    mt = mt.model_name.singular          if mt.respond_to?(:model_name)
+    mt = mt.demodulize.underscore.to_sym if mt.is_a?(String)
+    @model_type = mt
+    @ctrlr_type = ct || @model_type
     ModelTypeMap.set(@model_type, self)
   end
 

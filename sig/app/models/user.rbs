@@ -44,12 +44,6 @@ class User < ApplicationRecord
   #
   def label: (?(User|nil) item) -> (String | nil)
 
-  # The controller for the model/model instance.
-  #
-  # @type [Class]
-  #
-  def self.model_controller: () -> Class
-
   # Create a new instance.
   #
   # @param [User, Hash, nil] attr
@@ -61,6 +55,12 @@ class User < ApplicationRecord
   def user_id: () -> (Integer | nil)
 
   def org_id: () -> (Integer | nil)
+
+  # Symbolic name of the controller associated with the model/model instance.
+  #
+  # @type [Symbol]
+  #
+  def self.ctrlr_type: () -> Symbol
 
   def user_key: () -> Symbol
 

@@ -788,7 +788,7 @@ class Ability
   # @param [ApplicationRecord,Class] model
   def self.all_actions_for(model)
     keys  = all_actions_keys
-    ctrlr = model.try(:model_controller)
+    ctrlr = model.try(:controller)
     ctrlr ? keys.intersection(ctrlr.public_instance_methods(false)) : keys
   end
 

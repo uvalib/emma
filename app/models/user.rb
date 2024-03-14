@@ -102,14 +102,6 @@ class User < ApplicationRecord
     (item || self).account.presence
   end
 
-  # The controller for the model/model instance.
-  #
-  # @type [Class]
-  #
-  def self.model_controller
-    AccountController
-  end
-
   # Create a new instance.
   #
   # @param [User, Hash, nil] attr
@@ -123,6 +115,20 @@ class User < ApplicationRecord
   def user_id = id
 
   def org_id = self[:org_id]
+
+  # ===========================================================================
+  # :section: ApplicationRecord overrides
+  # ===========================================================================
+
+  public
+
+  # Symbolic name of the controller associated with the model/model instance.
+  #
+  # @type [Symbol]
+  #
+  def self.ctrlr_type
+    :account
+  end
 
   # ===========================================================================
   # :section: IdMethods overrides

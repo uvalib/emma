@@ -124,12 +124,20 @@ class ApplicationRecord < ActiveRecord::Base
     :"#{model_key}_id"
   end
 
+  # Symbolic name of the controller associated with the model/model instance.
+  #
+  # @type [Symbol]
+  #
+  def self.ctrlr_type
+    model_type
+  end
+
   # The controller class associated with the model/model instance.
   #
   # @type [Class]
   #
-  def self.model_controller
-    "#{model_type}_controller".camelize.safe_constantize
+  def self.controller
+    "#{ctrlr_type}_controller".camelize.safe_constantize
   end
 
   # Return the record instance indicated by the argument.
@@ -151,7 +159,7 @@ class ApplicationRecord < ActiveRecord::Base
   end
 
   delegate :model_type, :model_key, :model_id_key, to: :class
-  delegate :model_controller, to: :class
+  delegate :ctrlr_type, :controller, to: :class
 
   # ===========================================================================
   # :section: Class methods

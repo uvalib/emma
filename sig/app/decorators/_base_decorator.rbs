@@ -120,6 +120,7 @@ class BaseDecorator < Draper::Decorator
     def current_user: () -> (User | nil)
 
     def model_type: () -> Symbol
+    def ctrlr_type: () -> Symbol
     def ar_class: () -> (Class | nil)
     def null_object: () -> Object
     def config_lookup: (*(String|strArray) path, **untyped opt) -> (untyped | nil)
@@ -228,6 +229,16 @@ class BaseDecorator < Draper::Decorator
 
     @model_type: Symbol
 
+    # The controller associated with the decorator.
+    #
+    # @return [Symbol]
+    #
+    # @see BaseDecorator#decorator_for
+    #
+    def ctrlr_type:  () -> Symbol
+
+    @ctrlr_type: Symbol
+
     # The ActiveRecord subclass associated with instances of this decorator.
     #
     # @return [Class, nil]
@@ -329,7 +340,7 @@ class BaseDecorator < Draper::Decorator
   @ar_class:    Class | nil
   @other_class: Array[Class]
 
-  # set_model_type
+  # Set @model_type and @ctrlr_type based on *mt*.
   #
   # @param [Class, Symbol, String, nil] mt
   #
@@ -338,6 +349,8 @@ class BaseDecorator < Draper::Decorator
   def self.set_model_type: ((Class|Symbol|String|nil) mt) -> (Symbol | nil)
 
   @model_type: Symbol
+
+  @ctrlr_type: Symbol
 
   # Set @object_class and @ar_class based on *obj*.
   #

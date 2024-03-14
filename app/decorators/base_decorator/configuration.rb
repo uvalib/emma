@@ -28,6 +28,16 @@ module BaseDecorator::Configuration
     must_be_overridden
   end
 
+  # The controller associated with the decorator.
+  #
+  # @return [Symbol]
+  #
+  # @see BaseDecorator#decorator_for
+  #
+  def ctrlr_type
+    must_be_overridden
+  end
+
   # The ActiveRecord subclass associated with the decorator.
   #
   # @return [Class, nil]
@@ -57,7 +67,7 @@ module BaseDecorator::Configuration
   # @return [Symbol]
   #
   def controller_config_key
-    model_type
+    ctrlr_type
   end
 
   # The model associated with the decorator (Model#fields_table key).

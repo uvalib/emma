@@ -478,7 +478,7 @@ class AccountDecorator
     row       = start
 
     models.map { |model|
-      ctrlr_actions = model.model_controller.public_instance_methods(false)
+      ctrlr_actions = model.controller.public_instance_methods(false)
       actions.intersection(ctrlr_actions).map { |action|
         row_opt = { 'aria-rowindex': (row += 1) }
         status  = target.can?(action, model)
