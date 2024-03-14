@@ -40,21 +40,30 @@ module ParamsHelper
   #
   SELECT_ACTION_SUFFIX = '_select'
 
-  # Request parameters that are not relevant to the application.
+  # Elements of `#params` which are not actually supplied as URL parameters.
   #
   # @type [Array<Symbol>]
   #
-  IGNORED_PARAMETERS = %i[
-    controller
-    action
-    format
+  NON_URL_KEYS = %i[controller action format].freeze
+
+  # Request URL parameters that are used by the system.
+  #
+  # @type [Array<Symbol>]
+  #
+  SYSTEM_PARAMS = %i[
     _method
     authenticity_token
     commit
     modal
     redirect
     utf8
-  ].sort.freeze
+  ].freeze
+
+  # Request parameters that are not relevant to the application.
+  #
+  # @type [Array<Symbol>]
+  #
+  IGNORED_PARAMS = (NON_URL_KEYS + SYSTEM_PARAMS).uniq.freeze
 
   # Used as the first character of a session value that has been compressed.
   #
@@ -152,10 +161,10 @@ module ParamsHelper
   # @return [Hash]
   #
   # @see #request_parameters
-  # @see #IGNORED_PARAMETERS
+  # @see #IGNORED_PARAMS
   #
   def url_parameters(prm = nil)
-    request_parameters(prm).except!(*IGNORED_PARAMETERS)
+    request_parameters(prm).except!(*IGNORED_PARAMS)
   end
 
   # Request parameters without :id.
@@ -166,6 +175,17 @@ module ParamsHelper
   #
   def without_id(**added)
     request_parameters.except(:id).merge(added)
+  end
+
+  # Redirection parameters with full data (used to allow redirection back to a
+  # form with supplied values intact).
+  #
+  # @param [Hash] added               Added/replaced parameter values.
+  #
+  # @return [Hash]
+  #
+  def redir_params(**added)
+    request_parameters.except(*SYSTEM_PARAMS).merge(added)
   end
 
   # ===========================================================================

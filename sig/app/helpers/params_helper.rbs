@@ -26,11 +26,23 @@ module ParamsHelper
   #
   SELECT_ACTION_SUFFIX: String
 
+  # Elements of `#params` which are not actually supplied as URL parameters.
+  #
+  # @type [Array<Symbol>]
+  #
+  NON_URL_KEYS: symArray
+
+  # Request URL parameters that are used by the system.
+  #
+  # @type [Array<Symbol>]
+  #
+  SYSTEM_PARAMS: symArray
+
   # Request parameters that are not relevant to the application.
   #
   # @type [Array<Symbol>]
   #
-  IGNORED_PARAMETERS: symArray
+  IGNORED_PARAMS: symArray
 
   # Used as the first character of a session value that has been compressed.
   #
@@ -92,7 +104,7 @@ module ParamsHelper
   # @return [Hash]
   #
   # @see #request_parameters
-  # @see #IGNORED_PARAMETERS
+  # @see #IGNORED_PARAMS
   #
   def url_parameters: (?(prmHash|nil) prm) -> symHash
 
@@ -103,6 +115,15 @@ module ParamsHelper
   # @return [Hash]
   #
   def without_id: (**untyped added) -> symHash
+
+  # Redirection parameters with full data (used to allow redirection back to a
+  # form with supplied values intact).
+  #
+  # @param [Hash] added               Added/replaced parameter values.
+  #
+  # @return [Hash]
+  #
+  def redir_params: (**untyped added) -> symHash
 
   # Get a reference to `session[section]`.
   #
