@@ -131,6 +131,18 @@ class ApiService
       Log.new(progname: 'API', level: (DEBUG_TRANSMISSION ? :debug : :info))
   end
 
+  # Generate a list of service classes.
+  #
+  # @param [Class] root               A subclass of ApiService.
+  #
+  # @param [Array<Class>]
+  #
+  def self.services(root = ApiService)
+    return []     unless root.is_a?(Class) && (root <= ApiService)
+    return [root] unless root.subclasses.present?
+    root.subclasses.flat_map { |c| services(c) }
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================

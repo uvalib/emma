@@ -80,6 +80,14 @@ class ApiService
   #
   def self.api_logger: () -> Logger
 
+  # Generate a list of service classes.
+  #
+  # @param [Class] root               A subclass of ApiService.
+  #
+  # @param [Array<Class>]
+  #
+  def self.services: (?Class root) -> Array[Class]
+
   # Represent the instance as a Hash.
   #
   # @return [Hash{Symbol=>any}]       (no *nil* values)

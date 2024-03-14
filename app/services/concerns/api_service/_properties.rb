@@ -193,7 +193,9 @@ module ApiService::Properties
         next log.("ENV[#{var}]: not present") if host.blank?
       end
       [engine, host]
-    }.compact.to_h
+    }.compact.to_h.tap { |result|
+      result[:default] ||= result[default_engine_key]
+    }
   end
 
   # Default service endpoint for this deployment.

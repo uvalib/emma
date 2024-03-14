@@ -396,7 +396,7 @@ body.sys.settings {
 
         .fields {
 
-            .text {
+            .value.text {
 
                 @include constrain-column;
 
@@ -404,6 +404,23 @@ body.sys.settings {
                     font-family: monospace;
                     font-size:   larger;
                     font-weight: bold;
+                }
+            }
+
+            .value.hierarchy {
+
+                display: grid;
+                gap:     0.5rem;
+                padding: 0.25rem;
+                border:  1px solid gray;
+                grid-template-columns: auto 1fr;
+
+                .name {
+                    font-weight: bold;
+                }
+
+                .value::before {
+                    content: '= ';
                 }
             }
         }

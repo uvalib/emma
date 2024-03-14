@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 module SysHelper::Settings
 
   include SysHelper::Common
+  include Emma::Json
 
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
@@ -77,6 +78,25 @@ module SysHelper::Settings
       html_div(class: 'fields') do
         GlobalProperty.instance_methods.map do |meth|
           app_setting_display(meth, Object.send(meth))
+        end
+      end
+    end
+  end
+
+  # Display of ApiService engine setting values.
+  #
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               To #form_tag
+  #
+  def app_engines(css: '.field-container.list', **opt)
+    services = ApiService.services.map { |s| [s.service_name, s.engines] }
+    services = services.sort_by { |name, _| name }.to_h
+    engines  = services.extract!('search', 'ingest').merge(services)
+    prepend_css!(opt, css)
+    html_div(**opt) do
+      html_div(class: 'fields') do
+        engines.map do |service, urls|
+          app_entry_display(service, urls)
         end
       end
     end
@@ -179,27 +199,60 @@ module SysHelper::Settings
       cls << 'from-obj'
       tip << config_text(:sys, :from_constant)
     end
+
+    # noinspection RubyMismatchedArgumentType
+    app_entry_display(key, value, class: cls, title: tip)
+  end
+
+  # HTML for an entry displaying an application setting value.
+  #
+  # @param [Symbol, String] key
+  # @param [any, nil]       value
+  # @param [Hash]           opt       Passed to label and value elements.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def app_entry_display(key, value, **opt)
     case value
-      when nil         then cls << 'missing'; value = EMPTY_VALUE
-      when EMPTY_VALUE then cls << 'missing'
-      when 'nil'       then cls << 'literal'
-      when String      then cls << 'string';  value = value.inspect
-      else                  cls << 'literal'; value = value.inspect
+      when nil         then append_css!(opt, 'text missing')
+      when EMPTY_VALUE then append_css!(opt, 'text missing')
+      when 'nil'       then append_css!(opt, 'text literal')
+      when Hash        then append_css!(opt, 'hierarchy')
+      when String      then append_css!(opt, 'text string')
+      else                  append_css!(opt, 'text literal')
     end
+    opt[:title] = opt[:title].join('; ') if opt[:title].is_a?(Array)
+    opt[:title] = opt[:title]&.upcase_first
 
     id    = css_randomize(key)
     v_id  = "value-#{id}"
     l_id  = "label-#{id}"
-    opt   = { class: css_classes(cls) }
-    opt[:title] = tip.join('; ').upcase_first if tip.present?
 
     l_opt = prepend_css(opt, 'setting line').merge!(id: l_id)
-    label = html_span(key, **l_opt)
+    label = html_span(**l_opt) { key }
 
-    v_opt = prepend_css(opt, 'text').merge!(id: v_id, 'aria-describedby': l_id)
-    value = html_div(value, **v_opt)
+    v_opt = prepend_css(opt,'value').merge!(id: v_id, 'aria-describedby': l_id)
+    value = html_div(**v_opt) { app_value_display(value) }
 
     label << value
+  end
+
+  # Render a value for display in an application setting entry.
+  #
+  # @param [any, nil] value
+  #
+  # @return [ActiveSupport::SafeBuffer] If *value* is a Hash
+  # @return [String]                    Otherwise
+  #
+  def app_value_display(value)
+    value = EMPTY_VALUE  if value.nil?
+    return value         if (value == EMPTY_VALUE) || (value == 'nil')
+    return value.inspect unless value.is_a?(Hash)
+    value.flat_map { |k, v|
+      { name: k, value: app_value_display(v) }.map do |cls, val|
+        html_div(val, class: cls)
+      end
+    }.join(' ').html_safe
   end
 
   # Create a radio button and label for an EMMA flag.

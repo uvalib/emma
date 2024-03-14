@@ -39,6 +39,13 @@
 
 <%= page_directions_section %>
 
+<h2>Engines</h2>
+<p role="note">
+  Configured engine URL values.
+</p>
+
+<%= app_engines %>
+
 <h2>GlobalProperty Values</h2>
 <p role="note">
   Fixed values set in <%= source_code_link('config/boot.rb') -%> at startup.
@@ -66,6 +73,7 @@
   changed dynamically.
   They can only be changed by modifying <%= vars -%> and restarting.
 </p>
+
 <%= app_settings %>
 
 <%= page_notes_section %>
