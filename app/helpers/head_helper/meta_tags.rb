@@ -183,7 +183,7 @@ module HeadHelper::MetaTags
     end
 
     # The tag content is formed from the value(s) accumulated for this item.
-    nl_opt = opt.slice!(:list_separator, :pair_separator, :sanitize, :quote)
+    nl_opt = opt.extract!(:list_separator, :pair_separator, :sanitize, :quote)
     opt[:content] =
       normalized_list(value, **nl_opt).join(separator).tap do |content|
         # noinspection RubyMismatchedArgumentType

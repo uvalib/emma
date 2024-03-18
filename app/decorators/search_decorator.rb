@@ -579,8 +579,8 @@ class SearchDecorator
   def record_popup(css: '.record-popup', **opt)
     p_opt  = opt.delete(:placeholder)
     attr   = opt.delete(:attr)&.dup || {}
-    css_id = opt[:'data-iframe'] || attr[:id] || "record-frame-#{rid}"
     rid    = object.emma_repositoryRecordId
+    css_id = opt[:'data-iframe'] || attr[:id] || "record-frame-#{rid}"
 
     opt[:'data-iframe'] = attr[:id] = css_id
     opt[:title]          ||= config_text(:search, :popup, :tooltip)

@@ -63,6 +63,9 @@ module Search::Shared::LinkMethods
     src  = emma_repository&.presence&.to_sym or return
     cfg  = REPOSITORY[src].presence          or raise "#{src}: invalid source"
     path = cfg[:title_path]                  or raise 'no title_path'
+    if respond_to?(:request) && (src.to_s == EmmaRepository.default)
+      path = request.base_url + path if path.start_with?('/')
+    end
     make_path(path, id)
   rescue RuntimeError => error
     # noinspection RubyScope
@@ -85,8 +88,12 @@ module Search::Shared::LinkMethods
     url  = cfg[:download_url]
     url  = url[fmt] if url.is_a?(Hash)
     path = cfg[:download_path]
-    if path.blank? && (src.to_s == EmmaRepository.default)
-      path = request.base_url if respond_to?(:request)
+    if respond_to?(:request) && (src.to_s == EmmaRepository.default)
+      if path.blank?
+        path = request.base_url
+      elsif path.start_with?('/')
+        path = request.base_url + path
+      end
     end
     raise 'no download_path' if path.blank?
     raise 'no download_url'  if url.blank?

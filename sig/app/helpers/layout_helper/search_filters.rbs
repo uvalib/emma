@@ -506,7 +506,6 @@ module LayoutHelper::SearchFilters
   # @param [Hash]   opt           Passed to #link_to except for #MENU_OPT and:
   #
   # @option opt [String] :url     Default from #request_parameters.
-  # @option opt [String] :class   CSS classes for both spacer and button.
   # @option opt [String] :label   Button label.
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -528,9 +527,7 @@ module LayoutHelper::SearchFilters
   # A blank element used for occupying "voids" in the search control panel.
   #
   # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to #html_div except #MENU_OPT and:
-  #
-  # @option opt [String] :class       CSS classes for both spacer and button.
+  # @param [Hash]   opt               Passed to #html_div except #MENU_OPT.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

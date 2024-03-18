@@ -119,24 +119,24 @@ module LayoutHelper::SearchFilters
     # noinspection RubyMismatchedArgumentType
     #++
     def make_menu(menu_name, values, **opt)
-      if values.is_a?(Hash)
-        config, values = values, values[:values]
-      else
-        config = current_menu_config(menu_name)
-      end
-      unless (pairs = config[:menu])
-        pairs =
-          case values
-            when Array  then values
-            when String then config_section(values)
-            when Symbol then EnumType.pairs_for(values)
-          end
-        # noinspection RailsParamDefResolve
-        pairs ||= values.try(:pairs).presence
-        pairs ||= values.try(:values).presence
-        pairs ||= values
-        pairs = pairs.invert if pairs.is_a?(Hash)
-      end
+      config  = values.is_a?(Hash) ? values : current_menu_config(menu_name)
+      pairs   = config[:menu]
+      pairs ||=
+        case values
+          when Array
+            values
+          when Symbol
+            EnumType.pairs_for(values)&.invert || {}
+          when Hash
+            values[:values].is_a?(Hash) ? values[:values].invert : values
+          when String
+            values = "emma.#{values}" unless values.start_with?('emma.')
+            I18n.t(values, default: {}).invert
+          else
+            # noinspection RailsParamDefResolve
+            values = values.try(:pairs) || values.try(:values) || values
+            values.is_a?(Hash) ? values.invert : values
+        end
 
       # Transform a simple list of values into label/value pairs.
       if pairs.is_a?(Hash)
@@ -708,7 +708,7 @@ module LayoutHelper::SearchFilters
     **opt
   )
     target   = search_target(target) or return
-    local    = opt.slice!(:config, :default, *MENU_OPT)
+    local    = opt.extract!(:config, :default, *MENU_OPT)
     config   = local[:config] || current_menu_config(menu_name, target: target)
     default  = local.key?(:default) ? local[:default] : config[:default]
     url_prm  = (config[:url_param] || menu_name).to_sym
@@ -875,7 +875,7 @@ module LayoutHelper::SearchFilters
     **opt
   )
     target  = search_target(target) or return
-    local   = opt.slice!(:config, :default, *MENU_OPT)
+    local   = opt.extract!(:config, :default, *MENU_OPT)
     config  = local[:config] || current_menu_config(menu_name, target: target)
     default = local.key?(:default) ? local[:default] : config[:default]
     url_prm = (config[:url_param] || menu_name).to_sym
@@ -939,7 +939,6 @@ module LayoutHelper::SearchFilters
   # @param [Hash]   opt           Passed to #link_to except for #MENU_OPT and:
   #
   # @option opt [String] :url     Default from #request_parameters.
-  # @option opt [String] :class   CSS classes for both spacer and button.
   # @option opt [String] :label   Button label.
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -949,7 +948,7 @@ module LayoutHelper::SearchFilters
   # @see GridHelper#grid_cell_classes
   #
   def reset_button(css: '.menu-button.reset.preserve-width', **opt)
-    local = opt.slice!(:url, :class, :label, *MENU_OPT)
+    local = opt.extract!(:url, :label, *MENU_OPT)
     label = non_breaking(local[:label] || SEARCH_RESET_CONTROL[:label])
     url   = local[:url] || reset_parameters
     url   = url_for(url) if url.is_a?(Hash)
@@ -981,9 +980,7 @@ module LayoutHelper::SearchFilters
   # A blank element used for occupying "voids" in the search control panel.
   #
   # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to #html_div except #MENU_OPT and:
-  #
-  # @option opt [String] :class       CSS classes for both spacer and button.
+  # @param [Hash]   opt               Passed to #html_div except #MENU_OPT.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -991,7 +988,7 @@ module LayoutHelper::SearchFilters
   #
   def menu_spacer(css: '.menu-spacer', **opt)
     # Spacers shouldn't have the 'col-last' CSS class.
-    local = opt.slice!(:class, *MENU_OPT).except!(:col_max)
+    local = opt.extract!(*MENU_OPT).except!(:col_max)
     prepend_grid_cell_classes!(opt, css, **local)
     html_div(HTML_SPACE, **opt, 'aria-hidden': true)
   end
@@ -1013,7 +1010,7 @@ module LayoutHelper::SearchFilters
   #
   def control_label(name, target: nil, label: nil, css: '.menu-label', **opt)
     # Labels shouldn't have the 'col-last' CSS class.
-    local   = opt.slice!(:config, *MENU_OPT).except!(:col_max)
+    local   = opt.extract!(:config, *MENU_OPT).except!(:col_max)
     config  = local[:config] || current_menu_config(name, target: target)
     url_prm = (config[:url_param] || name).to_sym
 
