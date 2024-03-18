@@ -105,6 +105,7 @@ gem 'good_job'
 gem 'activerecord-session_store'
 
 # == Other
+gem 'csv'
 gem 'draper'
 gem 'iso-639'
 gem 'sanitize'
