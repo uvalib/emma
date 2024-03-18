@@ -19,7 +19,8 @@
 
     display:               grid;
     gap:                   0.25rem;
-    grid-template-columns: repeat(auto-fill, minmax(10vw,max-content));
+    justify-content:       space-between;
+    grid-template-columns: repeat(auto-fit, minmax(10vw,max-content));
 
     border:             1px solid gray;
     border-radius:      0.25rem;
@@ -30,11 +31,11 @@
     }
 
     @media #{$medium-width} {
-        grid-template-columns: repeat(auto-fill, minmax(20vw,max-content));
+        grid-template-columns: repeat(auto-fit, minmax(20vw,max-content));
     }
 
     @media #{$narrow-screen} {
-        grid-template-columns: repeat(auto-fill, minmax(33vw,max-content));
+        grid-template-columns: repeat(auto-fit, minmax(33vw,max-content));
         line-height:    1.5;
     }
 
@@ -215,17 +216,18 @@
 
     .select-group {
 
-        display: grid;
-        gap:     0.5rem;
+        display:            grid;
+        gap:                0.5rem;
+        justify-content:    space-between;
 
-        grid-template-columns:     repeat(auto-fill, minmax(10vw,max-content));
+        grid-template-columns:     repeat(auto-fit, minmax(10vw,max-content));
 
         @media #{$medium-width} {
-            grid-template-columns: repeat(auto-fill, minmax(20vw,max-content));
+            grid-template-columns: repeat(auto-fit, minmax(20vw,max-content));
         }
 
         @media #{$narrow-screen} {
-            grid-template-columns: repeat(auto-fill, minmax(25vw,max-content));
+            grid-template-columns: repeat(auto-fit, minmax(25vw,max-content));
             gap:                   0.25rem;
         }
 
