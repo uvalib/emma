@@ -1365,6 +1365,8 @@ class EnumType < ScalarType
     #
     # @return [Hash{Symbol=>Hash}]
     #
+    # @note Currently unused.
+    #
     def add_enumerations_from(i18n_path)
       config = get_configuration(i18n_path)
       raise "'#{i18n_path}' is not a Hash" unless config.is_a?(Hash)

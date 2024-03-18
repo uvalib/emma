@@ -726,6 +726,8 @@ class EnumType < ScalarType
     #
     # @return [Hash{Symbol=>Hash}]
     #
+    # @note Currently unused.
+    #
     def add_enumerations_from: (String i18n_path) -> Hash[Symbol,symHash]
 
     # Called from API record definitions to provide this base class with the
