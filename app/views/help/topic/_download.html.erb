@@ -4,9 +4,15 @@
 
   view_debug(__FILE__)
 
-  ace_title           = 'Downloading an ACE / Scholars Portal item'
-  ia_title            = 'Downloading an Internet Archive item'
-  emma_title          = 'Downloading an EMMA item'
+  topic               = t('emma.help.topic.download')
+
+  ace                 = topic[:ace]
+  ia                  = topic[:ia]
+  emma                = topic[:emma]
+
+  ace_title           = ace[:title]
+  ia_title            = ia[:title]
+  emma_title          = emma[:title]
 
   ace_logo            = repository_source_logo(:ace)
   ia_logo             = repository_source_logo(:internetArchive)

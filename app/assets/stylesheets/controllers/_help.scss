@@ -338,6 +338,18 @@
         margin-left: 1rem;
     }
 
+    // A list of definitions.
+    dl.list {
+
+        margin-left: 1rem;
+        display:     grid;
+        grid-template-columns: auto 1fr;
+
+        dt {
+            font-weight: bold;
+        }
+    }
+
     // Special notation paragraph.
     .caveat {
         font-weight: bold;

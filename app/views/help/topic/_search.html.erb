@@ -4,35 +4,69 @@
 
   view_debug(__FILE__)
 
-  summary_title     = 'OVERVIEW'
+  topic             = t('emma.help.topic.search')
+  administrator     = current_user&.administrator?
 
-  types_title       = 'Search Types'
-  q_title           = 'Keyword Search'
-  title_title       = 'Title Search'
-  creator_title     = 'Creator Search'
-  id_title          = 'Identifier Search'
+  overview          =  topic[:overview]
 
-  filters_title     = 'Filters'
-  single_title      = 'Simple Filters'
-  repo_title        = 'Repository'
-  multi_title       = 'Multi-select Filters'
-  format_title      = 'Format'
-  feature_title     = 'Feature'
-  access_title      = 'Accessibility'
+  types             =  topic[:types]
+  q_type            =  types[:q_type]
+  title_type        =  types[:title_type]
+  creator_type      =  types[:creator_type]
+  id_type           =  types[:id_type]
 
-  results_title     = 'Search Result Controls'
-  sort_title        = 'Sort By'
-  size_title        = 'Page Size'
+  filters           =  topic[:filters]
+  single            =  filters[:single]
+  repo              =  filters[:repo]
+  multi             =  filters[:multi]
+  format            =  filters[:format]
+  feature           =  filters[:feature]
+  access            =  filters[:access]
 
-  display_title     = 'Search Display Modes'
-  by_title_title    = 'Results By Title'
-  by_file_title     = 'Results By File'
+  results           =  topic[:results]
+  sort              =  results[:sort]
+  size              =  results[:size]
+
+  display           =  topic[:display]
+  by_title          =  display[:by_title]
+  by_file           =  display[:by_file]
+
+  url_params        = (topic[:url_params] if administrator)
+
+  overview_title    =  overview[:title]
+  types_title       =  types[:title]
+  q_title           =  q_type[:title]
+  title_title       =  title_type[:title]
+  creator_title     =  creator_type[:title]
+  id_title          =  id_type[:title]
+
+  filters_title     =  filters[:title]
+  single_title      =  single[:title]
+  repo_title        =  repo[:title]
+  multi_title       =  multi[:title]
+  format_title      =  format[:title]
+  feature_title     =  feature[:title]
+  access_title      =  access[:title]
+
+  results_title     =  results[:title]
+  sort_title        =  sort[:title]
+  size_title        =  size[:title]
+
+  display_title     =  display[:title]
+  by_title_title    =  by_title[:title]
+  by_file_title     =  by_file[:title]
+
+  url_params_title  = (url_params[:title] if url_params)
+  url_params_prod   = ('ecs-tasks/production/environment.vars' if url_params)
+  url_params_stag   = ('ecs-tasks/staging/environment.vars'    if url_params)
+
+  # Controls
 
   search            = config_item('emma.search_bar.button.label') || '[?]'
   search            = help_span(search, class: 'search-button')
   x                 = LayoutHelper::SearchBar::CLEAR_SEARCH_ICON
   x                 = html_span(x, title: 'X')
-  #type_closed      = help_image(:search_type_closed)
+ #type_closed       = help_image(:search_type_closed)
   type_opened       = help_image(:search_type_opened)
 
   panel_opener      = help_toggle(PanelHelper::PANEL_OPENER_LABEL)
@@ -49,7 +83,7 @@
 
   # Page anchors
 
-  summary_help      = 'search_overview_help'
+  overview_help     = 'search_overview_help'
 
   types_help        = 'search_type_help'
   q_help            = 'search_q_help'
@@ -73,6 +107,8 @@
   by_title_help     = 'search_by_title_help'
   by_file_help      = 'search_by_file_help'
 
+  url_params_help   = 'search_url_params_help'
+
 -%>
 
 <nav role="navigation" aria-labelledby="search_help_nav">
@@ -81,7 +117,7 @@
   </div>
   <ul>
     <li>
-      <a href="#<%= summary_help -%>"><%= summary_title -%></a>
+      <a href="#<%= overview_help -%>"><%= overview_title -%></a>
     </li>
     <li>
       <a href="#<%= types_help -%>"><%= types_title -%></a>
@@ -123,12 +159,15 @@
         <li><a href="#<%= by_file_help  -%>"><%= by_file_title  -%></a></li>
       </ul>
     </li>
+    <%- if url_params -%>
+      <li><a href="#<%= url_params_help -%>"><%= url_params_title -%></a></li>
+    <%- end -%>
   </ul>
 </nav>
 
-<section role="region" data-part="overview" aria-labelledby="<%= summary_help -%>">
+<section role="region" data-part="overview" aria-labelledby="<%= overview_help -%>">
 
-  <h2 class="section" id="<%= summary_help -%>"><%= summary_title -%></h2>
+  <h2 class="section" id="<%= overview_help -%>"><%= overview_title -%></h2>
 
   <p>
     A search term is required to begin.
@@ -572,3 +611,64 @@
   </p>
 
 </section>
+
+<%- if url_params -%>
+  <section role="region" aria-labelledby="<%= url_params_help -%>">
+
+    <h2 class="section" id="<%= url_params_help -%>"><%= url_params_title -%></h2>
+
+    <p>
+      Each deployed instance of EMMA has its own index so that "fake" EMMA
+      submissions performed on the staging instance do not show up in
+      production search results (and vice versa).
+    </p>
+
+    <p>
+      However, it is possible to specify which search engine (i.e., index) to
+      use within a browser session in order to test EMMA service behavior with
+      an alternate index, or to test an alternate index within the context of
+      actual EMMA search operations.
+    </p>
+
+    <p>
+      Providing a "/search?engine=NAME" parameter at the "/search" endpoint
+      will cause subsequent EMMA searches from your browser session to be
+      performed through an alternate search engine.
+      The "NAME" value is symbolic (URL values are not allowed for security
+      reasons) and may be one of the following configured values:
+    </p>
+
+    <dl class="list">
+      <dt>production</dt> <dd>The production index</dd>
+      <dt>staging</dt>    <dd>The staging index</dd>
+      <dt>test</dt>       <dd>A third alternate index</dd>
+      <dt>reset</dt>      <dd>Restore your session to the default index</dd>
+    </dl>
+
+    <p>
+      The URLs for the symbolic names are provided by environment variables
+      which are set in Terraform configuration files
+      <%= terraform_link(url_params_prod) %> for production EMMA and
+      <%= terraform_link(url_params_stag) %> for any other EMMA deployment:
+    </p>
+
+    <dl class="list">
+      <dt>production</dt> <dd>ENV[SERVICE_INGEST_PRODUCTION]</dd>
+      <dt>staging</dt>    <dd>ENV[SERVICE_INGEST_STAGING]</dd>
+      <dt>test</dt>       <dd>ENV[SERVICE_INGEST_TEST]</dd>
+    </dl>
+
+    <p>
+      Note an EMMA index implementation requires must implement both the EMMA
+      EMMA Unified Search API and the EMMA Unified Ingest API.
+      The latter must be overridden separately via "/upload?engine=NAME".
+    </p>
+
+    <p>
+      In either case, these settings affect only your browser session.
+      All other EMMA users will continue to operate with the default index
+      configured for that EMMA deployment.
+    </p>
+
+  </section>
+<%- end -%>

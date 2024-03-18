@@ -73,6 +73,66 @@ en:
           tooltip:      'Help with searching in EMMA'
           content:      ~ # @see file:app/views/help/topic/_search.html.erb
 
+          overview:
+            title:      'OVERVIEW'
+
+          types:
+            title:      'Search Types'
+
+            q_type:
+              title:    'Keyword Search'
+
+            title_type:
+              title:    'Title Search'
+
+            creator_type:
+              title:    'Creator Search'
+
+            id_type:
+              title:    'Identifier Search'
+
+          filters:
+            title:      'Filters'
+
+            single:
+              title:    'Simple Filters'
+
+            repo:
+              title:    'Repository'
+
+            multi:
+              title:    'Multi-select Filters'
+
+            format:
+              title:    'Format'
+
+            feature:
+              title:    'Feature'
+
+            access:
+              title:    'Accessibility'
+
+          results:
+            title:      'Search Result Controls'
+
+            sort:
+              title:    'Sort By'
+
+            size:
+              title:    'Page Size'
+
+          display:
+            title:      'Search Display Modes'
+
+            by_title:
+              title:    'Results By Title'
+
+            by_file:
+              title:    'Results By File'
+
+          url_params:
+            title:      'URL Engine Parameters'
+
         download:
           <<:           *TOPIC_TEMPLATE
           topic:        'downloads'
@@ -80,6 +140,15 @@ en:
           title:        'Downloading from EMMA'
           tooltip:      'Help with downloading files from EMMA'
           content:      ~ # @see file:app/views/help/topic/_download.html.erb
+
+          ace:
+            title:      'Downloading an ACE / Scholars Portal item'
+
+          ia:
+            title:      'Downloading an Internet Archive item'
+
+          emma:
+            title:      'Downloading an EMMA item'
 
         upload:
           <<:           *TOPIC_TEMPLATE
