@@ -683,10 +683,10 @@ class Upload < ApplicationRecord
       nil
     elsif item.is_a?(Hash)
       item[key] || item[key.to_s]
-    elsif item.try(:field_names)&.include?(key)
-      item[key]
     elsif item.respond_to?(key)
       item.send(key)
+    elsif item.try(:field_names)&.include?(key)
+      item[key]
     elsif item.respond_to?(:emma_metadata) # Upload, ManifestItem
       item.emma_metadata[key]
     end.presence || default

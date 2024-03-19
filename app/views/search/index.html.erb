@@ -31,22 +31,23 @@
   list_classes = %w[search-list]
   list_classes << 'scores' if dec.relevancy_scores?
 
-  opt = {}
+  titles       = title_results?
+  unit         = titles ? 'title' : 'record'
+  opt          = titles ? {} : { row: row }
 
-  opt[:row]    = row if file_results?
-  top, bottom  = dec.index_controls(**opt)
+  top, bottom  = dec.index_controls(**opt, unit: unit)
   bottom       = nil if list.blank?
 
   list_ctrls   = [top, dec.list_styles, dec.list_results]
   list_heading = page_heading(title, *list_ctrls, help: help)
   list_footing = nil
 
-  if title_results?
+  if titles
     list_footing = bottom
     top = bottom = nil
   else
     # Re-create for unique identifier on 'results' mode menu.
-    top = dec.index_controls(**opt).first
+    top, _ = dec.index_controls(**opt, unit: unit)
     opt[:row] += 1 if opt[:row].is_a?(Integer)
   end
 

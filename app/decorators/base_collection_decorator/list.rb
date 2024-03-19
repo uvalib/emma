@@ -85,7 +85,6 @@ module BaseCollectionDecorator::List
     trace_attrs!(opt)
     list   = opt.delete(:list) || object || []
     unit   = opt.delete(:unit) || config_text(:list, :unit)
-    unit   = nil unless list.try(:first)&.aggregate?
 
     ctrls  = list_controls(**opt)
     links  = pagination_controls
