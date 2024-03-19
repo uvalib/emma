@@ -273,9 +273,6 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     def field_value: ((Search::Record::MetadataRecord|symHash) rec, (Symbol|String) field) -> (untyped | nil)
 
-    # @private
-    IDENTIFIER_FIELDS: symArray
-
     # Combined information from the values of the given fields of all of the
     # records.
     #
@@ -285,6 +282,14 @@ class Search::Record::TitleRecord < Search::Api::Record
     # @return [Hash{Symbol=>any}]
     #
     def field_union: (Array[Search::Record::MetadataRecord] recs, symArray fields) -> symHash
+
+    private
+
+    # Indicate whether the field is related to standard identifiers.
+    #
+    # @param [Symbol, nil] field
+    #
+    def id_field?: (Symbol|nil field) -> bool
 
     private
 

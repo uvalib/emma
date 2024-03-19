@@ -393,27 +393,28 @@ class Search::Record::TitleRecord < Search::Api::Record
             Log.debug { "#{__method__}: ignoring field = #{field.inspect}" }
         end
       end
-      id_fld = field && IDENTIFIER_FIELDS.include?(field)
       case value
         when Number
           value.number_value
         when Model
           make_comparable(value.fields)
         when Hash
-          # noinspection RubyMismatchedReturnType
           value.map { |k, v|
-            v = make_comparable(v, k)
-            [k, v] if v.present?
-          }.compact.sort_by! { |kv| kv&.first || '' }.to_h
+            [k, make_comparable(v, k)]
+          }.compact_blank!.sort_by! { |kv| kv&.first || '' }.to_h
         when Array
-          if id_fld
+          if id_field?(field)
             value.compact_blank.sort_by! { |v| identifier_sort_key(v) }
           else
             value.map { |v| make_comparable(v) }.compact_blank!.sort!
           end
         else
           # noinspection RubyMismatchedReturnType
-          id_fld ? value : value.to_s.downcase.gsub(/[[:punct:]]/, ' ').squish
+          if id_field?(field)
+            value
+          else
+            value.to_s.downcase.gsub(/[[:punct:]]/, ' ').squish
+          end
       end
     end
 
@@ -488,9 +489,6 @@ class Search::Record::TitleRecord < Search::Api::Record
 
     public
 
-    # @private
-    IDENTIFIER_FIELDS = Api::Shared::IdentifierMethods::IDENTIFIER_FIELDS
-
     # Combined information from the values of the given fields of all of the
     # records.
     #
@@ -512,7 +510,7 @@ class Search::Record::TitleRecord < Search::Api::Record
       result.map { |field, value|
         next if value.blank?
         if value.many?
-          if IDENTIFIER_FIELDS.include?(field)
+          if id_field?(field)
             value.sort_by! { |v| identifier_sort_key(v) }.uniq!
           else
             value.sort_by! { |v| make_comparable(v, field) }
@@ -522,6 +520,20 @@ class Search::Record::TitleRecord < Search::Api::Record
         value = value.join(' / ') unless array[field]
         [field, value]
       }.compact.to_h
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    private
+
+    # Indicate whether the field is related to standard identifiers.
+    #
+    # @param [Symbol, nil] field
+    #
+    def id_field?(field)
+      Api::Shared::IdentifierMethods::IDENTIFIER_FIELDS.include?(field)
     end
 
     # =========================================================================

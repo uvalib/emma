@@ -77,15 +77,16 @@ module Api::Shared::DateMethods
   # Produce day values of the form "YYYY-MM-DD".
   #
   # @param [Hash, nil] data           Default: *self*
-  # @param [Symbol]    mode           Default: `#date_array_mode`.
+  # @param [Hash]      opt            Passed to #update_field_value!.
+  #
+  # @option opt [Symbol] :mode        Default: `#date_array_mode`.
   #
   # @return [void]
   #
-  def normalize_day_fields!(data = nil, mode = nil)
-    mode ||= date_array_mode
+  def normalize_day_fields!(data = nil, **opt)
+    opt[:mode] ||= date_array_mode
     day_fields.each do |field|
-      # noinspection RubyMismatchedArgumentType
-      update_field_value!(data, field, mode) { |v| normalize_dates(v) }
+      update_field_value!(data, field, **opt) { |v| normalize_dates(v) }
     end
   end
 

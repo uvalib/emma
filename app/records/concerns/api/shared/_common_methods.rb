@@ -362,31 +362,43 @@ module Api::Shared::CommonMethods
   #
   def set_field_value!(data, field, value)
     value = value.presence
-    if !data.is_a?(Hash)
-      try("#{field}=", value)
-    elsif value
-      data[field] = value
-    elsif data.key?(field)
-      data.delete(field)
+    if data.is_a?(Hash)
+      if value
+        data[field] = value
+      else
+        data.delete(field)
+      end
+    else
+      if respond_to?((meth = :"#{field}="))
+        send(meth, value)
+      else
+        Log.warn do
+          "#{__method__}: #{field}: unexpected #{value.class} #{value.inspect}"
+        end
+      end
     end
   end
 
   # Update the target field.
   #
-  # @param [Hash, nil]   data         Default: *self*.
-  # @param [Symbol]      field
-  # @param [Symbol, nil] mode         One of #ARRAY_MODES.
+  # @param [Hash, nil]    data        Default: *self*.
+  # @param [Symbol]       field
+  # @param [Symbol, nil]  mode        One of #ARRAY_MODES.
+  # @param [Integer, nil] limit       Limit the number of array values.
   #
   # @return [void]
   #
   # @yield [value] Generate a replacement value
-  # @yieldparam [any, nil] value      The current field value.
-  # @yieldreturn [Array]              The new field value(s).
+  # @yieldparam [Array] values        The current field value.
+  # @yieldreturn [any, nil]           The new field value(s).
   #
-  def update_field_value!(data, field, mode = nil)
+  def update_field_value!(data, field, mode: nil, limit: nil, **)
     value = get_field_value(data, field)
     array = value.is_a?(Array)
-    value = Array.wrap(yield(value) || value)
+    value = Array.wrap(value)
+    # noinspection RubyMismatchedArgumentType
+    value = value.take(limit) if non_negative(limit)
+    value = Array.wrap(yield(value) || value) if block_given?
     case mode
       when :required  then # Keep value as array.
       when :forbidden then value = value.first

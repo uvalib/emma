@@ -19,11 +19,27 @@ module Api::Shared::IdentifierMethods
 
   public
 
+  # Limit on the number of individual values to keep for an identifier field.
+  #
+  # This is necessary because certain IA records have a *absurd* number of
+  # :dc_identifier and/or :dc_relation values (2500 in some cases) and there's
+  # no benefit in showing (let alone processing) all of those.
+  #
+  # @type [Integer]
+  #
+  MAX_IDENTIFIERS = 4
+
+  # Fields involving standard identifiers.
+  #
+  # @type [Array<Symbol>]
+  #
+  RELATION_FIELDS = %i[dc_relation dc_identifier].freeze
+
   # Fields whose value(s) should be prefixed by standard identifier type.
   #
   # @type [Array<Symbol>]
   #
-  IDENTIFIER_FIELDS = %i[dc_identifier dc_relation].freeze
+  IDENTIFIER_FIELDS = RELATION_FIELDS
 
   # ===========================================================================
   # :section:
@@ -59,15 +75,18 @@ module Api::Shared::IdentifierMethods
   # Produce standard identifiers of the form "(prefix):(value)".
   #
   # @param [Hash, nil] data           Default: *self*
-  # @param [Symbol]    mode           Default: `#id_array_mode`.
+  # @param [Hash]      opt            Passed to #update_field_value!.
+  #
+  # @option opt [Integer] :limit      Default: #MAX_IDENTIFIERS.
+  # @option opt [Symbol]  :mode       Default: `#id_array_mode`.
   #
   # @return [void]
   #
-  def normalize_identifier_fields!(data = nil, mode = nil)
-    mode ||= id_array_mode
+  def normalize_identifier_fields!(data = nil, **opt)
+    opt[:limit] ||= MAX_IDENTIFIERS
+    opt[:mode]  ||= id_array_mode
     identifier_fields.each do |field|
-      # noinspection RubyMismatchedArgumentType
-      update_field_value!(data, field, mode) { |v| normalize_identifiers(v) }
+      update_field_value!(data, field, **opt) { |v| normalize_identifiers(v) }
     end
   end
 
@@ -98,9 +117,6 @@ module Api::Shared::IdentifierMethods
 
   public
 
-  # @private
-  RELATION_FIELDS = %i[dc_relation dc_identifier].freeze
-
   # Ensure that "related identifiers" doesn't include values which are already
   # included in the reported identifiers for the item.
   #
@@ -108,9 +124,13 @@ module Api::Shared::IdentifierMethods
   #
   # @return [void]
   #
+  # == Usage Notes
+  # Make sure that this is invoked after #normalize_identifier_fields! to
+  # ensure that #MAX_IDENTIFIERS has been applied to limit the number of array
+  # elements in each field.
+  #
   def clean_dc_relation!(data = nil)
     related, std_ids = get_field_values(data, *RELATION_FIELDS)
-    return if related.blank? || std_ids.blank?
     related = Array.wrap(related) - Array.wrap(std_ids)
     set_field_value!(data, :dc_relation, related)
   end

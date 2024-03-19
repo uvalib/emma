@@ -5,6 +5,22 @@ module Api::Shared::IdentifierMethods
 
   extend ::Api::Shared::IdentifierMethods
 
+  # Limit on the number of individual values to keep for an identifier field.
+  #
+  # This is necessary because certain IA records have a *absurd* number of
+  # :dc_identifier and/or :dc_relation values (2500 in some cases) and there's
+  # no benefit in showing (let alone processing) all of those.
+  #
+  # @type [Integer]
+  #
+  MAX_IDENTIFIERS: Integer
+
+  # Fields involving standard identifiers.
+  #
+  # @type [Array<Symbol>]
+  #
+  RELATION_FIELDS: symArray
+
   # Fields whose value(s) should be prefixed by standard identifier type.
   #
   # @type [Array<Symbol>]
@@ -29,11 +45,14 @@ module Api::Shared::IdentifierMethods
   # Produce standard identifiers of the form "(prefix):(value)".
   #
   # @param [Hash, nil] data           Default: *self*
-  # @param [Symbol]    mode           Default: `#id_array_mode`.
+  # @param [Hash]      opt            Passed to #update_field_value!.
+  #
+  # @option opt [Integer] :limit      Default: #MAX_IDENTIFIERS.
+  # @option opt [Symbol]  :mode       Default: `#id_array_mode`.
   #
   # @return [void]
   #
-  def normalize_identifier_fields!: (?(symHash|nil) data, ?(Symbol|nil) mode) -> void
+  def normalize_identifier_fields!: (?(symHash|nil) data, **untyped opt) -> void
 
   # Produce standard identifiers of the form "(prefix):(value)".
   #
@@ -52,15 +71,17 @@ module Api::Shared::IdentifierMethods
   #
   def normalize_identifier: ((String|PublicationIdentifier|nil) value) -> (String | nil)
 
-  # @private
-  RELATION_FIELDS: symArray
-
   # Ensure that "related identifiers" doesn't include values which are already
   # included in the reported identifiers for the item.
   #
   # @param [Hash, nil] data           Default: *self*.
   #
   # @return [void]
+  #
+  # == Usage Notes
+  # Make sure that this is invoked after #normalize_identifier_fields! to
+  # ensure that #MAX_IDENTIFIERS has been applied to limit the number of array
+  # elements in each field.
   #
   def clean_dc_relation!: (?(symHash|nil) data) -> void
 

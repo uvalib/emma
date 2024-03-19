@@ -40,11 +40,13 @@ module Api::Shared::DateMethods
   # Produce day values of the form "YYYY-MM-DD".
   #
   # @param [Hash, nil] data           Default: *self*
-  # @param [Symbol]    mode           Default: `#date_array_mode`.
+  # @param [Hash]      opt            Passed to #update_field_value!.
+  #
+  # @option opt [Symbol] :mode        Default: `#date_array_mode`.
   #
   # @return [void]
   #
-  def normalize_day_fields!: (?(symHash|nil) data, ?(Symbol|nil) mode) -> void
+  def normalize_day_fields!: (?(symHash|nil) data, **untyped opt) -> void
 
   # Produce dates of the form "YYYY-MM-DD".
   #

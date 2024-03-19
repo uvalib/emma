@@ -221,17 +221,18 @@ module Api::Shared::CommonMethods
 
   # Update the target field.
   #
-  # @param [Hash, nil]   data         Default: *self*.
-  # @param [Symbol]      field
-  # @param [Symbol, nil] mode         One of #ARRAY_MODES.
+  # @param [Hash, nil]    data        Default: *self*.
+  # @param [Symbol]       field
+  # @param [Symbol, nil]  mode        One of #ARRAY_MODES.
+  # @param [Integer, nil] limit       Limit the number of array values.
   #
   # @return [void]
   #
   # @yield [value] Generate a replacement value
-  # @yieldparam [any, nil] value      The current field value.
-  # @yieldreturn [Array]              The new field value(s).
+  # @yieldparam [Array] values        The current field value.
+  # @yieldreturn [any, nil]           The new field value(s).
   #
-  def update_field_value!: ((symHash|nil) data, Symbol field, ?(Symbol|nil) mode) { (untyped) -> untyped } -> void
+  def update_field_value!: ((symHash|nil) data, Symbol field, ?mode: Symbol|nil, ?limit: Integer|nil, **untyped _ignored) { (anyArray values) -> untyped } -> void
 
   # Get the indicated field values from the indicated target.
   #
