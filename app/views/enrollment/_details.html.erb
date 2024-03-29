@@ -1,0 +1,33 @@
+<%# app/views/enrollment/_details.html.erb -%>
+<%-
+  # EMMA enrollment request details.
+
+  view_debug(__FILE__)
+
+  item  ||= nil
+  dec   ||= item && EnrollmentDecorator.new(item, **context) or return
+
+  level ||= 1
+  skip  ||= nil
+
+  skip    = [*skip]
+  heading =
+    if (level == 1) && !skip.include?(:title)
+      title ||= config_text(:enrollment, :details, :title)
+      html_tag((level + 1), title, class: 'details-heading')
+    end
+
+  only      ||= nil
+  except    ||= nil
+  details   ||= true
+
+-%>
+
+<%- if details -%>
+
+  <div class="enrollment-section details-section">
+    <%= heading %>
+    <%= dec.details(only: only, except: except) %>
+  </div>
+
+<%- end -%>

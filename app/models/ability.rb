@@ -298,6 +298,7 @@ class Ability
   def act_as_anonymous(...)
     can :show,   Upload
     can :backup, Upload
+    can :create, Enrollment
   end
 
   # ===========================================================================

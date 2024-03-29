@@ -1,0 +1,129 @@
+# Handle "/enrollment" requests.
+#
+class EnrollmentController < ApplicationController
+  include UserConcern
+
+  include ParamsConcern
+
+  include SessionConcern
+
+  include RunStateConcern
+
+  include PaginationConcern
+
+  include EnrollmentConcern
+
+  # :nocov:
+  #include AbstractController::Callbacks
+
+  ANON_OPS: symArray
+
+  @list: Array[Enrollment] | nil
+
+  # API results for :index.
+  #
+  # @return [Array<Enrollment>]
+  #
+  attr_reader list: Array[Enrollment]
+
+  # API results for :show.
+  #
+  # @return [Enrollment, nil]
+  #
+  attr_reader item: Enrollment | nil
+
+  # === GET /enrollment
+  #
+  # List EMMA enrollment requests.
+  #
+  # @see #enrollment_index_path       Route helper
+  #
+  def index: () -> void
+
+  # === GET /enrollment/:id
+  #
+  # Display details of a EMMA enrollment request.
+  #
+  # @see #show_enrollment_path        Route helper
+  #
+  def show: () -> void
+
+  # === GET /enrollment/new
+  #
+  # @see #new_enrollment_path         Route helper
+  #
+  def new: () -> void
+
+  # === POST  /enrollment/create
+  # === PUT   /enrollment/create
+  # === PATCH /enrollment/create
+  #
+  # @see #create_enrollment_path      Route helper
+  #
+  def create: () -> void
+
+  # === GET /enrollment/edit/(:id)
+  #
+  # Display a form for modification of an existing EMMA enrollment request.
+  #
+  # Redirects to #edit_select if :id is not given.
+  #
+  # @see #edit_enrollment_path        Route helper
+  #
+  def edit: () -> void
+
+  # === POST  /enrollment/update/:id
+  # === PUT   /enrollment/update/:id
+  # === PATCH /enrollment/update/:id
+  #
+  # @see #update_enrollment_path      Route helper
+  #
+  def update: () -> void
+
+  # === GET /enrollment/delete/(:id)
+  #
+  # Redirects to #delete_select if :id is not given.
+  #
+  # @see #delete_enrollment_path      Route helper
+  #
+  def delete: () -> void
+
+  # === DELETE /enrollment/destroy/:id
+  #
+  # @see #destroy_enrollment_path     Route helper
+  #
+  def destroy: () -> void
+
+  # === GET /enrollment/show_select
+  #
+  # Show a menu to select a EMMA enrollment request to show.
+  #
+  # @see #show_select_enrollment_path     Route helper
+  #
+  def show_select: () -> void
+
+  # === GET /enrollment/edit_select
+  #
+  # Show a menu to select a EMMA enrollment request to edit.
+  #
+  # @see #edit_select_enrollment_path     Route helper
+  #
+  def edit_select: () -> void
+
+  # === GET /enrollment/delete_select
+  #
+  # Show a menu to select a EMMA enrollment request to delete.
+  #
+  # @see #delete_select_enrollment_path   Route helper
+  #
+  def delete_select: () -> void
+
+  # === POST  /enrollment/finalize/:id
+  #
+  # Finalize an EMMA enrollment request by creating a new Org and User, and
+  # removing the Enrollment record.
+  #
+  # @see #finalize_enrollment_path      Route helper
+  #
+  def finalize: () -> void
+end

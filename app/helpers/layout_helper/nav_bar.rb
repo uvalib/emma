@@ -122,8 +122,9 @@ module LayoutHelper::NavBar
           tip    = CONTROLLER_TOOLTIP[controller]
           hidden =
             case controller
-              when :org then !current_user
-              when :sys then !current_user&.developer?
+              when :org        then !current_user
+              when :sys        then !current_user&.developer?
+              when :enrollment then !current_user&.administrator?
             end
         end
 

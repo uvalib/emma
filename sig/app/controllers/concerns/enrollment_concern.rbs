@@ -1,0 +1,170 @@
+# Support methods for the "/enrollment" controller.
+#
+module EnrollmentConcern
+  extend ActiveSupport::Concern
+
+  include RecaptchaHelper
+
+  include ModelConcern
+
+  # @private
+  # @type [Array<Symbol>]
+  NAME_FIELD_KEYS: symArray
+
+  # Add a new Enrollment record to the database.
+  #
+  # @param [Hash, nil] prm            Field values (def: `#current_params`).
+  # @param [Boolean]   fatal          If *false*, use #save not #save!.
+  # @param [Hash]      opt            Added field values.
+  #
+  # @option opt [Boolean] force       If *true* allow setting of :id.
+  #
+  # @return [Enrollment]              The new Enrollment record.
+  #
+  # @yield [attr] Adjust attributes and/or raise an exception.
+  # @yieldparam [Hash] attr           Supplied attributes for the new record.
+  # @yieldreturn [void]
+  #
+  def create_record: (?symHash? prm, ?fatal: bool, **untyped opt) ?{ (symHash attr) -> void } -> Enrollment
+
+  # Start editing an existing Enrollment record.
+  #
+  # @param [any, nil] item            Default: the record for #identifier.
+  # @param [Hash]     opt             Passed to #find_record.
+  #
+  # @raise [Record::StatementInvalid] If :id not given.
+  # @raise [Record::NotFound]         If *item* was not found.
+  #
+  # @return [Enrollment, nil] A fresh instance unless *item* is an Enrollment.
+  #
+  # @yield [record] Raise an exception if the record is not acceptable.
+  # @yieldparam [Enrollment] record May be altered by the block.
+  # @yieldreturn [void]                 Block not called if *record* is *nil*.
+  #
+  def edit_record: (?(String|Integer|Model|symHash|nil) item, **untyped opt) ?{ (Enrollment record) -> void } -> (Enrollment | nil)
+
+  # Update the indicated Enrollment record.
+  #
+  # @param [any, nil] item            Default: the record for #identifier.
+  # @param [Boolean]  fatal           If *false* use #update not #update!.
+  # @param [Hash]     opt             Field values (default: `#current_params`)
+  #
+  # @raise [Record::NotFound]               Record could not be found.
+  # @raise [ActiveRecord::RecordInvalid]    Record update failed.
+  # @raise [ActiveRecord::RecordNotSaved]   Record update halted.
+  #
+  # @return [Enrollment, nil]                The updated Enrollment record.
+  #
+  # @yield [record, attr] Raise an exception if the record is not acceptable.
+  # @yieldparam [Enrollment] record May be altered by the block
+  # @yieldparam [Hash] attr             New field(s) to be assigned to *record*
+  # @yieldreturn [void]                 Block not called if *record* is *nil*
+  #
+  def update_record: (?(String|Integer|Model|symHash|nil) item, ?fatal: bool, **untyped opt) ?{ (Enrollment record, symHash attr) -> void } -> (Enrollment | nil)
+
+  # Retrieve the indicated Enrollment record(s) for the '/delete' page.
+  #
+  # @param [any, nil] items           To #search_records
+  # @param [Hash]     opt             Default: `#current_params`
+  #
+  # @raise [RangeError]               If :page is not valid.
+  #
+  # @return [Paginator::Result]
+  #
+  # @yield [items, opt] Raise an exception unless the *items* are acceptable.
+  # @yieldparam [Array] items         Identifiers of items to be deleted.
+  # @yieldparam [Hash]  options       Options to #search_records.
+  # @yieldreturn [void]               Block not called if *record* is *nil*.
+  #
+  def delete_records: (?(Model|String|Integer|Array[Model|String|Integer]|nil) items, **untyped opt) ?{ (Array[Model|String|Integer] items, symHash options) -> void } -> Paginator::Result
+
+  # Remove the indicated Enrollment record(s).
+  #
+  # @param [any, nil] items
+  # @param [Boolean]  fatal           If *false* do not #raise_failure.
+  # @param [Hash]     opt             Default: `#current_params`
+  #
+  # @raise [Record::SubmitError]      If there were failure(s).
+  #
+  # @return [Array]                   Destroyed Enrollment records.
+  #
+  # @yield [record] Called for each record before deleting.
+  # @yieldparam [Enrollment] record
+  # @yieldreturn [String,nil]         Error message if *record* unacceptable.
+  #
+  def destroy_records: (?(Model|String|Integer|Array[Model|String|Integer]|nil) items, ?fatal: bool, **untyped opt) ?{ (Enrollment record) -> (String | nil) } -> Array[Enrollment]
+
+  # Normalize a *field* value from input.
+  #
+  # @param [Symbol]   field
+  # @param [any, nil] value
+  #
+  # @raise [Record::SubmitError]      If *value* is not acceptable for *field*.
+  #
+  # @return [String]                  Normalized value.
+  #
+  def normalize_input: (Symbol field, untyped value) -> String
+
+  # Normalize a :long_name value.
+  #
+  # @param [any, nil] value
+  #
+  # @raise [Record::SubmitError]      If *value* is not acceptable for *field*.
+  #
+  # @return [String]                  Normalized value.
+  #
+  def normalize_long_name: (untyped value) -> String
+
+  # Normalize a :short_name value.
+  #
+  # @param [any, nil] value
+  #
+  # @raise [Record::SubmitError]      If *value* is not acceptable for *field*.
+  #
+  # @return [String]                  Normalized value.
+  #
+  def normalize_short_name: (untyped value) -> String
+
+  # Return with an error message value if any of the fields of *attr* would
+  # result in a non-unique Enrollment or, ultimately, Organization.
+  #
+  # @param [Hash]          attrs      Enrollment fields/values.
+  # @param [Model, nil]    current    Existing record if *attr* is an update.
+  # @param [Array<Symbol>] keys       Only check these fields.
+  #
+  # @raise [Record::SubmitError]      If uniqueness would be violated.
+  #
+  # @return [void]
+  #
+  def check_unique: (symHash attrs, ?current: Model|nil, ?keys: symArray|nil) -> void
+
+  def default_fallback_location: () -> untyped
+
+  # Create an Options instance from the current parameters.
+  #
+  # @return [Enrollment::Options]
+  #
+  def get_model_options: () -> Enrollment::Options
+
+  # Create a Paginator for the current controller action.
+  #
+  # @param [Class<Paginator>] paginator  Paginator class.
+  # @param [Hash]             opt        Passed to super.
+  #
+  # @return [Enrollment::Paginator]
+  #
+  def pagination_setup: (?paginator: Class, **untyped opt) -> Enrollment::Paginator
+
+  # Finalize an EMMA enrollment request by creating a new Org and User, and
+  # removing the Enrollment record.
+  #
+  # @param [any, nil] item            Default: the record for #identifier.
+  # @param [Hash]     opt             Passed to #find_record.
+  #
+  # @return [Enrollment, nil]
+  #
+  def finalize_enrollment: (untyped item, **untyped opt) -> (Enrollment | nil)
+  private
+
+  THIS_MODULE: Module
+end

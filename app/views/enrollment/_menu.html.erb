@@ -1,0 +1,11 @@
+<%# app/views/enrollment/_menu.html.erb -%>
+<%-
+  # Show a menu of EMMA enrollment requests to operate on per params[:action].
+
+  view_debug(__FILE__)
+
+  dec ||= EnrollmentDecorator.new(**context)
+
+-%>
+
+<%= render 'layouts/menu_page', dec: dec %>

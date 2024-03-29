@@ -1,0 +1,63 @@
+# An EMMA enrollment request contains fields needed to generate a new Org
+# record and at least one new User record (the new organization's manager).
+#
+class Enrollment < ApplicationRecord
+  include Model
+
+  include Record
+
+  include Record::Assignable
+
+  include Record::Searchable
+
+  include Record::Sortable
+
+  include Record::Testing
+
+  include Record::Debugging
+
+  include Enrollment::Config
+
+  include Enrollment::Assignable
+
+  # :nocov:
+  #include Record::Rendering
+  #extend  Record::Rendering
+
+  # A short textual representation for the record instance.
+  #
+  # @param [Enrollment, nil] item     Default: self.
+  #
+  # @return [String, nil]
+  #
+  def abbrev: (?(Enrollment|nil) item) -> (String | nil)
+
+  # A textual label for the record instance.
+  #
+  # @param [Enrollment, nil] item     Default: self.
+  #
+  # @return [String, nil]
+  #
+  def label: (?(Enrollment|nil) item) -> (String | nil)
+
+  # Create a new instance.
+  #
+  # @param [Enrollment, Hash, nil] attr   To #assign_attributes via super.
+  #
+  # @note - for dev traceability
+  #
+  def initialize: (?(Enrollment|prmHash|nil) attr) ?{ () -> untyped } -> void
+
+  # Use the current Enrollment instance to create an Org record and one or more
+  # User records.
+  #
+  # @param [DateTime] now             Time of update; default: `DateTime.now`.
+  #
+  # @return [Array<(Org,Array<User>)]
+  #
+  # == Usage Notes
+  # The caller should remove the record associated with the current instance
+  # if the result of this method is satisfactory.
+  #
+  def complete_enrollment: (**untyped opt) -> [Org, Array[User]]
+end

@@ -42,6 +42,12 @@ class Field::Type
   #
   attr_reader valid: bool
 
+  # Optional data associated with the instance.
+  #
+  # @return [Hash]
+  #
+  attr_reader option: symHash
+
   # Initialize a new instance.
   #
   # @param [any, nil]            src    Symbol, Model
@@ -49,8 +55,9 @@ class Field::Type
   # @param [FieldConfig, nil]    prop
   # @param [Symbol, String, nil] model  (Only used if *prop* is missing.)
   # @param [any, nil]            value
+  # @param [Hash]                opt    To #options if present.
   #
-  def initialize: (untyped src, ?(Symbol|nil) field, ?prop: FieldConfig|nil, ?model: (Symbol|String|nil), ?value: untyped|nil) -> void
+  def initialize: (untyped src, ?(Symbol|nil) field, ?prop: FieldConfig|nil, ?model: (Symbol|String|nil), ?value: untyped|nil, **untyped opt) -> void
 
   # The resolved value for this field instance.
   #

@@ -98,6 +98,7 @@ module BaseDecorator::Form
     action    ||= context[:action]
     separator ||= DEFAULT_ELEMENT_SEPARATOR
     opt[:row]   = 0
+    row_count   = nil
     trace_attrs!(opt)
 
     value_pairs(**vp_opt).map { |label, value|
@@ -120,7 +121,10 @@ module BaseDecorator::Form
       value = list_field_value(value, field: field)
       value = field_for(field, value: value.presence, prop: prop)
 
-      opt[:row]  += 1
+      # Update row based on the number of row(s) the previous pair displaced.
+      opt[:row]  += (positive(row_count) || 1)
+      row_count   = value.option[:row_count]
+
       opt[:field] = field
       opt[:prop]  = prop
       opt[:index] = (0 if prop[:readonly])
@@ -252,6 +256,7 @@ module BaseDecorator::Form
     prepend_css!(opt, "pos-#{pos}") if pos
     prepend_css!(opt, "col-#{col}") if col
     prepend_css!(opt, "row-#{row}") if row
+    opt.merge!(row: row)            if row
     parts = []
 
     # Label for input element.
@@ -355,7 +360,7 @@ module BaseDecorator::Form
   UNSET_MENU_ITEM = config_text(:form, :unset).freeze
 
   # @private
-  MENU_SINGLE_OPT = %i[name base fixed readonly constraints].freeze
+  MENU_SINGLE_OPT = %i[name base fixed readonly constraints row].freeze
 
   # Single-select menu - drop-down.
   #
@@ -411,7 +416,7 @@ module BaseDecorator::Form
   end
 
   # @private
-  MENU_MULTI_OPT = %i[id name base fixed readonly inner outer].freeze
+  MENU_MULTI_OPT = %i[id name base fixed readonly inner outer row].freeze
 
   # Multi-select menu - scrollable list of checkboxes.
   #

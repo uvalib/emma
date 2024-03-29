@@ -489,6 +489,7 @@ AppDebug.file('shared/assets.js.erb');
  * @property {ModelProperties}    Org
  * @property {ModelProperties}    User
  * @property {ModelProperties}    Account
+ * @property {ModelProperties}    Enrollment
  * @property {ModelProperties}    Upload
  * @property {ModelProperties}    Manifest
  * @property {ModelProperties}    ManifestItem
@@ -653,6 +654,7 @@ export const Emma = (function() {
     const Org =             o$('<%= js OrgDecorator.js_properties %>'),
           User =            o$('<%= js UserDecorator.js_properties %>'),
           Account =         o$('<%= js AccountDecorator.js_properties %>'),
+          Enrollment =      o$('<%= js EnrollmentDecorator.js_properties %>'),
           Upload =          o$('<%= js UploadDecorator.js_properties %>'),
           Manifest =        o$('<%= js ManifestDecorator.js_properties %>'),
           ManifestItem =    o$('<%= js ManifestItemDecorator.js_properties %>');
@@ -867,6 +869,7 @@ export const Emma = (function() {
         Org,
         User,
         Account,
+        Enrollment,
         Upload,
         Manifest,
         ManifestItem,

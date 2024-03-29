@@ -1,0 +1,343 @@
+# config/locales/controllers/enrollment.en.yml
+#
+# EMMA enrollment request controller pages
+
+en:
+
+  emma:
+
+    enrollment:
+
+      unit:
+        brief:          'request'
+        long:           'enrollment request'
+      label:            'Enroll'
+      title:            'EMMA Enrollment'
+      tooltip:          'Show EMMA enrollment requests'
+
+      subsystem:
+        database:       true
+
+      # =======================================================================
+      # Messages (overriding "en.emma.messages")
+      # =======================================================================
+
+      messages:
+
+        success:        'XXX EMMA enrollment was successfully %{actioned}.'
+        failure:        'Could not %{action} EMMA enrollment: %{error}'
+
+        model_name:     'Enrollment Request'
+        select:         'Select an enrollment request'
+
+        details:
+          title:        'Enrollment Request Details'
+
+        enroll:
+          link:         'Enroll your organization now'
+          production:
+            link:       'Click here to enroll on the EMMA production system.'
+
+      # =======================================================================
+      # Search endpoint
+      # =======================================================================
+
+      search:           # TODO: ?
+        action:         index
+
+      # =======================================================================
+      # Layout
+      # =======================================================================
+
+      search_type:
+
+        like:
+          name:         'Filter'
+          label:        'Filter by account:'
+          placeholder:  'Partial email or name...'
+
+      search_bar:
+#       enabled:        [index]
+        enabled:        false
+        label:          'Organization Filter'
+
+      search_filters:
+#       enabled:        [index]
+        enabled:        false
+
+        layout:
+          - [sort, size, ~, ~]
+
+      page_controls:
+        label:          'Enrollment Actions:'
+        actions:
+          - index
+          - show_select
+          - new
+          - edit_select
+          - delete_select
+
+      # =======================================================================
+      # Controls
+      # =======================================================================
+
+      action_links:
+
+        index:
+          label:        'List all EMMA enrollment requests'
+
+        new:
+          label:        'Create %{an} EMMA enrollment request'
+
+        edit_select:
+          label:        'Modify %{an} existing EMMA enrollment request'
+
+        delete_select:
+          label:        'Remove %{an} existing EMMA enrollment request'
+
+      # =======================================================================
+      # Fields
+      # =======================================================================
+
+      display_fields: # Overrides order of 'en.emma.enrollment.record'
+        - id
+        - long_name
+        - short_name
+        - ip_domain
+        - org_users
+        - request_notes
+        - admin_notes
+        - updated_at
+        - created_at
+
+      # =======================================================================
+      # Pages
+      # =======================================================================
+
+      generic:
+        label:          'EMMA Enrollment Request'
+        title:          'EMMA Enrollment Request'
+        tooltip:        '(A brief description of this operation)'
+        description:    '(A more detailed description of this operation)'
+        directions:     '(Brief guidance for using the operation form)'
+        notes:          '(A more detailed description of this operation)'
+
+        submit:         &GENERIC_SUBMIT
+          label:        'Submit'
+          if_enabled:
+            tooltip:    'Proceed with this action'
+          if_disabled:
+            tooltip:    'Conditions have not yet been met to proceed'
+
+        cancel:         &GENERIC_CANCEL
+          label:        'CANCEL'
+          if_enabled:
+            tooltip:    'Do nothing and return to the previous screen'
+          if_disabled:
+            tooltip:    'Not able to cancel at this point'
+
+        success:        'EMMA enrollment request was successfully %{actioned}.'
+        failure:        'Failed to %{action} EMMA enrollment request: %{error}'
+
+      # =======================================================================
+
+      index:            &INDEX_ACTION
+        label:          'Pending'
+        title:          'Pending Enrollment Requests'
+        tooltip:        'List all EMMA enrollment requests'
+
+        display_fields: # @see 'en.emma.enrollment.record'
+          - !ruby/symbol all
+
+        role:           administrator
+        _endpoint:      true
+
+      # =======================================================================
+
+      show:             &SHOW_ACTION
+        label:          'Show'
+        title:          'Enrollment Request for %{name}'
+        tooltip:        'Details of an EMMA enrollment request entry'
+        notes:
+          >-
+          When the enrollment is finalized, request information is used to
+          create a new Organization, a new User will be created with the
+          Manager role for that Organization, and this enrollment request
+          record will be deleted.
+
+        display_fields: # @see 'en.emma.enrollment.record'
+          - long_name
+          - short_name
+          - ip_domain
+          - org_users
+          - request_notes
+          - id
+          - created_at
+          - updated_at
+          - admin_notes
+
+        role:           administrator
+        _endpoint:      true
+
+      # =======================================================================
+
+      show_select:
+        <<:             *SHOW_ACTION
+        label:          'Select'
+        title:          'Review an Enrollment Request'
+        tooltip:        'Review an enrollment request'
+        notes:          ~
+
+      # =======================================================================
+
+      new:              &NEW_ACTION
+        label:          'Create'
+        title:          'EMMA Enrollment Request'
+        tooltip:        'Create a new EMMA enrollment request'
+        description_html:
+          >-
+          <p>
+            Welcome to EMMA -- we're excited to have you on board!
+          </p>
+          <p>
+            Please tell us the name of your institution, an abbreviation to
+            identify it on certain tabular display listings, and your name
+            and email address so we can follow up.
+          </p>
+        enroll_production_html:
+          >-
+          <p>
+            PLEASE NOTE:
+            <br/>
+            This is a test version of EMMA;
+            any actions taken here are not monitored by staff.
+            <br/>
+            %{production_enroll_link}.
+          </p>
+
+        term:
+          action:       'create'
+          actioned:     'created'
+
+        submit:
+          <<:           *GENERIC_SUBMIT
+          label:        'Create'
+          if_enabled:
+            tooltip:    'Send the EMMA enrollment request'
+          if_disabled:
+            tooltip:    'Required information is still needed'
+
+        cancel:
+          <<:           *GENERIC_CANCEL
+          if_enabled:
+            tooltip:    'Do not send this entry'
+
+        success:
+          |-
+          Your EMMA enrollment request for %{name} has been sent.
+          We will follow up with you as soon as possible.
+        failure:
+          |-
+          Failed to create this EMMA enrollment request: %{error}
+
+        _endpoint:      true
+
+      # =======================================================================
+
+      create:
+        <<:             *NEW_ACTION
+
+      # =======================================================================
+
+      edit:             &EDIT_ACTION
+        label:          'Change'
+        title:          'Modify Enrollment Request for %{name}'
+        tooltip:        'Modify an existing EMMA enrollment request entry'
+
+        term:
+          action:       'update'
+          actioned:     'updated'
+
+        submit:
+          <<:           *GENERIC_SUBMIT
+          label:        'Update'
+          if_enabled:
+            tooltip:    'Modify this enrollment request'
+          if_disabled:
+            tooltip:    'No valid changes have been made yet'
+
+        cancel:
+          <<:           *GENERIC_CANCEL
+          if_enabled:
+            tooltip:    'Discard these changes'
+
+        success:        'EMMA enrollment request for %{name} updated.'
+        failure:        'Could not update EMMA enrollment request: %{error}'
+
+        role:           administrator
+        _endpoint:      true
+
+      # =======================================================================
+
+      edit_select:
+        <<:             *EDIT_ACTION
+        title:          'Modify Enrollment Requests'
+
+      # =======================================================================
+
+      update:
+        <<:             *EDIT_ACTION
+
+      # =======================================================================
+
+      delete:           &DELETE_ACTION
+        label:          'Remove'
+        title:          'Remove Enrollment Request for %{name}'
+        tooltip:        'Delete an existing EMMA enrollment request entry'
+
+        term:
+          action:       'remove'
+          actioned:     'removed'
+
+        submit:
+          <<:           *GENERIC_SUBMIT
+          label:        'Delete'
+          if_enabled:
+            tooltip:    'Remove this enrollment request'
+
+        cancel:
+          <<:           *GENERIC_CANCEL
+          if_enabled:
+            tooltip:    'Keep this enrollment request'
+
+        success:        'EMMA enrollment request for %{name} deleted.'
+        failure:        'Could not delete EMMA enrollment request: %{error}'
+
+        role:           administrator
+        _endpoint:      true
+
+      # =======================================================================
+
+      delete_select:
+        <<:             *DELETE_ACTION
+        title:          'Remove Enrollment Requests'
+
+      # =======================================================================
+
+      destroy:
+        <<:             *DELETE_ACTION
+
+      # =======================================================================
+
+      finalize:
+        label:          'Create New Organization'
+        title:          'Finalize Enrollment Request for %{name}'
+        tooltip:        'Finalize this enrollment request'
+
+        success:        'EMMA enrollment request complete; organization created.'
+        failure:        'Failed to complete EMMA enrollment request: %{error}'
+
+        role:           administrator
+        _endpoint:      true
+
+      # =======================================================================

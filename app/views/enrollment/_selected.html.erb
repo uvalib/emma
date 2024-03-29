@@ -1,0 +1,43 @@
+<%# app/views/enrollment/_selected.html.erb -%>
+<%-
+  # Display the selected item in an expandable panel.
+
+  view_debug(__FILE__)
+
+  item   ||= nil
+  dec    ||= item && EnrollmentDecorator.new(item, **context) or return
+  item     = dec.object
+
+  level  ||= 2
+  row    ||= 0
+  skip   ||= nil
+
+  skip     = [*skip, :thumbnail, :number]
+  panel_id = panel_css = toggle = nil
+  if item.is_a?(Enrollment)
+    name      = item.id
+    heading   = config_text(:enrollment, :selected, :title, item: name)
+    panel_css = 'selected-details'
+    panel_id  = css_randomize(panel_css)
+    toggle    = toggle_button(id: panel_id)
+  else
+    name      = html_span(item, class: 'item')
+    heading   = config_text(:enrollment, :selected, :invalid, item: name)
+  end
+
+-%>
+
+<div class="selected-item">
+
+  <div class="toggle-panel-title">
+    <h2 class="selected-header"><%= heading -%></h2>
+    <%= toggle %>
+  </div>
+
+  <%- if toggle -%>
+    <div id="<%= panel_id -%>" class="<%= panel_css -%> <%= "row-#{row}" -%>">
+      <%= dec.list_row(row: (row + 1), level: level, skip: skip) %>
+    </div>
+  <%- end -%>
+
+</div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_01_24_232008) do
+ActiveRecord::Schema[7.1].define(version: 2024_03_08_190000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -131,6 +131,19 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_24_232008) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "enrollments", force: :cascade do |t|
+    t.string "short_name"
+    t.string "long_name"
+    t.string "ip_domain", array: true
+    t.json "org_users"
+    t.text "request_notes"
+    t.text "admin_notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["long_name"], name: "index_enrollments_on_long_name"
+    t.index ["short_name"], name: "index_enrollments_on_short_name"
+  end
+
   create_table "entries", force: :cascade do |t|
     t.bigint "user_id"
     t.string "submission_id"
@@ -144,7 +157,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_24_232008) do
     t.index ["user_id"], name: "index_entries_on_user_id"
   end
 
-  create_table "good_job_batches", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
+  create_table "good_job_batches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "description"
@@ -159,7 +172,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_24_232008) do
     t.datetime "finished_at"
   end
 
-  create_table "good_job_executions", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
+  create_table "good_job_executions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "active_job_id", null: false
@@ -173,13 +186,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_24_232008) do
     t.index ["active_job_id", "created_at"], name: "index_good_job_executions_on_active_job_id_and_created_at"
   end
 
-  create_table "good_job_processes", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
+  create_table "good_job_processes", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "state"
   end
 
-  create_table "good_job_settings", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
+  create_table "good_job_settings", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "key"
@@ -187,7 +200,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_24_232008) do
     t.index ["key"], name: "index_good_job_settings_on_key", unique: true
   end
 
-  create_table "good_jobs", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
+  create_table "good_jobs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.text "queue_name"
     t.integer "priority"
     t.jsonb "serialized_params"
@@ -291,7 +304,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_24_232008) do
     t.index ["manifest_id"], name: "index_manifest_items_on_manifest_id"
   end
 
-  create_table "manifests", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
+  create_table "manifests", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
     t.bigint "user_id"
     t.datetime "created_at", null: false

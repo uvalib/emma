@@ -1,0 +1,5 @@
+# URL parameter options related to Enrollment records.
+#
+class Enrollment::Options < Options
+  include Record::Properties
+end

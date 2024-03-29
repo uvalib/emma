@@ -77,9 +77,10 @@ en:
         - 'manifest'
         - 'tool'
         - 'help'
-        - 'sys'
+        - 'enrollment'
         - 'org'
         - 'home'
+        - 'sys'
         - 'data'
 
       primary:
@@ -96,9 +97,10 @@ en:
         - 'manifest'
         - 'tool'
         - 'help'
-        - 'sys'
+        - 'enrollment'
         - 'org'
         - 'home'
+        - 'sys'
 
       unreleased:
 

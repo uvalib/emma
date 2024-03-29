@@ -1,0 +1,239 @@
+# Item presenter for "/enrollment" pages.
+#
+# @!attribute [r] object
+#   Set in Draper#initialize
+#   @return [Enrollment]
+#
+class EnrollmentDecorator < BaseDecorator
+  module SharedPathMethods
+    include BaseDecorator::SharedPathMethods
+  end
+
+  # Definitions available to both classes and instances of either this
+  # decorator or its related collection decorator.
+  #
+  module SharedGenericMethods
+    include BaseDecorator::SharedGenericMethods
+
+    extend Emma::Common::FormatMethods
+
+    # @private
+    # @type [String]
+    ITEM_NAME: String
+
+    # Get all fields for a model instance table entry.
+    #
+    # @param [Symbol, nil] type       Passed to super.
+    #
+    # @return [ActionConfig]
+    #
+    def model_table_fields: (?(Symbol|nil) `type`) -> ActionConfig
+
+    # Configuration properties for a field, with special handling for
+    # :org_users.
+    #
+    # @param [Symbol, nil] field
+    # @param [Hash]        opt          Passed to Field#for.
+    #
+    # @return [Field::Type, nil]
+    #
+    def field_for: ((Symbol|nil) field, **untyped opt) -> (Field::Type | nil)
+
+    # Control icon definitions.
+    #
+    # @type [Hash{Symbol=>Hash}]
+    #
+    # @see BaseDecorator::Controls#ICON_PROPERTIES
+    #
+    ICONS: Hash[Symbol,Hash[Symbol,(String|Symbol|Proc|bool|nil)]]
+
+    # Icon definitions for this decorator.
+    #
+    # @return [Hash{Symbol=>Hash}]
+    #
+    def icon_definitions: () -> Hash[Symbol,Hash[Symbol,(String|Symbol|Proc|bool|nil)]]
+
+    # Render a value for use on an input form.
+    #
+    # @param [String]   name
+    # @param [any, nil] value
+    # @param [Hash]     opt           Passed to super
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def render_form_field_item: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # Render a single label/value pair, forcing :ip_domain to be a single
+    # input field.
+    #
+    # @param [String, Symbol] label
+    # @param [any, nil]       value
+    # @param [Hash]           opt     Passed to super
+    #
+    # @return [ActiveSupport::SafeBuffer, nil]
+    #
+    def render_form_pair: ((String|Symbol) label, untyped value, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+    # @private
+    # @type [Hash{Symbol=>Symbol}]
+    USER_SUBFIELDS_TYPES: Hash[Symbol,Symbol]
+
+    # render_form_user
+    #
+    # @param [String]   name
+    # @param [any, nil] value
+    # @param [Hash]     opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def render_form_user: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+
+    # Generate a menu of enrollment instances.
+    #
+    # @param [Hash] opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def items_menu: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+    # Generate a prompt for #items_menu.
+    #
+    # @return [String]
+    #
+    def items_menu_prompt: (**untyped _ignored) -> String
+
+    # Descriptive term for an item of the given type.
+    #
+    # @param [Symbol, String, nil] model        Default: `#model_type`.
+    # @param [Boolean]             capitalize
+    #
+    # @return [String]
+    #
+    def model_item_name: (?model: Symbol|String|nil, ?capitalize: bool) -> String
+
+    # A button for finalizing an Enrollment by creating a new Org and User.
+    #
+    # @param [String, nil] label
+    # @param [String]      css        Characteristic CSS class/selector.
+    # @param [Hash]        opt
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    def finalize_button: (?(String|nil) label, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+  end
+
+  # Definitions available to instances of either this decorator or its related
+  # collection decorator.
+  #
+  # (Definitions that are only applicable to instances of this decorator but
+  # *not* to collection decorator instances are not included here.)
+  #
+  module SharedInstanceMethods
+    include BaseDecorator::SharedInstanceMethods
+
+    include SharedPathMethods
+
+    include SharedGenericMethods
+
+    # options
+    #
+    # @return [Enrollment::Options]
+    #
+    def options: () -> Enrollment::Options
+
+    # help_topic
+    #
+    # @param [Symbol, nil] sub_topic  Default: `context[:action]`.
+    # @param [Symbol, nil] topic      Default: #model_type.
+    #
+    # @return [Array<Symbol>]
+    #
+    def help_topic: (?(Symbol|nil) sub_topic, ?(Symbol|nil) topic) -> symArray
+  end
+
+  # Definitions available to both this decorator class and the related
+  # collector decorator class.
+  #
+  # (Definitions that are only applicable to this class but *not* to the
+  # collection class are not included here.)
+  #
+  module SharedClassMethods
+    include BaseDecorator::SharedClassMethods
+
+    include SharedPathMethods
+
+    include SharedGenericMethods
+  end
+
+  # Cause definitions to be included here and in the associated collection
+  # decorator via BaseCollectionDecorator#collection_of.
+  #
+  module SharedDefinitions
+    def self.included: (Module base) -> void
+  end
+end
+
+class EnrollmentDecorator
+  include SharedDefinitions
+
+  # Render a single label/value pair in a list item with special handling for
+  # the :org_users field.
+  #
+  # @param [String, Symbol, nil] label
+  # @param [any, nil]            value
+  # @param [Symbol]              field
+  # @param [FieldConfig]         prop
+  # @param [Hash]                opt    Passed to super.
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def list_render_pair: ((String|Symbol|nil) label, untyped value, field: Symbol, prop: FieldConfig, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Transform a field value for HTML rendering.
+  #
+  # @param [any, nil]    value
+  # @param [Symbol, nil] field
+  # @param [Hash]        opt          Passed to super.
+  #
+  # @return [any]                     HTML or scalar value.
+  #
+  def list_field_value: (untyped value, field: Symbol|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | untyped | nil)
+
+  # Fields and configurations augmented with a :value entry containing the
+  # current field value.
+  #
+  # @param [Hash] opt   Passed to #property_pairs and #table_field_value.
+  #
+  # @return [Hash{Symbol=>FieldConfig}]
+  #
+  def table_field_values: (**untyped opt) -> Hash[Symbol, FieldConfig]
+
+  # Transform a field value for rendering in a table.
+  #
+  # @param [any, nil]    value
+  # @param [Symbol, nil] field
+  # @param [Hash]        opt          Passed to super.
+  #
+  # @return [any, nil]
+  #
+  def table_field_value: (untyped value, field: Symbol|nil, **untyped opt) -> (Field::Type | String | nil)
+
+  # Generate a form with reCAPTCHA verification.
+  #
+  # @param [Hash] opt                 Passed to super.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def model_form: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Rendered table value for a :org_users field.
+  #
+  # @param [any, nil]      value
+  # @param [Array<Symbol>] fields
+  #
+  # @return [String, nil]
+  #
+  def table_org_users_value
+    : (nil     value, ?symArray fields) -> nil
+    | (untyped value, ?symArray fields) -> (String | nil)
+end

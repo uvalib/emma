@@ -55,6 +55,12 @@ class Field::Type
   #
   attr_reader :valid
 
+  # Optional data associated with the instance.
+  #
+  # @return [Hash]
+  #
+  attr_reader :option
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -68,11 +74,12 @@ class Field::Type
   # @param [FieldConfig, nil]    prop
   # @param [Symbol, String, nil] model  (Only used if *prop* is missing.)
   # @param [any, nil]            value
+  # @param [Hash]                opt    To #options if present.
   #
   #--
   # noinspection RubyMismatchedVariableType
   #++
-  def initialize(src, field = nil, prop: nil, model: nil, value: nil, **)
+  def initialize(src, field = nil, prop: nil, model: nil, value: nil, **opt)
     @base  = src
     @range = nil
     # noinspection RailsParamDefResolve, RubyMismatchedArgumentType
@@ -84,13 +91,15 @@ class Field::Type
       @range ||= (data.try(:[], field) if data.try(:key?, field))
       @range ||= src.try(field)
       @range ||= src.try(:[], field)
-      @range &&= Array.wrap(@range).map { |v| v.to_s.strip }.compact_blank!
+      @range   = Array.wrap(@range).compact_blank       unless @range.nil?
+      @range&.map! { |v| v.to_s.strip }&.compact_blank! unless @base == 'json'
     end
-    @base  = @base.to_s.safe_constantize if @base.is_a?(Symbol)
-    @base  = self.class.base             unless @base.is_a?(Class)
-    @value = clean(value)
-    @value = @range.presence             if @value.nil?
-    @valid = !@value.nil?
+    @base   = @base.to_s.safe_constantize if @base.is_a?(Symbol)
+    @base   = self.class.base             unless @base.is_a?(Class)
+    @value  = clean(value)
+    @value  = @range.presence             if @value.nil?
+    @valid  = !@value.nil?
+    @option = opt
   end
 
   # ===========================================================================

@@ -1,0 +1,55 @@
+module Enrollment::Assignable
+  include Emma::Json
+
+  # :nocov:
+  #include Record::Assignable
+
+  # Ensure that blanks are allowed and that input values are normalized.
+  #
+  # @param [Model, Hash, ActionController::Parameters, nil] attr
+  # @param [Hash]                                           opt
+  #
+  # @return [Hash]
+  #
+  def normalize_attributes: ((Model|prmHash|nil) attr, **untyped opt) -> symHash
+
+  # Normalize a specific field value.
+  #
+  # @param [Symbol]        key
+  # @param [any, nil]      value
+  # @param [String, Class] type
+  # @param [Hash, nil]     errors
+  #
+  # @return [any, nil]
+  #
+  def normalize_field: (Symbol key, untyped value, String|Class `type`, ?(symHash|nil) errors) -> untyped
+
+  # Normalize a value for the :org_users attribute.
+  #
+  # @param [String, Array, Hash, nil] arg
+  # @param [Hash]                     opt   To #json_parse.
+  #
+  # @return [Array<Hash>]
+  #
+  def normalize_users: (String|anyArray|anyHash|nil arg, **untyped opt) -> Array[symHash]
+
+  # Normalize a value for the :request_notes or :admin_notes attributes.
+  #
+  # @param [String, Array, nil] arg
+  #
+  # @return [String, nil]
+  #
+  def normalize_notes: (String|anyArray|nil arg) -> (String | nil)
+
+  # Turn a :long_name value into a :short_name value.
+  #
+  # @param [String] name
+  #
+  # @return [String]
+  #
+  def abbreviate_org: (String name) -> String
+
+  private
+
+  def self.included: (Module base) -> void
+end
