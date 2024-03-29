@@ -10,6 +10,23 @@ body.home-main,
 body.home-welcome,
 body.home-dashboard {
 
+    $section-gap: 3rem;
+
+    .heading + .page-text-section {
+        @media #{$wide-screen} {
+            margin-top: $section-gap;
+        }
+    }
+
+    .page-text-section.enroll,
+    .page-text-section.enroll_production {
+        @media #{$wide-screen} {
+            margin-top: $section-gap;
+        }
+        font-size:  large;
+        line-height: 1.25;
+    }
+
     .sign-in {
 
         margin-bottom:  $page-padding-y;
@@ -21,12 +38,6 @@ body.home-dashboard {
 
         @media #{$not-wide-screen} {
             margin-top: calc(2 * $page-padding-y);
-        }
-    }
-
-    .heading + .page-text-section {
-        @media #{$wide-screen} {
-            margin-top: 3rem;
         }
     }
 }

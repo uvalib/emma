@@ -25,5 +25,8 @@
   <%= t('emma.home.welcome.notice_html', sign_in: sign_in) %>
 </div>
 
+<%= page_text_section(:enroll) %>
+<%= page_alert_section(:enroll_production) unless production_deployment? %>
+
 <%= page_notes_section %>
 <%= render 'account/ability' if session_debug? %>

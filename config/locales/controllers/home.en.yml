@@ -58,6 +58,26 @@ en:
             If you would like to be notified when EMMA is ready for broader
             participation, please email %{project_email}.
           </p>
+        enroll_html:
+          >-
+          <p>
+            Interested in the opportunity to share your remediation work with
+            the academic community and get access to remediations created by
+            your peers at institutions across the United States and Canada?
+          </p>
+          <p>
+            %{enroll_link} to become a part of the EMMA community.
+          </p>
+        enroll_production_html:
+          >-
+          <p>
+            PLEASE NOTE:
+            <br/>
+            This is a test version of EMMA;
+            any actions taken here are not monitored by staff.
+            <br/>
+            %{production_enroll_link}
+          </p>
         _endpoint:      true
 
       # =======================================================================

@@ -56,6 +56,20 @@ module LayoutHelper::PageSections
     page_text_section(:notes, text, **opt)
   end
 
+  # Supply an section indicating a persistent warning condition.
+  #
+  # @param [String, Symbol]     type
+  # @param [String, Array, nil] text  Override text to display.
+  # @param [Hash]               opt   Passed to #page_text_section.
+  #
+  # @return [ActiveSupport::SafeBuffer]   An HTML element.
+  # @return [nil]                         If no text was provided or defined.
+  #
+  def page_alert_section(type, text = nil, **opt)
+    append_css!(opt, 'alert')
+    page_text_section(type, text, type: type, **opt)
+  end
+
   # Supply an element containing configured text for the current action.
   #
   # @param [String, Symbol, nil]  type        Default: 'text'.

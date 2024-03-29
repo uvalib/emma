@@ -1,0 +1,33 @@
+# Support methods for working with enrollment requests.
+#
+module EnrollmentHelper
+  include LinkHelper
+
+  extend ::EnrollmentHelper
+
+  # Make a link to the enrollment page for anonymous users.
+  #
+  # @param [String, nil] label
+  # @param [String]      css        Characteristic CSS class/selector.
+  # @param [Hash]        opt        Passed to #make_link except:
+  #
+  # @option opt [String] :path      Override default path.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def enroll_link: (?(String|nil) label, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Make a link to the enrollment page on the production system.
+  #
+  # @param [String, nil] label
+  # @param [String]      css        Characteristic CSS class/selector.
+  # @param [Hash]        opt        Passed to #enroll_link.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def production_enroll_link: (?(String|nil) label, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (Module base) -> void
+end
