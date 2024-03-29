@@ -5,12 +5,12 @@ module HeadHelper::Scripts
 
   private
 
-  # @type [Array<String>]
-  DEFAULT_PAGE_JAVASCRIPTS: strArray
+  # @type [Array<String,Hash,Array(String,Hash)>]
+  DEFAULT_PAGE_JAVASCRIPTS: Array[script_path]
 
   public
 
-  @page_javascript: strArray
+  @page_javascript: Array[script_path]
 
   # Access the scripts for this page.
   #
@@ -18,43 +18,37 @@ module HeadHelper::Scripts
   # sources; otherwise this invocation is being used to emit the JavaScript
   # '<script>' element(s).
   #
-  # @return [ActiveSupport::SafeBuffer]   If no block given.
-  # @return [Array<String>]               If block given.
+  # @return [ActiveSupport::SafeBuffer]               If no block given.
+  # @return [Array<String,Hash,Array(String,Hash)>]   If block given.
   #
   # @yield To supply source(s) to #set_page_javascripts.
-  # @yieldreturn [String, Array<String>]
+  # @yieldreturn [String,Hash,Array(String,Hash),Array<String,Hash,Array(String,Hash)>]
   #
   def page_javascripts
-    : () { () -> (String | strArray) } -> strArray
-    | ()                               -> ActiveSupport::SafeBuffer
+    : () { () -> (script_path | Array[script_path]) } -> Array[String|symHash|[String,symHash]]
+    | ()                                              -> ActiveSupport::SafeBuffer
 
   # Set the script(s) for this page, eliminating any previous value(s).
   #
   # @param [Array] sources
   #
-  # @return [Array<String>]           The new @page_javascript contents.
+  # @return [Array<String,Hash,Array(String,Hash)>] New @page_javascript array.
   #
   # @yield To supply additional source(s) to @page_javascript.
-  # @yieldreturn [String, Array<String>]
+  # @yieldreturn [String,Hash,Array(String,Hash),Array<String,Hash,Array(String,Hash)>]
   #
-  def set_page_javascripts
-    : ()                          { () -> (String | strArray) } -> strArray
-    | (*(String|strArray) values)                               -> strArray
+  def set_page_javascripts: (*(script_path|Array[script_path]) values) ?{ () -> (script_path | Array[script_path]) } -> Array[String|symHash|[String,symHash]]
 
   # Add to the script(s) for this page.
   #
   # @param [Array] sources
   #
-  # @return [Array<String>]           The updated @page_javascript contents.
+  # @return [Array<String,Hash,Array(String,Hash)>] Updated @page_javascript.
   #
   # @yield To supply additional source(s) to @page_javascript.
-  # @yieldreturn [String, Array<String>]
+  # @yieldreturn [String,Hash,Array(String,Hash),Array<String,Hash,Array(String,Hash)>]
   #
-  # @note Currently unused
-  #
-  def append_page_javascripts
-    : ()                          { () -> (String | strArray) } -> strArray
-    | (*(String|strArray) values)                               -> strArray
+  def append_page_javascripts: (*(script_path|Array[script_path]) values) ?{ () -> (script_path | Array[script_path]) } -> Array[String|symHash|[String,symHash]]
 
   # Emit the '<script>' tag(s) appropriate for the current page.
   #

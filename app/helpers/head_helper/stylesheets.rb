@@ -19,7 +19,7 @@ module HeadHelper::Stylesheets
 
   private
 
-  # @type [Array<String>]
+  # @type [Array<String,Hash,Array(String,Hash)>]
   DEFAULT_PAGE_STYLESHEETS = HEAD_CONFIG[:stylesheets]&.compact_blank || []
 
   # ===========================================================================
@@ -34,11 +34,11 @@ module HeadHelper::Stylesheets
   # sources; otherwise this invocation is being used to emit the stylesheet
   # '<link>' element(s).
   #
-  # @return [ActiveSupport::SafeBuffer]   If no block given.
-  # @return [Array<String>]               If block given.
+  # @return [ActiveSupport::SafeBuffer]               If no block given.
+  # @return [Array<String,Hash,Array(String,Hash)>]   If block given.
   #
   # @yield To supply sources(s) to #set_page_stylesheets.
-  # @yieldreturn [String, Array<String>]
+  # @yieldreturn [String,Hash,Array(String,Hash),Array<String,Hash,Array(String,Hash)>]
   #
   def page_stylesheets
     if block_given?
@@ -52,10 +52,10 @@ module HeadHelper::Stylesheets
   #
   # @param [Array] sources
   #
-  # @return [Array<String>]           The new @page_stylesheets contents.
+  # @return [Array<String,Hash,Array(String,Hash)>] New @page_stylesheets array
   #
   # @yield To supply additional source(s) to @page_stylesheets.
-  # @yieldreturn [String, Array<String>]
+  # @yieldreturn [String,Hash,Array(String,Hash),Array<String,Hash,Array(String,Hash)>]
   #
   def set_page_stylesheets(*sources)
     @page_stylesheets = sources
@@ -67,10 +67,10 @@ module HeadHelper::Stylesheets
   #
   # @param [Array] sources
   #
-  # @return [Array<String>]           The updated @page_stylesheets contents.
+  # @return [Array<String,Hash,Array(String,Hash)>] Updated @page_stylesheets.
   #
   # @yield To supply additional source(s) to @page_stylesheets.
-  # @yieldreturn [String, Array<String>]
+  # @yieldreturn [String,Hash,Array(String,Hash),Array<String,Hash,Array(String,Hash)>]
   #
   # @note Currently unused
   #
@@ -88,9 +88,20 @@ module HeadHelper::Stylesheets
   # @return [ActiveSupport::SafeBuffer]
   #
   def emit_page_stylesheets(**opt)
-    items   = @page_stylesheets&.flatten&.compact_blank!&.uniq
-    items ||= DEFAULT_PAGE_STYLESHEETS
-    stylesheet_link_tag(*items, opt) << app_stylesheet(**opt)
+    result = @page_stylesheets&.compact_blank! || DEFAULT_PAGE_STYLESHEETS.dup
+    result.map! do |src|
+      case src
+        when Hash  then source, options = src[:src], src.except(:src)
+        when Array then source, options = src.first, src.last
+        else            source, options = src
+      end
+      options = options&.reverse_merge(opt) || opt
+      options = options.sort.to_h if options.present?
+      stylesheet_link_tag(source, options)
+    end
+    result.uniq!
+    result << app_stylesheet(**opt)
+    safe_join(result, "\n")
   end
 
   # ===========================================================================

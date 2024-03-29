@@ -17,7 +17,7 @@ module HeadHelper::Scripts
 
   private
 
-  # @type [Array<String>]
+  # @type [Array<String,Hash,Array(String,Hash)>]
   DEFAULT_PAGE_JAVASCRIPTS = HEAD_CONFIG[:javascripts]&.compact_blank || []
 
   # ===========================================================================
@@ -32,11 +32,11 @@ module HeadHelper::Scripts
   # sources; otherwise this invocation is being used to emit the JavaScript
   # '<script>' element(s).
   #
-  # @return [ActiveSupport::SafeBuffer]   If no block given.
-  # @return [Array<String>]               If block given.
+  # @return [ActiveSupport::SafeBuffer]               If no block given.
+  # @return [Array<String,Hash,Array(String,Hash)>]   If block given.
   #
   # @yield To supply source(s) to #set_page_javascripts.
-  # @yieldreturn [String, Array<String>]
+  # @yieldreturn [String,Hash,Array(String,Hash),Array<String,Hash,Array(String,Hash)>]
   #
   def page_javascripts
     if block_given?
@@ -50,10 +50,10 @@ module HeadHelper::Scripts
   #
   # @param [Array] sources
   #
-  # @return [Array<String>]           The new @page_javascript contents.
+  # @return [Array<String,Hash,Array(String,Hash)>] New @page_javascript array.
   #
   # @yield To supply additional source(s) to @page_javascript.
-  # @yieldreturn [String, Array<String>]
+  # @yieldreturn [String,Hash,Array(String,Hash),Array<String,Hash,Array(String,Hash)>]
   #
   def set_page_javascripts(*sources)
     @page_javascript = sources
@@ -65,12 +65,10 @@ module HeadHelper::Scripts
   #
   # @param [Array] sources
   #
-  # @return [Array<String>]           The updated @page_javascript contents.
+  # @return [Array<String,Hash,Array(String,Hash)>] Updated @page_javascript.
   #
   # @yield To supply additional source(s) to @page_javascript.
-  # @yieldreturn [String, Array<String>]
-  #
-  # @note Currently unused
+  # @yieldreturn [String,Hash,Array(String,Hash),Array<String,Hash,Array(String,Hash)>]
   #
   def append_page_javascripts(*sources)
     @page_javascript ||= DEFAULT_PAGE_JAVASCRIPTS.dup
@@ -86,10 +84,18 @@ module HeadHelper::Scripts
   # @return [ActiveSupport::SafeBuffer]
   #
   def emit_page_javascripts(**opt)
-    items   = @page_javascript&.flatten&.compact_blank!&.uniq
-    items ||= DEFAULT_PAGE_JAVASCRIPTS
-    result  = []
-    result << javascript_include_tag(*items, opt)
+    result = @page_javascript&.compact_blank! || DEFAULT_PAGE_JAVASCRIPTS.dup
+    result.map! do |src|
+      case src
+        when Hash  then source, options = src[:src], src.except(:src)
+        when Array then source, options = src.first, src.last
+        else            source, options = src
+      end
+      options = options&.reverse_merge(opt) || opt
+      options = options.sort.to_h if options.present?
+      javascript_include_tag(source, options)
+    end
+    result.uniq!
     result << app_javascript(**opt)
     if Rails.env.test?
       result << capybara_lockstep(opt)              if CapybaraLockstep.active

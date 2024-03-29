@@ -7,10 +7,12 @@ module HeadHelper::Stylesheets
 
   private
 
-  # @type [Array<String>]
-  DEFAULT_PAGE_STYLESHEETS: strArray
+  # @type [Array<String,Hash,Array(String,Hash)>]
+  DEFAULT_PAGE_STYLESHEETS: Array[script_path]
 
   public
+
+  @page_stylesheets: Array[script_path]
 
   # Access the stylesheets for this page.
   #
@@ -19,44 +21,38 @@ module HeadHelper::Stylesheets
   # '<link>' element(s).
   #
   # @return [ActiveSupport::SafeBuffer]   If no block given.
-  # @return [Array<String>]               If block given.
+  # @return [Array<String,Hash>]          If block given.
   #
   # @yield To supply sources(s) to #set_page_stylesheets.
-  # @yieldreturn [String, Array<String>]
+  # @yieldreturn [String,Hash,Array(String,Hash),Array<String,Hash,Array(String,Hash)>]
   #
   def page_stylesheets
-    : () { () -> (String | strArray) } -> strArray
-    | ()                               -> ActiveSupport::SafeBuffer
-
-  @page_stylesheets: strArray
+    : () { () -> (script_path | Array[script_path]) } -> Array[String|symHash|[String,symHash]]
+    | ()                                              -> ActiveSupport::SafeBuffer
 
   # Set the stylesheet(s) for this page, eliminating any previous value(s).
   #
   # @param [Array] sources
   #
-  # @return [Array<String>]           The new @page_stylesheets contents.
+  # @return [Array<String,Hash,Array(String,Hash)>] New @page_stylesheets array
   #
   # @yield To supply additional source(s) to @page_stylesheets.
-  # @yieldreturn [String, Array<String>]
+  # @yieldreturn [String,Hash,Array(String,Hash),Array<String,Hash,Array(String,Hash)>]
   #
-  def set_page_stylesheets
-    : ()                          { () -> (String | strArray) } -> strArray
-    | (*(String|strArray) values)                               -> strArray
+  def set_page_stylesheets: (*(script_path|Array[script_path]) values) ?{ () -> (script_path | Array[script_path]) } -> Array[String|symHash|[String,symHash]]
 
   # Add to the stylesheet(s) for this page.
   #
   # @param [Array] sources
   #
-  # @return [Array<String>]           The updated @page_stylesheets contents.
+  # @return [Array<String,Hash,Array(String,Hash)>] Updated @page_stylesheets.
   #
   # @yield To supply additional source(s) to @page_stylesheets.
-  # @yieldreturn [String, Array<String>]
+  # @yieldreturn [String,Hash,Array(String,Hash),Array<String,Hash,Array(String,Hash)>]
   #
   # @note Currently unused
   #
-  def append_page_stylesheets
-    : ()                          { () -> (String | strArray) } -> strArray
-    | (*(String|strArray) values)                               -> strArray
+  def append_page_stylesheets: (*(script_path|Array[script_path]) values) ?{ () -> (script_path | Array[script_path]) } -> Array[String|symHash|[String,symHash]]
 
   # Emit the stylesheet '<link>' tag(s) appropriate for the current page.
   #

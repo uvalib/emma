@@ -24,6 +24,8 @@ type errorArgs  = Exception | ExecReport | symHash | String | strArray | Array[R
 
 type logger     = ActiveSupport::BroadcastLogger | Logger
 
+type script_path = String | symHash | [String,symHash] # e.g. @page_javascript
+
 # =============================================================================
 # Duck-typing definitions
 # =============================================================================
