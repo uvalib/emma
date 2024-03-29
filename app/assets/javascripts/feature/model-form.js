@@ -1522,11 +1522,13 @@ appSetup(MODULE, function() {
      * @param {Selector} [form]       Default: {@link formElement}.
      */
     function setupSubmitButton(form) {
-        const $form   = formElement(form);
-        const label   = submitLabel($form);
-        const tip     = submitTooltip($form);
-        const $button = submitButton($form).attr('title', tip).text(label);
-        handleClickAndKeypress($button, startSubmission);
+        const $form    = formElement(form);
+        const label    = submitLabel($form);
+        const tip      = submitTooltip($form);
+        const $button  = submitButton($form).attr('title', tip).text(label);
+        const verify   = requiresRecaptcha($form);
+        const callback = verify ? verifyRecaptcha : startSubmission;
+        handleClickAndKeypress($button, callback);
     }
 
     /**
@@ -3711,6 +3713,70 @@ appSetup(MODULE, function() {
             .prop('disabled', true)
             .attr('title', tip)
             .attr('data-state', 'not-ready');
+    }
+
+    // ========================================================================
+    // Functions - reCAPTCHA verification
+    // ========================================================================
+
+    /**
+     * CSS class for a form requiring reCAPTCHA verification.
+     *
+     * @readonly
+     * @type {string}
+     */
+    const RECAPTCHA_FORM_CLASS = 'recaptcha-verification';
+
+    /**
+     * Determine whether submission of the form is dependent on reCAPTCHA.
+     *
+     * @note This should never be *true* for the test environment.
+     *
+     * @param {Selector} [form]         Passed to {@link formElement}.
+     *
+     * @returns {boolean}
+     */
+    function requiresRecaptcha(form) {
+        return formElement(form).hasClass(RECAPTCHA_FORM_CLASS);
+    }
+
+    /**
+     * Get reCAPTCHA verification, first making the callback functions
+     * available globally so that reCAPTCHA can find them.
+     *
+     * @param {ElementEvt} [event]
+     */
+    function verifyRecaptcha(event) {
+        window.successfulRecaptcha = successfulRecaptcha;
+        window.failedRecaptcha     = failedRecaptcha;
+        event.preventDefault();
+        clearFlash();
+        // noinspection JSUnresolvedReference
+        grecaptcha.execute();
+    }
+
+    /**
+     * Called after reCAPTCHA verification is successful to complete submission
+     * of the form.
+     *
+     * (Set by name as the :callback option in RecaptchaHelper#recaptcha in
+     * place of the function "invisibleRecaptchaSubmit" that would be generated
+     * by the "recaptcha" gem.)
+     */
+    function successfulRecaptcha() {
+        const $form = formElement();
+        setFormSubmitting($form);
+        $form[0].submit();
+    }
+
+    /**
+     * Called after reCAPTCHA verification failure.
+     *
+     * (Only called if the :'error-callback' option is set to this name in
+     * RecaptchaHelper#recaptcha.)
+     */
+    function failedRecaptcha() {
+        console.error('failedRecaptcha:', arguments);
     }
 
     // ========================================================================

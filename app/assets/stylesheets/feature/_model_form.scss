@@ -681,7 +681,7 @@
     }
 
     //=========================================================================
-    // Elements - penultimate grid row
+    // Elements - penultimate grid row if not using reCAPTCHA
     //=========================================================================
 
     // Container for metadata field inputs.
@@ -694,17 +694,34 @@
     }
 
     //=========================================================================
+    // Elements - penultimate grid row if using reCAPTCHA
+    //=========================================================================
+
+    .recaptcha {
+        margin-bottom: calc(4 * $gap-y);
+    }
+
+    //=========================================================================
     // Elements - final grid row
     //=========================================================================
 
     // Convenience duplicates of submit and cancel buttons below the set of
     // fields.
-    .form-fields + .controls {
+    .form-fields + .controls,
+    .recaptcha   + .controls {
 
         position:      unset;
         margin-top:    $gap-y;
         margin-bottom: 0;
         grid-row:      unset;
+
+        @media #{$medium-width} {
+            margin-top: calc(6 * $gap-y);
+        }
+
+        @media #{$narrow-screen} {
+            margin-top: calc(12 * $gap-y);
+        }
 
         > *:not(.button-tray) {
             display: none;

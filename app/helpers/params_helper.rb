@@ -54,6 +54,7 @@ module ParamsHelper
     _method
     authenticity_token
     commit
+    g-recaptcha-response
     modal
     redirect
     utf8

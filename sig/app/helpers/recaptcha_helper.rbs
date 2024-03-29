@@ -1,0 +1,57 @@
+# Support methods for managing reCAPTCHA authorization.
+#
+# @see https://www.google.com/recaptcha/admin/site/698256122
+#
+module RecaptchaHelper
+  include IdentityHelper
+
+  # The older version of reCAPTCHA is better for selective use on specific
+  # pages.  Version 3 is better for web sites where *every* form submission is
+  # reCAPTCHA-validated.
+  #
+  # @type [Integer]
+  #
+  RECAPTCHA_VERSION: Integer
+
+  # So-called "invisible" reCAPTCHA involves display of reCAPTCHA branding but
+  # is easier for cases where validation needs to work alongside existing logic
+  # triggered by the submit button. Standard reCAPTCHA v2 is better where the
+  # submit button can be freely managed by client-side reCAPTCHA logic.
+  #
+  # @type [Boolean]
+  #
+  RECAPTCHA_INVISIBLE: bool
+
+  # By default the "recaptcha" gem injects the script element along with the
+  # reCAPTCHA tags.  If this constant is *true*, that script element is added
+  # to `<head>` instead.
+  #
+  # @type [Boolean]
+  #
+  RECAPTCHA_HEAD: bool
+
+  # Indicate whether reCAPTCHA would be in use on forms that require it.
+  #
+  # @note This is never *true* for the test environment.
+  #
+  # @param [Hash] opt                 Passed to Recaptcha#skip_env?.
+  #
+  def recaptcha_active?: (**untyped opt) -> bool
+
+  # Emit reCAPTCHA tags.
+  #
+  # If reCAPTCHA is not in use, an empty string is returned.
+  #
+  # @param [String, nil] css        Characteristic CSS class.
+  # @param [Hash]        opt        Options passed to the reCAPTCHA tags.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see app/assets/javascripts/feature/model-form.js
+  #
+  def recaptcha: (css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (Module base) -> void
+end

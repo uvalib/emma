@@ -706,33 +706,45 @@ module BaseDecorator::Form
   #
   FILE_NAME_CLASS = 'uploaded-filename'
 
+  # The CSS class which indicates that the element or its descendent(s) involve
+  # reCAPTCHA verification.
+  #
+  # @type [String]
+  #
+  # @see file:javascripts/feature/model-form.js *RECAPTCHA_FORM_CLASS*
+  #
+  RECAPTCHA_FORM_CLASS = 'recaptcha-verification'
+
   # Generate a form with controls for entering field values and submitting.
   #
-  # @param [String]         label     Label for the submit button.
-  # @param [String, Symbol] action    Either :new or :edit.
-  # @param [String]         cancel    URL for cancel button action (def: :back)
-  # @param [Boolean]        uploader  If *true*, active client-side logic for
+  # @param [String]        label      Label for the submit button.
+  # @param [String,Symbol] action     Either :new or :edit.
+  # @param [String]        cancel     URL for cancel button action (def: :back)
+  # @param [Boolean]       uploader   If *true*, active client-side logic for
   #                                     supporting file upload.
-  # @param [Hash]           outer     Passed to outer div.
-  # @param [String]         css       Characteristic CSS class/selector.
-  # @param [Hash]           opt       Passed to #form_with.
+  # @param [Boolean]       recaptcha  If *true*, verify with reCAPTCHA.
+  # @param [Hash]          outer      Passed to outer div.
+  # @param [String]        css        Characteristic CSS class/selector.
+  # @param [Hash]          opt        Passed to #form_with.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see file:app/assets/javascripts/feature/model-form.js *isFileUploader()*
   #
   def model_form(
-    label:    nil,
-    action:   nil,
-    cancel:   nil,
-    uploader: nil,
-    outer:    nil,
-    css:      '.model-form',
+    label:      nil,
+    action:     nil,
+    cancel:     nil,
+    uploader:   nil,
+    recaptcha:  nil,
+    outer:      nil,
+    css:        '.model-form',
     **opt
   )
-    uploader  = UPLOADER_CLASS if uploader.is_a?(TrueClass)
     action    = action&.to_sym || context[:action] || DEFAULT_FORM_ACTION
-    classes   = [action, model_type, uploader]
+    classes   = [action, model_type]
+    classes  << UPLOADER_CLASS       if uploader
+    classes  << RECAPTCHA_FORM_CLASS if recaptcha
 
     trace_attrs!(opt)
     prepend_css!(opt, css, *classes)
@@ -751,6 +763,7 @@ module BaseDecorator::Form
         parts  = form_hidden_fields(f)
         parts << form_top_controls(f, *buttons, **t_opt)
         parts << field_container(**t_opt)
+        parts << h.recaptcha if recaptcha
         parts << form_bottom_controls(f, *buttons, **t_opt)
         safe_join(parts.compact, "\n")
       end

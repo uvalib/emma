@@ -206,6 +206,7 @@ module BaseDecorator::Helpers
   include LinkHelper
   include PanelHelper
   include PopupHelper
+  include RecaptchaHelper
   include RepositoryHelper
   include ScrollHelper
   include SearchModesHelper

@@ -457,9 +457,9 @@ module ModelConcern
   #
   # @param [Hash, nil] prm            Field values (def: `#current_params`).
   # @param [Boolean]   fatal          If *false*, use #save not #save!.
-  # @param [Hash]      opt            Added field values.
+  # @param [Hash]      opt            Passed to #new_record except:
   #
-  # @option opt [Boolean] force       If *true* allow setting of :id.
+  # @option opt [Boolean] recaptcha   Require reCAPTCHA verification.
   #
   # @return [Model]                   The new persisted model record.
   #
@@ -469,7 +469,9 @@ module ModelConcern
   #
   def create_record(prm = nil, fatal: true, **opt, &blk)
     __debug_items("WF #{self.class} #{__method__}") { { opt: opt, prm: prm } }
+    recaptcha = opt.delete(:recaptcha)
     new_record(prm, **opt, &blk).tap do |record|
+      verified(record) if recaptcha
       fatal ? record.save! : record.save
     end
   end
@@ -500,7 +502,9 @@ module ModelConcern
   #
   # @param [any, nil] item            Default: the record for #identifier.
   # @param [Boolean]  fatal           If *false* use #update not #update!.
-  # @param [Hash]     opt             Field values (default: `#current_params`)
+  # @param [Hash]     opt             Field values (#current_params) except:
+  #
+  # @option opt [Boolean] recaptcha   Require reCAPTCHA verification.
   #
   # @raise [Record::NotFound]               If the record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Model record update failed.
@@ -514,10 +518,12 @@ module ModelConcern
   # @yieldreturn [void]               Block not called if *record* is *nil*.
   #
   def update_record(item = nil, fatal: true, **opt, &blk)
+    recaptcha  = opt.delete(:recaptcha)
     item, attr = model_request_params(item, opt.presence)
     __debug_items("WF #{self.class} #{__method__}") {{ opt: attr, item: item }}
     item ||= attr[:id]
     edit_record(item)&.tap do |record|
+      verified(record) if recaptcha
       blk&.call(record, attr)
       fatal ? record.update!(attr) : record.update(attr)
     end
@@ -549,7 +555,9 @@ module ModelConcern
   #
   # @param [any, nil] items
   # @param [Boolean]  fatal           If *false* do not #raise_failure.
-  # @param [Hash]     opt             Default: `#current_params`
+  # @param [Hash]     opt             Default: `#current_params` except:
+  #
+  # @option opt [Boolean] recaptcha   Require reCAPTCHA verification.
   #
   # @raise [Record::SubmitError]      If there were failure(s).
   #
@@ -560,6 +568,7 @@ module ModelConcern
   # @yieldreturn [String,nil]         Error message if *record* unacceptable.
   #
   def destroy_records(items = nil, fatal: true, **opt, &blk)
+    verified if opt.delete(:recaptcha)
     items, opt = model_request_params(items, opt.presence)
     __debug_items("WF #{self.class} #{__method__}") {{ opt: opt, item: item }}
     opt   = model_options.all.merge(opt)
@@ -751,6 +760,29 @@ module ModelConcern
   #
   def authorized_user?(record)
     User.uid(record) == current_user.id
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Action permitted if the current session has been verified by reCAPTCHA.
+  #
+  # @note Always *true* for an Administrator or in the test environment.
+  #
+  # @param [Model, nil] record
+  # @param [Hash]       opt           Passed to #verify_recaptcha.
+  #
+  # @raise [Record::SubmitError]      If not verified.
+  #
+  # @return [Boolean]                 *true* if verified.
+  #
+  def verified(record = nil, **opt)
+    return true unless recaptcha_active?
+    opt[:model] ||= record || new_record({})
+    verify_recaptcha(opt) or raise_failure(opt[:model].errors.full_messages)
   end
 
   # ===========================================================================

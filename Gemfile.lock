@@ -316,6 +316,7 @@ GEM
       abbrev
     rdoc (6.6.3.1)
       psych (>= 4.0.0)
+    recaptcha (5.16.0)
     regexp_parser (2.9.0)
     reline (0.5.0)
       io-console (~> 0.5)
@@ -429,6 +430,7 @@ DEPENDENCIES
   rack-cors
   rails (~> 7)
   rbs
+  recaptcha
   representable (~> 3.0, < 3.1)
   request_store
   sanitize

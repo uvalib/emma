@@ -240,9 +240,9 @@ module ModelConcern
   #
   # @param [Hash, nil] prm            Field values (def: `#current_params`).
   # @param [Boolean]   fatal          If *false*, use #save not #save!.
-  # @param [Hash]      opt            Added field values.
+  # @param [Hash]      opt            Passed to #new_record except:
   #
-  # @option opt [Boolean] force       If *true* allow setting of :id.
+  # @option opt [Boolean] recaptcha   Require reCAPTCHA verification.
   #
   # @return [Model]                   The new persisted model record.
   #
@@ -272,7 +272,9 @@ module ModelConcern
   #
   # @param [any, nil] item            Default: the record for #identifier.
   # @param [Boolean]  fatal           If *false* use #update not #update!.
-  # @param [Hash]     prm             Field values (default: `#current_params`)
+  # @param [Hash]     opt             Field values (#current_params) except:
+  #
+  # @option opt [Boolean] recaptcha   Require reCAPTCHA verification.
   #
   # @raise [Record::NotFound]               If the record could not be found.
   # @raise [ActiveRecord::RecordInvalid]    Model record update failed.
@@ -307,7 +309,9 @@ module ModelConcern
   #
   # @param [any, nil] items
   # @param [Boolean]  fatal           If *false* do not #raise_failure.
-  # @param [Hash]     opt             Default: `#current_params`
+  # @param [Hash]     opt             Default: `#current_params` except:
+  #
+  # @option opt [Boolean] recaptcha   Require reCAPTCHA verification.
   #
   # @raise [Record::SubmitError]      If there were failure(s).
   #
@@ -433,6 +437,19 @@ module ModelConcern
   # @param [Model, Hash, nil] record
   #
   def authorized_user?: (Model|symHash|nil record) -> bool
+
+  # Action permitted if the current session has been verified by reCAPTCHA.
+  #
+  # @note Always *true* for an Administrator or in the test environment.
+  #
+  # @param [Model, nil] record
+  # @param [Hash]       opt           Passed to #verify_recaptcha.
+  #
+  # @raise [Record::SubmitError]      If not verified.
+  #
+  # @return [Boolean]                 *true* if verified.
+  #
+  def verified: (Model|nil record, **untyped opt) -> bool
 
   # Raise an exception.
   #
