@@ -340,6 +340,42 @@ en:
           edit_select:
             title:      'Updating a selected EMMA member organization'
 
+        enrollment:
+          <<:           *TOPIC_TEMPLATE
+          topic:        'enrollment'
+          Topic:        'Enrollment'
+          title:        'EMMA Enrollment Requests'
+          tooltip:      'Help with EMMA enrollment request maintenance'
+          intro:        'How to enroll your organization as an EMMA member.'
+          content:      ~ # @see file:app/views/help/topic/_enrollment.html.erb
+
+          overview:
+            title:      'OVERVIEW'
+
+          index:
+            title:      'List all EMMA enrollment requests'
+
+          show:
+            title:      'View details of an EMMA enrollment request'
+
+          new:
+            title:      'Creating an EMMA enrollment request'
+
+          edit:
+            title:      'Updating an EMMA enrollment request'
+
+          delete:
+            title:      'Removing an EMMA enrollment request'
+
+          show_select:
+            title:      'Viewing a selected EMMA enrollment request'
+
+          edit_select:
+            title:      'Updating a selected EMMA enrollment request'
+
+          delete_select:
+            title:      'Removing a selected EMMA enrollment request'
+
       # =======================================================================
       # Illustrations
       # =======================================================================

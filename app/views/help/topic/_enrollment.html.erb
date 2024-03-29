@@ -1,0 +1,391 @@
+<%# app/views/help/topic/_enrollment.html.erb -%>
+<%-
+  # EMMA enrollment request help page.
+
+  view_debug(__FILE__)
+
+  topic             = t('emma.help.topic.enrollment')
+  administrator     = current_user&.administrator?
+  anonymous         = !administrator
+
+  overview          =  topic[:overview]
+  list_all          = (topic[:index]        if administrator)
+  show_select       = (topic[:show_select]  if administrator)
+  show              = (topic[:show]         if administrator)
+  new               = (topic[:new]          if administrator)
+  edit              = (topic[:edit]         if administrator)
+  delete            = (topic[:delete]       if administrator)
+
+  overview_title    =  overview[:title]
+  list_all_title    = (list_all[:title]     if list_all)
+  show_select_title = (show_select[:title]  if show_select)
+  show_title        = (show[:title]         if show)
+  new_title         = (new[:title]          if new)
+  edit_title        = (edit[:title]         if edit)
+  delete_title      = (delete[:title]       if delete)
+
+  list_all_label    = (t('emma.enrollment.index.label')       if list_all)
+  show_select_label = (t('emma.enrollment.show_select.label') if show_select)
+  show_label        = (t('emma.enrollment.show.label')        if show)
+  new_label         = (t('emma.enrollment.new.label')         if new)
+  edit_label        = (t('emma.enrollment.edit.label')        if edit)
+  delete_label      = (t('emma.enrollment.delete.label')      if delete)
+
+  list_all_btn      = (help_button(list_all_label)    if list_all)
+  show_select_btn   = (help_button(show_select_label) if show_select)
+  show_btn          = (help_button(show_label)        if show)
+  new_btn           = (help_button(new_label)         if new)
+  edit_btn          = (help_button(edit_label)        if edit)
+  delete_btn        = (help_button(delete_label)      if delete)
+
+  # Nav action menu
+
+  nav_menu_item     = t('emma.enrollment.label')
+  action_menu_label = 'Enrollment Actions'
+  action_menu       = help_image(:enrollment_actions)
+
+  # Shortcut icons
+
+  shortcuts_icons   = 'action short-cuts'
+  icons             = help_shortcut_icons(EnrollmentDecorator)
+  show_icon, show_tip = icons[:show].values_at(  :label, :value)
+  edit_icon, edit_tip = icons[:edit].values_at(  :label, :value)
+  del_icon,  del_tip  = icons[:delete].values_at(:label, :value)
+
+  # Form controls
+
+  panel_opener      = help_toggle(PanelHelper::PANEL_OPENER_LABEL)
+
+  delete_submit     = help_button_for(EnrollmentDecorator, :delete, :submit)
+  delete_cancel     = help_button_for(EnrollmentDecorator, :delete, :cancel)
+
+  # Page anchors
+
+  overview_help     = 'enrollment_overview_help'
+  list_all_help     = 'enrollment_list_all_help'
+  show_select_help  = 'enrollment_show_select_help'
+  show_help         = 'enrollment_show_help'
+  new_help          = 'enrollment_new_help'
+  edit_help         = 'enrollment_edit_help'
+  delete_help       = 'enrollment_delete_help'
+  actions_menu_help = 'enrollment_actions_menu_help'
+  shortcuts_help    = 'enrollment_shortcuts_help'
+
+-%>
+
+<%- if administrator -%>
+  <nav role="navigation" aria-labelledby="enrollment_help_nav">
+    <div id="enrollment_help_nav" class="sr-only">
+      Topics in this section:
+    </div>
+    <ul>
+      <li><a href="#<%= overview_help -%>"><%=    overview_title   -%></a></li>
+      <%- if list_all -%>
+        <li><a href="#<%= list_all_help -%>"><%=  list_all_title   -%></a></li>
+      <%- end -%>
+      <%- if show_select -%>
+        <li><a href="#<%= show_select_help-%>"><%=show_select_title-%></a></li>
+      <%- end -%>
+      <%- if show -%>
+        <li><a href="#<%= show_help-%>"><%=       show_title       -%></a></li>
+      <%- end -%>
+      <%- if new -%>
+        <li><a href="#<%= new_help -%>"><%=       new_title        -%></a></li>
+      <%- end -%>
+      <%- if edit -%>
+        <li><a href="#<%= edit_help -%>"><%=      edit_title       -%></a></li>
+      <%- end -%>
+      <%- if delete -%>
+        <li><a href="#<%= delete_help -%>"><%=    delete_title     -%></a></li>
+      <%- end -%>
+    </ul>
+  </nav>
+<%- end -%>
+
+<section role="region" data-part="overview" aria-labelledby="<%= overview_help -%>">
+
+  <%- if anonymous -%>
+
+    <p>
+      To enroll for an EMMA membership, we need some basic information about
+      your organization and yourself so that we can contact you.
+    </p>
+
+    <p>
+      When your enrollment is finalized, information about yourself will be
+      used to establish you with the Manager role for a new EMMA Organization.
+      As a Manager, you will be able to add additional users from your
+      institution to operate as EMMA member users.
+    </p>
+
+  <%- else -%>
+
+    <h2 class="section" id="<%= overview_help -%>">
+      <span class="text"><%= overview_title -%></span>
+    </h2>
+
+    <p>
+      Users with the Administrator role have full access to manage records in
+      the Enrollment subsystem.
+    </p>
+
+    <h3 class="sub-section" id="<%= actions_menu_help -%>">
+      <%= action_menu_label -%> menu
+    </h3>
+
+    <p>
+      The available functions are displayed at the top of each
+      <%= nav_menu_item -%> page as a set of buttons:
+      <%= action_menu %>
+    </p>
+
+    <div class="choices">
+
+      <%- if list_all -%>
+        <div class="label">
+          <a href="#<%= list_all_help -%>"><%= list_all_label -%></a>
+        </div>
+        <div class="value"><%= list_all_title -%></div>
+      <%- end -%>
+
+      <%- if show_select -%>
+        <div class="label">
+          <a href="#<%= show_select_help -%>"><%= show_select_label -%></a>
+        </div>
+        <div class="value"><%= show_select_title -%></div>
+      <%- end -%>
+
+      <%- if new -%>
+        <div class="label">
+          <a href="#<%= new_help -%>"><%= new_label -%></a>
+        </div>
+        <div class="value"><%= new_title -%></div>
+      <%- end -%>
+
+      <%- if edit -%>
+        <div class="label">
+          <a href="#<%= edit_help -%>"><%= edit_label -%></a>
+        </div>
+        <div class="value"><%= edit_title -%></div>
+      <%- end -%>
+
+      <%- if delete -%>
+        <div class="label">
+          <a href="#<%= delete_help -%>"><%= delete_label -%></a>
+        </div>
+        <div class="value"><%= delete_title -%></div>
+      <%- end -%>
+
+    </div>
+
+    <p>
+      Enrollment records remain in the enrollments list until they are either
+      deleted manually (in the case of an enrollment that has been rejected)
+      or until the enrollment has been finalized.
+    </p>
+
+    <h3 class="sub-section" id="<%= shortcuts_help -%>">
+      <%= shortcuts_icons.titleize -%>
+    </h3>
+
+    <p>
+      Each enrollment request listed on the <%= nav_menu_item -%> page is
+      associated with controls to manage that request (to the left of the
+      request description on desktop displays; at the top of the screen on
+      mobile displays):
+    </p>
+
+    <div class="choices">
+      <div class="label"><%=  show_icon -%></div>
+      <div class="value">“<%= show_tip  -%>”</div>
+      <div class="label"><%=  edit_icon -%></div>
+      <div class="value">“<%= edit_tip  -%>”</div>
+      <div class="label"><%=  del_icon  -%></div>
+      <div class="value">“<%= del_tip   -%>”</div>
+    </div>
+
+    <p>
+      Clicking on <%= show_icon -%> will redirect your browser to a new screen
+      that allows you to view the associated item, along with a control for
+      finalizing enrollment.
+      You may use your browser "back" button to return to this screen.
+    </p>
+
+    <p>
+      Clicking on <%= edit_icon -%> will redirect your browser to a new screen
+      that allows you to modify the associated item.
+    </p>
+
+    <p>
+      Clicking on <%= del_icon -%> will redirect your browser to a new screen
+      that will prompt you to delete the associated item.
+    </p>
+
+    <p>
+      If your account is not authorized to perform a particular operation on an
+      item, associated icon will not be displayed for that item.
+    </p>
+
+  <%- end -%>
+
+</section>
+
+<%- if list_all -%>
+  <section role="region" data-part="list_all" aria-labelledby="<%= list_all_help -%>">
+
+    <h2 class="section" id="<%= list_all_help -%>">
+      <%= list_all_btn -%> <span class="text"><%= list_all_title -%></span>
+    </h2>
+
+    <p>
+      This is a listing of all EMMA enrollment requests in descending time
+      order, starting with the one most recently created or modified.
+    </p>
+
+    <p>
+      Each enrollment request in the list is preceded by
+      <a href="#<%= shortcuts_help -%>"><%= shortcuts_icons -%></a>
+      for working with that request.
+    </p>
+
+  </section>
+<%- end -%>
+
+<%- if show_select -%>
+  <section role="region" data-part="show_select" aria-labelledby="<%= show_select_help -%>">
+
+    <h2 class="section" id="<%= show_select_help -%>">
+      <%= show_select_btn -%> <span class="text"><%= show_select_title -%></span>
+    </h2>
+
+    <p>
+      Provides a dropdown list to view the details of a specific enrollment
+      request.
+    </p>
+
+  </section>
+<%- end -%>
+
+<%- if show -%>
+  <section role="region" data-part="show" aria-labelledby="<%= show_help -%>">
+
+    <h2 class="section" id="<%= show_help -%>">
+      <%= show_btn -%> <span class="text"><%= show_title -%></span>
+    </h2>
+
+    <p>
+      In addition to a view of the fields in the enrollment request, this page
+      also includes a button to finalize the request.
+    </p>
+
+    <p>
+      When the enrollment request is finalized, request information is used to
+      create a new Organization, a new User will be created with the Manager
+      role for that Organization, and the enrollment request record will be
+      deleted.
+    </p>
+
+  </section>
+<%- end -%>
+
+<%- if new -%>
+
+  <section role="region" data-part="new_enrollment" aria-labelledby="<%= new_help -%>">
+
+    <h2 class="section" id="<%= new_help -%>">
+      <%= new_btn -%> <span class="text"><%= new_title -%></span>
+    </h2>
+
+    <p>
+      This displays the same form that a user requesting enrollment would see
+      with two exceptions:
+    </p>
+
+    <ul>
+      <li>There is an additional field for administrator notes.</li>
+      <li>The form does not use reCAPTCHA verification.</li>
+    </ul>
+
+  </section>
+
+<%- elsif anonymous -%>
+
+  <p>
+    This form contains fields to prompt for information needed to start an EMMA
+    membership.
+    Required fields must be supplied in order to activate the Submit button.
+    Other fields are optional.
+  </p>
+
+<%- end -%>
+
+<%- if edit -%>
+  <section role="region" data-part="edit_enrollment" aria-labelledby="<%= edit_help -%>">
+
+    <h2 class="section" id="<%= edit_help -%>">
+      <%= edit_btn -%> <span class="text"><%= edit_title -%></span>
+    </h2>
+
+    <p>
+      If you arrive at this page through the <%= action_menu_label -%>
+      <%= edit_btn -%> button,
+      you will be presented with a drop-down list of enrollment requests in
+      descending time order, starting with the one most recently created or
+      modified.
+      Select a request from the list to proceed.
+    </p>
+
+    <p>
+      The form displayed will contain the field values for the selected
+      enrollment, allowing you to modify the values that were used to create
+      the original enrollment request.
+      This is similar to the form a user would see when requesting enrollment
+      with two exceptions:
+    </p>
+
+    <ul>
+      <li>There is an additional field for administrator notes.</li>
+      <li>The form does not use reCAPTCHA verification.</li>
+    </ul>
+
+  </section>
+<%- end -%>
+
+<%- if delete -%>
+  <section role="region" data-part="delete_enrollment" aria-labelledby="<%= delete_help -%>">
+
+    <h2 class="section" id="<%= delete_help -%>">
+      <%= delete_btn -%> <span class="text"><%= delete_title -%></span>
+    </h2>
+
+    <p>
+      If you arrive at this page through the <%= action_menu_label -%>
+      <%= delete_btn -%> button,
+      you will be presented with a drop-down list of enrollment requests in
+      descending time order, starting with the one most recently created or
+      modified.
+      Select a request from the list to proceed.
+    </p>
+
+    <p>
+      To verify that this is really the enrollment request you want to delete,
+      you may click on <%= panel_opener -%> to display its details.
+    </p>
+
+    <p>
+      If you decide that you do not want to delete the enrollment request, you
+      may click
+      <%= delete_cancel -%>
+      (which will attempt to return you to the previous page),
+      or simply go to any other page in EMMA.
+    </p>
+
+    <p>
+      If you are certain that you want to delete the enrollment request, then
+      click
+      <%= delete_submit -%>.
+      This will removes the request and its contents from your list.
+    </p>
+
+  </section>
+<%- end -%>
