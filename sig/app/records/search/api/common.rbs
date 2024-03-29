@@ -98,7 +98,7 @@ class PublicationIdentifier < ScalarType
     #
     # @param [any, nil] v
     #
-    # @return [Array<(String, String)>]
+    # @return [Array(String, String)]
     #
     def parts: (untyped v) -> [String, String]
 
@@ -187,7 +187,7 @@ class PublicationIdentifier < ScalarType
   #
   # @param [any, nil] v               Default: #value.
   #
-  # @return [Array<(String, String)>]
+  # @return [Array(String, String)]
   #
   def parts: (?untyped v) -> [String, String]
 

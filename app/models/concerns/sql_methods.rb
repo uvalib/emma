@@ -378,7 +378,7 @@ module SqlMethods
   # @param [any, nil] value
   # @param [Hash]     opt             Passed to #sql_match_term
   #
-  # @return [Array<(String,String,String)>]
+  # @return [Array(String,String,String)]
   #
   def sql_name_value(name, value, **opt)
     opt.merge!(exact: true, match_case: true) if uuid?(value)
@@ -395,7 +395,7 @@ module SqlMethods
   # @param [Boolean]  exact
   # @param [Boolean]  match_case
   #
-  # @return [Array<(String,String)>]
+  # @return [Array(String,String)]
   #
   # @see #sql_test
   #

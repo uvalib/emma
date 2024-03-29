@@ -178,7 +178,7 @@ class Shrine
         # @param [any]  object
         # @param [Hash] params
         #
-        # @return [Array<(Array,Integer)>]
+        # @return [Array(Array,Integer)]
         #
         def get_object(object, params)
           super

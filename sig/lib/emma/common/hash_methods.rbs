@@ -14,7 +14,7 @@ module Emma::Common::HashMethods
   # @param [ActionController::Parameters, Hash, nil] hash
   # @param [Array<Symbol,String,Array,nil>]          keys
   #
-  # @return [Array<(Hash, Hash)>]     Matching hash followed by remainder hash.
+  # @return [Array(Hash, Hash)]       Matching hash followed by remainder hash.
   #
   def partition_hash: ((prmHash|nil) hash, *(Symbol|String|Array[Symbol|String]|nil) keys) -> [symHash, symHash]
 
@@ -86,7 +86,7 @@ module Emma::Common::HashMethods
   def reject_blanks
     : (symHash item, ?squeeze: bool, ?dup: bool, **untyped _ignored) -> symHash
     | (anyHash item, ?squeeze: bool, ?dup: bool, **untyped _ignored) -> anyHash
-    | (any|nil item, ?squeeze: bool, ?dup: bool, **untyped _ignored) -> anyHash
+    | (untyped item, ?squeeze: bool, ?dup: bool, **untyped _ignored) -> anyHash
 
   # Recursively remove blank items from a hash.
   #
@@ -101,7 +101,7 @@ module Emma::Common::HashMethods
   def reject_blanks!
     : (symHash item, ?squeeze: bool, **untyped _ignored) -> symHash
     | (anyHash item, ?squeeze: bool, **untyped _ignored) -> anyHash
-    | (any|nil item, ?squeeze: bool, **untyped _ignored) -> anyHash
+    | (untyped item, ?squeeze: bool, **untyped _ignored) -> anyHash
 
   # Recursively remove blank items from an object copy.
   #

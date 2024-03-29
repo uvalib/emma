@@ -161,7 +161,7 @@ class PublicationIdentifier < ScalarType
     #
     # @param [any, nil] v
     #
-    # @return [Array<(String, String)>]
+    # @return [Array(String, String)]
     #
     def parts(v)
       s = v.to_s.strip
@@ -298,7 +298,7 @@ class PublicationIdentifier < ScalarType
   #
   # @param [any, nil] v               Default: #value.
   #
-  # @return [Array<(String, String)>]
+  # @return [Array(String, String)]
   #
   def parts(v = nil)
     v ? super : [prefix, number]

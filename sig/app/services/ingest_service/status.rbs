@@ -17,8 +17,8 @@ module IngestService::Status
   # @param [String, Array<String>] with
   # @param [Proc]                  expect
   #
-  # @return [Array<(TrueClass,nil)>]
-  # @return [Array<(FalseClass,String)>]
+  # @return [Array(TrueClass,nil)]
+  # @return [Array(FalseClass,String)]
   #
   def active_status: (?with: String|strArray|nil, ?expect: Proc|nil) -> ([true, nil] | [false, String])
 

@@ -35,8 +35,8 @@ module IngestService::Common
   # @param [Hash, nil]         headers  Default: {}.
   # @param [String, Hash, nil] body     Default: nil unless `#update_request?`.
   #
-  # @return [Array<(Hash,Hash,String)>] Message body plus headers for GET.
-  # @return [Array<(Hash,Hash,Hash)>]   Query plus headers for PUT, POST, PATCH
+  # @return [Array(Hash,Hash,String)]   Message body plus headers for GET.
+  # @return [Array(Hash,Hash,Hash)]     Query plus headers for PUT, POST, PATCH
   #
   def api_headers(params = nil, headers = nil, body = nil)
     params, headers, body = super

@@ -139,11 +139,12 @@ en:
 
         warning:
           experimental: &EXPERIMENTAL
-            directions_html: |
-               <span style="color:red">
-                 WARNING: This is an experimental feature and not intended for
-                 general use
-               </span>
+            directions_html:
+              >-
+              <span style="color:red">
+                WARNING: This is an experimental feature and not intended for
+                general use
+              </span>
         success:        'Operation successful %{name}'
         failure:        'Could not proceed: %{error}'
 
@@ -238,7 +239,8 @@ en:
         label:          'Bulk Import'
         title:          'Import New Manifest Items'
         tooltip:        'Add new manifest items via a CSV or JSON control file'
-        description:    |
+        description:
+          >-
           Provide a *.csv or *.json data file to specify files and metadata to
           be used to create new EMMA entries.
 
@@ -277,9 +279,11 @@ en:
       bulk_edit:        &BULK_EDIT_ACTION
         label:          'Bulk Update'
         title:          'Import Manifest Modifications'
-        tooltip:        |
+        tooltip:
+          >-
           Modify existing manifest items via a CSV or JSON control file
-        description:    |
+        description:
+          >-
           Provide a *.csv or *.json data file to specify files and/or metadata
           to be used to update existing EMMA entries.
 
@@ -315,7 +319,8 @@ en:
         label:          'Bulk Delete'
         title:          'Remove Multiple Manifest Items'
         tooltip:        'Delete multiple manifest items by identifier'
-        description:    |
+        description:
+          >-
           Provide a comma-separated list of item numbers to specify which items
           to delete.
         directions:     ~

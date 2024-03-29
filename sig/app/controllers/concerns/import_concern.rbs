@@ -49,10 +49,10 @@ module ImportConcern
   #
   # @param [any] src
   #
-  # @return [Array<(IO, String)>]
-  # @return [Array<(String, String)>]
-  # @return [Array<(String, nil)>]
-  # @return [Array<(nil, nil)>]
+  # @return [Array(IO, String)]
+  # @return [Array(String, String)]
+  # @return [Array(String, nil)]
+  # @return [Array(nil, nil)]
   #
   def extract_from
     : (ActionDispatch::Http::UploadedFile        src) ->  [IO,         String]

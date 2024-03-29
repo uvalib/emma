@@ -400,7 +400,7 @@ class Ability
   # @param [any, nil]                subject
   # @param [Array]                   conditions
   #
-  # @return [Array<(*,*,*)>]
+  # @return [Array(*,*,*)]
   #
   def prep_conditions: (?(Symbol|String|Array[Symbol|String]|nil) action, ?untyped subject, anyArray conditions) -> void
 

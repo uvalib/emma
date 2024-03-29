@@ -43,8 +43,8 @@ module AwsS3Service::Status
   # @param [String, Array<String>] with
   # @param [Proc]                  expect
   #
-  # @return [Array<(TrueClass,nil)>]
-  # @return [Array<(FalseClass,String)>]
+  # @return [Array(TrueClass,nil)]
+  # @return [Array(FalseClass,String)]
   #
   def active_status(with: nil, expect: nil)
     with   ||= SAMPLE_RECORD_ID_ACCESS[:ids]

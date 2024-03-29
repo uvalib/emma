@@ -101,7 +101,7 @@ module Record::Identification
   #
   # @option opt [Symbol] :id_key      Default: `#id_column`.
   #
-  # @return [String]                  Record ID Array<(:id)>.
+  # @return [String]                  Record ID Array(:id).
   # @return [nil]                     No valid :id specified.
   #
   def id_value(item, **opt)

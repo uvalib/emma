@@ -1163,7 +1163,7 @@ appSetup(MODULE, function() {
 
     const $group_checkbox  = $head_row.find(`${CONTROLS} ${CHECKBOX}`);
 
-    /** @type {JQuery<HTMLInputElement>} */
+    /** @type {jQuery<HTMLInputElement>} */
     const $item_checkboxes = $item_rows.find(`${CONTROLS} ${CHECKBOX}`);
 
     /**

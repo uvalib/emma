@@ -191,7 +191,8 @@ en:
           label:        'Forgot your password?'
           tooltip:      'Click to reset your password'
           title:        'Reset your password'
-          description:  |
+          description:
+            >-
             When you click "Send", instructions will be sent to the email
             address you have provided.
           username:     'Your email address'
@@ -202,7 +203,8 @@ en:
         edit:
           label:        'Change your password'
           title:        'Change your password'
-          description:  |
+          description:
+            >-
             You may reset your password by providing a new one here.
           password:     'New password'
           confirm:      'Confirm new password'

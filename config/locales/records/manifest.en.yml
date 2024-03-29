@@ -71,7 +71,9 @@ en:
             min:          1
             max:          1
             label:        'Total Items'
-            tooltip:      'Current items contained in this manifest'
+            tooltip:
+              >-
+              The current number of items contained in this manifest
             type:         number
             origin:       system
 
@@ -79,7 +81,8 @@ en:
             min:          1
             max:          1
             label:        'Saved Items'
-            tooltip:      |
+            tooltip:
+              >-
               Finalized items which are either submittable or have already been
               submitted
             type:         number
@@ -89,10 +92,10 @@ en:
             min:          1
             max:          1
             label:        'Pending Items'
-            tooltip:      |
+            tooltip:
+              |-
               Items that have been created or changed since the last save.
-              NOTE: These will be removed if the current manifest session is
-              canceled.
+              NOTE: To be removed if the current manifest session is canceled.
             type:         number
             origin:       system
 
@@ -100,7 +103,8 @@ en:
             min:          1
             max:          1
             label:        'Complete Items'
-            tooltip:      |
+            tooltip:
+              |-
               Items that are up-to-date.
               NOTE: This total also includes items marked for deletion.
             type:         number
@@ -110,7 +114,8 @@ en:
             min:          1
             max:          1
             label:        'Unsaved Items'
-            tooltip:      |
+            tooltip:
+              |-
               Items that have been changed since the last save.
               NOTE: This total also includes items marked for deletion.
             type:         number
@@ -120,7 +125,8 @@ en:
             min:          1
             max:          1
             label:        'New Items'
-            tooltip:      |
+            tooltip:
+              |-
               Items that have been created since the last save.
               NOTE: This total also includes items marked for deletion.
             type:         number
@@ -130,7 +136,8 @@ en:
             min:          1
             max:          1
             label:        'Incomplete Items'
-            tooltip:      |
+            tooltip:
+              |-
               Items that have been created or changed since the last save.
               NOTE: This total also includes items marked for deletion.
             type:         number

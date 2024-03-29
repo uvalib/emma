@@ -19,8 +19,8 @@ module ApiService::Status
 
   # Indicate whether the service is operational.
   #
-  # @return [Array<(TrueClass,nil)>]
-  # @return [Array<(FalseClass,String)>]
+  # @return [Array(TrueClass,nil)]
+  # @return [Array(FalseClass,String)]
   #
   def active_status(...)
     must_be_overridden

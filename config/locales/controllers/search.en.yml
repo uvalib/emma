@@ -111,7 +111,8 @@ en:
           <<:           *SEARCH_STYLE
           label:        'Debug'
           class:        'restore-button'
-          tooltip:      |
+          tooltip:
+            >-
             Click to turn off debugging controls and return to normal display
             of search results
           field:        ~ # Indicates that this is not a topic button.
@@ -304,7 +305,8 @@ en:
         label:          'Advanced'
         title:          'EMMA Unified Search'
         tooltip:        'Combine multiple search terms and search limiters'
-        text_html:      |
+        text_html:
+          >-
           <p>
             A search term is required to begin.
             The search will vary depending on your choice of Keyword,

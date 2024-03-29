@@ -119,8 +119,8 @@ module ModelConcern
   # @param [any, nil]  item           Model, Hash
   # @param [Hash, nil] prm
   #
-  # @return [Array<(Model, Hash)>]
-  # @return [Array<(*,     Hash)>]
+  # @return [Array(Model, Hash)]
+  # @return [Array(*,     Hash)]
   #
   def model_request_params(item, prm = nil, &blk)
     item, prm = [nil, item] if item.is_a?(Hash)
@@ -429,7 +429,8 @@ module ModelConcern
   # Start a new model instance.
   #
   # @param [Hash, nil] prm            Field values (def: `#current_params`).
-  # @param [Hash]      opt            Added field values.
+  # @param [Hash]      opt            Field values to supplement or replace
+  #                                     #current_params values except:
   #
   # @option opt [Boolean] force       If *true* allow setting of :id.
   #
@@ -533,7 +534,7 @@ module ModelConcern
   #
   # @yield [items, opt] Raise an exception unless the *items* are acceptable.
   # @yieldparam [Array] items         Identifiers of items to be deleted.
-  # @yieldparam [Hash]  opt           Options to #search_records.
+  # @yieldparam [Hash]  options       Options to #search_records.
   # @yieldreturn [void]               Block not called if *record* is *nil*.
   #
   def delete_records(items = nil, **opt, &blk)

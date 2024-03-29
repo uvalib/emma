@@ -11,6 +11,7 @@ module AuthConcern
 
   extend ActiveSupport::Concern
 
+  include Emma::Config
   include Emma::Json
   include Emma::Debug
 

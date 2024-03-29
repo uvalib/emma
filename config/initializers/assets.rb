@@ -16,4 +16,4 @@ Rails.configuration.assets.css_compressor = nil
 # Rails.configuration.assets.paths << Emoji.images_path
 
 # Enable serving of images, stylesheets and JavaScripts from an asset server.
-# config.asset_host = "http://assets.example.com"
+# Rails.configuration.asset_host = "http://assets.example.com"

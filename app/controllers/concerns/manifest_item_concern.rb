@@ -20,6 +20,7 @@ module ManifestItemConcern
 
   extend ActiveSupport::Concern
 
+  include Emma::Config
   include Emma::Common
   include Emma::Json
 
@@ -371,14 +372,14 @@ module ManifestItemConcern
   #
   # @yield [items, opt] Raise an exception unless the *items* are acceptable.
   # @yieldparam [Array] items         Identifiers of items to be deleted.
-  # @yieldparam [Hash]  opt           Options to #search_records.
+  # @yieldparam [Hash]  options       Options to #search_records.
   # @yieldreturn [void]               Block not called if *record* is *nil*.
   #
   def delete_records(items = nil, **opt, &blk)
     return super if blk
     authorized_session
-    super do |_item, opt|
-      opt.except!(:force, :emergency, :truncate)
+    super do |_items, options|
+      options.except!(:force, :emergency, :truncate)
     end
   end
 

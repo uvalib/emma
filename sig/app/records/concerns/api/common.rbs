@@ -243,7 +243,7 @@ class IsoDuration < ScalarType
     # @param [Float, Integer, nil] value2
     # @param [Integer]             multiplier
     #
-    # @return [Array<(Float, any)>]
+    # @return [Array(Float, any)]
     #
     def fractional: (Float value1, (Float|Integer|nil) value2, Integer multiplier) -> [Float, untyped]
 

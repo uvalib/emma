@@ -42,7 +42,8 @@ en:
           blank:        ''
 
         parent_select:
-          title:        |
+          title:
+            >-
             Please indicate the EMMA entry for the original repository item.
             If possible, enter the standard identifier (ISBN, DOI, OCLC, etc.)
             or the full title of the original work.
@@ -389,7 +390,8 @@ en:
 
         warning:
           experimental: &EXPERIMENTAL
-            directions_html: |
+            directions_html:
+              >-
               <span style="color:red">
                 WARNING: This is an experimental feature and not intended for
                 general use
@@ -420,7 +422,8 @@ en:
         label:          'Org List'
         title:          '%{name} EMMA Submissions'
         tooltip:        'All uploads of remediated content to EMMA associated with your organization'
-        description_html: |
+        description_html:
+          >-
           <p>
             This is a listing of all EMMA entries submitted by users from your
             organization.
@@ -433,7 +436,8 @@ en:
         label:          'My List'
         title:          'EMMA Submissions'
         tooltip:        'Review uploads of remediated content to EMMA'
-        description_html: |
+        description_html:
+          >-
           <p>
             This is a listing of all of your EMMA submissions.
             With the buttons above, you may upload remediated content, remove
@@ -472,7 +476,8 @@ en:
         label:          'Create'
         title:          'Upload Remediated Content'
         tooltip:        'Upload a file to create a new EMMA entry'
-        description:    |
+        description:
+          >-
           You may share a remediated work with the EMMA community by uploading
           here.
 
@@ -482,7 +487,8 @@ en:
           Hover your mouse over buttons or field names for additional
           information.
 
-        directions:     |
+        directions:
+          >-
           Choose a file to upload and provide any information about the entry
           that could not be determined from the contents of the file:
 
@@ -502,7 +508,8 @@ en:
         select:
           <<:           *GENERIC_SELECT
           if_enabled:
-            tooltip:    |
+            tooltip:
+              >-
               As many fields as possible will be filled-in by information
               extracted from your file
 
@@ -523,7 +530,8 @@ en:
         label:          'Change'
         title:          'Modify EMMA Submission %{name}'
         tooltip:        'Upload a replacement file for an existing EMMA entry'
-        description:    |
+        description:
+          >-
           An EMMA repository entry can be modified by the user who created the
           entry or by an administrative user.
 
@@ -531,7 +539,8 @@ en:
           information, etc.) and/or replacement of the remediated file
           associated with the entry.
 
-        directions:     |
+        directions:
+          >-
           Provide an update version of your file, or modify fields that need to
           be corrected:
 
@@ -579,7 +588,8 @@ en:
         label:          'Remove'
         title:          'Remove EMMA Submission %{name}'
         tooltip:        'Delete an EMMA entry by removing a remediated file'
-        description:    |
+        description:
+          >-
           An EMMA repository entry can be removed by the user who created the
           entry or by an administrative user.
 
@@ -587,10 +597,12 @@ en:
           file from EMMA storage as well as removal of the entry from the EMMA
           Unified Index.
 
-        directions:     |
+        directions:
+          >-
           Click to remove the selected entry from the EMMA repository:
 
-        notes_html:     |
+        notes_html:
+          >-
           Content which resides outside of EMMA is under the purview of the
           originating partner repository and cannot be deleted here.
 
@@ -642,7 +654,8 @@ en:
         label:          'Bulk Upload'
         title:          'Bulk creation of EMMA entries'
         tooltip:        'Create new EMMA entries via CSV or JSON control file'
-        description:    |
+        description:
+          >-
           Provide a *.csv or *.json data file to specify files and metadata to
           be used to create new EMMA entries.
         directions:     ~
@@ -676,9 +689,11 @@ en:
         <<:             *BULK_NEW_ACTION
         label:          'Bulk Edit'
         title:          'Bulk modification of EMMA entries'
-        tooltip:        |
-          Modify existing EMMA entries via a CSV or JSON control file
-        description:    |
+        tooltip:
+          >-
+          Modify existing EMMA entries via a CSV or JSON control file.
+        description:
+          >-
           Provide a *.csv or *.json data file to specify files and/or metadata
           to be used to update existing EMMA entries.
         directions:     ~
@@ -707,7 +722,8 @@ en:
         label:          'Bulk Delete'
         title:          'Remove EMMA submission by database or submission ID'
         tooltip:        'Delete multiple EMMA entries by identifier'
-        description:    |
+        description:
+          >-
           Provide a comma-separated list of submission IDs to specify which
           EMMA entries to delete.
 
@@ -716,11 +732,12 @@ en:
           containing the submission ID.
 
         directions:     ~
-        notes:          |
+        notes:
+          >-
           An EMMA entry consists of three parts:
-          (1) a record in the EMMA database,
-          (2) an associated file in cloud storage, and
-          (3) a matching entry in the EMMA Unified Index.
+            (1) a record in the EMMA database,
+            (2) an associated file in cloud storage, and
+            (3) a matching entry in the EMMA Unified Index.
 
           If an item identifier can be found in the EMMA database then all
           three parts can be removed.
@@ -752,8 +769,9 @@ en:
       bulk_reindex:
         label:          'Re-index'
         title:          'Bulk Re-indexing'
-        tooltip:        |
-          Update submissions' entries in the EMMA Unified Index
+        tooltip:
+          >-
+          Update submissions' entries in the EMMA Unified Index.
         description:    'TODO: ???'
         role:           staff
         _endpoint:      true
@@ -770,7 +788,8 @@ en:
       renew:
         label:          'Renew'
         title:          'Renew Record'
-        description:    |
+        description:
+          >-
           If you are seeing this page, this indicates a failure of the system
           to refresh the form for creating a new Upload record.
 
@@ -784,7 +803,8 @@ en:
       reedit:
         label:          'Re-edit'
         title:          'Re-edit Record'
-        description:    |
+        description:
+          >-
           If you are seeing this page, this indicates a failure of the system
           to refresh the form for updating a new Upload record.
 

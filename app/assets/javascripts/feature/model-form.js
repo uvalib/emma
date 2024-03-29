@@ -1753,7 +1753,7 @@ appSetup(MODULE, function() {
         // checkboxes if it is an array, or to set a specific checkbox if it
         // is a string.
         const group       = CheckboxGroup.setupFor($field);
-        /** @type {JQuery<HTMLInputElement>} */
+        /** @type {jQuery<HTMLInputElement>} */
         const $checkboxes = group?.controls || CheckboxGroup.controls($field);
         if (Array.isArray(setting) || (setting === null)) {
             const values = compact(setting || []);

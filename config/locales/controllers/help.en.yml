@@ -243,7 +243,8 @@ en:
           topic:        'bibliographic lookup'
           Topic:        'Bibliographic Lookup Tool'
           tooltip:      'Help with this feature'
-          intro:        |
+          intro:
+            >-
             This is a temporary interface to code being developed to support
             improving the usefulness of EMMA submissions by making it easy to
             fill in missing bibliographic metadata.
@@ -347,18 +348,19 @@ en:
 
         sign_in_links:
           asset:        'help/sign_in_links.png'
-          alt:          |
-            Sign-in options links.
+          alt:          'Sign-in options links.'
 
         drop_down:
           asset:        'help/drop_down.png'
-          alt:          |
+          alt:
+            >-
             Opened search format drop-down menu with "DAISY" format selection
             highlighted.
 
         ia_timeout:
           asset:        'help/ia_timeout.png'
-          alt:          |
+          alt:
+            >-
             Alert message with Internet Archive download service response:
             "Sorry, we need more time to finish generating your ebook.
             Please refresh this page after a few minutes."
@@ -367,34 +369,40 @@ en:
 
         local_login:
           asset:        'help/local_login.png'
-          alt:          |
+          alt:
+            >-
             The "local sign-in" button with Account and Password fields and a
             "Sign in" submit button.
 
         one_selection:
           asset:        'help/one_selection.png'
-          alt:          |
+          alt:
+            >-
             Multi-select "Format" menu with "DAISY" as the single selection.
 
         two_selections:
           asset:        'help/two_selections.png'
-          alt:          |
+          alt:
+            >-
             Multi-select "Format" menu with two selections: "DAISY" and "EPUB".
 
         search_type_closed:
           asset:        'help/search_type_closed.png'
-          alt:          |
+          alt:
+            >-
             Search type menu (closed) with "Keyword" selected.
 
         search_type_opened:
           asset:        'help/search_type_opened.png'
-          alt:          |
+          alt:
+            >-
             Search type menu (opened) with a drop-down list of search types
             "ISBN/DOI/etc.", "Title", "Creator", "Publisher", and "Keyword".
 
         shibboleth_login:
           asset:        'help/shibboleth_login.png'
-          alt:          |
+          alt:
+            >-
             The InCommon login form with a drop-down menu to select your
             institution.
 
@@ -404,35 +412,40 @@ en:
 
         upload_actions:
           asset:        'help/upload_actions.png'
-          alt:          |
+          alt:
+            >-
             Upload action button panel ("My List", "Org List", "Create",
             "Change", and "Remove") with "My List" highlighted, indicating that
             the current page lists EMMA submissions made by this account.
 
         upload_actions_admin:
           asset:        'help/upload_actions_admin.png'
-          alt:          |
+          alt:
+            >-
             Upload action button panel ("My List", "List All", "Create",
             "Change", and "Remove") with "My List" highlighted, indicating that
             the current page lists EMMA submissions made by this account.
 
         source_menu:
           asset:        'help/source_menu.png'
-          alt:          |
+          alt:
+            >-
             A portion of the upload submission form showing radio buttons to
             filter the fields on the page, and with the Source Repository menu
             in its initial closed state showing "(unset)".
 
         source_menu_open:
           asset:        'help/source_menu_open.png'
-          alt:          |
+          alt:
+            >-
             A portion of the upload submission form showing radio buttons to
             filter the fields on the page, and with the Source Repository menu
             opened to show selections "EMMA", "ACE", and "Internet Archive".
 
         source_menu_repo:
           asset:        'help/source_menu_repo.png'
-          alt:          |
+          alt:
+            >-
             A portion of the upload submission form showing radio buttons to
             filter the fields on the page, with "Internet Archive" selected as
             the "Source Repository", and a mini-form with an input for a
@@ -440,7 +453,8 @@ en:
 
         source_selected_fields:
           asset:        'help/source_selected_fields.png'
-          alt:          |
+          alt:
+            >-
             A portion of the upload submission form showing radio buttons to
             filter the fields on the page, with "Completed fields" selected to
             show that selecting the "parent" EMMA source entry has pre-filled
@@ -453,7 +467,8 @@ en:
 
         manifest_actions:
           asset:        'help/manifest_actions.png'
-          alt:          |
+          alt:
+            >-
             Bulk upload action button panel ("My List", "Org List", "Create",
             "Change", "Remove", and "Submit") with "My List" highlighted,
             indicating that the current page lists bulk upload manifests made
@@ -461,7 +476,8 @@ en:
 
         manifest_actions_admin:
           asset:        'help/manifest_actions_admin.png'
-          alt:          |
+          alt:
+            >-
             Bulk upload action button panel ("My List", "List All", "Create",
             "Change", "Remove", and "Submit") with "My List" highlighted,
             indicating that the current page lists bulk upload manifests made
@@ -469,19 +485,22 @@ en:
 
         manifest_title:
           asset:        'help/manifest_title.png'
-          alt:          |
+          alt:
+            >-
             An example auto-generated manifest title, followed by an "Edit"
             button and a help button for the page.
 
         manifest_title_edit:
           asset:        'help/manifest_title_edit.png'
-          alt:          |
+          alt:
+            >-
             An example auto-generated manifest title being edited in a text
             input, followed by "Change" and "Cancel" buttons.
 
         submission_columns:
           asset:        'help/submission_columns.png'
-          alt:          |
+          alt:
+            >-
             The heading row of the bulk upload submission grid showing a
             checkbox which can be used to check/uncheck all items, and column
             headers "Item Name", "Validation", "File Status", "Storage Status",
@@ -489,37 +508,43 @@ en:
 
         unsaved:
           asset:        'help/unsaved.png'
-          alt:          |
+          alt:
+            >-
             The UNSAVED submission status marker, with an "Edit" button to jump
             to that item in the manifest edit grid.
 
         data_missing:
           asset:        'help/data_missing.png'
-          alt:          |
+          alt:
+            >-
             The DATA ERROR submission status marker, with an "Edit" button to
             jump to that item in the manifest edit grid.
 
         file_missing:
           asset:        'help/file_needed.png' # TODO: don't have this yet
-          alt:          |
+          alt:
+            >-
             The FILE MISSING submission status marker, with an "Edit" button to
             jump to that item in the manifest edit grid.
 
         file_needed:
           asset:        'help/file_needed.png'
-          alt:          |
+          alt:
+            >-
             The FILE NEEDED submission status marker, including the name of the
             remediated file that needs to be supplied.
 
         not_started:
           asset:        'help/not_started.png'
-          alt:          |
+          alt:
+            >-
             The NOT STARTED status marker, which indicates a submission step
             not yet reached for the given item.
 
         succeeded:
           asset:        'help/succeeded.png'
-          alt:          |
+          alt:
+            >-
             The OK status marker, which indicates a submission step that has
             been successfully completed for the given item.
 
@@ -530,14 +555,16 @@ en:
 
         account_actions:
           asset:        'help/account_actions.png'
-          alt:          |
+          alt:
+            >-
             Account action button panel ("Details", "Modify", "Org List") with
             "Details" highlighted, indicating that the current page lists
             information about the current account.
 
         account_actions_admin:
           asset:        'help/account_actions_admin.png'
-          alt:          |
+          alt:
+            >-
             Account action button panel ("Details", "Modify", "List All") with
             "List All" highlighted, indicating that the current page is a
             listing of all EMMA accounts.
@@ -548,7 +575,8 @@ en:
 
         org_actions_manager:
           asset:        'help/org_actions_manager.png'
-          alt:          |
+          alt:
+            >-
             Organization action button panel ("Details", "Modify", "Add User",
             "Edit User", "Remove User") with "Details" highlighted, indicating
             that the current page lists information the user's EMMA member
@@ -556,7 +584,8 @@ en:
 
         org_actions_admin:
           asset:        'help/org_actions_admin.png'
-          alt:          |
+          alt:
+            >-
             Organization action button panel ("List All", "Show Org", "Create",
             "Change", "Remove", "Add User", "Edit User", "Remove User") with
             "List All" highlighted, indicating that the current page is a
@@ -570,7 +599,8 @@ en:
         label:          'Help'
         title:          'EMMA Help Topics'
         tooltip:        'Get help on using the EMMA system'
-        intro_html:     |
+        intro_html:
+          >-
           <p>
             Documentation is also available as downloadable PDFs covering these
             topics:

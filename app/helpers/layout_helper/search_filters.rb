@@ -88,7 +88,7 @@ module LayoutHelper::SearchFilters
     # @param [Hash, String, Symbol, Class, Array<Array>] values
     # @param [Hash]   opt             Passed to #make_menu_label.
     #
-    # @return [Array<Array<(String,String)>>]
+    # @return [Array<Array(String,String)>]
     #
     # @overload make_menu(menu_name, entries, **opt)
     #   @param [Symbol]        menu_name
@@ -1036,7 +1036,7 @@ module LayoutHelper::SearchFilters
 
   # Indicate whether the menu is already sorted.
   #
-  # @param [Array<Array<(String,*)>>] menu
+  # @param [Array<Array(String,*)>] menu
   #
   def entries_sorted?(menu)
     sort_entries(menu) == menu
@@ -1044,9 +1044,9 @@ module LayoutHelper::SearchFilters
 
   # Return a sorted copy of the menu.
   #
-  # @param [Array<Array<(String,*)>>] menu
+  # @param [Array<Array(String,*)>] menu
   #
-  # @return [Array<Array<(String,*)>>]
+  # @return [Array<Array(String,*)>]
   #
   def sort_entries(menu)
     sort_entries!(menu.dup)
@@ -1054,9 +1054,9 @@ module LayoutHelper::SearchFilters
 
   # Sort the menu by value if the value is a number or by the label otherwise.
   #
-  # @param [Array<Array<(String,*)>>] menu
+  # @param [Array<Array(String,*)>] menu
   #
-  # @return [Array<Array<(String,*)>>]    The possibly-modified *menu*.
+  # @return [Array<Array(String,*)>]    The possibly-modified *menu*.
   #
   def sort_entries!(menu)
     menu.sort_by! { |lbl, val| val.is_a?(Integer) ? ('%09d' % val) : lbl.to_s }

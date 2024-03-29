@@ -443,10 +443,10 @@
     grid-template-columns:
         [submit] auto [cancel] auto [file] auto [selected] 1fr;
 
-    // Uploader for a new EMMA entry.
+    // Form for a new model record.
     &.new {}
 
-    // Uploader for an existing EMMA entry.
+    // Form for an model record.
     &.edit {}
 
     //=========================================================================

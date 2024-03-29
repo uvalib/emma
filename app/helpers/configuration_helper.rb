@@ -26,7 +26,7 @@ module ConfigurationHelper
   # @param [String, Symbol, nil] ctrlr
   # @param [String, Symbol, nil] action
   #
-  # @return [Array<(Symbol,Symbol)>]
+  # @return [Array(Symbol,Symbol)]
   #
   def config_path(ctrlr = nil, action = nil)
     [ctrlr, action].compact_blank!.map! do |s|

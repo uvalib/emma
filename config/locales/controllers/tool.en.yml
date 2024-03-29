@@ -42,12 +42,14 @@ en:
         label:            'Math Detective'
         title:            'Math Detective API trial'
         path:             md_trial_path
-        description_html: |
+        description_html:
+          >-
           This page allows you to process an image file (JPEG, PNG,
           <em>etc.</em>) through Benetech's Math Detective, a backend service
           for the automated conversion of equations in images to an accessible
           form.
-        notes:            |
+        notes:
+          >-
           This is a standalone service and not currently integrated into the
           EMMA submission process.
 
@@ -63,7 +65,8 @@ en:
         label:            'Bibliographic Lookup'
         title:            'Bibliographic Lookup'
         path:             bib_lookup_path
-        notes:            |
+        notes:
+          >-
           This page accesses on-going work which will be integrated into the
           individual EMMA submission form and the bulk manifest.
 

@@ -572,8 +572,8 @@ module UploadWorkflow::External
   # @param [Boolean] atomic           Passed to #add_to_index.
   # @param [Hash]    data             @see Upload#assign_attributes.
   #
-  # @return [Array<(Upload,Array)>]   Record instance; zero or more messages.
-  # @return [Array<(nil,Array)>]      No record; one or more error messages.
+  # @return [Array(Upload,Array)]     Record instance; zero or more messages.
+  # @return [Array(nil,Array)]        No record; one or more error messages.
   #
   # @see #db_insert
   # @see #add_to_index
@@ -604,8 +604,8 @@ module UploadWorkflow::External
   # @param [Boolean] atomic           Passed to #update_in_index.
   # @param [Hash]    data             @see Upload#assign_attributes
   #
-  # @return [Array<(Upload,Array)>]   Record instance; zero or more messages.
-  # @return [Array<(nil,Array)>]      No record; one or more error messages.
+  # @return [Array(Upload,Array)]     Record instance; zero or more messages.
+  # @return [Array(nil,Array)]        No record; one or more error messages.
   #
   # @see #db_update
   # @see #update_in_index
@@ -645,7 +645,7 @@ module UploadWorkflow::External
   #                                               even if the related database
   #                                               entries do not exist.
   #
-  # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+  # @return [Array(Array,Array)]      Succeeded items and failed item messages.
   #
   # @see #remove_from_index
   #
@@ -745,7 +745,7 @@ module UploadWorkflow::External
   # @param [Hash]    opt              Passed to #upload_remove via
   #                                     #batch_upload_operation.
   #
-  # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+  # @return [Array(Array,Array)]      Succeeded items and failed item messages.
   #
   # @see UploadWorkflow::External#upload_remove
   #
@@ -802,7 +802,7 @@ module UploadWorkflow::External
   # @param [Integer, Boolean]                  size     Default: #BATCH_SIZE.
   # @param [Hash]                              opt
   #
-  # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+  # @return [Array(Array,Array)]      Succeeded items and failed item messages.
   #
   def batch_upload_operation(op, items, size: nil, **opt)
     __debug_items((dbg = "UPLOAD WF #{op}"), binding)
@@ -1132,8 +1132,8 @@ module UploadWorkflow::External
   #
   # @raise [Api::Error] @see IngestService::Action::Submissions#put_records
   #
-  # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
-  #                                         msgs, and records to roll back.
+  # @return [Array(Array,Array,Array)]  Succeeded records, failed item msgs,
+  #                                     and records to roll back.
   #
   def add_to_index(*items, atomic: true, **)
     __debug_items("UPLOAD WF #{__method__}", binding)
@@ -1163,8 +1163,8 @@ module UploadWorkflow::External
   #
   # @raise [Api::Error] @see IngestService::Action::Submissions#put_records
   #
-  # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
-  #                                         msgs, and records to roll back.
+  # @return [Array(Array,Array,Array)]  Succeeded records, failed item msgs,
+  #                                     and records to roll back.
   #
   def update_in_index(*items, atomic: true, **)
     __debug_items("UPLOAD WF #{__method__}", binding)
@@ -1187,7 +1187,7 @@ module UploadWorkflow::External
   #
   # @raise [Api::Error] @see IngestService::Action::Submissions#delete_records
   #
-  # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+  # @return [Array(Array,Array)]      Succeeded items and failed item messages.
   #
   def remove_from_index(*items, atomic: true, **)
     __debug_items("UPLOAD WF #{__method__}", binding)
@@ -1229,8 +1229,8 @@ module UploadWorkflow::External
   # @param [Array<Upload, String>]                                   items
   # @param [Hash]                                                    opt
   #
-  # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
-  #                                         msgs, and records to roll back.
+  # @return [Array(Array,Array,Array)]  Succeeded records, failed item msgs,
+  #                                     and records to roll back.
   #
   # @see ExecReport#error_table
   #
@@ -1317,7 +1317,7 @@ module UploadWorkflow::External
   # @param [Array<Upload>] items
   # @param [Hash]          opt
   #
-  # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+  # @return [Array(Array,Array)]      Succeeded items and failed item messages.
   #
   def repository_create(*items, **opt)
     succeeded = []
@@ -1339,7 +1339,7 @@ module UploadWorkflow::External
   # @param [Array<Upload>] items
   # @param [Hash]          opt
   #
-  # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+  # @return [Array(Array,Array)]      Succeeded items and failed item messages.
   #
   # @note This capability is not yet supported by any partner repository.
   #
@@ -1362,7 +1362,7 @@ module UploadWorkflow::External
   # @param [Array<String,Upload>] items
   # @param [Hash]                 opt
   #
-  # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+  # @return [Array(Array,Array)]      Succeeded items and failed item messages.
   #
   # @note This capability is not yet supported by any partner repository.
   #
@@ -1395,9 +1395,9 @@ module UploadWorkflow::External
   # @param [Array<String,Model>] items
   # @param [Hash]                opt
   #
-  # @option opt [String] :repo      Required for String items.
+  # @option opt [String] :repo        Required for String items.
   #
-  # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+  # @return [Array(Array,Array)]      Succeeded items and failed item messages.
   #
   def repository_dequeue(*items, **opt)
     succeeded = []
@@ -1422,7 +1422,7 @@ module UploadWorkflow::External
   # @param [AwsS3::Message::Response, Hash{String,Integer=>String}] result
   # @param [Array<String, Upload>]                                  items
   #
-  # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+  # @return [Array(Array,Array)]      Succeeded items and failed item messages.
   #
   # @see ExecReport#error_table
   #
@@ -1446,7 +1446,7 @@ module UploadWorkflow::External
   # @param [Hash, Array] items
   # @param [Hash]        opt          Passed to #repository_remove.
   #
-  # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+  # @return [Array(Array,Array)]      Succeeded items and failed item messages.
   #
   #--
   # === Variations
@@ -1455,12 +1455,12 @@ module UploadWorkflow::External
   # @overload repository_removals(requests, **opt)
   #   @param [Hash{Symbol=>Array}]              requests
   #   @param [Hash]                             opt
-  #   @return [Array<(Array,Array)>]
+  #   @return [Array(Array,Array)]
   #
   # @overload repository_removals(items, **opt)
   #   @param [Array<String,#emma_recordId,any>] items
   #   @param [Hash]                             opt
-  #   @return [Array<(Array,Array)>]
+  #   @return [Array(Array,Array)]
   #
   def repository_removals(items, **opt)
     succeeded = []
@@ -1477,9 +1477,9 @@ module UploadWorkflow::External
   # Remove request(s) from partner repository queue(s).
   #
   # @param [Hash, Array] items
-  # @param [Hash]        opt        Passed to #repository_remove.
+  # @param [Hash]        opt          Passed to #repository_remove.
   #
-  # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+  # @return [Array(Array,Array)]      Succeeded items and failed item messages.
   #
   #--
   # === Variations
@@ -1488,12 +1488,12 @@ module UploadWorkflow::External
   # @overload repository_dequeues(requests, **opt)
   #   @param [Hash{Symbol=>Array}]              requests
   #   @param [Hash]                             opt
-  #   @return [Array<(Array,Array)>]
+  #   @return [Array(Array,Array)]
   #
   # @overload repository_dequeues(items, **opt)
   #   @param [Array<String,#emma_recordId,any>] items
   #   @param [Hash]                             opt
-  #   @return [Array<(Array,Array)>]
+  #   @return [Array(Array,Array)]
   #
   def repository_dequeues(items, **opt)
     succeeded = []

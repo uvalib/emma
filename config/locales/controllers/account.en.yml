@@ -200,7 +200,9 @@ en:
       show:             &SHOW_ACTION
         label:          'Account'
         title:          'EMMA User Account %{name}'
-        tooltip:        'Account details from the EMMA user account database table'
+        tooltip:
+          >-
+          Account details from the EMMA user account database table
 
         _endpoint:      true
 
@@ -225,7 +227,8 @@ en:
         label:          'Add User'
         title:          'Create an EMMA User Account'
         tooltip:        'Create a new EMMA account in the user database'
-        description:    |
+        description:
+          >-
           If the EMMA account is associated with an account authenticated via
           a remote authentication provider, sign-on is mediated by that
           provider.
@@ -267,7 +270,8 @@ en:
         label:          'Edit User'
         title:          'Modify EMMA User Account %{name}'
         tooltip:        'Modify an existing EMMA account in the user database'
-        description:    |
+        description:
+          >-
           You may change the local details of the EMMA account
           (whether it is a local EMMA account or one authenticated via a
           remote authentication provider).
@@ -324,7 +328,8 @@ en:
         label:          'Remove User'
         title:          'Remove EMMA User Account %{name}'
         tooltip:        'Remove an account from the set of active EMMA users'
-        description_html: |
+        description_html:
+          >-
           <p>
             Remove the selected account from the set of active EMMA users.
           </p>

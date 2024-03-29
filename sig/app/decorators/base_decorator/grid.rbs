@@ -141,7 +141,7 @@ module BaseDecorator::Grid
   # @param [Integer, nil] row
   # @param [Hash]         opt             Passed to #page_content_controls.
   #
-  # @return [Array<(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)>]
+  # @return [Array(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)]
   #
   def grid_controls: (?row: Integer|nil, **untyped opt) -> [ActiveSupport::SafeBuffer, ActiveSupport::SafeBuffer]
 

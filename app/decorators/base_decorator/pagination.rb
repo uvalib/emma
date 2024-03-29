@@ -82,7 +82,7 @@ module BaseDecorator::Pagination
   # @param [Integer, nil] row
   # @param [Hash]         opt         Passed to #page_count_and_number
   #
-  # @return [Array<(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)>]
+  # @return [Array(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)]
   #
   def page_content_controls(*ctrls, row: nil, **opt)
     links   = pagination_controls

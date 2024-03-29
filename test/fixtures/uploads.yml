@@ -8,7 +8,7 @@ emma_blank:           &EMMA
 
 emma_with_data:       &EMMA_WITH_DATA
   <<:                 *EMMA
-  emma_data:          |
+  emma_data:          |-
     <%= {
     dc_creator:       ['Edgar Allan Poe'],
     dc_format:        'epub',
@@ -35,7 +35,7 @@ emma_completed:       &EMMA_COMPLETED
   ext:                'epub'
   state:              'completed'
   phase:              'create'
-  file_data:          |
+  file_data:          |-
     <%= {
     id:               'e26602a61f196d2a022e9399af04619c.epub',
     storage:          'store',

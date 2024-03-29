@@ -190,7 +190,7 @@ module Import
   # @param [any, nil] k               Imported field being skipped.
   # @param [any, nil] v
   #
-  # @return [Array<(nil,nil)>]
+  # @return [Array(nil,nil)]
   #
   def skip: (?untyped k, ?untyped v) -> [nil, nil]
 
@@ -200,7 +200,7 @@ module Import
   # @param [any, nil]       v
   # @param [String]         prefix
   #
-  # @return [Array<(Symbol,*)>]
+  # @return [Array(Symbol,*)]
   #
   def default: (untyped k, untyped v, ?String prefix) -> [Symbol, untyped]
 
@@ -217,7 +217,7 @@ module Import
   # @param [Symbol, String] k         Import field name.
   # @param [any, nil]       v         Import field value.
   #
-  # @return [Array<(Symbol,*)>]
+  # @return [Array(Symbol,*)]
   #
   def resolve: ((Symbol|String) k, untyped v) -> [Symbol, untyped]
 

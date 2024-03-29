@@ -312,7 +312,7 @@ module Import
   # @param [any, nil] k               Imported field being skipped.
   # @param [any, nil] v
   #
-  # @return [Array<(nil,nil)>]
+  # @return [Array(nil,nil)]
   #
   def skip(k = nil, v = nil)
     __debug_import(__method__, k, v)
@@ -325,7 +325,7 @@ module Import
   # @param [any, nil]       v
   # @param [String]         prefix
   #
-  # @return [Array<(Symbol,*)>]
+  # @return [Array(Symbol,*)]
   #
   def default(k, v, prefix = name_prefix)
     __debug_import(__method__, k, v)
@@ -357,7 +357,7 @@ module Import
   # @param [Symbol, String] k         Import field name.
   # @param [any, nil]       v         Import field value.
   #
-  # @return [Array<(Symbol,*)>]
+  # @return [Array(Symbol,*)]
   #
   def resolve(k, v)
     k     = k.to_sym

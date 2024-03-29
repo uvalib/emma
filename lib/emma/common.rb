@@ -27,6 +27,14 @@ module Emma::Common
   include Emma::Common::StringMethods
   include Emma::Common::UrlMethods
 
+  # Non-functional hints for RubyMine type checking.
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    include Emma::Config
+    extend  Emma::Config
+    # :nocov:
+  end
+
 end
 
 __loading_end(__FILE__)

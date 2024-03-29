@@ -79,7 +79,7 @@ module BaseCollectionDecorator::List
   # @param [Integer] row              Starting row number.
   # @param [Hash]    opt              Passed to #list_controls.
   #
-  # @return [Array<(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)>]
+  # @return [Array(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)]
   #
   def index_controls(row: nil, **opt)
     trace_attrs!(opt)

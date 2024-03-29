@@ -50,7 +50,7 @@ module FormHelper
   # @param [Symbol, String, nil] id
   # @param [Hash]                fields
   #
-  # @return [Array<(Array,Array)>]
+  # @return [Array(Array,Array)]
   #
   def hidden_parameters_for(id, fields)
     id    = id&.to_sym

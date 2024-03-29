@@ -21,6 +21,7 @@ require 'net/http'
 module FlashHelper
 
   include Emma::Common
+  include Emma::Config
 
   include EncodingHelper
   include HtmlHelper

@@ -735,7 +735,7 @@ class Ability
   # @param [any, nil]                subject
   # @param [Array]                   conditions
   #
-  # @return [Array<(*,*,*)>]
+  # @return [Array(*,*,*)]
   #
   def prep_conditions(action, subject, conditions)
     action = action.compact.map!(&:to_sym) if action.is_a?(Array)

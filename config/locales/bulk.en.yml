@@ -142,7 +142,7 @@ en:
             closer:
               tooltip: 'Make this column take up less space'
             # When CONTROLS_ROTATE is true:
-            label: "\u27A4" # ➤ BLACK RIGHT ARROWHEAD
+            label:        "\u27A4" # ➤ BLACK RIGHT ARROWHEAD
 
           row:
             opener:
@@ -150,7 +150,7 @@ en:
             closer:
               tooltip: 'Minimize this row'
             # When CONTROLS_ROTATE is true (with "transform:rotate(0.25turn)"):
-            label: "\u27A4" # ➤ BLACK RIGHT ARROWHEAD
+            label:        "\u27A4" # ➤ BLACK RIGHT ARROWHEAD
 
         icons:
 
@@ -160,7 +160,8 @@ en:
             if_enabled:
               tooltip:    'Lookup bibliographic metadata for this item'
             if_disabled:
-              tooltip:    |
+              tooltip:
+                >-
                 Please supply either a standard identifier (ISBN, DOI, etc) or
                 a title and an author
             icon:         "\U0001F50D" # 🔍 LEFT-POINTING MAGNIFYING GLASS
@@ -171,10 +172,11 @@ en:
             if_enabled:
               tooltip:    'Delete this item'
             if_disabled:
-              tooltip:    |
-                Cannot delete the last item of a manifest.  If this item really
-                needs to be deleted, insert an empty item before deleting this
-                one.
+              tooltip:
+                >-
+                Cannot delete the last item of a manifest.
+                If this item really needs to be deleted, insert an empty item
+                before deleting this one.
             icon:         "\u2716" # ✖ HEAVY MULTIPLICATION X
 
           insert:
@@ -241,7 +243,8 @@ en:
 
           uploader:
             <<:           *UPLOADER_CONTROL
-            description:  |
+            description:
+              >-
               You can choose to pre-load your remediated content file now if
               that is more convenient.
             enabled:      true
@@ -251,7 +254,8 @@ en:
             panel:
               <<:         *FILE_PANEL
               label:      'Filename'
-            description:  |
+            description:
+              >-
               Provide the name of a file accessible from your web browser
               to be acquired at the start of the bulk upload process.
             enabled:      true
@@ -261,7 +265,8 @@ en:
             panel:
               <<:         *FILE_PANEL
               label:      'URL'
-            description:  |
+            description:
+              >-
               Provide the location of a file on the Internet
               to be acquired at the start of the bulk upload process.
             enabled:      false
@@ -295,7 +300,8 @@ en:
           local:
             label:       'Files'
             tooltip:     'Identify local files from your workstation'
-            description: |
+            description:
+              >-
               Use the file chooser to identify all of the files on your machine
               referenced by "FILE NEEDED" in the items below.
             enabled:     true
@@ -303,7 +309,8 @@ en:
           remote:
             label:       'URLs'
             tooltip:     'Identify remote files from the network'
-            description_html: |
+            description_html:
+              >-
               Provide access to the remote files referenced by "FILE NEEDED" in
               the items below.
               <em>NOTE: NOT YET IMPLEMENTED</em>

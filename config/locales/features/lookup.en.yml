@@ -12,12 +12,14 @@ en:
       tooltip:    'Lookup bibliographic information'
 
       if_enabled:
-        tooltip:  |
+        tooltip:
+          >-
           Try to fill in missing bibliographic information from external search
           services
 
       if_disabled:
-        tooltip:  |
+        tooltip:
+          >-
           Please supply either a standard identifier (ISBN, DOI, etc) or
           a title and an author
 

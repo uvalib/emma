@@ -203,7 +203,7 @@ module OrgConcern
   #
   # @yield [items, opt] Raise an exception unless the *items* are acceptable.
   # @yieldparam [Array] items         Identifiers of items to be deleted.
-  # @yieldparam [Hash]  opt           Options to #search_records.
+  # @yieldparam [Hash]  options       Options to #search_records.
   # @yieldreturn [void]               Block not called if *record* is *nil*.
   #
   def delete_records(items = nil, **opt, &blk)

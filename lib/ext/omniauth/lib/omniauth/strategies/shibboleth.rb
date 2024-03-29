@@ -61,8 +61,8 @@ module OmniAuth
       # @raise [Errno::ETIMEDOUT]
       # @raise [SocketError]
       #
-      # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
-      # @return [Array<(Integer, Hash{String=>any,nil}, Array<String>)>]
+      # @return [Array(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)]
+      # @return [Array(Integer, Hash{String=>any,nil},   Array<String>)]
       #
       def callback_phase
         raise 'No request' unless request

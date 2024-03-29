@@ -13,11 +13,12 @@ en:
 
       _template:
         _internal:      &INTERNAL_FIELD
-          notes_html:   |
+          notes_html:
+            >-
             <p>
               If this column is present in your imported data file it will
-              cause your file to be interpreted as
-              <strong>replacements</strong> for existing manifest records.
+              cause each line to be interpreted as a
+              <strong>replacement</strong> for an existing manifest record.
             </p>
           origin:       system
 
@@ -51,9 +52,11 @@ en:
           min:          0
           max:          1
           label:        'Row Insertion Offset'
-          tooltip:      |
-            Temporary offset number for an inserted row.  For any given row
-            this will be non-zero only until the rows are renumbered on update.
+          tooltip:
+            >-
+            Temporary offset number for an inserted row.
+            For any given row this will be non-zero only until the rows are
+            renumbered on update.
           type:         number
 
         # =====================================================================
@@ -82,7 +85,8 @@ en:
           max:          1
           label:        'Saved'
           tooltip:      'The last time changes to this row were committed'
-          notes_html:   |
+          notes_html:
+            >-
             <p>
               This is an internal record value noting the last time
               (in ISO 8601 format)
@@ -97,7 +101,8 @@ en:
           max:          1
           label:        'Lookup'
           tooltip:      'Date of last bibliographic lookup for this row'
-          notes_html:   |
+          notes_html:
+            >-
             <p>
               This is an internal record value noting the last time
               (in ISO 8601 format)
@@ -119,7 +124,8 @@ en:
           max:          1
           label:        'Submitted'
           tooltip:      'Date of last submission for this row'
-          notes_html:   |
+          notes_html:
+            >-
             <p>
               This is an internal record value noting the last time
               (in ISO 8601 format)
@@ -141,7 +147,8 @@ en:
           max:          1
           label:        'Created'
           tooltip:      'Date of creation of this row'
-          notes_html:   |
+          notes_html:
+            >-
             <p>
               This is an internal record value noting the time
               (in ISO 8601 format)
@@ -163,7 +170,8 @@ en:
           max:          1
           label:        'Updated'
           tooltip:      'Date of last update of this row'
-          notes_html:   |
+          notes_html:
+            >-
             <p>
               This is an internal record value noting the last time
               (in ISO 8601 format)
@@ -177,7 +185,6 @@ en:
               <li>If the data file row represents a new manifest item, the
                   value will be discarded.</li>
             </ul>
-
           type:         datetime
 
         # =====================================================================
@@ -217,7 +224,8 @@ en:
           max:          1
           label:        'File Data'
           tooltip:      'Uploaded file metadata for the associated submission'
-          notes_html:   |
+          notes_html:
+            >-
             <p>
               This field holds a reference to the file holding the remediated
               content which is being submitted for the given manifest item.
@@ -233,7 +241,8 @@ en:
           max:          1
           label:        'Repository'
           tooltip:      'Destination repository for the associated submission'
-          notes_html:   |
+          notes_html:
+            >-
             <p>
               This field indicates the repository which will receive the
               manifest item when it is submitted.
@@ -256,10 +265,12 @@ en:
           min:          0
           max:          ~
           label:        'Identifiers'
-          tooltip:      |
+          tooltip:
+            >-
             Standard identifier (e.g., ISBN, OCN [OCLC Number], etc.) for the
-            creative work represented by the remediated content file
-          notes_html:   |
+            creative work represented by the remediated content file.
+          notes_html:
+            >-
             <p>
               Standard identifier (e.g., ISBN, OCN [OCLC Number], etc.) for the
               creative work represented by the remediated content file.
@@ -271,10 +282,12 @@ en:
           min:          1
           max:          1
           label:        'Title'
-          tooltip:      |
+          tooltip:
+            >-
             Title of the creative work represented by the remediated content
-            file
-          notes_html:   |
+            file.
+          notes_html:
+            >-
             <p>
               Title of the creative work represented by the remediated content
               file.
@@ -286,10 +299,12 @@ en:
           min:          1
           max:          ~
           label:        'Author/Creator'
-          tooltip:      |
+          tooltip:
+            >-
             Author/editor/creator of the creative work represented by the
-            remediated content file
-          notes_html:   |
+            remediated content file.
+          notes_html:
+            >-
             <p>
               Author/editor/creator of the creative work represented by the
               remediated content file.
@@ -308,9 +323,11 @@ en:
           min:          0
           max:          1
           label:        'Version'
-          tooltip:      |
-            For book content, the edition or version of the book
-          notes_html:   |
+          tooltip:
+            >-
+            For book content, the edition or version of the book.
+          notes_html:
+            >-
             <p>
               For book content, the edition or version of the book.
             </p>
@@ -321,9 +338,11 @@ en:
           min:          0
           max:          1
           label:        'Series Type'
-          tooltip:      |
-            The type of publication from which the content was extracted
-          notes_html:   |
+          tooltip:
+            >-
+            The type of publication from which the content was extracted.
+          notes_html:
+            >-
             <p>
               The type of publication from which the content was extracted.
             </p>
@@ -334,11 +353,14 @@ en:
           min:          0
           max:          1
           label:        'Series Title'
-          tooltip:      |
+          tooltip:
+            >-
             For an article or paper, the name of the journal or periodical
-            in which it published; for book content, the name of the series
-            to which the book belongs
-          notes_html:   |
+            in which it published;
+            for book content, the name of the series to which the book
+            belongs.
+          notes_html:
+            >-
             <p>
               For an article or paper, the name of the journal or periodical
               in which it published;
@@ -352,11 +374,14 @@ en:
           min:          0
           max:          1
           label:        'Series Position'
-          tooltip:      |
+          tooltip:
+            >-
             For an article, the volume/issue/number of the journal or
-            periodical; for book content, the volume number or other
-            description of position within a series of books
-          notes_html:   |
+            periodical;
+            for book content, the volume number or other description of
+            position within a series of books.
+          notes_html:
+            >-
             <p>
               For an article, the volume/issue/number of the journal or
               periodical;
@@ -370,10 +395,12 @@ en:
           min:          0
           max:          1
           label:        'Copyright Date'
-          tooltip:      |
+          tooltip:
+            >-
             The year of copyright (or publication) of the creative work
-            represented by the remediated content file
-          notes_html:   |
+            represented by the remediated content file.
+          notes_html:
+            >-
             <p>
               The year of copyright (or publication) of the creative work
               represented by the remediated content file.
@@ -385,10 +412,12 @@ en:
           min:          0
           max:          1
           label:        'Publication Date'
-          tooltip:      |
+          tooltip:
+            >-
             Copyright or publication date of the creative work represented
-            by the remediated content file
-          notes_html:   |
+            by the remediated content file.
+          notes_html:
+            >-
             <p>
               Copyright or publication date of the creative work represented
               by the remediated content file.
@@ -400,10 +429,12 @@ en:
           min:          0
           max:          1
           label:        'Publisher'
-          tooltip:      |
+          tooltip:
+            >-
             Publisher/producer of the creative work represented by the
-            remediated content file
-          notes_html:   |
+            remediated content file.
+          notes_html:
+            >-
             <p>
               Publisher/producer of the creative work represented by the
               remediated content file.
@@ -420,10 +451,12 @@ en:
           min:          1
           max:          ~
           label:        'Language'
-          tooltip:      |
+          tooltip:
+            >-
             Language(s) of the creative work represented by the remediated
-            content file
-          notes_html:   |
+            content file.
+          notes_html:
+            >-
             <p>
               Language(s) of the creative work represented by the remediated
               content file.
@@ -435,10 +468,12 @@ en:
           min:          0
           max:          1
           label:        'Rights'
-          tooltip:      |
+          tooltip:
+            >-
             Reproduction rights for the creative work represented by the
-            remediated content file
-          notes_html:   |
+            remediated content file.
+          notes_html:
+            >-
             <p>
               Reproduction rights for the creative work represented by the
               remediated content file.
@@ -450,10 +485,12 @@ en:
           min:          0
           max:          1
           label:        'Description'
-          tooltip:      |
+          tooltip:
+            >-
             Description/synopsis/abstract of the creative work represented by
-            the remediated content file
-          notes_html:   |
+            the remediated content file.
+          notes_html:
+            >-
             <p>
               Description/synopsis/abstract of the creative work represented by
               the remediated content file.
@@ -466,10 +503,12 @@ en:
           min:          0
           max:          ~
           label:        'Subject'
-          tooltip:      |
+          tooltip:
+            >-
             Subject/keyword characterizing the creative work represented by
-            the remediated content file
-          notes_html:   |
+            the remediated content file.
+          notes_html:
+            >-
             <p>
               Subject/keyword characterizing the creative work represented by
               the remediated content file.
@@ -481,11 +520,13 @@ en:
           min:          0
           max:          ~
           label:        'Related Identifiers'
-          tooltip:      |
+          tooltip:
+            >-
             Standard identifier (e.g., ISBN, OCN [OCLC Number], etc.) of a
             related edition of the creative work represented by the
-            remediated content file
-          notes_html:   |
+            remediated content file.
+          notes_html:
+            >-
             <p>
               Standard identifier (e.g., ISBN, OCN [OCLC Number], etc.) of a
               related edition of the creative work represented by the
@@ -505,10 +546,12 @@ en:
           min:          1
           max:          1
           label:        'Type'
-          tooltip:      |
+          tooltip:
+            >-
             Original type of creative work represented by the remediated
-            content file
-          notes_html:   |
+            content file.
+          notes_html:
+            >-
             <p>
               Original type of creative work represented by the remediated
               content file.
@@ -520,9 +563,11 @@ en:
           min:          1
           max:          1
           label:        'Format'
-          tooltip:      |
-            The file format (or variant) of the remediated content file
-          notes_html:   |
+          tooltip:
+            >-
+            The file format (or variant) of the remediated content file.
+          notes_html:
+            >-
             <p>
               The file format (or variant) of the remediated content file.
             </p>
@@ -533,10 +578,12 @@ en:
           min:          0
           max:          ~
           label:        'Format Feature'
-          tooltip:      |
+          tooltip:
+            >-
             Format-specific attributes which are exhibited by the remediated
-            content file
-          notes_html:   |
+            content file.
+          notes_html:
+            >-
             <p>
               Format-specific attributes which are exhibited by the remediated
               content file.
@@ -548,10 +595,12 @@ en:
           min:          0
           max:          1
           label:        'Date Accepted'
-          tooltip:      |
+          tooltip:
+            >-
             Date in which the remediated content file was added to its
-            repository
-          notes_html:   |
+            repository.
+          notes_html:
+            >-
             <p>
               Date in which the remediated content file was added to its
               repository.
@@ -568,10 +617,12 @@ en:
           min:          0
           max:          1
           label:        'Source of Content'
-          tooltip:      |
+          tooltip:
+            >-
             The source of the original content from which the remediated file
-            was scanned or copied
-          notes_html:   |
+            was scanned or copied.
+          notes_html:
+            >-
             <p>
               The source of the original content from which the remediated file
               was scanned or copied.
@@ -583,10 +634,12 @@ en:
           min:          0
           max:          ~
           label:        'Source of Metadata'
-          tooltip:      |
+          tooltip:
+            >-
             The source of the metadata for the original creative work on
-            which the remediated file was based
-          notes_html:   |
+            which the remediated file was based.
+          notes_html:
+            >-
             <p>
               The source of the metadata for the original creative work on
               which the remediated file was based.
@@ -598,9 +651,11 @@ en:
           min:          0
           max:          ~
           label:        'Remediated By'
-          tooltip:      |
-            The source of the remediations provided in the submitted file
-          notes_html:   |
+          tooltip:
+            >-
+            The source of the remediations provided in the submitted file.
+          notes_html:
+            >-
             <p>
               The source of the remediations provided in the submitted file.
             </p>
@@ -611,11 +666,14 @@ en:
           min:          1
           max:          1
           label:        'Entire Document Remediated?'
-          tooltip:      |
+          tooltip:
+            >-
             True if the submission is a presentation of the entire original
-            work; false if the submission only covers certain sections or
-            chapters, or contains gaps or omissions
-          notes_html:   |
+            work;
+            false if the submission only covers certain sections or chapters,
+            or contains gaps or omissions.
+          notes_html:
+            >-
             <p>
               True if the submission is a presentation of the entire original
               work;
@@ -629,10 +687,12 @@ en:
           min:          1
           max:          1
           label:        'Part(s) Remediated'
-          tooltip:      |
+          tooltip:
+            >-
             For a submission which does not present the entire original
-            work, describe the part(s) which are covered by the submission
-          notes_html:   |
+            work, describe the part(s) which are covered by the submission.
+          notes_html:
+            >-
             <p>
               For a submission which does not present the entire original
               work, describe the part(s) which are covered by the submission.
@@ -645,10 +705,12 @@ en:
           min:          0
           max:          ~
           label:        'Remediated Aspects'
-          tooltip:      |
+          tooltip:
+            >-
             One or more terms which characterize the remediations that are
-            provided in this submission
-          notes_html:   |
+            provided in this submission.
+          notes_html:
+            >-
             <p>
               One or more terms which characterize the remediations that are
               provided in this submission.
@@ -660,10 +722,12 @@ en:
           min:          0
           max:          1
           label:        'Text Quality'
-          tooltip:      |
+          tooltip:
+            >-
             One or more indicators of the quality of the original scan on
-            which the submission was based
-          notes_html:   |
+            which the submission was based.
+          notes_html:
+            >-
             <p>
               One or more indicators of the quality of the original scan on
               which the submission was based.
@@ -675,9 +739,11 @@ en:
           min:          1
           max:          1
           label:        'Remediation Status'
-          tooltip:      |
-            The remediation status of submitted file
-          notes_html:   |
+          tooltip:
+            >-
+            The remediation status of submitted file.
+          notes_html:
+            >-
             <p>
               The remediation status of submitted file.
             </p>
@@ -688,9 +754,11 @@ en:
           min:          0
           max:          1
           label:        'Remediation Date'
-          tooltip:      |
-            Date of the most recent change to the remediated content file
-          notes_html:   |
+          tooltip:
+            >-
+            Date of the most recent change to the remediated content file.
+          notes_html:
+            >-
             <p>
               Date of the most recent change to the remediated content file.
             </p>
@@ -701,9 +769,11 @@ en:
           min:          1
           max:          1
           label:        'Remediation Comments'
-          tooltip:      |
-            Description of remediation(s) for this file
-          notes_html:   |
+          tooltip:
+            >-
+            Description of remediation(s) for this file.
+          notes_html:
+            >-
             <p>
               Description of remediation(s) for this file.
             </p>
@@ -719,9 +789,11 @@ en:
           min:          0
           max:          ~
           label:        'Accessibility Features'
-          tooltip:      |
-            Accessibility features of the remediated content
-          notes_html:   |
+          tooltip:
+            >-
+            Accessibility features of the remediated content.
+          notes_html:
+            >-
             <p>
               Accessibility features of the remediated content.
             </p>
@@ -732,9 +804,11 @@ en:
           min:          0
           max:          ~
           label:        'Accessibility Controls'
-          tooltip:      |
-            Accessibility controls of the remediated content
-          notes_html:   |
+          tooltip:
+            >-
+            Accessibility controls of the remediated content.
+          notes_html:
+            >-
             <p>
               Accessibility controls of the remediated content.
             </p>
@@ -745,9 +819,11 @@ en:
           min:          0
           max:          ~
           label:        'Accessibility Hazards'
-          tooltip:      |
-            Accessibility hazards of the remediated content
-          notes_html:   |
+          tooltip:
+            >-
+            Accessibility hazards of the remediated content.
+          notes_html:
+            >-
             <p>
               Accessibility hazards of the remediated content.
             </p>
@@ -758,9 +834,11 @@ en:
           min:          0
           max:          ~
           label:        'Access Mode'
-          tooltip:      |
-            Access mode for the remediated content
-          notes_html:   |
+          tooltip:
+            >-
+            Access mode for the remediated content.
+          notes_html:
+            >-
             <p>
               Access mode for the remediated content.
             </p>
@@ -771,9 +849,11 @@ en:
           min:          0
           max:          ~
           label:        'Sufficient Mode'
-          tooltip:      |
-            Access mode sufficient for the remediated content
-          notes_html:   |
+          tooltip:
+            >-
+            Access mode sufficient for the remediated content.
+          notes_html:
+            >-
             <p>
               Access mode sufficient for the remediated content.
             </p>
@@ -784,9 +864,11 @@ en:
           min:          0
           max:          1
           label:        'Accessibility Summary'
-          tooltip:      |
-            Accessibility summary for the remediated content
-          notes_html:   |
+          tooltip:
+            >-
+            Accessibility summary for the remediated content.
+          notes_html:
+            >-
             <p>
               Accessibility summary for the remediated content.
             </p>
@@ -812,7 +894,8 @@ en:
           max:          1
           label:        'Indexed'
           tooltip:      'Time of index ingest when this item was submitted'
-          notes_html:   |
+          notes_html:
+            >-
             <p>
               This is an internal record value holding the last time
               (in ISO 8601 format)
@@ -826,7 +909,8 @@ en:
           max:          1
           label:        'Submission ID'
           tooltip:      'The EMMA entry created by submission of this item'
-          notes_html:   |
+          notes_html:
+            >-
             <p>
               This is an internal record value holding the SID (submission ID)
               of the EMMA entry created from this manifest item.

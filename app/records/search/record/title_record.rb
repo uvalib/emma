@@ -165,7 +165,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @param [Number, Hash{any=>Number::Level}] item
     #
-    # @return [Array<(Float,Float)>]  Min and max level numbers.
+    # @return [Array(Float,Float)]    Min and max level numbers.
     #
     def number_range(item)
       return item.number_range if item.respond_to?(:number_range)
@@ -423,7 +423,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @param [String, nil] id
     #
-    # @return [Array<(String, Integer, String)>]
+    # @return [Array(String, Integer, String)]
     #
     def identifier_sort_key(id)
       id     = PublicationIdentifier.cast(id, invalid: true)
@@ -778,7 +778,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @param [String, nil] value      @see #number_name
     #
-    # @return [Array<(String,String)>]  Normalized name and entry type.
+    # @return [Array(String,String)]  Normalized name and entry type.
     #
     def name_type(value = nil)
       name = number_name(value)
@@ -810,7 +810,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @param [Number, Hash, nil] item   Default: `#level`.
     #
-    # @return [Array<(Float,Float)>]  Min and max level numbers.
+    # @return [Array(Float,Float)]      Min and max level numbers.
     #
     def number_range(item = nil)
       if item.nil? || (item == self)

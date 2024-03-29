@@ -108,9 +108,12 @@ en:
           too_small:        'Not enough characters.'
 
       fields:
-        valid_lang:         'Provided value: %s'
-        invalid_lang:       'The underlying data contains this value instead of a valid ISO 639 language code'
         invalid_id:         'This is not a valid %{TYPE} identifier.'
+        invalid_lang:
+          >-
+          The underlying data contains this value instead of a valid ISO 639
+          language code
+        valid_lang:         'Provided value: %s'
 
       flash:
         more:               'more'
@@ -125,9 +128,10 @@ en:
         cancel_first:       'Cancel this submission before retrying'
         filter:             'Filter input fields by state:'
         no_fields:          'NO FIELDS'
-        no_lookup:          |
-          Bibliographic metadata is inherited from
-          the original repository entry.
+        no_lookup:
+          >-
+          Bibliographic metadata is inherited from the original repository
+          entry.
         success:            'Changes saved'
         unchangeable:       'NOT CHANGEABLE WHILE THE SERVER IS OFFLINE'
         unmodifiable:       'System-generated; not modifiable.'
@@ -149,7 +153,9 @@ en:
 
       ia_download:
         response:           '%{service} response: %{body}'
-        retry:              'Close this browser tab and retry the original download link.'
+        retry:
+          >-
+          Close this browser tab and retry the original download link.
 
       image:
         alt:                'Illustration'
@@ -235,11 +241,17 @@ en:
           tooltip:          'Align with the top of the main content area'
 
       search_analysis:
-        early_exile:        'A LATER PAGE OF SEARCH RESULTS HAS ITEM(S) MATCHING THIS ONE'
+        early_exile:
+          >-
+          A LATER PAGE OF SEARCH RESULTS HAS ITEM(S) MATCHING THIS ONE
+        late_exile:
+          >-
+          THIS ITEM BELONGS ON AN EARLIER PAGE OF SEARCH RESULTS
         error:              'THIS ITEM IS OUT-OF-SEQUENCE'
         fields:             'specific metadata field(s)'
-        jump:               'Jump to the first occurrence on the page of this identity'
-        late_exile:         'THIS ITEM BELONGS ON AN EARLIER PAGE OF SEARCH RESULTS'
+        jump:
+          >-
+          Jump to the first occurrence on the page of this identity
         tooltip:            'Relevancy based on'
 
       search_bar:
@@ -250,10 +262,13 @@ en:
         row_remove:
           tooltip:          'Remove this search term'
         search_button:
-          not_ready:
-            tooltip:        'To perform a new search, add/modify search terms or filter selections.'
           ready:
             tooltip:        ''
+          not_ready:
+            tooltip:
+              >-
+              To perform a new search, add/modify search terms or filter
+              selections.
         search_clear:
           tooltip:          'Clear search terms'
 
@@ -278,9 +293,13 @@ en:
       submission:
         all_resolved:       'all files resolved'
         all_selected:       'all selected'
-        blocked:            'Files must be resolved before the submission process can begin'
+        blocked:
+          >-
+          Files must be resolved before the submission process can begin
         conn_error:         'Connection error'
-        none_saved:         'None of the items in the manifest have been completed and saved'
+        none_saved:
+          >-
+          None of the items in the manifest have been completed and saved
         not_selectable:     'not selectable until resolved'
         ready_for_upload:   'ready for upload'
         refresh:            'Refresh this page to re-authenticate.'
@@ -320,9 +339,13 @@ en:
         all_records:        'See all records'
         rows_here:          '%{rows} displayed here'
         sort:
-          ascending:        'Sorted; click to reverse-sort on this column'
-          descending:       'Reverse-sorted; click to stop sorting on this column'
           none:             'Unsorted; click to sort on this column'
+          ascending:
+            >-
+            Sorted; click to reverse-sort on this column
+          descending:
+            >-
+            Reverse-sorted; click to stop sorting on this column
 
       tool:
         sign_in:            '(sign-in required)'

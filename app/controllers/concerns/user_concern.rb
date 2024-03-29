@@ -61,7 +61,7 @@ module UserConcern
   #   Bs::Message::MyAccountPreferences,
   #   Bs::Message::TitleDownloadList
   # )>]
-  # @return [Array<(nil,nil,nil)>]
+  # @return [Array(nil,nil,nil)]
   #
   def get_account_details(id: nil, fast: nil, meth: nil)
     Log.debug do

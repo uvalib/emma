@@ -59,7 +59,8 @@ en:
         label:          'Submissions'
         title:          'EMMA Submission Records'
         tooltip:        'View information for all EMMA submissions'
-        text_html:      |
+        text_html:
+          >-
           <p>
             This page is constructed from selected parts of the EMMA
             submissions table for entries which are complete or (in the case of
@@ -79,7 +80,8 @@ en:
         label:          'Field Counts'
         title:          'EMMA Submission Field Value Counts'
         tooltip:        'View field values for all EMMA submissions'
-        text_html:      |
+        text_html:
+          >-
           <p>
             This page is constructed from selected parts of the EMMA
             submissions table for entries which are complete or (in the case of
@@ -91,7 +93,8 @@ en:
             <a href="/data/counts.json">JSON</a> or
             <a href="/data/counts.xml">XML</a>.
           </p>
-        notes_html:     |
+        notes_html:
+          >-
           <p>
             This page only reports on data fields which are actually used in
             submissions.

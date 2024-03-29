@@ -139,7 +139,7 @@ module SearchTermsHelper
   # @param [Hash, Symbol, String, nil] target
   # @param [Hash]                      opt      Passed to #search_target.
   #
-  # @return [Array<Array<(String,Symbol)>>]
+  # @return [Array<Array(String,Symbol)>]
   #
   def search_query_menu_pairs(target = nil, **opt)
     target = search_target(target, **opt)

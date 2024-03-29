@@ -158,8 +158,8 @@ module HelpHelper
   # @param [Symbol, String]      topic
   # @param [Symbol, String, nil] sub_topic
   #
-  # @return [Array<(Symbol,Symbol)>]
-  # @return [Array<(Symbol,nil)>]
+  # @return [Array(Symbol,Symbol)]
+  # @return [Array(Symbol,nil)]
   #
   def help_normalize(topic, sub_topic = nil)
     topic     = help_topic(topic)
@@ -246,7 +246,7 @@ module HelpHelper
   # @param [Symbol, nil]         type     Type of links; default: :anchor.
   # @param [Hash]                opt      Passed to route helper.
   #
-  # @return [Array<Array<(String,String)>>]
+  # @return [Array<Array(String,String)>]
   #
   def help_links(*topics, type: nil, **opt)
     type ||= :anchor

@@ -27,8 +27,8 @@ module IaDownloadService::Action::Records
   #
   # @raise [ExecError]                If the download failed.
   #
-  # @return [Array<(String,String,String)>]
-  # @return [Array<(String,String,nil)>]
+  # @return [Array(String,String,String)]
+  # @return [Array(String,String,nil)]
   #
   def download(url, **opt)
     api(:get, url, **opt)

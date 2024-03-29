@@ -262,8 +262,8 @@ module Record::Submittable
     #
     # @raise [Api::Error] @see IngestService::Action::Submissions#put_records
     #
-    # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
-    #                                         msgs, and records to roll back.
+    # @return [Array(Array,Array,Array)]  Succeeded records, failed item msgs,
+    #                                     and records to roll back.
     #
     # @note From UploadWorkflow::External#add_to_index
     #
@@ -297,8 +297,8 @@ module Record::Submittable
     #
     # @raise [Api::Error] @see IngestService::Action::Submissions#put_records
     #
-    # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
-    #                                         msgs, and records to roll back.
+    # @return [Array(Array,Array,Array)]  Succeeded records, failed item msgs,
+    #                                     and records to roll back.
     #
     # @note From UploadWorkflow::External#update_in_index
     #
@@ -323,7 +323,7 @@ module Record::Submittable
     #
     # @raise [Api::Error] @see IngestService::Action::Submissions#delete_records
     #
-    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+    # @return [Array(Array,Array)]  Succeeded items and failed item messages.
     #
     # @note From UploadWorkflow::External#remove_from_index
     #
@@ -374,8 +374,8 @@ module Record::Submittable
     # @param [Array<Model,String>]                                     items
     # @param [Hash]                                                    opt
     #
-    # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
-    #                                         msgs, and records to roll back.
+    # @return [Array(Array,Array,Array)]  Succeeded records, failed item msgs,
+    #                                     and records to roll back.
     #
     # @see ExecReport#error_table
     #
@@ -491,7 +491,7 @@ module Record::Submittable
     # @param [Array<Model>] items
     # @param [Hash]         opt
     #
-    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+    # @return [Array(Array,Array)]    Succeeded items and failed item messages.
     #
     # @note From UploadWorkflow::External#repository_create
     #
@@ -515,7 +515,7 @@ module Record::Submittable
     # @param [Array<Model>] items
     # @param [Hash]         opt
     #
-    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+    # @return [Array(Array,Array)]    Succeeded items and failed item messages.
     #
     # @note This capability is not yet supported by any partner repository.
     #
@@ -540,7 +540,7 @@ module Record::Submittable
     # @param [Array<String,Model>] items
     # @param [Hash]                opt
     #
-    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+    # @return [Array(Array,Array)]    Succeeded items and failed item messages.
     #
     # @note This capability is not yet supported by any partner repository.
     #
@@ -577,7 +577,7 @@ module Record::Submittable
     #
     # @option opt [String] :repo      Required for String items.
     #
-    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+    # @return [Array(Array,Array)]    Succeeded items and failed item messages.
     #
     # @note From UploadWorkflow::External#repository_dequeue
     #
@@ -604,7 +604,7 @@ module Record::Submittable
     # @param [AwsS3::Message::Response, Hash{String,Integer=>String}] result
     # @param [Array<String,Model>]                                    items
     #
-    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+    # @return [Array(Array,Array)]    Succeeded items and failed item messages.
     #
     # @see ExecReport#error_table
     #
@@ -630,7 +630,7 @@ module Record::Submittable
     # @param [Hash, Array, Model] items
     # @param [Hash]               opt     Passed to #repository_remove.
     #
-    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+    # @return [Array(Array,Array)]    Succeeded items and failed item messages.
     #
     # @note From UploadWorkflow::External#repository_removals
     #
@@ -641,12 +641,12 @@ module Record::Submittable
     # @overload repository_removals(requests, **opt)
     #   @param [Hash{Symbol=>Array}] requests
     #   @param [Hash]                opt
-    #   @return [Array<(Array,Array)>]
+    #   @return [Array(Array,Array)]
     #
     # @overload repository_removals(items, **opt)
     #   @param [Array]               items
     #   @param [Hash]                opt
-    #   @return [Array<(Array,Array)>]
+    #   @return [Array(Array,Array)]
     #
     def repository_removals(items, **opt)
       succeeded = []
@@ -665,7 +665,7 @@ module Record::Submittable
     # @param [Hash, Array] items
     # @param [Hash]        opt        Passed to #repository_remove.
     #
-    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+    # @return [Array(Array,Array)]    Succeeded items and failed item messages.
     #
     #--
     # === Variations
@@ -674,12 +674,12 @@ module Record::Submittable
     # @overload repository_dequeues(requests, **opt)
     #   @param [Hash{Symbol=>Array}] requests
     #   @param [Hash]                opt
-    #   @return [Array<(Array,Array)>]
+    #   @return [Array(Array,Array)]
     #
     # @overload repository_dequeues(items, **opt)
     #   @param [Array]               items
     #   @param [Hash]                opt
-    #   @return [Array<(Array,Array)>]
+    #   @return [Array(Array,Array)]
     #
     def repository_dequeues(items, **opt)
       succeeded = []
@@ -764,7 +764,7 @@ module Record::Submittable
     # @param [Hash]    opt            Passed to #entry_remove via
     #                                   #batch_entry_operation.
     #
-    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+    # @return [Array(Array,Array)]    Succeeded items and failed item messages.
     #
     # @note From UploadWorkflow::External#batch_upload_remove
     #
@@ -822,7 +822,7 @@ module Record::Submittable
     # @param [Integer, Boolean]                 size     Default: #BATCH_SIZE.
     # @param [Hash]                             opt
     #
-    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+    # @return [Array(Array,Array)]    Succeeded items and failed item messages.
     #
     # @note From UploadWorkflow::External#batch_upload_operation
     #
@@ -906,8 +906,8 @@ module Record::Submittable
     # @param [Boolean] atomic         Passed to #add_to_index.
     # @param [Hash]    data           @see Upload#assign_attributes.
     #
-    # @return [Array<(Upload,Array>)]  Record instance; zero or more messages.
-    # @return [Array<(nil,Array)>]     No record; one or more error messages.
+    # @return [Array<(Upload,Array>)] Record instance; zero or more messages.
+    # @return [Array(nil,Array)]      No record; one or more error messages.
     #
     # @see #db_insert
     # @see #add_to_index
@@ -946,7 +946,7 @@ module Record::Submittable
     # @param [Hash]    data           @see Upload#assign_attributes
     #
     # @return [Array<(Upload,Array>)] Record instance; zero or more messages.
-    # @return [Array<(nil,Array)>]    No record; one or more error messages.
+    # @return [Array(nil,Array)]      No record; one or more error messages.
     #
     # @see #db_update
     # @see #update_in_index
@@ -991,7 +991,7 @@ module Record::Submittable
     #                                             even if the related database
     #                                             entries do not exist.
     #
-    # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+    # @return [Array(Array,Array)]    Succeeded items and failed item messages.
     #
     # @see #remove_from_index
     #

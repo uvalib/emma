@@ -3,6 +3,8 @@
 module HealthConcern
   extend ActiveSupport::Concern
 
+  include Emma::Config
+
   include Emma::TimeMethods
 
   include Emma::Debug
@@ -139,36 +141,36 @@ module HealthConcern
 
   # Health status of the database service.
   #
-  # @return [Array<(Boolean,String)>]
-  # @return [Array<(Boolean,nil)>]
+  # @return [Array(Boolean,String)]
+  # @return [Array(Boolean,nil)]
   #
   def database_status: (*untyped _ignored) ?{ () -> untyped } -> ([true, nil] | [false, String])
 
   # Health status of the Redis service.
   #
-  # @return [Array<(Boolean,String)>]
-  # @return [Array<(Boolean,nil)>]
+  # @return [Array(Boolean,String)]
+  # @return [Array(Boolean,nil)]
   #
   def redis_status: (*untyped _ignored) ?{ () -> untyped } -> ([true, nil] | [false, String])
 
   # Health status of AWS storage.
   #
-  # @return [Array<(Boolean,String)>]
-  # @return [Array<(Boolean,nil)>]
+  # @return [Array(Boolean,String)]
+  # @return [Array(Boolean,nil)]
   #
   def storage_status: (*untyped _ignored) ?{ () -> untyped } -> ([true, nil] | [false, String])
 
   # Health status of the EMMA Unified Search service.
   #
-  # @return [Array<(Boolean,String)>]
-  # @return [Array<(Boolean,nil)>]
+  # @return [Array(Boolean,String)]
+  # @return [Array(Boolean,nil)]
   #
   def search_status: (*untyped _ignored) ?{ () -> untyped } -> ([true, nil] | [false, String])
 
   # Health status of the EMMA Unified Ingest service.
   #
-  # @return [Array<(Boolean,String)>]
-  # @return [Array<(Boolean,nil)>]
+  # @return [Array(Boolean,String)]
+  # @return [Array(Boolean,nil)]
   #
   def ingest_status: (*untyped _ignored) ?{ () -> untyped } -> ([true, nil] | [false, String])
 

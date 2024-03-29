@@ -331,7 +331,7 @@ module ManifestItem::StatusMethods
   #
   # @param [ManifestItem, Hash, nil] item   Default: self.
   #
-  # @return [Array<(String,Symbol)>, nil]
+  # @return [Array(String,Symbol), nil]
   #
   def file_name_type(item = nil)
     fd   = get_file_data(item)

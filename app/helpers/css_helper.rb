@@ -225,7 +225,7 @@ module CssHelper
       when String  then item.dup
       when Array   then item.map { |v| deep_dup_options(v) }
       when Hash    then item.transform_values { |v| deep_dup_options(v) }
-      else             duplicable_option?(item) ? item.dup : item
+      else              duplicable_option?(item) ? item.dup : item
     end
   end
 

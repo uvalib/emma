@@ -39,8 +39,8 @@ module FileFormat::Xml
   #
   # @param [Nokogiri::XML::Element] element
   #
-  # @return [Array<(Symbol,String)>]
-  # @return [Array<(Symbol,nil)>]
+  # @return [Array(Symbol,String)]
+  # @return [Array(Symbol,nil)]
   #
   def parse_element: (Nokogiri::XML::Element element) -> [Symbol, String?]
 
@@ -56,8 +56,8 @@ module FileFormat::Xml
   #
   # @param [Nokogiri::XML::Element] elem
   #
-  # @return [Array<(Symbol,String)>]
-  # @return [Array<(Symbol,nil)>]
+  # @return [Array(Symbol,String)]
+  # @return [Array(Symbol,nil)]
   # @return [nil]
   #
   def parse_meta: (Nokogiri::XML::Element elem) -> ([Symbol, String?] | nil)
@@ -66,8 +66,8 @@ module FileFormat::Xml
   #
   # @param [Nokogiri::XML::Element] elem
   #
-  # @return [Array<(Symbol,String)>]
-  # @return [Array<(Symbol,nil)>]
+  # @return [Array(Symbol,String)]
+  # @return [Array(Symbol,nil)]
   #
   def get_properties: (Nokogiri::XML::Element elem) -> [Symbol, String?]
 

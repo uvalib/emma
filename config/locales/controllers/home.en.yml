@@ -42,7 +42,8 @@ en:
         title:          'Welcome to EMMA'
         tooltip:        'Return to the home page'
         notice_html:    'You must %{sign_in} to upload or download files.'
-        text_html:      |
+        text_html:
+          >-
           <p>
             The purpose of this project and the infrastructure we are creating
             is to reduce the duplication of effort in disability service

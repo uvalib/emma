@@ -322,10 +322,10 @@ module ParamsHelper
   # @param [Symbol,String,Hash,Module,*] ctrlr    Def: `params[:controller]`
   # @param [Symbol,String,*]             action   Def: `params[:action]`
   #
-  # @return [Array<(String,String)>]
-  # @return [Array<(String,nil)>]
-  # @return [Array<(nil,String)>]
-  # @return [Array<(nil,nil)>]
+  # @return [Array(String,String)]
+  # @return [Array(String,nil)]
+  # @return [Array(nil,String)]
+  # @return [Array(nil,nil)]
   #
   #--
   # === Variations
@@ -333,24 +333,24 @@ module ParamsHelper
   #
   # @overload ctrlr_action_to_names
   #   Get :controller and :action from `#params`.
-  #   @return [Array<(String,String)>]
+  #   @return [Array(String,String)]
   #
   # @overload ctrlr_action_to_names(hash)
   #   Extract :controller and/or :action from *hash*.
   #   @param [Hash] hash
-  #   @return [Array<(String,String)>]
-  #   @return [Array<(String,nil)>]
-  #   @return [Array<(nil,String)>]
-  #   @return [Array<(nil,nil)>]
+  #   @return [Array(String,String)]
+  #   @return [Array(String,nil)]
+  #   @return [Array(nil,String)]
+  #   @return [Array(nil,nil)]
   #
   # @overload ctrlr_action_to_names(ctrlr)
   #   @param [Symbol, String, Module] ctrlr
-  #   @return [Array<(String,nil)>]
+  #   @return [Array(String,nil)]
   #
   # @overload ctrlr_action_to_names(ctrlr, action)
   #   @param [any, nil]       ctrlr   Symbol, String, Hash, Module
   #   @param [Symbol, String] action
-  #   @return [Array<(String,String)>]
+  #   @return [Array(String,String)]
   #
   def ctrlr_action_to_names(ctrlr = nil, action = nil)
     ctrlr  = request_parameters unless ctrlr || action

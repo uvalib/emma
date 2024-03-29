@@ -23,4 +23,8 @@ module Emma::Common
   include Emma::Common::StringMethods
 
   include Emma::Common::UrlMethods
+
+  # :nocov:
+  #include Emma::Config
+  #extend  Emma::Config
 end

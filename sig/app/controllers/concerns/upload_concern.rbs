@@ -157,7 +157,7 @@ module UploadConcern
   #
   # @return [Array<Upload,String>]    NOTE: not Paginator::Result
   #
-  def delete_records: (?(Model|String|Integer|Array[Model|String|Integer]|nil) items, **untyped opt) ?{ (Array[Model|String|Integer] items, symHash opt) -> void } -> Array[Upload|String]
+  def delete_records: (?(Model|String|Integer|Array[Model|String|Integer]|nil) items, **untyped opt) ?{ (Array[Model|String|Integer] items, symHash options) -> void } -> Array[Upload|String]
 
   # Remove the indicated EMMA submission(s) by deleting the associated Upload
   # records and removing the associated entries from the EMMA Unified Index.

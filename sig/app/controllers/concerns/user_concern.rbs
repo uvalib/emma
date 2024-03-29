@@ -38,7 +38,7 @@ module UserConcern
   #   Bs::Message::MyAccountPreferences,
   #   Bs::Message::TitleDownloadList
   # )>]
-  # @return [Array<(nil,nil,nil)>]
+  # @return [Array(nil,nil,nil)]
   #
   def get_account_details: (?id: String|nil, ?fast: bool|nil, ?meth: Symbol|String|nil) -> ([untyped, untyped|nil, untyped|nil] | [nil, nil, nil])
 

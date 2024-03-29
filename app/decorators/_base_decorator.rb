@@ -158,6 +158,14 @@ class BaseDecorator < Draper::Decorator
     include BaseDecorator::Submission
     include BaseDecorator::Table
 
+    # Non-functional hints for RubyMine type checking.
+    unless ONLY_FOR_DOCUMENTATION
+      # :nocov:
+      include Emma::Config
+      extend  Emma::Config
+      # :nocov:
+    end
+
     # =========================================================================
     # :section:
     # =========================================================================

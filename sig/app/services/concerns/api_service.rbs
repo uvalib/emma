@@ -92,7 +92,7 @@ class ApiService
   #
   # @return [Hash{Symbol=>any}]       (no *nil* values)
   #
-  def to_h: () -> Hash[Symbol,any]
+  def to_h: () -> symHash
 
   # Each subclass gets its own distinct set of service state variables.
   #

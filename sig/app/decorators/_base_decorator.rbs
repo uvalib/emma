@@ -104,6 +104,10 @@ class BaseDecorator < Draper::Decorator
 
     include BaseDecorator::Table
 
+    # :nocov:
+    #include Emma::Config
+    #extend  Emma::Config
+
     def list_css_class:  () -> String
     def can?: ((Symbol|String|nil) action, ?untyped target, *untyped extra_args) -> bool
     def config_button_values: ((String|Symbol) action) -> Hash[Symbol,Hash[Symbol,String|symHash]]

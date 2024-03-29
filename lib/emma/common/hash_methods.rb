@@ -34,7 +34,7 @@ module Emma::Common::HashMethods
   # @param [ActionController::Parameters, Hash, nil] hash
   # @param [Array<Symbol,String,Array,nil>]          keys
   #
-  # @return [Array<(Hash, Hash)>]     Matching hash followed by remainder hash.
+  # @return [Array(Hash, Hash)]       Matching hash followed by remainder hash.
   #
   def partition_hash(hash, *keys)
     keys      = keys.flatten.compact_blank!.map!(&:to_sym)

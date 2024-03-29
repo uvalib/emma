@@ -12,7 +12,7 @@ module ConfigurationHelper
   # @param [String, Symbol, nil] ctrlr
   # @param [String, Symbol, nil] action
   #
-  # @return [Array<(Symbol,Symbol)>]
+  # @return [Array(Symbol,Symbol)]
   #
   def config_path
     : ((String|Symbol|nil) ctrlr, ?(String|Symbol|nil) action) -> [Symbol,Symbol]
