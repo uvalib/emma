@@ -18,7 +18,7 @@ namespace 'emma:assets' do
   #
   # @note This should only be done on the desktop.
   #
-  BACKUP_CSS_SOURCES ||= not_deployed? ? :true : :false
+  BACKUP_CSS_SOURCES ||= not_deployed? && !Rails.env.test?
 
   # ===========================================================================
   # Tasks
@@ -28,8 +28,8 @@ namespace 'emma:assets' do
   desc ['Post-process CSS sourcemap', 'Replaces file:// with file://C:']
   task fix_css_map: [:environment] do
     $stderr.puts
-    backup_css_sources if true?(BACKUP_CSS_SOURCES)
     edit_source_map    if true?(FIX_CSS_MAP)
+    backup_css_sources if true?(BACKUP_CSS_SOURCES)
   end
 
   # ===========================================================================

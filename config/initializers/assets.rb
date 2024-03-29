@@ -5,6 +5,9 @@
 #
 # Configuration for asset pre-compilation.
 
+# Keep test assets separate.
+Rails.configuration.assets.prefix = '/assets-test' if Rails.env.test?
+
 # Version of your assets, change this if you want to expire all your assets.
 Rails.configuration.assets.version = '1.0'
 

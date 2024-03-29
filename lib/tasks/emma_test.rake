@@ -18,7 +18,7 @@ namespace 'emma:test' do
 
     task all: :default
 
-    task default: 'test:prepare' do
+    task default: :prerequisites do
       run_interactive_tests
     end
 
@@ -43,7 +43,7 @@ namespace 'emma:test' do
 
     task all: :default
 
-    task default: 'test:prepare' do
+    task default: :prerequisites do
       run_data_tests
     end
 
@@ -67,31 +67,31 @@ namespace 'emma:test' do
   namespace :serialization do
 
     desc 'Run controller tests rendering to JSON and XML'
-    task all: 'test:prepare' do
+    task all: :prerequisites do
       run_serialization_tests(:json, :xml)
     end
 
     desc 'Run controller tests rendering to JSON'
-    task json: 'test:prepare' do
+    task json: :prerequisites do
       run_serialization_tests(:json)
     end
 
     desc 'Run controller tests rendering to XML'
-    task xml: 'test:prepare' do
+    task xml: :prerequisites do
       run_serialization_tests(:xml)
     end
 
     desc 'Run controller tests rendering to HTML'
-    task html: 'test:prepare' do
+    task html: :prerequisites do
       run_serialization_tests(:html)
     end
 
     desc 'Run controller tests rendering to HTML, JSON, and XML'
-    task complete: 'test:prepare' do
+    task complete: :prerequisites do
       run_serialization_tests(:html, :json, :xml)
     end
 
-    task default: 'test:prepare' do
+    task default: :prerequisites do
       run_serialization_tests
     end
 
@@ -114,7 +114,7 @@ namespace 'emma:test' do
   # ===========================================================================
 
   # desc 'Required prerequisites for tasks in this namespace.'
-  task prerequisites: %w[environment db:load_config]
+  task prerequisites: %w[test:prepare]
 
   # ===========================================================================
   # Support methods
