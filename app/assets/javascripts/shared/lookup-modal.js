@@ -65,6 +65,9 @@ const COLUMN = deepFreeze({
     dc_description:         Emma.Messages.lookup.column.dc_description,
 });
 
+const LOCK_LBL   = Emma.Messages.lookup.lock.label;
+const UNLOCK_LBL = Emma.Messages.lookup.unlock.label;
+
 const LOCK_TIP   = Emma.Messages.lookup.lock.tooltip;
 const UNLOCK_TIP = Emma.Messages.lookup.unlock.tooltip;
 
@@ -1479,13 +1482,17 @@ export class LookupModal extends ModalDialog {
         this._debug('lockFieldValue:', field, locking);
         const $cell   = this.fieldValueCell(field);
         const $lock   = this.lockFor($cell);
+        const $input  = $lock;
+        const $slider = $lock.parent().find('.slider');
         const $state  = $lock.parent().find('.state');
         const name    = $state.attr('data-name');
         const locked  = (locking !== false);
-        const status  = locked ? 'locked' : 'unlocked';
-        const tooltip = locked ? UNLOCK_TIP : LOCK_TIP;
+        const tip     = locked ? UNLOCK_TIP : LOCK_TIP;
+        const label   = locked ? LOCK_LBL   : UNLOCK_LBL;
+        const status  = locked ? 'locked'   : 'unlocked';
         $cell.data(this.FIELD_LOCKED_DATA, locked);
-        $lock.attr('title', tooltip);
+        $input.attr('title', tip);
+        $slider.css('--label', `'${label}'`);
         $state.text(`${name} ${Emma.Messages.lookup.field_is} ${status}`);
     }
 

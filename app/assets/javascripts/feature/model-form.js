@@ -3153,21 +3153,19 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
-     * The bibliographic lookup button.
+     * The bibliographic lookup button if present on the form.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
      *
-     * @returns {jQuery}
+     * @returns {jQuery|undefined}
      *
      * @see "BaseDecorator::Lookup#lookup_control"
      */
     function lookupButton(form) {
-        const $element = form && $(form);
-        if ($element?.is(LOOKUP_BUTTON)) {
-            return $element;
-        } else {
-            return buttonTray($element).find(LOOKUP_BUTTON);
-        }
+        const $elem = form && $(form);
+        if (isEmpty($elem)) { return }
+        if ($elem.is(LOOKUP_BUTTON)) { return $elem }
+        return presence(buttonTray($elem).find(LOOKUP_BUTTON));
     }
 
     /**
@@ -3176,23 +3174,13 @@ appSetup(MODULE, function() {
      * @param {Selector} [form]       Default: {@link formElement}.
      */
     function setupLookupButton(form) {
-        const $button = lookupButtonInitialize(form);
-        LookupModal.setupFor($button, onLookupStart, onLookupComplete);
-    }
-
-    /**
-     * Initialize the internal conditions values for the Lookup button.
-     *
-     * @param {Selector} [form]       Default: {@link formElement}.
-     *
-     * @returns {jQuery}              The Lookup button.
-     */
-    function lookupButtonInitialize(form) {
         const $toggle = lookupButton(form);
-        clearSearchResultsData($toggle);
-        clearSearchTermsData($toggle);
-        clearLookupCondition($toggle);
-        return $toggle;
+        if ($toggle) {
+            clearSearchResultsData($toggle);
+            clearSearchTermsData($toggle);
+            clearLookupCondition($toggle);
+            LookupModal.setupFor($toggle, onLookupStart, onLookupComplete);
+        }
     }
 
     /**
@@ -3282,19 +3270,21 @@ appSetup(MODULE, function() {
      * @param {boolean}  [enable]     If **false** run {@link disableLookup}.
      * @param {boolean}  [forbid]     If **false** run {@link disableLookup}.
      *
-     * @returns {jQuery}              The submit button.
+     * @returns {jQuery|undefined}    The submit button.
      */
     function enableLookup(form, enable, forbid) {
-        if (enable === false) {
-            return disableLookup(form, forbid);
-        }
-        if (forbid) {
-            OUT.error('enableLookup: cannot enable and forbid');
-        }
         const $button = lookupButton(form);
-        $button.prop('disabled', false);
-        $button.removeClass('forbidden disabled');
-        $button.attr('title', Emma.Lookup.if_enabled.tooltip);
+        if ($button) {
+            if (enable === false) {
+                return disableLookup($button, forbid);
+            }
+            if (forbid) {
+                OUT.error('enableLookup: cannot enable and forbid');
+            }
+            $button.prop('disabled', false);
+            $button.removeClass('forbidden disabled');
+            $button.attr('title', Emma.Lookup.if_enabled.tooltip);
+        }
         return $button;
     }
 
@@ -3304,20 +3294,22 @@ appSetup(MODULE, function() {
      * @param {Selector} [form]       Default: {@link formElement}.
      * @param {boolean}  [forbid]     If **true** add ".forbidden".
      *
-     * @returns {jQuery}              The submit button.
+     * @returns {jQuery|undefined}    The submit button.
      */
     function disableLookup(form, forbid) {
         const $button = lookupButton(form);
-        $button.prop('disabled', true);
-        $button.addClass('disabled');
-        let tooltip;
-        if (forbid) {
-            $button.addClass('forbidden');
-            tooltip = Emma.Messages.form.no_lookup;
-        } else {
-            tooltip = Emma.Lookup.if_disabled.tooltip;
+        if ($button) {
+            $button.prop('disabled', true);
+            $button.addClass('disabled');
+            let tooltip;
+            if (forbid) {
+                $button.addClass('forbidden');
+                tooltip = Emma.Messages.form.no_lookup;
+            } else {
+                tooltip = Emma.Lookup.if_disabled.tooltip;
+            }
+            $button.attr('title', tooltip);
         }
-        $button.attr('title', tooltip);
         return $button;
     }
 
@@ -3335,7 +3327,9 @@ appSetup(MODULE, function() {
      * @returns {LookupCondition}
      */
     function getLookupCondition(form) {
-        return lookupButton(form).data(LOOKUP_CONDITION_DATA);
+        const $button   = lookupButton(form);
+        const condition = $button?.data(LOOKUP_CONDITION_DATA);
+        return condition || LookupRequest.blankLookupCondition();
     }
 
     /**
@@ -3343,23 +3337,19 @@ appSetup(MODULE, function() {
      *
      * @param {Selector}        form
      * @param {LookupCondition} value
-     *
-     * @returns {LookupCondition}
      */
     function setLookupCondition(form, value) {
-        lookupButton(form).data(LOOKUP_CONDITION_DATA, value);
-        return value;
+        lookupButton(form)?.data(LOOKUP_CONDITION_DATA, value);
     }
 
     /**
      * Set the field value(s) for bibliographic lookup to the initial state.
      *
      * @param {Selector} form
-     *
-     * @returns {LookupCondition}
      */
     function clearLookupCondition(form) {
-        return setLookupCondition(form, LookupRequest.blankLookupCondition());
+        const $btn = lookupButton(form);
+        $btn && setLookupCondition($btn, LookupRequest.blankLookupCondition());
     }
 
     /**
@@ -3370,35 +3360,34 @@ appSetup(MODULE, function() {
      * @param {Selector} form         Default: {@link formElement}.
      * @param {string}   field        A field-type.
      * @param {boolean}  valid        Whether data for that type is valid.
-     *
-     * @returns {boolean}             Whether *field* is a Lookup condition.
      */
     function updateLookupCondition(form, field, valid) {
-        const $form     = formElement(form);
-        const $button   = lookupButton($form);
-        const condition = getLookupCondition($button);
-        let found;
-        $.each(condition, (logical_op, entry) => {
-            found = Object.keys(entry).includes(field);
-            if (found) {
-                condition[logical_op][field] = valid;
+        const $form   = formElement(form);
+        const $button = lookupButton($form);
+        if ($button) {
+            const condition = getLookupCondition($button);
+            let found;
+            $.each(condition, (logical_op, entry) => {
+                found = Object.keys(entry).includes(field);
+                if (found) {
+                    condition[logical_op][field] = valid;
+                }
+                return !found; // break loop if type found.
+            });
+            let enable   = false;
+            const repo   = sourceRepositoryMenu($form).val();
+            const forbid = !defaultRepository(repo);
+            if (found && !forbid) {
+                enable ||= Object.values(condition.or).some(v => v);
+                enable ||= Object.values(condition.and).every(v => v);
             }
-            return !found; // break loop if type found.
-        });
-        let enable   = false;
-        const repo   = sourceRepositoryMenu($form).val();
-        const forbid = !defaultRepository(repo);
-        if (found && !forbid) {
-            enable ||= Object.values(condition.or).some(v => v);
-            enable ||= Object.values(condition.and).every(v => v);
+            if (found || forbid) {
+                enableLookup($button, enable, forbid);
+            }
+            if (enable) {
+                clearSearchTermsData($button);
+            }
         }
-        if (found || forbid) {
-            enableLookup($form, enable, forbid);
-        }
-        if (enable) {
-            clearSearchTermsData($button);
-        }
-        return found;
     }
 
     /**
@@ -3412,30 +3401,32 @@ appSetup(MODULE, function() {
     function resetLookupCondition(form, permit) {
         const $form   = formElement(form);
         const $button = lookupButton($form);
-        let forbid;
-        if (isDefined(permit)) {
-            forbid = !permit;
-        } else {
-            const repo = sourceRepositoryMenu($form).val();
-            forbid = !defaultRepository(repo);
-        }
-        let enable = false;
-        if (!forbid) {
-            const $fields   = inputFields($form);
-            const condition = getLookupCondition($button);
-            for (const [logical_op, entry] of Object.entries(condition)) {
-                for (const [field, _] of Object.entries(entry)) {
-                    const $field = $fields.filter(`[data-field="${field}"]`);
-                    condition[logical_op][field] = isPresent($field.val());
+        if ($button) {
+            let enable = false;
+            let forbid;
+            if (isDefined(permit)) {
+                forbid = !permit;
+            } else {
+                const repo = sourceRepositoryMenu($form).val();
+                forbid = !defaultRepository(repo);
+            }
+            if (!forbid) {
+                const $fields   = inputFields($form);
+                const condition = getLookupCondition($button);
+                for (const [logical_op, entry] of Object.entries(condition)) {
+                    for (const [field, _] of Object.entries(entry)) {
+                        const $fld = $fields.filter(`[data-field="${field}"]`);
+                        condition[logical_op][field] = isPresent($fld.val());
+                    }
+                }
+                enable ||= Object.values(condition.or).some(v => v);
+                enable ||= Object.values(condition.and).every(v => v);
+                if (enable) {
+                    clearSearchTermsData($button);
                 }
             }
-            enable ||= Object.values(condition.or).some(v => v);
-            enable ||= Object.values(condition.and).every(v => v);
-            if (enable) {
-                clearSearchTermsData($button);
-            }
+            enableLookup($button, enable, forbid);
         }
-        enableLookup($button, enable, forbid);
     }
 
     // ========================================================================
@@ -3453,7 +3444,7 @@ appSetup(MODULE, function() {
         const dat = toObject(LookupModal.DATA_COLUMNS, (f) => deepDup(
             value ? value[f] : $if.filter(`[data-field="${f}"]`).val()
         ));
-        lookupButton(form).data(LookupModal.ENTRY_ITEM_DATA, dat);
+        lookupButton(form)?.data(LookupModal.ENTRY_ITEM_DATA, dat);
     }
 
     // ========================================================================
@@ -3468,7 +3459,7 @@ appSetup(MODULE, function() {
      * @returns {LookupRequest|undefined}
      */
     function getSearchTermsData(form) {
-        return lookupButton(form).data(LookupModal.SEARCH_TERMS_DATA);
+        return lookupButton(form)?.data(LookupModal.SEARCH_TERMS_DATA);
     }
 
     /**
@@ -3476,30 +3467,27 @@ appSetup(MODULE, function() {
      *
      * @param {Selector}                      form
      * @param {LookupRequest|LookupCondition} [value]
-     *
-     * @returns {LookupRequest}     The data object assigned to the button.
      */
     function setSearchTermsData(form, value) {
         const $button = lookupButton(form);
-        let request;
-        if (value instanceof LookupRequest) {
-            request = value;
-        } else {
-            request = generateLookupRequest($button, value);
+        if ($button) {
+            let request;
+            if (value instanceof LookupRequest) {
+                request = value;
+            } else {
+                request = generateLookupRequest($button, value);
+            }
+            $button.data(LookupModal.SEARCH_TERMS_DATA, request);
         }
-        $button.data(LookupModal.SEARCH_TERMS_DATA, request);
-        return request;
     }
 
     /**
      * Clear the search terms to be provided for lookup.
      *
      * @param {Selector} form
-     *
-     * @returns {jQuery}
      */
     function clearSearchTermsData(form) {
-        return lookupButton(form).removeData(LookupModal.SEARCH_TERMS_DATA);
+        lookupButton(form)?.removeData(LookupModal.SEARCH_TERMS_DATA);
     }
 
     // noinspection JSUnusedLocalSymbols
@@ -3565,18 +3553,16 @@ appSetup(MODULE, function() {
      * @returns {LookupResults|undefined}
      */
     function getSearchResultsData(form) {
-        return lookupButton(form).data(LookupModal.SEARCH_RESULT_DATA);
+        return lookupButton(form)?.data(LookupModal.SEARCH_RESULT_DATA);
     }
 
     /**
      * Clear the search terms from the button.
      *
      * @param {Selector} [form]
-     *
-     * @returns {jQuery}
      */
     function clearSearchResultsData(form) {
-        return lookupButton(form).removeData(LookupModal.SEARCH_RESULT_DATA);
+        lookupButton(form)?.removeData(LookupModal.SEARCH_RESULT_DATA);
     }
 
     // ========================================================================
@@ -3591,7 +3577,7 @@ appSetup(MODULE, function() {
      * @returns {LookupResponseItem|undefined}
      */
     function getFieldResultsData(form) {
-        return lookupButton(form).data(LookupModal.FIELD_RESULTS_DATA);
+        return lookupButton(form)?.data(LookupModal.FIELD_RESULTS_DATA);
     }
 
     // ========================================================================
@@ -4821,7 +4807,7 @@ appSetup(MODULE, function() {
 
     // Setup bibliographic lookup first so that linkages are in place before
     // setupLookupButton() executes.
-    LookupModal.initializeAll();
+    if (lookupButton($model_form)) { LookupModal.initializeAll() }
 
     // Setup Uppy for any `<input type="file">` elements.
     $model_form.each((_, form) => initializeModelForm(form));

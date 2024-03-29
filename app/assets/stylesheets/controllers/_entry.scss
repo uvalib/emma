@@ -891,10 +891,11 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
         background:     $unlocked-color;
         border-color:   $unlocked-color;
 
+        // @see LookupModal.lockFieldValue()
         .slider {
             $x-pos:     $slider-offset;
             transform:  translate($x-pos);
-            &::before { content: 'unlocked'; }
+            &::before { content: var(--label, 'unlocked'); }
         }
     }
 
@@ -906,10 +907,11 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
         background:     $locked-color;
         border-color:   $locked-color;
 
+        // @see LookupModal.lockFieldValue()
         .slider {
             $x-pos:     $slider-offset + ($slider-pad-x * 2);
             transform:  translate(calc(100% - $x-pos));
-            &::after {  content: 'locked'; }
+            &::after {  content: var(--label, 'locked'); }
         }
     }
 
