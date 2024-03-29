@@ -306,7 +306,7 @@ $item-padding:      0.5rem;
 
     // Revert to one data item label/value per line with less room.
     @media #{$medium-width} {
-        grid-template-columns: [label] minmax(10%,auto) [value] 1fr;
+        grid-template-columns: [label] minmax(17.5%,auto) [value] 1fr;
     }
 
     // Each label and value on a separate line on narrow screens.
@@ -457,6 +457,7 @@ $item-padding:      0.5rem;
 
         @media #{$medium-width} {
             margin: 0 $medium-margin;
+            grid-template-columns: [label] minmax(17.5%,auto) [value] 1fr;
         }
 
         @media #{$narrow-screen} {
@@ -472,16 +473,13 @@ $item-padding:      0.5rem;
         // Adjustment for a hierarchical element which is itself a hierarchy.
         .data-list {
 
-            @media #{$not-narrow-screen} {
-                margin-top:     1.5rem;
-                margin-left:    -4rem;
-            }
-
-            @media #{$wide-screen} {
-                margin-right:   $wide-margin;
-            }
+            margin-top:         1.5rem;
+            margin-left:        -4rem;
+            margin-right:       $wide-margin;
 
             @media #{$medium-width} {
+                margin-top:     1.5rem;
+                margin-left:    -6rem;
                 margin-right:   $medium-margin * 1.25;
             }
 

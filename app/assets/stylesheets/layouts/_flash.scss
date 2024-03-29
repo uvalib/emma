@@ -26,7 +26,7 @@ $flash-optimal-width: 20em;
     padding:        0;
     max-width:      flash-width();
 
-    @media #{$narrow-screen} {
+    @media #{$not-wide-screen} {
         margin-top: $page-padding-y;
     }
 

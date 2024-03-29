@@ -58,20 +58,18 @@
         align-items:        baseline;
         gap:                calc($gap-y / 2) $gap-x;
         width:              max-content;
-
-        @media #{$wide-screen} {
-            max-width:      100%;
-            margin-bottom:  2vh;
-        }
+        max-width:          100%;
+        margin-bottom:      2vh;
 
         @media #{$medium-width} {
+            gap:            calc(2 * $gap-y) calc(4 * $gap-x);
             max-width:      98%;
             margin-bottom:  1vh;
         }
 
         @media #{$narrow-screen} {
+            gap:            calc(4 * $gap-y) calc(8 * $gap-x);
             max-width:      95%;
-            margin-bottom:  2vh;
         }
 
         &.count-0,
@@ -87,9 +85,7 @@
 
         .controls {
 
-            @media #{$narrow-screen} {
-                gap: $gap-y $gap-x;
-            }
+            gap: inherit;
 
             // noinspection CssReplaceWithShorthandSafely
             .control {

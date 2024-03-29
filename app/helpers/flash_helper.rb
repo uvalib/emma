@@ -547,14 +547,15 @@ module FlashHelper
               !excp.is_a?(Timeout::Error) &&
               !excp.is_a?(UploadWorkflow::SubmitError)
             end
+          topics  = excp.class
           details = trace ? excp.full_message(order: :top) : msg.join(msg_sep)
-          [meth, status, excp.class, details].compact_blank.join(': ')
+          ['flash', meth, status, topics, details].compact_blank.join(': ')
         end
       else
         Log.info do
           topics  = msg.join(msg_sep)
           details = args.join(arg_sep)
-          [meth, status, topics, details].compact_blank.join(': ')
+          ['flash', meth, status, topics, details].compact_blank.join(': ')
         end
       end
     end

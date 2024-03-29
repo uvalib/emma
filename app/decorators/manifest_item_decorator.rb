@@ -1026,8 +1026,8 @@ class ManifestItemDecorator < BaseDecorator
 
     protected
 
-    LABEL_CLASS = BaseDecorator::List::DEFAULT_LABEL_CLASS
-    VALUE_CLASS = BaseDecorator::List::DEFAULT_VALUE_CLASS
+    LABEL_CLASS = BaseDecorator::List::DEF_LABEL_CLASS
+    VALUE_CLASS = BaseDecorator::List::DEF_VALUE_CLASS
 
     # row_indicator
     #

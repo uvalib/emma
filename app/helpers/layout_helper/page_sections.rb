@@ -21,8 +21,8 @@ module LayoutHelper::PageSections
 
   # Supply an element containing a description for the current action context.
   #
-  # @param [String, nil] text         Override text to display.
-  # @param [Hash]        opt          Passed to #page_text_section.
+  # @param [String, Array, nil] text  Override text to display.
+  # @param [Hash]               opt   Passed to #page_text_section.
   #
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If no text was provided or defined.
@@ -33,8 +33,8 @@ module LayoutHelper::PageSections
 
   # Supply an element containing directions for the current action context.
   #
-  # @param [String, nil] text         Override text to display.
-  # @param [Hash]        opt          Passed to #page_text_section.
+  # @param [String, Array, nil] text  Override text to display.
+  # @param [Hash]               opt   Passed to #page_text_section.
   #
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If no text was provided or defined.
@@ -46,8 +46,8 @@ module LayoutHelper::PageSections
 
   # Supply an element containing additional notes for the current action.
   #
-  # @param [String, nil] text         Override text to display.
-  # @param [Hash]        opt          Passed to #page_text_section.
+  # @param [String, Array, nil] text  Override text to display.
+  # @param [Hash]               opt   Passed to #page_text_section.
   #
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If no text was provided or defined.
@@ -59,7 +59,7 @@ module LayoutHelper::PageSections
   # Supply an element containing configured text for the current action.
   #
   # @param [String, Symbol, nil]  type        Default: 'text'.
-  # @param [String, nil]          text        Override text to display.
+  # @param [String, Array, nil]   text        Override text to display.
   # @param [String, Symbol, nil]  controller  Default: `params[:controller]`.
   # @param [String, Symbol, nil]  action      Default: `params[:action]`.
   # @param [Symbol, Integer, nil] tag         Tag for the internal text block.
@@ -81,15 +81,24 @@ module LayoutHelper::PageSections
     type   = type&.to_s&.delete_suffix('_html')&.to_sym || :text
     text ||= page_text(controller: controller, action: action, type: type)
     return if text.blank?
-    if (refs = named_references(text)).present?
-      vals = opt.extract!(*refs)
-      (refs - vals.keys).each { |ref| vals[ref] = try(ref) || '???' }
-      text %= vals
+    refs   = Array.wrap(text).map { |t| named_references(t) }
+    if (all_refs = refs.flatten).present?
+      vals = opt.extract!(*all_refs)
+      (all_refs - vals.keys).each do |ref|
+        vals[ref] = respond_to?(ref) ? (send(ref) || ref.to_s) : '???'
+      end
+      edit = ->(t, i = 0) { (r = refs[i]).presence ? (t % vals.slice(*r)) : t }
+      text = text.is_a?(Array) ? text.map.with_index(&edit) : edit.(text)
     end
-    text = html_tag(tag, text) unless text.html_safe? || tag.blank?
     prepend_css!(opt, css)
     append_css!(opt, *type) unless type == :text
-    html_div(text, **opt)
+    html_div(**opt) do
+      if tag.blank? || Array.wrap(text).all?(&:html_safe?)
+        text
+      else
+        html_tag(tag, text)
+      end
+    end
   end
 
   # Get the configured page description.
@@ -99,6 +108,7 @@ module LayoutHelper::PageSections
   # @param [String, Symbol, nil] type         Optional type under action.
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [Array<String>]
   # @return [String]
   # @return [nil]
   #
@@ -106,14 +116,15 @@ module LayoutHelper::PageSections
     controller ||= params[:controller]
     action     ||= params[:action]
     entry = controller_configuration(controller, action)
-    types = Array.wrap(type).compact.map!(&:to_sym)
-    types = %i[description text] if types.blank? || types == %i[description]
+    types = type ? Array.wrap(type).compact.map!(&:to_sym) : []
+    types = %i[description text] if types.excluding(:description).blank?
     # noinspection RubyMismatchedReturnType
     types.find do |t|
-      html  = "#{t}_html".to_sym
-      plain = t.to_sym
-      text  = entry[html]&.strip&.presence&.html_safe || entry[plain]&.strip
-      return text if text.present?
+      if (text = entry[:"#{t}_html"]).present?
+        return Array.wrap(text).compact.map!(&:html_safe).join("\n").html_safe
+      elsif (text = entry[t.to_sym]).present?
+        return text.is_a?(Array) ? text.map { |v| v.to_s.strip } : text.strip
+      end
     end
   end
 

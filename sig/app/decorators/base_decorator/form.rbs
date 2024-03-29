@@ -105,19 +105,26 @@ module BaseDecorator::Form
   #
   def render_form_pair: ((String|Symbol) label, untyped value, ?prop: FieldConfig|nil, ?field: Symbol|nil, ?index: Integer|nil, ?row: Integer|nil, ?col: Integer|nil, ?pos: Integer|nil, ?disabled: bool|nil, ?required: bool|nil, ?no_label: bool|nil, ?no_help: bool|nil, ?label_css: String|nil, ?value_css: String|nil, **untyped opt) ?{ (Symbol field, untyped value, FieldConfig prop, **untyped opt) -> (nil|ActiveSupport::SafeBuffer|Array[ActiveSupport::SafeBuffer]) } -> (ActiveSupport::SafeBuffer | nil)
 
+  # Internal options for #render_form_pair_label.
+  #
+  # :tag    - Optional alternative to :label
+  # :help   - To #help_popup
+  # :status - To #status_marker
+  #
+  # @type [Array<Symbol>]
+  #
+  FORM_PAIR_LABEL_OPT: symArray
+
   # Render the label for a label/value pair.
   #
-  # @param [Symbol]                field
-  # @param [String, nil]           label
-  # @param [Symbol]                tag
-  # @param [Symbol, Array<Symbol>] status
-  # @param [Symbol, String, Array] help
-  # @param [String]                css      Characteristic CSS class/selector.
-  # @param [Hash]                  opt
+  # @param [Symbol]      field
+  # @param [String, nil] label
+  # @param [String]      css        Characteristic CSS class/selector.
+  # @param [Hash]        opt        To element tag except #FORM_PAIR_LABEL_OPT.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_form_pair_label: (Symbol field, (String|nil) label, ?tag: Symbol, ?status: symArray|Symbol|nil, ?help: Array[Symbol|String]|Symbol|String|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def render_form_pair_label: (Symbol field, ?(String|nil) label, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # @private
   UNSET_MENU_ITEM: String

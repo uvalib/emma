@@ -25,7 +25,7 @@ en:
       messages:
 
         success:        'XXX EMMA member organization was successfully %{actioned}.'
-        failure:        'Could not %{action} EMMA member organization.'
+        failure:        'Could not %{action} EMMA member organization: %{error}'
 
         model_name:     'EMMA Member Organization'
         select:         'Select an EMMA member organization'
@@ -148,7 +148,7 @@ en:
             tooltip:    'Not able to cancel at this point'
 
 #       success:        'EMMA member organization was successfully %{actioned}.'
-#       failure:        'Failed to %{action} EMMA member organization.'
+#       failure:        'Failed to %{action} EMMA member organization: %{error}'
 
       # =======================================================================
 
@@ -221,7 +221,7 @@ en:
             tooltip:    'Do not create this entry (or start over)'
 
 #       success:        'EMMA Member Organization %{name} created.'
-#       failure:        'Could not create EMMA Member Organization.'
+#       failure:        'Could not create EMMA Member Organization: %{error}'
 
         role:           administrator
         _endpoint:      true
@@ -256,7 +256,7 @@ en:
             tooltip:    'Discard these changes'
 
 #       success:        'EMMA Member Organization %{name} updated.'
-#       failure:        'Could not update EMMA Member Organization.'
+#       failure:        'Could not update EMMA Member Organization: %{error}'
 
         role:           administrator
         _endpoint:      true
@@ -302,7 +302,7 @@ en:
             tooltip:    'Keep this EMMA Member Organization'
 
 #       success:        'EMMA Member Organization %{name} deleted.'
-#       failure:        'Could not delete EMMA Member Organization.'
+#       failure:        'Could not delete EMMA Member Organization: %{error}'
 
         role:           administrator
         _endpoint:      true

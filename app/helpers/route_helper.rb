@@ -55,6 +55,7 @@ module RouteHelper
   # @return [String, nil]
   #
   def get_path_for(*arg, base: false, warn: true, **opt)
+    opt.delete_if { |k, _| k.start_with?('data-') }
     ctr, act = arg
     ca  = opt.extract!(:controller, :ctrlr, :action)
     ctr = ca[:ctrlr]  || ca[:controller] || ctr

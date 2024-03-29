@@ -118,7 +118,7 @@ module CssHelper
   #
   # @note Currently unused
   #
-  def remove_css: (symHash html_opt, *(Array[_ToS]|_ToS|nil) classes) -> symHash
+  def remove_css: (symHash html_opt, *(Array[_ToS]|_ToS|nil) classes) ?{ (String cls) -> untyped } -> symHash
 
   # Replace `html_opt[:class]` with a new string that includes none of the
   # named classes.  If no classes remain, :class is removed from *html_opt*.
@@ -128,7 +128,11 @@ module CssHelper
   #
   # @return [Hash]                        The modified *html_opt* hash.
   #
-  def remove_css!: (symHash html_opt, *(Array[_ToS]|_ToS|nil) classes) -> symHash
+  # @yield [cls] Indicate whether a CSS class should be removed.
+  # @yieldparam [String] cls          A current *html_opt* CSS class.
+  # @yieldreturn [any, nil]           Truthy if *cls* should be removed.
+  #
+  def remove_css!: (symHash html_opt, *(Array[_ToS]|_ToS|nil) classes) ?{ (String cls) -> untyped } -> symHash
 
   # Return an independent copy of HTML options that can be modified without
   # affecting the original.

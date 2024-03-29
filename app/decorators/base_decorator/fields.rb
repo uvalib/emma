@@ -295,6 +295,12 @@ module BaseDecorator::Fields
 =end
   }.freeze
 
+  # Internal options for #render_form_field_item.
+  #
+  # @type [Array<Symbol>]
+  #
+  RENDER_FIELD_ITEM_OPT = %i[base name type row].freeze
+
   # Render a value for use on an input form.
   #
   # @param [String]   name
@@ -310,7 +316,7 @@ module BaseDecorator::Fields
   def render_form_field_item(name, value, **opt)
     normalize_attributes!(opt)
     trace_attrs!(opt)
-    local = opt.extract!(:base, :name, :type)
+    local = opt.extract!(*RENDER_FIELD_ITEM_OPT)
     field = opt[:'data-field']
     name  = local[:name] || name || local[:base] || field
     value = Array.wrap(value).compact_blank

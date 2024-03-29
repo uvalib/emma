@@ -54,9 +54,9 @@ module BaseDecorator::List
   #
   def list_render_pair: ((String|Symbol|nil) label, untyped value, field: Symbol, prop: FieldConfig, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
-  DEFAULT_LABEL_CLASS: String
+  DEF_LABEL_CLASS: String
 
-  DEFAULT_VALUE_CLASS: String
+  DEF_VALUE_CLASS: String
 
   # Fields which, when formatting, should be rendered as 'textarea' values.
   #

@@ -136,14 +136,20 @@
 
     grid-template-columns: 1fr;
 
-    @media #{$not-wide-screen} {
-        margin-top: 1.5rem;
+    @media #{$medium-width} {
+        margin-top: calc(3 * $page-padding-y);
+    }
+
+    @media #{$narrow-screen} {
+        margin-top: calc(5 * $page-padding-y);
     }
 
     // @see AccountDecorator#model_form
     &.new,
     &.edit {
-        margin-top: $page-padding-y;
+        @media #{$wide-screen} {
+            margin-top: $page-padding-y;
+        }
     }
 
     // @see AccountDecorator#delete_form
@@ -154,10 +160,6 @@
     //=========================================================================
     // Elements
     //=========================================================================
-
-    .form-fields {
-        margin-bottom: 0;
-    }
 
     .button-tray {
         @include grid.row(unset);

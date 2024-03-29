@@ -747,7 +747,7 @@ module BaseDecorator::Grid
   #
   def grid_data_cell_edit(field, value, prop, css: '.edit', **opt)
     id_opt = opt.slice(:index).merge!(field: field)
-    l_id   = field_html_id("edit-#{DEFAULT_LABEL_CLASS}", **id_opt)
+    l_id   = field_html_id("edit-#{DEF_LABEL_CLASS}", **id_opt)
     value  = nil if value == EMPTY_VALUE
     unless value.is_a?(Field::Type)
       value = field_for(field, prop: prop, value: value)
@@ -756,7 +756,7 @@ module BaseDecorator::Grid
     opt[:field]     = field
     opt[:prop]      = prop
     opt[:label_id]  = l_id
-    opt[:label_css] = "#{DEFAULT_LABEL_CLASS} sr-only"
+    opt[:label_css] = "#{DEF_LABEL_CLASS} sr-only"
     opt[:value_css] = css
     opt[:render]  ||= :render_grid_input if prop[:type] == 'text'
 

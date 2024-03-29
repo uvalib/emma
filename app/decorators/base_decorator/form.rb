@@ -173,8 +173,8 @@ module BaseDecorator::Form
     required:   nil,
     no_label:   nil,
     no_help:    nil,
-    label_css:  DEFAULT_LABEL_CLASS,
-    value_css:  DEFAULT_VALUE_CLASS,
+    label_css:  DEF_LABEL_CLASS,
+    value_css:  DEF_VALUE_CLASS,
     **opt
   )
     prop  ||= field_configuration(field)
@@ -258,7 +258,7 @@ module BaseDecorator::Form
     if no_label || label.blank?
       l_id   = nil
     else
-      l_id ||= field_html_id(DEFAULT_LABEL_CLASS, **id_opt)
+      l_id ||= field_html_id(label_css, **id_opt)
       l_opt  = prepend_css(opt, label_css)
       l_opt[:id]               = l_id
       l_opt[:status]           = status
@@ -292,27 +292,31 @@ module BaseDecorator::Form
     safe_join(parts)
   end
 
+  # Internal options for #render_form_pair_label.
+  #
+  # :tag    - Optional alternative to :label
+  # :help   - To #help_popup
+  # :status - To #status_marker
+  #
+  # @type [Array<Symbol>]
+  #
+  FORM_PAIR_LABEL_OPT = %i[tag status help row].freeze
+
   # Render the label for a label/value pair.
   #
-  # @param [Symbol]                field
-  # @param [String, nil]           label
-  # @param [Symbol]                tag
-  # @param [Symbol, Array<Symbol>] status
-  # @param [Symbol, String, Array] help
-  # @param [String]                css      Characteristic CSS class/selector.
-  # @param [Hash]                  opt
+  # @param [Symbol]      field
+  # @param [String, nil] label
+  # @param [String]      css        Characteristic CSS class/selector.
+  # @param [Hash]        opt        To element tag except #FORM_PAIR_LABEL_OPT.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_form_pair_label(
-    field,
-    label,
-    tag:    :label,
-    status: nil,
-    help:   nil,
-    css:    DEFAULT_LABEL_CLASS,
-    **opt
-  )
+  def render_form_pair_label(field, label = nil, css: DEF_LABEL_CLASS, **opt)
+    local  = opt.extract!(*FORM_PAIR_LABEL_OPT)
+    tag    = local[:tag] || :label
+    help   = local[:help].presence
+    status = local[:status].presence
+
     # Encapsulate the text in its own element to ensure separation from added
     # icon(s).
     if label.is_a?(ActiveSupport::SafeBuffer)
@@ -334,8 +338,7 @@ module BaseDecorator::Form
 
     # Include status marker icon.
     if status.present?
-      marker = status_marker(status: status, label: text)
-      label << marker
+      label << status_marker(status: status, label: text)
     end
 
     append_css!(opt, 'fixed') if opt.delete(:fixed)

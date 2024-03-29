@@ -116,6 +116,12 @@ module BaseDecorator::Fields
   #
   REPLACE_FIELD_TYPE: Hash[Symbol,Symbol]
 
+  # Internal options for #render_form_field_item.
+  #
+  # @type [Array<Symbol>]
+  #
+  RENDER_FIELD_ITEM_OPT: symArray
+
   # Render a value for use on an input form.
   #
   # @param [String]   name

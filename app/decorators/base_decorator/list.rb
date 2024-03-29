@@ -106,8 +106,8 @@ module BaseDecorator::List
     render_pair(label, value, field: field, prop: prop, **opt)
   end
 
-  DEFAULT_LABEL_CLASS = 'label'
-  DEFAULT_VALUE_CLASS = 'value'
+  DEF_LABEL_CLASS = 'label'
+  DEF_VALUE_CLASS = 'value'
 
   # Fields which, when formatting, should be rendered as 'textarea' values.
   #
@@ -183,8 +183,8 @@ module BaseDecorator::List
     no_code:    nil,
     no_label:   nil,
     no_help:    nil,
-    label_css:  DEFAULT_LABEL_CLASS,
-    value_css:  DEFAULT_VALUE_CLASS,
+    label_css:  DEF_LABEL_CLASS,
+    value_css:  DEF_VALUE_CLASS,
     **opt
   )
     prop  ||= field_configuration(field)
@@ -312,7 +312,7 @@ module BaseDecorator::List
       end
       label << render_help_icon(field, value, *help) if help
       l_tag   = wrap ? :div : tag
-      l_id  ||= field_html_id(DEFAULT_LABEL_CLASS, **id_opt)
+      l_id  ||= field_html_id(DEF_LABEL_CLASS, **id_opt)
       l_opt   = prepend_css(opt, label_css)
       l_opt[:id]    = l_id    if l_id
       l_opt[:title] = tooltip if tooltip && !wrap

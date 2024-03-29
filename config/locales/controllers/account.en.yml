@@ -25,7 +25,7 @@ en:
       messages:
 
         success:        'EMMA user account was successfully %{actioned}.'
-        failure:        'Could not %{action} EMMA user account.'
+        failure:        'Could not %{action} EMMA user account: %{error}'
 
         failed:         'FAILED'
 
@@ -169,7 +169,7 @@ en:
             tooltip:    'Not able to cancel at this point'
 
 #       success:        'EMMA user account was successfully %{actioned}.'
-#       failure:        'Failed to %{action} EMMA user account.'
+#       failure:        'Failed to %{action} EMMA user account: %{error}'
 
       # =======================================================================
 

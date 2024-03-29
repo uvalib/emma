@@ -145,14 +145,16 @@ module ResponseConcern
     end
     re_raise_if_internal_exception(item) if (error = item.is_a?(Exception))
 
-    redirect = params[:redirect] if redirect.nil?
-    xhr      = request_xhr?      if xhr.nil?
-    html     = !xhr || redirect.present?
-    report   = item.presence && ExecReport[item]
-    status ||= report&.http_status
-    status ||= error ? :bad_request : :ok
-    success  = http_success?(status)
-    redirect = html && http_redirect?(status) if redirect.nil?
+    redirect   = params[:redirect] if redirect.nil?
+    xhr        = request_xhr?      if xhr.nil?
+    html       = !xhr || redirect.present?
+    report     = item.presence && ExecReport[item]
+    status   ||= report&.http_status
+    status   ||= error ? :bad_request : :ok
+    success    = http_success?(status)
+    redirect   = html && http_redirect?(status) if redirect.nil?
+    back       = redirect.is_a?(TrueClass)
+    fallback ||= default_fallback_location if back
 
     # @see https://github.com/hotwired/turbo/issues/492
     if html && redirect
@@ -163,32 +165,25 @@ module ResponseConcern
       end
     end
 
-    message = report&.render(html: html)&.presence
-    unless message
-      message = (item.is_a?(Array) ? item.flatten : [item]).compact.presence
-      message&.map! { |v| make_label(v) || v.to_s }
+    if (msg = report).blank?
+      msg = (item.is_a?(Array) ? item.flatten : [item]).compact.presence
+      msg&.map! { |v| make_label(v) || v.to_s }
     end
-    if message
-      flash_opt = { meth: meth, status: status }
-      if xhr
-        message = { 'X-Flash-Message': flash_xhr(*message, **flash_opt) }
-      elsif success
-        flash_success(*message, **flash_opt)
-      else
-        flash_failure(*message, **flash_opt)
+    if msg.present?
+      f_opt = { meth: meth, status: status }
+      case
+        when xhr     then msg = { 'X-Flash-Message': flash_xhr(*msg, **f_opt) }
+        when success then flash_success(*msg, **f_opt)
+        else              flash_failure(*msg, **f_opt)
       end
     end
 
-    if xhr
-      head status, (message || {})
-    elsif redirect.is_a?(String) || redirect.is_a?(Hash)
-      redirect_to(redirect, status: status)
-    elsif redirect
-      fallback ||= default_fallback_location
-      redirect_back_or_to(fallback, status: status)
-    elsif error
-      # noinspection RubyMismatchedArgumentType
-      raise(item)
+    # noinspection RubyMismatchedArgumentType
+    case
+      when xhr      then head status, (msg || {})
+      when back     then redirect_back_or_to(fallback, status: status)
+      when redirect then redirect_to(redirect, status: status)
+      when error    then raise(item)
     end
   end
 

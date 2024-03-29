@@ -53,24 +53,19 @@
 
     display:            inline-flex;
     flex-direction:     row;
-
-    @media #{$wide-screen} {
-        column-gap:     $gap-x;
-    }
+    column-gap:         $gap-x;
 
     @media #{$medium-width} {
         column-gap:     calc(2 * $gap-x);
     }
 
     @media #{$narrow-screen} {
+        column-gap:     calc(4 * $gap-x);
         margin-bottom:  $page-padding-y;
         flex-wrap:      wrap;
     }
 
     .toggle {
-        @media #{$not-narrow-screen} {
-            margin-right: $gap-x;
-        }
     }
 
     .list-heading {

@@ -101,14 +101,20 @@
 
     grid-template-columns: 1fr;
 
-    @media #{$not-wide-screen} {
-        margin-top: 1.5rem;
+    @media #{$medium-width} {
+        margin-top: calc(3 * $page-padding-y);
+    }
+
+    @media #{$narrow-screen} {
+        margin-top: calc(5 * $page-padding-y);
     }
 
     // @see OrgDecorator#model_form
     &.new,
     &.edit {
-        margin-top: $page-padding-y;
+        @media #{$wide-screen} {
+            margin-top: $page-padding-y;
+        }
     }
 
     // @see OrgDecorator#delete_form
