@@ -179,6 +179,7 @@ class SearchController < ApplicationController
     __log_activity(anonymous: true)
     __debug_route
     force_file_results
+    err     = nil
     prm     = paginator.initial_parameters
     prm[:q] = SearchTerm::NULL_SEARCH if prm.slice(*search_query_keys).blank?
     @list   = index_search(titles: false, save: false, scores: false, **prm)
@@ -190,10 +191,10 @@ class SearchController < ApplicationController
       format.xml  { render_xml  index_values }
     end
   rescue => error
-    flash_now_failure(error)
-    render 'search/index'
+    err = error
   ensure
     reset_results_type
+    failure_status(err)
   end
 
   # === GET /search/validate?identifier=idval1[,idval2[,...]]

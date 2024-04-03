@@ -1,12 +1,13 @@
 // app/assets/javascripts/shared/xhr.js
 
 
-import { AppDebug }         from '../application/debug';
-import { isMissing }        from './definitions';
-import * as HTTP            from './http';
-import { fromJSON, hasKey } from './objects';
-import { secondsSince }     from './time';
-import { makeUrl }          from './url';
+import { AppDebug }           from '../application/debug';
+import { arrayWrap }          from './arrays';
+import { isEmpty, isMissing } from './definitions';
+import * as HTTP              from './http';
+import { fromJSON, hasKey }   from './objects';
+import { secondsSince }       from './time';
+import { makeUrl }            from './url';
 
 
 const MODULE = 'XHR';
@@ -294,15 +295,45 @@ export function transientError(code) {
  * @returns {object}
  */
 export function response(xhr) {
-    let result;
     // noinspection JSUnresolvedVariable
-    if (typeof xhr.responseJSON === 'function') {
-        // noinspection JSUnresolvedVariable
-        result = xhr.responseJSON;
-    } else if (xhr.responseType === 'json') {
-        result = xhr.response;
-    } else if (xhr.responseText) {
-        result = fromJSON(xhr.responseText);
+    const json = xhr?.responseJSON;
+    const text = xhr?.responseText;
+    switch (true) {
+        case (typeof json === 'function'):   return json()         || {};
+        case (typeof json === 'object'):     return json           || {};
+        case (xhr?.responseType === 'json'): return xhr.response   || {};
+        default:                             return fromJSON(text) || {};
     }
-    return result || {};
+}
+
+/**
+ * Retrieve the error message line(s) from the response.
+ *
+ * @param {XMLHttpRequest} arg
+ *
+ * @returns {string[]}
+ */
+export function responseErrors(arg) {
+    const result = response(arg);
+    const errors = result.error;
+    return errorParts(errors);
+}
+
+/**
+ * Recursively extract error message lines.
+ *
+ * @param {*} a
+ *
+ * @returns {string[]}
+ */
+function errorParts(a) {
+    switch (true) {
+        case isEmpty(a):              return [];
+        case Array.isArray(a):        return a.map(v => errorParts(v)).flat();
+        case (typeof a !== 'object'): return [a];
+        case hasKey(a, 'exception'):  return [a.exception];
+        case hasKey(a, 'topic'):      return [a.topic,...arrayWrap(a.details)];
+        case hasKey(a, 'parts'):      return errorParts(a.parts);
+        default:                      return [];
+    }
 }

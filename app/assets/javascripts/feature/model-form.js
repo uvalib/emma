@@ -15,7 +15,7 @@ import { CheckboxGroup, TextInputGroup }   from '../shared/nav-group';
 import { SearchInProgress }                from '../shared/search-in-progress';
 import { SingleUploader, UPLOADER }        from '../shared/uploader';
 import { cancelAction, makeUrl }           from '../shared/url';
-import { transientError }                  from '../shared/xhr';
+import { responseErrors, transientError }  from '../shared/xhr';
 import { Rails }                           from '../vendor/rails';
 import {
     delegateInputClick,
@@ -1261,11 +1261,12 @@ appSetup(MODULE, function() {
          * @param {string}         message
          */
         function onError(xhr, status, message) {
-            const failure = `${status}: ${xhr.status} ${message}`;
+            const errs = presence(responseErrors(xhr));
+            const text = errs?.join("\n") || `${status}: ${message}`;
             if (transientError(xhr.status)) {
-                warning = failure;
+                warning = text;
             } else {
-                error   = failure;
+                error   = text;
             }
         }
 
@@ -1273,19 +1274,18 @@ appSetup(MODULE, function() {
          * Actions after the request is completed.  If there was no error, the
          * list of extracted entries is passed to the callback function.
          *
-         * @param {XMLHttpRequest} _xhr
+         * @param {XMLHttpRequest} xhr
          * @param {string}         _status
          */
-        function onComplete(_xhr, _status) {
+        function onComplete(xhr, _status) {
             _debugXhr(`${func}: completed in`, secondsSince(start), 'sec.');
             if (records) {
                 callback(records);
             } else if (warning) {
-                OUT.warn(`${func}: ${url}: ${warning}`);
+                OUT.warn(`${func}: ${xhr.status}: ${warning} FROM ${url}`);
                 callback([]);
-            } else {
-                const failure = error || 'unknown failure';
-                OUT.error(`${func}: ${url}: ${failure} - aborting`);
+            } else if (error ||= 'unknown failure') {
+                OUT.error(`${func}: ${xhr.status}: ${error} - ABORT ${url}`);
             }
         }
     }
@@ -1433,11 +1433,12 @@ appSetup(MODULE, function() {
          * @param {string}         message
          */
         function onError(xhr, status, message) {
-            const failure = `${status}: ${xhr.status} ${message}`;
+            const errs = presence(responseErrors(xhr));
+            const text = errs?.join("\n") || `${status}: ${message}`;
             if (transientError(xhr.status)) {
-                warning = failure;
+                warning = text;
             } else {
-                error   = failure;
+                error   = text;
             }
         }
 
@@ -1448,17 +1449,17 @@ appSetup(MODULE, function() {
          * called (just without replacement values).  It remains to be seen
          * whether this is better than indicating a failure.
          *
-         * @param {XMLHttpRequest} _xhr
+         * @param {XMLHttpRequest} xhr
          * @param {string}         _status
          */
-        function onComplete(_xhr, _status) {
+        function onComplete(xhr, _status) {
             _debugXhr(`${func}: completed in`, secondsSince(start), 'sec.');
             if (record) {
                 //_debugXhr(`${func}: data from server:`, record);
             } else if (warning) {
-                OUT.warn(`${func}: ${url}:`, warning);
-            } else {
-                OUT.error(`${func}: ${url}:`, (error || 'unknown error'));
+                OUT.warn(`${func}: ${xhr.status}: ${warning} FROM ${url}`);
+            } else if (error ||= 'unknown error') {
+                OUT.error(`${func}: ${xhr.status}: ${error} FROM ${url}`);
             }
             initializeModelForm($form, record);
         }
@@ -2546,20 +2547,21 @@ appSetup(MODULE, function() {
             if (xhr.status === HTTP.unauthorized) {
                 error = Emma.Messages.field.validation.no_server;
             } else {
-                error = `${status}: ${xhr.status} ${message}`;
+                const errs = presence(responseErrors(xhr));
+                error = errs?.join("\n") || `${status}: ${message}`;
             }
         }
 
         /**
          * Invoke the callback with the reply.
          *
-         * @param {XMLHttpRequest} _xhr
+         * @param {XMLHttpRequest} xhr
          * @param {string}         _status
          */
-        function onComplete(_xhr, _status) {
+        function onComplete(xhr, _status) {
             _debugXhr(`${func}: completed in`, secondsSince(start), 'sec.');
             if (error) {
-                OUT.warn(`${func}: ${url}:`, error);
+                OUT.warn(`${func}: ${xhr.status}: ${error} FROM ${url}`);
                 callback(undefined, `system error: ${error}`);
             } else if (isPresent(reply.errors)) {
                 callback(reply.valid, reply.errors);
@@ -2960,11 +2962,12 @@ appSetup(MODULE, function() {
          * @param {string}         message
          */
         function onError(xhr, status, message) {
-            const failure = `${status}: ${xhr.status} ${message}`;
+            const errs = presence(responseErrors(xhr));
+            const text = errs?.join("\n") || `${status}: ${message}`;
             if (transientError(xhr.status)) {
-                warning = failure;
+                warning = text;
             } else {
-                error   = failure;
+                error   = text;
             }
         }
 
@@ -2972,24 +2975,19 @@ appSetup(MODULE, function() {
          * Actions after the request is completed.  If there was no error, the
          * search result list is passed to the callback function.
          *
-         * @param {XMLHttpRequest} _xhr
+         * @param {XMLHttpRequest} xhr
          * @param {string}         _status
          */
-        function onComplete(_xhr, _status) {
+        function onComplete(xhr, _status) {
             _debugXhr(`${func}: complete`, secondsSince(start), 'sec.');
             if (records) {
                 callback(records);
-            } else {
-                const failure = error || warning || 'unknown failure'
-                const message = `${url}: ${failure}`;
-                if (warning) {
-                    OUT.warn(`${func}:`, message);
-                } else {
-                    OUT.error(`${func}:`, message);
-                }
-                if (error_callback) {
-                    error_callback(message);
-                }
+            } else if (warning) {
+                OUT.warn(`${func}: ${xhr.status}: ${warning} FROM ${url}`);
+                error_callback?.(warning);
+            } else if (error ||= 'unknown failure') {
+                OUT.error(`${func}: ${xhr.status}: ${error} FROM ${url}`);
+                error_callback?.(error);
             }
         }
     }
