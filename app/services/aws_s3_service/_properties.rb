@@ -36,21 +36,19 @@ module AwsS3Service::Properties
   # @type [Hash{Symbol=>Hash{Symbol=>String}}]
   #
   S3_BUCKET =
-    Api::Common::REPOSITORY.transform_values { |property|
+    Api::Common::REPOSITORY.merge(
+      # NOTE: These need to remain until any items uploaded to these buckets
+      #   are dealt with (maybe simply by moving to "emma-storage").
+      bookshare:  { symbol: :bs },
+      hathiTrust: { symbol: :ht },
+    ).transform_values { |property|
+      next if false?(property[:s3])
       key  = property[:symbol]
       name = key ? "#{key}-queue" : 'storage'
       %i[production staging].map { |deployment|
         [deployment, "emma-#{name}-#{deployment}"]
       }.to_h
-    }.deep_freeze
-
-  # A list of the partner repositories.
-  #
-  # @type [Array<Symbol>]
-  #
-  # @note Currently unused
-  #
-  PARTNER_REPOSITORIES = S3_BUCKET.keys.excluding(:emma).freeze
+    }.compact.deep_freeze
 
   # S3 options are kept in encrypted credentials but can be overridden by
   # environment variables.

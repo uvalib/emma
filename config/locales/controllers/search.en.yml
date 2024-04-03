@@ -45,10 +45,8 @@ en:
           last_tooltip:   'This is the last record on the page'
 
         source:
-          default:        'source repository'
           link_tooltip:   'View this item on the %{repo} website'
-          origin:         'the source repository'
-          retrieval_tip:  'Retrieve the %{fmt} source from %{repo}'
+          retrieval_tip:  'Retrieve the %{fmt} file from %{repo}'
 
       # =======================================================================
       # Search endpoint

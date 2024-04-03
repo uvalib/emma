@@ -206,6 +206,7 @@ en:
             internetArchive:
               - 'IA'
               - !ruby/regexp /Internet *Archive|archive\.org/i
+            openAlex:               !ruby/regexp /Open *Alex/i
             emma:                   !ruby/regexp /EMMA/
             accessTextNetwork:      !ruby/regexp /ATN|Access *Text *Net/
             publisher:              !ruby/regexp /publisher/i

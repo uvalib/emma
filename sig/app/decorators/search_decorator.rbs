@@ -258,18 +258,20 @@ class SearchDecorator
   # Make a clickable link to the display page for the title on the originating
   # repository's web site.
   #
-  # @param [Hash] opt     Passed to #record_popup or LinkHelper#external_link.
+  # @param [String] label             Link text (def: :emma_repositoryRecordId)
+  # @param [String] url               Overrides `object.record_title_url`.
+  # @param [Hash]   opt               Passed to #record_popup or
+  #                                     LinkHelper#external_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def source_record_link: (**untyped opt) -> ActiveSupport::SafeBuffer
+  def source_record_link: (?label: String|nil, ?url: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Make a clickable link to retrieve a remediated file.
   #
-  # @param [Hash] opt                   Passed to link method except for:
-  #
-  # @option opt [String] :label         Link text (default: the URL).
-  # @option opt [String] :url           Overrides `item.record_download_url`.
+  # @param [String] label             Link text (default: the URL).
+  # @param [String] url               Overrides `object.record_download_url`.
+  # @param [Hash]   opt               Passed to link method except for:
   #
   # @return [ActiveSupport::SafeBuffer] HTML link element.
   # @return [nil]                       If no *url* was provided or found.
@@ -277,7 +279,7 @@ class SearchDecorator
   # @see RepositoryHelper#emma_retrieval_link
   # @see RepositoryHelper#ia_retrieval_link
   #
-  def source_retrieval_link: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def source_retrieval_link: (?label: String|nil, ?url: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Render a metadata listing of a search result item.
   #

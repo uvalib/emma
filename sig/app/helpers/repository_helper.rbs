@@ -24,14 +24,21 @@ module RepositoryHelper
   #
   def ia_link?: ((String|nil) url) -> bool
 
-  # Report the partner repository associated with the given URL.
+  # Indicate whether the given URL is an OpenAlex link.
   #
   # @param [String, nil] url
   #
-  # @return [String]                  One of EmmaRepository#values.
-  # @return [nil]                     If not associated with any repository.
+  def oa_link?: ((String|nil) url) -> bool
+
+  # Report the partner repository associated with the given URL.
   #
-  def url_repository: ((String|nil) url) -> (String | nil)
+  # @param [String, nil] url
+  # @param [Boolean]     warn
+  #
+  # @return [Symbol]                  From one of EmmaRepository#values.
+  # @return [nil]                     Associated repo could not be determined.
+  #
+  def url_repository: ((String|nil) url, ?warn: bool) -> (Symbol | nil)
 
   # Report the partner repository as indicated by the given parameter(s).
   #
@@ -40,13 +47,53 @@ module RepositoryHelper
   # given, change the reported repository based on the nature of the URL.
   #
   # @param [String, Model, Hash, nil] url
-  # @param [Model, Hash, nil]         obj     Default: #object.
+  # @param [Model, Hash, nil]         obj
   # @param [Symbol]                   field
   #
-  # @return [String]                  One of EmmaRepository#values.
-  # @return [nil]                     If not associated with any repository.
+  # @return [Symbol]                  From one of EmmaRepository#values.
+  # @return [nil]                     Associated repo could not be determined.
   #
-  def repository_for: ((String|Model|symHash|nil) url, ?(Model|symHash|nil) obj, ?field: Symbol) -> (String | nil)
+  def repository_for: ((String|Model|symHash|nil) url, ?(Model|symHash|nil) obj, ?field: Symbol) -> (Symbol | nil)
+
+  # Return the name of the indicated repository.
+  #
+  # @param [any, nil] repo            EmmaRepository, String, Symbol
+  #
+  # @return [String, nil]
+  #
+  def repository_title
+    : (EmmaRepository|String|Symbol repo) -> (String | nil)
+    | (untyped                      repo) -> nil
+
+  # Return the term for the indicated repository needed for
+  # "emma.search.messages.source.link_tooltip".
+  #
+  # @param [any, nil] repo            EmmaRepository, String, Symbol
+  #
+  # @return [String]
+  #
+  def record_src: (EmmaRepository|String|Symbol|nil repo) -> String
+
+  # Return the term for the indicated repository needed for
+  # "emma.search.messages.source.retrieval_tip".
+  #
+  # @param [any, nil] repo            EmmaRepository, String, Symbol
+  #
+  # @return [String]
+  #
+  def download_src: (EmmaRepository|String|Symbol|nil repo) -> String
+
+  # Get a value from "emma.repository.#(repo)" or the fallback value from
+  # "emma.repository._template".
+  #
+  # @note "emma.repository._template.#(key)" is expected to be non-nil.
+  #
+  # @param [Symbol]   key
+  # @param [any, nil] repo            EmmaRepository, String, Symbol
+  #
+  # @return [String]
+  #
+  def repository_config_value: (Symbol key, ?(EmmaRepository|String|Symbol|nil) repo) -> String
 
   # Produce a link to retrieve an EMMA file.
   #
@@ -81,6 +128,19 @@ module RepositoryHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def ace_retrieval_link: (String label, String url, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Produce a link to retrieve an OpenAlex file.
+  #
+  # @param [String] label
+  # @param [String] url
+  # @param [Hash]   opt               Passed to #retrieval_link
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # === Implementation Notes
+  # OpenAlex only has direct download of PDF files.
+  #
+  def oa_retrieval_link: (String label, String url, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Produce a link to retrieve a content file.
   #

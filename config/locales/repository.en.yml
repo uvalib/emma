@@ -16,13 +16,16 @@ en:
 
       _template:         &REPOSITORY_TEMPLATE
         name:           ~
-        symbol:         ~  # @see AwsS3Service::Properties::S3_BUCKET
+        symbol:         ~
+        s3:             true # @see AwsS3Service::Properties::S3_BUCKET
         logo:           # Logo image (@see LogoHelper::LOGO_TYPES)
           default:      ~  # ... for generic usage.
           wide:         ~  # ... transformed for wide fixed width.
           thumb:        ~  # ... image transformed for narrow fixed width.
           base:         ~  # ... unmodified original.
         title_path:     '' # Base URL to source pages for title-level entries.
+        record_src:     'source repository'     # For RepositoryHelper
+        download_src:   'the source repository' # For RepositoryHelper
         download_path:  '' # Base URL for content file downloads.
         download_url:   '' # URL template for content file downloads.
         download_fmt:
@@ -40,6 +43,8 @@ en:
 
       _template_ia:     &IA_TEMPLATE
         title_path:     'https://archive.org/details'
+        record_src:     'Internet Archive'
+        download_src:   'Internet Archive'
         download_path:  'https://archive.org/download'
         download_url:
           daisy:        '%{download_path}/%{id}/%{id}_daisy.zip'
@@ -60,6 +65,8 @@ en:
           thumb:        'EMMA-159x100.png'
           base:         'EMMA-logo-UVAbg.png'
         title_path:     '/upload'
+        record_src:     'EMMA'
+        download_src:   'EMMA'
         download_path:  ~ # Use `request.base_url`.
         download_url:   '%{download_path}/upload/download/%{id}'
 
@@ -120,3 +127,15 @@ en:
           wide:         'Internet_Archive-300x100.png'
           thumb:        'thumb-Internet_Archive_logo.png'
           base:         'thumb-Internet_Archive_logo.png'
+
+      openAlex:
+        <<:             *REPOSITORY_TEMPLATE
+        name:           'OpenAlex'
+        symbol:         'oa'
+        s3:             false
+        logo:
+          default:      'OpenAlex-300x100.png'
+          wide:         'OpenAlex-300x100.png'
+          thumb:        'thumb-OpenAlex-logo.jpg'
+          base:         'thumb-OpenAlex-logo.jpg'
+        title_path:     'https://openalex.org/works'

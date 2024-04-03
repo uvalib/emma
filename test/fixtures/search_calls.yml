@@ -75,6 +75,7 @@ template:
        #- bookshare
        #- hathiTrust
         - internetArchive
+        - openAlex
     accessibility:
       multiple: true
       values:   # @see "en.emma.search.type.A11yFeature"

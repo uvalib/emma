@@ -36,7 +36,7 @@ module RepositoryHelper
   # @param [String, nil] url
   #
   def emma_link?(url)
-    url.to_s.strip.match?(%r{^https?://emma[^/]*\.virginia\.edu/})
+    url.to_s.strip.match?(%r{^https?://emma[^/]*\.virginia\.edu/}i)
   end
 
   # Indicate whether the given URL is an Internet Archive link.
@@ -47,23 +47,33 @@ module RepositoryHelper
   # @param [String, nil] url
   #
   def ia_link?(url)
-    url.to_s.strip.match?(%r{^https?://([^/]+\.)?archive\.org/})
+    url.to_s.strip.match?(%r{^https?://([^./]+\.)*archive\.org/}i)
+  end
+
+  # Indicate whether the given URL is an OpenAlex link.
+  #
+  # @param [String, nil] url
+  #
+  def oa_link?(url)
+    url.to_s.strip.match?(%r{^https?://([^./]+\.)*openalex\.org/}i)
   end
 
   # Report the partner repository associated with the given URL.
   #
   # @param [String, nil] url
+  # @param [Boolean]     warn
   #
-  # @return [String]                  One of EmmaRepository#values.
-  # @return [nil]                     If not associated with any repository.
+  # @return [Symbol]                  From one of EmmaRepository#values.
+  # @return [nil]                     Associated repo could not be determined.
   #
-  def url_repository(url)
-    return unless url.present?
+  def url_repository(url, warn: false)
     case
+      when url.blank?      then nil
       when emma_link?(url) then :emma
+      when oa_link?(url)   then :openAlex
       when ia_link?(url)   then :internetArchive
-      else                      Log.warn { "#{__method__}: #{url.inspect}" }
-    end&.to_s
+      when warn            then Log.warn { "#{__method__}: #{url.inspect}" }
+    end
   end
 
   # Report the partner repository as indicated by the given parameter(s).
@@ -73,17 +83,67 @@ module RepositoryHelper
   # given, change the reported repository based on the nature of the URL.
   #
   # @param [String, Model, Hash, nil] url
-  # @param [Model, Hash, nil]         obj     Default: #object.
+  # @param [Model, Hash, nil]         obj
   # @param [Symbol]                   field
   #
-  # @return [String]                  One of EmmaRepository#values.
-  # @return [nil]                     If not associated with any repository.
+  # @return [Symbol]                  From one of EmmaRepository#values.
+  # @return [nil]                     Associated repo could not be determined.
   #
   def repository_for(url, obj = nil, field: :emma_repository)
     url, obj = [nil, url] if url && !url.is_a?(String)
     # noinspection RubyMismatchedArgumentType
-    repo = url_repository(url) and return repo
-    (obj ||= object) && (obj.try(field) || obj.try(:[], field))&.to_s
+    (obj&.try(field) || obj&.try(:[], field) || url_repository(url))&.to_sym
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Return the term for the indicated repository needed for
+  # "emma.search.messages.source.link_tooltip".
+  #
+  # @param [any, nil] repo            EmmaRepository, String, Symbol
+  #
+  # @return [String]
+  #
+  def record_src(repo)
+    repository_config_value(__method__, repo)
+  end
+
+  # Return the term for the indicated repository needed for
+  # "emma.search.messages.source.retrieval_tip".
+  #
+  # @param [any, nil] repo            EmmaRepository, String, Symbol
+  #
+  # @return [String]
+  #
+  def download_src(repo)
+    repository_config_value(__method__, repo)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Get a value from "emma.repository.#(repo)" or the fallback value from
+  # "emma.repository._template".
+  #
+  # @note "emma.repository._template.#(key)" is expected to be non-nil.
+  #
+  # @param [Symbol]   key
+  # @param [any, nil] repo            EmmaRepository, String, Symbol
+  #
+  # @return [String]
+  #
+  def repository_config_value(key, repo = nil)
+    cfg  = Api::Common::REPOSITORY_CONFIG
+    repo = repo.value if repo.is_a?(EmmaRepository)
+    repo = (repo.to_sym.presence if repo.is_a?(String) || repo.is_a?(Symbol))
+    repo && cfg.dig(repo, key) || cfg.dig(:_template, key)
   end
 
   # ===========================================================================
@@ -132,6 +192,21 @@ module RepositoryHelper
   #
   def ace_retrieval_link(label, url, **opt)
     ia_retrieval_link(label, url, **opt)
+  end
+
+  # Produce a link to retrieve an OpenAlex file.
+  #
+  # @param [String] label
+  # @param [String] url
+  # @param [Hash]   opt               Passed to #retrieval_link
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # === Implementation Notes
+  # OpenAlex only has direct download of PDF files.
+  #
+  def oa_retrieval_link(label, url, **opt)
+    retrieval_link(label, url, **opt)
   end
 
   # ===========================================================================

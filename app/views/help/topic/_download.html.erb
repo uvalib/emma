@@ -8,14 +8,17 @@
 
   ace                 = topic[:ace]
   ia                  = topic[:ia]
+  oa                  = topic[:oa]
   emma                = topic[:emma]
 
   ace_title           = ace[:title]
   ia_title            = ia[:title]
+  oa_title            = oa[:title]
   emma_title          = emma[:title]
 
   ace_logo            = repository_source_logo(:ace)
   ia_logo             = repository_source_logo(:internetArchive)
+  oa_logo             = repository_source_logo(:openAlex)
   emma_logo           = repository_source_logo(:emma)
 
   signed_in           = help_jump('signed in', :sign_in)
@@ -31,6 +34,7 @@
 
   ace_help            = 'download_ace_help'
   ia_help             = 'download_internetArchive_help'
+  oa_help             = 'download_openAlex_help'
   emma_help           = 'download_emma_help'
 
 -%>
@@ -50,6 +54,7 @@
   <ul>
     <li><a href="#<%= ace_help  -%>"><%= ace_title  -%></a></li>
     <li><a href="#<%= ia_help   -%>"><%= ia_title   -%></a></li>
+    <li><a href="#<%= oa_help   -%>"><%= oa_title   -%></a></li>
     <li><a href="#<%= emma_help -%>"><%= emma_title -%></a></li>
   </ul>
 </nav>
@@ -107,6 +112,20 @@
     unsuccessfully.
     Retrying the download link after a few minutes, however, should result in
     the download without further delay.
+  </p>
+
+</section>
+
+<section role="region" data-part="download" aria-labelledby="<%= oa_help -%>">
+
+  <h2 class="section" id="<%= oa_help -%>">
+    <span class="text"><%= oa_title -%></span>
+    <%= oa_logo %>
+  </h2>
+
+  <p>
+    Any download link for an index entry associated with OpenAlex is actually
+    a link to the original source of the file.
   </p>
 
 </section>

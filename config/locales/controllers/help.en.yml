@@ -138,7 +138,7 @@ en:
           topic:        'downloads'
           Topic:        'Download'
           title:        'Downloading from EMMA'
-          tooltip:      'Help with downloading files from EMMA'
+          tooltip:      'Help with downloading files'
           content:      ~ # @see file:app/views/help/topic/_download.html.erb
 
           ace:
@@ -146,6 +146,9 @@ en:
 
           ia:
             title:      'Downloading an Internet Archive item'
+
+          oa:
+            title:      'Downloading an OpenAlex item'
 
           emma:
             title:      'Downloading an EMMA item'
@@ -476,7 +479,8 @@ en:
             >-
             A portion of the upload submission form showing radio buttons to
             filter the fields on the page, and with the Source Repository menu
-            opened to show selections "EMMA", "ACE", and "Internet Archive".
+            opened to show selections "EMMA", "ACE", "Internet Archive", and
+            "OpenAlex".
 
         source_menu_repo:
           asset:        'help/source_menu_repo.png'

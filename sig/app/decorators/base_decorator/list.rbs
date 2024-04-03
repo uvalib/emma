@@ -131,6 +131,7 @@ module BaseDecorator::List
   # @param [Symbol]               field
   # @param [any, nil]             value
   # @param [Array<Symbol,String>] help    Help topic(s).
+  # @param [String, Symbol, nil]  topic
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -139,7 +140,7 @@ module BaseDecorator::List
   # only ever called for the decorator's object (and not for an arbitrary
   # label/value pair outside of that context).
   #
-  def render_help_icon: (Symbol field, untyped value, *(Symbol|String) help, **untyped _ignored) -> ActiveSupport::SafeBuffer
+  def render_help_icon: (Symbol field, untyped value, *(Symbol|String) help, ?topic: String|Symbol|nil, **untyped _ignored) -> ActiveSupport::SafeBuffer
 
   # Displayed in place of a results list.
   #

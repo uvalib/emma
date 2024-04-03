@@ -384,6 +384,7 @@ module BaseDecorator::List
   # @param [Symbol]               field
   # @param [any, nil]             value
   # @param [Array<Symbol,String>] help    Help topic(s).
+  # @param [String, Symbol, nil]  topic
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -392,12 +393,11 @@ module BaseDecorator::List
   # only ever called for the decorator's object (and not for an arbitrary
   # label/value pair outside of that context).
   #
-  def render_help_icon(field, value, *help, **)
+  def render_help_icon(field, value, *help, topic: nil, **)
     if field == :emma_retrievalLink
-      url   = extract_url(value)
-      topic = repository_for(url)
-      help  = help.many? ? [*help[...-1], topic] : [*help, topic] if topic
+      topic ||= repository_for(extract_url(value), object)
     end
+    help = help.many? ? [*help[...-1], topic] : [*help, topic] if topic
     h.help_popup(*help)
   end
 

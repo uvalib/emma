@@ -183,6 +183,7 @@ en:
           bookshare:                'Bookshare'
           hathiTrust:               'HathiTrust'
           internetArchive:          'Internet Archive'
+          openAlex:                 'OpenAlex'
           publisher:                'Publisher'
           purchased:                'Purchased'
           faculty:                  'Faculty'

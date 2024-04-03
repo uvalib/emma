@@ -466,28 +466,29 @@ class SearchDecorator
   # Make a clickable link to the display page for the title on the originating
   # repository's web site.
   #
-  # @param [Hash] opt     Passed to #record_popup or LinkHelper#external_link.
+  # @param [String] label             Link text (def: :emma_repositoryRecordId)
+  # @param [String] url               Overrides `object.record_title_url`.
+  # @param [Hash]   opt               Passed to #record_popup or
+  #                                     LinkHelper#external_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def source_record_link(**opt)
-    url  = object.record_title_url
-    repo = repository_for(url)
-    return record_popup(**opt) if repo == EmmaRepository.default
-    if url && !opt[:title]
-      repo = repo&.titleize || config_text(:search, :source, :default)
-      opt[:title] = config_text(:search, :source, :link_tooltip, repo: repo)
-    end
-    rid = CGI.unescape(object.emma_repositoryRecordId)
-    url ? external_link(rid, url, **opt) : ERB::Util.h(rid)
+  def source_record_link(label: nil, url: nil, **opt)
+    url   ||= object.record_title_url
+    repo    = repository_for(url, object)
+    return record_popup(**opt) if EmmaRepository.default?(repo)
+    label ||= CGI.unescape(object.emma_repositoryRecordId)
+    return ERB::Util.h(label) unless url
+    opt[:title] ||=
+      config_text(:search, :source, :link_tooltip, repo: record_src(repo))
+    external_link(label, url, **opt)
   end
 
   # Make a clickable link to retrieve a remediated file.
   #
-  # @param [Hash] opt                   Passed to link method except for:
-  #
-  # @option opt [String] :label         Link text (default: the URL).
-  # @option opt [String] :url           Overrides `item.record_download_url`.
+  # @param [String] label             Link text (default: the URL).
+  # @param [String] url               Overrides `object.record_download_url`.
+  # @param [Hash]   opt               Passed to link method except for:
   #
   # @return [ActiveSupport::SafeBuffer] HTML link element.
   # @return [nil]                       If no *url* was provided or found.
@@ -495,38 +496,36 @@ class SearchDecorator
   # @see RepositoryHelper#emma_retrieval_link
   # @see RepositoryHelper#ia_retrieval_link
   #
-  def source_retrieval_link(**opt)
-    url = opt.delete(:url) || object.record_download_url
-    url = CGI.unescape(url.to_s)
-    return if url.blank?
-
-    repo  = repository_for(url)
-    label = opt.delete(:label) || url.dup
+  def source_retrieval_link(label: nil, url: nil, **opt)
+    url   ||= object.record_download_url.presence or return
+    repo    = repository_for(url, object)
+    label ||= CGI.unescape(url.to_s)
 
     # Adjust the link depending on whether the current session is permitted to
     # perform the download.
-    allow = can?(:download, Upload)
-    append_css!(opt, 'sign-in-required') unless allow
+    allowed = can?(:download, Upload)
+    append_css!(opt, 'sign-in-required') unless allowed
 
     # Set up the tooltip to be shown before the item has been requested.
     opt[:title] ||=
-      if allow
-        fmt     = object.dc_format.to_s.underscore.upcase.tr('_', ' ')
-        origin  = repo&.titleize || config_text(:search, :source, :origin)
-        config_text(:search, :source, :retrieval_tip, fmt: fmt, repo: origin)
+      if allowed
+        fmt = object.dc_format.to_s.underscore.upcase.tr('_', ' ')
+        rep = download_src(repo)
+        config_text(:search, :source, :retrieval_tip, fmt: fmt, repo: rep)
       else
-        fmt     = object.label
-        origin  = repo || EmmaRepository.default
-        default = %i[emma.download.tooltip]
-        tip_key = (h.signed_in?) ? 'disallowed' : 'sign_in'
-        tip_key = "emma.download.link.#{tip_key}.tooltip"
-        config_item(tip_key, fmt: fmt, repo: origin, default: default)
+        fmt = object.label
+        rep = repo || EmmaRepository.default
+        key = h.signed_in? ? 'disallowed' : 'sign_in'
+        key = "emma.download.link.#{key}.tooltip"
+        dft = %i[emma.download.tooltip]
+        config_item(key, fmt: fmt, repo: rep, default: dft)
       end
 
     case repo&.to_sym
       when :emma            then emma_retrieval_link(label, url, **opt)
       when :ace             then ace_retrieval_link( label, url, **opt)
       when :internetArchive then ia_retrieval_link(  label, url, **opt)
+      when :openAlex        then oa_retrieval_link(  label, url, **opt)
       else Log.error { "#{__method__}: #{repo.inspect}: unexpected" } if repo
     end
   end

@@ -23,14 +23,6 @@ module AwsS3Service::Properties
   #
   S3_BUCKET: Hash[Symbol,Hash[Symbol,String]]
 
-  # A list of the partner repositories.
-  #
-  # @type [Array<Symbol>]
-  #
-  # @note Currently unused
-  #
-  PARTNER_REPOSITORIES: symArray
-
   # S3 options are kept in encrypted credentials but can be overridden by
   # environment variables.
   #
