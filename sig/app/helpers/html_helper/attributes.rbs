@@ -17,21 +17,72 @@ module HtmlHelper::Attributes
   #
   def accessible_name?: (*untyped args, **untyped opt) -> bool
 
+  # The key for a hash value used to pass internal-use information alongside
+  # HTML attributes.
+  #
+  # If the key is :internal then the associated value should be a Hash.
+  # If the key starts with "internal" (e.g. :internal_xxx or :"internal-xxx")
+  # then the associated value may be anything.
+  #
+  # @type [Symbol]
+  #
+  INTERNAL_ATTR: Symbol
+
+  # @private
+  # @type [Regexp]
+  INTERNAL_ATTR_RE: Regexp
+
+  # Indicate whether the given key is an internal attribute.
+  #
+  # @param [Symbol, String, nil] key
+  #
+  def internal_attribute?
+    : (nil           key) -> false
+    | (String|Symbol key) -> bool
+
+  # These are observed hash keys which may travel alongside HTML attributes
+  # like :id, :class, :tabindex etc. when passed as named parameters, but
+  # should not be passed into methods which actually generate HTML elements.
+  #
+  # @type [Array<Symbol>]
+  #
+  NON_HTML_ATTRIBUTES: symArray
+
+  # Remove hash keys which are definitely not HTML attributes.
+  #
+  # @param [Hash] html_opt
+  #
+  # @return [Hash]                    The modified *html_opt* hash.
+  #
+  def remove_non_attributes!: (symHash html_opt) -> symHash
+
   # A line added to tooltips to indicate a .sign-in-required link.
   #
   # @type [String]
   #
   SIGN_IN: String
 
-  # Augment with options that should be set/unset according to the context
+  # Augment with attributes that should be set/unset according to the context
   # (e.g. CSS classes present).
   #
   # @param [Symbol, String] tag
-  # @param [Hash]           options
+  # @param [Hash]           opt
   #
-  # @return [Hash]
+  # @return [Hash]          A possibly-modified copy of *opt*.
   #
-  def add_inferred_attributes: (Symbol|String _tag, symHash options) -> symHash
+  # @note Currently unused.
+  #
+  def add_inferred_attributes: (Symbol|String _tag, symHash html_opt) -> symHash
+
+  # Augment with attributes that should be set/unset according to the context
+  # (e.g. CSS classes present).
+  #
+  # @param [Symbol, String] tag
+  # @param [Hash]           opt
+  #
+  # @return [Hash]          The possibly-modified *opt*.
+  #
+  def add_inferred_attributes!: (Symbol|String _tag, symHash opt) -> symHash
 
   # Attributes that are expected for a given HTML tag and can be added
   # automatically.
@@ -42,14 +93,25 @@ module HtmlHelper::Attributes
   #
   ADDED_HTML_ATTRIBUTES: Hash[Symbol,symHash]
 
-  # Augment with default options.
+  # Augment with default attributes.
   #
   # @param [Symbol, String] tag
-  # @param [Hash]           options
+  # @param [Hash]           opt
   #
-  # @return [Hash]
+  # @return [Hash]          A possibly-modified copy of *opt*.
   #
-  def add_required_attributes: (Symbol|String tag, symHash options) -> symHash
+  # @note Currently unused.
+  #
+  def add_required_attributes: (Symbol|String tag, symHash opt) -> symHash
+
+  # Augment with default attributes.
+  #
+  # @param [Symbol, String] tag
+  # @param [Hash]           opt
+  #
+  # @return [Hash]          The possibly-modified *opt*.
+  #
+  def add_required_attributes!: (Symbol|String tag, symHash opt) -> symHash
 
   # Attributes that are expected for a given HTML tag.
   #
@@ -66,10 +128,10 @@ module HtmlHelper::Attributes
   # Verify that options have been included unless 'aria-hidden'.
   #
   # @param [Symbol, String] tag
-  # @param [Hash]           options
+  # @param [Hash]           opt
   # @param [Symbol, nil]    meth      Calling method for diagnostics.
   #
   # @return [Boolean]                 If *false* at least one was missing.
   #
-  def check_required_attributes: (Symbol|String tag, symHash options, ?meth: Symbol|nil) -> bool
+  def check_required_attributes: (Symbol|String tag, symHash opt, ?meth: Symbol|nil) -> bool
 end

@@ -1,15 +1,9 @@
 # Shared view helper HTML support methods.
 #
 module HtmlHelper::Options
-  include CssHelper
+  include HtmlHelper::Attributes
 
-  # These are observed hash keys which may travel alongside HTML attributes
-  # like :id, :class, :tabindex etc. when passed as named parameters, but
-  # should not be passed into methods which actually generate HTML elements.
-  #
-  # @type [Array<Symbol>]
-  #
-  NON_HTML_ATTRIBUTES: symArray
+  include CssHelper
 
   # Make a copy which has only valid HTML attributes with coalesced "data-*"
   # and `data: { }` options.

@@ -5,10 +5,13 @@
 
 __loading_begin(__FILE__)
 
+require_relative 'attributes'
+
 # Shared view helper HTML support methods.
 #
 module HtmlHelper::Options
 
+  include HtmlHelper::Attributes
   include CssHelper
 
   # ===========================================================================
@@ -16,20 +19,6 @@ module HtmlHelper::Options
   # ===========================================================================
 
   public
-
-  # These are observed hash keys which may travel alongside HTML attributes
-  # like :id, :class, :tabindex etc. when passed as named parameters, but
-  # should not be passed into methods which actually generate HTML elements.
-  #
-  # @type [Array<Symbol>]
-  #
-  NON_HTML_ATTRIBUTES = %i[
-    index
-    level
-    offset
-    row
-    skip
-  ].freeze
 
   # Make a copy which has only valid HTML attributes with coalesced "data-*"
   # and `data: { }` options.
@@ -56,7 +45,7 @@ module HtmlHelper::Options
     data = html_opt.delete(:data).presence
     html_opt.reverse_merge!(data.transform_keys { |k| :"data-#{k}" }) if data
     html_opt[:'data-method'] ||= meth if meth
-    html_opt.except!(*NON_HTML_ATTRIBUTES)
+    remove_non_attributes!(html_opt)
   end
 
   # Merge values from one or more options hashes.

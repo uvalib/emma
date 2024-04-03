@@ -48,44 +48,107 @@ module HtmlHelper::Attributes
 
   public
 
+  # The key for a hash value used to pass internal-use information alongside
+  # HTML attributes.
+  #
+  # If the key is :internal then the associated value should be a Hash.
+  # If the key starts with "internal" (e.g. :internal_xxx or :"internal-xxx")
+  # then the associated value may be anything.
+  #
+  # @type [Symbol]
+  #
+  INTERNAL_ATTR = :internal
+
+  # @private
+  # @type [Regexp]
+  INTERNAL_ATTR_RE = /^#{INTERNAL_ATTR}([_-]|$)/i.freeze
+
+  # Indicate whether the given key is an internal attribute.
+  #
+  # @param [Symbol, String, nil] key
+  #
+  def internal_attribute?(key)
+    key&.match?(INTERNAL_ATTR_RE) || false
+  end
+
+  # These are observed hash keys which may travel alongside HTML attributes
+  # like :id, :class, :tabindex etc. when passed as named parameters, but
+  # should not be passed into methods which actually generate HTML elements.
+  #
+  # @type [Array<Symbol>]
+  #
+  NON_HTML_ATTRIBUTES = %i[
+    index
+    level
+    offset
+    row
+    skip
+  ].push(INTERNAL_ATTR).freeze
+
+  # Remove hash keys which are definitely not HTML attributes.
+  #
+  # @param [Hash] html_opt
+  #
+  # @return [Hash]                    The modified *html_opt* hash.
+  #
+  def remove_non_attributes!(html_opt)
+    html_opt.reject! { |k, _| k.nil? || internal_attribute?(k) }
+    html_opt.except!(*NON_HTML_ATTRIBUTES)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # A line added to tooltips to indicate a .sign-in-required link.
   #
   # @type [String]
   #
   SIGN_IN = I18n.t('emma.download.failure.sign_in').freeze
 
-  # Augment with options that should be set/unset according to the context
+  # Augment with attributes that should be set/unset according to the context
   # (e.g. CSS classes present).
   #
   # @param [Symbol, String] tag
-  # @param [Hash]           options
+  # @param [Hash]           opt
   #
-  # @return [Hash]
+  # @return [Hash]          A possibly-modified copy of *opt*.
   #
-  def add_inferred_attributes(tag, options)
-    opt = options.dup
-    css = css_class_array(opt[:class])
+  # @note Currently unused.
+  #
+  def add_inferred_attributes(tag, opt)
+    add_inferred_attributes!(tag, opt.dup)
+  end
 
-    # Attribute defaults which may be overridden in *options*.
-    css.each do |css_class|
-      case css_class.to_sym
-        when :hidden    then opt.reverse_merge!('aria-hidden':   true)
-        when :disabled  then opt.reverse_merge!('aria-disabled': true)
-        when :forbidden then opt.reverse_merge!('aria-disabled': true)
-      end
-    end
+  # Augment with attributes that should be set/unset according to the context
+  # (e.g. CSS classes present).
+  #
+  # @param [Symbol, String] tag
+  # @param [Hash]           opt
+  #
+  # @return [Hash]          The possibly-modified *opt*.
+  #
+  def add_inferred_attributes!(tag, opt)
+    default     = {} # Attribute defaults which may be overridden in *opt*.
+    replacement = {} # Attribute replacements which will override *opt*.
 
-    # Attribute replacements which will override *options*.
-    css.each do |css_class|
+    css_class_array(opt[:class]).each do |css_class|
       case css_class
+        when 'disabled', 'forbidden'
+          default[:'aria-disabled'] = true
+        when 'hidden'
+          default[:'aria-hidden'] = true
         when 'sign-in-required'
           if (tip = opt[:title].to_s).blank?
-            opt[:title] = SIGN_IN
+            replacement[:title] = SIGN_IN
           elsif !tip.include?(SIGN_IN)
-            opt[:title] = tooltip_text(tip, "(#{SIGN_IN})")
+            replacement[:title] = tooltip_text(tip, "(#{SIGN_IN})")
           end
       end
     end
+    opt.reverse_merge!(default).merge!(replacement)
 
     if %w[a button].include?(tag.to_s)
       opt.reverse_merge!(disabled: true) if opt[:'aria-disabled']
@@ -112,16 +175,29 @@ module HtmlHelper::Attributes
     td:     { role: nil },            # Either 'cell' or 'gridcell'
   }.deep_freeze
 
-  # Augment with default options.
+  # Augment with default attributes.
   #
   # @param [Symbol, String] tag
-  # @param [Hash]           options
+  # @param [Hash]           opt
   #
-  # @return [Hash]
+  # @return [Hash]          A possibly-modified copy of *opt*.
   #
-  def add_required_attributes(tag, options)
-    attrs = ADDED_HTML_ATTRIBUTES[tag&.to_sym]
-    attrs&.merge(options) || options
+  # @note Currently unused.
+  #
+  def add_required_attributes(tag, opt)
+    add_required_attributes!(tag, opt.dup)
+  end
+
+  # Augment with default attributes.
+  #
+  # @param [Symbol, String] tag
+  # @param [Hash]           opt
+  #
+  # @return [Hash]          The possibly-modified *opt*.
+  #
+  def add_required_attributes!(tag, opt)
+    attrs = ADDED_HTML_ATTRIBUTES[tag&.to_sym] || {}
+    opt.reverse_merge!(attrs)
   end
 
   # Attributes that are expected for a given HTML tag.
@@ -148,20 +224,20 @@ module HtmlHelper::Attributes
   # Verify that options have been included unless 'aria-hidden'.
   #
   # @param [Symbol, String] tag
-  # @param [Hash]           options
+  # @param [Hash]           opt
   # @param [Symbol, nil]    meth      Calling method for diagnostics.
   #
   # @return [Boolean]                 If *false* at least one was missing.
   #
-  def check_required_attributes(tag, options, meth: nil)
-    return true if true?(options[:'aria-hidden'])
+  def check_required_attributes(tag, opt, meth: nil)
+    return true if true?(opt[:'aria-hidden'])
     return true unless REQUIRED_HTML_ATTRIBUTES.include?((tag = tag&.to_sym))
-    missing = Array.wrap(REQUIRED_HTML_ATTRIBUTES[tag]) - options.keys
+    missing = Array.wrap(REQUIRED_HTML_ATTRIBUTES[tag]) - opt.keys
     error   =
       if missing.present?
         'missing attributes: %s' % missing.join(', ')
-      elsif (roles = EXPECTED_ROLES[tag]) && !roles.include?(options[:role])
-        "unexpected role: #{options[:role]}"
+      elsif (roles = EXPECTED_ROLES[tag]) && !roles.include?(opt[:role])
+        "unexpected role: #{opt[:role]}"
       end
     Log.debug { "#{meth || calling_method}: #{tag}: #{error}" } if error
     error.blank?

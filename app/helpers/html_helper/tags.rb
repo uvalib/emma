@@ -279,9 +279,9 @@ module HtmlHelper::Tags
     tag = lvl && ('h%d' % [lvl, 6].min) || tag || 'div'
 
     opt = args.pop.dup if opt.blank? && args.last.is_a?(Hash)
-    opt = add_inferred_attributes(tag, opt)
-    opt = add_required_attributes(tag, opt)
-    opt = html_options!(opt)
+    add_inferred_attributes!(tag, opt)
+    add_required_attributes!(tag, opt)
+    html_options!(opt)
     check_required_attributes(tag, opt, meth: calling_method) if Log.debug?
 
     args.concat(Array.wrap(yield)) if block_given?
@@ -305,10 +305,11 @@ module HtmlHelper::Tags
   # @yieldreturn [String, Array]
   #
   def html_form(url_or_path, *args, separator: "\n", **opt)
-    opt = args.pop if opt.blank? && args.last.is_a?(Hash)
+    opt  = args.pop.dup if opt.blank? && args.last.is_a?(Hash)
     args.concat(Array.wrap(yield)) if block_given?
+    args = args.flatten.compact_blank!
     form_tag(url_or_path, opt) do
-      safe_join(args.flatten.compact_blank!, separator)
+      safe_join(args, separator)
     end
   end
 

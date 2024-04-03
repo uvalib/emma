@@ -115,7 +115,10 @@ module LinkHelper
   #
   # @type [String]
   #
-  NEW_TAB = config_text(:link, :new_tab).freeze
+  NEW_TAB =
+    config_text(:link, :new_tab).then { |v|
+      (v.start_with?('(','[') && v.end_with?(')',']')) ? v : "(#{v})"
+    }.freeze
 
   # Produce a link with appropriate accessibility settings.
   #
@@ -132,23 +135,24 @@ module LinkHelper
   # This method assumes that local paths are always relative.
   #
   def make_link(label, path, **opt, &blk)
+    add_inferred_attributes!(:a, opt)
+
+    http     = path.is_a?(String) && path.start_with?('http')
     label    = opt.delete(:label) || label if opt.key?(:label)
     named    = accessible_name?(label, **opt)
     title    = opt[:title]
-    new_tab  = (opt[:target] == '_blank')
-    sign_in  = has_class?(opt, 'sign-in-required')
-    http     = path.is_a?(String) && path.start_with?('http')
-
-    opt      = add_inferred_attributes(:a, opt)
     hidden   = opt[:'aria-hidden']
     disabled = opt[:'aria-disabled']
+    new_tab  = (opt[:target] == '_blank')
+    sign_in  = has_class?(opt, 'sign-in-required')
 
     opt[:'aria-label'] = title      if title   && !named
     opt[:tabindex]     = -1         if hidden  && !opt.key?(:tabindex)
     opt[:rel]          = 'noopener' if http    && !opt.key?(:rel)
     append_tooltip!(opt, NEW_TAB)   if new_tab && !disabled && !sign_in
+    html_options!(opt)
 
-    link_to(label, path, html_options!(opt), &blk)
+    link_to(label, path, opt, &blk)
   end
 
   # Produce a link to an external site which opens in a new browser tab.
