@@ -85,10 +85,17 @@ module BaseDecorator::List
   # @param [String, nil]          value_css
   # @param [Hash]                 opt       Passed to each #html_div except:
   #
-  # @option opt [String] :role              Passed to outer wrapper only.
-  # @option opt [String] :base
-  # @option opt [String] :label_id
-  # @option opt [String] :value_id
+  # @option opt [String]         :base              Passed to #field_html_id.
+  # @option opt [String, Symbol] :group             Passed to #field_html_id.
+  #
+  # @option opt [String]         :role              To outer wrapper only.
+  # @option opt [any, nil]       :'aria-level'      To outer wrapper only.
+  # @option opt [any, nil]       :'aria-colindex'   To outer wrapper only.
+  #
+  # @option opt [String]         :label_id          Specify label element ID.
+  # @option opt [String]         :value_id          Specify value element ID.
+  # @option opt [Hash, nil]      :field_error       Special for ManifestItem
+  # @option opt [any, nil]       :'data-raw-value'  Override for value element.
   #
   # @return [ActiveSupport::SafeBuffer, nil]
   #

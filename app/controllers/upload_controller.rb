@@ -771,9 +771,6 @@ class UploadController < ApplicationController
   #
   # @see #retrieval_path              Route helper
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def retrieval
     __log_activity
     __debug_route
@@ -783,7 +780,6 @@ class UploadController < ApplicationController
     elsif IA_DIRECT_LINK_PATTERNS.any? { |pattern| url.match?(pattern) }
       return redirect_to url
     else
-      # noinspection xRubyUnnecessaryReturnStatement
       ia_download_response(url)
     end
   end
