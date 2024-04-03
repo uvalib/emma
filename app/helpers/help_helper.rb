@@ -115,22 +115,24 @@ module HelpHelper
   def help_popup(topic, sub_topic = nil, css: '.help-popup', **opt)
     return if topic.blank?
     topic, sub_topic = help_normalize(topic, sub_topic)
+    title  = opt.delete(:title)
     p_opt  = opt.delete(:placeholder)
     attr   = opt.delete(:attr)&.dup || {}
     css_id = opt[:'data-iframe'] || attr[:id] || css_randomize("help-#{topic}")
 
-    opt[:title]        ||= HELP_ENTRY.dig(topic.to_sym, :tooltip)
-    opt[:'aria-label'] ||= config_text(:help, :label)
-    opt[:'data-iframe']  = attr[:id] = css_id
-
-    unless opt.dig(:control, :icon)
+    unless opt.dig(:control, :icon) && opt.dig(:control, :title)
       opt[:control] = opt[:control]&.dup || {}
-      opt[:control].merge!(icon: QUESTION)
+      opt[:control][:icon]  ||= QUESTION
+      opt[:control][:title] ||= title || HELP_ENTRY.dig(topic.to_sym, :tooltip)
     end
+
     unless opt.dig(:panel, :'aria-label')
       opt[:panel] = opt[:panel]&.dup || {}
-      opt[:panel].merge!('aria-label': config_text(:help, :contents))
+      opt[:panel][:'aria-label'] ||= config_text(:help, :contents)
     end
+
+    opt[:'aria-label'] ||= config_text(:help, :label)
+    opt[:'data-iframe']  = attr[:id] = css_id
 
     prepend_css!(opt, css)
     inline_popup(**opt) do
