@@ -22,6 +22,12 @@ class ScalarType
     #
     def default: () -> String
 
+    # Indicate whether *v* matches the default value.
+    #
+    # @param [any, nil] v
+    #
+    def default?: (untyped v) -> bool
+
     # Indicate whether *v* would be a valid value for an item of this type.
     #
     # @param [any, nil] v
@@ -800,6 +806,12 @@ class EnumType < ScalarType
     # @return [String]
     #
     def default: () -> String
+
+    # Indicate whether *v* matches the default value.
+    #
+    # @param [any, nil] v
+    #
+    def default?: (untyped v) -> bool
 
     # Indicate whether *v* would be a valid value for an item of this type.
     #

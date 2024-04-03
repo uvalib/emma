@@ -42,4 +42,15 @@ module Search::Shared::LinkMethods
   # @return [String, nil]
   #
   def generate_download_url: () -> (String | nil)
+
+  # Form an absolute path from a relative path based on the current request and
+  # the source repository.
+  #
+  # @param [String, nil]         path
+  # @param [Symbol, String, nil] repo
+  #
+  # @return [String]                  Absolute path from *path*.
+  # @return [nil]                     If *path* is not relative.
+  #
+  def absolute_path: (String|nil path, Symbol|String|nil repo) -> (String | nil)
 end

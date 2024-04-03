@@ -407,7 +407,7 @@ class Upload < ApplicationRecord
       end
 
       # EMMA metadata defaults that are only appropriate for EMMA-native items.
-      if attr[:repository] == EmmaRepository.default
+      if EmmaRepository.default?(attr[:repository])
         rid = data[:emma_repositoryRecordId] ||= attr[:submission_id]
         data[:emma_retrievalLink] ||=
           make_retrieval_link((rid || self[:submission_id]), opt[:base_url])

@@ -59,10 +59,10 @@ module Api::Shared::CommonMethods
     if (elements = rec.try(:elements))
       elements.all?(&:canonical?)
     else
-      local = (rec.try(:emma_repository) == EmmaRepository.default)
-      url   = (rec.try(:emma_retrievalLink)   if local)
-      host  = (URI.parse(url).host rescue nil if url.present?)
-      host.blank? || (host == PRODUCTION_HOST)
+      local = EmmaRepository.default?(rec.try(:emma_repository))
+      url   = (rec.try(:emma_retrievalLink).presence   if local)
+      host  = (URI.parse(url).host.presence rescue nil if url)
+      host.nil? || (host == PRODUCTION_HOST)
     end
   end
 

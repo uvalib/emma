@@ -63,9 +63,7 @@ module Search::Shared::LinkMethods
     src  = emma_repository&.presence&.to_sym or return
     cfg  = REPOSITORY[src].presence          or raise "#{src}: invalid source"
     path = cfg[:title_path]                  or raise 'no title_path'
-    if respond_to?(:request) && (src.to_s == EmmaRepository.default)
-      path = request.base_url + path if path.start_with?('/')
-    end
+    path = absolute_path(path, src) || path
     make_path(path, id)
   rescue RuntimeError => error
     # noinspection RubyScope
@@ -88,19 +86,34 @@ module Search::Shared::LinkMethods
     url  = cfg[:download_url]
     url  = url[fmt] if url.is_a?(Hash)
     path = cfg[:download_path]
-    if respond_to?(:request) && (src.to_s == EmmaRepository.default)
-      if path.blank?
-        path = request.base_url
-      elsif path.start_with?('/')
-        path = request.base_url + path
-      end
-    end
+    path = absolute_path(path, src) || path
     raise 'no download_path' if path.blank?
     raise 'no download_url'  if url.blank?
     url % { id: id, fmt: fmt, download_path: path }
   rescue RuntimeError => error
     # noinspection RubyScope
     Log.warn { "#{__method__}: #{src}: #{error.class}: #{error.message}" }
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Form an absolute path from a relative path based on the current request and
+  # the source repository.
+  #
+  # @param [String, nil]         path
+  # @param [Symbol, String, nil] repo
+  #
+  # @return [String]                  Absolute path from *path*.
+  # @return [nil]                     If *path* is not relative.
+  #
+  def absolute_path(path, repo)
+    return unless respond_to?(:request) && EmmaRepository.default?(repo)
+    return unless path.blank? || path.start_with?('/')
+    request.base_url + path.to_s
   end
 
 end

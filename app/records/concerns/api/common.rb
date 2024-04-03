@@ -50,6 +50,14 @@ class ScalarType
       ''
     end
 
+    # Indicate whether *v* matches the default value.
+    #
+    # @param [any, nil] v
+    #
+    def default?(v)
+      false
+    end
+
     # Indicate whether *v* would be a valid value for an item of this type.
     #
     # @param [any, nil] v
@@ -1499,6 +1507,14 @@ class EnumType < ScalarType
     def default
       entry = enumerations[type]
       entry[:default] || entry[:values]&.first
+    end
+
+    # Indicate whether *v* matches the default value.
+    #
+    # @param [any, nil] v
+    #
+    def default?(v)
+      normalize(v) == default
     end
 
     # Indicate whether *v* would be a valid value for an item of this type.

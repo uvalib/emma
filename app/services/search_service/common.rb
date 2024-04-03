@@ -116,7 +116,7 @@ module SearchService::Common
 
       # Ensure default (relevance) sort is expressed as "no sort".
       sort = result[:sort]
-      if sort == SearchSort.default
+      if SearchSort.default?(sort)
         result.delete(:sort)
         sort = nil
       end
