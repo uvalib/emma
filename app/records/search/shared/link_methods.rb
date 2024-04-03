@@ -69,7 +69,7 @@ module Search::Shared::LinkMethods
     make_path(path, id)
   rescue RuntimeError => error
     # noinspection RubyScope
-    Log.warn { "#{__method__}: #{src}: #{error.message}" }
+    Log.warn { "#{__method__}: #{src}: #{error.class}: #{error.message}" }
   end
 
   # Create a URL on the original repository for acquiring the content file

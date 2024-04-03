@@ -311,12 +311,10 @@ module BaseDecorator::List
       l_id = nil
     else
       # Wrap label text in a <span> if needed; append help icon if applicable.
-      help = (Array.wrap(prop[:help]).presence unless no_help)
-      if label.is_a?(ActiveSupport::SafeBuffer)
-        label = label.dup if help
-      else
-        label = html_span(class: 'text') { label || labelize(field) }
-      end
+      help  = (prop[:help].presence unless no_help)
+      html  = label.is_a?(ActiveSupport::SafeBuffer)
+      label = label.dup if help && html
+      label = html_span(class: 'text') { label || labelize(field) } unless html
       label << render_help_icon(field, value, *help) if help
       l_tag   = wrap ? :div : tag
       l_id  ||= field_html_id(DEF_LABEL_CLASS, **id_opt)

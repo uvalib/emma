@@ -48,7 +48,7 @@ module Search::Shared::TransformMethods
   # @return [void]
   #
   def normalize_title_url!(data = nil, field: :emma_webPageLink)
-    url = get_field_values(data, *field).first
+    url = get_field_value(data, field)
     set_field_value!(data, field, generate_title_url) if url.blank?
   end
 
@@ -60,7 +60,7 @@ module Search::Shared::TransformMethods
   # @return [void]
   #
   def normalize_download_url!(data = nil, field: :emma_retrievalLink)
-    url = get_field_values(data, *field).first
+    url = get_field_value(data, field)
     set_field_value!(data, field, generate_download_url) if url.blank?
   end
 
