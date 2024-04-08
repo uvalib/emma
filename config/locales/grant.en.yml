@@ -11,52 +11,76 @@ en:
       partner:
 
         # =====================================================================
+        # Shared values
+        # =====================================================================
+
+        _template:      &TEMPLATE
+          tag:          ~
+          name:
+            short:      ~
+            long:       ~
+          active:       true
+
+        _template_a:    &ACADEMIC
+          <<:           *TEMPLATE
+
+        _template_c:    &COMMERCIAL
+          <<:           *TEMPLATE
+
+        # =====================================================================
         # Academic partners
         # =====================================================================
 
         academic:
 
           gmu:
+            <<:         *ACADEMIC
+            tag:        'GMU'
             name:
               short:    'George Mason'
               long:     'George Mason University'
-            tag:        'GMU'
 
           nau:
+            <<:         *ACADEMIC
+            tag:        'NAU'
             name:
               short:    'Northern Arizona'
               long:     'Northern Arizona University'
-            tag:        'NAU'
 
           osu:
+            <<:         *ACADEMIC
+            tag:        'OSU'
             name:
               short:    'Ohio State'
               long:     'the Ohio State University'
-            tag:        'OSU'
 
           ui:
+            <<:         *ACADEMIC
+            tag:        'UIUC'
             name:
               short:    'Illinois'
               long:     'the University of Illinois'
-            tag:        'UIUC'
 
           uva:
+            <<:         *ACADEMIC
+            tag:        'UVA'
             name:
               short:    'Virginia'
               long:     'the University of Virginia'
-            tag:        'UVA'
 
           uw:
+            <<:         *ACADEMIC
+            tag:        'UW'
             name:
               short:    'Wisconsin'
               long:     'the University of Wisconsin'
-            tag:        'UW'
 
           vu:
+            <<:         *ACADEMIC
+            tag:        'VU'
             name:
               short:    'Vanderbilt'
               long:     'Vanderbilt University'
-            tag:        'VU'
 
         # =====================================================================
         # Non-academic partners
@@ -65,25 +89,40 @@ en:
         commercial:
 
           ace:
+            <<:         *COMMERCIAL
+            tag:        'ACE'
             name:
               short:    'ACE'
               long:     'ACE / Scholars Portal'
-            tag:        'ACE'
 
-#         bookshare:    # @see "en.emma.repository.bookshare"
-#           name:
-#             short:    'Bookshare'
-#             long:     'Bookshare'
-#           tag:        'BS'
+          bookshare:    # @see "en.emma.repository.bookshare"
+            <<:         *COMMERCIAL
+            tag:        'BS'
+            name:
+              short:    'Bookshare'
+              long:     'Bookshare'
+            active:     false
 
-#         hathiTrust:    # @see "en.emma.repository.hathiTrust"
-#           name:
-#             short:    'Hathi'
-#             long:     'HathiTrust'
-#           tag:        'HT'
+          hathiTrust:    # @see "en.emma.repository.hathiTrust"
+            <<:         *COMMERCIAL
+            tag:        'HT'
+            name:
+              short:    'Hathi'
+              long:     'HathiTrust'
+            active:     false
 
           internetArchive: # @see "en.emma.repository.internetArchive"
+            <<:         *COMMERCIAL
+            tag:        'IA'
             name:
               short:    'Internet Archive'
               long:     'the Internet Archive'
-            tag:        'IA'
+
+          openAlex: # @see "en.emma.repository.openAlex"
+            <<:         *COMMERCIAL
+            tag:        'OA'
+            name:
+              short:    'OpenAlex'
+              long:     'OpenAlex'
+            # TODO: Should this be represented as a partner?
+            active:     false

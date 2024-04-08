@@ -17,17 +17,27 @@ module EmmaHelper
 
   public
 
-  # EMMA grant partners
+  # EMMA grant partner configurations.
+  #
+  # @type [Hash{Symbol=>any}]
+  #
+  EMMA_PARTNER_CONFIG = config_section('emma.grant.partner').deep_freeze
+
+  # Past or present EMMA grant partners.
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  EMMA_PARTNER = config_section('emma.grant.partner').deep_freeze
+  EMMA_PARTNER_ENTRY =
+    EMMA_PARTNER_CONFIG.reject { |k, _| k.start_with?('_') }.deep_freeze
 
-  # EMMA grant partner categories.
+  # Active EMMA grant partners.
   #
-  # @type [Array<Symbol>]
+  # @type [Hash{Symbol=>Hash}]
   #
-  EMMA_PARTNER_TYPE = EMMA_PARTNER.keys.freeze
+  EMMA_PARTNER =
+    EMMA_PARTNER_ENTRY.transform_values { |section|
+      section.select { |_, entry| entry[:active] }
+    }.deep_freeze
 
   # ===========================================================================
   # :section:
@@ -42,7 +52,7 @@ module EmmaHelper
   # @return [String]
   #
   def academic_partners(**opt)
-    emma_partner_list(:academic, **opt)
+    emma_partner_list(**opt, type: :academic)
   end
 
   # List EMMA commercial partners.
@@ -52,29 +62,23 @@ module EmmaHelper
   # @return [String]
   #
   def commercial_partners(**opt)
-    emma_partner_list(:commercial, **opt)
+    emma_partner_list(**opt, type: :commercial)
   end
 
   # Generate a textual list of EMMA partners.
   #
-  # @param [Symbol, nil] type         One of :academic, :commercial, :all (def)
-  # @param [Symbol]      mode         One of :brief or :long (default).
-  # @param [String]      separator    Separator between items.
-  # @param [String]      final        Connector for final :long format item.
+  # @param [Symbol] mode              One of :brief or :long (default).
+  # @param [String] separator         Separator between items.
+  # @param [String] final             Connector for final :long format item.
+  # @param [Hash]   opt               Passed to #emma_partners.
   #
   # @return [String]
   #
-  def emma_partner_list(
-    type =      nil,
-    mode:       :long,
-    separator:  ',',
-    final:      'and',
-    **
-  )
+  def emma_partner_list(mode: :long, separator: ',', final: 'and', **opt)
     separator   = "#{separator} " if %w[ , ; ].include?(separator)
     separator ||= ' '
     list =
-      emma_partners(type).map { |key, partner|
+      emma_partners(**opt).map { |key, partner|
         name = partner&.dig(:name) || partner&.dig(:tag) || key.to_s.upcase
         name.try(:dig, mode) || name
       }.compact
@@ -89,18 +93,20 @@ module EmmaHelper
 
   # Get a selection of EMMA partners.
   #
-  # @param [Symbol, nil] type         One of :academic, :commercial, :all (def)
+  # @param [Symbol]       type        One of :academic, :commercial, or :all.
+  # @param [Boolean, nil] active      If *nil*, all partners past and present.
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def emma_partners(type = :all)
-    if type.nil? || (type == :all)
-      {}.merge!(*EMMA_PARTNER.values)
-    elsif EMMA_PARTNER.key?(type)
-      EMMA_PARTNER[type]
-    else
-      Log.warn { "#{__method__}: #{type.inspect} not in #{EMMA_PARTNER_TYPE}" }
-      {}
+  def emma_partners(type: :all, active: true, **)
+    cfg = active ? EMMA_PARTNER : EMMA_PARTNER_ENTRY
+    if cfg.is_a?(FalseClass)
+      cfg = cfg.transform_values { |s| s.reject { |_, e| e[:active] } }
+    end
+    case type
+      when :all      then {}.merge!(*cfg.values)
+      when *cfg.keys then cfg[type]
+      else Log.warn { "#{__method__}: #{type.inspect} not in #{cfg.keys}" }; {}
     end
   end
 

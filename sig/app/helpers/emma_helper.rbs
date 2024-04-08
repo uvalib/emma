@@ -3,17 +3,23 @@
 module EmmaHelper
   include Emma::Project
 
-  # EMMA grant partners
+  # EMMA grant partner configurations.
+  #
+  # @type [Hash{Symbol=>any}]
+  #
+  EMMA_PARTNER_CONFIG: symHash
+
+  # Past or present EMMA grant partners.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  EMMA_PARTNER_ENTRY: symHash
+
+  # Active EMMA grant partners.
   #
   # @type [Hash{Symbol=>Hash}]
   #
   EMMA_PARTNER: symHash
-
-  # EMMA grant partner categories.
-  #
-  # @type [Array<Symbol>]
-  #
-  EMMA_PARTNER_TYPE: symArray
 
   # List EMMA academic partners.
   #
@@ -33,22 +39,23 @@ module EmmaHelper
 
   # Generate a textual list of EMMA partners.
   #
-  # @param [Symbol, nil] type         One of :academic, :commercial, :all (def)
-  # @param [Symbol]      mode         One of :brief or :long (default).
-  # @param [String]      separator    Separator between items.
-  # @param [String]      final        Connector for final :long format item.
+  # @param [Symbol] mode              One of :brief or :long (default).
+  # @param [String] separator         Separator between items.
+  # @param [String] final             Connector for final :long format item.
+  # @param [Hash]   opt               Passed to #emma_partners.
   #
   # @return [String]
   #
-  def emma_partner_list: (?(Symbol|nil) `type`, ?mode: Symbol, ?separator: String, ?final: String, **untyped _ignored) -> String
+  def emma_partner_list: (?mode: Symbol, ?separator: String, ?final: String, **untyped opt) -> String
 
   # Get a selection of EMMA partners.
   #
-  # @param [Symbol, nil] type         One of :academic, :commercial, :all (def)
+  # @param [Symbol]       type        One of :academic, :commercial, or :all.
+  # @param [Boolean, nil] active      If *nil*, all partners past and present.
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  def emma_partners: (?(Symbol|nil) `type`) -> symHash
+  def emma_partners: (?type: Symbol, ?active: bool|nil, **untyped _ignored) -> symHash
 
   # A simple "mailto:" link for project e-mail contact.
   #
