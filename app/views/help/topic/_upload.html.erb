@@ -79,6 +79,8 @@
   source_menu_repo  = help_image(:source_menu_repo,       class: 'wide')
   source_selected   = help_image(:source_selected_fields, class: 'wide')
 
+  partner_workflow  = EmmaRepository.partner.present? # TODO: rework sections
+
   # Submission steps
 
   prepare_step      = 'Prepare a file for upload'
@@ -393,42 +395,59 @@
 
     <%= source_menu %>
 
-    <p>
-      Select "EMMA" if your file was an original scan, or is derived from a
-      source other than one of EMMA's participating partner repositories.
-    </p>
+    <%- if partner_workflow -%>
 
-    <p>
-      If your remediated file is based on a file from a participating partner
-      repository, you must indicate the EMMA entry associated with that
-      original file.
-    </p>
+      <p>
+        Select "EMMA" if your file was an original scan, or is derived from a
+        source other than one of EMMA's participating partner repositories.
+      </p>
 
-    <%= source_menu_open %>
+      <p>
+        If your remediated file is based on a file from a participating partner
+        repository, you must indicate the EMMA entry associated with that
+        original file.
+      </p>
 
-    <p>
-      When you select the source partner repository, you will be prompted for
-      the identity of the original entry.
-      For most items the standard identifier (ISBN, OCLC, etc.) is sufficient
-      to locate the proper EMMA entry.
-      (For items without a standard identifier, the full title should work.)
-    </p>
+      <%= source_menu_open %>
 
-    <%= source_menu_repo %>
+      <p>
+        When you select the source partner repository, you will be prompted for
+        the identity of the original entry.
+        For most items the standard identifier (ISBN, OCLC, etc.) is sufficient
+        to locate the proper EMMA entry.
+        (For items without a standard identifier, the full title should work.)
+      </p>
 
-    <p>
-      After the original item has been identified, you'll see that your
-      submission has "inherited" the bibliographic metadata of the original
-      item:
-    </p>
+      <%= source_menu_repo %>
 
-    <%= source_selected %>
+      <p>
+        After the original item has been identified, you'll see that your
+        submission has "inherited" the bibliographic metadata of the original
+        item:
+      </p>
 
-    <p>
-      These fields appear differently as a reminder that the bibliographic
-      metadata (title-level cataloging information) is not subject to change
-      for items derived from EMMA entries supplied by partner repositories.
-    </p>
+      <%= source_selected %>
+
+      <p>
+        These fields appear differently as a reminder that the bibliographic
+        metadata (title-level cataloging information) is not subject to change
+        for items derived from EMMA entries supplied by partner repositories.
+      </p>
+
+    <%- else -%>
+
+      <p>
+        If your file is derived from an entry that was downloaded from EMMA,
+        please give the source repository that was indicated in the EMMA search
+        results listing for the original item.
+      </p>
+
+      <p>
+        Select "EMMA" if your file was an original scan, or is derived from an
+        source other than one of the sources included in EMMA search results.
+      </p>
+
+    <%- end -%>
 
     <h3 class="sub-section" id="<%= metadata_step_help -%>">
       Step <%= upload_step += 1 -%>: <%= metadata_step -%>
