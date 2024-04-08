@@ -314,11 +314,11 @@ appSetup(MODULE, function() {
     const FIELD_ATTR = 'data-field';
 
     const HEADING_CLASS         = 'heading-bar';
-    const TITLE_TEXT_CLASS      = `text.name`;
-    const TITLE_EDIT_CLASS      = `title-edit`;
-    const TITLE_EDITOR_CLASS    = `line-editor`;
-    const TITLE_UPDATE_CLASS    = `update`;
-    const TITLE_CANCEL_CLASS    = `cancel`;
+    const TITLE_TEXT_CLASS      = 'text.name';
+    const TITLE_EDIT_CLASS      = 'title-edit';
+    const TITLE_EDITOR_CLASS    = 'line-editor';
+    const TITLE_UPDATE_CLASS    = 'update';
+    const TITLE_CANCEL_CLASS    = 'cancel';
 
     const CONTAINER_CLASS       = 'manifest-grid-container';
     const SUBMIT_CLASS          = 'submit-button';
@@ -3963,7 +3963,7 @@ appSetup(MODULE, function() {
      * @param {Selector} row
      */
     function setupDataCellEditing(row) {
-        OUT.debug(`setupDataCellEditing: row =`, row);
+        OUT.debug('setupDataCellEditing: row =', row);
         dataCells(row).each((_, cell) => setupCellNavGroup(cell));
     }
 

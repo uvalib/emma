@@ -12,7 +12,7 @@
       link  = link_to('production EMMA system', PRODUCTION_BASE_URL)
       html_div(title, class: 'title') <<
       html_div(text,  class: 'text')  <<
-      html_div(class: 'text') { h('Switch to the ') << link }
+      html_div(class: 'text') { h('Switch to the ') << link << '.' }
     end
 
   username     = current_user.to_s

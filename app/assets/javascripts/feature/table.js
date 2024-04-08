@@ -753,7 +753,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function rowsFor(target) {
-        return tableFor(target).find(`tbody tr`);
+        return tableFor(target).find('tbody tr');
     }
 
     // ========================================================================

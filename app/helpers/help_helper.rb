@@ -176,6 +176,7 @@ module HelpHelper
       when %i[organization delete_select] then %i[organization delete]
       when %i[upload edit_select]         then %i[upload edit]
       when %i[upload delete_select]       then %i[upload delete]
+      when %i[upload repository]          then %i[upload repo_step]
       when %i[manifest edit_select]       then %i[manifest edit]
       when %i[manifest delete_select]     then %i[manifest delete]
       when %i[manifest remit_select]      then %i[manifest remit]
