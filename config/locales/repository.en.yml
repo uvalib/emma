@@ -17,7 +17,10 @@ en:
       _template:         &REPOSITORY_TEMPLATE
         name:           ~
         symbol:         ~
-        s3:             true # @see AwsS3Service::Properties::S3_BUCKET
+        s3:             true  # @see AwsS3Service::Properties::S3_BUCKET
+        partner:        false # Submitted via the normal EMMA-native workflow.
+        metadata:       true  # Source site contributes to the Unified Index.
+        file_store:     true  # Source site serves its own files.
         logo:           # Logo image (@see LogoHelper::LOGO_TYPES)
           default:      ~  # ... for generic usage.
           wide:         ~  # ... transformed for wide fixed width.
@@ -40,6 +43,7 @@ en:
           tactile:      'tactile'
           kurzweil:     'kurzweil'
           rtf:          'rtf'
+        active:         true
 
       _template_ia:     &IA_TEMPLATE
         title_path:     'https://archive.org/details'
@@ -50,6 +54,9 @@ en:
           daisy:        '%{download_path}/%{id}/%{id}_daisy.zip'
           epub:         '%{download_path}/%{id}/%{id}.epub'
           pdf:          '%{download_path}/%{id}/%{id}.pdf'
+
+      _template_remote: &PARTNER_TEMPLATE
+        partner:        true  # Submitted via the "partner repository workflow"
 
       # =======================================================================
       # Repositories
@@ -79,10 +86,12 @@ en:
           default:      'ACE-logo-300x100-72.png'
           wide:         'ACE-logo-300x100-72.png'
 
-#     bookshare:        # @see "en.emma.grant.partner.commercial.bookshare"
-#       <<:             *REPOSITORY_TEMPLATE
-#       name:           'Bookshare'
-#       symbol:         'bs'
+      bookshare:        # @see "en.emma.grant.partner.commercial.bookshare"
+        <<:             *REPOSITORY_TEMPLATE
+        <<:             *PARTNER_TEMPLATE
+        name:           'Bookshare'
+        symbol:         'bs'
+        active:         false
 #       logo:
 #         default:      'Bookshare-300x100.png'
 #         wide:         'Bookshare-300x100.png'
@@ -104,10 +113,12 @@ en:
 #         '???':        'HTML'                # note: not in schema
 #       download_url:   '%{download_path}/%{id}'
 
-#     hathiTrust:       # @see "en.emma.grant.partner.commercial.hathiTrust"
-#       <<:             *REPOSITORY_TEMPLATE  # TODO: HT download formats
-#       name:           'HathiTrust'
-#       symbol:         'ht'
+      hathiTrust:       # @see "en.emma.grant.partner.commercial.hathiTrust"
+        <<:             *REPOSITORY_TEMPLATE
+        <<:             *PARTNER_TEMPLATE
+        name:           'HathiTrust'
+        symbol:         'ht'
+        active:         false
 #       logo:
 #         default:      'HathiTrust-300x100.png'
 #         wide:         'HathiTrust-300x100.png'
@@ -118,7 +129,7 @@ en:
 #       download_url:   '%{download_path}/%{fmt}?id=%{id};orient=0;size=100'
 
       internetArchive:  # @see "en.emma.grant.partner.commercial.internetArchive"
-        <<:             *REPOSITORY_TEMPLATE  # TODO: IA download formats
+        <<:             *REPOSITORY_TEMPLATE
         <<:             *IA_TEMPLATE
         name:           'Internet Archive'
         symbol:         'ia'
@@ -133,6 +144,7 @@ en:
         name:           'OpenAlex'
         symbol:         'oa'
         s3:             false
+        file_store:     false
         logo:
           default:      'OpenAlex-300x100.png'
           wide:         'OpenAlex-300x100.png'

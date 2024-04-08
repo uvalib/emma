@@ -942,7 +942,16 @@ module Api::Common
   #
   DEFAULT_REPOSITORY: String
 
-  # Values associated with each source repository.
+  # Values associated with each past or present source repository.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # @see file:config/locales/repository.en.yml *en.emma.repository*
+  # @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/EmmaRepository  JSON schema specification
+  #
+  REPOSITORY_ENTRY: Hash[Symbol,symHash]
+
+  # Values associated with each currently-active source repository.
   #
   # @type [Hash{Symbol=>Hash}]
   #
@@ -950,6 +959,22 @@ module Api::Common
   # @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/EmmaRepository  JSON schema specification
   #
   REPOSITORY: Hash[Symbol,symHash]
+
+  # The repositories that require the "partner repository workflow".
+  #
+  # @type [Array<Symbol>]
+  #
+  PARTNER_REPOSITORY: symArray
+
+  # The repositories that can handle "partner repository workflow" requests.
+  #
+  # If the repository is not also in #PARTNER_REPOSITORY then related
+  # submissions are handled as EMMA-native, but with the additional step of
+  # reflecting the submission in the S3 bucket.
+  #
+  # @type [Array<Symbol>]
+  #
+  S3_QUEUE_REPOSITORY: symArray
 
   # Table of repository names.
   #
@@ -1022,6 +1047,21 @@ end
 
 # @see Api::Common#REPOSITORY_MAP
 class EmmaRepository < EnumType
+  # The repositories that require the "partner repository workflow".
+  #
+  # @type [Array<Symbol>]
+  #
+  def self.partner: () -> symArray
+
+  # The repositories that can handle "partner repository workflow" requests.
+  #
+  # If the repository is not also in #PARTNER_REPOSITORY then related
+  # submissions are handled as EMMA-native, but with the additional step of
+  # reflecting the submission in the S3 bucket.
+  #
+  # @type [Array<Symbol>]
+  #
+  def self.s3_queue: () -> symArray
 end
 
 # @see Api::Common#MEMBER_STATUS_MAP

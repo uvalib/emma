@@ -2336,22 +2336,22 @@ appSetup(MODULE, function() {
         OUT.debug('updateLookupCondition: row =', row);
         const $row    = dataRow(row);
         const $button = lookupButton($row);
-        let allow, enable = false;
+        let forbid, enable = false;
         if (isDefined(permit)) {
-            allow = permit;
+            forbid = !permit;
         } else {
-            allow = defaultRepository(repositoryFor($row));
+            forbid = partnerRepository(repositoryFor($row));
         }
-        if (allow) {
+        if (forbid) {
+            clearLookupCondition($row);
+        } else {
             const condition = setLookupCondition($row);
             enable ||= Object.values(condition.or).some(v => v);
             enable ||= Object.values(condition.and).every(v => v);
-        } else {
-            clearLookupCondition($row);
         }
         clearSearchTermsData($button);
         clearSearchResultsData($button);
-        enableLookup($button, enable, !allow);
+        enableLookup($button, enable, forbid);
     }
 
     /**
@@ -2644,15 +2644,14 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Indicate whether the given repository is the default (local) repository
-     * or an (external) partner repository.
+     * Indicate whether *repo* requires the "partner repository workflow".
      *
      * @param {string} [repo]
      *
      * @returns {boolean}
      */
-    function defaultRepository(repo) {
-        return !repo || (repo === PAGE_PROPERTIES.Repo.default);
+    function partnerRepository(repo) {
+        return PAGE_PROPERTIES.Repo.partner.includes(repo);
     }
 
     // ========================================================================

@@ -119,7 +119,7 @@ module Record::EmmaIdentification
   # @note From Upload#emma_native?
   #
   def emma_native?(item)
-    repository_value(item) == EmmaRepository.default
+    !EmmaRepository.partner.include?(repository_value(item))
   end
 
   # Extract the repository associated with the item.

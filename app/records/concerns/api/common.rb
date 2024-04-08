@@ -1743,15 +1743,44 @@ module Api::Common
   #
   DEFAULT_REPOSITORY = REPOSITORY_CONFIG[:_default]
 
-  # Values associated with each source repository.
+  # Values associated with each past or present source repository.
   #
   # @type [Hash{Symbol=>Hash}]
   #
   # @see file:config/locales/repository.en.yml *en.emma.repository*
   # @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/EmmaRepository  JSON schema specification
   #
-  REPOSITORY =
-    REPOSITORY_CONFIG.reject { |k, _| k.start_with?('_') }.deep_freeze
+  REPOSITORY_ENTRY =
+    REPOSITORY_CONFIG.map { |repo, cfg|
+      next if repo.start_with?('_')
+      [repo, cfg.merge(default: (repo.to_s == DEFAULT_REPOSITORY))]
+    }.compact.to_h.deep_freeze
+
+  # Values associated with each currently-active source repository.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # @see file:config/locales/repository.en.yml *en.emma.repository*
+  # @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/EmmaRepository  JSON schema specification
+  #
+  REPOSITORY = REPOSITORY_ENTRY.select { |_, cfg| cfg[:active] }.deep_freeze
+
+  # The repositories that require the "partner repository workflow".
+  #
+  # @type [Array<Symbol>]
+  #
+  PARTNER_REPOSITORY = REPOSITORY.select { |_, cfg| cfg[:partner] }.keys.freeze
+
+  # The repositories that can handle "partner repository workflow" requests.
+  #
+  # If the repository is not also in #PARTNER_REPOSITORY then related
+  # submissions are handled as EMMA-native, but with the additional step of
+  # reflecting the submission in the S3 bucket.
+  #
+  # @type [Array<Symbol>]
+  #
+  S3_QUEUE_REPOSITORY =
+    REPOSITORY.select { |_, cfg| cfg[:s3] unless cfg[:default] }.keys.freeze
 
   # Table of repository names.
   #
@@ -1761,7 +1790,7 @@ module Api::Common
   #
   REPOSITORY_MAP =
     REPOSITORY
-      .transform_values { |config| config[:name] }
+      .transform_values { |cfg| cfg[:name] }
       .merge!(_default: DEFAULT_REPOSITORY)
       .deep_freeze
 
@@ -1860,7 +1889,35 @@ class AuthProvider < EnumType; end
 class Deployment < EnumType; end
 
 # @see Api::Common#REPOSITORY_MAP
-class EmmaRepository < EnumType; end
+class EmmaRepository < EnumType
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
+  # The repositories that require the "partner repository workflow".
+  #
+  # @type [Array<Symbol>]
+  #
+  def self.partner
+    Api::Common::PARTNER_REPOSITORY
+  end
+
+  # The repositories that can handle "partner repository workflow" requests.
+  #
+  # If the repository is not also in #PARTNER_REPOSITORY then related
+  # submissions are handled as EMMA-native, but with the additional step of
+  # reflecting the submission in the S3 bucket.
+  #
+  # @type [Array<Symbol>]
+  #
+  def self.s3_queue
+    Api::Common::S3_QUEUE_REPOSITORY
+  end
+
+end
 
 # @see Api::Common#MEMBER_STATUS_MAP
 class MemberStatus < EnumType; end

@@ -2657,15 +2657,14 @@ appSetup(MODULE, function() {
     });
 
     /**
-     * Indicate whether the given repository is the default (local) repository
-     * or an (external) partner repository.
+     * Indicate whether *repo* requires the "partner repository workflow".
      *
      * @param {string} [repo]
      *
      * @returns {boolean}
      */
-    function defaultRepository(repo) {
-        return !repo || (repo === PROPERTIES.Repo.default);
+    function partnerRepository(repo) {
+        return PROPERTIES.Repo.partner.includes(repo);
     }
 
     /**
@@ -2697,12 +2696,12 @@ appSetup(MODULE, function() {
         handleEvent($menu, 'change', function() {
             clearFlash();
             const new_repo = $menu.val() || '';
-            if (defaultRepository(new_repo)) {
-                hideParentEntrySelect($form);
-                setSourceRepository(new_repo);
-            } else {
+            if (partnerRepository(new_repo)) {
                 showParentEntrySelect($form);
                 parentEntrySearchInput($form).trigger('focus');
+            } else {
+                hideParentEntrySelect($form);
+                setSourceRepository(new_repo);
             }
         });
 
@@ -2844,7 +2843,7 @@ appSetup(MODULE, function() {
                 new_repo = $menu.attr(REPO_DATA) || '';
             }
             OUT.debug(`${func}:`, (new_repo || 'cleared'));
-            if (defaultRepository(new_repo)) {
+            if (!partnerRepository(new_repo)) {
                 unsealFields();
                 resetLookupCondition($form, true);
             }
@@ -3376,7 +3375,7 @@ appSetup(MODULE, function() {
             });
             let enable   = false;
             const repo   = sourceRepositoryMenu($form).val();
-            const forbid = !defaultRepository(repo);
+            const forbid = partnerRepository(repo);
             if (found && !forbid) {
                 enable ||= Object.values(condition.or).some(v => v);
                 enable ||= Object.values(condition.and).every(v => v);
@@ -3408,7 +3407,7 @@ appSetup(MODULE, function() {
                 forbid = !permit;
             } else {
                 const repo = sourceRepositoryMenu($form).val();
-                forbid = !defaultRepository(repo);
+                forbid = partnerRepository(repo);
             }
             if (!forbid) {
                 const $fields   = inputFields($form);

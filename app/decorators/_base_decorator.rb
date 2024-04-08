@@ -1117,6 +1117,7 @@ class BaseDecorator
     repo_properties = {
       name:       EmmaRepository.pairs,
       default:    EmmaRepository.default,
+      partner:    EmmaRepository.partner,
     }
 
     path_properties = {
