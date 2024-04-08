@@ -158,22 +158,22 @@ module UploadWorkflow::Properties
   #
   TRUNCATE_DELETE_DEFAULT: bool
 
-  # Permit the **creation** of partner repository items via a request to be
-  # queued to the appropriate partner repository.
+  # For the "partner repository workflow", permit the **creation** of partner
+  # repository items via a request to be queued to a partner repository.
   #
   # @type [Boolean]
   #
   REPO_CREATE_DEFAULT: bool
 
-  # Permit the **update** of partner repository items via a request to be
-  # queued to the appropriate partner repository.
+  # For the "partner repository workflow", permit the **update** of partner
+  # repository items via a request to be queued to a partner repository.
   #
   # @type [Boolean]
   #
   REPO_EDIT_DEFAULT: bool
 
-  # Permit the **removal** of partner repository items via a request to be
-  # queued to the appropriate partner repository.
+  # For the "partner repository workflow", permit the **removal** of partner
+  # repository items via a request to be queued to a partner repository.
   #
   # @type [Boolean]
   #
@@ -268,8 +268,8 @@ module UploadWorkflow::Properties
   #
   def truncate_delete: () -> bool
 
-  # Permit the **creation** of partner repository items via a request to be
-  # queued to the appropriate partner repository.
+  # For the "partner repository workflow", permit the **creation** of partner
+  # repository items via a request to be queued to a partner repository.
   #
   # @return [Boolean]
   #
@@ -277,8 +277,8 @@ module UploadWorkflow::Properties
   #
   def repo_create: () -> bool
 
-  # Permit the **update** of partner repository items via a request to be
-  # queued to the appropriate partner repository.
+  # For the "partner repository workflow", permit the **update** of partner
+  # repository items via a request to be queued to a partner repository.
   #
   # @return [Boolean]
   #
@@ -286,8 +286,8 @@ module UploadWorkflow::Properties
   #
   def repo_edit: () -> bool
 
-  # Permit the **removal** of partner repository items via a request to be
-  # queued to the appropriate partner repository.
+  # For the "partner repository workflow", permit the **removal** of partner
+  # repository items via a request to be queued to a partner repository.
   #
   # @return [Boolean]
   #
@@ -357,7 +357,7 @@ module UploadWorkflow::External
   def ingest_api: () -> IngestService
 
   # Indicate whether the item represents an EMMA repository entry (as opposed
-  # to a partner repository entry).
+  # to an entry subject to the "partner repository workflow").
   #
   # @param [any, nil] item            Upload
   #
@@ -673,13 +673,13 @@ module UploadWorkflow::External
   #
   def normalize_index_items: (*(Upload|String|Array[Upload|String]) items, ?meth: Symbol|nil, ?max: Integer) -> Array[Upload|String]
 
-  # Failure messages for partner repository requests.
+  # Failure messages for "partner repository workflow" requests.
   #
   # @type [Hash{Symbol=>String}]
   #
   REPO_FAILURE: Hash[Symbol,String]
 
-  # Submit a new item to a partner repository.
+  # Failure messages for "partner repository workflow" requests.
   #
   # @param [Array<Upload>] items
   # @param [Hash]          opt
@@ -688,8 +688,8 @@ module UploadWorkflow::External
   #
   def repository_create: (*Upload items, **untyped opt) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
 
-  # Submit a request to a partner repository to modify the metadata and/or
-  # file of a previously-submitted item.
+  # Submit a "partner repository workflow" request to modify the metadata
+  # and/or file of a previously-submitted item.
   #
   # @param [Array<Upload>] items
   # @param [Hash]          opt
@@ -700,7 +700,8 @@ module UploadWorkflow::External
   #
   def repository_modify: (*Upload items, **untyped opt) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
 
-  # Request deletion of a prior submission to a partner repository.
+  # Request deletion of a prior submission to a partner repository through
+  # the "partner repository workflow".
   #
   # @param [Array<String,Upload>] items
   # @param [Hash]                 opt
@@ -711,7 +712,8 @@ module UploadWorkflow::External
   #
   def repository_remove: (*Upload items, **untyped opt) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
 
-  # Remove request(s) from a partner repository queue.
+  # Remove "partner repository workflow" request(s) from a partner repository
+  # queue.
   #
   # @param [Array<String,Model>] items
   # @param [Hash]                opt
@@ -733,7 +735,8 @@ module UploadWorkflow::External
   #
   def process_aws_errors: ((AwsS3::Message::Response|Hash[(String|Integer),String]) result, *(Upload|String) items) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
 
-  # Send removal request(s) to partner repositories.
+  # Send "partner repository workflow" removal request(s) to partner
+  # repositories.
   #
   # @param [Hash, Array] items
   # @param [Hash]        opt          Passed to #repository_remove.
@@ -756,7 +759,8 @@ module UploadWorkflow::External
   #
   def repository_removals: ((symHash|Array[Upload|String]|nil) items, **untyped opt) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
 
-  # Remove request(s) from partner repository queue(s).
+  # Remove "partner repository workflow" request(s) from partner repository
+  # queue(s).
   #
   # @param [Hash, Array] items
   # @param [Hash]        opt          Passed to #repository_dequeue.
@@ -779,7 +783,8 @@ module UploadWorkflow::External
   #
   def repository_dequeues: ((symHash|Array[Upload|String]|nil) items, **untyped opt) -> [Array[Upload], Array[UploadWorkflow::Errors::FlashPart]]
 
-  # Transform items into arrays of requests per repository.
+  # Transform items into arrays of "partner repository workflow" requests per
+  # repository.
   #
   # @param [Hash, Array, Upload] items
   # @param [Boolean]             empty_key  If *true*, allow invalid items.

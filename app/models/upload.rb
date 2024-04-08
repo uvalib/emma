@@ -352,7 +352,8 @@ class Upload < ApplicationRecord
 
     # Portions that apply when item metadata is expected to change.  EMMA and
     # file data should never change if the item is under review or if it is
-    # currently in the process of being submitted to a partner repository.
+    # currently in the process of being submitted to a partner repository via
+    # the "partner repository workflow".
 
     if sealed? && (op_mode != :finishing_edit)
 

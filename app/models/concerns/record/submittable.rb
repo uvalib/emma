@@ -39,7 +39,7 @@ module Record::Submittable
     public
 
     # Indicate whether the item represents an EMMA repository entry (as opposed
-    # to a partner repository entry).
+    # to an entry subject to the "partner repository workflow").
     #
     # @param [any, nil] item          Model, String
     #
@@ -478,7 +478,7 @@ module Record::Submittable
 
     public
 
-    # Failure messages for partner repository requests.
+    # Failure messages for "partner repository workflow" requests.
     #
     # @type [Hash{Symbol=>String}]
     #
@@ -486,7 +486,7 @@ module Record::Submittable
     #
     REPO_FAILURE = config_text_section(:record, :failure).deep_freeze
 
-    # Submit a new item to a partner repository.
+    # Submit a new item through the "partner repository workflow".
     #
     # @param [Array<Model>] items
     # @param [Hash]         opt
@@ -509,8 +509,8 @@ module Record::Submittable
       return succeeded, failed
     end
 
-    # Submit a request to a partner repository to modify the metadata and/or
-    # file of a previously-submitted item.
+    # Submit a "partner repository workflow" request to modify the metadata
+    # and/or file of a previously-submitted item.
     #
     # @param [Array<Model>] items
     # @param [Hash]         opt
@@ -535,7 +535,8 @@ module Record::Submittable
       return succeeded, failed
     end
 
-    # Request deletion of a prior submission to a partner repository.
+    # Request deletion of a prior submission to a partner repository through
+    # the "partner repository workflow".
     #
     # @param [Array<String,Model>] items
     # @param [Hash]                opt
@@ -570,7 +571,8 @@ module Record::Submittable
 
     public
 
-    # Remove request(s) from a partner repository queue.
+    # Remove "partner repository workflow" request(s) from a partner repository
+    # queue.
     #
     # @param [Array<String,Model>] items
     # @param [Hash]                opt
@@ -625,7 +627,8 @@ module Record::Submittable
 
     public
 
-    # Send removal request(s) to partner repositories.
+    # Send "partner repository workflow" removal request(s) to partner
+    # repositories.
     #
     # @param [Hash, Array, Model] items
     # @param [Hash]               opt     Passed to #repository_remove.
@@ -660,7 +663,8 @@ module Record::Submittable
       return succeeded, failed
     end
 
-    # Remove request(s) from partner repository queue(s).
+    # Remove "partner repository workflow" request(s) from partner repository
+    # queue(s).
     #
     # @param [Hash, Array] items
     # @param [Hash]        opt        Passed to #repository_remove.
@@ -693,7 +697,8 @@ module Record::Submittable
       return succeeded, failed
     end
 
-    # Transform items into arrays of requests per repository.
+    # Transform items into arrays of "partner repository workflow" requests per
+    # repository.
     #
     # @param [Hash, Array, Model] items
     # @param [Boolean]            empty_key   If *true*, allow invalid items.
@@ -793,8 +798,8 @@ module Record::Submittable
         end
       end
 
-      # Partner repository removal requests that were deferred in #entry_remove
-      # are handled now.
+      # Any "partner repository workflow" removal requests that were deferred
+      # in #entry_remove are handled now.
       if model_options.repo_remove && opt[:requests].present?
         if atomic && failed.present?
           Log.warn('failure(s) prevented generation of repo removal requests')
@@ -1017,8 +1022,8 @@ module Record::Submittable
       requested = []
       if force
         emergency = opt[:emergency] || model_options.emergency_delete
-        # Mark as failed any non-EMMA-items that could not be added to a
-        # request for removal of partner repository items.
+        # Mark as failed any "partner repository workflow" items that could not
+        # be added to a request for removal of partner repository items.
         items, failed =
           items.partition do |item|
             emma_item?(item) || incomplete?(item) ||

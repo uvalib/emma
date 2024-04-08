@@ -21,7 +21,7 @@ module Record::Submittable
     include Record::Submittable
 
     # Indicate whether the item represents an EMMA repository entry (as opposed
-    # to a partner repository entry).
+    # to an entry subject to the "partner repository workflow").
     #
     # @param [any, nil] item          Model, String
     #
@@ -238,7 +238,7 @@ module Record::Submittable
     #
     def aws_api: () -> AwsS3Service
 
-    # Failure messages for partner repository requests.
+    # Failure messages for "partner repository workflow" requests.
     #
     # @type [Hash{Symbol=>String}]
     #
@@ -246,7 +246,7 @@ module Record::Submittable
     #
     REPO_FAILURE: Hash[Symbol,String]
 
-    # Submit a new item to a partner repository.
+    # Submit a new item through the "partner repository workflow".
     #
     # @param [Array<Model>] items
     # @param [Hash]         opt
@@ -257,8 +257,8 @@ module Record::Submittable
     #
     def repository_create: (*Model items, **untyped opt) -> [Array[Model], Array[Record::Exceptions::FlashPart]]
 
-    # Submit a request to a partner repository to modify the metadata and/or
-    # file of a previously-submitted item.
+    # Submit a "partner repository workflow" request to modify the metadata
+    # and/or file of a previously-submitted item.
     #
     # @param [Array<Model>] items
     # @param [Hash]         opt
@@ -271,7 +271,8 @@ module Record::Submittable
     #
     def repository_modify: (*Model items, **untyped opt) -> [Array[Model], Array[Record::Exceptions::FlashPart]]
 
-    # Request deletion of a prior submission to a partner repository.
+    # Request deletion of a prior submission to a partner repository through
+    # the "partner repository workflow".
     #
     # @param [Array<String,Model>] items
     # @param [Hash]                opt
@@ -284,7 +285,8 @@ module Record::Submittable
     #
     def repository_remove: (*Model items, **untyped opt) -> [Array[Model], Array[Record::Exceptions::FlashPart]]
 
-    # Remove request(s) from a partner repository queue.
+    # Remove "partner repository workflow" request(s) from a partner repository
+    # queue.
     #
     # @param [Array<String,Model>] items
     # @param [Hash]                opt
@@ -310,7 +312,8 @@ module Record::Submittable
     #
     def process_aws_errors: ((AwsS3::Message::Response|Hash[(String|Integer),String]) result, *(String|Model) items) -> [Array[String|Model], Array[Record::Exceptions::FlashPart]]
 
-    # Send removal request(s) to partner repositories.
+    # Send "partner repository workflow" removal request(s) to partner
+    # repositories.
     #
     # @param [Hash, Array, Model] items
     # @param [Hash]               opt     Passed to #repository_remove.
@@ -335,7 +338,8 @@ module Record::Submittable
     #
     def repository_removals: ((symHash|String|Model|Array[String|Model]|nil) items, **untyped opt) ->  [Array[String|Model], Array[Record::Exceptions::FlashPart]]
 
-    # Remove request(s) from partner repository queue(s).
+    # Remove "partner repository workflow" request(s) from partner repository
+    # queue(s).
     #
     # @param [Hash, Array] items
     # @param [Hash]        opt        Passed to #repository_remove.
@@ -358,7 +362,8 @@ module Record::Submittable
     #
     def repository_dequeues: ((symHash|Array[String|Model]|nil) items, **untyped opt) -> [Array[String|Model], Array[Record::Exceptions::FlashPart]]
 
-    # Transform items into arrays of requests per repository.
+    # Transform items into arrays of "partner repository workflow" requests per
+    # repository.
     #
     # @param [Hash, Array, Model] items
     # @param [Boolean]            empty_key   If *true*, allow invalid items.

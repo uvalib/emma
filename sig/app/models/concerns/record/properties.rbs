@@ -79,22 +79,22 @@ module Record::Properties
   #
   TRUNCATE_DELETE_DEFAULT: bool
 
-  # Permit the **creation** of partner repository items via a request to be
-  # queued to the appropriate partner repository.
+  # For the "partner repository workflow", permit the **creation** of partner
+  # repository items via a request to be queued to a partner repository.
   #
   # @type [Boolean]
   #
   REPO_CREATE_DEFAULT: bool
 
-  # Permit the **update** of partner repository items via a request to be
-  # queued to the appropriate partner repository.
+  # For the "partner repository workflow", permit the **update** of partner
+  # repository items via a request to be queued to a partner repository.
   #
   # @type [Boolean]
   #
   REPO_EDIT_DEFAULT: bool
 
-  # Permit the **removal** of partner repository items via a request to be
-  # queued to the appropriate partner repository.
+  # For the "partner repository workflow", permit the **removal** of partner
+  # repository items via a request to be queued to a partner repository.
   #
   # @type [Boolean]
   #
@@ -189,8 +189,8 @@ module Record::Properties
   #
   def truncate_delete: () -> bool
 
-  # Permit the **creation** of partner repository items via a request to be
-  # queued to the appropriate partner repository.
+  # For the "partner repository workflow", permit the **creation** of partner
+  # repository items via a request to be queued to a partner repository.
   #
   # @return [Boolean]
   #
@@ -198,8 +198,8 @@ module Record::Properties
   #
   def repo_create: () -> bool
 
-  # Permit the **update** of partner repository items via a request to be
-  # queued to the appropriate partner repository.
+  # For the "partner repository workflow", permit the **update** of partner
+  # repository items via a request to be queued to a partner repository.
   #
   # @return [Boolean]
   #
@@ -207,8 +207,8 @@ module Record::Properties
   #
   def repo_edit: () -> bool
 
-  # Permit the **removal** of partner repository items via a request to be
-  # queued to the appropriate partner repository.
+  # For the "partner repository workflow", permit the **removal** of partner
+  # repository items via a request to be queued to a partner repository.
   #
   # @return [Boolean]
   #
