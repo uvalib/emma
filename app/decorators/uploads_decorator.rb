@@ -325,7 +325,7 @@ class UploadsDecorator < BaseCollectionDecorator
     result = IngestService.instance.get_records(*items)
     found  = result.records
     sids   = found.map(&:emma_repositoryRecordId)
-    failed = items.reject { |i| sids.include?(Upload.sid_value(i)) }
+    failed = items.reject { |item| sids.include?(Upload.sid_value(item)) }
     return found, failed
   end
 

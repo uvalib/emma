@@ -1275,7 +1275,7 @@ module UploadWorkflow::External
     elsif sids.present?
       sids = sids.map! { |v| Upload.sid_value(v) }.uniq
       rollback, succeeded =
-        items.partition { |itm| sids.include?(itm.submission_id) }
+        items.partition { |item| sids.include?(item.submission_id) }
     end
 
     return succeeded, failed, rollback
@@ -1477,7 +1477,7 @@ module UploadWorkflow::External
   # Remove request(s) from partner repository queue(s).
   #
   # @param [Hash, Array] items
-  # @param [Hash]        opt          Passed to #repository_remove.
+  # @param [Hash]        opt          Passed to #repository_dequeue.
   #
   # @return [Array(Array,Array)]      Succeeded items and failed item messages.
   #

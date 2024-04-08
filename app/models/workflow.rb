@@ -800,7 +800,7 @@ module Workflow::Base::States
 
   ].freeze
 
-  # States that will not assigned to @previous_state.
+  # States that will not be assigned to @previous_state.
   #
   # @type [Array<Symbol>]
   #

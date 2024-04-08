@@ -95,13 +95,13 @@ en:
 #         daisy:        'DAISY'
 #         daisyAudio:   'DAISY_AUDIO'
 #         epub:         'EPUB3'
-#         braille:      'BRF'                 # TODO: Bookshare braille
+#         braille:      'BRF'                 # todo: Bookshare braille
 #         pdf:          'PDF'
 #         word:         'DOCX'
-#         tactile:      'BRF'                 # TODO: Bookshare tactile
-#         kurzweil:     'BRF'                 # TODO: Bookshare kurzweil
-#         rtf:          'TEXT'                # TODO: Bookshare rtf
-#         '???':        'HTML'                # NOTE: not in schema
+#         tactile:      'BRF'                 # todo: Bookshare tactile
+#         kurzweil:     'BRF'                 # todo: Bookshare kurzweil
+#         rtf:          'TEXT'                # todo: Bookshare rtf
+#         '???':        'HTML'                # note: not in schema
 #       download_url:   '%{download_path}/%{id}'
 
 #     hathiTrust:       # @see "en.emma.grant.partner.commercial.hathiTrust"

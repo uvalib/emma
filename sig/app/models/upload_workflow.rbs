@@ -759,7 +759,7 @@ module UploadWorkflow::External
   # Remove request(s) from partner repository queue(s).
   #
   # @param [Hash, Array] items
-  # @param [Hash]        opt          Passed to #repository_remove.
+  # @param [Hash]        opt          Passed to #repository_dequeue.
   #
   # @return [Array(Array,Array)]      Succeeded items and failed item messages.
   #

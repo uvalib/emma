@@ -60,7 +60,6 @@ module UploadWorkflow::Single::Edit::Actions
   #
   # @return [void]
   #
-  # @see UploadWorkflow::Single::Data#set_record
   # @see Upload#begin_editing
   #
   def wf_start_submission(*event_args)
