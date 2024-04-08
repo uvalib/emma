@@ -43,6 +43,7 @@ en:
           - environment
           - processes
           - disk_space
+          - files
           - database
 
       # =======================================================================
@@ -111,6 +112,14 @@ en:
         label:          'Env Vars'
         title:          'Environment Variables (ENV)'
         tooltip:        'Values from the system environment'
+        _endpoint:      true
+
+      # =======================================================================
+
+      files:
+        label:          'Files'
+        title:          'EMMA files'
+        tooltip:        'View contents of the EMMA directory'
         _endpoint:      true
 
       # =======================================================================
