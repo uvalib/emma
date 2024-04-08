@@ -78,13 +78,14 @@ module UploadWorkflow::Single::Data
   # *data*.
   #
   # @param [Upload, Hash, String, nil] data
+  # @param [Hash]                      opt    To super.
   #
   # @return [Upload, nil]
   #
   #--
   # noinspection RubyMismatchedArgumentType
   #++
-  def set_data(data)
+  def set_data(data, **opt)
     data = super
 
     @existing = nil
@@ -1213,7 +1214,8 @@ class UploadWorkflow::Single < UploadWorkflow
   # @see Upload#set_phase
   #
   def set_workflow_phase(new_value = nil, rec = nil)
-    (rec || record)&.set_phase(new_value)
+    rec ||= record or return
+    rec.set_phase(new_value) unless rec.destroyed?
   end
 
   # Get the current real-time value of the appropriate workflow state field.
@@ -1240,7 +1242,8 @@ class UploadWorkflow::Single < UploadWorkflow
   # @see Upload#set_state
   #
   def set_workflow_state(new_value, rec = nil)
-    (rec || record)&.set_state(new_value, workflow_column)&.to_s
+    rec ||= record or return
+    rec.set_state(new_value, workflow_column).to_s unless rec.destroyed?
   end
 
   # ===========================================================================

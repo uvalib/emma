@@ -51,10 +51,11 @@ module UploadWorkflow::Single::Data
   # *data*.
   #
   # @param [Upload, Hash, String, nil] data
+  # @param [Hash]                      opt    To super.
   #
   # @return [Upload, nil]
   #
-  def set_data: ((symHash|String|Upload|nil) data) -> (Upload | nil)
+  def set_data: ((symHash|String|Upload|nil) data, **untyped opt) -> (Upload | nil)
 
   alias set_record set_data
 

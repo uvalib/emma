@@ -54,26 +54,28 @@ module UploadWorkflow::Single::Remove::Actions
 
   public
 
-  # wf_index_update
+  # wf_validate_submission
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  def wf_validate_submission(*event_args)
+    __debug_items(binding)
+    wf_list_items(*event_args)
+    first = results.find { |rec| rec.is_a?(Upload) }
+    set_record(first, reset: false)
+  end
+
+  # Due to the fact that the index entries have already been removed, this is a
+  # no-op for the :remove workflow.
   #
   # @param [Array] _event_args        Ignored.
   #
   # @return [void]
   #
-  # @see UploadWorkflow::Single::External#remove_from_index
-  #
   def wf_index_update(*_event_args)
-    super
-    if record.emma_native?
-      s, f, _ = remove_from_index(*record)
-      self.succeeded = s
-      self.failures.concat(f)
-    else
-      sid  = record.submission_id.inspect
-      repo = Upload.repository_name(record)
-      msg  = config_text(:upload, :non_native, :remove, sid: sid, repo: repo)
-      self.succeeded << msg
-    end
+    __debug_items(binding)
   end
 
 end
@@ -121,7 +123,7 @@ module UploadWorkflow::Single::Remove::States
     super
     #__debug_wf 'System shows the list of item(s) to be removed.'
 
-    wf_list_items(*event_args)
+    wf_validate_submission(*event_args)
 
     #__debug_wf 'USER must `cancel!` or `submit!` to advance...'
     self

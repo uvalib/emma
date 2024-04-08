@@ -71,6 +71,13 @@ module Record::EmmaIdentification
   #
   def emma_native?: (untyped item) -> bool
 
+  # Indicate whether the item should involve requests queued through an
+  # S3 bucket.
+  #
+  # @param [any, nil] item            Model, Hash, String, Symbol
+  #
+  def s3_queue?: (untyped item) -> bool
+
   # Extract the repository associated with the item.
   #
   # @param [any, nil] item            Model, Hash, String, Symbol
@@ -223,6 +230,10 @@ module Record::EmmaIdentification
     # @see Record::EmmaIdentification#emma_native?
     #
     def emma_native?: (?untyped item) -> bool
+
+    # @see Record::EmmaIdentification#s3_queue?
+    #
+    def s3_queue?: (?untyped item) -> bool
 
     # @see Record::EmmaIdentification#repository_value
     #

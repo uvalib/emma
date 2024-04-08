@@ -553,10 +553,11 @@ module UploadWorkflow::Bulk::Data
   # set_data
   #
   # @param [Array<Upload,Hash,String,Array>] data
+  # @param [Hash]                            opt    To super.
   #
   # @return [Array<Upload,Hash,String,Array>]
   #
-  def set_data(data)
+  def set_data(data, **opt)
     data = super
     @entries = Array.wrap(data)
   end

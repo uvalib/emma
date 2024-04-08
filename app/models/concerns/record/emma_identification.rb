@@ -120,6 +120,15 @@ module Record::EmmaIdentification
     !EmmaRepository.partner.include?(repository_value(item))
   end
 
+  # Indicate whether the item should involve requests queued through an
+  # S3 bucket.
+  #
+  # @param [any, nil] item            Model, Hash, String, Symbol
+  #
+  def s3_queue?(item)
+    EmmaRepository.s3_queue.include?(repository_value(item))
+  end
+
   # Extract the repository associated with the item.
   #
   # @param [any, nil] item            Model, Hash, String, Symbol
@@ -408,6 +417,13 @@ module Record::EmmaIdentification
     # @see Record::EmmaIdentification#emma_native?
     #
     def emma_native?(item = nil)
+      item ||= self
+      super
+    end
+
+    # @see Record::EmmaIdentification#s3_queue?
+    #
+    def s3_queue?(item = nil)
       item ||= self
       super
     end

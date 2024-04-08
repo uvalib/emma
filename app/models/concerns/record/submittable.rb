@@ -1047,6 +1047,7 @@ module Record::Submittable
       # Remove the records from the database.
       destroyed = []
       retained  = []
+      removals  = []
       counter   = 0
       items =
         items.map { |item|
@@ -1056,6 +1057,7 @@ module Record::Submittable
             throttle(counter)
             counter += 1
             destroyed << item
+            removals  << item if item.s3_queue?
             item
           elsif atomic && destroyed.blank?
             return [], [item]         # Early return with the problem item.
@@ -1073,6 +1075,9 @@ module Record::Submittable
         end
         not_removed = config_text(:record, :not_removed)
         retained.map! { |item| FlashPart.new(item, not_removed) }
+      end
+      if model_options.repo_remove && removals.present?
+        repository_removals(removals, **opt)
       end
 
       # Remove the associated entries from the index.

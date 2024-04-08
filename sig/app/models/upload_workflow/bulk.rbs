@@ -280,11 +280,12 @@ module UploadWorkflow::Bulk::Data
 
   # set_data
   #
-  # @param [Array<Upload,String,Array>] data
+  # @param [Array<Upload,Hash,String,Array>] data
+  # @param [Hash]                            opt    To super.
   #
-  # @return [Array<Upload,String,Array>]
+  # @return [Array<Upload,Hash,String,Array>]
   #
-  def set_data: (Array[String|Upload|symHash|Array[String|Upload|symHash]] data) -> Array[String|Upload|symHash|Array[String|Upload|symHash]]
+  def set_data: (Array[String|Upload|symHash|Array[String|Upload|symHash]] data, **untyped opt) -> Array[String|Upload|symHash|Array[String|Upload|symHash]]
 
   alias set_entries set_data
 

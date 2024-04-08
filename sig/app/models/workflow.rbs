@@ -204,10 +204,11 @@ module Workflow::Base::Data
   # set_data
   #
   # @param [any, nil] data
+  # @param [Boolean]  reset
   #
   # @return [any, nil]
   #
-  def set_data: (untyped data) -> untyped
+  def set_data: (untyped data, ?reset: bool, **untyped _ignored) -> untyped
 
   # reset_status
   #

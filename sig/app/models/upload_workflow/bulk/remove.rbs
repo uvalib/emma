@@ -30,6 +30,14 @@ module UploadWorkflow::Bulk::Remove::Actions
   include UploadWorkflow::Bulk::Actions
 
   include UploadWorkflow::Bulk::Remove::Data
+
+  # wf_validate_submission
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  def wf_validate_submission: (*untyped event_args) -> void
 end
 
 module UploadWorkflow::Bulk::Remove::Events

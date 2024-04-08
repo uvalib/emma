@@ -294,11 +294,12 @@ module Workflow::Base::Data
   # set_data
   #
   # @param [any, nil] data
+  # @param [Boolean]  reset
   #
   # @return [any, nil]
   #
-  def set_data(data)
-    reset_status
+  def set_data(data, reset: true, **)
+    reset_status if reset
     data
   end
 

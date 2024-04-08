@@ -42,8 +42,27 @@ module UploadWorkflow::Bulk::Remove::Data
 end
 
 module UploadWorkflow::Bulk::Remove::Actions
+
   include UploadWorkflow::Bulk::Actions
   include UploadWorkflow::Bulk::Remove::Data
+
+  # ===========================================================================
+  # :section: UploadWorkflow::Actions overrides
+  # ===========================================================================
+
+  public
+
+  # wf_validate_submission
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  def wf_validate_submission(*event_args)
+    __debug_items(binding)
+    wf_list_items(*event_args)
+  end
+
 end
 
 # =============================================================================
@@ -89,7 +108,7 @@ module UploadWorkflow::Bulk::Remove::States
     super
     #__debug_wf 'System shows the list of item(s) to be removed.'
 
-    wf_list_items(*event_args)
+    wf_validate_submission(*event_args)
 
     #__debug_wf 'USER must `cancel!` or `submit!` to advance...'
     self

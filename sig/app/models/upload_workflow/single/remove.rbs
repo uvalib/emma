@@ -33,13 +33,20 @@ module UploadWorkflow::Single::Remove::Actions
 
   include UploadWorkflow::Single::Remove::Data
 
-  # wf_index_update
+  # wf_validate_submission
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  def wf_validate_submission: (*untyped event_args) -> void
+
+  # Due to the fact that the index entries have already been removed, this is a
+  # no-op for the :remove workflow.
   #
   # @param [Array] _event_args        Ignored.
   #
   # @return [void]
-  #
-  # @see UploadWorkflow::Single::External#remove_from_index
   #
   def wf_index_update: (*untyped _event_args) -> void
 end

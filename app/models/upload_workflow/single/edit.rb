@@ -81,11 +81,14 @@ module UploadWorkflow::Single::Edit::Actions
     __debug_items(binding)
     assert_record_present
     record.finish_editing
+    s, f =
+      if record.s3_queue?
+        opt = event_args.extract_options!
+        repository_modify(*record, **opt)
+      end
     if record.emma_native?
       self.succeeded = [record]
-    else
-      opt = event_args.extract_options!
-      s, f = repository_modify(*record, **opt)
+    else # "partner repository workflow"
       self.succeeded = s
       self.failures.concat(f)
     end
@@ -133,7 +136,7 @@ module UploadWorkflow::Single::Edit::Actions
       s, f, _ = update_in_index(*record)
       self.succeeded = s
       self.failures.concat(f)
-    else
+    else # "partner repository workflow"
       sid  = record.submission_id.inspect
       repo = Upload.repository_name(record)
       msg  = config_text(:upload, :non_native, :edit, sid: sid, repo: repo)
