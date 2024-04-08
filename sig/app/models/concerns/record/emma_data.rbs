@@ -41,15 +41,19 @@ module Record::EmmaData
   #
   DEFAULT_TIME_NOW_FIELDS: symArray
 
+  # Fallback URL base. TODO: ?
+  #
+  # @type [String]
+  #
+  BULK_BASE_URL: String
+
   # Create a URL for use with :emma_retrievalLink.
   #
   # @param [String, nil]      rid       EMMA repository record ID.
-  # @param [String, Hash nil] base_url  Default: `Upload#BULK_BASE_URL`.
+  # @param [String, Hash nil] base_url  Default: `#BULK_BASE_URL`.
   #
   # @return [String]
   # @return [nil]                       If no repository ID was given.
-  #
-  # @note From Upload#make_retrieval_link
   #
   def make_retrieval_link: (String? rid, ?(symHash|String|nil) base_url) -> (String | nil)
 

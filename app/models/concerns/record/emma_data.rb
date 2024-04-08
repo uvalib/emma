@@ -67,6 +67,12 @@ module Record::EmmaData
     rem_remediationDate
   ].freeze
 
+  # Fallback URL base.
+  #
+  # @type [String]
+  #
+  BULK_BASE_URL = PRODUCTION_BASE_URL
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -76,17 +82,15 @@ module Record::EmmaData
   # Create a URL for use with :emma_retrievalLink.
   #
   # @param [String, nil]      rid       EMMA repository record ID.
-  # @param [String, Hash nil] base_url  Default: `Upload#BULK_BASE_URL`.
+  # @param [String, Hash nil] base_url  Default: `#BULK_BASE_URL`.
   #
   # @return [String]
   # @return [nil]                       If no repository ID was given.
   #
-  # @note From Upload#make_retrieval_link
-  #
   def make_retrieval_link(rid, base_url = nil)
     return if rid.blank?
-    base_url   = base_url[:base_url] if base_url.is_a?(Hash)
-    base_url ||= Upload::BULK_BASE_URL
+    base_url = base_url[:base_url] if base_url.is_a?(Hash)
+    base_url = BULK_BASE_URL       if base_url.blank?
     # noinspection RubyMismatchedArgumentType
     File.join(base_url, 'download', rid).to_s
   end

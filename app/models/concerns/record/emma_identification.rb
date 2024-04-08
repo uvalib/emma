@@ -116,8 +116,6 @@ module Record::EmmaIdentification
   #
   # @param [any, nil] item            Model, Hash, String, Symbol
   #
-  # @note From Upload#emma_native?
-  #
   def emma_native?(item)
     !EmmaRepository.partner.include?(repository_value(item))
   end
@@ -128,8 +126,6 @@ module Record::EmmaIdentification
   #
   # @return [String]                  One of EmmaRepository#values.
   # @return [nil]                     If *item* did not indicate a repository.
-  #
-  # @note From Upload#repository_of
   #
   # === Usage Notes
   # Depending on the context, the caller may need to validate the result with
@@ -150,8 +146,6 @@ module Record::EmmaIdentification
   # @return [String]                  The name of the associated repository.
   # @return [nil]                     If *src* did not indicate a repository.
   #
-  # @note From Upload#repository_name
-  #
   def repository_name(item)
     repo = repository_value(item) and EmmaRepository.pairs[repo]
   end
@@ -162,8 +156,6 @@ module Record::EmmaIdentification
   #
   # @return [String]
   # @return [nil]
-  #
-  # @note From Upload#record_id
   #
   # === Usage Notes
   # If *item* is a String, it is assumed to be good.  Depending on the context,
@@ -190,8 +182,6 @@ module Record::EmmaIdentification
   # @param [any, nil]              item       Model, Hash, String, Symbol
   # @param [String, Array<String>] add_repo
   # @param [String, Array<String>] add_fmt
-  #
-  # @note From Upload#valid_record_id?
   #
   def valid_record_id?(item, add_repo: nil, add_fmt: nil, **)
     repo, rid, fmt, _version, remainder = record_id(item).to_s.split('-')

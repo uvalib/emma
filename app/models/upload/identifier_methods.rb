@@ -11,8 +11,6 @@ module Upload::IdentifierMethods
 
   include Record::EmmaIdentification
 
-  extend self
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -21,6 +19,7 @@ module Upload::IdentifierMethods
 
   def self.included(base)
     base.extend(self)
+    base.include(Record::EmmaIdentification::InstanceMethods)
   end
 
 end

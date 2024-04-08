@@ -113,7 +113,7 @@ module AwsS3Service::Common
   # @return [String]
   #
   def bucket_for(item, deployment = nil)
-    repository = Upload.repository_of(item)&.to_sym
+    repository = Upload.repository_value(item)&.to_sym
     deployment = deployment&.to_sym || aws_deployment
     S3_BUCKET.dig(repository, deployment).tap do |bucket|
       unless bucket

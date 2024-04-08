@@ -677,7 +677,7 @@ module UploadWorkflow::External
         deferred = opt.key?(:requests)
         requests = opt.delete(:requests) || {}
         failed.delete_if do |item|
-          next unless (repo = Upload.repository_of(item))
+          next unless (repo = Upload.repository_value(item))
           requests[repo] ||= []
           requests[repo] << item
           requested << item
@@ -1537,7 +1537,7 @@ module UploadWorkflow::External
     items = items.flatten.compact_blank! if items.is_a?(Array)
     items = [items]                      if items.is_a?(Upload)
     case items
-      when Array then items.group_by { |req| Upload.repository_of(req) }
+      when Array then items.group_by { |req| Upload.repository_value(req) }
       when Hash  then items.transform_values { |reqs| Array.wrap(reqs) }
       else Log.error { "#{__method__}: unexpected type: #{items.class}" }
     end.tap do |result|

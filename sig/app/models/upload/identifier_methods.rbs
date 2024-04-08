@@ -3,8 +3,6 @@
 module Upload::IdentifierMethods
   include Record::EmmaIdentification
 
-  extend ::Upload::IdentifierMethods
-
   private
 
   def self.included: (Module base) -> void

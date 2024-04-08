@@ -103,7 +103,7 @@ module LogoHelper
     return EmmaRepository.default if src.blank?
     src  = src.to_s               if src.is_a?(Symbol)
     src  = src.squish             if src.is_a?(String)
-    repo = Upload.repository_of(src)
+    repo = Upload.repository_value(src)
     return repo if repo && EmmaRepository.valid?(repo) || !src.is_a?(String)
     # Attempt a reverse lookup by repository name.
     EmmaRepository.pairs.first { |_repo, name| src.casecmp?(name) }&.first
