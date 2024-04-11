@@ -82,24 +82,34 @@ module ResponseConcern
   # Display the failure on the screen -- immediately if modal, or after a
   # redirect otherwise.
   #
+  # If *error* is a CanCan::AccessDenied then *redirect* defaults to
+  # #welcome_path since this is a destination that is guaranteed to be safe for
+  # an anonymous user.
+  #
   # @param [Exception, Model, String] error
-  # @param [String]                   redirect  Def: #default_fallback_location
+  # @param [String, nil]              redirect  Def: *fallback*
+  # @param [String, nil]              fallback  Def: #default_fallback_location
   # @param [Hash]                     opt       To #flash_failure/#flash_status
   #
   # @return [void]
   #
-  def error_response(error, redirect = nil, **opt)
+  def error_response(error, redirect = nil, fallback: nil, **opt)
     opt[:meth] ||= calling_method
-    if request.format.html? && !modal?
-      re_raise_if_internal_exception(error) if error.is_a?(Exception)
-      flash_failure(error, **opt)
-      redirect_back_or_to(redirect || default_fallback_location)
+    return failure_status(error, **opt)   if modal? || !request.format.html?
+    re_raise_if_internal_exception(error) if error.is_a?(Exception)
+    flash_failure(error, **opt)
+    if error.is_a?(CanCan::AccessDenied) || http_forbidden?(opt[:status])
+      redirect_to(redirect || welcome_path)
     else
-      failure_status(error, **opt)
+      redirect_back_or_to(redirect || fallback || default_fallback_location)
     end
   end
 
   # Generate a response to a POST.
+  #
+  # If *status* is :forbidden or *item* is a CanCan::AccessDenied then
+  # *redirect* defaults to #welcome_path since this is a destination that is
+  # guaranteed to be safe for an anonymous user.
   #
   # @param [Symbol, Integer, Exception, nil] status
   # @param [any, nil]                        item      Array
@@ -143,21 +153,24 @@ module ResponseConcern
     unless status.is_a?(Symbol) || status.is_a?(Integer)
       status, item = [nil, status]
     end
-    re_raise_if_internal_exception(item) if (error = item.is_a?(Exception))
 
-    redirect   = params[:redirect] if redirect.nil?
-    xhr        = request_xhr?      if xhr.nil?
-    html       = !xhr || redirect.present?
+    error      = item.is_a?(Exception) and re_raise_if_internal_exception(item)
     report     = item.presence && ExecReport[item]
     status   ||= report&.http_status
+    status   ||= (:forbidden if item.is_a?(CanCan::AccessDenied))
     status   ||= error ? :bad_request : :ok
-    success    = http_success?(status)
-    redirect   = html && http_redirect?(status) if redirect.nil?
+    forbidden  = http_forbidden?(status)
+    success    = !forbidden && http_success?(status)
+    xhr        = request_xhr?               if xhr.nil?
+    redirect   = params[:redirect]          if redirect.nil?
+    redirect   = welcome_path               if redirect.nil? && forbidden
+    redirect   = http_redirect?(status)     if redirect.nil? && !xhr
+    redirect   = true?(redirect)            if boolean?(redirect)
     back       = redirect.is_a?(TrueClass)
-    fallback ||= default_fallback_location if back
+    fallback ||= default_fallback_location  if back
 
     # @see https://github.com/hotwired/turbo/issues/492
-    if html && redirect
+    if redirect && !xhr
       if request.get? || request.post?
         status = :found     unless http_redirect?(status)
       else

@@ -100,6 +100,8 @@ class ManifestItemController < ApplicationController
       format.json { render_json index_values }
       format.xml  { render_xml  index_values }
     end
+  rescue CanCan::AccessDenied => error
+    error_response(error)
   rescue Record::SubmitError => error
     error_response(error)
   rescue => error
@@ -122,7 +124,7 @@ class ManifestItemController < ApplicationController
       format.xml  { render_xml  show_values }
     end
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     error_response(error)
   end
@@ -146,7 +148,7 @@ class ManifestItemController < ApplicationController
     __debug_route
     @item = new_record
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     failure_status(error)
   end
@@ -174,7 +176,7 @@ class ManifestItemController < ApplicationController
       end
     end
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue => error
     post_response(error)
   end
@@ -192,7 +194,7 @@ class ManifestItemController < ApplicationController
     __debug_route
     @item = edit_record
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     failure_status(error)
   end
@@ -211,7 +213,7 @@ class ManifestItemController < ApplicationController
     @item = update_record
     post_response(:ok, @item, redirect: manifest_item_index_path)
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue => error
     post_response(error)
   end
@@ -228,7 +230,7 @@ class ManifestItemController < ApplicationController
     __debug_route
     @list = delete_records.list&.records
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     failure_status(error)
   end
@@ -246,7 +248,7 @@ class ManifestItemController < ApplicationController
     @list = destroy_records
     post_response(:ok, @list, redirect: :back)
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue => error
     post_response(error, redirect: :back)
   end
@@ -268,7 +270,7 @@ class ManifestItemController < ApplicationController
     @item = start_editing(**current_params)
     post_response(:ok)
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue => error
     post_response(error)
   end
@@ -281,7 +283,7 @@ class ManifestItemController < ApplicationController
     __debug_route
     render_json finish_editing(**current_params)
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue => error
     post_response(error)
   end
@@ -294,7 +296,7 @@ class ManifestItemController < ApplicationController
     __debug_route
     render_json editing_update(**current_params)
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue => error
     post_response(error)
   end
@@ -320,7 +322,7 @@ class ManifestItemController < ApplicationController
     self.headers.merge!(hdrs) if hdrs.present?
     self.response_body = body if body.present?
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue Record::SubmitError => error
     post_response(:conflict, error, xhr: true)
   rescue => error
@@ -345,7 +347,7 @@ class ManifestItemController < ApplicationController
     __debug_route
     bulk_new_manifest_items
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     failure_status(error)
   end
@@ -365,7 +367,7 @@ class ManifestItemController < ApplicationController
     @list = bulk_create_manifest_items
     render_json bulk_update_response
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue => error
     post_response(error)
   end
@@ -382,7 +384,7 @@ class ManifestItemController < ApplicationController
     __debug_route
     @list = bulk_edit_manifest_items
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     failure_status(error)
   end
@@ -403,7 +405,7 @@ class ManifestItemController < ApplicationController
     @list = bulk_update_manifest_items
     render_json bulk_update_response
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue => error
     post_response(error)
   end
@@ -419,7 +421,7 @@ class ManifestItemController < ApplicationController
     __debug_route
     @list = bulk_delete_manifest_items
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     failure_status(error)
   end
@@ -435,7 +437,7 @@ class ManifestItemController < ApplicationController
     @list = bulk_destroy_manifest_items
     render_json bulk_id_response
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue => error
     post_response(error, xhr: false)
   end
@@ -454,7 +456,7 @@ class ManifestItemController < ApplicationController
     @list = bulk_fields_manifest_items
     render_json bulk_update_response
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue => error
     post_response(error)
   end

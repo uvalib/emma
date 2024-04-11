@@ -143,6 +143,8 @@ class UploadController < ApplicationController
         format.xml  { redirect_to prm.merge!(format: :xml) }
       end
     end
+  rescue CanCan::AccessDenied => error
+    error_response(error)
   rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     error_response(error)
   rescue => error
@@ -168,7 +170,7 @@ class UploadController < ApplicationController
       format.xml  { render_xml  show_values }
     end
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     error_response(error)
   end
@@ -197,7 +199,7 @@ class UploadController < ApplicationController
     __debug_route
     @item = new_record
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     failure_status(error)
   end
@@ -219,7 +221,7 @@ class UploadController < ApplicationController
     @item = create_record
     post_response(:ok, @item, redirect: upload_index_path)
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error
@@ -243,7 +245,7 @@ class UploadController < ApplicationController
     return redirect_to action: :edit_select if identifier.blank?
     @item = edit_record
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     error_response(error)
   end
@@ -264,7 +266,7 @@ class UploadController < ApplicationController
     @item = update_record
     post_response(:ok, @item, redirect: upload_index_path)
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error
@@ -292,7 +294,7 @@ class UploadController < ApplicationController
     return redirect_to action: :delete_select if identifier.blank?
     @list = delete_records
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     error_response(error)
   end
@@ -307,18 +309,14 @@ class UploadController < ApplicationController
   # @see UploadWorkflow::Single::Remove::States#on_removed_entry
   # @see UploadController#delete
   #
-  #--
-  # noinspection RubyScope
-  #++
-  def destroy
+  def destroy(back: delete_select_upload_path)
     __log_activity
     __debug_route
-    back  = delete_select_upload_path
     @list = destroy_records
     raise_failure(:file_id) if @list.blank?
     post_response(:ok, @list, redirect: back)
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     post_response(:conflict, error, redirect: back)
   rescue => error
@@ -344,6 +342,8 @@ class UploadController < ApplicationController
       format.json { render_json index_values }
       format.xml  { render_xml  index_values(item: :entry) }
     end
+  rescue CanCan::AccessDenied => error
+    error_response(error)
   rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     error_response(error)
   rescue => error
@@ -365,6 +365,8 @@ class UploadController < ApplicationController
       format.json { render_json index_values }
       format.xml  { render_xml  index_values(item: :entry) }
     end
+  rescue CanCan::AccessDenied => error
+    error_response(error)
   rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     error_response(error)
   rescue => error
@@ -384,6 +386,8 @@ class UploadController < ApplicationController
       format.json { render_json index_values }
       format.xml  { render_xml  index_values(item: :entry) }
     end
+  rescue CanCan::AccessDenied => error
+    error_response(error)
   rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     error_response(error)
   rescue => error
@@ -617,7 +621,7 @@ class UploadController < ApplicationController
       format.xml  { render xml:  @item }
     end
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue => error
     post_response(error)
   end
@@ -639,7 +643,7 @@ class UploadController < ApplicationController
       format.xml  { render xml:  @item }
     end
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue => error
     post_response(error)
   end
@@ -757,7 +761,7 @@ class UploadController < ApplicationController
       format.xml  { render_xml  download_values(link) }
     end
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue => error
     post_response(error, xhr: true)
   end
@@ -826,6 +830,8 @@ class UploadController < ApplicationController
       format.json { render_json index_values }
       format.xml  { render_xml  index_values(item: :entry) }
     end
+  rescue CanCan::AccessDenied => error
+    error_response(error)
   rescue UploadWorkflow::SubmitError, Record::SubmitError => error
     error_response(error)
   rescue => error

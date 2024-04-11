@@ -41,15 +41,24 @@ module ResponseConcern
   # Display the failure on the screen -- immediately if modal, or after a
   # redirect otherwise.
   #
+  # If *error* is a CanCan::AccessDenied then *redirect* defaults to
+  # #welcome_path since this is a destination that is guaranteed to be safe for
+  # an anonymous user.
+  #
   # @param [Exception, Model, String] error
-  # @param [String]                   redirect  Def: #default_fallback_location
+  # @param [String, nil]              redirect  Def: *fallback*
+  # @param [String, nil]              fallback  Def: #default_fallback_location
   # @param [Hash]                     opt       To #flash_failure/#flash_status
   #
   # @return [void]
   #
-  def error_response: (Exception|Model|String error, ?(String|nil) redirect, **untyped opt) -> void
+  def error_response: (Exception|Model|String error, ?(String|nil) redirect, ?fallback: String|nil, **untyped opt) -> void
 
   # Generate a response to a POST.
+  #
+  # If *status* is :forbidden or *item* is a CanCan::AccessDenied then
+  # *redirect* defaults to #welcome_path since this is a destination that is
+  # guaranteed to be safe for an anonymous user.
   #
   # @param [Symbol, Integer, Exception, nil] status
   # @param [any, nil]                        item      Array

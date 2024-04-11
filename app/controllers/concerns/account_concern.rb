@@ -375,12 +375,13 @@ module AccountConcern
   # redirect otherwise.
   #
   # @param [Exception, User, String] error
-  # @param [String]                  fallback
-  # @param [Symbol]                  meth
+  # @param [String, nil]             redirect   Def: *fallback*
+  # @param [String, nil]             fallback   Def: #default_fallback_location
+  # @param [Hash]                    opt        To #flash_failure/#flash_status
   #
   # @return [void]
   #
-  def error_response(error, fallback = nil, meth: nil)
+  def error_response(error, redirect = nil, fallback: nil, **opt)
     fallback ||=
       case params[:action]&.to_sym
         when :new,    :create  then { action: :new }

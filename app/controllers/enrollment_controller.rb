@@ -78,7 +78,7 @@ class EnrollmentController < ApplicationController
     items = find_or_match_records(**prm)
     paginator.finalize(items, **prm)
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     error_response(error)
   end
@@ -97,7 +97,7 @@ class EnrollmentController < ApplicationController
     @item = find_record
     raise config_text(:enrollment, :not_found, id: id) if @item.blank?
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     error_response(error)
   end
@@ -111,7 +111,7 @@ class EnrollmentController < ApplicationController
     __debug_route
     @item = new_record
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     failure_status(error)
   end
@@ -129,7 +129,7 @@ class EnrollmentController < ApplicationController
   # @see #create_enrollment_path      Route helper
   # @see EnrollmentConcern#generate_help_ticket
   #
-  def create
+  def create(back: welcome_path)
     __log_activity
     __debug_route
     ticket = current_params.delete(:ticket)
@@ -138,15 +138,15 @@ class EnrollmentController < ApplicationController
     if request_xhr?
       render json: @item.as_json
     else
-      post_response(@item, redirect: welcome_path)
+      post_response(@item, redirect: back)
     end
     generate_help_ticket(item: @item) if ticket
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue Record::SubmitError => error
     post_response(:conflict, error, redirect: redir_params(action: :new))
   rescue => error
-    post_response(error)
+    post_response(error, redirect: back)
   end
 
   # === GET /enrollment/edit/(:id)
@@ -164,7 +164,7 @@ class EnrollmentController < ApplicationController
     @item = edit_record
     raise config_text(:enrollment, :not_found, id: identifier) if @item.blank?
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     error_response(error, edit_select_enrollment_path)
   end
@@ -186,7 +186,7 @@ class EnrollmentController < ApplicationController
       post_response(:ok, @item, redirect: enrollment_index_path)
     end
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error
@@ -208,7 +208,7 @@ class EnrollmentController < ApplicationController
       raise config_text(:enrollment, :no_match, id: identifier_list)
     end
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     error_response(error, delete_select_enrollment_path)
   end
@@ -217,17 +217,13 @@ class EnrollmentController < ApplicationController
   #
   # @see #destroy_enrollment_path     Route helper
   #
-  #--
-  # noinspection RubyScope
-  #++
-  def destroy
+  def destroy(back: delete_select_enrollment_path)
     __log_activity
     __debug_route
-    back  = delete_select_enrollment_path
     @list = destroy_records
     post_response(:ok, @list, redirect: back)
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue Record::SubmitError => error
     post_response(:conflict, error, redirect: back)
   rescue => error
@@ -296,7 +292,7 @@ class EnrollmentController < ApplicationController
       post_response(:ok, @item, redirect: enrollment_index_path)
     end
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error

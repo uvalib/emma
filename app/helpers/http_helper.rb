@@ -55,6 +55,7 @@ module HttpHelper
   def http_status?(range, code)
     entry = error = nil
     case code
+      when nil     then return false
       when Integer then entry = HTTP_STATUS_CODE_RANGE[range]
       when Symbol  then entry = HTTP_SYMBOLIC_CODE_RANGE[range]
       else              error = "invalid HTTP code #{code.inspect}"
@@ -111,6 +112,14 @@ module HttpHelper
   #
   def http_temporary_redirect?(code)
     http_status?(:temp_redirect, code)
+  end
+
+  # Indicate whether the value represents an HTTP 403 status.
+  #
+  # @param [any, nil] code            Symbol, Integer
+  #
+  def http_forbidden?(code)
+    http_status?(:forbidden, code)
   end
 
   # Indicate whether the value represents a failure HTTP status.

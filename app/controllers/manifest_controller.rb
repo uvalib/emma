@@ -102,6 +102,8 @@ class ManifestController < ApplicationController
         format.xml  { redirect_to prm.merge!(format: :xml) }
       end
     end
+  rescue CanCan::AccessDenied => error
+    error_response(error)
   rescue Record::SubmitError => error
     error_response(error)
   rescue => error
@@ -125,7 +127,7 @@ class ManifestController < ApplicationController
       format.xml  #{ render_xml  show_values }
     end
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     error_response(error, root_path)
   end
@@ -139,7 +141,7 @@ class ManifestController < ApplicationController
     __debug_route
     @item = new_record
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     failure_status(error)
   end
@@ -160,7 +162,7 @@ class ManifestController < ApplicationController
       post_response(:ok, @item, redirect: manifest_index_path)
     end
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error
@@ -182,7 +184,7 @@ class ManifestController < ApplicationController
     found = find_or_match_manifest_items(@item, **prm)
     paginator.finalize(found, **prm)
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     error_response(error, edit_select_manifest_path)
   end
@@ -204,7 +206,7 @@ class ManifestController < ApplicationController
       post_response(:ok, @item, redirect: manifest_index_path)
     end
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error
@@ -223,7 +225,7 @@ class ManifestController < ApplicationController
     return redirect_to action: :delete_select if identifier.blank?
     @list = delete_records.list&.records
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     error_response(error, delete_select_manifest_path)
   end
@@ -232,17 +234,13 @@ class ManifestController < ApplicationController
   #
   # @see #destroy_manifest_path       Route helper
   #
-  #--
-  # noinspection RubyScope
-  #++
-  def destroy
+  def destroy(back: delete_select_manifest_path)
     __log_activity
     __debug_route
-    back  = delete_select_manifest_path
     @list = destroy_records
     post_response(:ok, @list, redirect: back)
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue Record::SubmitError => error
     post_response(:conflict, error, redirect: back)
   rescue => error
@@ -268,6 +266,8 @@ class ManifestController < ApplicationController
       format.json { render 'manifest/index' }
       format.xml  { render 'manifest/index' }
     end
+  rescue CanCan::AccessDenied => error
+    error_response(error)
   rescue Record::SubmitError => error
     error_response(error)
   rescue => error
@@ -289,6 +289,8 @@ class ManifestController < ApplicationController
       format.json { render 'manifest/index', **opt }
       format.xml  { render 'manifest/index', **opt }
     end
+  rescue CanCan::AccessDenied => error
+    error_response(error)
   rescue Record::SubmitError => error
     error_response(error)
   rescue => error
@@ -308,6 +310,8 @@ class ManifestController < ApplicationController
       format.json { render 'manifest/index' }
       format.xml  { render 'manifest/index' }
     end
+  rescue CanCan::AccessDenied => error
+    error_response(error)
   rescue Record::SubmitError => error
     error_response(error)
   rescue => error
@@ -424,7 +428,7 @@ class ManifestController < ApplicationController
     result = { items: rows }
     render_json result
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error
@@ -448,7 +452,7 @@ class ManifestController < ApplicationController
       redirect_to(params[:redirect] || manifest_index_path)
     end
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error
@@ -473,7 +477,7 @@ class ManifestController < ApplicationController
     return redirect_to action: :remit_select if identifier.blank?
     @item = remit_manifest
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     error_response(error, remit_select_manifest_path)
   end

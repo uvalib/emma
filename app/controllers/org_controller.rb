@@ -95,6 +95,8 @@ class OrgController < ApplicationController
         format.xml  { redirect_to prm.merge!(format: :xml) }
       end
     end
+  rescue CanCan::AccessDenied => error
+    error_response(error)
   rescue Record::SubmitError => error
     error_response(error)
   rescue => error
@@ -118,7 +120,7 @@ class OrgController < ApplicationController
     @item = find_record
     raise config_text(:org, :not_found, id: identifier)  if @item.blank?
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     error_response(error, show_select_org_path)
   end
@@ -132,7 +134,7 @@ class OrgController < ApplicationController
     __debug_route
     @item = new_record
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     failure_status(error)
   end
@@ -153,7 +155,7 @@ class OrgController < ApplicationController
       post_response(@item, redirect: org_index_path)
     end
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error
@@ -177,7 +179,7 @@ class OrgController < ApplicationController
     @item = edit_record
     raise config_text(:org, :not_found, id: identifier)  if @item.blank?
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     error_response(error, edit_select_org_path)
   end
@@ -199,7 +201,7 @@ class OrgController < ApplicationController
       post_response(:ok, @item, redirect: org_index_path)
     end
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error
@@ -222,7 +224,7 @@ class OrgController < ApplicationController
       raise config_text(:org, :no_match, id: identifier_list)
     end
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     error_response(error, delete_select_org_path)
   end
@@ -231,18 +233,14 @@ class OrgController < ApplicationController
   #
   # @see #destroy_org_path       Route helper
   #
-  #--
-  # noinspection RubyScope
-  #++
-  def destroy
+  def destroy(back: delete_select_org_path)
     __log_activity
     __debug_route
-    back  = delete_select_org_path
     raise config_text(:org, :self_delete) if current_id?
     @list = destroy_records
     post_response(:ok, @list, redirect: back)
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue Record::SubmitError => error
     post_response(:conflict, error, redirect: back)
   rescue => error
@@ -268,6 +266,8 @@ class OrgController < ApplicationController
       format.json { render 'org/index' }
       format.xml  { render 'org/index' }
     end
+  rescue CanCan::AccessDenied => error
+    error_response(error)
   rescue Record::SubmitError => error
     error_response(error)
   rescue => error
@@ -316,7 +316,7 @@ class OrgController < ApplicationController
       format.xml  { render 'org/show' }
     end
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    error_response(error)
   rescue => error
     if params[:format] == :html
       error_response(error, org_index_path)
@@ -342,7 +342,7 @@ class OrgController < ApplicationController
       format.xml  { render 'org/edit' }
     end
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    error_response(error)
   rescue => error
     error_response(error, org_index_path)
   end

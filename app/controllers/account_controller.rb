@@ -110,7 +110,7 @@ class AccountController < ApplicationController
     @item = find_record
     raise config_text(:account, :not_found, id: identifier) if @item.blank?
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     error_response(error, show_select_account_path)
   end
@@ -126,7 +126,7 @@ class AccountController < ApplicationController
     __debug_route
     @item = new_record
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     failure_status(error)
   end
@@ -150,7 +150,7 @@ class AccountController < ApplicationController
     @item = create_record
     post_response(:created, @item)
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue Record::SubmitError => error
     post_response(:conflict, error)
   rescue => error
@@ -174,7 +174,7 @@ class AccountController < ApplicationController
     @item = edit_record
     raise config_text(:account, :not_found, id: identifier) if @item.blank?
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     error_response(error, edit_select_account_path)
   end
@@ -193,7 +193,7 @@ class AccountController < ApplicationController
     @item = update_record
     post_response(:ok, @item)
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue => error
     post_response(error, redirect: edit_select_account_path)
   end
@@ -216,7 +216,7 @@ class AccountController < ApplicationController
       raise config_text(:account, :no_match, id: identifier_list)
     end
   rescue CanCan::AccessDenied => error
-    error_response(error, welcome_path)
+    error_response(error)
   rescue => error
     error_response(error, delete_select_account_path)
   end
@@ -227,18 +227,14 @@ class AccountController < ApplicationController
   #
   # @see #destroy_account_path        Route helper
   #
-  #--
-  # noinspection RubyScope
-  #++
-  def destroy
+  def destroy(back: delete_select_account_path)
     __log_activity
     __debug_route
-    back  = delete_select_account_path
     raise config_text(:account, :self_delete) if current_id?
     @list = destroy_records
     post_response(:ok, @list, redirect: back)
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    post_response(:forbidden, error)
   rescue Record::SubmitError => error
     post_response(:conflict, error, redirect: back)
   rescue => error
@@ -330,7 +326,7 @@ class AccountController < ApplicationController
       format.xml  { render 'account/show' }
     end
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    error_response(error)
   rescue => error
     error_response(error, account_index_path)
   end
@@ -353,7 +349,7 @@ class AccountController < ApplicationController
       format.xml  { render 'account/edit' }
     end
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error, redirect: welcome_path)
+    error_response(error)
   rescue => error
     error_response(error, account_index_path)
   end

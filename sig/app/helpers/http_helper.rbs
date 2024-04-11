@@ -61,6 +61,12 @@ module HttpHelper
   #
   def http_temporary_redirect?: (untyped code) -> bool
 
+  # Indicate whether the value represents an HTTP 403 status.
+  #
+  # @param [any, nil] code            Symbol, Integer
+  #
+  def http_forbidden?: (untyped code) -> bool
+
   # Indicate whether the value represents a failure HTTP status.
   #
   # @param [any, nil] code            Symbol, Integer
