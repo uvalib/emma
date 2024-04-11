@@ -264,7 +264,8 @@ class Upload < ApplicationRecord
   #
   def assign_attributes(attributes)
     __debug_items(binding)
-    attributes  = attributes.fields if attributes.is_a?(Upload)
+    attributes  = attributes.fields              if attributes.is_a?(Upload)
+    attributes  = attributes.deep_symbolize_keys if attributes.is_a?(Hash)
     opt, fields = partition_hash(attributes, *ASSIGN_CONTROL_OPT)
     op_mode     = opt.slice(*ASSIGN_MODES).compact_blank!.keys.first
 
@@ -289,7 +290,6 @@ class Upload < ApplicationRecord
 
     # In the general case, if no data was supplied then there's nothing to do.
     return unless fields.present?
-    fields.deep_symbolize_keys!
     fetch_file = false
     new_record = being_created? && (op_mode == :initializing)
 

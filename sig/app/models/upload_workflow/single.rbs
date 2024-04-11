@@ -74,6 +74,15 @@ module UploadWorkflow::Single::Data
   #
   def record_data: ((symHash|Upload) data) -> symHash
 
+  # Prepare record data for use in the update of a record prior to creating a
+  # new submission or updating an existing submission.
+  #
+  # @param [Upload, Hash, nil] data
+  #
+  # @return [Hash]
+  #
+  def submission_data: ((symHash|Upload|nil) data) -> symHash
+
   # Clear the fields in an existing Upload record.
   #
   # @param [Upload, Hash, String, nil] data

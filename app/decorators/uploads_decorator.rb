@@ -224,7 +224,7 @@ class UploadsDecorator < BaseCollectionDecorator
     groups = { ALL_FILTERS: { checked: false } }.merge!(STATE_GROUP)
     checkboxes =
       groups.map do |group, properties|
-        cb_name  = "[#{name}][]"
+        cb_name  = "#{name}[]"
         cb_value = group
         lbl, chk = properties.values_at(:label, :checked)
         lbl &&= config_text(:upload, :filter_options, :select, filter: lbl)

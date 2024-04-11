@@ -189,6 +189,36 @@ module UploadWorkflow::Single::Data
     data.symbolize_keys.except!(*IGNORED_UPLOAD_FIELDS)
   end
 
+  # Prepare record data for use in the update of a record prior to creating a
+  # new submission or updating an existing submission.
+  #
+  # This ensures that non "partner repository workflow" items are uploaded as
+  # EMMA items.
+  #
+  # @param [Upload, Hash, nil] data
+  #
+  # @return [Hash]
+  #
+  def submission_data(data)
+    case data
+      when Upload then meta = data.emma_metadata
+      when Hash   then meta = data.except(*Upload.field_names)
+      else             meta = data = {}
+    end
+    emma = meta.key?(:emma_data)
+    meta = (meta[:emma_data] || {}).merge(meta.except(:emma_data)) if emma
+    repo = data[:repository].presence || meta[:emma_repository].presence
+    if repo && !EmmaRepository.default?(repo) && Upload.emma_native?(repo)
+      dr   = EmmaRepository.default
+      meta = { rem_source: repo }.merge!(meta, emma_repository: dr)
+      data = data.is_a?(Upload) ? data.fields : data.slice(*Upload.field_names)
+      data.merge!(meta, repository: dr)
+    else
+      # noinspection RubyMismatchedReturnType
+      data.is_a?(Upload) ? data.fields : data
+    end
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -326,6 +356,7 @@ module UploadWorkflow::Single::Actions
   def wf_validate_submission(*event_args)
     __debug_items(binding)
     data = event_args.extract_options!.presence || event_args.first
+    data = submission_data(data)
     set_record(data)
     self.succeeded << record.id unless failures?
   end

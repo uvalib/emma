@@ -454,7 +454,7 @@ module BaseDecorator::Form
     selected = Array.wrap(value).compact.presence
     checkboxes =
       range.pairs.map do |item_value, item_label|
-        cb_name          = "[#{field}][]"
+        cb_name          = "#{field}[]"
         cb_value         = item_value
         cb_opt[:id]      = [item_value, field, local[:id]].compact.join('-')
         cb_opt[:label]   = item_label
