@@ -51,13 +51,13 @@ module HttpHelper
   #
   # @param [any, nil] code            Symbol, Integer
   #
-  # @note Currently unused.
-  #
   def http_permanent_redirect?: (untyped code) -> bool
 
   # Indicate whether the value represents an HTTP 302 or 307 status.
   #
   # @param [any, nil] code            Symbol, Integer
+  #
+  # @note Currently unused.
   #
   def http_temporary_redirect?: (untyped code) -> bool
 

@@ -99,8 +99,6 @@ module HttpHelper
   #
   # @param [any, nil] code            Symbol, Integer
   #
-  # @note Currently unused.
-  #
   def http_permanent_redirect?(code)
     http_status?(:perm_redirect, code)
   end
@@ -108,6 +106,8 @@ module HttpHelper
   # Indicate whether the value represents an HTTP 302 or 307 status.
   #
   # @param [any, nil] code            Symbol, Integer
+  #
+  # @note Currently unused.
   #
   def http_temporary_redirect?(code)
     http_status?(:temp_redirect, code)
