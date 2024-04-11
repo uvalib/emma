@@ -317,7 +317,7 @@ module EnrollmentConcern
   # @see EnrollmentMailer#request_email
   #
   def generate_help_ticket(**opt)
-    opt = params.slice(:format).merge!(opt)
+    opt[:format] ||= params[:format]
     EnrollmentMailer.with(opt).request_email.deliver_later
   end
 

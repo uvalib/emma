@@ -221,7 +221,7 @@ en:
 
         submit:
           <<:           *GENERIC_SUBMIT
-          label:        'Create'
+          label:        'Send'
           if_enabled:
             tooltip:    'Send the EMMA enrollment request'
           if_disabled:

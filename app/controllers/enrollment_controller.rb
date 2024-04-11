@@ -104,7 +104,16 @@ class EnrollmentController < ApplicationController
 
   # === GET /enrollment/new
   #
+  # For the deployed production application, a request ticket is generated for
+  # the new enrollment unless "ticket=false" appears in URL parameters.
+  # Otherwise, a request ticket is generated *only* if "ticket=true" appears in
+  # URL parameters.
+  #
+  # This parameter (if provided) is passed to the :create endpoint via a hidden
+  # form parameter.
+  #
   # @see #new_enrollment_path         Route helper
+  # @see EnrollmentDecorator#form_hidden
   #
   def new
     __log_activity
@@ -121,10 +130,10 @@ class EnrollmentController < ApplicationController
   # === PATCH /enrollment/create
   #
   # For the deployed production application, a request ticket is generated for
-  # the new enrollment unless "ticket=false" appears in URL parameters.
+  # the new enrollment unless "ticket=false" appears in the form parameters.
   #
   # Otherwise, a request ticket is generated *only* if "ticket=true" appears in
-  # URL parameters.
+  # the form parameters.
   #
   # @see #create_enrollment_path      Route helper
   # @see EnrollmentConcern#generate_help_ticket
@@ -132,8 +141,8 @@ class EnrollmentController < ApplicationController
   def create(back: welcome_path)
     __log_activity
     __debug_route
-    ticket = current_params.delete(:ticket)
-    ticket = application_deployed? ? !false?(ticket) : true?(ticket)
+    ticket = params[:ticket]
+    ticket = production_deployment? ? !false?(ticket) : true?(ticket)
     @item  = create_record
     if request_xhr?
       render json: @item.as_json

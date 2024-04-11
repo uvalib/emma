@@ -226,6 +226,14 @@ class EnrollmentDecorator
   #
   def model_form: (**untyped opt) -> ActiveSupport::SafeBuffer
 
+  # Pass the value of the "ticket" URL parameter as a hidden field.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]
+  #
+  def form_hidden: (**untyped opt) -> symHash
+
   # Rendered table value for a :org_users field.
   #
   # @param [any, nil]      value

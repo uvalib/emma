@@ -440,6 +440,20 @@ class EnrollmentDecorator
     super
   end
 
+  # Pass the value of the "ticket" URL parameter as a hidden field.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]
+  #
+  def form_hidden(**opt)
+    if (ticket = params[:ticket]).nil?
+      super
+    else
+      super { |result, _| result.merge!(ticket: ticket) }
+    end
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
