@@ -1,4 +1,4 @@
-# test/mailers/devise_mailer_preview.rb
+# test/mailers/previews/devise_mailer_preview.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true

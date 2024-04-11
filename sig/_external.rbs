@@ -84,6 +84,8 @@ end
 module ActionMailer
   class Preview
   end
+  class TestCase < ActiveSupport::TestCase
+  end
 end
 
 # NOTE: overrides .gem_rbs_collection/activemodel/7.0/patch.rbs

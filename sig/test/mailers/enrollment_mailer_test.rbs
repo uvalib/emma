@@ -1,0 +1,2 @@
+class EnrollmentMailerTest < ActionMailer::TestCase
+end

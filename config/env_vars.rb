@@ -160,15 +160,13 @@ SIGN_IN_AS = (:sign_in_as if ENV['RAILS_ENV'] == 'test')
 # Mailer properties
 # =============================================================================
 
-MAILER_SENDER = ENV['MAILER_SENDER'] || 'do-not-reply@virginia.edu'
+MAILER_SENDER = ENV.fetch('MAILER_SENDER', 'emmahelp@virginia.edu')
 
 MAILER_URL_HOST =
-  if production_deployment?
-    URI.parse(PRODUCTION_BASE_URL).host.freeze
-  elsif staging_deployment?
-    URI.parse(STAGING_BASE_URL).host.freeze
-  else
-    'localhost:3000'.freeze
+  case
+    when production_deployment? then URI.parse(PRODUCTION_BASE_URL).host.freeze
+    when staging_deployment?    then URI.parse(STAGING_BASE_URL).host.freeze
+    else                             'localhost'
   end
 
 # =============================================================================

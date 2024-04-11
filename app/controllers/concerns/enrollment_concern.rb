@@ -307,6 +307,20 @@ module EnrollmentConcern
     end
   end
 
+  # Send a request email in order to generate a JIRA help ticket for a new
+  # enrollment request.
+  #
+  # @param [Hash] opt
+  #
+  # @return [void]
+  #
+  # @see EnrollmentMailer#request_email
+  #
+  def generate_help_ticket(**opt)
+    opt = params.slice(:format).merge!(opt)
+    EnrollmentMailer.with(opt).request_email.deliver_later
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================

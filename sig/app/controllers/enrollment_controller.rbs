@@ -58,7 +58,14 @@ class EnrollmentController < ApplicationController
   # === PUT   /enrollment/create
   # === PATCH /enrollment/create
   #
+  # For the deployed production application, a request ticket is generated for
+  # the new enrollment unless "ticket=false" appears in URL parameters.
+  #
+  # Otherwise, a request ticket is generated *only* if "ticket=true" appears in
+  # URL parameters.
+  #
   # @see #create_enrollment_path      Route helper
+  # @see EnrollmentConcern#generate_help_ticket
   #
   def create: () -> void
 

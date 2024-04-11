@@ -1,0 +1,15 @@
+# Preview all emails at '/rails/mailers/enrollment_mailer'.
+#
+class EnrollmentMailerPreview < ActionMailer::Preview
+  # Preview '/rails/mailers/enrollment_mailer/request_email' using the latest
+  # Enrollment by default or the specified Enrollment record if an :id
+  # parameter is given.
+  #
+  def request_email: () -> void
+
+  # Generate a fake Enrollment if there is no record to use with the preview.
+  #
+  # @return [Enrollment]              Non-persisted instance.
+  #
+  def fake_enrollment: () -> Enrollment
+end

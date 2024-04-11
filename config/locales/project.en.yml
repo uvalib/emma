@@ -14,3 +14,18 @@ en:
     contact:
 
       email:            'emmahelp@virginia.edu'
+
+    enroll:
+
+      email:            'emmahelp@virginia.edu'
+      subject:          'ENROLLMENT REQUEST'
+      heading:          'EMMA Enrollment Request'
+      body:
+        - 'An enrollment request for %{org} has been made by %{name}.'
+        - |-
+          You may access this request at %{show} or
+          view all enrollment requests at %{list}.
+      testing:
+        subject:        'TESTING - %s'
+        heading:        'Test %s'
+        body:           '(NOTE: This is a test, not an actual request.)'

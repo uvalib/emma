@@ -18,4 +18,10 @@ module Emma::Project
   # @type [String]
   #
   CONTACT_EMAIL: String
+
+  # The email address for requesting EMMA enrollment.
+  #
+  # @type [String]
+  #
+  ENROLL_EMAIL: String
 end

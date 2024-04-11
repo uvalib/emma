@@ -33,6 +33,12 @@ module Emma::Project
   #
   CONTACT_EMAIL = config_item('emma.contact.email').freeze
 
+  # The email address for requesting EMMA enrollment.
+  #
+  # @type [String]
+  #
+  ENROLL_EMAIL = config_item('emma.enroll.email').freeze
+
 end
 
 __loading_end(__FILE__)

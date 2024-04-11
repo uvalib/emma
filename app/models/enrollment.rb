@@ -79,6 +79,48 @@ class Enrollment < ApplicationRecord
 
   public
 
+  # User information based on :org_users.
+  #
+  # @return [Array<Hash>]
+  #
+  def user_list
+    @user_list ||= prepare_user_list(org_users)
+  end
+
+  # User information for the requesting user (from :org_users).
+  #
+  # @return [Hash]
+  #
+  def requesting_user
+    user_list.first
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Normalize a value from :org_users, supplying roles if missing.
+  # 
+  # @param [Array<Hash>, Hash, nil] users
+  #
+  # @return [Array<Hash>]
+  #
+  def prepare_user_list(users)
+    users = Array.wrap(users).compact_blank.presence or return [{}]
+    users.map! { |u| json_parse(u, log: false).reverse_merge!(role: 'member') }
+    users.first[:role] = 'manager' if users.none? { |u| u[:role] == 'manager' }
+    # noinspection RubyMismatchedReturnType
+    users
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Use the current Enrollment instance to create an Org record and one or more
   # User records.
   #
@@ -98,13 +140,11 @@ class Enrollment < ApplicationRecord
     opt[:created_at] ||= opt[:updated_at]
 
     org = nil
-    usr = Array.wrap(self[:org_users]).compact
+    usr = user_list
     Org.transaction do
       org = Org.create(fields.except(:id).merge!(opt))
+      usr = usr.map { |u| u.merge(opt, org_id: org.id) }
       User.transaction(requires_new: true) do
-        usr.map! { |u| u.merge(opt, org_id: org.id) }
-        usr.each { |u| u[:role] ||= 'member' }
-        usr.first[:role] = 'manager' if usr.none? { |u| u[:role] == 'manager' }
         usr.map! { |u| User.create(u) }
       end
     end

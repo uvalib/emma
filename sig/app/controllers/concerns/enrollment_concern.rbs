@@ -164,6 +164,18 @@ module EnrollmentConcern
   # @return [Enrollment, nil]
   #
   def finalize_enrollment: (untyped item, **untyped opt) -> (Enrollment | nil)
+
+  # Send a request email in order to generate a JIRA help ticket for a new
+  # enrollment request.
+  #
+  # @param [Hash] opt
+  #
+  # @return [void]
+  #
+  # @see EnrollmentMailer#request_email
+  #
+  def generate_help_ticket: (**untyped opt) -> void
+
   private
 
   THIS_MODULE: Module

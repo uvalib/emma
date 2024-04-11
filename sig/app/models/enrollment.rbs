@@ -48,6 +48,28 @@ class Enrollment < ApplicationRecord
   #
   def initialize: (?(Enrollment|prmHash|nil) attr) ?{ () -> untyped } -> void
 
+  @user_list: Array[symHash]
+
+  # User information based on :org_users.
+  #
+  # @return [Array<Hash>]
+  #
+  def user_list: () -> Array[symHash]
+
+  # User information for the requesting user (from :org_users).
+  #
+  # @return [Hash]
+  #
+  def requesting_user: () -> symHash
+
+  # Normalize a value from :org_users, supplying roles if missing.
+  #
+  # @param [Array<Hash>, Hash, nil] users
+  #
+  # @return [Array<Hash>]
+  #
+  def prepare_user_list: (Array[symHash]|symHash|nil users) -> Array[symHash]
+
   # Use the current Enrollment instance to create an Org record and one or more
   # User records.
   #

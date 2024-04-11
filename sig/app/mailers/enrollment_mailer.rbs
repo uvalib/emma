@@ -1,0 +1,52 @@
+class EnrollmentMailer < ApplicationMailer
+  include Emma::Config
+
+  include Emma::Project
+
+  include ActionView::Helpers::UrlHelper
+
+  @item: Enrollment
+
+  @elem: symHash
+
+  # Send to produce a JIRA help ticket for a new enrollment request.
+  #
+  # If this is not the production deployment, the email subject will be
+  # annotated to indicate that this is not a real enrollment request.
+  #
+  # @param [Hash] opt
+  #
+  def request_email: (**untyped opt) -> void
+
+  # Generate mailer message content for :request_email.
+  #
+  # If this is not the production deployment, the heading and body will be
+  # annotated to indicate that this is not a real enrollment request.
+  #
+  # @param [Enrollment] item
+  # @param [Hash]       opt
+  #
+  # @option opt [String] :show        URL to the enrollment item.
+  # @option opt [String] :list        URL to all enrollment items.
+  # @option opt [Symbol] :format
+  #
+  # @return [Hash]
+  #
+  def request_email_elements: (item: Enrollment, **untyped opt) -> symHash
+
+  # Extract organization name.
+  #
+  # @param [Enrollment, nil] item
+  #
+  # @return [String, nil]
+  #
+  def org_from: (Enrollment|nil item) -> (String | nil)
+
+  # Extract name/e-mail.
+  #
+  # @param [Enrollment, nil] item
+  #
+  # @return [String, nil]
+  #
+  def name_from: (Enrollment|nil item) -> (String | nil)
+end

@@ -1,0 +1,12 @@
+<%# app/views/enrollment_mailer/request_email.html.erb -%>
+<%-
+  # Create a new EMMA enrollment request ticket.
+  elem ||= @elem
+  head, body = elem.values_at(:heading, :body)
+-%>
+
+<h1><%= head -%></h1>
+
+<%- body.each do |line| -%>
+  <p><%= line -%></p>
+<%- end -%>

@@ -120,17 +120,27 @@ class EnrollmentController < ApplicationController
   # === PUT   /enrollment/create
   # === PATCH /enrollment/create
   #
+  # For the deployed production application, a request ticket is generated for
+  # the new enrollment unless "ticket=false" appears in URL parameters.
+  #
+  # Otherwise, a request ticket is generated *only* if "ticket=true" appears in
+  # URL parameters.
+  #
   # @see #create_enrollment_path      Route helper
+  # @see EnrollmentConcern#generate_help_ticket
   #
   def create
     __log_activity
     __debug_route
-    @item = create_record
+    ticket = current_params.delete(:ticket)
+    ticket = application_deployed? ? !false?(ticket) : true?(ticket)
+    @item  = create_record
     if request_xhr?
       render json: @item.as_json
     else
       post_response(@item, redirect: welcome_path)
     end
+    generate_help_ticket(item: @item) if ticket
   rescue CanCan::AccessDenied => error
     post_response(:forbidden, error, redirect: welcome_path)
   rescue Record::SubmitError => error

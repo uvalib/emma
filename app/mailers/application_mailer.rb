@@ -5,11 +5,22 @@
 
 __loading_begin(__FILE__)
 
-# @note Currently unused
-#
 class ApplicationMailer < ActionMailer::Base
-  default from: 'from@example.com'
+
+  # ===========================================================================
+  # :section: Mailer layout
+  # ===========================================================================
+
+  helper LayoutHelper::PageLanguage
+
   layout 'mailer'
+
+  # ===========================================================================
+  # :section: Mailer settings
+  # ===========================================================================
+
+  default from: MAILER_SENDER
+
 end
 
 __loading_end(__FILE__)
