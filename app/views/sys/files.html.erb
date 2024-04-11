@@ -13,10 +13,9 @@
     set_page_description(title)
   end
 
-  ignore  = %w[.git cache]
-  ignore += %w[.gem_rbs_collection .idea cache-test] if not_deployed?
-  ignore  = ignore.compact_blank.map { |name| "-I '#{name}'" }.join(' ')
-  command = "ls -AFlRv #{ignore}"
+  ignore  = %w[.gem_rbs_collection .git .idea tmp].join("\n")
+  names   = `ls -d .[^.]* * | fgrep -v "#{ignore}"`
+  command = "ls -AFlRv #{names}"
 
 -%>
 
