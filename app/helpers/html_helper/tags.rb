@@ -13,6 +13,7 @@ __loading_begin(__FILE__)
 module HtmlHelper::Tags
 
   include HtmlHelper::Attributes
+  include HtmlHelper::Options
 
   # ===========================================================================
   # :section:

@@ -3,6 +3,8 @@
 module HtmlHelper::Tags
   include HtmlHelper::Attributes
 
+  include HtmlHelper::Options
+
   # Short-cut for generating an HTML '<span>' element.
   #
   # @return [ActiveSupport::SafeBuffer]

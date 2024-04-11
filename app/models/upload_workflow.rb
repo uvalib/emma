@@ -543,8 +543,8 @@ module UploadWorkflow::External
   #
   # @param [any, nil] item            Upload
   #
-  # @see Upload#valid_sid?
-  # @see Upload#emma_native?
+  # @see Record::EmmaIdentification#valid_sid?
+  # @see Record::EmmaIdentification#emma_native?
   #
   def emma_item?(item)
     return true if item.is_a?(Upload) && item.repository.nil?
