@@ -13,16 +13,15 @@
     set_page_description(title)
   end
 
-  root_ignore = %w[
-    .gem_rbs_collection
-    .git
-    .idea
-    tmp
-  ].join("\n")
+  # Root directories that will not be included in the recursive listing.
+  ignore  = %w[.git node_modules tmp]
+  ignore += %w[.gem_rbs_collection .idea sig] if not_deployed?
+  ignore  = ignore.join("\n")
 
   names   = '.[^.]* *'
-  dirs    = `ls -dv #{names} | fgrep -v -x "#{root_ignore}"`.squish
+  dirs    = `ls -dv #{names} | fgrep -v -x "#{ignore}"`.squish
   ls_opt  = 'hlp'
+
   command = [
     "ls -dv#{ls_opt} #{names}",                 # In place of root-level lines.
     'echo',
