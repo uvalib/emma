@@ -32,7 +32,7 @@ class EnrollmentMailer < ApplicationMailer
   # @param [Hash] opt
   #
   def request_email(**opt)
-    test  = opt.key?(:test) ? opt.delete(:test) : not_deployed?
+    test  = opt.key?(:test) ? opt.delete(:test) : !production_deployment?
     @item = params[:item]
     @elem = request_email_elements(**params, **opt, test: test)
 
@@ -71,7 +71,7 @@ class EnrollmentMailer < ApplicationMailer
   # @return [Hash]
   #
   def request_email_elements(item: @item, **opt)
-    test = opt.key?(:test) ? opt.delete(:test) : not_deployed?
+    test = opt.key?(:test) ? opt.delete(:test) : !production_deployment?
     html = (opt[:format] == :html)
     id   = item.id || 1 # Might be nil only from EnrollmentMailerPreview.
 
