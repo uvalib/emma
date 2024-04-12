@@ -4,4 +4,5 @@ package/scripts/build.ksh
 package/scripts/shell.ksh
 sig
 test
+!test/mailers/previews
 tmp
