@@ -13,9 +13,21 @@
     set_page_description(title)
   end
 
-  ignore  = %w[.gem_rbs_collection .git .idea tmp].join("\n")
-  names   = `ls -d .[^.]* * | fgrep -v "#{ignore}"`
-  command = "ls -AFlRv #{names}"
+  root_ignore = %w[
+    .gem_rbs_collection
+    .git
+    .idea
+    tmp
+  ].join("\n")
+
+  names   = '.[^.]* *'
+  dirs    = `ls -dv #{names} | fgrep -v -x "#{root_ignore}"`.squish
+  ls_opt  = 'hlp'
+  command = [
+    "ls -dv#{ls_opt} #{names}",                 # In place of root-level lines.
+    'echo',
+    "ls -ARv#{ls_opt} #{dirs} | sed '1,/^$/d'"  # Skip root-level output lines.
+  ].join(";\n")
 
 -%>
 
