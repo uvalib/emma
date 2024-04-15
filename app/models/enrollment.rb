@@ -135,18 +135,23 @@ class Enrollment < ApplicationRecord
   def complete_enrollment(**opt)
     retry_opt = :"#{__method__}_retry"
     retrying  = opt.delete(retry_opt)
-    opt.delete(:id) # Just to be safe.
-    opt[:updated_at] ||= DateTime.now
-    opt[:created_at] ||= opt[:updated_at]
+    org = usr = nil
 
-    org = nil
-    usr = user_list
+    # Initialize values that will be used to create Org and/or User records.
+    opt[:status]      ||= :active
+    opt[:created_at]  ||= DateTime.now
+    opt[:updated_at]  ||= opt[:created_at]
+    opt[:status_date] ||= opt[:updated_at]
+    opt[:start_date]  ||= opt[:status_date]
+
+    org_attr = fields.merge(opt).slice(*Org.field_names).except(:id)
+    usr_attr = opt.slice(*User.field_names).except(:id)
+
     Org.transaction do
-      org = Org.create(fields.except(:id).merge!(opt))
-      usr = usr.map { |u| u.merge(opt, org_id: org.id) }
-      User.transaction(requires_new: true) do
-        usr.map! { |u| User.create(u) }
-      end
+      org = Org.create(org_attr)
+      usr = user_list.map { |u| u.merge(usr_attr, org_id: org.id) }
+      User.transaction(requires_new: true) { usr.map! { |u| User.create(u) } }
+      org.update_columns(contact: usr.select(&:manager?).map(&:id))
     end
     return org, usr
 
