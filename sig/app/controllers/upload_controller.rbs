@@ -412,6 +412,11 @@ class UploadController < ApplicationController
   #
   # Cause completed submission records to be re-indexed.
   #
+  # NOTE: Since this is a rarely-needed feature, there is no UI -- monitor the
+  #   log file to track progress.  When you execute the endpoint the browser
+  #   will "hang" until all completed items in the "uploads" table have been
+  #   submitted in batches to the Ingest API.
+  #
   # @see #bulk_reindex_upload_path    Route helper
   #
   def bulk_reindex: () -> void
