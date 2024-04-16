@@ -706,9 +706,12 @@ module SubmissionService::Action::Submit
   #
   def run_step(records, wait: nil, **opt, &blk)
 
-    max_time  = (opt[:max_time] || DEFAULT_TIMEOUT) * records.size
-    max_time += records.map { |r| r.file_size.to_i / 1.megabyte }.sum if wait
-    deadline  = timestamp + max_time
+    deadline =
+      unless in_debugger?
+        time  = (opt[:max_time] || DEFAULT_TIMEOUT) * records.size
+        time += records.map { |r| r.file_size.to_i / 1.megabyte }.sum if wait
+        time + timestamp
+      end
 
     meth      = opt[:meth] || __method__
     msg       = opt.slice(*DEF_MSG.keys).reverse_merge!(DEF_MSG)
@@ -731,7 +734,7 @@ module SubmissionService::Action::Submit
             Log.warn { "#{meth}: #{error.message}" }
           end
           done << id if id
-          break if timestamp > deadline
+          break if deadline && (timestamp > deadline)
         end
         remaining.except!(*done)
       end
@@ -745,7 +748,7 @@ module SubmissionService::Action::Submit
           Log.warn { "#{meth}: #{error.message}" }
         end
         done << id
-        break if timestamp > deadline
+        break if deadline && (timestamp > deadline)
       end
       remaining.except!(*done)
     end

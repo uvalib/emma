@@ -155,8 +155,7 @@ class LookupService
   # @return [Hash{String=>LookupService::Response}]
   #
   def self.get_sync(request, timeout: nil, **opt)
-    # noinspection RubyMismatchedArgumentType
-    deadline = (timestamp + timeout if timeout)
+    deadline = (timestamp + timeout if timeout && !in_debugger?)
     log      = "#{name}.#{__method__}"
     services = services_for(request, log: log)
     services.map { |service|
