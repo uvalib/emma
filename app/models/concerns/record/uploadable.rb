@@ -428,11 +428,9 @@ module Record::Uploadable
   def promote_cached_file(keep_cached: false, fatal: true)
     __debug_items(binding)
     return unless attach_cached
-    old_file   = !keep_cached
-    old_file &&= file&.data
-    # noinspection RubyArgCount
-    old_file &&= FileUploader::UploadedFile.new(old_file)
-    file_attacher.promote.tap { old_file&.delete }
+    cached_file   = (file&.data&.presence unless keep_cached)
+    cached_file &&= FileUploader::UploadedFile.new(cached_file)
+    file_attacher.promote.tap { cached_file&.delete }
   rescue => error
     log_exception(error, __method__)
     re_raise_if_internal_exception(error)

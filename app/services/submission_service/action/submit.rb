@@ -460,6 +460,7 @@ module SubmissionService::Action::Submit
     opt[:success] = config_text(:submission, :service, :stored)
     run_step(records, **opt) do |_id, rec|
       rec.promote_file(fatal: true)
+      rec.update_columns(file_data: rec.file_data)
     end
   end
 
