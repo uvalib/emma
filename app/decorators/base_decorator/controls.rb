@@ -143,7 +143,7 @@ module BaseDecorator::Controls
     opt[:id] = unique_id(*opt[:id], **uniq_opt) if uniq_opt.present?
 
     if opt[:title].blank? && (tip = prop[:tooltip]).present?
-      tip = tip.include?('%') ? (tip % { item: model_type }) : tip.dup
+      tip = interpolate!(tip, item: model_type) || tip.dup
       tip = "#{tip} #{index.next}" if index && tip.sub!(' this ', ' ')
       opt[:title] = tip
     end

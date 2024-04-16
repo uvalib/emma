@@ -711,7 +711,7 @@ module SubmissionService::Action::Submit
 
     meth      = opt[:meth] || __method__
     msg       = opt.slice(*DEF_MSG.keys).reverse_merge!(DEF_MSG)
-    msg.transform_values! { |v| v.include?('%') ? (v % { meth: meth }) : v }
+    msg.transform_values! { |v| interpolate(v, meth: meth) }
 
     records   = records.map { |rec| [manifest_item_id(rec), rec] }.to_h
     remaining = records.dup
