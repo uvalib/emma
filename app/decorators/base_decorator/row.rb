@@ -109,9 +109,10 @@ module BaseDecorator::Row
   # The number of rows of associated items per iteration.
   #
   # @return [Integer]
+  # @return [nil]                     If rows are not paginated.
   #
   def row_page_size
-    paginator.page_size # NOTE: Maybe this can never be null (in which case ROW_PAGE_SIZE is redundant)
+    paginator.page_size
   end
 
   # Named parameters for #row_page.

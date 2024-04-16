@@ -155,12 +155,12 @@ module Record::Searchable
     limit  = positive(arg[:limit])
     offset = positive(arg[:offset])
     if (page = positive(arg[:page]))
-      page_size = limit ||= Paginator.default_page_size
-      offset    = (page - 1) * page_size
-      last_page = (item_count / page_size) + 1
+      page_size = limit
+      offset  ||= page_size && ((page - 1) * page_size)
+      last_page = page_size && ((item_count / page_size) + 1)
       result[:page]  = page
       result[:first] = (page == 1)
-      result[:last]  = (page >= last_page)
+      result[:last]  = (page >= last_page) if last_page
     end
     result[:limit]  = limit  if limit
     result[:offset] = offset if offset

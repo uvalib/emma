@@ -87,6 +87,8 @@ class Paginator
 
   attr_reader initial_parameters: symHash
 
+  attr_reader disabled: bool
+
   # Create a new instance.
   #
   # @param [ApplicationController, nil] ctrlr
@@ -136,15 +138,13 @@ class Paginator
 
     # Configured results per page for the given controller/action.
     #
-    # @param [Symbol, String, Hash, nil] c    Controller
-    # @param [Symbol, String, nil]       a    Action
-    # @param [Symbol]                    key  Default: :page_size.
+    # @param [Symbol, String, nil] controller
+    # @param [Symbol, String, nil] action
+    # @param [Symbol]              key        Configuration key.
     #
     # @return [Integer]
     #
-    def get_page_size
-      : ( symHash             c,                         ?key: Symbol) -> Integer
-      | (?(Symbol|String|nil) c, ?(Symbol|String|nil) a, ?key: Symbol) -> Integer
+    def get_page_size: (?controller: Symbol|String|nil, ?action: Symbol|String|nil, ?key: Symbol, **untyped _ignored) -> Integer
 
     # Default number of results per page.
     #
@@ -226,23 +226,21 @@ class Paginator
   # Current results per page for the given controller/action (unless an
   # argument is present).
   #
-  # @param [Symbol, String, Hash, nil] c    Controller
-  # @param [Symbol, String, nil]       a    Action
-  # @param [Symbol]                    key  Configuration key.
+  # @param [Hash] opt                 Passed to super.
   #
   # @return [Integer]
+  # @return [nil]                     If #disabled.
   #
-  def get_page_size
-    : (symHash)                                        -> Integer
-    | (?(Symbol|String|nil) c, ?(Symbol|String|nil) a) -> Integer
+  def get_page_size: (**untyped opt) -> (Integer | nil)
 
   # Default results per page for the current controller/action.
   #
   # @return [Integer]
+  # @return [nil]                     If #disabled.
   #
-  def default_page_size: () -> Integer
+  def default_page_size: () -> (Integer | nil)
 
-  @default_page_size: Integer
+  @default_page_size: Integer | nil
 
   # Determine the number of records reported by an object.
   #
@@ -361,16 +359,17 @@ class Paginator
   # Get the number of results per page.
   #
   # @return [Integer]
+  # @return [nil]                     If #disabled.
   #
-  def page_size: () -> Integer
+  def page_size: () -> (Integer | nil)
 
   # Set the number of results per page.
   #
   # @param [Integer, nil] value
   #
-  # @return [Integer]
+  # @return [Integer, nil]
   #
-  def page_size=: ((Integer|nil) value) -> Integer
+  def page_size=: ((Integer|nil) value) -> (Integer | nil)
 
   # Get the offset of the current page into the total set of results.
   #
@@ -569,6 +568,12 @@ class Paginator
   # @return [Integer]
   #
   def current_position: (?(Integer|nil) index, ?increment: bool, ?check: bool) -> Integer
+
+  # Turn off pagination.
+  #
+  # @return [void]
+  #
+  def no_pagination: () -> void
 
   # Delegate to the underlying array of items if it has been generated, or to
   # the underlying source relation if it has been set.

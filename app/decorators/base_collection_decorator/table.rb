@@ -64,7 +64,8 @@ module BaseCollectionDecorator::Table
     end
 
     limit = positive(local[:partial])
-    full  = (rows < (limit || table_page_size))
+    max   = limit || table_page_size
+    full  = max && (rows < max)
 
     prepend_css!(opt, css, model_type)
     append_css!(opt, "columns-#{cols}")       if cols.positive?

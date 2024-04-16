@@ -73,12 +73,13 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
     #
     def initialize_context(**opt)
       super.tap do |ctx|
+        pag = ctx[:paginator]
         if ctx[:partial].is_a?(TrueClass)
-          ctx[:partial] =
-            ctx[:paginator]&.page_size || Paginator.default_page_size
+          ctx[:partial] = pag ? pag.page_size : Paginator.default_page_size
         end
         ctx[:pageable] = !ctx[:partial] unless ctx.key?(:pageable)
         ctx[:sortable] = true           unless ctx.key?(:sortable)
+        pag&.no_pagination              if false?(ctx[:pageable])
       end
     end
 

@@ -49,12 +49,6 @@ module BaseDecorator::Table
     MODEL_TABLE_PART_OPT  = %i[thead tbody tfoot],
   ].flatten.freeze
 
-  # Default number of rows per table page.
-  #
-  # @type [Integer]
-  #
-  TABLE_PAGE_SIZE = ROW_PAGE_SIZE
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -121,9 +115,10 @@ module BaseDecorator::Table
   # The number of rows of associated items per table page.
   #
   # @return [Integer]
+  # @return [nil]                     If rows are not paginated.
   #
   def table_page_size
-    TABLE_PAGE_SIZE
+    row_page_size
   end
 
   # Get a subset of associated items.

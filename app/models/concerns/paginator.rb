@@ -136,6 +136,7 @@ class Paginator
 
   attr_reader :context
   attr_reader :initial_parameters
+  attr_reader :disabled
 
   # ===========================================================================
   # :section:
@@ -151,7 +152,8 @@ class Paginator
   #
   def initialize(ctrlr = nil, request: nil, **opt)
 
-    @context = opt.extract!(:controller, :action)
+    @disabled = !!opt.delete(:disabled)
+    @context  = opt.extract!(:controller, :action)
     @context[:controller] ||= ctrlr&.controller_name&.to_sym
     @context[:request]    ||= request || ctrlr&.request
 
@@ -164,56 +166,64 @@ class Paginator
     # Strip off index cursor initialization values.
     Properties::INDEX.each { |k| property[k] = opt.delete(k)&.to_i }
 
-    # Get pagination values.
-    page     = positive(opt[:page])
-    offset   = positive(opt[:offset])
-    limit    = positive(opt[:limit]) || page_size
-    page   ||= (offset / limit) + 1 if offset
-    offset ||= (page - 1) * limit   if page
+    # Pagination values.
+    page = offset = limit = nil
+    unless @disabled
 
-    # Get first and current page paths; adjust values if currently on the first
-    # page of results.
-    main_page  = @context[:request].path
-    path_opt   = { decorate: true, unescape: true }
-    mp_opt     = opt.merge(path_opt)
-    current    = make_path(main_page, **mp_opt)
-    first      = main_page
-    on_first   = (current == first)
-    unless on_first
-      mp_opt   = opt.except(*PAGE_OFFSET_KEYS).merge!(path_opt)
-      first    = make_path(main_page, **mp_opt)
-      on_first = (current == first)
-    end
-    unless on_first
-      mp_opt   = opt.except(*PAGINATION_KEYS).merge!(path_opt)
-      first    = make_path(main_page, **mp_opt)
-      on_first = (current == first)
-    end
+      # Get pagination values.
+      page     = positive(opt[:page])
+      offset   = positive(opt[:offset])
+      limit    = positive(opt[:limit]) || page_size
+      page   ||= (offset / limit) + 1 if offset
+      offset ||= (page - 1) * limit   if page
 
-    if sanity_check?
-      if on_first
-        raise "on_first for opt = #{opt.inspect}" if page.to_i > 1
-      else
-        raise "no page number for opt = #{opt.inspect}" if page.blank?
+      # Get first and current page paths; adjust values if currently on the
+      # first page of results.
+      main_page  = @context[:request].path
+      path_opt   = { decorate: true, unescape: true }
+      mp_opt     = opt.merge(path_opt)
+      current    = make_path(main_page, **mp_opt)
+      first      = main_page
+      on_first   = (current == first)
+      unless on_first
+        mp_opt   = opt.except(*PAGE_OFFSET_KEYS).merge!(path_opt)
+        first    = make_path(main_page, **mp_opt)
+        on_first = (current == first)
       end
-    end
+      unless on_first
+        mp_opt   = opt.except(*PAGINATION_KEYS).merge!(path_opt)
+        first    = make_path(main_page, **mp_opt)
+        on_first = (current == first)
+      end
 
-    # On the first page, all pagination values retain their defaults.
-    # Otherwise the previous page link is just 'history.back()'.
-    unless on_first
-      self.page_offset = offset
-      self.page_number = page
-      self.first_page  = first
-      self.prev_page   = :back
+      if sanity_check?
+        if on_first
+          raise "on_first for opt = #{opt.inspect}" if page.to_i > 1
+        else
+          raise "no page number for opt = #{opt.inspect}" if page.blank?
+        end
+      end
+
+      # On the first page, all pagination values retain their defaults.
+      # Otherwise the previous page link is just 'history.back()'.
+      unless on_first
+        self.page_offset = offset
+        self.page_number = page
+        self.first_page  = first
+        self.prev_page   = :back
+      end
+      self.page_size = limit
+
     end
-    self.page_size = limit
 
     # Set the effective URL parameters, including those required by API calls
     # for paginated results.
-    opt = url_parameters(opt).except!(*FORM_KEYS)
-    opt[:page]   = page
-    opt[:offset] = (offset unless page)
-    opt[:limit]  = (limit  unless limit == default_page_size)
+    opt = url_parameters(opt).except!(:page, :offset, :limit, *FORM_KEYS)
+    unless @disabled
+      opt[:page]   = page
+      opt[:offset] = (offset unless page)
+      opt[:limit]  = (limit  unless limit == default_page_size)
+    end
     @initial_parameters = opt.compact
   end
 
@@ -226,24 +236,27 @@ class Paginator
   # @return [void]
   #
   def finalize(values = nil, **opt)
-    options = opt.extract!(:page, :first, :last, :list, :total)
     values  = { list: values } if values.is_a?(ActiveRecord::Relation)
     values  = {}               if values.blank?
-    if values.is_a?(Hash)
-      values = values.merge(opt.slice(:limit, :offset), options)
-      page   = positive(values[:page])
-      first  = values[:first] || page.nil?
-      last   = values[:last]  || page.nil?
-      self.page_items   = values[:list]
-      self.page_size    = values[:limit]
-      self.page_offset  = values[:offset]
-      self.total_items  = values[:total]
-      self.next_page    = (url_for(opt.merge(page: (page + 1))) unless last)
-      self.prev_page    = (url_for(opt.merge(page: (page - 1))) unless first)
-      self.first_page   = (url_for(opt.except(*PAGE_KEYS))      unless first)
-      self.prev_page    = first_page if page == 2
-    else
+    unless values.is_a?(Hash)
       raise "#{__method__}: not a Hash: #{values.class} #{values.inspect}"
+    end
+    options = opt.extract!(:page, :first, :last, :list, :total)
+    values  = values.merge(opt.slice(:limit, :offset), options)
+    self.page_items  = values[:list]
+    self.total_items = values[:total]
+    if disabled
+      self.first_page  = url_for(opt.except(*PAGE_KEYS))
+    else
+      page  = positive(values[:page])
+      first = values[:first] || page.nil?
+      last  = values[:last]  || page.nil?
+      self.page_size   = values[:limit]
+      self.page_offset = values[:offset]
+      self.next_page   = (url_for(opt.merge(page: (page + 1))) unless last)
+      self.prev_page   = (url_for(opt.merge(page: (page - 1))) unless first)
+      self.first_page  = (url_for(opt.except(*PAGE_KEYS))      unless first)
+      self.prev_page   = first_page if page == 2
     end
   end
 
@@ -315,14 +328,14 @@ class Paginator
 
     # Configured results per page for the given controller/action.
     #
-    # @param [Symbol, String, Hash, nil] c    Controller
-    # @param [Symbol, String, nil]       a    Action
-    # @param [Symbol]                    key  Configuration key.
+    # @param [Symbol, String, nil] controller
+    # @param [Symbol, String, nil] action
+    # @param [Symbol]              key        Configuration key.
     #
     # @return [Integer]
     #
-    def get_page_size(c = nil, a = nil, key: PAGE_SIZE_KEY)
-      c, a = c.values_at(:controller, :action) if c.is_a?(Hash)
+    def get_page_size(controller: nil, action: nil, key: PAGE_SIZE_KEY, **)
+      c, a = controller, action
       keys = []
       keys << :"emma.#{c}.#{a}.pagination" if c && a
       keys << :"emma.#{c}.#{a}"            if c && a
@@ -481,19 +494,19 @@ class Paginator
   # Current results per page for the given controller/action (unless an
   # argument is present).
   #
-  # @param [Symbol, String, Hash, nil] c    Controller
-  # @param [Symbol, String, nil]       a    Action
-  # @param [Symbol]                    key  Configuration key.
+  # @param [Hash] opt                 Passed to super.
   #
   # @return [Integer]
+  # @return [nil]                     If #disabled.
   #
-  def get_page_size(c = nil, a = nil, key: PAGE_SIZE_KEY)
-    c ? super : super(context)
+  def get_page_size(**opt)
+    opt[:controller] ? super(**opt) : super(**context) unless disabled
   end
 
   # Default results per page for the current controller/action.
   #
   # @return [Integer]
+  # @return [nil]                     If #disabled.
   #
   def default_page_size
     @default_page_size ||= get_page_size
@@ -643,11 +656,12 @@ class Paginator
   # @return [ActiveRecord::Relation, nil]
   #
   def source_relation(**opt)
-    return unless (src = page_source)
-    limit  = positive(opt.key?(:limit)  ? opt[:limit]  : page_size)
-    offset = positive(opt.key?(:offset) ? opt[:offset] : page_offset)
-    src = src.limit(limit)   if limit
-    src = src.offset(offset) if offset
+    unless (src = page_source).nil? || disabled
+      limit  = positive(opt.key?(:limit)  ? opt[:limit]  : page_size)
+      offset = positive(opt.key?(:offset) ? opt[:offset] : page_offset)
+      src = src.limit(limit)   if limit
+      src = src.offset(offset) if offset
+    end
     src
   end
 
@@ -672,12 +686,14 @@ class Paginator
   # @return [Integer]
   #
   def page_number=(value)
+    # raise "#{__method__} invalid when disabled" if disabled
     (property[:page_number] = positive(value)) or page_number
   end
 
   # Get the number of results per page.
   #
   # @return [Integer]
+  # @return [nil]                     If #disabled.
   #
   def page_size
     property[:page_size] ||= default_page_size
@@ -687,9 +703,10 @@ class Paginator
   #
   # @param [Integer, nil] value
   #
-  # @return [Integer]
+  # @return [Integer, nil]
   #
   def page_size=(value)
+    # raise "#{__method__} invalid when disabled" if disabled
     (property[:page_size] = positive(value)) or page_size
   end
 
@@ -708,6 +725,7 @@ class Paginator
   # @return [Integer]
   #
   def page_offset=(value)
+    # raise "#{__method__} invalid when disabled" if disabled
     (property[:page_offset] = positive(value)) or page_offset
   end
 
@@ -855,6 +873,7 @@ class Paginator
   # @return [nil]                     If there is no next page.
   #
   def next_page_path(list: nil, **url_params)
+    return if disabled
     list ||= page_items
     # noinspection RailsParamDefResolve
     if list.try(:next).present?
@@ -899,7 +918,11 @@ class Paginator
   #
   def first_index
     property[:first_index] ||=
-      positive(page_offset) || ((page_number - 1) * page_size)
+      if disabled
+        0
+      else
+        positive(page_offset) || ((page_number - 1) * page_size)
+      end
   end
 
   # Set the item index of the first item on the current page.
@@ -917,7 +940,12 @@ class Paginator
   # @return [Integer]
   #
   def last_index
-    property[:last_index] ||= first_index + (page_size - 1)
+    property[:last_index] ||=
+      if disabled
+        size - 1
+      else
+        first_index + (page_size - 1)
+      end
   end
 
   # Set the item index of the first item on the current page.
@@ -1012,6 +1040,26 @@ class Paginator
         raise "#{__method__}: #{v} > #{final} [final_position(#{index})]"
       end
       current[index] += 1 if increment
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Turn off pagination.
+  #
+  # @return [void]
+  #
+  def no_pagination
+    return if disabled
+    @disabled = true
+    @default_page_size = nil
+    @initial_parameters.except!(:page, :offset, :limit)
+    property.keys.excluding(:total_items, :page_records).each do |k|
+      property[k] = nil
     end
   end
 

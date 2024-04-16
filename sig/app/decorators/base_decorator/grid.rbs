@@ -116,12 +116,6 @@ module BaseDecorator::Grid
   #
   def grid_header_rows: () -> Integer
 
-  # Default number of rows per grid page.
-  #
-  # @type [Integer]
-  #
-  GRID_PAGE_SIZE: Integer
-
   # The number of rows of associated items per grid page.
   #
   # @return [Integer]

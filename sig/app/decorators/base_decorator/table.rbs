@@ -35,12 +35,6 @@ module BaseDecorator::Table
   MODEL_TABLE_ROW_OPT:    symArray
   MODEL_TABLE_PART_OPT:   symArray
 
-  # Default number of rows per table page.
-  #
-  # @type [Integer]
-  #
-  TABLE_PAGE_SIZE: Integer
-
   # The collection of items to be presented in tabular form.
   #
   # @param [Hash] opt                 Modifies *object* results.
@@ -88,8 +82,9 @@ module BaseDecorator::Table
   # The number of rows of associated items per table page.
   #
   # @return [Integer]
+  # @return [nil]                     If rows are not paginated.
   #
-  def table_page_size: () -> Integer
+  def table_page_size: () -> (Integer | nil)
 
   # Get a subset of associated items.
   #

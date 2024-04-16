@@ -62,7 +62,8 @@ module TestHelper::SystemTests::Index
 
     # Validate pagination if provided.
     if index || page
-      size  ||= Paginator.get_page_size(ctrlr)
+      # noinspection RubyMismatchedArgumentType
+      size  ||= Paginator.get_page_size(controller: ctrlr)
       page  ||= (index - 1) / size
       index ||= (page * size) + 1
       (page  <= 0)    ? assert_first_page : assert_not_first_page
