@@ -483,7 +483,7 @@ module SubmissionService::Action::Submit
   def add_to_index(records, **opt)
     fields = records.map(&:emma_metadata)
     $stderr.puts "=== STEP #{__method__} | #{Emma::ThreadMethods.thread_name} | #{records.size} recs = #{records.map { |r| manifest_item_id(r) }} | #{fields.size} fields = #{fields.inspect.truncate(1024)}" # TODO: testing - remove
-    result = ingest_api.put_records(*fields)
+    result = IngestService.instance.put_records(*fields)
     remaining, failure = process_ingest_errors(result, *records)
 
     opt[:meth]    = __method__
