@@ -327,8 +327,6 @@ class AccountDecorator
   def render_form_email(name, value, **opt)
     action = opt.delete(:action) || context[:action]
     edit   = (action == :edit)
-    opt[:readonly] = true                 if edit
-    opt[:title]    = EMAIL_FIELD_READONLY if edit
     opt[:readonly] = true                                if edit
     opt[:title]    = config_text(:account, :id_readonly) if edit
     opt.reverse_merge!(autocomplete: 'email')
