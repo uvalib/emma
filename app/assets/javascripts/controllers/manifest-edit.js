@@ -371,8 +371,9 @@ appSetup(MODULE, function() {
     const ROW           = selector(ROW_CLASS);
     const HEAD          = selector(HEAD_CLASS);
     const HEADER_ROW    = `${ROW}${HEAD}`;
-    const ALL_DATA_ROW  = `${ROW}:not(${HEAD})`;
-    const DATA_ROW      = `${ALL_DATA_ROW}:not(${HIDDEN})`;
+    const DATA_ROW      = `${ROW}:not(${HEAD})`;
+    const TEMPLATE_ROW  = `${DATA_ROW}${HIDDEN}`;
+    const VISIBLE_ROW   = `${DATA_ROW}:not(${HIDDEN})`;
     const COL_EXPANDER  = selector(COL_EXPANDER_CLASS);
     const ROW_EXPANDER  = selector(ROW_EXPANDER_CLASS);
     const EXPANDED      = selector(EXPANDED_MARKER);
@@ -1219,7 +1220,7 @@ appSetup(MODULE, function() {
      */
     function dataRows(target, hidden) {
         const tgt   = target || $grid;
-        const match = hidden ? ALL_DATA_ROW : DATA_ROW;
+        const match = hidden ? DATA_ROW : VISIBLE_ROW;
         return selfOrDescendents(tgt, match);
     }
 
@@ -1227,13 +1228,12 @@ appSetup(MODULE, function() {
      * Get the single row container associated with the target.
      *
      * @param {Selector} target
-     * @param {boolean}  [hidden]     If **true**, also match template row(s).
      *
      * @returns {jQuery}
      */
-    function dataRow(target, hidden) {
+    function dataRow(target) {
         const func  = 'dataRow'; //OUT.debug(`${func}: target =`, target);
-        const match = hidden ? ALL_DATA_ROW : DATA_ROW;
+        const match = DATA_ROW;
         return selfOrParent(target, match, func);
     }
 
@@ -1673,6 +1673,7 @@ appSetup(MODULE, function() {
         }
         if (!intermediate) {
             updateGridRowCount(1);
+            updateGridNavigation($grid);
         }
         return $new_row;
     }
@@ -3058,7 +3059,7 @@ appSetup(MODULE, function() {
      */
     function setupUploader(target) {
         OUT.debug('setupUploader: target =', target);
-        dataRows(target).each((_, row) => initializeUploader(row));
+        dataRows(target, true).each((_, row) => initializeUploader(row));
     }
 
     // ========================================================================
@@ -3183,7 +3184,7 @@ appSetup(MODULE, function() {
      * @returns {number}
      */
     function dbRowValue(target) {
-        const $row  = dataRow(target, true);
+        const $row  = dataRow(target);
         const value = $row.data(DB_ROW_DATA);
         return value || 0;
     }
@@ -3198,7 +3199,7 @@ appSetup(MODULE, function() {
      */
     function setDbRowValue(target, setting) {
         //OUT.debug(`setDbRowValue: setting = "${setting}"; target =`, target);
-        const $row   = dataRow(target, true);
+        const $row   = dataRow(target);
         const number = Number(setting);
         const value  = number || 0;
         if (number) { $row.removeAttr(DB_ROW_ATTR) }
@@ -3217,7 +3218,7 @@ appSetup(MODULE, function() {
      * @returns {number}
      */
     function initializeDbRowValue(target) {
-        const $row = dataRow(target, true);
+        const $row = dataRow(target);
         const attr = $row.attr(DB_ROW_ATTR);
         return attr ? setDbRowValue($row, attr) : dbRowValue($row);
     }
@@ -3233,7 +3234,7 @@ appSetup(MODULE, function() {
      * @returns {number}
      */
     function dbRowDelta(target) {
-        const $row  = dataRow(target, true);
+        const $row  = dataRow(target);
         const value = $row.data(DB_DELTA_DATA);
         return value || 0;
     }
@@ -3251,7 +3252,7 @@ appSetup(MODULE, function() {
      */
     function setDbRowDelta(target, setting) {
         //OUT.debug(`setDbRowDelta: setting = "${setting}"; target =`, target);
-        const $row   = dataRow(target, true);
+        const $row   = dataRow(target);
         const number = Number(setting);
         const value  = number || 0;
         if (number) { $row.removeAttr(DB_DELTA_ATTR) }
@@ -3270,7 +3271,7 @@ appSetup(MODULE, function() {
      * @returns {number}
      */
     function initializeDbRowDelta(target) {
-        const $row = dataRow(target, true);
+        const $row = dataRow(target);
         const attr = $row.attr(DB_DELTA_ATTR);
         return attr ? setDbRowDelta($row, attr) : dbRowDelta($row);
     }
@@ -3695,7 +3696,7 @@ appSetup(MODULE, function() {
      *
      * @type {jQuery}
      */
-    const $template_row = $grid.find(`${ALL_DATA_ROW}${HIDDEN}`);
+    const $template_row = $grid.find(TEMPLATE_ROW);
 
     /**
      * Create an empty unattached data row based on a previous data row. <p/>
@@ -3776,7 +3777,9 @@ appSetup(MODULE, function() {
     function dataCells(target, hidden) {
         const $t    = target && $(target);
         const match = DATA_CELL;
-        return $t?.is(match) ? $t : dataRows($t, hidden).children(match);
+        if ($t?.is(match)) { return $t }
+        const $row  = $t?.is(DATA_ROW) ? $t : dataRows($t, hidden);
+        return $row.children(match);
     }
 
     /**
@@ -3963,7 +3966,7 @@ appSetup(MODULE, function() {
      */
     function setupDataCellEditing(row) {
         OUT.debug('setupDataCellEditing: row =', row);
-        dataCells(row).each((_, cell) => setupCellNavGroup(cell));
+        dataCells(row, true).each((_, cell) => setupCellNavGroup(cell));
     }
 
     /**
@@ -3979,6 +3982,9 @@ appSetup(MODULE, function() {
         let group   = NavGroup.instanceFor($cell);
         if (group) {
             OUT.debug(`${func}: ${group.CLASS_NAME} EXISTS FOR`, $cell);
+        } else if ($cell.is(`${DATA_HEAD}[data-readonly]`)) {
+            OUT.debug(`${func}: HIDDEN DATA_HEAD - $cell =`, $cell);
+            return; // @see BaseDecorator::Grid::grid_head_cell
         } else if ($cell.is('.array.enum.multi')) {
             group   = CheckboxGroup.setupFor($cell);
         } else if ($cell.is('.array.enum')) {
@@ -5692,7 +5698,7 @@ appSetup(MODULE, function() {
             $target     = $(`#${anchor}`);
         }
         if (isPresent($target)) {
-            const $rows = dataRows();
+            const $rows = allDataRows();
             let $row    = $rows.filter($target);
             if (isMissing($row)) {
                 const $cell = $rows.find($target);

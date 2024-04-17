@@ -26,6 +26,8 @@ en:
 
       messages:
 
+        field:          'field'
+
         details:
           dd:           'Displayed as'
           dt:           'Data value'
