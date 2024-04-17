@@ -31,11 +31,13 @@ module IaDownloadService::Action::Records
   # @return [Array(String,String,nil)]
   #
   def download(url, **opt)
-    api(:get, url, **opt)
-    data = response.body
-    type = response['Content-Type']
-    disp = response['Content-Disposition']
-    name = disp.to_s.sub(/^.*filename=([^;]+)(;.*)?$/, '\1').presence
+    name = type = data = nil
+    if (resp = api(:get, url, **opt)).is_a?(Faraday::Response)
+      data = resp.body
+      type = resp['Content-Type']
+      disp = resp['Content-Disposition']
+      name = disp.to_s.sub(/^.*filename=([^;]+)(;.*)?$/, '\1').presence
+    end
     type ||= 'application/octet-stream'
     name ||= File.basename(url)
     return name, type, data
