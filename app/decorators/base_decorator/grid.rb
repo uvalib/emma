@@ -398,7 +398,7 @@ module BaseDecorator::Grid
   #
   # @type [Array<Symbol>]
   #
-  FIELD_PROPERTIES = %i[max min role].concat(Field::SYNTHETIC_KEYS).freeze
+  FIELD_PROPERTIES = %i[max min role type].concat(Field::SYNTHETIC_KEYS).freeze
 
   # grid_head_headers
   #

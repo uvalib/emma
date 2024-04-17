@@ -1015,10 +1015,7 @@ appSetup(MODULE, function() {
             $cell.removeData(name).removeAttr(attr);
             $cell.find(with_attr).removeData(name).removeAttr(attr);
             delete data.emma_data;
-            const value = $cell.makeValue(data);
-            setCellOriginalValue($cell, value);
-            setCellCurrentValue($cell, value);
-            setCellDisplayValue($cell, value);
+            dataCellUpdate(cell, data);
         });
     }
 
@@ -3865,21 +3862,25 @@ appSetup(MODULE, function() {
      * Use received data to update cell(s) associated with data values.
      *
      * @param {Selector} cell
-     * @param {Value}    value
+     * @param {*}        data        Converted to {@link Value}
      * @param {boolean}  [changed]   Def.: check {@link getCellOriginalValue}
      * @param {boolean}  [valid]
      *
      * @returns {boolean}           Whether the cell value changed.
      */
-    function dataCellUpdate(cell, value, changed, valid) {
-        OUT.debug('dataCellUpdate: value =', value, cell);
-        const $cell = dataCell(cell);
+    function dataCellUpdate(cell, data, changed, valid) {
+        OUT.debug('dataCellUpdate: data =', data, cell);
+        const $cell     = dataCell(cell);
+        const value     = $cell.makeValue(data);
+        const original  = getCellOriginalValue($cell);
+        let was_changed = changed;
+        if (notDefined(original)) {
+            setCellOriginalValue($cell, value);
+        } else if (notDefined(was_changed)) {
+            was_changed = value.differsFrom(original);
+        }
         setCellCurrentValue($cell, value);
         setCellDisplayValue($cell, value);
-        let was_changed = changed;
-        if (notDefined(was_changed)) {
-            was_changed = value.differsFrom(getCellOriginalValue($cell));
-        }
         updateCellValid($cell, valid);
         return was_changed;
     }
