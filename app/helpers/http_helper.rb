@@ -119,7 +119,7 @@ module HttpHelper
   # @param [any, nil] code            Symbol, Integer
   #
   def http_forbidden?(code)
-    http_status?(:forbidden, code)
+    (code == :forbidden) || (code == 403)
   end
 
   # Indicate whether the value represents a failure HTTP status.
