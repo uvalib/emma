@@ -57,7 +57,7 @@ module EmmaHelper
   #
   def emma_partners: (?type: Symbol, ?active: bool|nil, **untyped _ignored) -> symHash
 
-  # A simple "mailto:" link for project e-mail contact.
+  # A simple "mailto:" link for project email contact.
   #
   # @param [String, nil] label        Link text instead of the email address.
   #
@@ -65,7 +65,7 @@ module EmmaHelper
   #
   def project_email: (?(String|nil) label) -> ActiveSupport::SafeBuffer
 
-  # A simple "mailto:" link for the general e-mail contact.
+  # A simple "mailto:" link for the general email contact.
   #
   # @param [String, nil] label        Link text instead of the email address.
   #
@@ -73,7 +73,7 @@ module EmmaHelper
   #
   def contact_email: (?(String|nil) label) -> ActiveSupport::SafeBuffer
 
-  # The "mailto:" link for the general e-mail contact.
+  # The "mailto:" link for the general email contact.
   #
   # @param [String, nil] label        Link text instead of the email address.
   #

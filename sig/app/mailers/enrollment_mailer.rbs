@@ -18,7 +18,7 @@ class EnrollmentMailer < ApplicationMailer
   #
   def request_email: (**untyped opt) -> void
 
-  # Generate mailer message content for :request_email.
+  # Generate mailer message content for #request_email.
   #
   # If this is not the production deployment, the heading and body will be
   # annotated to indicate that this is not a real enrollment request.
@@ -42,7 +42,7 @@ class EnrollmentMailer < ApplicationMailer
   #
   def org_from: (Enrollment|nil item) -> (String | nil)
 
-  # Extract name/e-mail.
+  # Extract name/email.
   #
   # @param [Enrollment, nil] item
   #

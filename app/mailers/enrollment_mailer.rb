@@ -56,7 +56,7 @@ class EnrollmentMailer < ApplicationMailer
 
   protected
 
-  # Generate mailer message content for :request_email.
+  # Generate mailer message content for #request_email.
   #
   # If this is not the production deployment, the heading and body will be
   # annotated to indicate that this is not a real enrollment request.
@@ -115,7 +115,7 @@ class EnrollmentMailer < ApplicationMailer
     item&.long_name&.presence
   end
 
-  # Extract name/e-mail.
+  # Extract name/email.
   #
   # @param [Enrollment, nil] item
   #

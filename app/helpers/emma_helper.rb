@@ -116,7 +116,7 @@ module EmmaHelper
 
   public
 
-  # A simple "mailto:" link for project e-mail contact.
+  # A simple "mailto:" link for project email contact.
   #
   # @param [String, nil] label        Link text instead of the email address.
   #
@@ -126,7 +126,7 @@ module EmmaHelper
     mail_to(PROJECT_EMAIL, label)
   end
 
-  # A simple "mailto:" link for the general e-mail contact.
+  # A simple "mailto:" link for the general email contact.
   #
   # @param [String, nil] label        Link text instead of the email address.
   #
@@ -136,7 +136,7 @@ module EmmaHelper
     mail_to(CONTACT_EMAIL, label)
   end
 
-  # The "mailto:" link for the general e-mail contact.
+  # The "mailto:" link for the general email contact.
   #
   # @param [String, nil] label        Link text instead of the email address.
   #
