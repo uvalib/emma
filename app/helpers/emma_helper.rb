@@ -136,6 +136,16 @@ module EmmaHelper
     mail_to(CONTACT_EMAIL, label)
   end
 
+  # A simple "mailto:" link for the support email.
+  #
+  # @param [String, nil] label        Link text instead of the email address.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def help_email(label = nil)
+    mail_to(HELP_EMAIL, label)
+  end
+
   # The "mailto:" link for the general email contact.
   #
   # @param [String, nil] label        Link text instead of the email address.

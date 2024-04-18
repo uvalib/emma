@@ -54,6 +54,14 @@ class AccountController < ApplicationController
   #
   # Display a form for creation of a new EMMA user account.
   #
+  # For the deployed production application, a welcome -mail is generated for
+  # the new user unless "welcome=false" appears in URL parameters.
+  # Otherwise, a welcome email is generated *only* if "welcome=true" appears
+  # in URL parameters.
+  #
+  # This parameter (if provided) is passed to the :create endpoint via a hidden
+  # form parameter.
+  #
   # @see #new_account_path            Route helper
   #
   def new: () -> void
@@ -63,6 +71,12 @@ class AccountController < ApplicationController
   # === PATCH /account/create
   #
   # Create a new EMMA user account.
+  #
+  # For the deployed production application, a welcome email is generated for
+  # the new user unless "welcome=false" appears in the form parameters.
+  #
+  # Otherwise, a welcome email is generated *only* if "welcome=true" appears
+  # in the form parameters.
   #
   # === Usage Notes
   # In order to allow the database to auto-generate the record ID, the :id

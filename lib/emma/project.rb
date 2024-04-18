@@ -27,11 +27,17 @@ module Emma::Project
   #
   PROJECT_EMAIL = config_item('emma.project.email').freeze
 
-  # The email address for support and general information.
+  # The email address for general information.
   #
   # @type [String]
   #
   CONTACT_EMAIL = config_item('emma.contact.email').freeze
+
+  # The email address for support.
+  #
+  # @type [String]
+  #
+  HELP_EMAIL = CONTACT_EMAIL
 
   # The email address for requesting EMMA enrollment.
   #

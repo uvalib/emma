@@ -144,12 +144,12 @@ class EnrollmentController < ApplicationController
     ticket = params[:ticket]
     ticket = production_deployment? ? !false?(ticket) : true?(ticket)
     @item  = create_record
+    generate_help_ticket(item: @item) if ticket
     if request_xhr?
       render json: @item.as_json
     else
       post_response(@item, redirect: back)
     end
-    generate_help_ticket(item: @item) if ticket
   rescue CanCan::AccessDenied => error
     post_response(:forbidden, error)
   rescue Record::SubmitError => error

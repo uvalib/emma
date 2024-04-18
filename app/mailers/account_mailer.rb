@@ -1,14 +1,16 @@
-# app/mailers/enrollment_mailer.rb
+# app/mailers/account_mailer.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-class EnrollmentMailer < ApplicationMailer
+class AccountMailer < ApplicationMailer
 
   include Emma::Config
   include Emma::Project
+
+  include EmmaHelper
 
   include ActionView::Helpers::UrlHelper
 
@@ -16,7 +18,7 @@ class EnrollmentMailer < ApplicationMailer
   # :section: Mailer settings
   # ===========================================================================
 
-  default to: ENROLL_EMAIL, from: ENROLL_EMAIL
+  default from: CONTACT_EMAIL
 
   # ===========================================================================
   # :section:
@@ -24,26 +26,27 @@ class EnrollmentMailer < ApplicationMailer
 
   public
 
-  # Send to produce a JIRA help ticket for a new enrollment request.
+  # Send a welcome email to a new EMMA user.
   #
   # If this is not the production deployment, the email subject will be
   # annotated to indicate that this is not a real enrollment request.
   #
   # @param [Hash] opt
   #
-  def request_email(**opt)
+  def welcome_email(**opt)
     test  = opt.key?(:test) ? opt.delete(:test) : !production_deployment?
     @item = params[:item]
-    @elem = request_email_elements(**params, **opt, test: test)
+    @elem = welcome_email_elements(**params, **opt, test: test)
     test  = test && @elem[:testing] || {}
 
     # Setup mail options.
     opt             = params.slice(*MAIL_OPT).merge!(opt)
-    opt[:from]    ||= @item.requesting_user[:email] || ENROLL_EMAIL
-    opt[:subject] ||= [@elem[:subject], @item.long_name].compact.join(' - ')
+    opt[:to]      ||= @item.email_address
+    opt[:from]    ||= CONTACT_EMAIL
+    opt[:subject] ||= @elem[:subject]
     opt[:subject] &&= test[:subject] % opt[:subject] if test[:subject].present?
 
-    # Send the email to generate a help ticket.
+    # Send the email to the user.
     mail(opt) do |format|
       format.text
       format.html
@@ -56,43 +59,33 @@ class EnrollmentMailer < ApplicationMailer
 
   protected
 
-  # Generate mailer message content for #request_email.
+  # Generate mailer message content for #welcome_email.
   #
   # If this is not the production deployment, the heading and body will be
   # annotated to indicate that this is not a real enrollment request.
   #
-  # @param [Enrollment] item
-  # @param [Hash]       opt
+  # @param [User] item
+  # @param [Hash] opt
   #
   # @option opt [Symbol]  :format
   # @option opt [Boolean] :test
   #
   # @return [Hash]
   #
-  def request_email_elements(item: @item, **opt)
+  def welcome_email_elements(item: @item, **opt)
     test = opt.key?(:test) ? opt.delete(:test) : !production_deployment?
     html = (opt[:format] == :html)
-    id   = item.id || 1 # Might be nil only from EnrollmentMailerPreview.
 
-    # Get configured enrollment request email elements.
-    config_section('emma.enroll.request', **opt).tap do |cfg|
+    # Get configured welcome email elements.
+    config_section('emma.project.welcome', **opt).tap do |cfg|
 
       cfg[:body] = format_paragraphs(cfg[:body], **opt)
 
       # Interpolation happens afterwards to preserve HTML safety.
       vals = {
-        show: show_enrollment_url(id: id),
-        list: enrollment_index_url,
-        org:  org_from(item)&.inspect || '[ORG]',
-        name: name_from(item)         || '[NAME]'
+        contact_email: html ? contact_email : CONTACT_EMAIL,
+        help_email:    html ? help_email    : HELP_EMAIL,
       }
-      if html
-        l_opt = { target: '_top' } # Needed for EnrollmentMailerPreview.
-        vals[:show] = link_to(vals[:show], vals[:show], l_opt)
-        vals[:list] = link_to(vals[:list], vals[:list], l_opt)
-        vals[:org]  = ERB::Util.h(vals[:org])
-        vals[:name] = ERB::Util.h(vals[:name])
-      end
       cfg[:body].map! { |paragraph| interpolate(paragraph, **vals) }
 
       if test && (test = cfg[:testing]).present?
@@ -107,30 +100,6 @@ class EnrollmentMailer < ApplicationMailer
       end
 
     end
-  end
-
-  # Extract organization name.
-  #
-  # @param [Enrollment, nil] item
-  #
-  # @return [String, nil]
-  #
-  def org_from(item)
-    item&.long_name&.presence
-  end
-
-  # Extract name/email.
-  #
-  # @param [Enrollment, nil] item
-  #
-  # @return [String, nil]
-  #
-  def name_from(item)
-    user = item&.requesting_user&.presence or return
-    addr = user[:email].presence
-    name = [user[:first_name], user[:last_name]].compact_blank.presence
-    name = name&.join(' ')
-    (name && addr) && "#{addr} (#{name})" || addr || name
   end
 
 end

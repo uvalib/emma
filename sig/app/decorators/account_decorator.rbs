@@ -173,6 +173,23 @@ class AccountDecorator
   #
   FIELD_FILTERS: Array[String|Symbol|Regexp]
 
+  # Fields and configurations augmented with a :value entry containing the
+  # current field value.
+  #
+  # @param [Hash] opt                 Passed to super
+  #
+  # @return [Hash{Symbol=>FieldConfig}]
+  #
+  def list_field_values: (?limited: bool, **untyped opt) -> Hash[Symbol,FieldConfig]
+
+  # Pass the value of the "welcome" URL parameter as a hidden field.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]
+  #
+  def form_hidden: (**untyped opt) -> symHash
+
   # Render pre-populated form fields, manually adding password field(s) (which
   # are not in "emma.account.record").
   #

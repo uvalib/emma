@@ -26,9 +26,8 @@ class EnrollmentMailer < ApplicationMailer
   # @param [Enrollment] item
   # @param [Hash]       opt
   #
-  # @option opt [String] :show        URL to the enrollment item.
-  # @option opt [String] :list        URL to all enrollment items.
-  # @option opt [Symbol] :format
+  # @option opt [Symbol]  :format
+  # @option opt [Boolean] :test
   #
   # @return [Hash]
   #

@@ -13,11 +13,17 @@ module Emma::Project
   #
   PROJECT_EMAIL: String
 
-  # The email address for support and general information.
+  # The email address for general information.
   #
   # @type [String]
   #
   CONTACT_EMAIL: String
+
+  # The email address for support.
+  #
+  # @type [String]
+  #
+  HELP_EMAIL: String
 
   # The email address for requesting EMMA enrollment.
   #

@@ -429,6 +429,25 @@ module AccountConcern
 
   public
 
+  # Send a welcome email to a new user.
+  #
+  # @param [Hash] opt
+  #
+  # @return [void]
+  #
+  # @see AccountMailer#welcome_email
+  #
+  def generate_welcome_email(**opt)
+    opt = url_parameters.slice(:cc, :bcc, :format).merge(opt)
+    AccountMailer.with(opt).welcome_email.deliver_later
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   module DeviseMethods
 
     # devise_mapping

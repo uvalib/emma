@@ -287,6 +287,21 @@ class AccountDecorator
 
   public
 
+  # Pass the value of the "welcome" URL parameter as a hidden field.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]
+  #
+  def form_hidden(**opt)
+    prm = url_parameters.slice(:welcome, :cc, :bcc)
+    if prm[:welcome].nil?
+      super
+    else
+      super { |result, _| result.merge!(prm) }
+    end
+  end
+
   # Render pre-populated form fields, manually adding password field(s) (which
   # are not in "emma.account.record").
   #

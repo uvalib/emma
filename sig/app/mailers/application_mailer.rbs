@@ -1,2 +1,30 @@
 class ApplicationMailer < ActionMailer::Base
+  include Emma::Common
+
+  include HtmlHelper
+
+  # @private
+  MAIL_OPT: symArray
+
+  # Transform *body* into an array of paragraphs.
+  #
+  # @param [Array, String]       body
+  # @param [Symbol, String, nil] format
+  # @param [Integer, nil]        width
+  # @param [String]              paragraph
+  #
+  # @return [Array<ActiveSupport::SafeBuffer>]    If *format* == :html
+  # @return [Array<String>]                       Otherwise
+  #
+  def format_paragraphs: (untyped boyd, ?format: Symbol|String|nil, ?width: Integer|nil, ?paragraph: String, **untyped _ignored) -> (Array[ActiveSupport::SafeBuffer] | Array[String])
+
+  # Replace white space in *text* to yield a result containing one or more
+  # newline-delimited lines.
+  #
+  # @param [String]  text
+  # @param [Integer] width
+  #
+  # @return [String]
+  #
+  def wrap_lines: (String text, ?width: Integer) -> String
 end

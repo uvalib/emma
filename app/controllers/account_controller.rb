@@ -119,6 +119,14 @@ class AccountController < ApplicationController
   #
   # Display a form for creation of a new EMMA user account.
   #
+  # For the deployed production application, a welcome email is generated for
+  # the new user unless "welcome=false" appears in URL parameters.
+  # Otherwise, a welcome email is generated *only* if "welcome=true" appears
+  # in URL parameters.
+  #
+  # This parameter (if provided) is passed to the :create endpoint via a hidden
+  # form parameter.
+  #
   # @see #new_account_path            Route helper
   #
   def new
@@ -137,6 +145,12 @@ class AccountController < ApplicationController
   #
   # Create a new EMMA user account.
   #
+  # For the deployed production application, a welcome email is generated for
+  # the new user unless "welcome=false" appears in the form parameters.
+  #
+  # Otherwise, a welcome email is generated *only* if "welcome=true" appears
+  # in the form parameters.
+  #
   # === Usage Notes
   # In order to allow the database to auto-generate the record ID, the :id
   # parameter will be rejected unless "force=true" is included in the URL
@@ -147,7 +161,10 @@ class AccountController < ApplicationController
   def create
     __log_activity
     __debug_route
+    mail  = params[:welcome]
+    mail  = production_deployment? ? !false?(mail) : true?(mail)
     @item = create_record
+    generate_welcome_email(item: @item) if mail
     post_response(:created, @item)
   rescue CanCan::AccessDenied => error
     post_response(:forbidden, error)

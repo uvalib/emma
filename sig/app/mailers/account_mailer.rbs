@@ -1,0 +1,37 @@
+class AccountMailer < ApplicationMailer
+  include Emma::Config
+
+  include Emma::Project
+
+  include EmmaHelper
+
+  include ActionView::Helpers::UrlHelper
+
+  @item: User
+
+  @elem: symHash
+
+  # Send a welcome email to a new EMMA user.
+  #
+  # If this is not the production deployment, the email subject will be
+  # annotated to indicate that this is not a real enrollment request.
+  #
+  # @param [Hash] opt
+  #
+  def welcome_email: (**untyped opt) -> void
+
+  # Generate mailer message content for #welcome_email.
+  #
+  # If this is not the production deployment, the heading and body will be
+  # annotated to indicate that this is not a real enrollment request.
+  #
+  # @param [User] item
+  # @param [Hash] opt
+  #
+  # @option opt [Symbol]  :format
+  # @option opt [Boolean] :test
+  #
+  # @return [Hash]
+  #
+  def welcome_email_elements: (?item: User, **untyped opt) -> symHash
+end
