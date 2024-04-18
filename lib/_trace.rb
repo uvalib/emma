@@ -110,9 +110,8 @@ def __output_impl(*args, **opt)
   # Combine arguments and block results into a single string.
   args.concat(Array.wrap(yield)) if block_given?
   if opt[:debug]
-    omit = opt[:omission] || '…'
-    max  = opt[:max]
-    max  = max - leader.size if max
+    max  = positive(opt[:max].to_i - leader.size)
+    omit = opt[:omission]
     args =
       args.flat_map do |arg|
         case arg
@@ -122,20 +121,10 @@ def __output_impl(*args, **opt)
           else             arg.inspect
         end
       end
-    args.map! do |arg|
-      arg = to_utf8(arg)
-      if max
-        next unless max.positive?
-        size = arg.size + sep.size
-        if max >= size
-          max -= size
-        else
-          stop = max - omit.length
-          arg  = (arg[0, stop] + omit unless stop.negative?)
-          max  = 0
-        end
-      end
-      arg
+    if max && omit
+      args.map! { |arg| arg.truncate_bytes(max, omission: omit) rescue nil }
+    elsif max
+      args.map! { |arg| arg.truncate_bytes(max) rescue nil }
     end
   end
   lines = leader + args.compact.join(sep).gsub(/\n/, "\n#{leader}").strip

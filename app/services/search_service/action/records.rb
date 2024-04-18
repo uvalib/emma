@@ -126,7 +126,9 @@ module SearchService::Action::Records
   # @see https://api.swaggerhub.com/apis/bus/emma-federated-search-api/0.0.5#/paths/search           JSON API specification
   #
   def get_records(**opt)
-    opt.slice(:prev_id, :prev_value).each { |k, v| opt[k] = CGI.unescape(v) }
+    opt.slice(:prev_id, :prev_value).each do |k, v|
+      opt[k] = CGI.unescape(v) if (v = v.to_s).present?
+    end
     opt = get_parameters(__method__, **opt)
     api(:get, 'search', **opt)
     api_return(Search::Message::SearchRecordList)

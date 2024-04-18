@@ -85,8 +85,7 @@ module SearchService::Common
 
       # Redistribute identifier search terms and ensure that OCLC terms do not
       # include leading zeros (since the Unified Index handles this badly).
-      keys  = %i[q identifier]
-      terms = keys.map { |k| [k, result[k]] }.to_h
+      terms = result.slice(:q, :identifier)
       if terms.any? { |_, v| v.present? }
         terms.transform_values! do |v|
           next [] if v.blank?
@@ -95,14 +94,12 @@ module SearchService::Common
           v.map! { |t| PublicationIdentifier.cast(t, invalid: true) || t }
           v.compact_blank!
         end
-        i, q = terms[:q].partition { |term| term.is_a?(PublicationIdentifier) }
-        terms[:q] = q
-        terms[:identifier] = [*terms[:identifier], *i].map! do |term|
-          term.is_a?(Oclc) ? term.to_s.sub(/:0+/, ':') : term.to_s
-        end
-        keys.each do |k|
-          if terms[k].present?
-            result[k] = terms[k].join(' ')
+        i, q = terms[:q].partition { |t| t.is_a?(PublicationIdentifier) }
+        i = [*terms[:identifier], *i]
+        i.map! { |t| t.is_a?(Oclc) ? t.to_s.sub(/:0+/, ':') : t.to_s }
+        { q: q, identifier: i }.each_pair do |k, v|
+          if v.present?
+            result[k] = v.join(' ')
           else
             result.delete(k)
           end

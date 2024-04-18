@@ -312,10 +312,11 @@ module ApiService::Common
   # @param [Exception]              error
   # @param [Symbol,String]          action
   # @param [Boolean]                full      If *true*, show complete body.
+  # @param [Integer, nil]           limit     Max data output size.
   #
   # @return [void]
   #
-  def __debug_api_response: (?response: Faraday::Response|symHash, ?error: Exception, ?action: Symbol|String, ?full: bool) -> void
+  def __debug_api_response: (?response: Faraday::Response|symHash, ?error: Exception, ?action: Symbol|String, ?full: bool, ?limit: Integer|nil) -> void
 
   # Include the shared data structure which holds the definition of the API
   # requests and parameters.

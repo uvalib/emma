@@ -594,6 +594,7 @@ module ApiService::Common
   # @param [Exception]              error
   # @param [Symbol,String]          action
   # @param [Boolean]                full      If *true*, show complete body.
+  # @param [Integer, nil]           limit     Max data output size.
   #
   # @return [void]
   #
@@ -604,7 +605,8 @@ module ApiService::Common
     response: @response,
     error:    @exception,
     action:   @action,
-    full:     DEBUG_TRANSMISSION
+    full:     DEBUG_TRANSMISSION,
+    limit:    2048
   )
     response ||= error.try(:http_response) || error.try(:response)
 
@@ -614,17 +616,15 @@ module ApiService::Common
     status.transform_values! { |v| v&.inspect || '(none)' }
     status.transform_values! { |v| v.truncate(256) } unless full
 
-    limit = 2048
     if (data = ApiService::Error.oauth2_error_header(response))
       data = "(www-authenticate) #{data}"
     elsif (data = response.try(:body) || response.try(:dig, :body)).blank?
       data = '(none)'
     else
-      size = ("#{data.size} bytes:" if data.is_a?(String))
+      size = data.is_a?(String) ? "#{data.size} bytes" : data.class
       data = data.pretty_inspect unless data.is_a?(String)
-      data = to_utf8(data).truncate_bytes(limit) rescue nil
-      data &&= "#{size}\n#{data}"
-      data ||= "#{size} [...]"
+      data = data.truncate_bytes(limit) rescue nil if limit&.positive?
+      data = data ? "#{size}:\n#{data}" : "#{size} [...]"
     end
 
     __debug_impl(leader: '<<<', separator: DEBUG_SEPARATOR, max: nil) do
