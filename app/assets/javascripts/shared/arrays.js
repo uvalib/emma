@@ -17,13 +17,17 @@ AppDebug.file('shared/arrays');
 /**
  * Make a duplicate of the given array.
  *
- * @param {array|undefined} item
- * @param {boolean}         [shallow]   If **true** make a shallow copy.
+ * @param {*}       item
+ * @param {boolean} [shallow]         If **true** make a shallow copy.
  *
  * @returns {array}
  */
 export function dupArray(item, shallow) {
-    return Array.isArray(item) ? dup(item, !shallow) : arrayWrap(item);
+    switch (true) {
+        case Array.isArray(item):       return dup(item, !shallow);
+        case isDefined(item?.toArray):  return dup(item.toArray(), !shallow);
+        default:                        return arrayWrap(item);
+    }
 }
 
 /**

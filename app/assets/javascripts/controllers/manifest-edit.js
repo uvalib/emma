@@ -1329,7 +1329,7 @@ appSetup(MODULE, function() {
                     const errors = Object.keys(err);
                     value = (errors.length > 1) ? errors : errors[0];
                 }
-                const new_value = $cell.makeValue(value, undefined, err);
+                const new_value = $cell.makeValue(value, err);
                 const old_value = getCellCurrentValue($cell);
                 if (!old_value || new_value.differsFrom(old_value)) {
                     dataCellUpdate($cell, new_value, true, new_value.valid);
@@ -4291,7 +4291,11 @@ appSetup(MODULE, function() {
         if (notDefined(changed)) {
             const original = getCellOriginalValue($cell);
             const current  = getCellCurrentValue($cell);
-            changed = current.differsFrom(original);
+            if (isDefined(original) && isDefined(current)) {
+                changed = current.differsFrom(original);
+            } else {
+                changed = false;
+            }
         }
         return updateCellChanged($cell, changed);
     }
@@ -4380,13 +4384,12 @@ appSetup(MODULE, function() {
         if ($cell.is(ERROR)) {
             return false;
         }
-        const prop  = cellProperties($cell);
         if (isDefined(current)) {
-            value = $cell.makeValue(current, prop);
+            value = $cell.makeValue(current);
         } else {
             value = getCellCurrentValue($cell);
         }
-        if (prop.required) {
+        if (cellProperties($cell).required) {
             return !!value && value.nonBlank;
         } else {
             return !value || value.valid;
@@ -6060,23 +6063,16 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Create a Value in the context of the jQuery object unless the argument
-     * is already a Value object.
+     * Create a new Value in the context of the jQuery object.
      *
-     * @param {*}          v
-     * @param {Properties} [prop]     Def: element's associated properties
+     * @param {*}                                 value
      * @param {Object.<string,(string|string[])>} [errs]
      *
      * @returns {Value}
      */
-    jQuery.fn.makeValue = function(v, prop, errs) {
-        if (v instanceof Field.Value) {
-            if (errs) { v.errorTable = errs }
-            return v;
-        } else {
-            const p = prop || cellProperties(this);
-            return new Field.Value(v, p, errs);
-        }
+    jQuery.fn.makeValue = function(value, errs) {
+        const prop = cellProperties(this);
+        return new Field.Value(value, prop, errs);
     };
 
     // ========================================================================

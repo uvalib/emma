@@ -586,7 +586,7 @@ export class Value extends BaseClass {
     set errorTable(arg) { this._errors = { ...arg } }
 
     // ========================================================================
-    // Methods - internal
+    // Methods
     // ========================================================================
 
     /**
@@ -612,24 +612,24 @@ export class Value extends BaseClass {
      * Indicate whether the instance has the same value.
      *
      * @param {*}       value         A Value or convertible to a Value.
-     * @param {boolean} [any_order]   If **true**, array order doesn't matter.
+     * @param {boolean} [ordered]     If **true**, array order matters.
      *
      * @returns {boolean}             They represent the same value.
      */
-    sameAs(value, any_order) {
-        return this.constructor.same(this, value, any_order, true);
+    sameAs(value, ordered) {
+        return this.constructor.same(this, value, ordered, true);
     }
 
     /**
      * Indicate whether the instance has a different value.
      *
      * @param {*}       value         A Value or convertible to a Value.
-     * @param {boolean} [any_order]   If **true**, array order doesn't matter.
+     * @param {boolean} [ordered]     If **true**, array order matters.
      *
      * @returns {boolean}             They represent different values.
      */
-    differsFrom(value, any_order) {
-        return this.constructor.differ(this, value, any_order, true);
+    differsFrom(value, ordered) {
+        return this.constructor.differ(this, value, ordered, true);
     }
 
     /**
@@ -791,15 +791,15 @@ export class Value extends BaseClass {
      *
      * @param {*}       value1        A Value or convertible to a Value.
      * @param {*}       value2        A Value or convertible to a Value.
-     * @param {boolean} [any_order]   If **true**, array order doesn't matter.
+     * @param {boolean} [ordered]     If **true**, array order matters.
      * @param {boolean} [value_only]  If **true**, blank strings and undefined
      *                                  are treated as the same (not applied
      *                                  to array elements or object values).
      *
      * @returns {boolean}             They represent the same value.
      */
-    static same(value1, value2, any_order, value_only) {
-        return !this.differ(value1, value2, any_order, value_only);
+    static same(value1, value2, ordered, value_only) {
+        return !this.differ(value1, value2, ordered, value_only);
     }
 
     /**
@@ -807,24 +807,31 @@ export class Value extends BaseClass {
      *
      * @param {*}       value1        A Value or convertible to a Value.
      * @param {*}       value2        A Value or convertible to a Value.
-     * @param {boolean} [any_order]   If **true**, array order doesn't matter.
+     * @param {boolean} [ordered]     If **true**, array order matters.
      * @param {boolean} [value_only]  If **true**, blank strings and undefined
      *                                  are treated as the same (not applied
      *                                  to array elements or object values).
      *
      * @returns {boolean}             They represent different values.
      */
-    static differ(value1, value2, any_order, value_only) {
+    static differ(value1, value2, ordered, value_only) {
         const [v1, v2] = [value1, value2].map(v => this.wrap(v));
-        if (value_only && (v1.toString() === v2.toString())) { return false }
-        if (v1.type !== v2.type) { return true }
-        if (v1.type === 'array') {
-            return this._diffArray(v1.toArray(), v2.toArray(), any_order);
+
+        const [a1, a2] = [v1, v2].map(v => (v.type === 'array'));
+        if (a1 || a2) {
+            return !a1 || !a2 || this._diffArray(v1.value, v2.value, ordered);
         }
-        if (v1.type === 'object') {
-            return this._diffObject(v1.value, v2.value, any_order);
+
+        const [o1, o2] = [v1, v2].map(v => (v.type === 'object'));
+        if (o1 || o2) {
+            return !o1 || !o2 || this._diffObject(v1.value, v2.value, ordered);
         }
-        return v1.value !== v2.value;
+
+        if (value_only) {
+            return (v1.toString() !== v2.toString());
+        } else {
+            return (v1.value !== v2.value);
+        }
     }
 
     /**
@@ -832,15 +839,15 @@ export class Value extends BaseClass {
      *
      * @param {array}   a1
      * @param {array}   a2
-     * @param {boolean} [any_order]   If **true**, array order doesn't matter.
+     * @param {boolean} [ordered]     If **true**, array order matters.
      *
      * @returns {boolean}
      * @protected
      */
-    static _diffArray(a1, a2, any_order) {
+    static _diffArray(a1, a2, ordered) {
         if (a1.length !== a2.length) { return true }
-        if (any_order) { [a1, a2] = [a1, a2].map(v => [...v].sort()) }
-        return !!a1.find((v, i) => this._diffItem(v, a2[i]));
+        if (!ordered) { [a1, a2] = [a1, a2].map(v => [...v].sort()) }
+        return !!a1.find((v, i) => this._diffItem(v, a2[i], ordered));
     }
 
     /**
@@ -848,17 +855,16 @@ export class Value extends BaseClass {
      *
      * @param {object}  o1
      * @param {object}  o2
-     * @param {boolean} [any_order]   If **true**, array order doesn't matter.
-     *                                If **false**, object keys must be in the
+     * @param {boolean} [ordered]     If **true**, object keys must be in the
      *                                  same order.
      *
      * @returns {boolean}
      * @protected
      */
-    static _diffObject(o1, o2, any_order) {
+    static _diffObject(o1, o2, ordered) {
         const [k1, k2] = [o1, o2].map(v => Object.keys(v));
-        if (this._diffArray(k1, k2, (any_order !== false))) { return true }
-        return !!k1.find(k => this._diffItem(o1[k], o2[k]));
+        if (this._diffArray(k1, k2, ordered)) { return true }
+        return !!k1.find(k => this._diffItem(o1[k], o2[k], ordered));
     }
 
     /**
@@ -866,16 +872,19 @@ export class Value extends BaseClass {
      *
      * @param {array|object|string|number|boolean|null|undefined} v1
      * @param {array|object|string|number|boolean|null|undefined} v2
+     * @param {boolean}                                           [ordered]
      *
      * @returns {boolean}
      * @protected
      */
-    static _diffItem(v1, v2) {
+    static _diffItem(v1, v2, ordered) {
         if (v1 === v2) { return false }
+
         const [a1, a2] = [v1, v2].map(v => Array.isArray(v));
-        if (a1 || a2)  { return (a1 !== a2) || this._diffArray(v1, v2) }
-        const [t1, t2] = [v1, v2].map(v => typeof(v));
-        return (t1 !== t2) || (t1 !== 'object') || this._diffObject(v1, v2);
+        if (a1 || a2) { return !a1 || !a2 || this._diffArray(v1, v2, ordered) }
+
+        const [o1, o2] = [v1, v2].map(v => (typeof(v) === 'object'));
+        return !o1 || !o2 || this._diffObject(v1, v2, ordered);
     }
 
 }
