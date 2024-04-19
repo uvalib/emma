@@ -35,13 +35,25 @@ module ManifestItem::StatusMethods
     overwrite:  true,
     **added
   )
-    item  ||= default_to_self
-    file  &&= overwrite || item[:file_status].nil?
-    data  &&= overwrite || item[:data_status].nil?
-    ready &&= overwrite || item[:ready_status].nil?
-    item[:file_status]  = evaluate_file_status(item, **added)  if file
-    item[:data_status]  = evaluate_data_status(item, **added)  if data
-    item[:ready_status] = evaluate_ready_status(item, **added) if ready
+    item ||= default_to_self
+
+    old_fs, dif_fs = item[:file_status]&.to_sym, nil
+    if file && (overwrite || old_fs.blank?)
+      value = evaluate_file_status(item, **added)
+      item[:file_status] = value if (dif_fs = (value != old_fs))
+    end
+
+    old_ds, dif_ds = item[:data_status]&.to_sym, nil
+    if data && (overwrite || old_ds.blank?)
+      value = evaluate_data_status(item, **added)
+      item[:data_status] = value if (dif_ds = (value != old_ds))
+    end
+
+    old_rs = item[:ready_status]&.to_sym
+    if ready && (overwrite || old_rs.blank?) || (dif_fs && dif_ds)
+      item[:ready_status] = evaluate_ready_status(item, **added)
+    end
+
     # noinspection RubyMismatchedReturnType
     item
   end
@@ -151,7 +163,8 @@ module ManifestItem::StatusMethods
   def item_fields(item, added = nil)
     item ||= default_to_self
     result = item.is_a?(ManifestItem) ? item.fields : item.symbolize_keys
-    added ? result.merge!(added) : result
+    result.merge!(added) if added.present?
+    result
   end
 
   # ===========================================================================
@@ -160,12 +173,26 @@ module ManifestItem::StatusMethods
 
   public
 
-  # Indicate the item represents unsaved data.
+  # Indicate whether the item record is in its initial state.
   #
   # @param [ManifestItem, Hash, nil] item   Default: self.
   #
+  # @see file:javascripts/controllers/manifest-edit.js *isInitialData()*
+  #
+  def initial?(item = nil)
+    item ||= default_to_self
+    item[:updated_at] == item[:created_at]
+  end
+
+  # Indicate whether the item represents unsaved data.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  # @see file:javascripts/controllers/manifest-edit.js *isUnsavedData()*
+  #
   def unsaved?(item = nil)
-    item     ||= default_to_self
+    item ||= default_to_self
+    return false if initial?(item)
     last_saved = item[:last_saved]
     updated_at = item[:updated_at]
     last_saved.blank? || (updated_at.present? && (last_saved < updated_at))
@@ -177,7 +204,7 @@ module ManifestItem::StatusMethods
   #
   def ready?(item = nil)
     item ||= default_to_self
-    %i[file_status data_status].all? { |col| status_ok?(item, column: col) }
+    file_ok?(item) && data_ok?(item)
   end
 
   # Indicate whether the item has been associated with a file.

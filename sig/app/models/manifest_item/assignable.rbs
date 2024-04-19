@@ -11,8 +11,9 @@ module ManifestItem::Assignable
   # @param [Model, Hash, ActionController::Parameters, nil] attr
   # @param [Hash]                                           opt
   #
-  # @option opt [Boolean] :invalid    Allow invalid values.
-  # @option opt [Symbol]  :meth       Caller (for diagnostics).
+  # @option opt [Boolean] :invalid      Allow invalid values.
+  # @option opt [Symbol]  :meth         Caller (for diagnostics).
+  # @option opt [Boolean] :revalidate   Cause status re-evaluation here.
   #
   # @return [Hash]
   #

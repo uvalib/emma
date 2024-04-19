@@ -95,7 +95,7 @@ class ManifestItem < ApplicationRecord
   #
   # @param [Model, Hash, ActionController::Parameters, nil] attr
   #
-  # @option attr [Boolean] :re_validate
+  # @option attr [Boolean] :revalidate  Cause status re-evaluation here.
   #
   # @return [void]
   #

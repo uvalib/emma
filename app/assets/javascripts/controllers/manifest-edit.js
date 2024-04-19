@@ -3348,6 +3348,40 @@ appSetup(MODULE, function() {
     const STATUS_DEFAULT = 'missing';
 
     /**
+     * Indicate whether the item record is in its initial state.
+     *
+     * @param {ManifestItem|undefined} data
+     *
+     * @returns {boolean}
+     *
+     * @see "ManifestItem::StatusMethods#initial?"
+     */
+    function isInitialData(data) {
+        const updated_at = timestamp(data?.updated_at);
+        const created_at = timestamp(data?.created_at);
+        return (updated_at === created_at);
+    }
+
+    /**
+     * Indicate whether the item represents unsaved data.
+     *
+     * @param {ManifestItem|undefined} data
+     *
+     * @returns {boolean}
+     *
+     * @see "ManifestItem::StatusMethods#unsaved?"
+     */
+    function isUnsavedData(data) {
+        if (isInitialData(data)) {
+            return false;
+        } else {
+            const last_saved = timestamp(data?.last_saved);
+            const updated_at = timestamp(data?.updated_at);
+            return !last_saved || (last_saved < updated_at);
+        }
+    }
+
+    /**
      * Extract status data fields.
      *
      * @param {ManifestItem|undefined} data
@@ -3358,20 +3392,10 @@ appSetup(MODULE, function() {
      */
     function statusData(data) {
         if (isEmpty(data)) { return {} }
-        if (hasKey(data, 'last_saved')) {
-            if (data.ready_status === 'ready') {
-                const last_saved = timestamp(data.last_saved);
-                const updated_at = timestamp(data.updated_at);
-                if (!last_saved || (last_saved < updated_at)) {
-                    data.ready_status = 'unsaved';
-                }
-            } else if (!hasKey(data, 'ready_status')) {
-                const last_saved = timestamp(data.last_saved);
-                const updated_at = timestamp(data.updated_at);
-                if (last_saved > updated_at) {
-                    data.ready_status = 'ready';
-                }
-            }
+        if (isUnsavedData(data)) {
+            data.ready_status = 'unsaved';
+        } else if (!data.ready_status) {
+            data.ready_status = 'ready';
         }
         return compact(toObject(STATUS_TYPE_VALUES, t => presence(data[t])));
     }

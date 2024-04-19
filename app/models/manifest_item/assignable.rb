@@ -30,15 +30,16 @@ module ManifestItem::Assignable
   #
   # @option opt [Boolean] :invalid      Allow invalid values.
   # @option opt [Symbol]  :meth         Caller (for diagnostics).
-  # @option opt [Boolean] :re_validate  Caller will validate so skip that here.
+  # @option opt [Boolean] :revalidate   Cause status re-evaluation here.
   #
   # @return [Hash]
   #
   def normalize_attributes(attr, **opt)
+    rev = opt.delete(:revalidate)
     opt.reverse_merge!(key_norm: true, compact: false)
-    opt.reverse_merge!(errors: {}) unless opt[:re_validate]
+    opt.reverse_merge!(errors: {}) if rev
     super.tap do |result|
-      unless opt[:re_validate]
+      if rev
         result[:field_error] = opt[:errors]
         update_status!(result, **opt.slice(*UPDATE_STATUS_OPT))
       end

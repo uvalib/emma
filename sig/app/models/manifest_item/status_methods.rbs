@@ -65,7 +65,15 @@ module ManifestItem::StatusMethods
   #
   def item_fields: (?(ManifestItem|symHash|nil) item, ?(symHash|nil) added) -> symHash
 
-  # Indicate the item represents unsaved data.
+  # Indicate whether the item record is in its initial state.
+  #
+  # @param [ManifestItem, Hash, nil] item   Default: self.
+  #
+  # @see file:javascripts/controllers/manifest-edit.js *isInitialData()*
+  #
+  def initial?: (?(ManifestItem|symHash|nil) item) -> bool
+
+  # Indicate whether the item represents unsaved data.
   #
   # @param [ManifestItem, Hash, nil] item   Default: self.
   #

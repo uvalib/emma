@@ -181,15 +181,21 @@ class ManifestItem < ApplicationRecord
   #
   # @param [Model, Hash, ActionController::Parameters, nil] attr
   #
-  # @option attr [Boolean] :re_validate
+  # @option attr [Boolean] :revalidate  Cause status re-evaluation here.
   #
   # @return [void]
   #
   def assign_attributes(attr)
+    opt = attr.is_a?(Hash) && attr[:attr_opt] || {}
+    rev = nil # Status is not revalidated by default.
+    if opt.key?(:revalidate)
+      opt  = opt.dup
+      rev  = opt.delete(:revalidate)
+      attr = attr.merge(attr_opt: opt)
+    end
     attr = normalize_attributes(attr)
-    opt  = attr[:attr_opt] || {}
     super
-    if opt[:re_validate]
+    if rev
       data_columns = fields.except(*NON_BACKUP_COLS)
       data_values  = normalize_attributes(data_columns)
       self.field_error = data_values[:field_error]
@@ -224,7 +230,7 @@ class ManifestItem < ApplicationRecord
     opt[:deleting]   = false            unless opt.key?(:deleting)  if deleting
     opt[:editing]    = false            unless opt.key?(:editing)   if editing
     opt[:backup]     = nil              unless opt.key?(:backup)    if backup
-    opt[:attr_opt]   = { re_validate: true }
+    opt[:attr_opt]   = { revalidate: true }
     update!(opt)
     self
   end

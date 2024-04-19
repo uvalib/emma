@@ -57,10 +57,14 @@ export const MINUTES = 1 * MINUTE;
  */
 export function timestamp(value) {
     let date;
-    if (typeof value === 'string') {
+    if (!value) {
+        // No date value given.
+    } else if (value instanceof Date) {
+        date = value;
+    } else if (typeof value === 'number') {
+        date = new Date(value);
+    } else if (typeof value === 'string') {
         date = new Date(value.trim().replace(/\s*UTC\s*/, ''));
-    } else {
-        date = (value instanceof Date) ? value : new Date(value);
     }
     return date?.getTime() || 0;
 }

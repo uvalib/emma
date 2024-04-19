@@ -159,7 +159,8 @@ module ManifestItemConcern
   #
   def import_transform!(item)
     normalize_import_name!(item)
-    item.replace(ManifestItem.normalize_attributes(item).except!(:attr_opt))
+    attr = ManifestItem.normalize_attributes(item, revalidate: true)
+    item.replace(attr.except(:attr_opt))
   end
 
   # Transform ManifestItem field values for export.
@@ -734,7 +735,8 @@ module ManifestItemConcern
       end
       row   = (item[:row]   ||= row)
       delta = (item[:delta] ||= delta + 1)
-      ManifestItem.normalize_attributes(item).except!(:attr_opt)
+      item  = ManifestItem.normalize_attributes(item, revalidate: true)
+      item.except(:attr_opt)
     end
   end
 
