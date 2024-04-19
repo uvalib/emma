@@ -176,6 +176,16 @@ module EnrollmentConcern
   #
   def generate_help_ticket: (**untyped opt) -> void
 
+  # Send a welcome email to the new organization Manager user.
+  #
+  # @param [Hash] opt
+  #
+  # @return [void]
+  #
+  # @see AccountMailer#welcome_email
+  #
+  def generate_welcome_email: (**untyped opt) -> void
+
   private
 
   THIS_MODULE: Module

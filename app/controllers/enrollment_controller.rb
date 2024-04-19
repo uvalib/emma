@@ -141,10 +141,10 @@ class EnrollmentController < ApplicationController
   def create(back: welcome_path)
     __log_activity
     __debug_route
-    ticket = params[:ticket]
-    ticket = production_deployment? ? !false?(ticket) : true?(ticket)
-    @item  = create_record
-    generate_help_ticket(item: @item) if ticket
+    mail  = params[:ticket]
+    mail  = production_deployment? ? !false?(mail) : true?(mail)
+    @item = create_record
+    generate_help_ticket(item: @item) if mail
     if request_xhr?
       render json: @item.as_json
     else
@@ -293,8 +293,11 @@ class EnrollmentController < ApplicationController
     __log_activity
     __debug_route
     __debug_request
+    mail  = params[:welcome]
+    mail  = production_deployment? ? !false?(mail) : true?(mail)
     @item = finalize_enrollment
     raise config_text(:enrollment, :not_found, id: identifier) if @item.blank?
+    generate_welcome_email(item: @item) if mail
     if request_xhr?
       render json: @item.as_json
     else
