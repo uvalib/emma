@@ -52,6 +52,10 @@ en:
         label:          'Contact'
         link:           'emmahelp@virginia.edu'
 
+      version:
+        label:          'Version'
+        content:        BUILD_VERSION
+
     # =========================================================================
     # Layout
     # =========================================================================

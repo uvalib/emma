@@ -39,17 +39,21 @@ module GridHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def grid_table(pairs, **opt)
-    opt[:row]     ||= 0
-    opt[:col]     ||= 0
-    opt[:row_max] ||= pairs.size
+    opt[:col]     ||= 1
+    opt[:row]     ||= 1
     opt[:col_max] ||= 2
+    opt[:row_max] ||= pairs.size / opt[:col_max]
     outer_opt = opt.slice!(:wrap, :sr_only, *GRID_OPT)
-    outer_opt.merge!(opt.slice(:row_max, :col_max))
     html_div(**outer_opt) do
-      pair_key = opt[:wrap] ? :col : :row
       pairs.map do |key, value|
-        opt[pair_key] += 1
-        grid_table_row(key, value, **opt)
+        grid_table_row(key, value, **opt).tap do
+          if (opt[:col] % opt[:col_max]).zero?
+            opt[:col] = 1
+            opt[:row] += 1
+          else
+            opt[:col] += 1
+          end
+        end
       end
     end
   end
@@ -68,21 +72,28 @@ module GridHelper
     col = positive(opt[:col]) || 1
     key = opt[:'data-key'] = key.to_s
     unless key.is_a?(ActiveSupport::SafeBuffer)
-      k_opt = opt.merge(col: col)
-      k_opt[:class] = grid_cell_classes('key', **k_opt)
-      k_opt.except!(:row_max, :col_max)
-      key = ERB::Util.h("#{key}:") if wrap
+      k_opt = opt.dup
+      unless wrap
+        k_opt[:col]   = col
+        k_opt[:class] = grid_cell_classes('key', **k_opt)
+      end
+      k_opt.except!(*GRID_OPT)
+      key = ERB::Util.h("#{key}:") if wrap && key.present?
       key = html_div(key, **k_opt)
     end
     unless value.is_a?(ActiveSupport::SafeBuffer)
-      v_opt = opt.merge(col: col.succ)
-      v_opt[:class] = grid_cell_classes('value', **v_opt)
-      v_opt.except!(:row_max, :col_max)
+      v_opt = opt.dup
+      unless wrap
+        v_opt[:col]   = col.succ
+        v_opt[:class] = grid_cell_classes('value', **v_opt)
+      end
+      v_opt.except!(*GRID_OPT)
       value = html_div(value, **v_opt)
     end
     if wrap
+      opt[:col]   = col
       opt[:class] = grid_cell_classes('entry', **opt)
-      opt.except!(:row_max, :col_max)
+      opt.except!(*GRID_OPT)
       html_div(**opt) { key << HTML_SPACE << value }
     else
       key << value

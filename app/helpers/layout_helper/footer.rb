@@ -64,11 +64,14 @@ module LayoutHelper::Footer
   def footer_items(**opt)
     FOOT_CONFIG.map { |k, v|
       label = v[:label]&.to_s || k.to_s.capitalize
-      case (url = v[:link])
-        when /@/ then link = mail_to(url)
-        else          link = external_link(url, url)
+      if (url = v[:link])
+        value = url.include?('@') ? mail_to(url) : external_link(url, url)
+      elsif v[:content].to_s.casecmp?('BUILD_VERSION')
+        value = BUILD_VERSION
+      else
+        value = v[:content]
       end
-      [label, link]
+      [label, value]
     }.to_h.merge(opt)
   end
 
