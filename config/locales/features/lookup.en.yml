@@ -58,8 +58,8 @@ en:
         column:
           selection:              'USE'
           tag:                    'FROM'
-          dc_identifier:          'FROM'
-          dc_title:               'IDENTIFIER'
+          dc_identifier:          'IDENTIFIER'
+          dc_title:               'TITLE'
           dc_creator:             'AUTHOR/CREATOR'
           dc_publisher:           'PUBLISHER'
           emma_publicationDate:   'DATE'
