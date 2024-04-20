@@ -39,7 +39,8 @@ class FileParser::Pdf < FileParser
   # @return [nil]
   #
   def pdf_reader
-    @pdf_reader ||= (PDF::Reader.new(file_handle) if file_handle)
+    @pdf_reader ||=
+      (f = file_handle&.handle || filename).presence && PDF::Reader.new(f)
   end
 
   # ===========================================================================
