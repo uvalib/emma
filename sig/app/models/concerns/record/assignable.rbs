@@ -62,6 +62,16 @@ module Record::Assignable
   #
   def key_mapping: () -> Hash[String,Symbol]
 
+  # Evaluate an attribute key.
+  #
+  # @param [Symbol]   k
+  # @param [any, nil] v
+  #
+  # @return [String]                  The reason why *k* will be rejected.
+  # @return [nil]                     If *k* is acceptable.
+  #
+  def invalid_field: (Symbol k, untyped v) -> (String | nil)
+
   # Include defaults where values were not specified.
   #
   # @param [Hash] attr

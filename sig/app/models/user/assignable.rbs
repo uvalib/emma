@@ -1,0 +1,30 @@
+module User::Assignable
+  # :nocov:
+  #include Record::Assignable
+
+  # Parameter keys related to password management.
+  #
+  # @type [Array<Symbol>]
+  #
+  PASSWORD_KEYS: symArray
+
+  # Ensure that :password and :password_confirmation are allowed.
+  #
+  # @return [Array<Symbol>]
+  #
+  def allowed_keys: () -> symArray
+
+  # Allow passing #PASSWORD_KEYS to #normalize_attributes.
+  #
+  # @param [Symbol]   k
+  # @param [any, nil] v
+  #
+  # @return [String]                  The reason why *k* will be rejected.
+  # @return [nil]                     If *k* is acceptable.
+  #
+  def invalid_field: (Symbol k, untyped v) -> (String | nil)
+
+  private
+
+  def self.included: (Module base) -> void
+end

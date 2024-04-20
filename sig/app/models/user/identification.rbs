@@ -1,0 +1,33 @@
+module User::Identification
+  # :nocov:
+  #include Emma::Common
+
+  #include Record::Identification
+
+  # Value of :id for the indicated record.
+  #
+  # @param [any, nil] item            User, String, Integer; default: `self`
+  # @param [Hash]     opt
+  #
+  # @return [String]
+  # @return [nil]                     If no matching record was found.
+  #
+  def id_value: (untyped item, **untyped opt) -> (String | nil)
+
+  def user_column: () -> Symbol
+
+  # Return with the specified User record or *nil* if one could not be found.
+  #
+  # @param [any, nil] item            String, Symbol, Integer, Hash, Model
+  # @param [Hash]     opt
+  #
+  # @option opt [Boolean] :fatal      False by default.
+  #
+  # @return [User, nil]               A fresh record unless *item* is a User.
+  #
+  def find_record: (untyped item, **untyped opt) -> (User | nil)
+
+  private
+
+  def self.included: (untyped base) -> untyped
+end

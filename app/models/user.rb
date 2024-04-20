@@ -22,6 +22,10 @@ class User < ApplicationRecord
   include Record::Searchable
   include Record::Sortable
 
+  include User::Config
+  include User::Assignable
+  include User::Identification
+
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
@@ -152,83 +156,6 @@ class User < ApplicationRecord
   #
   def to_s
     account.to_s
-  end
-
-  # ===========================================================================
-  # :section: Record::Identification overrides
-  # ===========================================================================
-
-  public
-
-  # Value of :id for the indicated record.
-  #
-  # @param [any, nil] user            User, String, Integer; default: `self`
-  # @param [Hash]     opt
-  #
-  # @return [String]
-  # @return [nil]                     If no matching record was found.
-  #
-  def id_value(user = nil, **opt)
-    return id&.to_s if user.nil? && opt.blank?
-    self.class.send(__method__, (user || self), **opt)
-  end
-
-  # Value of :id for the indicated record.
-  #
-  # @param [any, nil] user            User, String, Integer
-  # @param [Hash]     opt
-  #
-  # @return [String]
-  # @return [nil]                     If no matching record was found.
-  #
-  def self.id_value(user, **opt)
-    user = instance_for(user)
-    super
-  end
-
-  # ===========================================================================
-  # :section: Record::Identification overrides
-  # ===========================================================================
-
-  public
-
-  def user_column = user_key
-
-  def self.user_column = user_key
-
-  # ===========================================================================
-  # :section: Record::Identification overrides
-  # ===========================================================================
-
-  public
-
-  # Return with the specified User record or *nil* if one could not be found.
-  #
-  # @param [any, nil] item            String, Integer, Hash, Model
-  # @param [Hash]     opt
-  #
-  # @return [User, nil]
-  #
-  def find_record(item, **opt)
-    self.class.send(__method__, item, **opt)
-  end
-
-  # Return with the specified User record or *nil* if one could not be found.
-  #
-  # @param [any, nil] item            String, Symbol, Integer, Hash, Model
-  # @param [Hash]     opt
-  #
-  # @option opt [Boolean] :fatal      False by default.
-  #
-  # @return [User, nil]               A fresh record unless *item* is a User.
-  #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
-  def self.find_record(item, **opt)
-    item = item.to_s if item.is_a?(Symbol)
-    opt.reverse_merge!(fatal: false)
-    super || instance_for(item)
   end
 
   # ===========================================================================

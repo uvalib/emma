@@ -103,9 +103,7 @@ module Record::Assignable
     attr.except!(*excp)          if excp.present?
 
     attr.select! do |k, v|
-      error   = ("blank key for #{v.inspect}"      if k.blank?)
-      error ||= ("ignoring non-field #{k.inspect}" unless database_columns[k])
-      error.blank? or Log.warn("#{meth}: #{error}")
+      (error = invalid_field(k, v)).blank? or Log.warn { "#{meth}: #{error}" }
     end
 
     attr = normalize_fields(attr, **opt)
@@ -158,6 +156,21 @@ module Record::Assignable
   def key_mapping
     # noinspection RubyMismatchedReturnType
     EnumType.comparable_map(database_columns.keys)
+  end
+
+  # Evaluate an attribute key.
+  #
+  # @param [Symbol]   k
+  # @param [any, nil] v
+  #
+  # @return [String]                  The reason why *k* will be rejected.
+  # @return [nil]                     If *k* is acceptable.
+  #
+  def invalid_field(k, v)
+    case
+      when k.blank?             then "blank key for #{v.inspect}"
+      when !database_columns[k] then "ignoring non-field #{k.inspect}"
+    end
   end
 
   # Called by #normalize_attributes after key names have been normalized and
