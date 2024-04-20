@@ -107,8 +107,6 @@ module Record::EmmaData
   #
   # @return [Search::Record::MetadataRecord]
   #
-  # @note From Upload::EmmaDataMethods#make_emma_record
-  #
   def make_emma_record(data, **)
     Search::Record::MetadataRecord.new(data)
   end
@@ -119,8 +117,6 @@ module Record::EmmaData
   # @param [Boolean] allow_blank
   #
   # @return [Hash]
-  #
-  # @note From Upload::EmmaDataMethods#parse_emma_data
   #
   def parse_emma_data(data, allow_blank = false)
     case data
@@ -215,8 +211,6 @@ module Record::EmmaData
     #
     # @return [Search::Record::MetadataRecord]
     #
-    # @note From Upload::EmmaDataMethods#emma_record
-    #
     def emma_record(refresh: false)
       @emma_record = nil if refresh
       @emma_record ||= make_emma_record(emma_metadata(refresh: refresh))
@@ -227,8 +221,6 @@ module Record::EmmaData
     # @param [Boolean] refresh        If *true*, force regeneration.
     #
     # @return [Hash]
-    #
-    # @note From Upload::EmmaDataMethods#emma_metadata
     #
     def emma_metadata(refresh: false)
       @emma_metadata = nil if refresh
@@ -243,8 +235,6 @@ module Record::EmmaData
     # @return [any]                   New value of :emma_data
     # @return [nil]                   ...if *data* is *nil*.
     #
-    # @note From Upload::EmmaDataMethods#set_emma_data
-    #
     def set_emma_data(data, allow_blank = true)
       @emma_record     = nil # Force regeneration.
       @emma_metadata   = parse_emma_data(data, allow_blank)
@@ -258,8 +248,6 @@ module Record::EmmaData
     #
     # @return [any]                   New value of :emma_data
     # @return [nil]                   If no change and :emma_data was *nil*.
-    #
-    # @note From Upload::EmmaDataMethods#modify_emma_data
     #
     def modify_emma_data(data, allow_blank = true)
       if (new_metadata = parse_emma_data(data, allow_blank)).present?

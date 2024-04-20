@@ -713,8 +713,8 @@ appSetup(MODULE, function() {
         const cb    = { onSelect, onStart, onError, onSuccess };
         const $form = $(form);
         const state = {
-            new:    isCreateForm($form),
-            edit:   isUpdateForm($form),
+            new:    isNewForm($form),
+            edit:   isEditForm($form),
             bulk:   isBulkOpForm($form),
         };
         const features = { debugging: DEBUG };
@@ -1364,7 +1364,7 @@ appSetup(MODULE, function() {
      * up for the fact that previously clicking away from the page resulted in
      * the original partial Upload record being deleted. <p/>
      *
-     * If this is an update form, then the appropriate field values are
+     * If this is an edit form, then the appropriate field values are
      * generated to put the Upload record in the initial workflow edit state.
      * <p/>
      *
@@ -1380,7 +1380,7 @@ appSetup(MODULE, function() {
         const func  = 'refreshRecord';
         const $form = formElement(form);
         let url;
-        if (isCreateForm($form)) {
+        if (isNewForm($form)) {
             url = PROPERTIES.Path.renew;
         } else {
             url = PROPERTIES.Path.reedit;
@@ -2405,7 +2405,7 @@ appSetup(MODULE, function() {
     }
 
     // ========================================================================
-    // Functions - field validation
+    // Functions - form fields - validation
     // ========================================================================
 
     /**
@@ -2680,7 +2680,7 @@ appSetup(MODULE, function() {
         // If editing a completed submission, prevent the selection from being
         // updated.
 
-        if (isUpdateForm($form) && $menu.val() && !$menu.is(FIXED)) {
+        if (isEditForm($form) && $menu.val() && !$menu.is(FIXED)) {
             const note = Emma.Messages.field.readonly;
             seal($menu, true).attr('title', note);
             return;
@@ -3655,12 +3655,12 @@ appSetup(MODULE, function() {
         const $fields = inputFields($form);
         let ready     = !$fields.is(INVALID);
         if ((ready &&= !menuMultiFields($form).is(INVALID))) {
-            const updating = isUpdateForm($form);
-            let recheck    = updating;
+            const editing = isEditForm($form);
+            let recheck   = editing;
             if (uploader) {
                 if (uploader.fileSelected()) {
                     recheck = false;
-                } else if (!updating) {
+                } else if (!editing) {
                     ready = false;
                 }
             }
@@ -3821,7 +3821,7 @@ appSetup(MODULE, function() {
             setFormCanceled($form);
             if (PROPERTIES.Path.cancel) {
                 const path   = $button.attr('data-path');
-                const fields = isUpdateForm($form) && revertEditData($form);
+                const fields = isEditForm($form) && revertEditData($form);
                 cancelCurrent($form, path, fields);
             } else {
                 cancelAction($button);
@@ -3877,7 +3877,7 @@ appSetup(MODULE, function() {
         const $form = formElement(form);
         if (formState($form)) {
             // Either Submit or Cancel has already been invoked.
-        } else if (isUpdateForm($form)) {
+        } else if (isEditForm($form)) {
             abortCurrent($form, revertEditData($form));
         } else {
             abortCurrent($form);
@@ -4660,7 +4660,7 @@ appSetup(MODULE, function() {
      *
      * @returns {boolean}
      */
-    function isCreateForm(form) {
+    function isNewForm(form) {
         return formElement(form).hasClass('new');
     }
 
@@ -4672,30 +4672,30 @@ appSetup(MODULE, function() {
      *
      * @returns {boolean}
      */
-    function isUpdateForm(form) {
+    function isEditForm(form) {
         return formElement(form).hasClass('edit');
     }
 
     /**
      * Displayable term for the action associated with the form.
      *
-     * @param {Selector} [form]       Passed to {@link isUpdateForm}.
+     * @param {Selector} [form]       Passed to {@link isEditForm}.
      *
      * @returns {string}
      */
     function termAction(form) {
-        return isUpdateForm(form) ? UPDATE : CREATE;
+        return isEditForm(form) ? UPDATE : CREATE;
     }
 
     /**
      * Displayable term for the past-tense action associated with the form.
      *
-     * @param {Selector} [form]       Passed to {@link isUpdateForm}.
+     * @param {Selector} [form]       Passed to {@link isEditForm}.
      *
      * @returns {string}
      */
     function termActionOccurred(form) {
-        return isUpdateForm(form) ? UPDATED : CREATED;
+        return isEditForm(form) ? UPDATED : CREATED;
     }
 
     /**
@@ -4813,7 +4813,7 @@ appSetup(MODULE, function() {
     /**
      * Get the configuration properties for the current form action.
      *
-     * @param {Selector} [form]       Passed to {@link isUpdateForm}.
+     * @param {Selector} [form]       Passed to {@link isEditForm}.
      *
      * @returns {EndpointProperties}
      *
@@ -4823,9 +4823,9 @@ appSetup(MODULE, function() {
         const $form  = formElement(form);
         const action = PROPERTIES.Action || {};
         if (isBulkOpForm($form)) {
-            return isUpdateForm($form) ? action.bulk_edit : action.bulk_new;
+            return isEditForm($form) ? action.bulk_edit : action.bulk_new;
         } else {
-            return isUpdateForm($form) ? action.edit : action.new;
+            return isEditForm($form) ? action.edit : action.new;
         }
     }
 

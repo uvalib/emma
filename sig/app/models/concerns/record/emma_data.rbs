@@ -63,8 +63,6 @@ module Record::EmmaData
   #
   # @return [Search::Record::MetadataRecord]
   #
-  # @note From Upload::EmmaDataMethods#make_emma_record
-  #
   def make_emma_record: (symHash data, **untyped _ignored) -> Search::Record::MetadataRecord
 
   # parse_emma_data
@@ -73,8 +71,6 @@ module Record::EmmaData
   # @param [Boolean] allow_blank
   #
   # @return [Hash]
-  #
-  # @note From Upload::EmmaDataMethods#parse_emma_data
   #
   def parse_emma_data: ((Search::Record::MetadataRecord|Model|anyHash|String|nil) data, ?bool allow_blank) -> symHash
 
@@ -100,8 +96,6 @@ module Record::EmmaData
     #
     # @return [Search::Record::MetadataRecord]
     #
-    # @note From Upload::EmmaDataMethods#emma_record
-    #
     def emma_record: (?refresh: bool) -> Search::Record::MetadataRecord
 
     @emma_record: Search::Record::MetadataRecord | nil
@@ -111,8 +105,6 @@ module Record::EmmaData
     # @param [Boolean] refresh        If *true*, force regeneration.
     #
     # @return [Hash]
-    #
-    # @note From Upload::EmmaDataMethods#emma_metadata
     #
     def emma_metadata: (?refresh: bool) -> symHash
 
@@ -126,8 +118,6 @@ module Record::EmmaData
     # @return [any]                   New value of :emma_data
     # @return [nil]                   ...if *data* is *nil*.
     #
-    # @note From Upload::EmmaDataMethods#set_emma_data
-    #
     def set_emma_data: ((anyHash|String|Search::Record::MetadataRecord|nil) data, ?bool allow_blank) -> (untyped | nil)
 
     # Selectively modify the :emma_data field value.
@@ -137,8 +127,6 @@ module Record::EmmaData
     #
     # @return [any]                   New value of :emma_data
     # @return [nil]                   If no change and :emma_data was *nil*.
-    #
-    # @note From Upload::EmmaDataMethods#modify_emma_data
     #
     def modify_emma_data: (symHash data, ?bool allow_blank) -> (untyped | nil)
 
