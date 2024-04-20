@@ -251,7 +251,7 @@ export class Value extends BaseClass {
     // Constants
     // ========================================================================
 
-    static EMPTY_VALUE = Emma.Manifest.Field.empty;
+    static EMPTY_VALUE = Emma.Field.empty;
 
     static TRANSLATION = {
         textarea: 'array',

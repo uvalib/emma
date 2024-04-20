@@ -5,6 +5,8 @@ module Record::EmmaData
 
   include Emma::Common
 
+  include Emma::Constants
+
   include Emma::Json
 
   include Record
@@ -68,11 +70,11 @@ module Record::EmmaData
   # parse_emma_data
   #
   # @param [Search::Record::MetadataRecord, Model, Hash, String, nil] data
-  # @param [Boolean] allow_blank
+  # @param [Boolean]                                                  blanks
   #
   # @return [Hash]
   #
-  def parse_emma_data: ((Search::Record::MetadataRecord|Model|anyHash|String|nil) data, ?bool allow_blank) -> symHash
+  def parse_emma_data: ((Search::Record::MetadataRecord|Model|anyHash|String|nil) data, ?blanks: bool) -> symHash
 
   # Class methods automatically added to the including record class.
   #
@@ -113,22 +115,22 @@ module Record::EmmaData
     # Set the :emma_data field value.
     #
     # @param [Search::Record::MetadataRecord, Hash, String, nil] data
-    # @param [Boolean]                                           allow_blank
+    # @param [Boolean]                                           blanks
     #
     # @return [any]                   New value of :emma_data
     # @return [nil]                   ...if *data* is *nil*.
     #
-    def set_emma_data: ((anyHash|String|Search::Record::MetadataRecord|nil) data, ?bool allow_blank) -> (untyped | nil)
+    def set_emma_data: ((anyHash|String|Search::Record::MetadataRecord|nil) data, ?blanks: bool) -> (untyped | nil)
 
     # Selectively modify the :emma_data field value.
     #
     # @param [Hash]    data
-    # @param [Boolean] allow_blank
+    # @param [Boolean] blanks
     #
     # @return [any]                   New value of :emma_data
     # @return [nil]                   If no change and :emma_data was *nil*.
     #
-    def modify_emma_data: (symHash data, ?bool allow_blank) -> (untyped | nil)
+    def modify_emma_data: (symHash data, ?blanks: bool) -> (untyped | nil)
 
     # init_emma_data_value
     #
@@ -143,6 +145,15 @@ module Record::EmmaData
     # @return [Hash{String=>any,nil}, String, nil]
     #
     def curr_emma_data_value: () -> (untyped | nil)
+
+    # Merge metadata with deletions.
+    #
+    # @param [Hash] metadata      The element to update.
+    # @param [Hash] updates       Additions/modifications/deletions.
+    #
+    # @return [Hash]              A modified copy of *metadata*.
+    #
+    def merge_metadata: (symHash metadata, symHash updates) -> symHash
   end
 
   # Instance implementation overrides if EMMA_DATA_COLUMN is saved as 'json'.
@@ -152,22 +163,22 @@ module Record::EmmaData
     # Set the :emma_data field value.
     #
     # @param [Search::Record::MetadataRecord, Hash, String, nil] data
-    # @param [Boolean]                                           allow_blank
+    # @param [Boolean]                                           blanks
     #
     # @return [Hash{String=>any,nil}] New value of :emma_data
     # @return [nil]                   ...if *data* is *nil*.
     #
-    def set_emma_data: ((anyHash|String|Search::Record::MetadataRecord|nil) data, ?bool allow_blank) -> (symHash | nil)
+    def set_emma_data: ((anyHash|String|Search::Record::MetadataRecord|nil) data, ?blanks: bool) -> (symHash | nil)
 
     # Selectively modify the :emma_data field value.
     #
     # @param [Hash]    data
-    # @param [Boolean] allow_blank
+    # @param [Boolean] blanks
     #
     # @return [Hash{String=>any,nil}] New value of :emma_data
     # @return [nil]                   If no change and :emma_data was *nil*.
     #
-    def modify_emma_data: (symHash data, ?bool allow_blank) -> (symHash | nil)
+    def modify_emma_data: (symHash data, ?blanks: bool) -> (symHash | nil)
 
     # init_emma_data_value
     #
@@ -191,22 +202,22 @@ module Record::EmmaData
     # Set the :emma_data field value.
     #
     # @param [Search::Record::MetadataRecord, Hash, String, nil] data
-    # @param [Boolean]                                           allow_blank
+    # @param [Boolean]                                           blanks
     #
     # @return [String]                New value of :emma_data
     # @return [nil]                   ...if *data* is *nil*.
     #
-    def set_emma_data: ((anyHash|String|Search::Record::MetadataRecord|nil) data, ?bool allow_blank) -> (String | nil)
+    def set_emma_data: ((anyHash|String|Search::Record::MetadataRecord|nil) data, ?blanks: bool) -> (String | nil)
 
     # Selectively modify the :emma_data field value.
     #
     # @param [Hash]    data
-    # @param [Boolean] allow_blank
+    # @param [Boolean] blanks
     #
     # @return [String]                New value of :emma_data
     # @return [nil]                   If no change and :emma_data was *nil*.
     #
-    def modify_emma_data: (symHash data, ?bool allow_blank) -> (String | nil)
+    def modify_emma_data: (symHash data, ?blanks: bool) -> (String | nil)
 
     # init_emma_data_value
     #

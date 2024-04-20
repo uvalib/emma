@@ -371,9 +371,10 @@ class Upload < ApplicationRecord
       # Augment EMMA data fields supplied as method options with the contents
       # of :emma_data if it was supplied.
       if (ed = attr.delete(:emma_data))
-        __debug_items { { "#{__method__} emma_data": ed.inspect } }
+        __debug_items { { "#{__method__} :emma_data field": ed.inspect } }
         added_data = parse_emma_data(ed)
         data.reverse_merge!(added_data) if added_data.present?
+        __debug_items { { "#{__method__} data": data.inspect } }
       end
 
       # Get value for :file_data as JSON.

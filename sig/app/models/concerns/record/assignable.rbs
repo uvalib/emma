@@ -3,6 +3,8 @@
 module Record::Assignable
   extend ActiveSupport::Concern
 
+  include Emma::Constants
+
   include Emma::Json
 
   include Record
@@ -79,6 +81,18 @@ module Record::Assignable
   # @return [Hash]                    The *attr* argument, possibly modified.
   #
   def default_attributes!: (symHash attr) -> symHash
+
+  # Convert field values which have been marked for removal.
+  #
+  # @param [Hash] attr
+  #
+  # @return [Hash]                    The *attr* argument, possibly modified.
+  #
+  # == Usage Notes
+  # It is important that this come after honoring :compact so that the fields
+  # which are being intentionally nullified are not removed.
+  #
+  def deleted_fields!: (symHash attr) -> symHash
 
   # Called by #normalize_attributes after key names have been normalized and
   # attributes have been filtered.

@@ -11,6 +11,7 @@ module Record::Assignable
 
   extend ActiveSupport::Concern
 
+  include Emma::Constants
   include Emma::Json
 
   include Record
@@ -109,6 +110,7 @@ module Record::Assignable
     attr = normalize_fields(attr, **opt)
     default_attributes!(attr)
     reject_blanks!(attr) if compact
+    deleted_fields!(attr)
     attr.merge!(attr_opt: opt.merge!(normalized: true))
   end
 
@@ -120,6 +122,20 @@ module Record::Assignable
   #
   def default_attributes!(attr)
     attr
+  end
+
+  # Convert field values which have been marked for removal.
+  #
+  # @param [Hash] attr
+  #
+  # @return [Hash]                    The *attr* argument, possibly modified.
+  #
+  # == Usage Notes
+  # It is important that this come after honoring :compact so that the fields
+  # which are being intentionally nullified are not removed.
+  #
+  def deleted_fields!(attr)
+    attr.transform_values! { |v| v unless v == DELETED_FIELD }
   end
 
   # The fields that will be accepted by #normalize_attributes.

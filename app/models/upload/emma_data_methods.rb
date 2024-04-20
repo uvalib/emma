@@ -103,35 +103,34 @@ module Upload::EmmaDataMethods
   # @return [Hash]
   #
   def edit_emma_metadata
-    @edit_emma_metadata ||= parse_emma_data(edit_emma_data, true)
+    @edit_emma_metadata ||= parse_emma_data(edit_emma_data, blanks: true)
   end
 
   # Set the :edit_emma_data field value.
   #
   # @param [Search::Record::MetadataRecord, Hash, String, nil] data
-  # @param [Boolean]                                           allow_blank
+  # @param [Boolean]                                           blanks
   #
   # @return [String]
   # @return [nil]                     If *data* is *nil*.
   #
-  def set_edit_emma_data(data, allow_blank = false)
+  def set_edit_emma_data(data, blanks: true)
     @edit_emma_record     = nil # Force regeneration.
-    @edit_emma_metadata   = parse_emma_data(data, allow_blank)
+    @edit_emma_metadata   = parse_emma_data(data, blanks: blanks)
     self[:edit_emma_data] = init_edit_emma_data_value(data)
   end
 
   # Selectively modify the :edit_emma_data field value.
   #
   # @param [Hash]    data
-  # @param [Boolean] allow_blank
+  # @param [Boolean] blanks
   #
   # @return [String, nil]
   #
-  def modify_edit_emma_data(data, allow_blank = false)
-    new_metadata = parse_emma_data(data, allow_blank)
-    if new_metadata.present?
+  def modify_edit_emma_data(data, blanks: true)
+    if (new_metadata = parse_emma_data(data, blanks: blanks)).present?
       @edit_emma_record     = nil # Force regeneration.
-      @edit_emma_metadata   = edit_emma_metadata.merge(new_metadata)
+      @edit_emma_metadata   = merge_metadata(edit_emma_metadata, new_metadata)
       self[:edit_emma_data] = curr_edit_emma_data_value
     end
     self[:edit_emma_data]
@@ -181,31 +180,34 @@ module Upload::EmmaDataMethods
   # Set the EMMA data currently associated with the record.
   #
   # @param [Search::Record::MetadataRecord, Hash, String, nil] data
-  # @param [Boolean]                                           allow_blank
+  # @param [Boolean]                                           blanks
   #
   # @return [String]
   # @return [nil]                     If *data* is *nil*.
   #
-  def set_active_emma_data(data, allow_blank = false)
+  def set_active_emma_data(data, blanks: true)
+    __debug_items { { "#{__method__} data": data.inspect } }
     if edit_phase
-      set_edit_emma_data(data, allow_blank)
+      set_edit_emma_data(data, blanks: blanks)
     else
-      set_emma_data(data, allow_blank)
+      set_emma_data(data, blanks: blanks)
     end
   end
 
   # Selectively modify the EMMA data currently associated with the record.
   #
   # @param [Hash]    data
-  # @param [Boolean] allow_blank
+  # @param [Boolean] blanks
   #
   # @return [String, nil]
   #
-  def modify_active_emma_data(data, allow_blank = false)
+  def modify_active_emma_data(data, blanks: true)
+    __debug_items { { "#{__method__} data": data.inspect } }
     if edit_phase
-      modify_edit_emma_data(data, allow_blank)
+      modify_edit_emma_data(data, blanks: blanks)
+      set_emma_data(self[:edit_emma_data], blanks: blanks)
     else
-      modify_emma_data(data, allow_blank)
+      modify_emma_data(data, blanks: blanks)
     end
   end
 

@@ -150,7 +150,12 @@ AppDebug.file('shared/assets.js.erb');
  *
  * @property {string} empty
  *
- *  Blank field value indicator. <p/>
+ *  Blank field value indicator when rendering. <p/>
+ *
+ * @property {string} deleted
+ *
+ *  A field value indicating that the field should be cleared/removed from the
+ *  associated record. <p/>
  */
 
 /**
@@ -472,33 +477,34 @@ AppDebug.file('shared/assets.js.erb');
  *
  * @type {object}
  *
- * @property {boolean}  APP_DEBUG
- * @property {string}   RAILS_ENV
- * @property {boolean}  DEPLOYED
- * @property {string}   SESSION_ID
- * @property {boolean}  SEARCH_ANALYSIS
+ * @property {boolean}              APP_DEBUG
+ * @property {string}               RAILS_ENV
+ * @property {boolean}              DEPLOYED
+ * @property {string}               SESSION_ID
+ * @property {boolean}              SEARCH_ANALYSIS
  *
  * @property {RepositoryProperties} Repo
  * @property {AnalyticsProperties}  Analytics
  *
- * @property {ImageProperties}    Image
- * @property {PanelProperties}    Panel
- * @property {TreeProperties}     Tree
- * @property {GridProperties}     Grid
- * @property {PopupProperties}    Popup
- * @property {ScrollProperties}   Scroll
- * @property {SearchProperties}   Search
- * @property {DownloadProperties} Download
- * @property {ActionProperties}   Lookup
- * @property {ModelProperties}    Org
- * @property {ModelProperties}    User
- * @property {ModelProperties}    Account
- * @property {ModelProperties}    Enrollment
- * @property {ModelProperties}    Upload
- * @property {ModelProperties}    Manifest
- * @property {ModelProperties}    ManifestItem
+ * @property {FieldProperties}      Field
+ * @property {ImageProperties}      Image
+ * @property {PanelProperties}      Panel
+ * @property {TreeProperties}       Tree
+ * @property {GridProperties}       Grid
+ * @property {PopupProperties}      Popup
+ * @property {ScrollProperties}     Scroll
+ * @property {SearchProperties}     Search
+ * @property {DownloadProperties}   Download
+ * @property {ActionProperties}     Lookup
+ * @property {ModelProperties}      Org
+ * @property {ModelProperties}      User
+ * @property {ModelProperties}      Account
+ * @property {ModelProperties}      Enrollment
+ * @property {ModelProperties}      Upload
+ * @property {ModelProperties}      Manifest
+ * @property {ModelProperties}      ManifestItem
  *
- * @property {object}             Messages
+ * @property {object}               Messages
  */
 export const Emma = (function() {
 
@@ -554,6 +560,12 @@ export const Emma = (function() {
     // ========================================================================
     // Feature settings
     // ========================================================================
+
+    /** @type {FieldProperties} */
+    const Field = {
+        empty:              '<%= js Emma::Constants::EMPTY_VALUE %>',
+        deleted:            '<%= js Emma::Constants::DELETED_FIELD %>',
+    };
 
     /** @type {ImageProperties} */
     const Image = {
@@ -869,6 +881,7 @@ export const Emma = (function() {
         SEARCH_ANALYSIS,
         Repo,
         Analytics,
+        Field,
         Image,
         Panel,
         Tree,

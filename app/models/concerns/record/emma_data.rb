@@ -12,6 +12,7 @@ module Record::EmmaData
   extend ActiveSupport::Concern
 
   include Emma::Common
+  include Emma::Constants
   include Emma::Json
 
   include Record
@@ -114,11 +115,11 @@ module Record::EmmaData
   # parse_emma_data
   #
   # @param [Search::Record::MetadataRecord, Model, Hash, String, nil] data
-  # @param [Boolean] allow_blank
+  # @param [Boolean]                                                  blanks
   #
   # @return [Hash]
   #
-  def parse_emma_data(data, allow_blank = false)
+  def parse_emma_data(data, blanks: false)
     case data
       when Search::Record::MetadataRecord
         result = data.as_json
@@ -127,9 +128,10 @@ module Record::EmmaData
       else
         result = data
     end
-    result = json_parse(result, fatal: true) or return {}
-    reject_blanks!(result) unless allow_blank
-    result.map { |k, v|
+    result  = json_parse(result, fatal: true) or return {}
+    reject_blanks!(result) unless blanks
+    removed = result.select { |_, v| v == DELETED_FIELD }
+    result.except(*removed.keys).map { |k, v|
       v     = Array.wrap(v)
       prop  = Field.configuration_for(k, :upload)
       array = prop[:array]
@@ -154,10 +156,10 @@ module Record::EmmaData
         v = v.join(join).split(sep).map!(&:strip).compact_blank!
       end
       v = v.first if v.is_a?(Array) && !array
-      [k, v] if allow_blank || v.present? || v.is_a?(FalseClass)
+      [k, v] if blanks || v.present? || v.is_a?(FalseClass)
     }.compact.sort.to_h.tap { |hash|
       Api::Shared::TransformMethods.normalize_data_fields!(hash)
-    }
+    }.merge!(removed)
   rescue => error
     Log.warn do
       msg = [__method__, error.message]
@@ -224,35 +226,35 @@ module Record::EmmaData
     #
     def emma_metadata(refresh: false)
       @emma_metadata = nil if refresh
-      @emma_metadata ||= parse_emma_data(emma_data, true)
+      @emma_metadata ||= parse_emma_data(emma_data, blanks: true)
     end
 
     # Set the :emma_data field value.
     #
     # @param [Search::Record::MetadataRecord, Hash, String, nil] data
-    # @param [Boolean]                                           allow_blank
+    # @param [Boolean]                                           blanks
     #
     # @return [any]                   New value of :emma_data
     # @return [nil]                   ...if *data* is *nil*.
     #
-    def set_emma_data(data, allow_blank = true)
+    def set_emma_data(data, blanks: true)
       @emma_record     = nil # Force regeneration.
-      @emma_metadata   = parse_emma_data(data, allow_blank)
+      @emma_metadata   = parse_emma_data(data, blanks: blanks)
       self[:emma_data] = init_emma_data_value(data)
     end
 
     # Selectively modify the :emma_data field value.
     #
     # @param [Hash]    data
-    # @param [Boolean] allow_blank
+    # @param [Boolean] blanks
     #
     # @return [any]                   New value of :emma_data
     # @return [nil]                   If no change and :emma_data was *nil*.
     #
-    def modify_emma_data(data, allow_blank = true)
-      if (new_metadata = parse_emma_data(data, allow_blank)).present?
+    def modify_emma_data(data, blanks: true)
+      if (new_metadata = parse_emma_data(data, blanks: blanks)).present?
         @emma_record     = nil # Force regeneration.
-        @emma_metadata   = emma_metadata.merge(new_metadata)
+        @emma_metadata   = merge_metadata(emma_metadata, new_metadata)
         self[:emma_data] = curr_emma_data_value
       end
       self[:emma_data]
@@ -276,6 +278,23 @@ module Record::EmmaData
       must_be_overridden
     end
 
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    protected
+
+    # Merge metadata with deletions.
+    #
+    # @param [Hash] metadata      The element to update.
+    # @param [Hash] updates       Additions/modifications/deletions.
+    #
+    # @return [Hash]              A modified copy of *metadata*.
+    #
+    def merge_metadata(metadata, updates)
+      metadata.merge(updates).delete_if { |_, v| v == DELETED_FIELD }
+    end
+
   end
 
   # Instance implementation overrides if EMMA_DATA_COLUMN is saved as 'json'.
@@ -292,24 +311,24 @@ module Record::EmmaData
     # Set the :emma_data field value hash.
     #
     # @param [Search::Record::MetadataRecord, Hash, String, nil] data
-    # @param [Boolean]                                           allow_blank
+    # @param [Boolean]                                           blanks
     #
     # @return [Hash{String=>any,nil}] New value of :emma_data
     # @return [nil]                   ...if *data* is *nil*.
     #
-    def set_emma_data(data, allow_blank = true)
+    def set_emma_data(data, blanks: true)
       super
     end
 
     # Selectively modify the :emma_data field value hash.
     #
     # @param [Hash]    data
-    # @param [Boolean] allow_blank
+    # @param [Boolean] blanks
     #
     # @return [Hash{String=>any,nil}] New value of :emma_data
     # @return [nil]                   If no change and :emma_data was *nil*.
     #
-    def modify_emma_data(data, allow_blank = true)
+    def modify_emma_data(data, blanks: true)
       super
     end
 
@@ -347,24 +366,24 @@ module Record::EmmaData
     # Set the :emma_data field value.
     #
     # @param [Search::Record::MetadataRecord, Hash, String, nil] data
-    # @param [Boolean]                                           allow_blank
+    # @param [Boolean]                                           blanks
     #
     # @return [String]                New value of :emma_data
     # @return [nil]                   ...if *data* is *nil*.
     #
-    def set_emma_data(data, allow_blank = true)
+    def set_emma_data(data, blanks: true)
       super
     end
 
     # Selectively modify the :emma_data field value.
     #
     # @param [Hash]    data
-    # @param [Boolean] allow_blank
+    # @param [Boolean] blanks
     #
     # @return [String]                New value of :emma_data
     # @return [nil]                   If no change and :emma_data was *nil*.
     #
-    def modify_emma_data(data, allow_blank = true)
+    def modify_emma_data(data, blanks: true)
       super
     end
 

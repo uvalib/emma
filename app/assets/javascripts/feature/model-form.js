@@ -447,7 +447,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const EMPTY_VALUE = PROPERTIES.Field.empty;
+    const EMPTY_VALUE = Emma.Field.empty;
 
     /**
      * Generic form selector.
@@ -489,7 +489,7 @@ appSetup(MODULE, function() {
     const MENU_MULTI            = `.${MENU_CLASS}.${MULTI_CLASS}`;
     const MENU_SINGLE           = `.${MENU_CLASS}.${SINGLE_CLASS}`;
     const INPUT_MULTI           = `.${INPUT_CLASS}.${MULTI_CLASS}`;
-  //const INPUT_SINGLE          = `.${INPUT_CLASS}.${SINGLE_CLASS}`;
+    const INPUT_SINGLE          = `.${INPUT_CLASS}.${SINGLE_CLASS}`;
 
     /**
      * Interrelated elements.  For example: <p/>
@@ -2405,6 +2405,77 @@ appSetup(MODULE, function() {
     }
 
     // ========================================================================
+    // Functions - form fields - deletion
+    // ========================================================================
+
+    const TO_DELETE_ATTR = 'data-to-delete';
+    const DELETING_ATTR  = 'data-now-deleting';
+
+    /**
+     * Mark a field to be transmitted as a deleted field when submitted.
+     *
+     * @param {Selector} field
+     */
+    function markForDeletion(field) {
+        $(field).attr(TO_DELETE_ATTR, true);
+    }
+
+    /**
+     * Unmark a field to be transmitted as a deleted field.
+     *
+     * @param {Selector} field
+     */
+    function unmarkForDeletion(field) {
+        $(field).removeAttr(TO_DELETE_ATTR);
+    }
+
+    /**
+     * Indicate whether a field is marked for deletion.
+     *
+     * @param {Selector} field
+     */
+    function markedForDeletion(field) {
+        return !!$(field).attr(TO_DELETE_ATTR);
+    }
+
+    /**
+     * Mark a field to be transmitted as a deleted field when submitted,
+     * transforming its value as needed.
+     *
+     * @param {Selector} field
+     */
+    function markAsDeleting(field) {
+        const func   = 'markAsDeleting';
+        const $field = $(field);
+        const value  = Emma.Field.deleted;
+
+        $field.attr(DELETING_ATTR, true);
+
+        if ($field.is(MENU_SINGLE)) {
+            OUT.debug(`${func}: MENU_SINGLE`, field);
+            // noinspection JSCheckFunctionSignatures
+            const unset = $field.children().find('[value=""]').text();
+            const $added = $('<option>').val(value).text(unset);
+            $field.append($added).val(value);
+            OUT.debug(`${func}: MENU_SINGLE val =`, $field.val());
+
+        } else if ($field.is(`${INPUT_SINGLE}[type="date"]`)) {
+            OUT.debug(`${func}: INPUT_SINGLE[type="date"]`, field);
+            // TODO: ?
+            OUT.debug(`${func}: INPUT_SINGLE[type="date"] val =`, $field.val())
+
+        } else if ($field.is(INPUT_SINGLE)) {
+            OUT.debug(`${func}: INPUT_SINGLE`, field);
+            $field.val(value);
+            OUT.debug(`${func}: INPUT_SINGLE val =`, $field.val());
+
+        } else {
+            OUT.debug(`${func}: ignoring`, field);
+            OUT.debug(`${func}: ignoring val =`, $field.val());
+        }
+    }
+
+    // ========================================================================
     // Functions - form fields - validation
     // ========================================================================
 
@@ -3664,7 +3735,25 @@ appSetup(MODULE, function() {
                     ready = false;
                 }
             }
-            if (recheck) {
+            if (editing) {
+                let changed = false;
+                $fields.each((_, field) => {
+                    const $field   = $(field);
+                    const current  = valueOf($field);
+                    const original = getOriginalValue($field);
+                    if (current !== original) {
+                        if (original && !current) {
+                            markForDeletion($field);
+                        } else {
+                            unmarkForDeletion($field);
+                        }
+                        changed = true;
+                    }
+                });
+                if (recheck) {
+                    ready = changed;
+                }
+            } else if (recheck) {
                 const items = $fields.toArray();
                 ready = items.some(i => (valueOf(i) !== getOriginalValue(i)));
             }
@@ -3790,6 +3879,11 @@ appSetup(MODULE, function() {
         const $form   = formElement($button);
         clearFlash();
         setFormSubmitting($form);
+        if (isEditForm($form)) {
+            fieldContainer($form).find(`[${TO_DELETE_ATTR}]`).each((_, f) => {
+                markAsDeleting(f);
+            });
+        }
     }
 
     /**

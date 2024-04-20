@@ -65,21 +65,21 @@ module Upload::EmmaDataMethods
   # Set the :edit_emma_data field value.
   #
   # @param [Search::Record::MetadataRecord, Hash, String, nil] data
-  # @param [Boolean]                                           allow_blank
+  # @param [Boolean]                                           blanks
   #
   # @return [String]
   # @return [nil]                     If *data* is *nil*.
   #
-  def set_edit_emma_data: ((symHash|String|Search::Record::MetadataRecord|nil) data, ?bool allow_blank) -> (String | nil)
+  def set_edit_emma_data: ((symHash|String|Search::Record::MetadataRecord|nil) data, ?blanks: bool) -> (String | nil)
 
   # Selectively modify the :edit_emma_data field value.
   #
   # @param [Hash]    data
-  # @param [Boolean] allow_blank
+  # @param [Boolean] blanks
   #
   # @return [String, nil]
   #
-  def modify_edit_emma_data: (symHash data, ?bool allow_blank) -> (String | nil)
+  def modify_edit_emma_data: (symHash data, ?blanks: bool) -> (String | nil)
 
   # init_edit_emma_data_value
   #
@@ -111,12 +111,12 @@ module Upload::EmmaDataMethods
   # Set the EMMA data currently associated with the record.
   #
   # @param [Search::Record::MetadataRecord, Hash, String, nil] data
-  # @param [Boolean]                                           allow_blank
+  # @param [Boolean]                                           blanks
   #
   # @return [String]
   # @return [nil]                     If *data* is *nil*.
   #
-  def set_active_emma_data: ((symHash|String|Search::Record::MetadataRecord|nil) data, ?bool allow_blank) -> (String | nil)
+  def set_active_emma_data: ((symHash|String|Search::Record::MetadataRecord|nil) data, ?blanks: bool) -> (String | nil)
 
   # Selectively modify the EMMA data currently associated with the record.
   #

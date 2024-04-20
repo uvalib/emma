@@ -777,7 +777,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const BLANK = Emma.Upload.Field.empty;
+    const BLANK = Emma.Field.empty;
 
     // ========================================================================
     // Constants - colorize titles

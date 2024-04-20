@@ -442,8 +442,14 @@ form.select-entry {
 
     // Single-line text input.
     .input.single {
+
         padding:       0.5rem;
         border-radius: 0.25rem;
+
+        // Special handling deleted fields while saving.
+        &[data-now-deleting] {
+            color: $bg-color;
+        }
     }
 
     // Single textarea input.

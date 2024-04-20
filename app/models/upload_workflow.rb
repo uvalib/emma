@@ -1016,7 +1016,7 @@ module UploadWorkflow::External
     prefix = "#{prefix} - " unless prefix.match?(/[[:punct:]]\s*$/)
     prefix = "#{prefix} "   unless prefix.end_with?(' ')
     return if title.start_with?(prefix)
-    record.modify_active_emma_data(dc_title: "#{prefix}#{title}")
+    record.modify_active_emma_data({ dc_title: "#{prefix}#{title}" })
   end
 
   # ===========================================================================

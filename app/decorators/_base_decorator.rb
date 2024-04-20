@@ -1114,12 +1114,6 @@ class BaseDecorator
       StateGroup: fetch_property(:STATE_GROUP)&.keys,
     )
 
-    repo_properties = {
-      name:       EmmaRepository.pairs,
-      default:    EmmaRepository.default,
-      partner:    EmmaRepository.partner,
-    }
-
     path_properties = {
       index:      (index_path               rescue nil),
       show:       (show_path(id: JS_ID)     rescue nil),
@@ -1138,8 +1132,6 @@ class BaseDecorator
       Uploader:   fetch_property(:UPLOADER),
       Record:     record_properties,
       Mime:       { to_fmt: FileNaming.mime_to_fmt },
-      Field:      { empty: EMPTY_VALUE },
-      Repo:       repo_properties,
       Path:       path_properties,
     }
   end

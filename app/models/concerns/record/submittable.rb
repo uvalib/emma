@@ -110,7 +110,7 @@ module Record::Submittable
       prefix = "#{prefix} - " unless prefix.match?(/[[:punct:]]\s*$/)
       prefix = "#{prefix} "   unless prefix.end_with?(' ')
       return if title.start_with?(prefix)
-      record.modify_emma_data(dc_title: "#{prefix}#{title}")
+      record.modify_emma_data({ dc_title: "#{prefix}#{title}" })
     end
 
   end
