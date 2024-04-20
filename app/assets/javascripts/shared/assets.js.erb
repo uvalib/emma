@@ -441,7 +441,6 @@ AppDebug.file('shared/assets.js.erb');
  * @property {StatusProperties}             Status
  * @property {MimeProperties}               Mime
  * @property {FieldProperties}              Field
- * @property {RepositoryProperties}         Repo
  * @property {RecordProperties}             Record
  * @property {Object.<string,StringTable>}  [Label]
  */
@@ -479,7 +478,8 @@ AppDebug.file('shared/assets.js.erb');
  * @property {string}   SESSION_ID
  * @property {boolean}  SEARCH_ANALYSIS
  *
- * @property {AnalyticsProperties} Analytics
+ * @property {RepositoryProperties} Repo
+ * @property {AnalyticsProperties}  Analytics
  *
  * @property {ImageProperties}    Image
  * @property {PanelProperties}    Panel
@@ -534,8 +534,15 @@ export const Emma = (function() {
           APP_DEBUG =       false;
 
     // ========================================================================
-    // Analytics
+    // General information
     // ========================================================================
+
+    /** @type {RepositoryProperties} */
+    const Repo = {
+        name:               o$('<%= js EmmaRepository.pairs %>'),
+        default:            '<%= js EmmaRepository.default %>',
+        partner:            a$('<%= js EmmaRepository.partner %>'),
+    };
 
     /** @type {AnalyticsProperties} */
     const Analytics = {
@@ -860,6 +867,7 @@ export const Emma = (function() {
         DEPLOYED,
         SESSION_ID,
         SEARCH_ANALYSIS,
+        Repo,
         Analytics,
         Image,
         Panel,

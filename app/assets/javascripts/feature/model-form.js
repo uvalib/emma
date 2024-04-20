@@ -2664,7 +2664,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}
      */
     function partnerRepository(repo) {
-        return PROPERTIES.Repo.partner.includes(repo);
+        return Emma.Repo.partner.includes(repo);
     }
 
     /**
@@ -2799,7 +2799,7 @@ appSetup(MODULE, function() {
             const source_fields = { ...SOURCE_FIELDS,
                 repository:         repo,
                 emma_repository:    repo,
-                rem_metadataSource: [PROPERTIES.Repo.name[repo]],
+                rem_metadataSource: [Emma.Repo.name[repo]],
             };
             for (const [field, value] of Object.entries(source_fields)) {
                 if (typeof value === 'function') {

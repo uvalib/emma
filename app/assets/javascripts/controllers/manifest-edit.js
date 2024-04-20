@@ -2649,7 +2649,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}
      */
     function partnerRepository(repo) {
-        return PAGE_PROPERTIES.Repo.partner.includes(repo);
+        return Emma.Repo.partner.includes(repo);
     }
 
     // ========================================================================
