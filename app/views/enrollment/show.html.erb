@@ -19,6 +19,9 @@
     set_page_description(title)
   end
 
+  mail_opt = url_parameters.slice(*AccountMailer::URL_PARAMETERS)
+  mail_opt = {} unless mail_opt.key?(:welcome)
+
 -%>
 
 <%= page_heading(title, help: help) %>
@@ -27,7 +30,7 @@
 <%= page_directions_section %>
 <%= render 'enrollment/details', dec: dec, skip: :title %>
 
-<%= dec.finalize_button %>
+<%= dec.finalize_button(**mail_opt) %>
 
 <%= page_notes_section %>
 <%= dec.action_list unless modal? %>

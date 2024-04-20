@@ -294,7 +294,7 @@ class AccountDecorator
   # @return [Hash]
   #
   def form_hidden(**opt)
-    prm = url_parameters.slice(:welcome, :cc, :bcc)
+    prm = url_parameters.slice(*AccountMailer::URL_PARAMETERS)
     if prm[:welcome].nil?
       super
     else

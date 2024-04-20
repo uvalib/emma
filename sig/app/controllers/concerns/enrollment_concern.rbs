@@ -155,6 +155,18 @@ module EnrollmentConcern
   #
   def pagination_setup: (?paginator: Class, **untyped opt) -> Enrollment::Paginator
 
+  # The organization created by #finalize_enrollment.
+  #
+  # @return [Org, nil]
+  #
+  attr_reader new_org: Org | nil
+
+  # The users created by #finalize_enrollment.
+  #
+  # @return [Array<User>, nil]
+  #
+  attr_reader new_users: Array[User] | nil
+
   # Finalize an EMMA enrollment request by creating a new Org and User, and
   # removing the Enrollment record.
   #
@@ -165,26 +177,37 @@ module EnrollmentConcern
   #
   def finalize_enrollment: (untyped item, **untyped opt) -> (Enrollment | nil)
 
+  # Indicate whether #generate_help_ticket should be run when creating an
+  # enrollment.
+  #
+  def help_ticket?: () -> bool
+
   # Send a request email in order to generate a JIRA help ticket for a new
   # enrollment request.
   #
-  # @param [Hash] opt
+  # @param [Enrollment] enrollment
+  # @param [Hash]       opt           To ActionMailer::Parameterized#with
   #
   # @return [void]
   #
   # @see EnrollmentMailer#request_email
   #
-  def generate_help_ticket: (**untyped opt) -> void
+  def generate_help_ticket: (?Enrollment enrollment, **untyped opt) -> void
 
-  # Send a welcome email to the new organization Manager user.
+  # Indicate whether #generate_welcome_email should be run for the new
+  # organization Manager user.
   #
-  # @param [Hash] opt
+  def welcome_email?: () -> bool
+
+  # Send a welcome email all new users created along with the organization.
+  #
+  # @param [Hash] opt                 To ActionMailer::Parameterized#with
   #
   # @return [void]
   #
   # @see AccountMailer#welcome_email
   #
-  def generate_welcome_email: (**untyped opt) -> void
+  def generate_welcome_emails: (**untyped opt) -> void
 
   private
 

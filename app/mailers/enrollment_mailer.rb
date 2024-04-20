@@ -24,6 +24,18 @@ class EnrollmentMailer < ApplicationMailer
 
   public
 
+  # URL/form parameters associated with enrollment request emails.
+  #
+  # @type [Array<Symbol>]
+  #
+  URL_PARAMETERS = [:ticket, *MAIL_OPT].freeze
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Send to produce a JIRA help ticket for a new enrollment request.
   #
   # If this is not the production deployment, the email subject will be

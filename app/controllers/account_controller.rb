@@ -161,10 +161,8 @@ class AccountController < ApplicationController
   def create
     __log_activity
     __debug_route
-    mail  = params[:welcome]
-    mail  = production_deployment? ? !false?(mail) : true?(mail)
     @item = create_record
-    generate_welcome_email(item: @item) if mail
+    generate_welcome_email(@item) if welcome_email?
     post_response(:created, @item)
   rescue CanCan::AccessDenied => error
     post_response(:forbidden, error)

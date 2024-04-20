@@ -10,9 +10,6 @@ class ApplicationMailer < ActionMailer::Base
   include Emma::Common
   include HtmlHelper
 
-  # @private
-  MAIL_OPT = %i[to from subject cc bcc].freeze
-
   # ===========================================================================
   # :section: Mailer layout
   # ===========================================================================
@@ -26,6 +23,18 @@ class ApplicationMailer < ActionMailer::Base
   # ===========================================================================
 
   default from: MAILER_SENDER
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Options for ActionMailer::Base#mail.
+  #
+  # @type [Array<Symbol>]
+  #
+  MAIL_OPT = %i[to from subject cc bcc].freeze
 
   # ===========================================================================
   # :section:

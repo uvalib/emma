@@ -267,15 +267,21 @@ class EnrollmentDecorator < BaseDecorator
     #
     # @param [String, nil] label
     # @param [String]      css        Characteristic CSS class/selector.
-    # @param [Hash]        opt
+    # @param [Hash]        opt        Passed to #button_to except for :id and
+    #                                   AccountMailer::URL_PARAMETERS which go
+    #                                   to #finalize_enrollment_path.
     #
     # @return [ActiveSupport::SafeBuffer]
     #
     def finalize_button(label = nil, css: '.finalize-button', **opt)
-      config  = config_item('emma.enrollment.finalize')
-      label ||= config[:label]
-      id      = opt.delete(:id) || object.id
-      path    = h.finalize_enrollment_path(id: id)
+      config   = config_item('emma.enrollment.finalize')
+      label  ||= config[:label]
+
+      mail_opt = opt.extract!(*AccountMailer::URL_PARAMETERS)
+      mail_opt = {} unless mail_opt.key?(:welcome)
+      enroll   = opt.delete(:id) || object.id
+      path     = h.finalize_enrollment_path(id: enroll, **mail_opt)
+
       opt[:title] ||= config[:tooltip]
       prepend_css!(opt, css)
       h.button_to(label, path, opt)
@@ -447,10 +453,11 @@ class EnrollmentDecorator
   # @return [Hash]
   #
   def form_hidden(**opt)
-    if (ticket = params[:ticket]).nil?
+    prm = url_parameters.slice(*EnrollmentMailer::URL_PARAMETERS)
+    if prm[:ticket].nil?
       super
     else
-      super { |result, _| result.merge!(ticket: ticket) }
+      super { |result, _| result.merge!(prm) }
     end
   end
 

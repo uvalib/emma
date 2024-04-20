@@ -227,15 +227,20 @@ module AccountConcern
   #
   def pagination_setup: (?paginator: Class, **untyped opt) -> User::Paginator
 
+  # Indicate whether #generate_welcome_email should be run for a new user.
+  #
+  def welcome_email?: () -> bool
+
   # Send a welcome email to a new user.
   #
+  # @param [User] user
   # @param [Hash] opt
   #
   # @return [void]
   #
   # @see AccountMailer#welcome_email
   #
-  def generate_welcome_email: (**untyped opt) -> void
+  def generate_welcome_email: (User user, **untyped opt) -> void
 
   module DeviseMethods
 

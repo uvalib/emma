@@ -429,16 +429,25 @@ module AccountConcern
 
   public
 
+  # Indicate whether #generate_welcome_email should be run for a new user.
+  #
+  def welcome_email?
+    mail = params[:welcome]
+    production_deployment? ? !false?(mail) : true?(mail)
+  end
+
   # Send a welcome email to a new user.
   #
+  # @param [User] user
   # @param [Hash] opt
   #
   # @return [void]
   #
   # @see AccountMailer#welcome_email
   #
-  def generate_welcome_email(**opt)
-    opt = url_parameters.slice(:cc, :bcc, :format).merge(opt)
+  def generate_welcome_email(user = @item, **opt)
+    prm = url_parameters.slice(*ApplicationMailer::MAIL_OPT).except!(:to)
+    opt = prm.merge!(opt, item: user)
     AccountMailer.with(opt).welcome_email.deliver_later
   end
 

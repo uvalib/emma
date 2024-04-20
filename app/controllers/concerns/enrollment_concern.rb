@@ -288,6 +288,18 @@ module EnrollmentConcern
 
   public
 
+  # The organization created by #finalize_enrollment.
+  #
+  # @return [Org, nil]
+  #
+  attr_reader :new_org
+
+  # The users created by #finalize_enrollment.
+  #
+  # @return [Array<User>, nil]
+  #
+  attr_reader :new_users
+
   # Finalize an EMMA enrollment request by creating a new Org and User, and
   # removing the Enrollment record.
   #
@@ -302,36 +314,59 @@ module EnrollmentConcern
     time = opt.delete(:time) || DateTime.now
     # noinspection RubyMismatchedReturnType
     find_record(item, **opt).tap do |record|
-      record.complete_enrollment(updated_at: time)
+      @new_org, @new_users = record.complete_enrollment(updated_at: time)
       record.destroy
     end
+  end
+
+  # Indicate whether #generate_help_ticket should be run when creating an
+  # enrollment.
+  #
+  def help_ticket?
+    mail = params[:ticket]
+    production_deployment? ? !false?(mail) : true?(mail)
   end
 
   # Send a request email in order to generate a JIRA help ticket for a new
   # enrollment request.
   #
-  # @param [Hash] opt
+  # @param [Enrollment] enrollment
+  # @param [Hash]       opt           To ActionMailer::Parameterized#with
   #
   # @return [void]
   #
   # @see EnrollmentMailer#request_email
   #
-  def generate_help_ticket(**opt)
-    opt[:format] ||= params[:format]
+  def generate_help_ticket(enrollment = @item, **opt)
+    prm = url_parameters.slice(*ApplicationMailer::MAIL_OPT)
+    opt = prm.merge!(opt, item: enrollment)
     EnrollmentMailer.with(opt).request_email.deliver_later
   end
 
-  # Send a welcome email to the new organization Manager user.
+  # Indicate whether #generate_welcome_email should be run for the new
+  # organization Manager user.
   #
-  # @param [Hash] opt
+  def welcome_email?
+    mail = params[:welcome]
+    production_deployment? ? !false?(mail) : true?(mail)
+  end
+
+  # Send a welcome email to all new users created along with the organization.
+  #
+  # @param [Hash] opt                 To ActionMailer::Parameterized#with
   #
   # @return [void]
   #
   # @see AccountMailer#welcome_email
   #
-  def generate_welcome_email(**opt)
-    opt = url_parameters.slice(:cc, :bcc, :format).merge(opt)
-    AccountMailer.with(opt).welcome_email.deliver_later
+  def generate_welcome_emails(**opt)
+    return Log.warn { "#{__method__}: @new_users empty" } if @new_users.blank?
+    prm = url_parameters.slice(*ApplicationMailer::MAIL_OPT).except!(:to)
+    opt = prm.merge!(opt)
+    @new_users.each do |user|
+      opt[:item] = user
+      AccountMailer.with(opt).welcome_email.deliver_later
+    end
   end
 
   # ===========================================================================

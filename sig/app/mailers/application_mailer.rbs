@@ -3,7 +3,10 @@ class ApplicationMailer < ActionMailer::Base
 
   include HtmlHelper
 
-  # @private
+  # Options for ActionMailer::Base#mail.
+  #
+  # @type [Array<Symbol>]
+  #
   MAIL_OPT: symArray
 
   # Transform *body* into an array of paragraphs.

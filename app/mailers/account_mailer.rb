@@ -26,6 +26,18 @@ class AccountMailer < ApplicationMailer
 
   public
 
+  # URL/form parameters associated with account emails.
+  #
+  # @type [Array<Symbol>]
+  #
+  URL_PARAMETERS = [:welcome, *MAIL_OPT].freeze
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Send a welcome email to a new EMMA user.
   #
   # If this is not the production deployment, the email subject will be
