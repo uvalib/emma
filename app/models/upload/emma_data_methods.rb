@@ -151,7 +151,7 @@ module Upload::EmmaDataMethods
   # @return [String, nil]
   #
   def curr_edit_emma_data_value
-    @emma_metadata&.to_json
+    @edit_emma_metadata&.to_json
   end
 
   # ===========================================================================
