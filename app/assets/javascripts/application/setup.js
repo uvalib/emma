@@ -335,17 +335,13 @@ export function appEventTarget(k, caller) {
 /**
  * Remove all window/document event listeners registered with
  * {@link window.APP_PAGE.Event}.
- *
- * @param {AppEventMap} [event_map]
- * @param {string}      [caller]
- *
- * @returns {undefined}
  */
-function removeEvents(event_map = window.APP_PAGE.Event, caller) {
-    const func = caller || 'removeEvents';
-    if (isEmpty(event_map)) { return OUT.debug(`${func}: no events`) }
+function removeEvents() {
+    const func   = 'removeEvents';
+    const ev_map = window.APP_PAGE.Event;
+    if (isEmpty(ev_map)) { return OUT.debug(`${func}: no events`) }
     OUT.debug(`${func}: BEGIN`);
-    for (const [ev_key, ev_target] of event_map) {
+    for (const [ev_key, ev_target] of ev_map) {
         const [_, node] = appEventTarget(ev_key, func);
         OUT.debug(`${func}: target =`, ev_key, 'node =', node);
         for (const [type, ev_type] of ev_target) {
@@ -358,7 +354,7 @@ function removeEvents(event_map = window.APP_PAGE.Event, caller) {
         }
     }
     OUT.debug(`${func}: END`);
-    event_map.clear();
+    ev_map.clear();
 }
 
 // ============================================================================
