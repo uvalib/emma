@@ -29,7 +29,10 @@ module Org::Assignable
   #
   def normalize_attributes(attr, **opt)
     opt.reverse_merge!(key_norm: true, compact: false)
-    super
+    super.tap do |result|
+      result[:contact]&.map! { |user| user.is_a?(User) ? user.id : user }
+      result[:status_date] ||= DateTime.now if result[:status]
+    end
   end
 
   # ===========================================================================
