@@ -1,6 +1,8 @@
 // app/assets/stylesheets/controllers/_search_call.scss
 
-@use 'feature/model' as model-classes;
+@use 'shared/feature/scroll' as scroll;
+
+@use 'feature/model'         as model-classes;
 
 //=============================================================================
 // Search call index page
@@ -20,11 +22,7 @@
 // Grid table of search calls.
 .model-table.search_call {
 
-    $scroll-snap: true;
-
-    @if $scroll-snap {
-        scroll-snap-type:      both mandatory;
-        scroll-behavior:       smooth;
+    @include scroll.snap {
         scroll-padding-top:    50px;
         scroll-padding-bottom: 5px;
     }

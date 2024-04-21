@@ -11,6 +11,7 @@
 @use 'shared/controls/grids'   as grid;
 @use 'shared/feature/emoji'    as emoji;
 @use 'shared/feature/model'    as model;
+@use 'shared/feature/scroll'   as scroll;
 
 @use 'controllers/entry'       as entry-classes;
 
@@ -247,9 +248,7 @@ table.manifest_item-grid {
 
     grid-template-columns:   1fr;
 
-    @if $scroll-snap {
-        scroll-snap-type:    both mandatory;
-        scroll-behavior:     smooth;
+    @include scroll.snap {
         scroll-padding-top:  51px;  // TODO: dynamic calc of head row height
         scroll-padding-left: 124px; // TODO: dynamic calc of ctrl col width
     }
@@ -347,7 +346,7 @@ table.manifest_item-grid {
             border-right:   $cell-border-width solid $grid-border;
             border-bottom:  $cell-border-width solid $grid-border;
 
-            @if $scroll-snap {
+            @include scroll.snap-enabled {
                 scroll-snap-align: start;
             }
         }
@@ -1438,7 +1437,7 @@ table.manifest_item-grid {
             // Data cell for item metadata.
             > .cell:not(.file-uploader) {
 
-                @if $scroll-snap {
+                @include scroll.snap-enabled {
                     scroll-margin-left: 1px;
                 }
 
@@ -1598,7 +1597,7 @@ table.manifest_item-grid {
 
             > .cell:last-of-type {
                 // Allow the entire last column to be scrolled into view.
-                @if $scroll-snap {
+                @include scroll.snap-enabled {
                     scroll-snap-align: end;
                 }
             }
@@ -1655,7 +1654,7 @@ table.manifest_item-grid {
 
     &.head-expanded {
 
-        @if $scroll-snap {
+        @include scroll.snap-enabled {
 
             // Without dynamic calculation (and setting) of scroll-padding-top
             // there's no safe way to support vertical scroll snap when the
@@ -1709,7 +1708,7 @@ table.manifest_item-grid {
 
     &.controls-expanded {
 
-        @if $scroll-snap {
+        @include scroll.snap-enabled {
             scroll-padding-left: 239px; // TODO: dynamic calc of ctrl col width
         }
 

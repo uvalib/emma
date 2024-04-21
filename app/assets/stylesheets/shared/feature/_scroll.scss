@@ -1,0 +1,34 @@
+// app/assets/stylesheets/shared/feature/_scroll.scss
+//
+// Shared definitions supporting scrolling.
+
+
+//=============================================================================
+// Constants
+//=============================================================================
+
+// Indicate whether browser-based scroll snap will be used.
+$scroll-snap: true;
+
+//=============================================================================
+// Mixins
+//=============================================================================
+
+/// Applied to elements which may use scroll snap.
+/// Rules within the block are included only if $scroll-snap is true.
+///
+@mixin snap {
+    @if $scroll-snap {
+        scroll-snap-type: both proximity;
+        scroll-behavior:  smooth;
+        @content;
+    }
+}
+
+/// Rules within the block are included only if $scroll-snap is true.
+///
+@mixin snap-enabled {
+    @if $scroll-snap {
+        @content;
+    }
+}
