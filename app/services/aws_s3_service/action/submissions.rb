@@ -29,7 +29,7 @@ module AwsS3Service::Action::Submissions
   def creation_request(*records, **opt)
     opt[:meth] ||= __method__
     requested = AwsS3::Message::SubmissionRequest.array(records)
-    succeeded = put_records(*records, **opt)
+    succeeded = put_records(*requested, **opt)
     api_return(requested, succeeded)
   end
     .tap do |method|

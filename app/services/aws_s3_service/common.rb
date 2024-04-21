@@ -94,7 +94,7 @@ module AwsS3Service::Common
   # @return [AwsS3::Message::Response]
   #
   def api_return(records, succeeded, **opt)
-    super(AwsS3::Message::Response, records, succeeded, **opt)
+    AwsS3::Message::Response.new(records, succeeded, **opt)
   end
 
   # ===========================================================================
