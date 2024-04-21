@@ -494,37 +494,46 @@ class ManifestItemDecorator < BaseDecorator
     def type_details(col, prop = nil, &blk)
       prop ||= field_configuration(col)
       many   = prop[:array].presence
-      type   = prop[:type]&.to_s || 'string'
+      type   = prop[:type]&.to_s || 'text'
       case type
-        when /^text/     then name, plural = :type_text
-        when 'date'      then name, plural = :type_date
-        when 'TrueFalse' then name, plural = :type_boolean
-        when /^[A-Z]/    then name, plural = :type_value, many
-        else                  name, plural = nil
+        when 'date'      then name = :date
+        when 'TrueFalse' then name = :boolean
+        when /^[A-Z]/    then name = :enum
+        when /^text/     then name = many ? :text : :string
+        else                  name = nil
       end
-      text   = config_text_section(:manifest_item, :details, type: type)
-      name   = name ? text[name] : type
-      name   = name.pluralize if plural
+      cfg    = config_text_section(:manifest_item, :details)
+      field  = cfg[name] || {}
+      name   = (prop[:type_name] || field[:name] || type) % { type: type }
+      name   = name.pluralize if many
 
-      tag    = html_span(class: 'tag')        { "#{text[:type]}:" }
-      many &&= html_span(class: 'type-count') { text[:one_or_more] }
+      tag    = html_span(class: 'tag')        { "#{cfg[:type]}:" }
+      many &&= html_span(class: 'type-count') { cfg[:one_or_more] }
       name   = html_span(class: 'type-name')  { name }
       first  = safe_join([tag, many, name].compact)
-      lines  =
+
+      desc   = prop[:type_html]
+      desc ||= prop[:type_desc_html] || prop[:type_desc]
+      desc ||= field[:desc_html]     || field[:desc]
+      desc ||=
         if prop[:pairs]
+          # The description of a controlled-value field is just the list of
+          # valid field values.
           html_dl do
             opt = { class: 'label' } # First pair only
-            { text[:dt] => text[:dd] }.merge!(prop[:pairs]).map do |val, lbl|
+            { field[:dt] => field[:dd] }.merge!(prop[:pairs]).map do |val, lbl|
               val = html_dt(val, **opt)
               lbl = html_dd(lbl, **opt)
               opt = {}
               val << lbl
             end
           end
-        else
-          config_text(:manifest_item, :details, :type_desc, type: type.inspect)
         end
-      html_details(first, *lines, &blk)
+      desc ||=
+        config_text(:manifest_item, :details, :type_desc, type: type.inspect)
+      desc   = Array.wrap(desc).map { |v| v.html_safe? ? v : html_div(v) }
+
+      html_details(first, *desc, &blk)
     end
 
     # =========================================================================

@@ -231,6 +231,16 @@ en:
               content which is being submitted for the given manifest item.
             </p>
           type:         json
+          type_name:    'see details'
+          type_html:
+            |-
+            <p>
+              On import, if this is provided, it should be the name of a file
+              locally available on your workstation.
+              It only needs to be the name of the file;
+              when the bulk upload is submitted you will be prompted for the
+              actual file location.
+            </p>
 
         # =====================================================================
         # Selection of destination repository not currently supported.
@@ -274,6 +284,19 @@ en:
             <p>
               Standard identifier (e.g., ISBN, OCN [OCLC Number], etc.) for the
               creative work represented by the remediated content file.
+            </p>
+          type_html:
+            |-
+            <p>
+              Each identifier should be prefixed by it's type (e.g. "isbn:").
+              OCLC numbers not already starting with "ocn" should be prefixed
+              with "oclc:".
+              Valid DOIs should already be prefixed with "doi:" but if they
+              are in the form of a URL that should also be understood.
+            </p>
+            <p>
+              Identifiers can be separated by newlines, semicolons (";"), or
+              pipe symbols ("|").
             </p>
           placeholder:  'ISBN/etc for the work'
           category:     bibliographic
