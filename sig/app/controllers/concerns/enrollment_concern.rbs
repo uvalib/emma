@@ -7,10 +7,6 @@ module EnrollmentConcern
 
   include ModelConcern
 
-  # @private
-  # @type [Array<Symbol>]
-  NAME_FIELD_KEYS: symArray
-
   # Add a new Enrollment record to the database.
   #
   # @param [Hash, nil] prm            Field values (def: `#current_params`).
@@ -93,37 +89,6 @@ module EnrollmentConcern
   # @yieldreturn [String,nil]         Error message if *record* unacceptable.
   #
   def destroy_records: (?(Model|String|Integer|Array[Model|String|Integer]|nil) items, ?fatal: bool, **untyped opt) ?{ (Enrollment record) -> (String | nil) } -> Array[Enrollment]
-
-  # Normalize a *field* value from input.
-  #
-  # @param [Symbol]   field
-  # @param [any, nil] value
-  #
-  # @raise [Record::SubmitError]      If *value* is not acceptable for *field*.
-  #
-  # @return [String]                  Normalized value.
-  #
-  def normalize_input: (Symbol field, untyped value) -> String
-
-  # Normalize a :long_name value.
-  #
-  # @param [any, nil] value
-  #
-  # @raise [Record::SubmitError]      If *value* is not acceptable for *field*.
-  #
-  # @return [String]                  Normalized value.
-  #
-  def normalize_long_name: (untyped value) -> String
-
-  # Normalize a :short_name value.
-  #
-  # @param [any, nil] value
-  #
-  # @raise [Record::SubmitError]      If *value* is not acceptable for *field*.
-  #
-  # @return [String]                  Normalized value.
-  #
-  def normalize_short_name: (untyped value) -> String
 
   # Return with an error message value if any of the fields of *attr* would
   # result in a non-unique Enrollment or, ultimately, Organization.

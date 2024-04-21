@@ -146,6 +146,19 @@ module OrgConcern
   #
   def destroy_records: (?(Model|String|Integer|Array[Model|String|Integer]|nil) items, ?fatal: bool, **untyped opt) ?{ (Org record) -> (String | nil) } -> Array[Org]
 
+  # Return with an error message value if any of the fields of *attr* would
+  # result in a non-unique Organization.
+  #
+  # @param [Hash]          attrs      Enrollment fields/values.
+  # @param [Model, nil]    current    Existing record if *attr* is an update.
+  # @param [Array<Symbol>] keys       Only check these fields.
+  #
+  # @raise [Record::SubmitError]      If uniqueness would be violated.
+  #
+  # @return [void]
+  #
+  def check_unique: (symHash attrs, ?current: Model|nil, ?keys: symArray|nil) -> void
+
   # Create an Options instance from the current parameters.
   #
   # @return [Org::Options]

@@ -184,6 +184,55 @@ class Org < ApplicationRecord
     org.is_a?(String) ? org : instance_for(org)&.abbrev
   end
 
+  # Normalize a :long_name value.
+  #
+  # @param [any, nil] value
+  # @param [Boolean]  fatal
+  #
+  # @raise [Record::SubmitError]      If *value* is not acceptable for *field*.
+  #
+  # @return [String]                  Normalized value.
+  # @return [nil]                     If missing and not fatal.
+  #
+  def self.normalize_long_name(value, fatal: false, **)
+    value = value.to_s.squish.presence
+    error = ('Missing %{field}' if value.blank?) # TODO: I18n
+    if error
+      error %= { field: 'organization name' } # TODO: I18n
+      raise Record::SubmitError, error if fatal
+    else
+      value.upcase_first
+    end
+  end
+
+  # Normalize a :short_name value.
+  #
+  # @param [any, nil] value
+  # @param [Boolean]  fatal
+  #
+  # @raise [Record::SubmitError]      If *value* is not acceptable for *field*.
+  #
+  # @return [String]                  Normalized value.
+  # @return [nil]                     If missing and not fatal.
+  #
+  def self.normalize_short_name(value, fatal: false, **)
+    value = value.to_s.squish
+    error =
+      if value.blank?
+        'Missing %{field}' # TODO: I18n
+      elsif (value = value.gsub(/[^[:alnum:]]/, '')).blank?
+        'Please use only letters or numbers for %{field}' # TODO: I18n
+      elsif value.start_with?(/\d/)
+        'Please begin %{field} with a letter' # TODO: I18n
+      end
+    if error
+      error %= { field: 'abbreviation' } # TODO: I18n
+      raise Record::SubmitError, error if fatal
+    else
+      value
+    end
+  end
+
   # This is the (non-persisted) organization associated with ID 0.
   #
   # User records use :org_id == 0 to indicate that the user is explicitly not

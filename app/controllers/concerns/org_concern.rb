@@ -138,7 +138,19 @@ module OrgConcern
   def create_record(prm = nil, fatal: true, **opt, &blk)
     return super if blk
     unauthorized unless administrator?
-    super
+    super do |attr|
+      # Ensure that :long_name is present and that :short_name is valid or can
+      # be derived from :long_name.
+      k = :long_name
+      v = attr[k]
+      attr[k] = Org.normalize_long_name(v, fatal: true)
+      k = :short_name
+      v = attr[k] || Enrollment.abbreviate_org(attr[:long_name])
+      attr[k] = Org.normalize_short_name(v, fatal: true)
+
+      # Ensure that :long_name and :short_name are unique.
+      check_unique(attr)
+    end
   end
 
   # Start editing an existing Org record.
@@ -189,7 +201,9 @@ module OrgConcern
   def update_record(item = nil, fatal: true, **opt, &blk)
     return super if blk
     unauthorized unless administrator? || manager?
-    super
+    super do |record, attr|
+      check_unique(attr, current: record)
+    end
   end
 
   # Retrieve the indicated Org record(s) for the '/delete' page.
@@ -233,6 +247,34 @@ module OrgConcern
     return super if blk
     unauthorized unless administrator?
     super
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Return with an error message value if any of the fields of *attr* would
+  # result in a non-unique Organization.
+  #
+  # @param [Hash]          attrs      Enrollment fields/values.
+  # @param [Model, nil]    current    Existing record if *attr* is an update.
+  # @param [Array<Symbol>] keys       Only check these fields.
+  #
+  # @raise [Record::SubmitError]      If uniqueness would be violated.
+  #
+  # @return [void]
+  #
+  def check_unique(attrs, current: nil, keys: %i[long_name short_name])
+    attrs = attrs.slice(*keys)                      if keys
+    attrs = attrs.reject { |k, v| current[k] == v } if current
+    error =
+      attrs.find do |k, v|
+        next if Org.where(k => v).blank?
+        break "There is already an organization with #{k} #{v.inspect}"
+      end
+    raise Record::SubmitError, error if error
   end
 
   # ===========================================================================

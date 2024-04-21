@@ -21,10 +21,6 @@ module EnrollmentConcern
 
   public
 
-  # @private
-  # @type [Array<Symbol>]
-  NAME_FIELD_KEYS = %i[long_name short_name].freeze
-
   # Add a new Enrollment record to the database.
   #
   # @param [Hash, nil] prm            Field values (def: `#current_params`).
@@ -53,14 +49,15 @@ module EnrollmentConcern
 
       # Ensure that :long_name is present and that :short_name is valid or can
       # be derived from :long_name.
-      NAME_FIELD_KEYS.each do |k|
-        v = attr[k]
-        v ||= Enrollment.abbreviate_org(attr[:long_name]) if k == :short_name
-        attr[k] = normalize_input(k, v)
-      end
+      k = :long_name
+      v = attr[k]
+      attr[k] = Org.normalize_long_name(v, fatal: true)
+      k = :short_name
+      v = attr[k] || Enrollment.abbreviate_org(attr[:long_name])
+      attr[k] = Org.normalize_short_name(v, fatal: true)
 
       # Ensure that :long_name and :short_name are unique.
-      check_unique(attr, keys: NAME_FIELD_KEYS)
+      check_unique(attr)
     end
   end
 
@@ -110,9 +107,7 @@ module EnrollmentConcern
   def update_record(item = nil, fatal: true, **opt, &blk)
     return super if blk
     super do |record, attr|
-      # Ensure that :long_name and/or :short_name would not cause a conflict if
-      # either is being changed.
-      check_unique(attr, current: record, keys: NAME_FIELD_KEYS)
+      check_unique(attr, current: record)
     end
   end
 
@@ -165,60 +160,6 @@ module EnrollmentConcern
 
   protected
 
-  # Normalize a *field* value from input.
-  #
-  # @param [Symbol]   field
-  # @param [any, nil] value
-  #
-  # @raise [Record::SubmitError]      If *value* is not acceptable for *field*.
-  #
-  # @return [String]                  Normalized value.
-  #
-  def normalize_input(field, value)
-    case field
-      when :long_name  then normalize_long_name(value)
-      when :short_name then normalize_short_name(value)
-      else                  Log.error("#{__method__}: #{field} unexpected")
-    end
-  end
-
-  # Normalize a :long_name value.
-  #
-  # @param [any, nil] value
-  #
-  # @raise [Record::SubmitError]      If *value* is not acceptable for *field*.
-  #
-  # @return [String]                  Normalized value.
-  #
-  def normalize_long_name(value)
-    value = value.to_s.squish
-    error = ('Missing %{field}' if value.blank?)
-    error &&= error % { field: 'organization name' } # TODO: I18n
-    error and raise Record::SubmitError, error or value.upcase_first
-  end
-
-  # Normalize a :short_name value.
-  #
-  # @param [any, nil] value
-  #
-  # @raise [Record::SubmitError]      If *value* is not acceptable for *field*.
-  #
-  # @return [String]                  Normalized value.
-  #
-  def normalize_short_name(value)
-    value = value.to_s.squish
-    error =
-      if value.blank?
-        'Missing %{field}'
-      elsif (value = value.gsub(/[^[:alnum:]]/, '')).blank?
-        'Please use only letters or numbers for %{field}'
-      elsif value.start_with?(/\d/)
-        'Please begin %{field} with a letter'
-      end
-    error &&= error % { field: 'abbreviation' } # TODO: I18n
-    error and raise Record::SubmitError, error or value
-  end
-
   # Return with an error message value if any of the fields of *attr* would
   # result in a non-unique Enrollment or, ultimately, Organization.
   #
@@ -230,7 +171,7 @@ module EnrollmentConcern
   #
   # @return [void]
   #
-  def check_unique(attrs, current: nil, keys: nil)
+  def check_unique(attrs, current: nil, keys: %i[long_name short_name])
     attrs = attrs.slice(*keys)                      if keys
     attrs = attrs.reject { |k, v| current[k] == v } if current
     error =

@@ -100,6 +100,30 @@ class Org < ApplicationRecord
   #
   def self.org_name: (untyped org) -> (String | nil)
 
+  # Normalize a :long_name value.
+  #
+  # @param [any, nil] value
+  # @param [Boolean]  fatal
+  #
+  # @raise [Record::SubmitError]      If *value* is not acceptable for *field*.
+  #
+  # @return [String]                  Normalized value.
+  # @return [nil]                     If missing and not fatal.
+  #
+  def self.normalize_long_name: (untyped value, ?fatal: bool, **untyped _ignored) -> (String | nil)
+
+  # Normalize a :short_name value.
+  #
+  # @param [any, nil] value
+  # @param [Boolean]  fatal
+  #
+  # @raise [Record::SubmitError]      If *value* is not acceptable for *field*.
+  #
+  # @return [String]                  Normalized value.
+  # @return [nil]                     If missing and not fatal.
+  #
+  def self.normalize_short_name: (untyped value, ?fatal: bool, **untyped _ignored) -> (String | nil)
+
   # This is the (non-persisted) organization associated with ID 0.
   #
   # User records use :org_id == 0 to indicate that the user is explicitly not
