@@ -9,6 +9,7 @@
   manager           = current_user&.manager? && !administrator
 
   signed_in         = help_jump('signed in', :sign_in)
+  csv_template      = '/public/doc/Bulk Upload Example.xlsx'
 
   overview          =  topic[:overview]
   grid              =  topic[:grid]
@@ -478,12 +479,17 @@
     </p>
 
     <p>
-      To begin, click the <%= grid_import -%> button which will open a
-      "file chooser" for CSV files.
+      You can find detailed instructions for modifying an existing spreadsheet
+      in the PDF Help document, “Depositing Remediated Resources” (available on
+      the EMMA Help page).
+      Alternatively, you can download this
+      <a href="<%= csv_template -%>">example Excel template file</a>.
+      (NOTE: updates may be released in the future.)
     </p>
 
     <p>
-      TODO...
+      To begin, click the <%= grid_import -%> button which will open a
+      "file chooser" for CSV files.
     </p>
 
     <p>
@@ -501,9 +507,11 @@
       a new empty row will be inserted after that row.
     </p>
 
+<!--
     <p>
       TODO...
     </p>
+-->
 
     <p>
       Once your changes, additions, and deletions are as you like them, click
