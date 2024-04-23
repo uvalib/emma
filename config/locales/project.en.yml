@@ -52,12 +52,115 @@ en:
           educational materials for qualified end users.
           If you need assistance managing user accounts, or if you need to
           reassign the Manager role at your organization, please contact us at
-          %{contact_email} .
+          %{contact_email}.
           
           EMMA is supported by staff of the University of Virginia Library.
           If you encounter problems while using EMMA, please send us a help
-          request at %{help_email} .
-          We will do our best to respond within normal working hours.
+          request at %{help_email}.
+          We will do our best to respond as soon as possible.
+
+      new_manager:      &NEW_MANAGER
+        heading:        'EMMA Appropriate Use Guidelines'
+        body:
+          |-
+          An account has been created for you, and an organization has been
+          created in EMMA for your school.
+          As the person who initiated EMMA enrollment for your organization,
+          you have been made the local manager of EMMA accounts for your
+          school. 
+
+          You can now go to emma.lib.virginia.edu and use the email address to
+          which this message has been sent to log in.
+          First, try using Shibboleth to log in: you will either find your
+          school on the InCommon dropdown list or you won't.
+          If you do find your institution there, choose it and then give it
+          your individual and literal network ID, not an alias or group mailbox
+          address.
+          If Shibboleth login succeeds, that's the best outcome in terms of
+          ease of use in the future.
+          If it fails after you found your school on the list, please let me
+          know.
+          If your institution was not on the InCommon list in the first place,
+          or if your shibboleth attempt failed, then choose the other option,
+          EMMA local sign-in, and choose "Forgot your password" which will ask
+          you for your email address.
+          Please give the same address that you used in requesting enrollment
+          (or the corrected version, if I asked you for one).
+          If you are not successful, drop me a line at unsworth@virginia.edu.  
+
+          Once logged in as a Manager, you can now add accounts for other users
+          at your organization.
+          Instructions for signing into EMMA and creating additional accounts
+          are in the attached PDF help document, pages 4-7 which you can share.
+          Additional help documents are available as downloadable PDFs on the
+          EMMA Help Topics page, but for the users you create you will already
+          know which option they should choose--shibboleth or EMMA local
+          sign-in, so you can instruct them accordingly.
+          If you are using Shibboleth, be sure to remind the users you create
+          to give you their literal email address, not an alias or group
+          mailbox name.  
+
+          Feel free to sign into EMMA and start exploring (and uploading!).
+          The search feature lets you search for accessible, machine readable,
+          and remediated resources from the Internet Archive, the Accessible
+          Content E-Portal in Canada, and the EMMA Repository itself, which is
+          where your uploads will go.  
+
+          Zoom demos of EMMA will be scheduled in the near future, but EMMA is
+          still under development, so we want to advise you of a few known
+          issues you might bump into:
+
+          Search and Download: Known Issues
+
+          OpenAlex is listed as a searchable repository, but is not actually
+          available yet.
+          OpenAlex indexing is a “coming soon” feature for this summer.
+          This will add about 40M URLS for open-access journal articles, books,
+          and other materials that EMMA users will be able to download directly
+          from our search results. 
+
+          DAISY downloads from Internet Archive are not working, probably due
+          to factors outside our direct control.
+          We have reached out to our friends at the Internet Archive for
+          assistance.
+          We'll update via the emma-users email list. 
+
+          Users may run into references to our former repository partners
+          HathiTrust and Bookshare scattered through the interface and
+          documentation:
+          they're still friends, but they're not in the current index.  
+
+          Upload: Known Issues
+
+          All uploads should be manually set to “source repository” = EMMA,
+          regardless of where they were actually sourced from.
+          The confusing situation reflects an earlier stage in EMMA's
+          development that will eventually become invisible.
+
+          If the bulk upload manifest does not allow you to enter data, refresh
+          your browser page.
+
+          The status indicators on the left side of the bulk upload manifest
+          are not always appearing as they should, and may falsely indicate
+          that a line in the manifest is not ready for upload.
+          If you think you have supplied the minimum necessary metadata along
+          with the files for upload, try saving and submitting the manifest.
+
+          Bug reporting: 
+
+          If you run into difficulties not listed above, and not addressed by
+          the documentation on  the Help page, please email us at
+          %{help_email}.
+          We are a small crew, working very hard to open EMMA for new users,
+          and we will respond as soon as we can.
+
+          Details of Zoom demos and other announcements will be sent out to the
+          emma-users email list.
+          You should already be subscribed to that list, and in the future we
+          will automate that as part of new account creation, but meanwhile,
+          when you create accounts for staff at your institution, please ask
+          them to subscribe here:
+          https://lists.virginia.edu/sympa/info/emma-users
 
       _:                # END
 

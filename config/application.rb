@@ -57,9 +57,9 @@ module Emma
     # Mailer
     # =========================================================================
 
-    config.action_mailer.perform_caching = false
+    config.action_mailer.perform_caching    = false
     config.action_mailer.perform_deliveries = application_deployed?
-    config.action_mailer.show_previews = true
+    config.action_mailer.show_previews      = true
 
     config.action_mailer.smtp_settings = {
       port:    ENV.fetch('SMTP_PORT', 587).to_i,

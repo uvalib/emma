@@ -16,6 +16,8 @@ class EnrollmentMailer < ApplicationMailer
   # :section: Mailer settings
   # ===========================================================================
 
+  self.delivery_job = MailerJob
+
   default to: ENROLL_EMAIL, from: ENROLL_EMAIL
 
   # ===========================================================================
@@ -73,21 +75,22 @@ class EnrollmentMailer < ApplicationMailer
   # If this is not the production deployment, the heading and body will be
   # annotated to indicate that this is not a real enrollment request.
   #
-  # @param [Enrollment] item
-  # @param [Hash]       opt
+  # @param [Hash] opt
   #
-  # @option opt [Symbol]  :format
-  # @option opt [Boolean] :test
+  # @option opt [Enrollment] :item    Default: @item.
+  # @option opt [Symbol]     :format
+  # @option opt [Boolean]    :test
   #
   # @return [Hash]
   #
-  def request_email_elements(item: @item, **opt)
+  def request_email_elements(**opt)
     test = opt.key?(:test) ? opt.delete(:test) : !production_deployment?
     html = (opt[:format] == :html)
+    item = opt.delete(:item) || @item
     id   = item.id || 1 # Might be nil only from EnrollmentMailerPreview.
 
     # Get configured enrollment request email elements.
-    config_section('emma.enroll.request', **opt).tap do |cfg|
+    config_section('emma.enroll.request', **opt).deep_dup.tap do |cfg|
 
       cfg[:body] = format_paragraphs(cfg[:body], **opt)
 

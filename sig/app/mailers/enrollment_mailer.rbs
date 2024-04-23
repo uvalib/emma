@@ -29,15 +29,15 @@ class EnrollmentMailer < ApplicationMailer
   # If this is not the production deployment, the heading and body will be
   # annotated to indicate that this is not a real enrollment request.
   #
-  # @param [Enrollment] item
-  # @param [Hash]       opt
+  # @param [Hash] opt
   #
-  # @option opt [Symbol]  :format
-  # @option opt [Boolean] :test
+  # @option opt [Enrollment] :item    Default: @item.
+  # @option opt [Symbol]     :format
+  # @option opt [Boolean]    :test
   #
   # @return [Hash]
   #
-  def request_email_elements: (item: Enrollment, **untyped opt) -> symHash
+  def request_email_elements: (**untyped opt) -> symHash
 
   # Extract organization name.
   #

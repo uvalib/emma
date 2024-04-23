@@ -44,7 +44,8 @@ class LookupJob < ApplicationJob
   #   @return [Hash]  From LookupService::RemoteService#lookup_metadata
   #
   def perform(*args, **opt)
-    no_raise = record = nil
+    no_raise = nil
+    record   = JobResult.create(active_job_id: job_id)
     super
     args     = arguments.dup
     opt      = args.extract_options!.dup
@@ -55,7 +56,6 @@ class LookupJob < ApplicationJob
 
     service  = args.shift.presence or raise ExecError, "#{meth}: no service"
     request  = args.shift.presence or raise ExecError, "#{meth}: no request"
-    record   = JobResult.create(active_job_id: job_id)
 
     opt[:deadline] ||= (start + timeout) if timeout
     opt[:job_type] ||= service.is_a?(Array) ? :waiter : :worker

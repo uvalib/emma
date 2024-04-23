@@ -18,6 +18,8 @@ class AccountMailer < ApplicationMailer
   # :section: Mailer settings
   # ===========================================================================
 
+  self.delivery_job = MailerJob
+
   default from: CONTACT_EMAIL
 
   # ===========================================================================
@@ -76,7 +78,6 @@ class AccountMailer < ApplicationMailer
   # If this is not the production deployment, the heading and body will be
   # annotated to indicate that this is not a real enrollment request.
   #
-  # @param [User] item
   # @param [Hash] opt
   #
   # @option opt [Symbol]  :format
@@ -84,12 +85,12 @@ class AccountMailer < ApplicationMailer
   #
   # @return [Hash]
   #
-  def welcome_email_elements(item: @item, **opt)
+  def welcome_email_elements(**opt)
     test = opt.key?(:test) ? opt.delete(:test) : !production_deployment?
     html = (opt[:format] == :html)
 
     # Get configured welcome email elements.
-    config_section('emma.project.welcome', **opt).tap do |cfg|
+    config_section('emma.project.welcome', **opt).deep_dup.tap do |cfg|
 
       cfg[:body] = format_paragraphs(cfg[:body], **opt)
 

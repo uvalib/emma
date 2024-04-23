@@ -47,7 +47,8 @@ class SubmitJob < ApplicationJob
   # @return [Hash]
   #
   def perform(*args, **opt)
-    no_raise = record = nil
+    no_raise = nil
+    record   = JobResult.create(active_job_id: job_id)
     super
     args     = arguments.dup
     opt      = args.extract_options!.dup
@@ -58,7 +59,6 @@ class SubmitJob < ApplicationJob
 
     _service = opt[:service]        or raise ExecError, "#{meth}: no service"
     request  = args.shift.presence  or raise ExecError, "#{meth}: no request"
-    record   = JobResult.create(active_job_id: job_id)
 
     self.manifest_id = request.manifest_id
     opt[:deadline] ||= (start + timeout) if timeout

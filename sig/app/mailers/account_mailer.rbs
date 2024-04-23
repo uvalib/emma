@@ -31,7 +31,6 @@ class AccountMailer < ApplicationMailer
   # If this is not the production deployment, the heading and body will be
   # annotated to indicate that this is not a real enrollment request.
   #
-  # @param [User] item
   # @param [Hash] opt
   #
   # @option opt [Symbol]  :format
@@ -39,5 +38,5 @@ class AccountMailer < ApplicationMailer
   #
   # @return [Hash]
   #
-  def welcome_email_elements: (?item: User, **untyped opt) -> symHash
+  def welcome_email_elements: (**untyped opt) -> symHash
 end
