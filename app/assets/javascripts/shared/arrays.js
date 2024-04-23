@@ -3,9 +3,9 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { AppDebug }              from '../application/debug';
-import { isDefined, notDefined } from './definitions';
-import { dup }                   from './objects';
+import { AppDebug }                         from '../application/debug';
+import { isDefined, isPresent, notDefined } from './definitions';
+import { dup }                              from './objects';
 
 
 AppDebug.file('shared/arrays');
@@ -79,6 +79,36 @@ export function flatten(...args) {
         isDefined(item) && result.push(item);
     }
     return result;
+}
+
+// ============================================================================
+// Functions - set operations
+// ============================================================================
+
+/**
+ * The union of two arrays.
+ *
+ * @param {*} item1
+ * @param {*} item2
+ *
+ * @returns {array}
+ */
+export function intersection(item1, item2) {
+    const array1 = arrayWrap(item1);
+    const array2 = arrayWrap(item2);
+    return [...new Set([...array1, ...array2])];
+}
+
+/**
+ * Indicate whether two array intersect.
+ *
+ * @param {*} item1
+ * @param {*} item2
+ *
+ * @returns {boolean}
+ */
+export function intersects(item1, item2) {
+    return isPresent(intersection(item1, item2));
 }
 
 // ============================================================================

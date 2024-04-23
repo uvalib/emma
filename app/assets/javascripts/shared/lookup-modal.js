@@ -9,7 +9,7 @@ import { AppDebug }                       from '../application/debug';
 import { appTeardown }                    from '../application/setup';
 import { LookupChannel }                  from '../channels/lookup-channel';
 import { toggleVisibility }               from './accessibility';
-import { arrayWrap }                      from './arrays';
+import { arrayWrap, intersects }          from './arrays';
 import { Emma }                           from './assets';
 import { selector, toggleHidden }         from './css';
 import { turnOffAutocomplete }            from './form';
@@ -1836,7 +1836,7 @@ export class LookupModal extends ModalDialog {
             this._warn(`${func}: missing message.data`);
 
         } else if (data.blend) {
-            this._debug(`${func}: ignoring empty message.data.blend`);
+            this._debug(`${func}: ignoring message.data.blend`);
 
         } else if (isMissing(data.items)) {
             this._warn(`${func}: empty message.data.items`);
@@ -1846,9 +1846,12 @@ export class LookupModal extends ModalDialog {
             const req_ids = presence(request.ids);
             const service = camelCase(message.service);
             for (const [id, items] of Object.entries(data.items)) {
-                if (!req_ids || req_ids.includes(id)) {
-                    items.forEach(item => this.addEntry(item, service));
-                }
+                const use_all = !req_ids || req_ids.includes(id);
+                items.forEach(item => {
+                    if (use_all || intersects(req_ids, item.dc_identifier)) {
+                        this.addEntry(item, service);
+                    }
+                });
             }
         }
 

@@ -7,7 +7,7 @@
 
 import { AppDebug }                       from '../application/debug';
 import { LookupChannel }                  from '../channels/lookup-channel';
-import { arrayWrap }                      from '../shared/arrays';
+import { arrayWrap, intersects }          from "../shared/arrays";
 import { Emma }                           from '../shared/assets';
 import { selector, toggleHidden }         from '../shared/css';
 import { turnOffAutocomplete }            from '../shared/form';
@@ -1393,19 +1393,23 @@ export async function setupFor(base, show_hooks, hide_hooks) {
             OUT.warn(`${func}: missing message.data`);
 
         } else if (data.blend) {
-            OUT.debug(`${func}: ignoring empty message.data.blend`);
+            OUT.debug(`${func}: ignoring message.data.blend`);
 
         } else if (isMissing(data.items)) {
             OUT.warn(`${func}: empty message.data.items`);
 
         } else {
+            OUT.debug(`${func}: ${Object.keys(data.items).length} entries`);
             const request = getRequestData();
             const req_ids = presence(request.ids);
             const service = camelCase(message.service);
             for (const [id, items] of Object.entries(data.items)) {
-                if (!req_ids || req_ids.includes(id)) {
-                    items.forEach(item => addEntry(item, service));
-                }
+                const use_all = !req_ids || req_ids.includes(id);
+                items.forEach(item => {
+                    if (use_all || intersects(req_ids, item.dc_identifier)) {
+                        addEntry(item, service);
+                    }
+                });
             }
         }
 
