@@ -33,8 +33,26 @@ class SysController < ApplicationController
   #
   def database: () -> void
 
-  # An endpoint is defined for each configured page.
+  # === GET /sys/jobs
+  #
+  # Redirects to GoodJob dashboard.
+  #
+  def jobs: () -> void
+
+  # === GET /sys/mailers
+  #
+  # Redirects to "/rails/mailers".
+  #
+  def mailers: () -> void
+
+  # An endpoint is defined for each configured page that hasn't already been
+  # defined here.  Pages that are not just redirects should have a template in
+  # "/app/views/sys".
+  #
+  # @type [Array<Symbol>]
+  #
   # @see file:config/locales/controllers/sys.en.yml *en.emma.sys*
+  #
   PAGES: symArray
 
   def disk_space:   () -> void
@@ -44,4 +62,12 @@ class SysController < ApplicationController
   def loggers:      () -> void
   def processes:    () -> void
   def settings:     () -> void
+
+  # Get the path for a redirection from configuration.
+  #
+  # @param [Symbol] meth
+  #
+  # @return [String]
+  #
+  def sys_path_for: (Symbol meth) -> String
 end

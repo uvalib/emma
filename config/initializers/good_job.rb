@@ -70,5 +70,5 @@ Rails.application.configure do
     #   ENV['GOOD_JOB_PIDFILE'] || Rails.root.join('tmp/pids/good_job.pid'),
     # probe_port:
     #   ENV['GOOD_JOB_PROBE_PORT'],
-}
+  }
 end

@@ -44,7 +44,9 @@ en:
           - processes
           - disk_space
           - files
+          - mailers
           - database
+          - jobs
 
       # =======================================================================
       # Tables
@@ -96,6 +98,7 @@ en:
         label:          'Database'
         title:          'Database Tables'
         tooltip:        'Contents of database tables'
+        redirect:       '/data'
         _endpoint:      true
 
       # =======================================================================
@@ -140,10 +143,28 @@ en:
 
       # =======================================================================
 
+      jobs:
+        label:          'Jobs'
+        title:          'Job Queues'
+        tooltip:        'View asynchronous job queue information'
+        redirect:       '/good_job'
+        _endpoint:      true
+
+      # =======================================================================
+
       loggers:
         label:          'Loggers'
         title:          'Logger Instances'
         tooltip:        'View live logger instances'
+        _endpoint:      true
+
+      # =======================================================================
+
+      mailers:
+        label:          'Mailers'
+        title:          'Action Mailer Previews'
+        tooltip:        'View previews of generated emails'
+        redirect:       '/rails/mailers'
         _endpoint:      true
 
       # =======================================================================

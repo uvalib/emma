@@ -24,8 +24,8 @@ module SysConcern
   # @type [Array<Symbol>]
   #
   SYS_PAGES =
-    CONTROLLER_CONFIGURATION[:sys].map { |k, v|
-      k if v.is_a?(Hash) && v[:_endpoint] && (k != :index)
+    CONTROLLER_CONFIGURATION[:sys].except(:index).map { |k, v|
+      k if v.is_a?(Hash) && v[:_endpoint]
     }.compact.freeze
 
   # ===========================================================================
