@@ -308,23 +308,20 @@ module Emma::Common::FormatMethods
     Regexp.union(SIMPLE_NAMED_REFERENCE, FORMAT_NAMED_REFERENCE).freeze
 
   # Extract the named references in a format string and pair them with their
-  # respective sprintf formats.  Each "%{name}" reference is paired with "%s";
+  # respective sprintf formats.  Each "%{name}" reference is paired with *nil*;
   # each "%<name>" reference is paired with the format which follows it.
   #
-  # @param [any, nil]    text         String with #sprintf formatting.
-  # @param [String, nil] default_fmt  Format value for "%{name}" matches.
+  # @param [any, nil] text            String with #sprintf formatting.
   #
-  # @return [Hash{Symbol=>String}]
+  # @return [Hash{Symbol=>String,nil}]
   #
-  def named_references_and_formats(text, default_fmt: '%s')
-    result = {}
-    text.to_s.scan(NAMED_REFERENCE).each do |parts|
+  def named_references_and_formats(text)
+    text.to_s.scan(NAMED_REFERENCE).map { |parts|
       name = parts.shift || parts.shift
-      fmt  = parts.presence&.join || default_fmt
+      fmt  = parts.compact.presence&.join
       fmt  = "%#{fmt}" if fmt && !fmt.start_with?('%')
-      result[name.to_sym] = fmt
-    end
-    result
+      [name.to_sym, fmt]
+    }.to_h
   end
 
   # Matches the given named reference appearing in a string as "%{name}".
@@ -455,10 +452,10 @@ module Emma::Common::FormatMethods
     text   = text.to_s
     html   = false
     values =
-      named_references_and_formats(text, default_fmt: nil).map { |term, format|
-        key  = term.to_s.underscore.to_sym
-        val  = nil
-        src.find { |item|
+      named_references_and_formats(text).map { |term, format|
+        key = term.to_s.underscore.to_sym
+        val = nil
+        src.each do |item|
           case
             when item.try(:include?, key)  then val = item[key]
             when item.try(:include?, term) then val = item[term]
@@ -466,11 +463,12 @@ module Emma::Common::FormatMethods
             when item.respond_to?(term)    then val = item.send(term)
             else                                next
           end
-          break true
-        } or next
-        term = term.to_s
-        val  = val&.to_s || term
-        htm  = val.is_a?(ActiveSupport::SafeBuffer)
+          break
+        end
+        term  = term.to_s
+        val   = val&.to_s
+        val ||= "%{#{term}}" # Named reference will show as un-interpolated.
+        htm   = val.html_safe?
         if term.start_with?(/[[:alpha:]]/) && (term == term.capitalize)
           key = key.capitalize
           val = val.capitalize unless htm
@@ -478,12 +476,12 @@ module Emma::Common::FormatMethods
           key = key.upcase
           val = val.upcase unless htm
         end
-        val %= format if format && !htm
+        val %= format if format
         html ||= htm
         [key, val]
       }.compact.presence&.to_h or return
 
-    html ||= text.is_a?(ActiveSupport::SafeBuffer)
+    html ||= text.html_safe?
     text   = text.gsub(/(?<!%)(%[^{<])/,  '%\1')  # Preserve %s specifiers
     text  %= html ? values.transform_values! { |v| ERB::Util.h(v) } : values
     text   = text.gsub(/(?<!%)%(%[^{<])/, '\1')   # Restore %s specifiers

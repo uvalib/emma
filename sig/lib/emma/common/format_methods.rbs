@@ -199,15 +199,14 @@ module Emma::Common::FormatMethods
   NAMED_REFERENCE: Regexp
 
   # Extract the named references in a format string and pair them with their
-  # respective sprintf formats.  Each "%{name}" reference is paired with "%s";
+  # respective sprintf formats.  Each "%{name}" reference is paired with *nil*;
   # each "%<name>" reference is paired with the format which follows it.
   #
-  # @param [any, nil]    text         String with #sprintf formatting.
-  # @param [String, nil] default_fmt  Format value for "%{name}" matches.
+  # @param [any, nil] text            String with #sprintf formatting.
   #
-  # @return [Hash{Symbol=>String}]
+  # @return [Hash{Symbol=>String,nil}]
   #
-  def named_references_and_formats: (untyped text, ?default_fmt: String|nil) -> Hash[Symbol,String]
+  def named_references_and_formats: (untyped text) -> Hash[Symbol,(String|nil)]
 
   # Matches the given named reference appearing in a string as "%{name}".
   # Named references of the form "%<name>" will not be matched.

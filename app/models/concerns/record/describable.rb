@@ -50,7 +50,7 @@ module Record::Describable
   def interpolations(text, model, **opt)
     text  = text.to_s unless text.is_a?(String)
     terms =
-      named_references_and_formats(text, default_fmt: nil).map { |term, format|
+      named_references_and_formats(text).map { |term, format|
         term = term.to_s
         key  = term.underscore.to_sym
         next unless (meth = interpolation_table[key])
