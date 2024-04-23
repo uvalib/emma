@@ -4,7 +4,7 @@
 
   view_debug(__FILE__)
 
-  resource ||= current_user
+  resource ||= @resource
   errors   ||= resource&.errors
 
   return unless errors.present?

@@ -4,7 +4,7 @@
 
   view_abort(__FILE__, 'NOT EXPECTED TO BE USED')
 
-  user  ||= current_user
+  user  ||= @resource
 
   help  ||= nil
   title ||= t('emma.user.confirmations.new.title')

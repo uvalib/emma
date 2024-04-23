@@ -3,7 +3,7 @@
 
   view_abort(__FILE__, 'NOT EXPECTED TO BE USED')
 
-  user  ||= current_user
+  user  ||= @resource
   name  ||= @email || user.email
   token ||= @token
 
