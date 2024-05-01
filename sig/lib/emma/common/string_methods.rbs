@@ -16,10 +16,11 @@ module Emma::Common::StringMethods
   # Strip HTML from value strings.
   #
   # @param [String, Symbol] string
+  # @param [Hash]           opt       Passed to Sanitize#fragment.
   #
   # @return [String]
   #
-  def sanitized_string: (String|Symbol string) -> String
+  def sanitized_string: (String|Symbol string, **untyped opt) -> String
 
   # Generate a rendering of a hash as a delimited list of key-value pairs.
   #

@@ -33,12 +33,14 @@ module Emma::Common::StringMethods
   # Strip HTML from value strings.
   #
   # @param [String, Symbol] string
+  # @param [Hash]           opt       Passed to Sanitize#fragment.
   #
   # @return [String]
   #
-  def sanitized_string(string)
-    text = Sanitize.fragment(string.to_s).squish
-    CGI.unescapeHTML(text).gsub(/&nbsp;/, ' ')
+  def sanitized_string(string, **opt)
+    text = Sanitize.fragment(string.to_s, **opt)
+    text = CGI.unescapeHTML(text)
+    text.gsub(/&nbsp;/, ' ')
   end
 
   # Generate a rendering of a hash as a delimited list of key-value pairs.
@@ -102,7 +104,8 @@ module Emma::Common::StringMethods
         when Array
           array_string(value, **opt)
         else
-          value = sanitized_string(value) if sanitize && value.is_a?(String)
+          value = sanitized_string(value) if value.is_a?(String) && sanitize
+          value = value.squish            if value.is_a?(String)
           if opt[:inspect]
             value.inspect
           elsif opt[:quote]

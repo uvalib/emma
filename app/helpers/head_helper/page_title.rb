@@ -124,7 +124,7 @@ module HeadHelper::PageTitle
     parts << META_TITLE_TRAILER unless title.end_with?(META_TITLE_SUFFIX)
     title  = parts.join(' ').strip
     html_tag(:title, 'data-turbolinks-eval': false, **opt) do
-      sanitized_string(title)
+      sanitized_string(title).squish
     end
   end
 

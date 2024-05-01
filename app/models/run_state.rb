@@ -183,7 +183,7 @@ class RunState < Hash
           v[:code]   = other[:code]&.to_i
           v[:html]   = other[:html] || other[:message]
           v[:text]   = other[:text] || other[:message] || other[:html]
-          v[:text]   = sanitized_string(v[:text]).presence
+          v[:text]   = sanitized_string(v[:text]).squish.presence
           v[:after]  = other[:after] || other[:retry_after]
           v[:after]  = timestamp_or_duration(v[:after])
           v.compact.presence

@@ -326,7 +326,7 @@ module BaseDecorator::Form
     # icon(s).
     if label.is_a?(ActiveSupport::SafeBuffer)
       # noinspection RubyMismatchedArgumentType
-      text  = sanitized_string(label)
+      text  = sanitized_string(label).squish
     else
       text  = (label || field).to_s
       label = labelize(field) unless label.is_a?(String)
