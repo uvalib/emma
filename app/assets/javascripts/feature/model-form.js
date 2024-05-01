@@ -2517,6 +2517,9 @@ appSetup(MODULE, function() {
                 valid = false;
             }
 
+        } else if ($input.is('[type="email"]')) {
+            valid = !!value.match(/^[^@]+@[^.].*\.[^.]+$/);
+
         } else if ((min = $input.attr('minlength')) && (value.length < min)) {
             notes = Emma.Messages.field.validation.too_small;
             valid = false;
