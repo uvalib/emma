@@ -64,6 +64,12 @@ module AccountConcern
   #
   attr_reader new_admin: bool | nil
 
+  # Set when a new non-Administrator user is created.
+  #
+  # @type [Boolean, nil]
+  #
+  attr_reader new_user: bool | nil
+
   # Return with the specified User record.
   #
   # @param [any, nil] item      String, Integer, Hash, Model; def: #identifier.
@@ -242,12 +248,15 @@ module AccountConcern
   #
   def pagination_setup: (?paginator: Class, **untyped opt) -> User::Paginator
 
+  # Indicate whether emails should be generated.
+  #
+  def send_email?: () -> bool
+
   # Indicate whether #generate_new_user_email should be run for a new user.
   #
   def new_user_email?: () -> bool
 
-  # Send a welcome email to a new user. Manager users will receive
-  # #new_org_mail; any others will receive #new_user_email.
+  # Send a welcome email to a new user.
   #
   # @param [User] user
   # @param [Hash] opt
@@ -255,6 +264,7 @@ module AccountConcern
   # @return [void]
   #
   # @see AccountMailer#new_user_email
+  # @see EnrollmentConcern#generate_new_user_emails
   #
   def generate_new_user_email: (?User user, **untyped opt) -> void
 

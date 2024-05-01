@@ -159,14 +159,17 @@ module EnrollmentConcern
   #
   def generate_help_ticket: (?Enrollment enrollment, **untyped opt) -> void
 
+  # Indicate whether emails should be generated.
+  #
+  def send_email?: () -> bool
+
   # Indicate whether #generate_new_user_email should be run for users of the
   # new organization.
   #
   def new_user_email?: () -> bool
 
   # Send a welcome email to all new users created along with the organization.
-  # Manager users will receive #new_org_mail; any others will receive
-  # #new_user_email.
+  # In addition, manager users will receive #new_org_email.
   #
   # @param [Hash] opt                 To ActionMailer::Parameterized#with
   #

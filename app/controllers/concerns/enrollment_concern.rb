@@ -272,17 +272,21 @@ module EnrollmentConcern
     EnrollmentMailer.with(opt).request_email.deliver_later
   end
 
-  # Indicate whether #generate_new_user_email should be run for users of the
-  # new organization.
+  # Indicate whether emails should be generated.
   #
-  def new_user_email?
+  def send_email?
     mail = params[:welcome]
     production_deployment? ? !false?(mail) : true?(mail)
   end
 
+  # Indicate whether #generate_new_user_email should be run for a new user.
+  #
+  def new_user_email?
+    new_users.present? && send_email?
+  end
+
   # Send a welcome email to all new users created along with the organization.
-  # Manager users will receive #new_org_mail; any others will receive
-  # #new_user_email.
+  # In addition, manager users will receive #new_org_email.
   #
   # @param [Hash] opt                 To ActionMailer::Parameterized#with
   #
@@ -293,14 +297,14 @@ module EnrollmentConcern
   # @see AccountConcern#generate_new_user_email
   #
   def generate_new_user_emails(**opt)
-    return Log.warn { "#{__method__}: @new_users empty" } if @new_users.blank?
     prm = url_parameters.slice(*ApplicationMailer::MAIL_OPT).except!(:to)
     opt = prm.merge!(opt)
-    @new_users.each do |user|
+    man = new_users.none?(&:manager?)
+    new_users.each do |user|
       opt[:item] = user
       mail = AccountMailer.with(opt)
-      mail = user.manager? ? mail.new_org_email : mail.new_user_email
-      mail.deliver_later
+      mail.new_org_email.deliver_later if man || user.manager?
+      mail.new_user_email.deliver_later
     end
   end
 

@@ -107,6 +107,12 @@ module AccountConcern
   #
   attr_reader :new_admin
 
+  # Set when a new non-Administrator user is created.
+  #
+  # @type [Boolean, nil]
+  #
+  attr_reader :new_user
+
   # Return with the specified User record.
   #
   # @param [any, nil] item      String, Integer, Hash, Model; def: #identifier.
@@ -188,11 +194,14 @@ module AccountConcern
       if administrator?
         if oid.nil?
           attr[:org_id] = Org.none.id
+          @new_admin   = true
         elsif oid == Org.none.id
-          @new_admin = true
+          @new_admin   = true
         elsif (org = Org.find_by(id: oid))
+          @new_user    = true
           @new_org_man = org.managers.blank?
         else
+          @new_user    = true
           Log.error("#{self}.#{__method__}: invalid: org_id #{oid.inspect}")
         end
       else # if manager?
@@ -201,6 +210,7 @@ module AccountConcern
         elsif oid != current_org_id
           invalid_attr(:org_id, oid, "not permitted for #{current_user}")
         end
+        @new_user = true
       end
 
       if acct && !skip.include?(:email) && User.find_by(email: acct).present?
@@ -517,15 +527,20 @@ module AccountConcern
 
   public
 
-  # Indicate whether #generate_new_user_email should be run for a new user.
+  # Indicate whether emails should be generated.
   #
-  def new_user_email?
+  def send_email?
     mail = params[:welcome]
     production_deployment? ? !false?(mail) : true?(mail)
   end
 
-  # Send a welcome email to a new user. Manager users will receive
-  # #new_org_mail; any others will receive #new_user_email.
+  # Indicate whether #generate_new_user_email should be run for a new user.
+  #
+  def new_user_email?
+    new_user.present? && send_email?
+  end
+
+  # Send a welcome email to a new user.
   #
   # @param [User] user
   # @param [Hash] opt
@@ -533,22 +548,19 @@ module AccountConcern
   # @return [void]
   #
   # @see AccountMailer#new_user_email
-  # @see AccountMailer#new_org_email
   # @see EnrollmentConcern#generate_new_user_emails
   #
   def generate_new_user_email(user = @item, **opt)
-    prm  = url_parameters.slice(*ApplicationMailer::MAIL_OPT).except!(:to)
-    opt  = prm.merge!(opt, item: user)
-    mail = AccountMailer.with(opt)
-    mail = new_org_man ? mail.new_org_email : mail.new_user_email
-    mail.deliver_later
+    prm = url_parameters.slice(*ApplicationMailer::MAIL_OPT).except!(:to)
+    opt = prm.merge!(opt, item: user)
+    AccountMailer.with(opt).new_user_email.deliver_later
   end
 
   # Indicate whether #generate_new_org_email should be run for a user that
   # has been modified to be the Manager of a new organization.
   #
   def new_org_email?
-    new_user_email? && new_org_man.present?
+    new_org_man.present? && send_email?
   end
 
   # Send a welcome email to the Manager of a new organization.
@@ -563,8 +575,8 @@ module AccountConcern
   # @see EnrollmentConcern#generate_new_user_emails
   #
   def generate_new_org_email(user = @item, **opt)
-    prm  = url_parameters.slice(*ApplicationMailer::MAIL_OPT).except!(:to)
-    opt  = prm.merge!(opt, item: user)
+    prm = url_parameters.slice(*ApplicationMailer::MAIL_OPT).except!(:to)
+    opt = prm.merge!(opt, item: user)
     AccountMailer.with(opt).new_org_email.deliver_later
   end
 

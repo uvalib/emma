@@ -182,6 +182,10 @@ module OrgConcern
   #
   def pagination_setup: (?paginator: Class, **untyped opt) -> Org::Paginator
 
+  # Indicate whether emails should be generated.
+  #
+  def send_email?: () -> bool
+
   # Indicate whether #generate_new_org_email should be run for a user that
   # has been modified to be the Manager of a new organization.
   #
