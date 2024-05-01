@@ -1,6 +1,9 @@
 # config/locales/formats/pdf.en.yml
 #
 # PDF (Portable Document Format)
+#
+# PDF metadata is usually about the creator of the PDF and rarely contains
+# bibliographic information about the source document.
 
 en:
 
@@ -22,16 +25,16 @@ en:
 
       fields:
 
-        Title:        'Title'
-        Author:       'Author'
-        Keywords:     'Keywords'
-        Creator:      'Creator'
-        CreationDate: 'CreationDate'
-        ModifiedDate: 'ModDate'
-        Subject:      'Subject'
-        PdfProducer:  'Producer'
-        PdfVersion:   'pdf_version'
-        PageCount:    'page_count'
+        Title:          'Title'
+        Author:         'Author'
+        Keywords:       'Keywords'
+        Creator:        'Creator'
+        CreationDate:   'CreationDate'
+        ModifiedDate:   'ModDate'
+        Subject:        'Subject'
+        PdfProducer:    'Producer'
+        PdfVersion:     'pdf_version'
+        PageCount:      'page_count'
 
       # =======================================================================
       # A mapping of format field to the equivalent

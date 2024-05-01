@@ -69,7 +69,7 @@ module OmniAuth
 
       # Performs the steps necessary to run the request phase of a strategy.
       #
-      # @return [Array(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)]
+      # @return [Array(Integer, Rack::Headers, Rack::BodyProxy)]
       # @return [Array(Integer, Hash{String=>any,nil},   Array<String>)]
       #
       def request_call
@@ -255,7 +255,7 @@ module OmniAuth
 
       # request_phase
       #
-      # @return [(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)]
+      # @return [(Integer, Rack::Headers, Rack::BodyProxy)]
       # @return [(Integer, Hash{String=>any,nil}, Array<String>)]
       #
       # @see ::OAuth2::ClientExt#request
@@ -277,7 +277,7 @@ module OmniAuth
       # @raise [Errno::ETIMEDOUT]
       # @raise [SocketError]
       #
-      # @return [Array(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)]
+      # @return [Array(Integer, Rack::Headers, Rack::BodyProxy)]
       # @return [Array(Integer, Hash{String=>any,nil},   Array<String>)]
       #
       #--

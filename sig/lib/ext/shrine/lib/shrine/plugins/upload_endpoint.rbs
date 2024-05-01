@@ -25,7 +25,7 @@ class Shrine
     #
     # @param [Hash] env
     #
-    def call: (untyped env) -> untyped
+    def call: (untyped env) -> httpResult
 
     # handle_request
     #

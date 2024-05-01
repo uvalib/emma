@@ -687,7 +687,7 @@ class BaseUploader extends BaseClass {
      * @returns {object}
      * @protected
      *
-     * @see https://uppy.io/docs/xhr-upload/#getResponseData-responseText-response
+     * @see https://uppy.io/docs/xhr-upload/#getresponsedata
      */
     _xhrGetResponseData(body, xhr) {
         this._debug('_xhrGetResponseData; xhr =', xhr, 'body =', body);
@@ -704,7 +704,7 @@ class BaseUploader extends BaseClass {
      * @returns {Error}
      * @protected
      *
-     * @see https://uppy.io/docs/xhr-upload/#getResponseError-responseText-response
+     * @see https://uppy.io/docs/xhr-upload/#getresponseerror
      */
     _xhrGetResponseError(body, xhr) {
         this._debug('_xhrGetResponseError; xhr =', xhr, 'body =', body);
@@ -1373,7 +1373,7 @@ class BaseUploader extends BaseClass {
      * @protected
      */
     _uploadedFilenameElement(inner = '.filename') {
-        const $element = this.uploadedFilenameDisplay()
+        const $element = this.uploadedFilenameDisplay();
         const $inner   = $element.find(inner);
         return isPresent($inner) ? $inner : $element;
     }

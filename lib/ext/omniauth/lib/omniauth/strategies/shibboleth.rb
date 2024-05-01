@@ -48,7 +48,7 @@ module OmniAuth
       # The request phase results in a redirect to a path that is configured to
       # be hijacked by mod rewrite and shibboleth apache module.
       #
-      # @return [(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)]
+      # @return [(Integer, Rack::Headers, Rack::BodyProxy)]
       # @return [(Integer, Hash{String=>any,nil}, Array<String>)]
       #
       def request_phase
@@ -61,7 +61,7 @@ module OmniAuth
       # @raise [Errno::ETIMEDOUT]
       # @raise [SocketError]
       #
-      # @return [Array(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)]
+      # @return [Array(Integer, Rack::Headers, Rack::BodyProxy)]
       # @return [Array(Integer, Hash{String=>any,nil},   Array<String>)]
       #
       def callback_phase

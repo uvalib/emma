@@ -1,6 +1,9 @@
 # config/locales/formats/braille.en.yml
 #
 # Braille format - TODO: Is this actually different than BRF?
+#
+# Braille is basically a type of text document; any bibliographic metadata such
+# document might contain would be highly dependent on arbitrary conventions.
 
 en:
 

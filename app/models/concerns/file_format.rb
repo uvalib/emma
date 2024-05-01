@@ -398,7 +398,7 @@ module FileFormat
   public
 
   # Common storage for configured properties for each file format.
-  #
+  # noinspection RbsMissingTypeSignature
   class << self
 
     # Get configured properties for a file format.  If multiple sections are
@@ -452,7 +452,6 @@ module FileFormat
     # @return [Hash{Symbol=>Hash}]
     #
     def configuration_table
-      # noinspection RbsMissingTypeSignature
       @configuration_table ||= {}
     end
 

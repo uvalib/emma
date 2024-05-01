@@ -19,12 +19,17 @@ type strArray   = Array[String]           # Array of String
 
 type prmHash    = symHash | ActionController::Parameters
 
-type httpResult = [Integer, (strHash|Rack::Utils::HeaderHash), (strArray|Rack::BodyProxy)]
+type httpResult = [Integer, (strHash|Rack::Headers), (strArray|Rack::BodyProxy)]
 type errorArgs  = Exception | ExecReport | symHash | String | strArray | Array[Record::Exceptions::FlashPart] | nil
 
 type logger     = ActiveSupport::BroadcastLogger | Logger
 
 type script_path = String | symHash | [String,symHash] # e.g. @page_javascript
+
+# NOTE: why is RubyMine not using gems/rbs-*/core/builtin.rb
+type int      = Integer | _ToInt
+type string   = String | _ToStr
+type interned = Symbol | string
 
 # =============================================================================
 # Duck-typing definitions
@@ -37,6 +42,26 @@ end
 interface _LoggerConfig
   def logger:  ()        -> logger?
   def logger=: (untyped) -> logger?
+end
+
+# NOTE: why is RubyMine not using gems/rbs-*/core/builtin.rb
+interface _Each[out A]
+  def each: () { (A) -> void } -> void
+end
+
+# NOTE: why is RubyMine not using gems/rbs-*/core/builtin.rb
+interface _ToInt
+  def to_int: () -> Integer
+end
+
+# NOTE: why is RubyMine not using gems/rbs-*/core/builtin.rb
+interface _ToIO
+  def to_io: () -> IO
+end
+
+# NOTE: why is RubyMine not using gems/rbs-*/core/builtin.rb
+interface _ToStr
+  def to_str: () -> String
 end
 
 # =============================================================================
@@ -332,6 +357,10 @@ module Capybara
   end
 end
 
+# NOTE: why is RubyMine not using plugins/ruby/rubystubs/rubystubs33/exception.rb
+class Comparable
+end
+
 module Concurrent
   module Collection
     class MriMapBackend
@@ -425,6 +454,11 @@ module Enumerable[unchecked out Elem] : _Each[Elem]
 
 end
 
+# NOTE: why is RubyMine not using gems/rbs-*/core/enumerator.rb
+class Enumerator[unchecked out Elem, out Return] < Object
+  include Enumerable[Elem]
+end
+
 # NOTE: overrides gems/rbs-*/stdlib/erb/0/erb.rbs
 class ERB
 
@@ -438,6 +472,10 @@ class ERB
     def self.html_escape: (untyped|nil) -> ActiveSupport::SafeBuffer
   end
 
+end
+
+# NOTE: why is RubyMine not using plugins/ruby/rubystubs/rubystubs33/exception.rb
+class Exception
 end
 
 module Faraday
@@ -607,6 +645,10 @@ module PDF
   end
 end
 
+# NOTE: why is RubyMine not using plugins/ruby/rubystubs/rubystubs33/proc.rb
+class Proc
+end
+
 module Prometheus
   module Client
     class Metric
@@ -630,6 +672,11 @@ module Puma
   class Events
   end
   class IOBuffer < ::StringIO
+  end
+end
+
+module Rack
+  class Headers < ::Hash[untyped, untyped]
   end
 end
 
@@ -711,9 +758,17 @@ class String
   def start_with?: (*(string|Regexp) prefixes) -> bool
 end
 
+# NOTE: why is RubyMine not using gems/rbs-*/core/string_io.rbs
+class StringIO
+end
+
 # NOTE: overrides plugins/ruby/rubystubs/rubystubs33/symbol.rb
 class Symbol
   def match?: (Regexp|string pattern, ?int offset) -> bool
+end
+
+# NOTE: why is RubyMine not using ruby/3.3.0/tempfile.rbs
+class Tempfile
 end
 
 module Workflow

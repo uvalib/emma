@@ -1,6 +1,9 @@
 # config/locales/formats/word.en.yml
 #
 # Microsoft Word format
+#
+# MS Word metadata is usually about the creator of the Word document and rarely
+# contains bibliographic information about the source document.
 
 en:
 

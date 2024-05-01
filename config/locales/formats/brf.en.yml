@@ -1,6 +1,9 @@
 # config/locales/formats/brf.en.yml
 #
 # BRF (Braille-Ready File) format
+#
+# Braille is basically a type of text document; any bibliographic metadata such
+# document might contain would be highly dependent on arbitrary conventions.
 
 en:
 

@@ -73,8 +73,7 @@ module IdentityHelper
   #
   # @raise [RuntimeError]             The user should have an org and doesn't.
   #
-  # @return [Org, nil]
-  # @return [nil]                     If no user or administrative user.
+  # @return [Integer, nil]
   #
   def current_org_id
     return if current_user.nil? || administrator?
