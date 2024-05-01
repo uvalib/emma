@@ -63,11 +63,12 @@ module ExceptionHelper
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
   # @param [any, nil]                                                  value
   # @param [Symbol]                                                    model
+  # @param [Boolean, String]                                           log
   #
   # @raise [Record::SubmitError]
   # @raise [ExecError]
   #
-  def raise_failure(problem, value = nil, model:)
+  def raise_failure(problem, value = nil, model:, log: false, **)
     __debug_items("#{model.upcase} WF #{__method__}", binding)
 
     # If any failure is actually an internal error, re-raise it now so that it
@@ -102,6 +103,18 @@ module ExceptionHelper
     rpt ||= ExecReport.new(msg, *value) if msg
     rpt ||= ExecReport.new(err, *value) if err
     rpt ||= ExecReport.new(problem.to_s, *value)
+
+    # Emit a log entry if requested.
+    if log
+      Log.warn do
+        case log
+          when TrueClass then log = "#{self_class}.#{calling_method}"
+          when Symbol    then log = "#{self_class}.#{log}"
+        end
+        msg = rpt.render(html: false).join('; ')
+        "#{log}: #{msg}"
+      end
+    end
 
     # Find or create the exception and raise it.
     err ||= rpt.exception

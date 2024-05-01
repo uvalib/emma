@@ -89,6 +89,21 @@ module AccountConcern
 
   public
 
+  # Set when the current record operation has assigned a Manager to an
+  # organization that had none (because the Org record had been created by
+  # an Administrator with an empty :contact field).
+  #
+  # @type [Boolean, nil]
+  #
+  attr_reader :new_org_man
+
+  # Set when the current record operation has created an Administrator user or
+  # converted an organization member user into an Administrator.
+  #
+  # @type [Boolean, nil]
+  #
+  attr_reader :new_admin
+
   # Return with the specified User record.
   #
   # @param [any, nil] item      String, Integer, Hash, Model; def: #identifier.
@@ -163,11 +178,40 @@ module AccountConcern
     return super if blk
     authorized_session
     super do |attr|
+      skip = []
+      oid  = Org.oid(attr[:org_id])
+      acct = attr[:email].presence
+
       if administrator?
-        attr[:org_id] = Org.none.id if attr[:org_id].nil?
-      else
-        attr[:org_id] = current_org_id
+        if oid.nil?
+          attr[:org_id] = Org.none.id
+        elsif oid == Org.none.id
+          @new_admin = true
+        elsif (org = Org.find_by(id: oid))
+          @new_org_man = org.managers.blank?
+        else
+          Log.error("#{self}.#{__method__}: invalid: org_id #{oid.inspect}")
+        end
+      else # if manager?
+        if oid.nil?
+          attr[:org_id] = current_org_id
+        elsif oid != current_org_id
+          invalid_attr(:org_id, oid, "not permitted for #{current_user}")
+        end
       end
+
+      if acct && !skip.include?(:email) && User.find_by(email: acct).present?
+        invalid_attr(:email, acct, 'account already exists')
+      end
+
+      if skip.present?
+        Log.debug do
+          list = skip.join(', ')
+          "#{self}.#{__method__}: ignored: #{list} for #{current_user}"
+        end
+        attr.except!(*skip)
+      end
+
     end
   end
 
@@ -219,26 +263,67 @@ module AccountConcern
   def update_record(item = nil, fatal: true, **opt, &blk)
     return super if blk
     super do |record, attr|
+      skip = []
+      oid  = Org.oid(attr[:org_id])
+      acct = attr[:email].presence
+
       if administrator?
-        attr[:org_id] = Org.none.id if attr[:org_id].nil?
+
+        # == Validate :org_id
+        if oid.nil? && attr.key?(:org_id)
+          attr[:org_id] = Org.none.id
+          @new_admin = true
+        elsif oid.nil?
+          # No organization was specified.
+        elsif oid == record.org_id
+          skip << :org_id
+        elsif oid == Org.none.id
+          @new_admin = true
+        elsif (org = Org.find_by(id: oid))
+          @new_org_man = org.managers.blank?
+        else
+          Log.error("#{self}.#{__method__}: invalid: org_id #{oid.inspect}")
+        end
+
+        # == Validate :email
+        if acct.nil?
+          # No account was specified.
+        elsif acct == record.account
+          skip << :email
+        end
+
       else
-        discard = []
-        if attr.key?((k = :org_id)) && (attr[k] != current_org_id)
-          discard << k
+
+        # == Validate :org_id
+        if oid.nil?
+          # No organization was specified.
+        elsif oid == current_org_id
+          skip << :org_id
+        else
+          invalid_attr(:org_id, oid, "not permitted for #{current_user}")
         end
-        if attr.key?((k = :email)) && ((acct = attr[k]) != record.account)
-          if acct.blank? || !manager? || (User.find_by(k => acct)&.oid != org)
-            discard << k
-          end
+
+        # == Validate :email
+        if acct.nil?
+          # No account was specified.
+        elsif acct == record.account
+          skip << :email
+        elsif !manager?
+          invalid_attr(:email, acct, "not permitted for #{current_user}")
         end
-        if discard.present?
-          attr.except!(*discard)
-          Log.info do
-            # noinspection RubyScope
-            list = discard.map { |k, v| "#{k}=#{v.inspect}" }.join(', ')
-            "#{__method__}: discarded: #{list} for #{current_user}"
-          end
+
+      end
+
+      if acct && !skip.include?(:email) && User.find_by(email: acct).present?
+        invalid_attr(:email, acct, 'account already exists')
+      end
+
+      if skip.present?
+        Log.debug do
+          list = skip.join(', ')
+          "#{self}.#{__method__}: ignored: #{list} for #{current_user}"
         end
+        attr.except!(*skip)
       end
     end
   end

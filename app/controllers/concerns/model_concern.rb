@@ -791,18 +791,40 @@ module ModelConcern
 
   protected
 
+  # @private
+  UNSET = :'unset parameter'
+
+  # Raise Record::SubmitError for an illegal attribute.
+  #
+  # @param [Symbol]   key             Attribute key.
+  # @param [any, nil] value           Optional attribute value.
+  # @param [any, nil] reason
+  # @param [Symbol]   op
+  # @param [Hash]     opt             Passed to #raise_failure.
+  #
+  # @raise [Record::SubmitError]      Always.
+  #
+  def invalid_attr(key, value = UNSET, reason = nil, op: :set, **opt)
+    msg = ["cannot #{op} #{key}"]
+    msg << "= #{value.inspect}" unless value == UNSET
+    msg << "- #{reason}"        if reason.present?
+    raise_failure(msg.join(' '), **opt)
+  end
+
   # Raise an exception.
   #
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
   # @param [any, nil]                                                  value
+  # @param [Boolean, String]                                           log
   #
   # @raise [Record::SubmitError]
   # @raise [ExecError]
   #
   # @see ExceptionHelper#raise_failure
   #
-  def raise_failure(problem, value = nil)
-    super(problem, value, model: model_key)
+  def raise_failure(problem, value = nil, log: true, **)
+    log = "#{self_class}.#{calling_method}" if log.is_a?(TrueClass)
+    super(problem, value, model: model_key, log: log)
   end
 
   # ===========================================================================

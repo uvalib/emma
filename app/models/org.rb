@@ -145,6 +145,22 @@ class Org < ApplicationRecord
     manifests.count
   end
 
+  # A relation for all organization contact users.
+  #
+  # @return [ActiveRecord::Relation<User>]
+  #
+  def contacts
+    contact.present? ? User.where(id: contact) : User.none
+  end
+
+  # A relation for all organization managers.
+  #
+  # @return [ActiveRecord::Relation<User>]
+  #
+  def managers
+    users.where(role: RolePrototype(:manager).to_s)
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -184,10 +200,26 @@ class Org < ApplicationRecord
     org.is_a?(String) ? org : instance_for(org)&.abbrev
   end
 
+  # Ensure that :long_name is present and that :short_name is valid or can be
+  # derived from :long_name.
+  #
+  # @param [Hash] attr
+  # @param [Hash] opt           To #normalize_long_name, #normalize_short_name
+  #
+  # @return [Hash]              The possibly-modified *attr*.
+  #
+  def self.normalize_names!(attr, **opt)
+    long_name  = normalize_long_name(attr[:long_name], **opt)
+    short_name = attr[:short_name] || abbreviate_org(long_name.to_s)
+    attr[:long_name]  = long_name
+    attr[:short_name] = normalize_short_name(short_name, **opt)
+    attr
+  end
+
   # Normalize a :long_name value.
   #
-  # @param [any, nil] value
-  # @param [Boolean]  fatal
+  # @param [any, nil]       value
+  # @param [Boolean, Class] fatal     If *true* defaults to RuntimeError.
   #
   # @raise [Record::SubmitError]      If *value* is not acceptable for *field*.
   #
@@ -197,18 +229,18 @@ class Org < ApplicationRecord
   def self.normalize_long_name(value, fatal: false, **)
     value = value.to_s.squish.presence
     error = ('Missing %{field}' if value.blank?) # TODO: I18n
-    if error
-      error %= { field: 'organization name' } # TODO: I18n
-      raise Record::SubmitError, error if fatal
-    else
-      value.upcase_first
-    end
+
+    return value.upcase_first unless error
+
+    error %= { field: 'organization name' } # TODO: I18n
+    Log.info { "#{__method__} #{error}" }
+    raise (fatal.is_a?(Class) ? fatal : RuntimeError), error if fatal
   end
 
   # Normalize a :short_name value.
   #
-  # @param [any, nil] value
-  # @param [Boolean]  fatal
+  # @param [any, nil]       value
+  # @param [Boolean, Class] fatal     If *true* defaults to RuntimeError.
   #
   # @raise [Record::SubmitError]      If *value* is not acceptable for *field*.
   #
@@ -225,12 +257,12 @@ class Org < ApplicationRecord
       elsif value.start_with?(/\d/)
         'Please begin %{field} with a letter' # TODO: I18n
       end
-    if error
-      error %= { field: 'abbreviation' } # TODO: I18n
-      raise Record::SubmitError, error if fatal
-    else
-      value
-    end
+
+    return value unless error
+
+    error %= { field: 'abbreviation' } # TODO: I18n
+    Log.info { "#{__method__} #{error}" }
+    raise (fatal.is_a?(Class) ? fatal : RuntimeError), error if fatal
   end
 
   # This is the (non-persisted) organization associated with ID 0.

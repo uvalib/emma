@@ -122,4 +122,12 @@ class OrgDecorator
   # @return [Hash{Symbol=>FieldConfig}]
   #
   def table_field_values: (**untyped opt) -> Hash[Symbol, FieldConfig]
+
+  # Pass the value of the "welcome" URL parameter as a hidden field.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]
+  #
+  def form_hidden: (**untyped opt) -> symHash
 end

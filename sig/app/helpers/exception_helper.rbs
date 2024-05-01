@@ -23,9 +23,10 @@ module ExceptionHelper
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
   # @param [any, nil]                                                  value
   # @param [Symbol]                                                    model
+  # @param [Boolean, String]                                           log
   #
   # @raise [Record::SubmitError]
   # @raise [ExecError]
   #
-  def raise_failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?untyped value, model: Symbol) -> void
+  def raise_failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?untyped value, model: Symbol, ?log: bool|String, **untyped _ignored) -> void
 end

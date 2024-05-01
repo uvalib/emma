@@ -32,6 +32,14 @@ module OrgConcern
   #
   def current_post_params: () -> symHash
 
+  # Set when the current record operation has assigned a Manager to an
+  # organization that had none (because the Org record had been created by
+  # an Administrator with an empty :contact field).
+  #
+  # @type [Boolean, nil]
+  #
+  attr_reader new_org_man: bool | nil
+
   # Return with the specified Org record.
   #
   # @param [any, nil] item      String, Integer, Hash, Model; def: #identifier.
@@ -149,7 +157,7 @@ module OrgConcern
   # Return with an error message value if any of the fields of *attr* would
   # result in a non-unique Organization.
   #
-  # @param [Hash]          attrs      Enrollment fields/values.
+  # @param [Hash]          attrs      Org fields/values.
   # @param [Model, nil]    current    Existing record if *attr* is an update.
   # @param [Array<Symbol>] keys       Only check these fields.
   #

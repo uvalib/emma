@@ -81,6 +81,18 @@ class Org < ApplicationRecord
   #
   def manifest_count: () -> Integer
 
+  # A relation for all organization contact users.
+  #
+  # @return [ActiveRecord::Relation<User>]
+  #
+  def contacts: () -> ActiveRecord::Relation
+
+  # A relation for all organization managers.
+  #
+  # @return [ActiveRecord::Relation<User>]
+  #
+  def managers: () -> ActiveRecord::Relation
+
   # Return the common name of *org*.
   #
   # @param [any, nil] org             User, String, Symbol, Integer; def: self
@@ -100,29 +112,39 @@ class Org < ApplicationRecord
   #
   def self.org_name: (untyped org) -> (String | nil)
 
+  # Ensure that :long_name is present and that :short_name is valid or can be
+  # derived from :long_name.
+  #
+  # @param [Hash] attr
+  # @param [Hash] opt           To #normalize_long_name, #normalize_short_name
+  #
+  # @return [Hash]              The possibly-modified *attr*.
+  #
+  def self.normalize_names!: (symHash attr, **untyped opt) -> symHash
+
   # Normalize a :long_name value.
   #
-  # @param [any, nil] value
-  # @param [Boolean]  fatal
+  # @param [any, nil]       value
+  # @param [Boolean, Class] fatal     If *true* defaults to RuntimeError.
   #
   # @raise [Record::SubmitError]      If *value* is not acceptable for *field*.
   #
   # @return [String]                  Normalized value.
   # @return [nil]                     If missing and not fatal.
   #
-  def self.normalize_long_name: (untyped value, ?fatal: bool, **untyped _ignored) -> (String | nil)
+  def self.normalize_long_name: (untyped value, ?fatal: bool|Class, **untyped _ignored) -> (String | nil)
 
   # Normalize a :short_name value.
   #
-  # @param [any, nil] value
-  # @param [Boolean]  fatal
+  # @param [any, nil]       value
+  # @param [Boolean, Class] fatal     If *true* defaults to RuntimeError.
   #
   # @raise [Record::SubmitError]      If *value* is not acceptable for *field*.
   #
   # @return [String]                  Normalized value.
   # @return [nil]                     If missing and not fatal.
   #
-  def self.normalize_short_name: (untyped value, ?fatal: bool, **untyped _ignored) -> (String | nil)
+  def self.normalize_short_name: (untyped value, ?fatal: bool|Class, **untyped _ignored) -> (String | nil)
 
   # This is the (non-persisted) organization associated with ID 0.
   #

@@ -42,21 +42,8 @@ module EnrollmentConcern
     opt.reverse_merge!(recaptcha: true) if recaptcha_active?
     return super if blk
     super do |attr|
-      # Ensure that an initial organization user is present.
-      if attr[:org_users].blank?
-        raise Record::SubmitError, 'No user information given'
-      end
-
-      # Ensure that :long_name is present and that :short_name is valid or can
-      # be derived from :long_name.
-      k = :long_name
-      v = attr[k]
-      attr[k] = Org.normalize_long_name(v, fatal: true)
-      k = :short_name
-      v = attr[k] || Enrollment.abbreviate_org(attr[:long_name])
-      attr[k] = Org.normalize_short_name(v, fatal: true)
-
-      # Ensure that :long_name and :short_name are unique.
+      raise_failure('No contact information given') if attr[:org_users].blank?
+      Org.normalize_names!(attr, fatal: Record::SubmitError)
       check_unique(attr)
     end
   end
@@ -172,14 +159,15 @@ module EnrollmentConcern
   # @return [void]
   #
   def check_unique(attrs, current: nil, keys: %i[long_name short_name])
-    attrs = attrs.slice(*keys)                      if keys
-    attrs = attrs.reject { |k, v| current[k] == v } if current
-    error =
-      attrs.find do |k, v|
-        next if Org.where(k => v).blank? && Enrollment.where(k => v).blank?
-        break "There is already an organization with #{k} #{v.inspect}"
-      end
-    raise Record::SubmitError, error if error
+    attrs = attrs.dup   if keys || current
+    attrs.slice!(*keys) if keys
+    attrs.reject! do |k, v|
+      v.is_a?(String) ? v.casecmp?(current[k]) : (v == current[k])
+    end if current
+    attrs.each_pair do |k, v|
+      next if Org.where(k => v).blank? && Enrollment.where(k => v).blank?
+      raise_failure("There is already an organization with #{k} #{v.inspect}")
+    end
   end
 
   # ===========================================================================

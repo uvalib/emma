@@ -23,6 +23,7 @@ module Record::Exceptions
   #
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
   # @param [any, nil]                                                  value
+  # @param [Boolean, String]                                           log
   #
   # @raise [Record::SubmitError]
   # @raise [ExecError]
@@ -31,8 +32,9 @@ module Record::Exceptions
   #
   # @note From UploadWorkflow::Errors#raise_failure
   #
-  def raise_failure(problem, value = nil)
-    ExceptionHelper.raise_failure(problem, value, model: :upload)
+  def raise_failure(problem, value = nil, log: true, **)
+    log = "#{self_class}.#{calling_method}" if log.is_a?(TrueClass)
+    ExceptionHelper.raise_failure(problem, value, model: :upload, log: log)
   end
 
   # ===========================================================================

@@ -451,17 +451,33 @@ module ModelConcern
   #
   def verified: (Model|nil record, **untyped opt) -> bool
 
+  # @private
+  UNSET: Symbol
+
+  # Raise Record::SubmitError for an illegal attribute.
+  #
+  # @param [Symbol]   key             Attribute key.
+  # @param [any, nil] value           Optional attribute value.
+  # @param [any, nil] reason
+  # @param [Symbol]   op
+  # @param [Hash]     opt             Passed to #raise_failure.
+  #
+  # @raise [Record::SubmitError]      Always.
+  #
+  def invalid_attr: (Symbol key, ?untyped value, ?untyped reason, ?op: Symbol, ?meth: Symbol|nil, **untyped _ignored) -> void
+
   # Raise an exception.
   #
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
   # @param [any, nil]                                                  value
+  # @param [Boolean, String]                                           log
   #
   # @raise [Record::SubmitError]
   # @raise [ExecError]
   #
   # @see ExceptionHelper#raise_failure
   #
-  def raise_failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?untyped value) -> void
+  def raise_failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?untyped value, ?log: bool|String, **untyped _ignored) -> void
 
   private
 

@@ -20,7 +20,8 @@ module Org::Assignable
 
   public
 
-  # Ensure that blanks are allowed and that input values are normalized.
+  # Ensure that blanks are allowed, that input values are normalized, and that
+  # :status_date is set if :status is updated.
   #
   # @param [Model, Hash, ActionController::Parameters, nil] attr
   # @param [Hash]                                           opt
@@ -30,9 +31,29 @@ module Org::Assignable
   def normalize_attributes(attr, **opt)
     opt.reverse_merge!(key_norm: true, compact: false)
     super.tap do |result|
+      if result[:status]
+        result[:status_date] ||= (result[:updated_at] ||= DateTime.now)
+      end
       result[:contact]&.map! { |user| user.is_a?(User) ? user.id : user }
-      result[:status_date] ||= DateTime.now if result[:status]
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Turn a :long_name value into a :short_name value.
+  #
+  # @param [String] name
+  #
+  # @return [String]
+  #
+  def abbreviate_org(name)
+    words = name.split(/[^[:alnum:]]+/).reject! { |w| w.start_with?(/\d/) }
+    nouns = words.reject { |w| %w[a an the of].include?(w.downcase) }
+    (nouns.presence || words).map(&:first).join
   end
 
   # ===========================================================================

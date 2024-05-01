@@ -64,13 +64,14 @@ module UploadWorkflow::Errors
   #
   # @param [Symbol, String, Array<String>, ExecReport, Exception, nil] problem
   # @param [any, nil]                                                  value
+  # @param [Boolean, String]                                           log
   #
   # @raise [UploadWorkflow::SubmitError]
   # @raise [ExecError]
   #
   # @see ExceptionHelper#raise_failure
   #
-  def raise_failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?untyped value) -> void
+  def raise_failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?untyped value, ?log: bool|String, **untyped _ignored) -> void
 end
 
 # Workflow properties that can be set via URL parameters.

@@ -41,14 +41,6 @@ module Enrollment::Assignable
   #
   def normalize_notes: (String|anyArray|nil arg) -> (String | nil)
 
-  # Turn a :long_name value into a :short_name value.
-  #
-  # @param [String] name
-  #
-  # @return [String]
-  #
-  def abbreviate_org: (String name) -> String
-
   private
 
   def self.included: (Module base) -> void

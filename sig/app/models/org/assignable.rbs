@@ -2,7 +2,8 @@ module Org::Assignable
   # :nocov:
   #include Record::Assignable
 
-  # Ensure that blanks are allowed and that input values are normalized.
+  # Ensure that blanks are allowed, that input values are normalized, and that
+  # :status_date is set if :status is updated.
   #
   # @param [Model, Hash, ActionController::Parameters, nil] attr
   # @param [Hash]                                           opt
@@ -10,6 +11,14 @@ module Org::Assignable
   # @return [Hash]
   #
   def normalize_attributes: ((Model|prmHash|nil) attr, **untyped opt) -> symHash
+
+  # Turn a :long_name value into a :short_name value.
+  #
+  # @param [String] name
+  #
+  # @return [String]
+  #
+  def abbreviate_org: (String name) -> String
 
   private
 

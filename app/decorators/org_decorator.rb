@@ -211,6 +211,27 @@ class OrgDecorator
     super
   end
 
+  # ===========================================================================
+  # :section: BaseDecorator::Form overrides
+  # ===========================================================================
+
+  public
+
+  # Pass the value of the "welcome" URL parameter as a hidden field.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]
+  #
+  def form_hidden(**opt)
+    prm = url_parameters.slice(*AccountMailer::URL_PARAMETERS)
+    if prm[:welcome].nil?
+      super
+    else
+      super { |result, _| result.merge!(prm) }
+    end
+  end
+
 end
 
 __loading_end(__FILE__)

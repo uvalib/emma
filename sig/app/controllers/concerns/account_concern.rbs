@@ -49,6 +49,21 @@ module AccountConcern
 
   def find_or_match_keys: () -> symArray
 
+  # Set when the current record operation has assigned a Manager to an
+  # organization that had none (because the Org record had been created by
+  # an Administrator with an empty :contact field).
+  #
+  # @type [Boolean, nil]
+  #
+  attr_reader new_org_man: bool | nil
+
+  # Set when the current record operation has created an Administrator user or
+  # converted an organization member user into an Administrator.
+  #
+  # @type [Boolean, nil]
+  #
+  attr_reader new_admin: bool | nil
+
   # Return with the specified User record.
   #
   # @param [any, nil] item      String, Integer, Hash, Model; def: #identifier.

@@ -8,6 +8,15 @@ module User::Assignable
   #
   PASSWORD_KEYS: symArray
 
+  # Ensure that :status_date is set if :status is updated.
+  #
+  # @param [Model, Hash, ActionController::Parameters, nil] attr
+  # @param [Hash]                                           opt
+  #
+  # @return [Hash]
+  #
+  def normalize_attributes: ((Model|prmHash|nil) attr, **untyped opt) -> symHash
+
   # Ensure that :password and :password_confirmation are allowed.
   #
   # @return [Array<Symbol>]

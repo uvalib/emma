@@ -71,6 +71,14 @@ module OrgConcern
 
   public
 
+  # Set when the current record operation has assigned a Manager to an
+  # organization that had none (because the Org record had been created by
+  # an Administrator with an empty :contact field).
+  #
+  # @type [Boolean, nil]
+  #
+  attr_reader :new_org_man
+
   # Return with the specified Org record.
   #
   # @param [any, nil] item      String, Integer, Hash, Model; def: #identifier.
@@ -139,17 +147,9 @@ module OrgConcern
     return super if blk
     unauthorized unless administrator?
     super do |attr|
-      # Ensure that :long_name is present and that :short_name is valid or can
-      # be derived from :long_name.
-      k = :long_name
-      v = attr[k]
-      attr[k] = Org.normalize_long_name(v, fatal: true)
-      k = :short_name
-      v = attr[k] || Enrollment.abbreviate_org(attr[:long_name])
-      attr[k] = Org.normalize_short_name(v, fatal: true)
-
-      # Ensure that :long_name and :short_name are unique.
+      Org.normalize_names!(attr, fatal: Record::SubmitError)
       check_unique(attr)
+      @new_org_man = attr[:contact].present?
     end
   end
 
@@ -202,7 +202,12 @@ module OrgConcern
     return super if blk
     unauthorized unless administrator? || manager?
     super do |record, attr|
+      ln, sn = attr.values_at(:long_name, :short_name)
+      norm   = ln && !ln.casecmp?(record[:long_name])
+      norm ||= sn && !sn.casecmp?(record[:short_name])
+      Org.normalize_names!(attr, fatal: Record::SubmitError) if norm
       check_unique(attr, current: record)
+      @new_org_man = attr[:contact].present? && record[:contact].blank?
     end
   end
 
@@ -258,7 +263,7 @@ module OrgConcern
   # Return with an error message value if any of the fields of *attr* would
   # result in a non-unique Organization.
   #
-  # @param [Hash]          attrs      Enrollment fields/values.
+  # @param [Hash]          attrs      Org fields/values.
   # @param [Model, nil]    current    Existing record if *attr* is an update.
   # @param [Array<Symbol>] keys       Only check these fields.
   #
@@ -267,14 +272,15 @@ module OrgConcern
   # @return [void]
   #
   def check_unique(attrs, current: nil, keys: %i[long_name short_name])
-    attrs = attrs.slice(*keys)                      if keys
-    attrs = attrs.reject { |k, v| current[k] == v } if current
-    error =
-      attrs.find do |k, v|
-        next if Org.where(k => v).blank?
-        break "There is already an organization with #{k} #{v.inspect}"
-      end
-    raise Record::SubmitError, error if error
+    attrs = attrs.dup   if keys || current
+    attrs.slice!(*keys) if keys
+    attrs.reject! do |k, v|
+      v.is_a?(String) ? v.casecmp?(current[k]) : (v == current[k])
+    end if current
+    attrs.each_pair do |k, v|
+      next if Org.where(k => v).blank?
+      raise_failure("There is already an organization with #{k} #{v.inspect}")
+    end
   end
 
   # ===========================================================================

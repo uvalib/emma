@@ -32,6 +32,21 @@ module User::Assignable
 
   public
 
+  # Ensure that :status_date is set if :status is updated.
+  #
+  # @param [Model, Hash, ActionController::Parameters, nil] attr
+  # @param [Hash]                                           opt
+  #
+  # @return [Hash]
+  #
+  def normalize_attributes(attr, **opt)
+    super.tap do |result|
+      if result[:status]
+        result[:status_date] ||= (result[:updated_at] ||= DateTime.now)
+      end
+    end
+  end
+
   # Ensure that :password and :password_confirmation are allowed.
   #
   # @return [Array<Symbol>]

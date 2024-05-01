@@ -114,24 +114,6 @@ module Enrollment::Assignable
   # :section:
   # ===========================================================================
 
-  public
-
-  # Turn a :long_name value into a :short_name value.
-  #
-  # @param [String] name
-  #
-  # @return [String]
-  #
-  def abbreviate_org(name)
-    words = name.split(/[^[:alnum:]]+/).reject! { |w| w.start_with?(/\d/) }
-    nouns = words.reject { |w| %w[a an the of].include?(w.downcase) }
-    (nouns.presence || words).map(&:first).join
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
   private
 
   def self.included(base)
