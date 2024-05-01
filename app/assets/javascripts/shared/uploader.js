@@ -649,7 +649,7 @@ class BaseUploader extends BaseClass {
     _uppyOptions(options) {
         /** @type {Uppy.UppyOptions} */
         const opt = { ...this._options, ...options?.uppy };
-        opt.id ||= `uppy-${this.$root[0].id}`;
+        opt.id ||= `uppy-${this.$root.attr('id') || 0}`;
         return opt;
     }
 
@@ -1073,9 +1073,9 @@ class BaseUploader extends BaseClass {
      * @protected
      */
     _uppyInfo(text, duration, info_level) {
-        this._debug(`_uppyInfo: ${info_level}:`, text);
-        if (!this.feature.popup_messages) { return }
         const level = info_level || 'info';
+        this._debug(`_uppyInfo: ${level}:`, text);
+        if (!this.feature.popup_messages) { return }
         const time  = duration   || 1000 * MINUTES;
         this._uppy.info(text, level, time);
         this.showInfo();
@@ -2174,8 +2174,8 @@ export class BulkUploader extends BaseUploader {
                     const log = [];
                     const err = [];
                     if (result) {
-                        const succeeded = result.successful.length;
-                        const failed    = result.failed.length;
+                        const succeeded = result.successful?.length;
+                        const failed    = result.failed?.length;
                         if (succeeded && failed) {
                             log.push(`${succeeded} uploads succeeded`);
                             log.push(`${failed} uploads failed:`);
@@ -2184,7 +2184,9 @@ export class BulkUploader extends BaseUploader {
                         } else if (failed) {
                             log.push(`all ${failed} uploads failed:`);
                         }
-                        err.push(...result.failed);
+                        if (failed) {
+                            err.push(...result.failed);
+                        }
                     } else {
                         log.push('server failure');
                     }
