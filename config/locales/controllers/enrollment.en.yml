@@ -197,12 +197,18 @@ en:
         description_html:
           >-
           <p>
-            Welcome to EMMA -- we're excited to have you on board!
+            On this form please provide the name of your organization, any
+            commonly used abbreviation for its name, and your first name, last
+            name, and email address.
           </p>
           <p>
-            Please tell us the name of your institution, an abbreviation to
-            identify it on certain tabular display listings, and your name
-            and email address so we can follow up.
+            After you submit this form a human being will review it and EMMA
+            will process it, whereupon a manager account will be created in
+            EMMA for the submitter, and you will receive a welcome message with
+            information about logging in as well as a copy of EMMA’s
+            appropriate use guidelines.
+            You will also be subscribed to the %{mailing_list_email} email
+            list, if you are not already.
           </p>
         enroll_production_html:
           >-

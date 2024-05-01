@@ -181,6 +181,10 @@ en:
 
       email:            'emmahelp@virginia.edu'
 
+    mailing_list:
+      site:             'https://lists.virginia.edu/sympa/info/emma-users'
+      email:            'emma-users@virginia.edu'
+
     enroll:
 
       email:            'emmahelp@virginia.edu'

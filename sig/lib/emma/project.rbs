@@ -13,6 +13,18 @@ module Emma::Project
   #
   PROJECT_EMAIL: String
 
+  # The web site for the "emma-users" mailing list.
+  #
+  # @type [String]
+  #
+  MAILING_LIST_SITE: String
+
+  # The email address for the "emma-users" mailing list.
+  #
+  # @type [String]
+  #
+  MAILING_LIST_EMAIL: String
+
   # The email address for general information.
   #
   # @type [String]

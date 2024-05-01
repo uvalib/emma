@@ -157,6 +157,28 @@ module EmmaHelper
     contact_email(label)
   end
 
+  # A simple "mailto:" link for the "emma-users" mailing list.
+  #
+  # @param [String, nil] label        Link text instead of the email address.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def mailing_list_email(label = nil)
+    mail_to(MAILING_LIST_EMAIL, label)
+  end
+
+  # A link to the "emma-users" mailing list site.
+  #
+  # @param [String, nil] label        Link text instead of the URL.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def mailing_list_site(label = nil)
+    url     = MAILING_LIST_SITE
+    label ||= url
+    link_to(label, url)
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================

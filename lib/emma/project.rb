@@ -27,6 +27,18 @@ module Emma::Project
   #
   PROJECT_EMAIL = config_item('emma.project.email').freeze
 
+  # The web site for the "emma-users" mailing list.
+  #
+  # @type [String]
+  #
+  MAILING_LIST_SITE = config_item('emma.mailing_list.site').freeze
+
+  # The email address for the "emma-users" mailing list.
+  #
+  # @type [String]
+  #
+  MAILING_LIST_EMAIL = config_item('emma.mailing_list.email').freeze
+
   # The email address for general information.
   #
   # @type [String]

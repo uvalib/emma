@@ -89,6 +89,22 @@ module EmmaHelper
   #
   def emma_administrator: (?(String|nil) label) -> ActiveSupport::SafeBuffer
 
+  # A simple "mailto:" link for the "emma-users" mailing list.
+  #
+  # @param [String, nil] label        Link text instead of the email address.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def mailing_list_email: (?(String|nil) label) -> ActiveSupport::SafeBuffer
+
+  # A link to the "emma-users" mailing list site.
+  #
+  # @param [String, nil] label        Link text instead of the URL.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def mailing_list_site: (?(String|nil) label) -> ActiveSupport::SafeBuffer
+
   private
 
   def self.included: (Module base) -> void
