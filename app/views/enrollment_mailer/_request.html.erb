@@ -1,0 +1,26 @@
+<%# app/views/enrollment_mailer/_request.html.erb -%>
+<%-
+  # Create a new EMMA enrollment request ticket.
+  elem ||= @elem
+  test ||= elem[:testing] || {}
+
+  show, list, org, name, comments =
+    interpolation_values(**params)
+      .values_at(:show, :list, :org, :name, :comments)
+-%>
+
+<h1><%= elem[:heading] -%></h1>
+
+<p>
+  An enrollment request for <%= org -%> has been made by <%= name -%>.
+</p>
+<p>
+  You may access this request at <%= show -%> or view all enrollment requests
+  at <%= list -%>.
+</p>
+<p>
+  Requester comments:
+</p>
+<%= comments -%>
+
+<%= test[:body] %>

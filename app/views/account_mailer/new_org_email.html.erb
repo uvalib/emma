@@ -1,6 +1,6 @@
-<%# app/views/enrollment_mailer/request_email.html.erb -%>
+<%# app/views/account_mailer/new_org_email.html.erb -%>
 <%-
-  # Create a new EMMA enrollment request ticket.
+  # Create a welcome message to the manager of a new organization.
   elem ||= @elem
   heading, body = elem.values_at(:heading, :body)
 -%>
@@ -9,5 +9,5 @@
   <h1><%= heading -%></h1>
   <%= body %>
 <%- else -%>
-  <%= render 'request' %>
+  <%= render('new_org') %>
 <%- end -%>

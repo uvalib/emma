@@ -48,7 +48,7 @@ class EnrollmentMailer < ApplicationMailer
   def request_email(**opt)
     test  = opt.key?(:test) ? opt.delete(:test) : !production_deployment?
     @item = params[:item]
-    @elem = request_email_elements(**params, **opt, test: test)
+    @elem = email_elements(:enroll_request, **opt, test: test)
     test  = test && @elem[:testing] || {}
 
     # Setup mail options.
@@ -70,57 +70,37 @@ class EnrollmentMailer < ApplicationMailer
 
   protected
 
-  # Generate mailer message content for #request_email.
+  # Supply interpolation values for the current email.
   #
-  # If this is not the production deployment, the heading and body will be
-  # annotated to indicate that this is not a real enrollment request.
-  #
-  # @param [Hash] opt
-  #
-  # @option opt [Enrollment] :item    Default: @item.
-  # @option opt [Symbol]     :format
-  # @option opt [Boolean]    :test
+  # @param [Hash, nil] vals
+  # @param [Hash]      opt
   #
   # @return [Hash]
   #
-  def request_email_elements(**opt)
-    test = opt.key?(:test) ? opt.delete(:test) : !production_deployment?
+  def interpolation_values(vals = nil, **opt)
     html = (opt[:format] == :html)
-    item = opt.delete(:item) || @item
-    id   = item.id || 1 # Might be nil only from EnrollmentMailerPreview.
+    item = opt[:item]
+    id   = item&.id || 1 # Might be nil only from EnrollmentMailerPreview.
 
-    # Get configured enrollment request email elements.
-    config_section('emma.enroll.request', **opt).deep_dup.tap do |cfg|
+    vals = super
+    show = show_enrollment_url(id: id)
+    list = enrollment_index_url
+    org  = org_from(item)&.inspect || '[ORG]'
+    name = name_from(item)         || '[NAME]'
+    com  = comments_from(item)     || '[NONE]'
 
-      cfg[:body] = format_paragraphs(cfg[:body], **opt)
-
-      # Interpolation happens afterwards to preserve HTML safety.
-      vals = {
-        show: show_enrollment_url(id: id),
-        list: enrollment_index_url,
-        org:  org_from(item)&.inspect || '[ORG]',
-        name: name_from(item)         || '[NAME]'
-      }
-      if html
-        l_opt = { target: '_top' } # Needed for EnrollmentMailerPreview.
-        vals[:show] = link_to(vals[:show], vals[:show], l_opt)
-        vals[:list] = link_to(vals[:list], vals[:list], l_opt)
-        vals[:org]  = ERB::Util.h(vals[:org])
-        vals[:name] = ERB::Util.h(vals[:name])
-      end
-      cfg[:body].map! { |paragraph| interpolate(paragraph, **vals) }
-
-      if test && (test = cfg[:testing]).present?
-        if (h = test[:heading]).present?
-          cfg[:heading] = h % cfg[:heading]
-        end
-        if (b = test[:body]).present?
-          b = format_paragraphs(b, **opt)
-          b.map! { |v| content_tag(:strong, v) } if html
-          cfg[:body] += b
-        end
-      end
-
+    if html
+      l_opt = { target: '_top' } # Needed for EnrollmentMailerPreview.
+      vals[:show] = link_to(show, show, l_opt)
+      vals[:list] = link_to(list, list, l_opt)
+      vals[:org]  = ERB::Util.h(org)
+      vals[:name] = ERB::Util.h(name)
+      vals[:comments] =
+        com.split(PARAGRAPH).map { |v| html_paragraph(v) }.join("\n").html_safe
+      # noinspection RubyMismatchedReturnType
+      vals
+    else
+      vals.merge!(show: show, list: list, org: org, name: name, comments: com)
     end
   end
 
@@ -146,6 +126,18 @@ class EnrollmentMailer < ApplicationMailer
     name = [user[:first_name], user[:last_name]].compact_blank.presence
     name = name&.join(' ')
     (name && addr) && "#{addr} (#{name})" || addr || name
+  end
+
+  # Extract request comments.
+  #
+  # @param [Enrollment, nil] item
+  #
+  # @return [String, nil]
+  #
+  def comments_from(item)
+    lines = item&.request_notes&.presence or return
+    lines = lines.to_s.split(/;?\n/) unless lines.is_a?(Array)
+    lines.join(PARAGRAPH)
   end
 
 end

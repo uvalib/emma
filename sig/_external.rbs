@@ -109,6 +109,8 @@ end
 module ActionMailer
   class Preview
   end
+  module MailHelper
+  end
   class TestCase < ActiveSupport::TestCase
   end
 end

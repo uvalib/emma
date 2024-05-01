@@ -1,0 +1,50 @@
+# config/locales/mail.en.yml
+#
+# ApplicationMailer message components
+
+en:
+
+  emma:
+
+    mail:
+
+      # =======================================================================
+      # Internal templates
+      # =======================================================================
+
+      _test:          &TEST
+        subject:      'TESTING - %s'
+        heading:      'Test %s'
+        body:         '(NOTE: This is a test message.)'
+
+      _testing:       &TESTING
+        testing:
+          <<:         *TEST
+
+      # =======================================================================
+      # User emails
+      # =======================================================================
+
+      new_org:
+        <<:             *TESTING
+        subject:        'Welcome to EMMA'
+        heading:        'Welcome to EMMA'
+        body:           https://emma.uvacreate.virginia.edu/jmu2m/welcome.new.manager.html
+
+      new_user:
+        <<:             *TESTING
+        subject:        'Welcome to EMMA'
+        heading:        'EMMA Appropriate Use Guidelines'
+        body:           ~ # @see app/views/account_mailer/_new_user.html.erb
+
+      # =======================================================================
+      # JIRA tickets
+      # =======================================================================
+
+      enroll_request:
+        subject:        'ENROLLMENT REQUEST'
+        heading:        'EMMA Enrollment Request'
+        body:           ~ # @see app/views/enrollment_mailer/_request.html.erb
+        testing:
+          <<:           *TEST
+          body:         '(NOTE: This is a test, not an actual request.)'

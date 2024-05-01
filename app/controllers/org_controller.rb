@@ -149,6 +149,7 @@ class OrgController < ApplicationController
     __log_activity
     __debug_route
     @item = create_record
+    generate_new_org_email if new_org_email?
     if request_xhr?
       render json: @item.as_json
     else
@@ -195,6 +196,7 @@ class OrgController < ApplicationController
     __debug_route
     __debug_request
     @item = update_record
+    generate_new_org_email if new_org_email?
     if request_xhr?
       render json: @item.as_json
     else

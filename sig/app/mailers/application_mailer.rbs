@@ -9,17 +9,84 @@ class ApplicationMailer < ActionMailer::Base
   #
   MAIL_OPT: symArray
 
-  # Transform *body* into an array of paragraphs.
+  # Acquire the message body from a source other than the view template.
   #
-  # @param [Array, String]       body
-  # @param [Symbol, String, nil] format
-  # @param [Integer, nil]        width
-  # @param [String]              paragraph
+  # @param [String, Hash] src
+  # @param [Hash]         opt
+  #
+  # @return [String]                  The acquired message body
+  # @return [nil]                     If no body could be acquired.
+  #
+  def fetch_message: (String|symHash src, **untyped opt) -> (String | nil)
+
+  # Acquire the message body from a web site.
+  #
+  # @param [String] src               Full URL to the file.
+  # @param [Hash]   opt               Passed to #extract_headers.
+  #
+  # @return [Hash, nil]
+  #
+  def fetch_remote_message: (String src, **untyped opt) -> (symHash | nil)
+
+  # Acquire the message body from a local file.
+  #
+  # @param [String] src               Project-relative path to the file.
+  #
+  # @return [Hash, nil]
+  #
+  def fetch_local_message: (String src, **untyped _ignored) -> (symHash | nil)
+
+  # Acquire the message body from the "messages" database table.
+  #
+  # @param [String] src               Project-relative path to the file.
+  # @param [String] table             Database table name.
+  # @param [Hash]   opt               Passed to #extract_headers.
+  #
+  # @return [Hash, nil]
+  #
+  def fetch_db_message: (String src, ?table: String, **untyped opt) -> (symHash | nil)
+
+  # Interpret the initial lines of *src* as mail headers and return with a
+  # hash where [:body] contains the remaining lines.
+  #
+  # @param [Array, String, nil] src
+  # @param [Symbol, nil]        format
+  #
+  # @return [Hash]
+  #
+  def extract_headers: (String|strArray src, ?format: Symbol|nil, **untyped _ignored) -> symHash
+
+  # Separator which indicates a division between paragraphs for text format.
+  #
+  # @type [String]
+  #
+  PARAGRAPH: String
+
+  # The width of text format lines.
+  #
+  # @type [Integer]
+  #
+  WIDTH: Integer
+
+  # Transform source content into an array of paragraphs.
+  #
+  # @param [Array, String, nil] src
+  # @param [Symbol, nil]        format
+  # @param [Integer, nil]       width
+  # @param [String]             paragraph
   #
   # @return [Array<ActiveSupport::SafeBuffer>]    If *format* == :html
   # @return [Array<String>]                       Otherwise
   #
-  def format_paragraphs: (untyped boyd, ?format: Symbol|String|nil, ?width: Integer|nil, ?paragraph: String, **untyped _ignored) -> (Array[ActiveSupport::SafeBuffer] | Array[String])
+  def format_body: (strArray|String|nil src, ?format: Symbol|nil, ?width: Integer|nil, ?paragraph: String, **untyped _ignored) -> (Array[ActiveSupport::SafeBuffer] | Array[String])
+
+  # Transform HTML into plain text with paragraphs separated by two newlines.
+  #
+  # @param [ActiveSupport::SafeBuffer] text
+  #
+  # @return [String]
+  #
+  def sanitize: (ActiveSupport::SafeBuffer text) -> String
 
   # Replace white space in *text* to yield a result containing one or more
   # newline-delimited lines.
@@ -30,4 +97,51 @@ class ApplicationMailer < ActionMailer::Base
   # @return [String]
   #
   def wrap_lines: (String text, ?width: Integer) -> String
+
+  # Generate mailer message content for an AccountMailer email.
+  #
+  # If this is not the production deployment, the heading and body will be
+  # annotated to indicate that this is not a real enrollment request.
+  #
+  # @param [Symbol] key               Entry under "en.emma.mail".
+  # @param [Hash]   opt
+  #
+  # @option opt [Symbol]  :format
+  # @option opt [Boolean] :test
+  #
+  # @return [Hash]
+  #
+  def email_elements: (Symbol key, **untyped opt) -> symHash
+
+  # Process message properties, including filling interpolation values.
+  #
+  # @param [Hash] msg                 Message configuration values.
+  # @param [Hash] opt
+  #
+  # @option opt [Hash] :vals          Interpolation values from caller.
+  #
+  # @return [Hash]
+  #
+  def interpolate_message!: (symHash msg, **untyped opt) -> symHash
+
+  # Supply interpolation values for the current email.
+  #
+  # @param [Hash, nil] vals
+  # @param [Hash]      opt
+  #
+  # @option opt [Hash] :vals
+  #
+  # @return [Hash]
+  #
+  def interpolation_values: (?(symHash|nil) vals, **untyped opt) -> symHash
+
+  # Takes the same arguments as RenderingHelper#render but converts the
+  # provided partial into text.
+  #
+  # @param [String, Hash] options
+  # @param [Hash]         locals
+  #
+  # @return [String]
+  #
+  def render_as_text: (String|symHash option, ?symHash locals) -> String
 end

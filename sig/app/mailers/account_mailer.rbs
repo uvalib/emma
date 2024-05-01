@@ -24,19 +24,23 @@ class AccountMailer < ApplicationMailer
   #
   # @param [Hash] opt
   #
-  def welcome_email: (**untyped opt) -> void
+  def new_user_email: (**untyped opt) -> void
 
-  # Generate mailer message content for #welcome_email.
+  # Send a welcome email to the manager of a new organization.
   #
-  # If this is not the production deployment, the heading and body will be
+  # If this is not the production deployment, the email subject will be
   # annotated to indicate that this is not a real enrollment request.
   #
   # @param [Hash] opt
   #
-  # @option opt [Symbol]  :format
-  # @option opt [Boolean] :test
+  def new_org_email: (**untyped opt) -> void
+
+  # Supply interpolation values for the current email.
+  #
+  # @param [Hash, nil] vals
+  # @param [Hash]      opt
   #
   # @return [Hash]
   #
-  def welcome_email_elements: (**untyped opt) -> symHash
+  def interpolation_values: (?(symHash|nil) vals, **untyped opt) -> symHash
 end

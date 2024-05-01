@@ -1,0 +1,60 @@
+<%# app/views/account_mailer/_new_user.html.erb -%>
+<%-
+  # A new user welcome message.
+  elem ||= @elem
+  test ||= elem[:testing] || {}
+-%>
+
+<h1><%= elem[:heading] -%></h1>
+
+<p>
+  The purpose of EMMA is to allow disability services professionals at
+  different organizations to share accessible and remediated educational
+  materials with each other.
+  You may upload such materials to the EMMA repository and download materials
+  deposited in the EMMA repository by your peers at other organizations.
+</p>
+<p>
+  EMMA is intended for use by disability services professionals, their support
+  staff, and librarians who help with bulk upload.
+  You may use EMMA to download educational materials to give to qualified end
+  users (people with documented print disabilities).
+  Qualified end users are not meant to have direct access to EMMA.
+  Each participating disability service organization is responsible for
+  identifying qualified end users and limiting the distribution of materials
+  sourced from EMMA to those users.
+</p>
+<p>
+  When uploading materials to the EMMA repository, please remove personally
+  identifiable information pertaining to your students and staff (such as
+  watermarks or embedded metadata containing students’ names).
+  Uploads to the EMMA repository will be shared with other EMMA members.
+  If you have added creative work to the materials (such as image
+  descriptions), you agree that EMMA will apply a Creative Commons CC0 Waiver
+  to them.
+  You can delete materials uploaded from your organization, if need be.
+  If your organization terminates its EMMA membership, EMMA will still retain
+  any educational materials you have uploaded unless you delete them before
+  your membership ends.
+</p>
+<p>
+  When your organization is enrolled in EMMA, one person will be designated as
+  the local Manager for your organization.
+  The Manager is responsible for creating additional accounts for other users
+  at your organization.
+  The Manager is also responsible for deactivating those users’ accounts if
+  they leave the organization or change job responsibilities and are no longer
+  involved in providing accessible educational materials for qualified end
+  users.
+  If you need assistance managing user accounts, or if you need to reassign the
+  Manager role at your organization, please contact us at
+  <%= contact_email -%>.
+</p>
+<p>
+  EMMA is supported by staff of the University of Virginia Library.
+  If you encounter problems while using EMMA, please send us a help request at
+  <%= help_email -%>.
+  We will do our best to respond as soon as possible.
+</p>
+
+<%= test[:body] %>

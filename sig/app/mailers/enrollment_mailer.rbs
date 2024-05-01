@@ -24,20 +24,14 @@ class EnrollmentMailer < ApplicationMailer
   #
   def request_email: (**untyped opt) -> void
 
-  # Generate mailer message content for #request_email.
+  # Supply interpolation values for the current email.
   #
-  # If this is not the production deployment, the heading and body will be
-  # annotated to indicate that this is not a real enrollment request.
-  #
-  # @param [Hash] opt
-  #
-  # @option opt [Enrollment] :item    Default: @item.
-  # @option opt [Symbol]     :format
-  # @option opt [Boolean]    :test
+  # @param [Hash, nil] vals
+  # @param [Hash]      opt
   #
   # @return [Hash]
   #
-  def request_email_elements: (**untyped opt) -> symHash
+  def interpolation_values: (?(symHash|nil) vals, **untyped opt) -> symHash
 
   # Extract organization name.
   #
@@ -54,4 +48,12 @@ class EnrollmentMailer < ApplicationMailer
   # @return [String, nil]
   #
   def name_from: (Enrollment|nil item) -> (String | nil)
+
+  # Extract request comments.
+  #
+  # @param [Enrollment, nil] item
+  #
+  # @return [String, nil]
+  #
+  def comments_from: (Enrollment|nil item) -> (String | nil)
 end

@@ -162,7 +162,7 @@ class AccountController < ApplicationController
     __log_activity
     __debug_route
     @item = create_record
-    generate_welcome_email(@item) if welcome_email?
+    generate_new_user_email(@item) if new_user_email?
     post_response(:created, @item)
   rescue CanCan::AccessDenied => error
     post_response(:forbidden, error)
@@ -206,6 +206,7 @@ class AccountController < ApplicationController
     __debug_route
     __debug_request
     @item = update_record
+    generate_new_org_email(@item) if new_org_email?
     post_response(:ok, @item)
   rescue CanCan::AccessDenied => error
     post_response(:forbidden, error)

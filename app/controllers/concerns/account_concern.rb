@@ -13,6 +13,9 @@ __loading_begin(__FILE__)
 # @!method paginator
 #   @return [User::Paginator]
 #
+#--
+# noinspection RubyTooManyMethodsInspection
+#++
 module AccountConcern
 
   extend ActiveSupport::Concern
@@ -514,26 +517,55 @@ module AccountConcern
 
   public
 
-  # Indicate whether #generate_welcome_email should be run for a new user.
+  # Indicate whether #generate_new_user_email should be run for a new user.
   #
-  def welcome_email?
+  def new_user_email?
     mail = params[:welcome]
     production_deployment? ? !false?(mail) : true?(mail)
   end
 
-  # Send a welcome email to a new user.
+  # Send a welcome email to a new user. Manager users will receive
+  # #new_org_mail; any others will receive #new_user_email.
   #
   # @param [User] user
   # @param [Hash] opt
   #
   # @return [void]
   #
-  # @see AccountMailer#welcome_email
+  # @see AccountMailer#new_user_email
+  # @see AccountMailer#new_org_email
+  # @see EnrollmentConcern#generate_new_user_emails
   #
-  def generate_welcome_email(user = @item, **opt)
-    prm = url_parameters.slice(*ApplicationMailer::MAIL_OPT).except!(:to)
-    opt = prm.merge!(opt, item: user)
-    AccountMailer.with(opt).welcome_email.deliver_later
+  def generate_new_user_email(user = @item, **opt)
+    prm  = url_parameters.slice(*ApplicationMailer::MAIL_OPT).except!(:to)
+    opt  = prm.merge!(opt, item: user)
+    mail = AccountMailer.with(opt)
+    mail = new_org_man ? mail.new_org_email : mail.new_user_email
+    mail.deliver_later
+  end
+
+  # Indicate whether #generate_new_org_email should be run for a user that
+  # has been modified to be the Manager of a new organization.
+  #
+  def new_org_email?
+    new_user_email? && new_org_man.present?
+  end
+
+  # Send a welcome email to the Manager of a new organization.
+  #
+  # @param [User] user
+  # @param [Hash] opt
+  #
+  # @return [void]
+  #
+  # @see AccountMailer#new_org_email
+  # @see OrgConcern#generate_new_org_email
+  # @see EnrollmentConcern#generate_new_user_emails
+  #
+  def generate_new_org_email(user = @item, **opt)
+    prm  = url_parameters.slice(*ApplicationMailer::MAIL_OPT).except!(:to)
+    opt  = prm.merge!(opt, item: user)
+    AccountMailer.with(opt).new_org_email.deliver_later
   end
 
   # ===========================================================================

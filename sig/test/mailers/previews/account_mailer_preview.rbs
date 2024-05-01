@@ -1,10 +1,15 @@
 # Preview all emails at '/rails/mailers/account_mailer'.
 #
 class AccountMailerPreview < ActionMailer::Preview
-  # Preview '/rails/mailers/account_mailer/welcome_email' using a fake user by
+  # Preview '/rails/mailers/account_mailer/new_user_email' using a fake user by
   # default or the specified User record if an :id parameter is given.
   #
-  def welcome_email: () -> void
+  def new_user_email: () -> void
+
+  # Preview '/rails/mailers/account_mailer/new_org_email' using a fake user by
+  # default or the specified User record if an :id parameter is given.
+  #
+  def new_org_email: () -> void
 
   # Generate a fake User if there is no record to use with the preview.
   #

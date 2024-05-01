@@ -1,0 +1,7 @@
+<%# app/views/account_mailer/new_org_email.text.erb -%>
+<%-
+  # Create a welcome message to the manager of a new organization.
+  elem ||= @elem
+  body ||= elem[:body]
+-%>
+<%= body || render_as_text('new_org') %>

@@ -47,10 +47,37 @@ class AccountMailer < ApplicationMailer
   #
   # @param [Hash] opt
   #
-  def welcome_email(**opt)
+  def new_user_email(**opt)
     test  = opt.key?(:test) ? opt.delete(:test) : !production_deployment?
     @item = params[:item]
-    @elem = welcome_email_elements(**params, **opt, test: test)
+    @elem = email_elements(:new_user, **opt, test: test)
+    test  = test && @elem[:testing] || {}
+
+    # Setup mail options.
+    opt             = params.slice(*MAIL_OPT).merge!(opt)
+    opt[:to]      ||= @item.email_address
+    opt[:from]    ||= CONTACT_EMAIL
+    opt[:subject] ||= @elem[:subject]
+    opt[:subject] &&= test[:subject] % opt[:subject] if test[:subject].present?
+
+    # Send the email to the user.
+    mail(opt) do |format|
+      format.text
+      format.html
+    end
+  end
+
+  # Send a welcome email to the manager of a new organization.
+  #
+  # If this is not the production deployment, the email subject will be
+  # annotated to indicate that this is not a real enrollment request.
+  #
+  # @param [Hash] opt
+  #
+  def new_org_email(**opt)
+    test  = opt.key?(:test) ? opt.delete(:test) : !production_deployment?
+    @item = params[:item]
+    @elem = email_elements(:new_org, **opt, test: test)
     test  = test && @elem[:testing] || {}
 
     # Setup mail options.
@@ -73,46 +100,20 @@ class AccountMailer < ApplicationMailer
 
   protected
 
-  # Generate mailer message content for #welcome_email.
+  # Supply interpolation values for the current email.
   #
-  # If this is not the production deployment, the heading and body will be
-  # annotated to indicate that this is not a real enrollment request.
-  #
-  # @param [Hash] opt
-  #
-  # @option opt [Symbol]  :format
-  # @option opt [Boolean] :test
+  # @param [Hash, nil] vals
+  # @param [Hash]      opt
   #
   # @return [Hash]
   #
-  def welcome_email_elements(**opt)
-    test = opt.key?(:test) ? opt.delete(:test) : !production_deployment?
+  def interpolation_values(vals = nil, **opt)
     html = (opt[:format] == :html)
-
-    # Get configured welcome email elements.
-    config_section('emma.project.welcome', **opt).deep_dup.tap do |cfg|
-
-      cfg[:body] = format_paragraphs(cfg[:body], **opt)
-
-      # Interpolation happens afterwards to preserve HTML safety.
-      vals = {
-        contact_email: html ? contact_email : CONTACT_EMAIL,
-        help_email:    html ? help_email    : HELP_EMAIL,
-      }
-      cfg[:body].map! { |paragraph| interpolate(paragraph, **vals) }
-
-      if test && (test = cfg[:testing]).present?
-        if (h = test[:heading]).present?
-          cfg[:heading] = h % cfg[:heading]
-        end
-        if (b = test[:body]).present?
-          b = format_paragraphs(b, **opt)
-          b.map! { |v| content_tag(:strong, v) } if html
-          cfg[:body] += b
-        end
-      end
-
-    end
+    vals = super
+    vals[:contact_email] = html ? contact_email : CONTACT_EMAIL
+    vals[:help_email]    = html ? help_email    : HELP_EMAIL
+    # noinspection RubyMismatchedReturnType
+    vals
   end
 
 end

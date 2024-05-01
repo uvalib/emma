@@ -328,6 +328,47 @@ module OrgConcern
   # :section:
   # ===========================================================================
 
+  public
+
+  # Indicate whether #generate_new_org_email should be run for a user that
+  # has been modified to be the Manager of a new organization.
+  #
+  def new_org_email?
+    return false unless new_org_man
+    mail = params[:welcome]
+    production_deployment? ? !false?(mail) : true?(mail)
+  end
+
+  # Send a welcome email to all new users of a new the organization. Manager
+  # users will receive #new_org_mail; any others will receive #new_user_email.
+  #
+  # @param [Org]  org
+  # @param [Hash] opt
+  #
+  # @return [void]
+  #
+  # @see AccountMailer#new_user_email
+  # @see AccountMailer#new_org_email
+  # @see AccountConcern#generate_new_org_email
+  # @see EnrollmentConcern#generate_new_user_emails
+  #
+  def generate_new_org_email(org = @item, **opt)
+    prm = url_parameters.slice(*ApplicationMailer::MAIL_OPT).except!(:to)
+    opt = prm.merge!(opt)
+    usr = org.contacts.to_a
+    man = !usr.many? || usr.none?(&:manager?)
+    usr.each do |user|
+      opt[:item] = user
+      mail = AccountMailer.with(opt)
+      mail = (man || user.manager?) ? mail.new_org_email : mail.new_user_email
+      mail.deliver_later
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   private
 
   THIS_MODULE = self

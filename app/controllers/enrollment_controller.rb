@@ -293,7 +293,7 @@ class EnrollmentController < ApplicationController
     __debug_request
     @item = finalize_enrollment
     raise config_text(:enrollment, :not_found, id: identifier) if @item.blank?
-    generate_welcome_emails if welcome_email?
+    generate_new_user_emails if new_user_email?
     if request_xhr?
       render json: @item.as_json
     else
