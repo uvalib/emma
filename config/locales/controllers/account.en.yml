@@ -118,6 +118,7 @@ en:
         - last_name
         - upload_count:   { label: 'Submissions' }
         - manifest_count: { label: 'Manifests' }
+        - sign_in_count
         - role
 #       - org
         - org_id
@@ -126,7 +127,6 @@ en:
         - address
         - status
         - status_date
-        - sign_in_count
         - current_sign_in_at
         - last_sign_in_at
         - current_sign_in_ip
