@@ -25,16 +25,22 @@ class Shrine
     # @param [Shrine::UploadedFile]    uploaded_file
     # @param [ActionDispatch::Request] request
     #
-    # @return [Array<(Integer, Hash, Array<String>)>]
+    # @return [Array<(Integer, Rack::Headers, Array<String>)>]
     #
     # @see file:javascripts/shared/uploader.js *onFileUploadSuccess()*
     #
+    #--
+    # noinspection RubyMismatchedReturnType
+    #++
     def make_response(uploaded_file, request)
       return super if @rack_response
       body = uploaded_file.data.merge(emma_data: uploaded_file.emma_metadata)
       body = { data: body, url: resolve_url(uploaded_file, request) } if @url
       body = body.to_json
-      [200, { 'Content-Type' => UploadEndpoint::CONTENT_TYPE_JSON }, [body]]
+      hdrs = { 'Content-Type' => UploadEndpoint::CONTENT_TYPE_JSON }
+      hdrs = Rack::Headers[hdrs] if Rack.release >= '3'
+      hdrs['Cache-Control'] = 'no-store' unless hdrs.key?('Cache-Control')
+      [200, hdrs, [body]]
     end
 
   end
@@ -80,7 +86,7 @@ class Shrine
       #
       # @param [ActionDispatch::Request] request
       #
-      # @return [Array<(Integer, Hash, Array<String>)>]
+      # @return [Array<(Integer, Rack::Headers, Array<String>)>]
       #
       def handle_request(request)
         start = timestamp
@@ -149,7 +155,7 @@ class Shrine
       # @param [Shrine::UploadedFile, Hash] uploaded_file
       # @param [ActionDispatch::Request]    request
       #
-      # @return [Array<(Integer, Hash, Array<String>)>]
+      # @return [Array<(Integer, Rack::Headers, Array<String>)>]
       #
       def make_response(uploaded_file, request)
         start = timestamp

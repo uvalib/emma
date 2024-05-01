@@ -34,8 +34,10 @@ class Shrine
         # @param [String, nil]          prefix
         # @param [Hash]                 upload_options
         # @param [Hash]                 multipart_threshold
+        # @param [Integer, nil]         max_multipart_parts
         # @param [any]                  signer
         # @param [any]                  public
+        # @param [Hash]                 copy_options
         # @param [Hash]                 s3_options
         #
         def initialize(
@@ -44,8 +46,10 @@ class Shrine
           prefix:              nil,
           upload_options:      {},
           multipart_threshold: {},
+          max_multipart_parts: nil,
           signer:              nil,
           public:              nil,
+          copy_options:        S3::COPY_OPTIONS,
           **s3_options
         )
           __ext_debug do
@@ -55,8 +59,10 @@ class Shrine
               prefix:              prefix,
               upload_options:      upload_options,
               multipart_threshold: multipart_threshold,
+              max_multipart_parts: max_multipart_parts,
               signer:              signer,
               public:              public,
+              copy_options:        copy_options,
               s3_options:          s3_options
             }
           end
@@ -84,11 +90,14 @@ class Shrine
 
         # open
         #
-        # @param [String]  id
-        # @param [Boolean] rewindable
-        # @param [Hash]    options
+        # @param [String]      id
+        # @param [Boolean]     rewindable
+        # @param [String, nil] encoding
+        # @param [Hash]        options
         #
-        def open(id, rewindable: true, **options)
+        # @return [Down::ChunkedIO]
+        #
+        def open(id, rewindable: true, encoding: nil, **options)
           __ext_debug { { id: id, options: options } }
           super
         end
@@ -171,22 +180,6 @@ class Shrine
         def part_size(io)
           super
             .tap { |res| __ext_debug("--> #{res.inspect}") { { io: io } } }
-        end
-
-        # get_object
-        #
-        # @param [any]  object
-        # @param [Hash] params
-        #
-        # @return [Array(Array,Integer)]
-        #
-        def get_object(object, params)
-          super
-            .tap do |result|
-              __ext_debug("--> #{result.inspect}") do
-                { object: object, params: params }
-              end
-            end
         end
 
         # copyable?

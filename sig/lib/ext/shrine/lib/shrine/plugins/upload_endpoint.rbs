@@ -6,11 +6,11 @@ class Shrine
     # @param [Shrine::UploadedFile]    uploaded_file
     # @param [ActionDispatch::Request] request
     #
-    # @return [Array<(Integer, Hash, Array<String>)>]
+    # @return [Array<(Integer, Rack::Headers, Array<String>)>]
     #
     # @see file:javascripts/shared/uploader.js *onFileUploadSuccess()*
     #
-    def make_response: (Shrine::UploadedFile uploaded_file, ActionDispatch::Request request) -> httpResult
+    def make_response: (Shrine::UploadedFile uploaded_file, ActionDispatch::Request request) -> [Integer, Rack::Headers, (strArray|Rack::BodyProxy)]
   end
 
   # Overrides adding extra debugging around method calls.
@@ -31,9 +31,9 @@ class Shrine
     #
     # @param [ActionDispatch::Request] request
     #
-    # @return [Array<(Integer, Hash, Array<String>)>]
+    # @return [Array<(Integer, Rack::Headers, Array<String>)>]
     #
-    def handle_request: (ActionDispatch::Request request) -> httpResult
+    def handle_request: (ActionDispatch::Request request) -> [Integer, Rack::Headers, (strArray|Rack::BodyProxy)]
 
     # get_io
     #
@@ -74,8 +74,8 @@ class Shrine
     # @param [Shrine::UploadedFile, Hash] uploaded_file
     # @param [ActionDispatch::Request]    request
     #
-    # @return [Array<(Integer, Hash, Array<String>)>]
+    # @return [Array<(Integer, Rack::Headers, Array<String>)>]
     #
-    def make_response: ((Shrine::UploadedFile|anyHash) uploaded_file, ActionDispatch::Request request) -> httpResult
+    def make_response: ((Shrine::UploadedFile|anyHash) uploaded_file, ActionDispatch::Request request) -> [Integer, Rack::Headers, (strArray|Rack::BodyProxy)]
   end
 end

@@ -12,11 +12,13 @@ class Shrine
       # @param [String, nil]          prefix
       # @param [Hash]                 upload_options
       # @param [Hash]                 multipart_threshold
+      # @param [Integer, nil]         max_multipart_parts
       # @param [any]                  signer
       # @param [any]                  public
+      # @param [Hash]                 copy_options
       # @param [Hash]                 s3_options
       #
-      def initialize: (bucket: String, ?client: Aws::S3::Client|nil, ?prefix: String|nil, ?upload_options: symHash, ?multipart_threshold: symHash, ?signer: Integer|nil, ?public: symHash|nil, **untyped s3_options) -> void
+      def initialize: (bucket: String, ?client: Aws::S3::Client|nil, ?prefix: String|nil, ?upload_options: symHash, ?multipart_threshold: symHash, ?max_multipart_parts: Integer|nil, ?signer: Integer|nil, ?public: symHash|nil, ?copy_options: symHash, **untyped s3_options) -> void
 
       # upload
       #
@@ -29,11 +31,14 @@ class Shrine
 
       # open
       #
-      # @param [String]  id
-      # @param [Boolean] rewindable
-      # @param [Hash]    options
+      # @param [String]      id
+      # @param [Boolean]     rewindable
+      # @param [String, nil] encoding
+      # @param [Hash]        options
       #
-      def open: (String id, ?rewindable: bool, **untyped options) -> untyped
+      # @return [Down::ChunkedIO]
+      #
+      def open: (String id, ?rewindable: bool, ?encoding: String|nil, **untyped options) -> Down::ChunkedIO
 
       # delete
       #
@@ -82,15 +87,6 @@ class Shrine
       # @return [Integer]
       #
       def part_size: ((IO|StringIO) io) -> untyped
-
-      # get_object
-      #
-      # @param [any]  object
-      # @param [Hash] params
-      #
-      # @return [Array(Array,Integer)]
-      #
-      def get_object: (untyped object, symHash params) -> [anyArray, Integer]
 
       # copyable?
       #
