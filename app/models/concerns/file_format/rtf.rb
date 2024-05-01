@@ -64,6 +64,13 @@ module FileFormat::Rtf
   #
   FIELD_MAP = RTF_FORMAT[:map]
 
+  # Indicate whether files of the given type should be processed to extract
+  # bibliographic metadata when being uploaded.
+  #
+  # @type [Boolean]
+  #
+  UPLOAD_PARSE = RTF_FORMAT.dig(:upload, :parse) || false
+
   # ===========================================================================
   # :section: FileFormat overrides
   # ===========================================================================

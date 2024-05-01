@@ -10,9 +10,8 @@ __loading_begin(__FILE__)
 # A class including this module is required to have the following constants
 # defined:
 #
-#   :FORMAT_FIELDS        Hash{Symbol=>Proc,Symbol}
-#   :FIELD_TRANSFORMS     Hash{Symbol=>Hash{Symbol=>Proc,Symbol}}
-#   :FIELD_ALWAYS_ARRAY   Array<Symbol>
+#   :FORMAT_FIELDS  Hash{Symbol=>Proc,Symbol}
+#   :UPLOAD_PARSE   Boolean
 #
 module FileFormat
 
@@ -68,6 +67,7 @@ module FileFormat
       RevisionDate:     :format_date_time,
       SourceDate:       :format_date_time,
       SubmissionDate:   :format_date_time,
+      Identifier:       :format_identifier,
       Language:         ->(values) { normalize_language(values) },
     }
   }.deep_freeze
@@ -89,6 +89,7 @@ module FileFormat
     Contributor
     CoverImage
     Creator
+    Identifier
     Keywords
     Subject
   ].freeze
@@ -137,6 +138,19 @@ module FileFormat
   #
   def common_metadata
     @common_metadata ||= mapped_metadata(parser_metadata)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Indicate whether files of the given type should be processed to extract
+  # bibliographic metadata when being uploaded.
+  #
+  def extract_on_upload?
+    self.class_eval { safe_const_get(:UPLOAD_PARSE) } || false
   end
 
   # ===========================================================================
@@ -322,6 +336,16 @@ module FileFormat
     value = IsoDate.datetime_convert(value) || value if value.is_a?(String)
     value = value.strftime('%F %R')                  if value.is_a?(Date)
     value.to_s.delete_suffix(' 00:00')
+  end
+
+  # Filter to accept only valid identifier values.
+  #
+  # @param [Array, String] value
+  #
+  # @return [Array<String>]
+  #
+  def format_identifier(value)
+    PublicationIdentifier.objects(value, invalid: false).map(&:to_s)
   end
 
   # format_image

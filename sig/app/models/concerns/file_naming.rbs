@@ -17,25 +17,29 @@ module FileNaming
   attr_accessor self.mime_to_fmt:     Hash[String,symArray]
   attr_accessor self.ext_to_fmt:      Hash[String,symArray]
 
-  # Create an instance of the appropriate FileObject subclass based on the
-  # indicated type and, if provided, the file contents
+  # Return the appropriate FileObject subclass based on the indicated type
+  # and, if provided, the file contents.
   #
-  # @param [Symbol, String]                     type
-  # @param [FileHandle, IO, StringIO, Tempfile] handle
+  # @param [Symbol, String]                          type
+  # @param [FileHandle, IO, StringIO, Tempfile, nil] handle
   #
   # @return [Class, nil]
   #
-  def self.format_class_instance: ((Symbol|String) `type`, ?(FileHandle|IO|StringIO|IO::Like|Tempfile|nil) handle) -> untyped
-  def      format_class_instance: ((Symbol|String) `type`, ?(FileHandle|IO|StringIO|IO::Like|Tempfile|nil) handle) -> untyped
+  def self.format_class: ((Symbol|String) `type`, ?(FileHandle|IO|StringIO|IO::Like|Tempfile|nil) handle) -> (Class | nil)
+  def      format_class: ((Symbol|String) `type`, ?(FileHandle|IO|StringIO|IO::Like|Tempfile|nil) handle) -> (Class | nil)
 
-  # format_class
+  # Given a DAISY variant, scan its contents to determine which.
   #
-  # @param [Symbol, String] type
+  # This heuristic assumes that only distinction between "Daisy" and
+  # "Daisy Audio" is the presence of sound files.
   #
-  # @return [Class, nil]
+  # @param [Symbol, String]                          type
+  # @param [FileHandle, IO, StringIO, Tempfile, nil] handle
   #
-  def self.format_class: ((Symbol|String) `type`) -> (Class | nil)
-  def      format_class: ((Symbol|String) `type`) -> (Class | nil)
+  # @return [Symbol, nil]           Either :daisy or :daisyAudio
+  #
+  def self.daisy_type: ((Symbol|String) `type`, (FileHandle|IO|StringIO|IO::Like|Tempfile|nil) handle) -> (Symbol | nil)
+  def      daisy_type: ((Symbol|String) `type`, (FileHandle|IO|StringIO|IO::Like|Tempfile|nil) handle) -> (Symbol | nil)
 
   # format_classes
   #

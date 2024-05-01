@@ -47,42 +47,48 @@ class Shrine
     # @return [Hash{Symbol=>any}]
     #
     def extract_file_metadata
-      mime  = fmt = fmt_class = fmt_instance = fmt_parser = fmt_metadata = nil
+      parse = false
+      mime  = fmt = fmt_cls = instance = parser = nil
+      data  = {}
       ext   = extension
       mime  = ext_to_mime(ext) || mime_type
       fmt   = (FileNaming.mime_to_fmt[mime]&.first if mime)
       fmt ||= (FileNaming.ext_to_fmt[ext]&.first   if ext)
       if fmt
-        # Any failure will be addressed in the 'rescue' section.
-        FileUploader.with_file(io) do |handle|
-          fmt_class    = FileNaming.format_class_instance(fmt, handle)
-          fmt_instance = fmt_class.new(handle)
-          fmt_parser   = fmt_instance.parser
-          fmt_metadata = fmt_parser.common_metadata rescue {}
-          fmt_metadata[:dc_format] = FileFormat.metadata_fmt(fmt_instance.fmt)
+        daisy   = %i[daisy daisyAudio].include?(fmt)
+        fmt_cls = FileNaming.format_class(fmt)          unless daisy
+        parse   = fmt_cls.safe_const_get(:UPLOAD_PARSE) if fmt_cls
+        if parse || daisy
+          FileUploader.with_file(io) do |handle|
+            fmt_cls ||= FileNaming.format_class(fmt, handle)
+            instance  = fmt_cls&.new(handle)
+            parse     = instance.extract_on_upload?      if instance
+            parser    = instance.parser                  if parse
+            data      = parser.common_metadata rescue {} if parser
+          end
         end
+        data[:dc_format] = FileFormat.metadata_fmt(instance.fmt) if instance
       elsif FileNaming::STRICT_FORMATS
-        fmt = fmt_class = fmt_instance = fmt_parser = ''
-        raise "#{__method__}: unknown mime #{mime.inspect}, ext #{ext.inspect}"
-      else
-        {}
+        raise
       end
       metadata.merge!('mime_type' => mime)
-      reject_blanks(fmt_metadata)
+      reject_blanks(data)
     rescue => error
       Log.debug { "#{__method__}: #{error.class}: #{error.message}" }
       if error.message.blank?
         msg =
-          if fmt.nil? || fmt_class.nil?
+          if FileNaming::STRICT_FORMATS
+            "unknown MIME type #{mime.inspect}, extension #{ext.inspect}"
+          elsif fmt.nil? || fmt_cls.nil?
             "#{mime.inspect} is not a recognized file type"
-          elsif fmt_instance.nil?
+          elsif instance.nil?
             "Could not create #{fmt.inspect} analyzer"
-          elsif fmt_parser.nil?
+          elsif parse && parser.nil?
             "Could not create #{fmt.inspect} parser"
-          elsif fmt.present?
+          else
             "Could not extract #{fmt.inspect} metadata"
           end
-        error = Record::SubmitError.new(msg)
+        raise Record::SubmitError, "#{__method__}: #{msg}"
       end
       raise error
     end

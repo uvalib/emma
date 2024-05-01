@@ -28,36 +28,35 @@ module FileNaming
 
     include FileFormat::Zip
 
-    # Create an instance of the appropriate FileObject subclass based on the
-    # indicated type and, if provided, the file contents
+    # Return the appropriate FileObject subclass based on the indicated type
+    # and, if provided, the file contents.
     #
-    # @param [Symbol, String]                     type
-    # @param [FileHandle, IO, StringIO, Tempfile] handle
+    # @param [Symbol, String]                          type
+    # @param [FileHandle, IO, StringIO, Tempfile, nil] handle
     #
     # @return [Class, nil]
     #
-    def format_class_instance(type, handle = nil)
-      if FileHandle.compatible?(handle)
-        case type.to_sym
-          when :daisy, :daisyAudio
-            # This heuristic assumes that only distinction between "Daisy" and
-            # "Daisy Audio" is the presence of sound files.
-            # noinspection RubyMismatchedArgumentType
-            type = get_archive_entry('.mp3', handle) ? :daisyAudio : :daisy
-        end
-      end
-      format_class(type)&.dup
+    def format_class(type, handle = nil)
+      type = daisy_type(type, handle) || type if handle
+      type = type.to_s.upcase_first
+      "FileObject::#{type}".safe_constantize
     end
 
-    # format_class
+    # Given a DAISY variant, scan its contents to determine which.
     #
-    # @param [Symbol, String] type
+    # This heuristic assumes that only distinction between "Daisy" and
+    # "Daisy Audio" is the presence of sound files.
     #
-    # @return [Class, nil]
+    # @param [Symbol, String]                          type
+    # @param [FileHandle, IO, StringIO, Tempfile, nil] handle
     #
-    def format_class(type)
-      fmt = type.to_s.upcase_first
-      "FileObject::#{fmt}".safe_constantize
+    # @return [Symbol, nil]           Either :daisy or :daisyAudio
+    #
+    def daisy_type(type, handle)
+      return unless %i[daisy daisyAudio].include?(type&.to_sym)
+      return unless FileHandle.compatible?(handle)
+      # noinspection RubyMismatchedArgumentType
+      get_archive_entry('.mp3', handle) ? :daisyAudio : :daisy
     end
 
     # format_classes

@@ -50,6 +50,13 @@ module FileFormat::Brf
   #
   FIELD_MAP: Hash[Symbol,Symbol]
 
+  # Indicate whether files of the given type should be processed to extract
+  # bibliographic metadata when being uploaded.
+  #
+  # @type [Boolean]
+  #
+  UPLOAD_PARSE: bool
+
   # configuration
   #
   # @return [Hash{Symbol=>String,Array,Hash}]

@@ -3,9 +3,8 @@
 # A class including this module is required to have the following constants
 # defined:
 #
-#   :FORMAT_FIELDS        Hash{Symbol=>Proc,Symbol}
-#   :FIELD_TRANSFORMS     Hash{Symbol=>Hash{Symbol=>Proc,Symbol}}
-#   :FIELD_ALWAYS_ARRAY   Array<Symbol>
+#   :FORMAT_FIELDS  Hash{Symbol=>Proc,Symbol}
+#   :UPLOAD_PARSE   Boolean
 #
 module FileFormat
   include Emma::Common
@@ -86,6 +85,11 @@ module FileFormat
   def common_metadata: () -> symHash
 
   @common_metadata: symHash
+
+  # Indicate whether files of the given type should be processed to extract
+  # bibliographic metadata when being uploaded.
+  #
+  def extract_on_upload?: () -> bool
 
   # Metadata extracted from the file format instance.
   #
@@ -180,6 +184,14 @@ module FileFormat
   # @return [String]
   #
   def format_date_time: ((String|Date|DateTime) value) -> String
+
+  # Filter to accept only valid identifier values.
+  #
+  # @param [Array, String] value
+  #
+  # @return [Array<String>]
+  #
+  def format_identifier: ((String|strArray) value) -> strArray
 
   # format_image
   #

@@ -64,6 +64,13 @@ module FileFormat::Word
   #
   FIELD_MAP = WORD_FORMAT[:map]
 
+  # Indicate whether files of the given type should be processed to extract
+  # bibliographic metadata when being uploaded.
+  #
+  # @type [Boolean]
+  #
+  UPLOAD_PARSE = WORD_FORMAT.dig(:upload, :parse) || false
+
   # ===========================================================================
   # :section: FileFormat overrides
   # ===========================================================================

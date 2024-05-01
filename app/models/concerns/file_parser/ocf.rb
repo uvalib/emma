@@ -144,6 +144,10 @@ class FileParser::Ocf < FileParser
       @cover_image << cover
     end
 
+    if (ids = result[:identifier])
+      result[:identifier] = format_identifier(ids)
+    end
+
     result
   end
 

@@ -64,6 +64,13 @@ module FileFormat::Tactile
   #
   FIELD_MAP = TACTILE_FORMAT[:map]
 
+  # Indicate whether files of the given type should be processed to extract
+  # bibliographic metadata when being uploaded.
+  #
+  # @type [Boolean]
+  #
+  UPLOAD_PARSE = TACTILE_FORMAT.dig(:upload, :parse) || false
+
   # ===========================================================================
   # :section: FileFormat overrides
   # ===========================================================================

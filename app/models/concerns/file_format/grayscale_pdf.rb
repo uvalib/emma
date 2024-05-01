@@ -68,6 +68,13 @@ module FileFormat::GrayscalePdf
   #
   FIELD_MAP = GRAYSCALE_PDF_FORMAT[:map]
 
+  # Indicate whether files of the given type should be processed to extract
+  # bibliographic metadata when being uploaded.
+  #
+  # @type [Boolean]
+  #
+  UPLOAD_PARSE = GRAYSCALE_PDF_FORMAT.dig(:upload, :parse) || false
+
   # ===========================================================================
   # :section: FileFormat overrides
   # ===========================================================================
