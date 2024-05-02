@@ -14,7 +14,7 @@ en:
 
       _test:          &TEST
         subject:      'TESTING - %s'
-        heading:      'Test %s'
+        heading:      'TESTING - %s'
         body:         '(NOTE: This is a test message.)'
 
       _testing:       &TESTING

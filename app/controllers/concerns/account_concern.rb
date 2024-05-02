@@ -13,9 +13,6 @@ __loading_begin(__FILE__)
 # @!method paginator
 #   @return [User::Paginator]
 #
-#--
-# noinspection RubyTooManyMethodsInspection
-#++
 module AccountConcern
 
   extend ActiveSupport::Concern
@@ -24,6 +21,7 @@ module AccountConcern
 
   include SerializationConcern
   include ModelConcern
+  include MailConcern
 
   # ===========================================================================
   # :section:
@@ -91,27 +89,6 @@ module AccountConcern
   # ===========================================================================
 
   public
-
-  # Set when the current record operation has assigned a Manager to an
-  # organization that had none (because the Org record had been created by
-  # an Administrator with an empty :contact field).
-  #
-  # @type [Boolean, nil]
-  #
-  attr_reader :new_org_man
-
-  # Set when the current record operation has created an Administrator user or
-  # converted an organization member user into an Administrator.
-  #
-  # @type [Boolean, nil]
-  #
-  attr_reader :new_admin
-
-  # Set when a new non-Administrator user is created.
-  #
-  # @type [Boolean, nil]
-  #
-  attr_reader :new_user
 
   # Return with the specified User record.
   #
@@ -519,65 +496,6 @@ module AccountConcern
   def pagination_setup(paginator: User::Paginator, **opt)
     # noinspection RubyMismatchedReturnType
     super
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Indicate whether emails should be generated.
-  #
-  def send_email?
-    mail = params[:welcome]
-    production_deployment? ? !false?(mail) : true?(mail)
-  end
-
-  # Indicate whether #generate_new_user_email should be run for a new user.
-  #
-  def new_user_email?
-    new_user.present? && send_email?
-  end
-
-  # Send a welcome email to a new user.
-  #
-  # @param [User] user
-  # @param [Hash] opt
-  #
-  # @return [void]
-  #
-  # @see AccountMailer#new_user_email
-  # @see EnrollmentConcern#generate_new_user_emails
-  #
-  def generate_new_user_email(user = @item, **opt)
-    prm = url_parameters.slice(*ApplicationMailer::MAIL_OPT).except!(:to)
-    opt = prm.merge!(opt, item: user)
-    AccountMailer.with(opt).new_user_email.deliver_later
-  end
-
-  # Indicate whether #generate_new_org_email should be run for a user that
-  # has been modified to be the Manager of a new organization.
-  #
-  def new_org_email?
-    new_org_man.present? && send_email?
-  end
-
-  # Send a welcome email to the Manager of a new organization.
-  #
-  # @param [User] user
-  # @param [Hash] opt
-  #
-  # @return [void]
-  #
-  # @see AccountMailer#new_org_email
-  # @see OrgConcern#generate_new_org_email
-  # @see EnrollmentConcern#generate_new_user_emails
-  #
-  def generate_new_org_email(user = @item, **opt)
-    prm = url_parameters.slice(*ApplicationMailer::MAIL_OPT).except!(:to)
-    opt = prm.merge!(opt, item: user)
-    AccountMailer.with(opt).new_org_email.deliver_later
   end
 
   # ===========================================================================

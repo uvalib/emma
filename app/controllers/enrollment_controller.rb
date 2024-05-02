@@ -138,14 +138,15 @@ class EnrollmentController < ApplicationController
   # Otherwise, a request ticket is generated *only* if "ticket=true" appears in
   # the form parameters.
   #
-  # @see #create_enrollment_path      Route helper
-  # @see EnrollmentConcern#generate_help_ticket
+  # @see #create_enrollment_path                  Route helper
+  # @see EnrollmentConcern#create_record
+  # @see MailConcern#generate_enrollment_ticket
   #
   def create(back: welcome_path)
     __log_activity
     __debug_route
     @item = create_record
-    generate_help_ticket(@item) if help_ticket?
+    generate_enrollment_ticket(@item) if send_help_ticket?
     if request_xhr?
       render json: @item.as_json
     else
@@ -292,7 +293,9 @@ class EnrollmentController < ApplicationController
   # Finalize an EMMA enrollment request by creating a new Org and User, and
   # removing the Enrollment record.
   #
-  # @see #finalize_enrollment_path      Route helper
+  # @see #finalize_enrollment_path                    Route helper
+  # @see EnrollmentConcern#finalize_enrollment
+  # @see EnrollmentConcern#generate_new_users_emails
   #
   def finalize
     __log_activity
@@ -300,7 +303,7 @@ class EnrollmentController < ApplicationController
     __debug_request
     @item = finalize_enrollment
     raise config_text(:enrollment, :not_found, id: identifier) if @item.blank?
-    generate_new_user_emails if new_user_email?
+    generate_new_users_emails if new_users_email?
     if request_xhr?
       render json: @item.as_json
     else

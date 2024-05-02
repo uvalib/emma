@@ -9,6 +9,15 @@ class ApplicationMailer < ActionMailer::Base
   #
   MAIL_OPT: symArray
 
+  # The pattern indicating a `<meta>` tag from an HTML content document which
+  # specifies a mail option.
+  #
+  # E.g. `<meta name="emma-mail-subject" content="MAIL SUBJECT LINE">`
+  #
+  # @type [Regexp]
+  #
+  META_PREFIX: Regexp
+
   # Acquire the message body from a source other than the view template.
   #
   # @param [String, Hash] src
@@ -22,7 +31,7 @@ class ApplicationMailer < ActionMailer::Base
   # Acquire the message body from a web site.
   #
   # @param [String] src               Full URL to the file.
-  # @param [Hash]   opt               Passed to #extract_headers.
+  # @param [Hash]   opt               Passed to #process_content.
   #
   # @return [Hash, nil]
   #
@@ -31,30 +40,51 @@ class ApplicationMailer < ActionMailer::Base
   # Acquire the message body from a local file.
   #
   # @param [String] src               Project-relative path to the file.
+  # @param [Hash]   opt               Passed to #process_content.
   #
   # @return [Hash, nil]
   #
-  def fetch_local_message: (String src, **untyped _ignored) -> (symHash | nil)
+  def fetch_local_message: (String src, **untyped opt) -> (symHash | nil)
 
   # Acquire the message body from the "messages" database table.
   #
   # @param [String] src               Project-relative path to the file.
   # @param [String] table             Database table name.
-  # @param [Hash]   opt               Passed to #extract_headers.
+  # @param [Hash]   opt               Passed to #process_content.
   #
   # @return [Hash, nil]
   #
   def fetch_db_message: (String src, ?table: String, **untyped opt) -> (symHash | nil)
 
-  # Interpret the initial lines of *src* as mail headers and return with a
-  # hash where [:body] contains the remaining lines.
+  # Process fetched content according to its original format.
   #
-  # @param [Array, String, nil] src
-  # @param [Symbol, nil]        format
+  # @param [String, nil] msg
+  # @param [Hash]        opt
   #
   # @return [Hash]
   #
-  def extract_headers: (String|strArray src, ?format: Symbol|nil, **untyped _ignored) -> symHash
+  def process_content: (String|nil msg, **untyped opt) -> symHash
+
+  # Process HTML content by interpreting `<head>` `<meta>` tags matching
+  # #META_PREFIX as mail option overrides and returning the contents of
+  # `<body>`.
+  #
+  # @param [String]      msg
+  # @param [Symbol, nil] format
+  #
+  # @return [Hash]
+  #
+  def process_html: (String|nil msg, ?format: Symbol|nil, **untyped _ignored) -> symHash
+
+  # Process text content by interpreting the initial lines as mail headers and
+  # returning with a hash where [:body] contains the remaining lines.
+  #
+  # @param [Array, String] msg
+  # @param [Symbol, nil]   format
+  #
+  # @return [Hash]
+  #
+  def process_text: (String|strArray msg, ?format: Symbol|nil, **untyped _ignored) -> symHash
 
   # Separator which indicates a division between paragraphs for text format.
   #
@@ -97,6 +127,14 @@ class ApplicationMailer < ActionMailer::Base
   # @return [String]
   #
   def wrap_lines: (String text, ?width: Integer) -> String
+
+  # Combine email addresses.
+  #
+  # @param [Array<String>, String] values
+  #
+  # @return [String]
+  #
+  def join_addresses: (*(String|strArray) values) -> String
 
   # Generate mailer message content for an AccountMailer email.
   #

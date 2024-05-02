@@ -15,6 +15,8 @@ module AccountConcern
 
   include ModelConcern
 
+  include MailConcern
+
   # Columns searched for generic (:like) matches.
   #
   # @type [Array<Symbol>]
@@ -48,27 +50,6 @@ module AccountConcern
   def id_param_keys: () -> symArray
 
   def find_or_match_keys: () -> symArray
-
-  # Set when the current record operation has assigned a Manager to an
-  # organization that had none (because the Org record had been created by
-  # an Administrator with an empty :contact field).
-  #
-  # @type [Boolean, nil]
-  #
-  attr_reader new_org_man: bool | nil
-
-  # Set when the current record operation has created an Administrator user or
-  # converted an organization member user into an Administrator.
-  #
-  # @type [Boolean, nil]
-  #
-  attr_reader new_admin: bool | nil
-
-  # Set when a new non-Administrator user is created.
-  #
-  # @type [Boolean, nil]
-  #
-  attr_reader new_user: bool | nil
 
   # Return with the specified User record.
   #
@@ -247,44 +228,6 @@ module AccountConcern
   # @return [User::Paginator]
   #
   def pagination_setup: (?paginator: Class, **untyped opt) -> User::Paginator
-
-  # Indicate whether emails should be generated.
-  #
-  def send_email?: () -> bool
-
-  # Indicate whether #generate_new_user_email should be run for a new user.
-  #
-  def new_user_email?: () -> bool
-
-  # Send a welcome email to a new user.
-  #
-  # @param [User] user
-  # @param [Hash] opt
-  #
-  # @return [void]
-  #
-  # @see AccountMailer#new_user_email
-  # @see EnrollmentConcern#generate_new_user_emails
-  #
-  def generate_new_user_email: (?User user, **untyped opt) -> void
-
-  # Indicate whether #generate_new_org_email should be run for a user that
-  # has been modified to be the Manager of a new organization.
-  #
-  def new_org_email?: () -> bool
-
-  # Send a welcome email to the Manager of a new organization.
-  #
-  # @param [User] user
-  # @param [Hash] opt
-  #
-  # @return [void]
-  #
-  # @see AccountMailer#new_org_email
-  # @see OrgConcern#generate_new_org_email
-  # @see EnrollmentConcern#generate_new_user_emails
-  #
-  def generate_new_org_email: (?User user, **untyped opt) -> void
 
   module DeviseMethods
 

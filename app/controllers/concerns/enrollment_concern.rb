@@ -14,6 +14,7 @@ module EnrollmentConcern
   include RecaptchaHelper
 
   include ModelConcern
+  include MailConcern
 
   # ===========================================================================
   # :section: ModelConcern overrides
@@ -248,64 +249,23 @@ module EnrollmentConcern
     end
   end
 
-  # Indicate whether #generate_help_ticket should be run when creating an
-  # enrollment.
+  # Indicate whether #generate_new_users_emails should be run for users of a
+  # new organization.
   #
-  def help_ticket?
-    mail = params[:ticket]
-    production_deployment? ? !false?(mail) : true?(mail)
-  end
-
-  # Send a request email in order to generate a JIRA help ticket for a new
-  # enrollment request.
-  #
-  # @param [Enrollment] enrollment
-  # @param [Hash]       opt           To ActionMailer::Parameterized#with
-  #
-  # @return [void]
-  #
-  # @see EnrollmentMailer#request_email
-  #
-  def generate_help_ticket(enrollment = @item, **opt)
-    prm = url_parameters.slice(*ApplicationMailer::MAIL_OPT)
-    opt = prm.merge!(opt, item: enrollment)
-    EnrollmentMailer.with(opt).request_email.deliver_later
-  end
-
-  # Indicate whether emails should be generated.
-  #
-  def send_email?
-    mail = params[:welcome]
-    production_deployment? ? !false?(mail) : true?(mail)
-  end
-
-  # Indicate whether #generate_new_user_email should be run for a new user.
-  #
-  def new_user_email?
-    new_users.present? && send_email?
+  def new_users_email?
+    new_users.present? && send_welcome_email?
   end
 
   # Send a welcome email to all new users created along with the organization.
   # In addition, manager users will receive #new_org_email.
   #
-  # @param [Hash] opt                 To ActionMailer::Parameterized#with
+  # @param [Hash] opt                 To MailConcern#generate_new_org_emails
   #
   # @return [void]
   #
-  # @see AccountMailer#new_user_email
-  # @see AccountMailer#new_org_email
-  # @see AccountConcern#generate_new_user_email
-  #
-  def generate_new_user_emails(**opt)
-    prm = url_parameters.slice(*ApplicationMailer::MAIL_OPT).except!(:to)
-    opt = prm.merge!(opt)
-    man = new_users.none?(&:manager?)
-    new_users.each do |user|
-      opt[:item] = user
-      mail = AccountMailer.with(opt)
-      mail.new_org_email.deliver_later if man || user.manager?
-      mail.new_user_email.deliver_later
-    end
+  def generate_new_users_emails(**opt)
+    # noinspection RubyMismatchedArgumentType
+    generate_new_org_emails(new_users, **opt)
   end
 
   # ===========================================================================

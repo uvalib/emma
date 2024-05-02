@@ -52,8 +52,11 @@ class EnrollmentMailer < ApplicationMailer
     test  = test && @elem[:testing] || {}
 
     # Setup mail options.
-    opt             = params.slice(*MAIL_OPT).merge!(opt)
-    opt[:from]    ||= @item.requesting_user[:email] || ENROLL_EMAIL
+    opt             = params.merge(opt).slice(*MAIL_OPT)
+    opt[:cc]        = join_addresses(opt[:cc],  @elem[:cc]).presence
+    opt[:bcc]       = join_addresses(opt[:bcc], @elem[:bcc]).presence
+    opt[:from]    ||= @elem[:from] || @item.requesting_user[:email]
+    opt[:from]    ||= ENROLL_EMAIL
     opt[:subject] ||= [@elem[:subject], @item.long_name].compact.join(' - ')
     opt[:subject] &&= test[:subject] % opt[:subject] if test[:subject].present?
 

@@ -3,11 +3,6 @@
   # Create a new user welcome message.
   elem ||= @elem
   heading, body = elem.values_at(:heading, :body)
+  body &&= html_h1(heading) << body if heading.present?
 -%>
-
-<%- if body -%>
-  <h1><%= heading -%></h1>
-  <%= body %>
-<%- else -%>
-  <%= render 'new_org' %>
-<%- end -%>
+<%= body || render('new_user') %>

@@ -54,9 +54,11 @@ class AccountMailer < ApplicationMailer
     test  = test && @elem[:testing] || {}
 
     # Setup mail options.
-    opt             = params.slice(*MAIL_OPT).merge!(opt)
-    opt[:to]      ||= @item.email_address
-    opt[:from]    ||= CONTACT_EMAIL
+    opt             = params.merge(opt).slice(*MAIL_OPT)
+    opt[:to]        = join_addresses(@item.email_address, opt[:to], @elem[:to])
+    opt[:cc]        = join_addresses(opt[:cc],  @elem[:cc]).presence
+    opt[:bcc]       = join_addresses(opt[:bcc], @elem[:bcc]).presence
+    opt[:from]    ||= @elem[:from] || CONTACT_EMAIL
     opt[:subject] ||= @elem[:subject]
     opt[:subject] &&= test[:subject] % opt[:subject] if test[:subject].present?
 
@@ -81,9 +83,11 @@ class AccountMailer < ApplicationMailer
     test  = test && @elem[:testing] || {}
 
     # Setup mail options.
-    opt             = params.slice(*MAIL_OPT).merge!(opt)
-    opt[:to]      ||= @item.email_address
-    opt[:from]    ||= CONTACT_EMAIL
+    opt             = params.merge(opt).slice(*MAIL_OPT)
+    opt[:to]        = join_addresses(@item.email_address, opt[:to], @elem[:to])
+    opt[:cc]        = join_addresses(opt[:cc],  @elem[:cc]).presence
+    opt[:bcc]       = join_addresses(opt[:bcc], @elem[:bcc]).presence
+    opt[:from]    ||= @elem[:from] || CONTACT_EMAIL
     opt[:subject] ||= @elem[:subject]
     opt[:subject] &&= test[:subject] % opt[:subject] if test[:subject].present?
 

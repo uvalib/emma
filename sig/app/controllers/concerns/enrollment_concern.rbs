@@ -7,6 +7,8 @@ module EnrollmentConcern
 
   include ModelConcern
 
+  include MailConcern
+
   # Add a new Enrollment record to the database.
   #
   # @param [Hash, nil] prm            Field values (def: `#current_params`).
@@ -142,44 +144,19 @@ module EnrollmentConcern
   #
   def finalize_enrollment: (untyped item, **untyped opt) -> (Enrollment | nil)
 
-  # Indicate whether #generate_help_ticket should be run when creating an
-  # enrollment.
-  #
-  def help_ticket?: () -> bool
-
-  # Send a request email in order to generate a JIRA help ticket for a new
-  # enrollment request.
-  #
-  # @param [Enrollment] enrollment
-  # @param [Hash]       opt           To ActionMailer::Parameterized#with
-  #
-  # @return [void]
-  #
-  # @see EnrollmentMailer#request_email
-  #
-  def generate_help_ticket: (?Enrollment enrollment, **untyped opt) -> void
-
-  # Indicate whether emails should be generated.
-  #
-  def send_email?: () -> bool
-
-  # Indicate whether #generate_new_user_email should be run for users of the
+  # Indicate whether #generate_new_users_emails should be run for users of a
   # new organization.
   #
-  def new_user_email?: () -> bool
+  def new_users_email?: () -> bool
 
   # Send a welcome email to all new users created along with the organization.
   # In addition, manager users will receive #new_org_email.
   #
-  # @param [Hash] opt                 To ActionMailer::Parameterized#with
+  # @param [Hash] opt                 To MailConcern#generate_new_org_emails
   #
   # @return [void]
   #
-  # @see AccountMailer#new_user_email
-  # @see AccountMailer#new_org_email
-  # @see AccountConcern#generate_new_user_email
-  #
-  def generate_new_user_emails: (**untyped opt) -> void
+  def generate_new_users_emails: (**untyped opt) -> void
 
   private
 

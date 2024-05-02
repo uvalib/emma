@@ -146,13 +146,15 @@ class OrgController < ApplicationController
   # === PUT   /org/create
   # === PATCH /org/create
   #
-  # @see #create_org_path        Route helper
+  # @see #create_org_path                     Route helper
+  # @see OrgConcern#create_record
+  # @see MailConcern#generate_new_org_emails
   #
   def create
     __log_activity
     __debug_route
     @item = create_record
-    generate_new_org_email if new_org_email?
+    generate_new_org_emails(@item) if new_org_email?
     if request_xhr?
       render json: @item.as_json
     else
@@ -193,14 +195,16 @@ class OrgController < ApplicationController
   # === PUT   /org/update/:id
   # === PATCH /org/update/:id
   #
-  # @see #update_org_path        Route helper
+  # @see #update_org_path                     Route helper
+  # @see OrgConcern#update_record
+  # @see MailConcern#generate_new_org_emails
   #
   def update
     __log_activity
     __debug_route
     __debug_request
     @item = update_record
-    generate_new_org_email if new_org_email?
+    generate_new_org_emails(@item) if new_org_email?
     if request_xhr?
       render json: @item.as_json
     else

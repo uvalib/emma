@@ -5,6 +5,8 @@ module OrgConcern
 
   include ModelConcern
 
+  include MailConcern
+
   # Indicate whether request parameters (explicitly or implicitly) reference
   # the current user's organization.
   #
@@ -31,14 +33,6 @@ module OrgConcern
   # @return [Hash]
   #
   def current_post_params: () -> symHash
-
-  # Set when the current record operation has assigned a Manager to an
-  # organization that had none (because the Org record had been created by
-  # an Administrator with an empty :contact field).
-  #
-  # @type [Boolean, nil]
-  #
-  attr_reader new_org_man: bool | nil
 
   # Return with the specified Org record.
   #
@@ -181,30 +175,6 @@ module OrgConcern
   # @return [Org::Paginator]
   #
   def pagination_setup: (?paginator: Class, **untyped opt) -> Org::Paginator
-
-  # Indicate whether emails should be generated.
-  #
-  def send_email?: () -> bool
-
-  # Indicate whether #generate_new_org_email should be run for a user that
-  # has been modified to be the Manager of a new organization.
-  #
-  def new_org_email?: () -> bool
-
-  # Send a welcome email to all new users of a new the organization. Manager
-  # users will receive #new_org_mail; any others will receive #new_user_email.
-  #
-  # @param [Org]  org
-  # @param [Hash] opt
-  #
-  # @return [void]
-  #
-  # @see AccountMailer#new_user_email
-  # @see AccountMailer#new_org_email
-  # @see AccountConcern#generate_new_org_email
-  # @see EnrollmentConcern#generate_new_user_emails
-  #
-  def generate_new_org_email: (?Org org, **untyped opt) -> void
 
   private
 

@@ -63,7 +63,9 @@ class OrgController < ApplicationController
   # === PUT   /org/create
   # === PATCH /org/create
   #
-  # @see #create_org_path        Route helper
+  # @see #create_org_path                     Route helper
+  # @see OrgConcern#create_record
+  # @see MailConcern#generate_new_org_emails
   #
   def create: () -> void
 
@@ -83,7 +85,9 @@ class OrgController < ApplicationController
   # === PUT   /org/update/:id
   # === PATCH /org/update/:id
   #
-  # @see #update_org_path        Route helper
+  # @see #update_org_path                     Route helper
+  # @see OrgConcern#update_record
+  # @see MailConcern#generate_new_org_emails
   #
   def update: () -> void
 

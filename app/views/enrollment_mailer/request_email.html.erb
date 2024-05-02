@@ -3,11 +3,6 @@
   # Create a new EMMA enrollment request ticket.
   elem ||= @elem
   heading, body = elem.values_at(:heading, :body)
+  body &&= html_h1(heading) << body if heading.present?
 -%>
-
-<%- if body -%>
-  <h1><%= heading -%></h1>
-  <%= body %>
-<%- else -%>
-  <%= render 'request' %>
-<%- end -%>
+<%= body || render('request') %>

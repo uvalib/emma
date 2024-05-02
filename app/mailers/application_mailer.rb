@@ -37,6 +37,15 @@ class ApplicationMailer < ActionMailer::Base
   #
   MAIL_OPT = %i[to from subject cc bcc].freeze
 
+  # The pattern indicating a `<meta>` tag from an HTML content document which
+  # specifies a mail option.
+  #
+  # E.g. `<meta name="emma-mail-subject" content="MAIL SUBJECT LINE">`
+  #
+  # @type [Regexp]
+  #
+  META_PREFIX = /^emma-mail-/.freeze
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -60,14 +69,14 @@ class ApplicationMailer < ActionMailer::Base
       when /\A *(https?:[^\n]+) *\z/  then fetch_remote_message($1, **opt)
       when /\A *(\/[^\n]+) *\z/       then fetch_local_message($1, **opt)
       when /\A *db:([^\s]+) *\z/      then fetch_db_message($1, **opt)
-      when                                 extract_headers(src, **opt)
+      when                                 process_content(src, **opt)
     end
   end
 
   # Acquire the message body from a web site.
   #
   # @param [String] src               Full URL to the file.
-  # @param [Hash]   opt               Passed to #extract_headers.
+  # @param [Hash]   opt               Passed to #process_content.
   #
   # @return [Hash, nil]
   #
@@ -75,26 +84,20 @@ class ApplicationMailer < ActionMailer::Base
     return unless src.is_a?(String) && src.present?
     resp = Faraday.get(src)
     stat = resp&.status || '-'
-    msg  = resp&.body&.strip
-    if msg&.include?('</')
-      msg = "<body>#{msg}</body>" unless msg.include?('<body')
-      doc = Nokogiri.parse(msg).at('//body')
-      msg = doc.children.map { |v| v.to_html.strip }.join("\n").html_safe
-    end
-    if msg.present?
-      extract_headers(msg, **opt)
-    else
-      err = (stat == 200) ? 'no content' : "status #{stat}"
-      err = "#{__method__}: failed: #{src.inspect} (#{err})"
-      Log.error(err)
-      { body: err }
+    body = resp&.body&.strip
+    process_content(body, **opt).tap do |result|
+      if result[:body].blank?
+        err = (stat == 200) ? 'no content' : "status #{stat}"
+        err = result[:body] = "#{__method__}: failed: #{src.inspect} (#{err})"
+        Log.error(err)
+      end
     end
   end
 
   # Acquire the message body from a local file.
   #
   # @param [String] src               Project-relative path to the file.
-  # @param [Hash]   opt               Passed to #extract_headers.
+  # @param [Hash]   opt               Passed to #process_content.
   #
   # @return [Hash, nil]
   #
@@ -102,14 +105,19 @@ class ApplicationMailer < ActionMailer::Base
     not_implemented 'TODO: fetch message body from local file'
     return unless src.is_a?(String) && src.present?
     body = src # TODO: get local file
-    extract_headers(body, **opt)
+    process_content(body, **opt).tap do |result|
+      if result[:body].blank?
+        err = result[:body] = "#{__method__}: failed: #{src.inspect}"
+        Log.error(err)
+      end
+    end
   end
 
   # Acquire the message body from the "messages" database table.
   #
   # @param [String] src               Project-relative path to the file.
   # @param [String] table             Database table name.
-  # @param [Hash]   opt               Passed to #extract_headers.
+  # @param [Hash]   opt               Passed to #process_content.
   #
   # @return [Hash, nil]
   #
@@ -117,30 +125,91 @@ class ApplicationMailer < ActionMailer::Base
     not_implemented 'TODO: fetch message body from database table'
     return unless src.is_a?(String) && src.present?
     body = table && src # TODO: get table field value
-    extract_headers(body, **opt)
+    process_content(body, **opt).tap do |result|
+      if result[:body].blank?
+        err = result[:body] = "#{__method__}: failed: #{src.inspect}"
+        Log.error(err)
+      end
+    end
   end
 
-  # Interpret the initial lines of *src* as mail headers and return with a
-  # hash where [:body] contains the remaining lines.
+  # Process fetched content according to its original format.
   #
-  # @param [Array, String, nil] src
-  # @param [Symbol, nil]        format
+  # @param [String, nil] msg
+  # @param [Hash]        opt
   #
   # @return [Hash]
   #
-  def extract_headers(src, format: nil, **)
+  def process_content(msg, **opt)
+    # noinspection RubyMismatchedArgumentType
+    case
+      when msg&.include?('</') then process_html(msg, **opt)
+      when msg.present?        then process_text(msg, **opt)
+      else                          {}
+    end
+  end
+
+  # Process HTML content by interpreting `<head>` `<meta>` tags matching
+  # #META_PREFIX as mail option overrides and returning the contents of
+  # `<body>`.
+  #
+  # @param [String]      msg
+  # @param [Symbol, nil] format
+  #
+  # @return [Hash]
+  #
+  def process_html(msg, format: nil, **)
     result = {}
     html   = (format == :html)
-    lines  = src.is_a?(Array) ? src.dup : src.split("\n")
+    msg    = "<body>#{msg}</body>" unless msg.include?('<body')
+    doc    = Nokogiri.parse(msg)
+
+    # Look for `<meta>` overrides of mail options.
+    doc.search('//head/meta[@name]').each do |node|
+      attrs = node.attributes.map { |k, v| [k.to_s.to_sym, v.to_s] }.to_h
+      name, value = attrs.values_at(:name, :content)
+      next unless name.match?(META_PREFIX) && value.present?
+      name = name.sub(META_PREFIX, '').to_sym
+      result[name] = value
+    end
+
+    # If the first element is `<h1>`, `<h2>`, etc. then assume the document
+    # defines the heading and ensure that the configured value is not used.
+    body = doc.at('//body')
+    result[:heading] = '' if body.elements.first.name.match?(/^h\d$/)
+
+    # Prepare message content for the current format.
+    body = body.children.map { |v| v.to_html.strip }.join("\n").html_safe
+    body = format_body(body, format: format).join("\n")
+    body = body.html_safe if html
+    result.merge!(body: body)
+  end
+
+  # Process text content by interpreting the initial lines as mail headers and
+  # returning with a hash where [:body] contains the remaining lines.
+  #
+  # @param [Array, String] msg
+  # @param [Symbol, nil]   format
+  #
+  # @return [Hash]
+  #
+  def process_text(msg, format: nil, **)
+    result = {}
+    html   = (format == :html)
+    lines  = msg.is_a?(Array) ? msg.dup : msg.split("\n")
+
+    # Look for overrides of mail options (e.g. "Subject: MAIL SUBJECT LINE").
     while lines.first&.match(/^([a-z_-]+):\s*([^\n]*)$/i) do
       break unless (header = $1) && (value = $2)
       result[header.underscore.to_sym] = value
       lines.shift
     end
+
+    # Prepare message content for the current format.
     body = lines.join("\n").strip
-    body = body.html_safe if src.is_a?(ActiveSupport::SafeBuffer)
+    body = body.html_safe if msg.is_a?(ActiveSupport::SafeBuffer)
     body = format_body(body, format: format).join("\n")
-    body = body.html_safe if src.is_a?(ActiveSupport::SafeBuffer) || html
+    body = body.html_safe if msg.is_a?(ActiveSupport::SafeBuffer) || html
     result.merge!(body: body)
   end
 
@@ -230,6 +299,21 @@ class ApplicationMailer < ActionMailer::Base
   # ===========================================================================
 
   protected
+
+  # Combine email addresses.
+  #
+  # @param [Array<String>, String] values
+  #
+  # @return [String]
+  #
+  def join_addresses(*values)
+    values = values.flatten.compact_blank!
+    if values.many?
+      values.uniq { |v| v.to_s.downcase }.join('; ')
+    else
+      values.first
+    end
+  end
 
   # Generate mailer message content for an AccountMailer email.
   #
