@@ -73,7 +73,7 @@ class AccountController < ApplicationController
   #
   # @see #users_path                  Route helper
   # @see #account_index_path          Route helper
-  # @see AccountConcern#get_accounts
+  # @see AccountController#list_items
   #
   def index
     __log_activity
@@ -101,6 +101,7 @@ class AccountController < ApplicationController
   # Redirects to #show_current if :id is #CURRENT_ID.
   #
   # @see #show_account_path           Route helper
+  # @see AccountConcern#find_record
   #
   def show
     __log_activity
@@ -128,6 +129,7 @@ class AccountController < ApplicationController
   # form parameter.
   #
   # @see #new_account_path            Route helper
+  # @see AccountConcern#new_record
   #
   def new
     __log_activity
@@ -156,7 +158,10 @@ class AccountController < ApplicationController
   # parameter will be rejected unless "force=true" is included in the URL
   # parameters (administrator only).
   #
-  # @see #create_account_path         Route helper
+  # @see #create_account_path                 Route helper
+  # @see AccountConcern#create_record
+  # @see MailConcern#generate_new_user_email
+  # @see MailConcern#generate_new_org_email
   #
   def create
     __log_activity
@@ -181,6 +186,7 @@ class AccountController < ApplicationController
   # Redirects to #edit_current if :id is #CURRENT_ID.
   #
   # @see #edit_account_path           Route helper
+  # @see AccountConcern#edit_record
   #
   def edit
     __log_activity
@@ -200,7 +206,9 @@ class AccountController < ApplicationController
   #
   # Update an existing EMMA user account.
   #
-  # @see #update_account_path         Route helper
+  # @see #update_account_path                 Route helper
+  # @see AccountConcern#update_record
+  # @see MailConcern#generate_new_org_email
   #
   def update
     __log_activity
@@ -221,7 +229,8 @@ class AccountController < ApplicationController
   #
   # Redirects to #delete_select if :id is not given.
   #
-  # @see #delete_account_path         Route helper
+  # @see #delete_account_path           Route helper
+  # @see AccountConcern#delete_records
   #
   def delete
     __log_activity
@@ -242,7 +251,8 @@ class AccountController < ApplicationController
   #
   # Remove existing EMMA user account(s).
   #
-  # @see #destroy_account_path        Route helper
+  # @see #destroy_account_path            Route helper
+  # @see AccountConcern#destroy_records
   #
   def destroy(back: delete_select_account_path)
     __log_activity
@@ -268,6 +278,8 @@ class AccountController < ApplicationController
   #
   # List all user accounts.
   #
+  # @see AccountController#list_items
+  #
   def list_all
     __log_activity
     __debug_route
@@ -282,6 +294,8 @@ class AccountController < ApplicationController
   # === GET /account/list_org
   #
   # List all user accounts in the same organization as the current user.
+  #
+  # @see AccountController#list_items
   #
   def list_org
     __log_activity
@@ -308,6 +322,8 @@ class AccountController < ApplicationController
   #
   # @return [Hash]
   #
+  # @see AccountConcern#get_accounts
+  #
   def list_items(prm = nil, for_org: false)
     prm ||= paginator.initial_parameters
     # noinspection RubyMismatchedArgumentType
@@ -330,6 +346,7 @@ class AccountController < ApplicationController
   # Display details of the current EMMA user account.
   #
   # @see #show_current_account_path   Route helper
+  # @see AccountConcern#find_record
   #
   def show_current
     __log_activity
@@ -353,6 +370,7 @@ class AccountController < ApplicationController
   # Display a form for modification of the current EMMA user account.
   #
   # @see #edit_current_account_path   Route helper
+  # @see AccountConcern#edit_record
   #
   def edit_current
     __log_activity

@@ -185,6 +185,8 @@ module UploadConcern
   #
   # @return [Upload]                  An un-persisted Upload record.
   #
+  # @see UploadWorkflow::Single::Create::States#on_creating_entry
+  #
   #--
   # noinspection RubyMismatchedReturnType
   #++
@@ -206,6 +208,8 @@ module UploadConcern
   #
   # @return [Upload]                  The new Upload record.
   #
+  # @see UploadWorkflow::Single::Create::States#on_submitting_entry
+  #
   #--
   # noinspection RubyMismatchedReturnType
   #++
@@ -226,6 +230,8 @@ module UploadConcern
   # @raise [Record::NotFound]         If *item* was not found.
   #
   # @return [Upload, nil]             A fresh record unless *item* is an Upload
+  #
+  # @see UploadWorkflow::Single::Edit::States#on_editing_entry
   #
   #--
   # noinspection RubyMismatchedReturnType
@@ -251,6 +257,8 @@ module UploadConcern
   #
   # @return [Upload, nil]             The updated Upload record.
   #
+  # @see UploadWorkflow::Single::Edit::States#on_modifying_entry
+  #
   #--
   # noinspection RubyMismatchedReturnType
   #++
@@ -270,6 +278,8 @@ module UploadConcern
   # @raise [RangeError]               If :page is not valid.
   #
   # @return [Array<Upload,String>]    NOTE: not Paginator::Result
+  #
+  # @see UploadWorkflow::Single::Remove::States#on_removing_entry
   #
   #--
   # noinspection RubyMismatchedReturnType
@@ -293,6 +303,8 @@ module UploadConcern
   # @raise [Record::SubmitError]      If there were failure(s).
   #
   # @return [Array]                   Destroyed Upload records.
+  #
+  # @see UploadWorkflow::Single::Remove::States#on_removed_entry
   #
   #--
   # noinspection RubyMismatchedReturnType

@@ -36,6 +36,7 @@ class OrgController < ApplicationController
   # List all organizations.
   #
   # @see #org_index_path          Route helper
+  # @see OrgController#list_items
   #
   def index: () -> void
 
@@ -47,12 +48,14 @@ class OrgController < ApplicationController
   # Redirects to #show_current if :id is #CURRENT_ID.
   #
   # @see #show_org_path          Route helper
+  # @see OrgConcern#find_record
   #
   def show: () -> void
 
   # === GET /org/new
   #
   # @see #new_org_path           Route helper
+  # @see OrgConcern#new_record
   #
   def new: () -> void
 
@@ -72,6 +75,7 @@ class OrgController < ApplicationController
   # Redirects to #edit_current if :id is #CURRENT_ID.
   #
   # @see #edit_org_path          Route helper
+  # @see OrgConcern#edit_record
   #
   def edit: () -> void
 
@@ -87,19 +91,23 @@ class OrgController < ApplicationController
   #
   # Redirects to #delete_select if :id is not given.
   #
-  # @see #delete_org_path        Route helper
+  # @see #delete_org_path           Route helper
+  # @see OrgConcern#delete_records
   #
   def delete: () -> void
 
   # === DELETE /org/destroy/:id
   #
-  # @see #destroy_org_path       Route helper
+  # @see #destroy_org_path            Route helper
+  # @see OrgConcern#destroy_records
   #
   def destroy: () -> void
 
   # === GET /org/list_all
   #
   # List all organizations.
+  #
+  # @see OrgController#list_items
   #
   def list_all: () -> void
 
@@ -109,6 +117,8 @@ class OrgController < ApplicationController
   #
   # @return [Hash]
   #
+  # @see ModelConcern#find_or_match_records
+  #
   def list_items: (?(symHash|nil) prm) -> symHash
 
   # === GET /org/show_current
@@ -116,6 +126,7 @@ class OrgController < ApplicationController
   # Display details of the current EMMA member organization.
   #
   # @see #show_current_org_path       Route helper
+  # @see IdentityHelper#current_org
   #
   def show_current: () -> void
 
@@ -125,6 +136,7 @@ class OrgController < ApplicationController
   # organization.
   #
   # @see #edit_current_org_path       Route helper
+  # @see IdentityHelper#current_org
   #
   def edit_current: () -> void
 

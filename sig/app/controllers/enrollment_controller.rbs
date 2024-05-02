@@ -36,7 +36,8 @@ class EnrollmentController < ApplicationController
   #
   # List EMMA enrollment requests.
   #
-  # @see #enrollment_index_path       Route helper
+  # @see #enrollment_index_path               Route helper
+  # @see ModelConcern#find_or_match_records
   #
   def index: () -> void
 
@@ -45,6 +46,7 @@ class EnrollmentController < ApplicationController
   # Display details of a EMMA enrollment request.
   #
   # @see #show_enrollment_path        Route helper
+  # @see ModelConcern#find_record
   #
   def show: () -> void
 

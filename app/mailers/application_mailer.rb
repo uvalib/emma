@@ -314,7 +314,7 @@ class ApplicationMailer < ActionMailer::Base
   helper_method :email_elements, :interpolation_values
 
   # ===========================================================================
-  # :section: ApplicationMailer::Helper
+  # :section:
   # ===========================================================================
 
   protected

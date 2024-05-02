@@ -46,6 +46,7 @@ class DataController < ApplicationController
   # (Defaults to HTML output.)
   #
   # @see #data_index_path             Route helper
+  # @see DataConcern#get_tables
   #
   def index
     __log_activity
@@ -62,6 +63,7 @@ class DataController < ApplicationController
   # Get the contents of the indicated database table.
   #
   # @see #data_path                   Route helper
+  # @see DataConcern#get_table_records
   #
   def show
     __log_activity
@@ -81,7 +83,8 @@ class DataController < ApplicationController
   #
   # Get a listing of EMMA submissions.
   #
-  # @see #data_submissions_path       Route helper
+  # @see #data_submissions_path               Route helper
+  # @see DataConcern#get_submission_records
   #
   def submissions
     __log_activity
@@ -95,7 +98,8 @@ class DataController < ApplicationController
   #
   # Get a listing of EMMA submission field values.
   #
-  # @see #data_counts_path            Route helper
+  # @see #data_counts_path                        Route helper
+  # @see DataConcern#get_submission_field_counts
   #
   def counts
     __log_activity

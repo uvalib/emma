@@ -68,7 +68,8 @@ class EnrollmentController < ApplicationController
   #
   # List EMMA enrollment requests.
   #
-  # @see #enrollment_index_path       Route helper
+  # @see #enrollment_index_path               Route helper
+  # @see ModelConcern#find_or_match_records
   #
   def index
     __log_activity
@@ -88,6 +89,7 @@ class EnrollmentController < ApplicationController
   # Display details of a EMMA enrollment request.
   #
   # @see #show_enrollment_path        Route helper
+  # @see ModelConcern#find_record
   #
   def show
     __log_activity
@@ -112,7 +114,8 @@ class EnrollmentController < ApplicationController
   # This parameter (if provided) is passed to the :create endpoint via a hidden
   # form parameter.
   #
-  # @see #new_enrollment_path         Route helper
+  # @see #new_enrollment_path             Route helper
+  # @see EnrollmentConcern#new_record
   # @see EnrollmentDecorator#form_hidden
   #
   def new
@@ -162,7 +165,8 @@ class EnrollmentController < ApplicationController
   #
   # Redirects to #edit_select if :id is not given.
   #
-  # @see #edit_enrollment_path        Route helper
+  # @see #edit_enrollment_path          Route helper
+  # @see EnrollmentConcern#edit_record
   #
   def edit
     __log_activity
@@ -180,7 +184,8 @@ class EnrollmentController < ApplicationController
   # === PUT   /enrollment/update/:id
   # === PATCH /enrollment/update/:id
   #
-  # @see #update_enrollment_path      Route helper
+  # @see #update_enrollment_path          Route helper
+  # @see EnrollmentConcern#update_record
   #
   def update
     __log_activity
@@ -204,7 +209,8 @@ class EnrollmentController < ApplicationController
   #
   # Redirects to #delete_select if :id is not given.
   #
-  # @see #delete_enrollment_path      Route helper
+  # @see #delete_enrollment_path            Route helper
+  # @see EnrollmentConcern#delete_records
   #
   def delete
     __log_activity
@@ -222,7 +228,8 @@ class EnrollmentController < ApplicationController
 
   # === DELETE /enrollment/destroy/:id
   #
-  # @see #destroy_enrollment_path     Route helper
+  # @see #destroy_enrollment_path           Route helper
+  # @see EnrollmentConcern#destroy_records
   #
   def destroy(back: delete_select_enrollment_path)
     __log_activity
