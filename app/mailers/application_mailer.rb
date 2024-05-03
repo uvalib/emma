@@ -62,7 +62,6 @@ class ApplicationMailer < ActionMailer::Base
   #
   def fetch_message(src, **opt)
     src = src[:body] if src.is_a?(Hash)
-    src = src.strip  if src.is_a?(String)
     # noinspection RubyMismatchedReturnType, RubyMismatchedArgumentType
     case (src = src.presence)
       when nil                        then return
@@ -135,17 +134,26 @@ class ApplicationMailer < ActionMailer::Base
 
   # Process fetched content according to its original format.
   #
+  # The result body is always an ActiveSupport::SafeBuffer.
+  #
   # @param [String, nil] msg
   # @param [Hash]        opt
   #
   # @return [Hash]
   #
   def process_content(msg, **opt)
+    if msg.is_a?(Array)
+      msg  = msg.flatten.map!(&:to_s)
+      html = msg.any?(&:html?)
+    else
+      msg  = msg.to_s.presence
+      html = html?(msg)
+    end
     # noinspection RubyMismatchedArgumentType
     case
-      when msg&.include?('</') then process_html(msg, **opt)
-      when msg.present?        then process_text(msg, **opt)
-      else                          {}
+      when html then process_html(msg, **opt)
+      when msg  then process_text(msg, **opt)
+      else           {}
     end
   end
 
@@ -153,14 +161,14 @@ class ApplicationMailer < ActionMailer::Base
   # #META_PREFIX as mail option overrides and returning the contents of
   # `<body>`.
   #
-  # @param [String]      msg
-  # @param [Symbol, nil] format
+  # The result body is always an ActiveSupport::SafeBuffer.
+  #
+  # @param [String] msg
   #
   # @return [Hash]
   #
-  def process_html(msg, format: nil, **)
+  def process_html(msg, **)
     result = {}
-    html   = (format == :html)
     msg    = "<body>#{msg}</body>" unless msg.include?('<body')
     doc    = Nokogiri.parse(msg)
 
@@ -179,23 +187,22 @@ class ApplicationMailer < ActionMailer::Base
     result[:heading] = '' if body.elements.first.name.match?(/^h\d$/)
 
     # Prepare message content for the current format.
-    body = body.children.map { |v| v.to_html.strip }.join("\n").html_safe
-    body = format_body(body, format: format).join("\n")
-    body = body.html_safe if html
+    body = body.children.map { |v| v.to_html.strip.html_safe }
+    body = format_body(body, format: :html).join("\n").html_safe
     result.merge!(body: body)
   end
 
   # Process text content by interpreting the initial lines as mail headers and
   # returning with a hash where [:body] contains the remaining lines.
   #
+  # The result body is always an ActiveSupport::SafeBuffer.
+  #
   # @param [Array, String] msg
-  # @param [Symbol, nil]   format
   #
   # @return [Hash]
   #
-  def process_text(msg, format: nil, **)
+  def process_text(msg, **)
     result = {}
-    html   = (format == :html)
     lines  = msg.is_a?(Array) ? msg.dup : msg.split("\n")
 
     # Look for overrides of mail options (e.g. "Subject: MAIL SUBJECT LINE").
@@ -206,10 +213,8 @@ class ApplicationMailer < ActionMailer::Base
     end
 
     # Prepare message content for the current format.
-    body = lines.join("\n").strip
-    body = body.html_safe if msg.is_a?(ActiveSupport::SafeBuffer)
-    body = format_body(body, format: format).join("\n")
-    body = body.html_safe if msg.is_a?(ActiveSupport::SafeBuffer) || html
+    body = msg.html_safe? ? lines.map!(&:html_safe) : lines
+    body = format_body(lines, format: :html).join("\n").html_safe
     result.merge!(body: body)
   end
 
@@ -262,7 +267,7 @@ class ApplicationMailer < ActionMailer::Base
 
   # Transform HTML into plain text with paragraphs separated by two newlines.
   #
-  # @param [ActiveSupport::SafeBuffer] text
+  # @param [String] text
   #
   # @return [String]
   #
@@ -299,6 +304,14 @@ class ApplicationMailer < ActionMailer::Base
   # ===========================================================================
 
   protected
+
+  # Indicate whether the value is HTML or could be HTML.
+  #
+  # @param [any, nil] value
+  #
+  def html?(value)
+    value.is_a?(ActiveSupport::SafeBuffer) || value.to_s.include?('</')
+  end
 
   # Combine email addresses.
   #
@@ -346,36 +359,34 @@ class ApplicationMailer < ActionMailer::Base
   # @return [Hash]
   #
   def interpolate_message!(msg, **opt)
+    heading, body = msg.values_at(:heading, :body)
+    opt[:format] = :html if body.nil? || body.is_a?(ActiveSupport::SafeBuffer)
     html = (opt[:format] == :html)
     test = opt[:test] && msg[:testing].presence || {}
 
-    test_heading, test_body = test.values_at(:heading, :body).map!(&:presence)
-    if test_body
+    if (test_body = test[:body].presence)
       test_body = format_body(test_body, **opt)
-      test_body.map! { |v| content_tag(:strong, v) } if html
-      test_body = [nil, test_body].join(PARAGRAPH)
-      test_body = test_body.html_safe if html
+      test_body.map! { |v| content_tag(:strong, v) }.prepend(nil) if html
+      test_body = test_body.join(PARAGRAPH)
+      test_body = html ? test_body.html_safe : test_body.lstrip
       msg[:testing][:body] = test_body
     end
 
-    if (heading = msg[:heading]).present?
-      heading = test_heading % heading if test_heading
-      msg[:heading] = html ? heading : "#{heading}\n%s" % ('=' * heading.size)
+    if heading.present? && (test_heading = test[:heading]).present?
+      msg[:heading] = test_heading % heading
     end
 
-    if (body = msg[:body]).present?
+    if body.present?
       vals = interpolation_values(**opt)
       safe = body.is_a?(ActiveSupport::SafeBuffer)
       body = body.is_a?(Array) ? body.dup : body.split(PARAGRAPH)
       body.map! { |paragraph| interpolate(paragraph, **vals) } if vals.present?
-      if !html
-        body.prepend(msg[:heading])
-      elsif !safe
-        body.map! { |paragraph| html_paragraph(paragraph) }
-      else
-        body.map!(&:html_safe)
+      case
+        when !html then body.prepend(msg[:heading]) if msg[:heading].present?
+        when !safe then body.map! { |paragraph| html_paragraph(paragraph) }
+        else            body.map!(&:html_safe)
       end
-      body << test_body.lstrip.then { |s| html ? s.html_safe : s } if test_body
+      body << test_body if test_body
       msg[:body] = html ? safe_join(body, PARAGRAPH) : body.join(PARAGRAPH)
     end
 
@@ -403,6 +414,20 @@ class ApplicationMailer < ActionMailer::Base
 
   protected
 
+  # Converts the provide content to text.
+  #
+  # @param [String] body
+  #
+  # @return [String, nil]
+  #
+  def as_text(body)
+    return if body.blank?
+    body = sanitize(body) if html?(body)
+    body.split(PARAGRAPH).flat_map { |v|
+      format_body(v)
+    }.join(PARAGRAPH).strip
+  end
+
   # Takes the same arguments as RenderingHelper#render but converts the
   # provided partial into text.
   #
@@ -414,21 +439,12 @@ class ApplicationMailer < ActionMailer::Base
   def render_as_text(options, locals = {}, &block)
     options = { partial: options } unless options.is_a?(Hash)
     options = options.merge(formats: %i[html])
-    body    = capture { render(options, locals, &block) }.strip
-    sanitize(body).split(PARAGRAPH).flat_map { |v|
-      # Special handling for the heading and its underline.
-      if v.match?(/\s=+$/)
-        parts = v.strip.split(/\s+/)
-        under = parts.pop
-        head  = parts.join(' ')
-        "#{head}\n#{under}"
-      else
-        format_body(v)
-      end
-    }.join(PARAGRAPH)
+    content = capture { render(options, locals, &block) }
+    # noinspection RubyMismatchedReturnType
+    as_text(content)
   end
 
-  helper_method :render_as_text
+  helper_method :as_text, :render_as_text
 
 end
 

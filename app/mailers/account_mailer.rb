@@ -112,12 +112,11 @@ class AccountMailer < ApplicationMailer
   # @return [Hash]
   #
   def interpolation_values(vals = nil, **opt)
+    opt[:format] ||= :html
     html = (opt[:format] == :html)
-    vals = super
-    vals[:contact_email] = html ? contact_email : CONTACT_EMAIL
-    vals[:help_email]    = html ? help_email    : HELP_EMAIL
-    # noinspection RubyMismatchedReturnType
-    vals
+    cont = html ? contact_email : CONTACT_EMAIL
+    help = html ? help_email    : HELP_EMAIL
+    super.merge!(contact_email: cont, help_email: help)
   end
 
 end

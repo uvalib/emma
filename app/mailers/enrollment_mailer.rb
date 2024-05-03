@@ -81,11 +81,11 @@ class EnrollmentMailer < ApplicationMailer
   # @return [Hash]
   #
   def interpolation_values(vals = nil, **opt)
+    opt[:format] ||= :html
     html = (opt[:format] == :html)
     item = opt[:item]
     id   = item&.id || 1 # Might be nil only from EnrollmentMailerPreview.
 
-    vals = super
     show = show_enrollment_url(id: id)
     list = enrollment_index_url
     org  = org_from(item)&.inspect || '[ORG]'
@@ -94,17 +94,15 @@ class EnrollmentMailer < ApplicationMailer
 
     if html
       l_opt = { target: '_top' } # Needed for EnrollmentMailerPreview.
-      vals[:show] = link_to(show, show, l_opt)
-      vals[:list] = link_to(list, list, l_opt)
-      vals[:org]  = ERB::Util.h(org)
-      vals[:name] = ERB::Util.h(name)
-      vals[:comments] =
-        com.split(PARAGRAPH).map { |v| html_paragraph(v) }.join("\n").html_safe
-      # noinspection RubyMismatchedReturnType
-      vals
-    else
-      vals.merge!(show: show, list: list, org: org, name: name, comments: com)
+      show  = link_to(show, show, l_opt)
+      list  = link_to(list, list, l_opt)
+      org   = ERB::Util.h(org)
+      name  = ERB::Util.h(name)
+      com   = com.split(PARAGRAPH).map { |v| html_paragraph(v) }
+      com   = safe_join(com, "\n")
     end
+
+    super.merge!(show: show, list: list, org: org, name: name, comments: com)
   end
 
   # Extract organization name.

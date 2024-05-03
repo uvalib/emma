@@ -58,6 +58,8 @@ class ApplicationMailer < ActionMailer::Base
 
   # Process fetched content according to its original format.
   #
+  # The result body is always an ActiveSupport::SafeBuffer.
+  #
   # @param [String, nil] msg
   # @param [Hash]        opt
   #
@@ -69,22 +71,24 @@ class ApplicationMailer < ActionMailer::Base
   # #META_PREFIX as mail option overrides and returning the contents of
   # `<body>`.
   #
-  # @param [String]      msg
-  # @param [Symbol, nil] format
+  # The result body is always an ActiveSupport::SafeBuffer.
+  #
+  # @param [String] msg
   #
   # @return [Hash]
   #
-  def process_html: (String|nil msg, ?format: Symbol|nil, **untyped _ignored) -> symHash
+  def process_html: (String|nil msg, **untyped _ignored) -> symHash
 
   # Process text content by interpreting the initial lines as mail headers and
   # returning with a hash where [:body] contains the remaining lines.
   #
+  # The result body is always an ActiveSupport::SafeBuffer.
+  #
   # @param [Array, String] msg
-  # @param [Symbol, nil]   format
   #
   # @return [Hash]
   #
-  def process_text: (String|strArray msg, ?format: Symbol|nil, **untyped _ignored) -> symHash
+  def process_text: (String|strArray msg, **untyped _ignored) -> symHash
 
   # Separator which indicates a division between paragraphs for text format.
   #
@@ -112,11 +116,11 @@ class ApplicationMailer < ActionMailer::Base
 
   # Transform HTML into plain text with paragraphs separated by two newlines.
   #
-  # @param [ActiveSupport::SafeBuffer] text
+  # @param [String] text
   #
   # @return [String]
   #
-  def sanitize: (ActiveSupport::SafeBuffer text) -> String
+  def sanitize: (String text) -> String
 
   # Replace white space in *text* to yield a result containing one or more
   # newline-delimited lines.
@@ -127,6 +131,12 @@ class ApplicationMailer < ActionMailer::Base
   # @return [String]
   #
   def wrap_lines: (String text, ?width: Integer) -> String
+
+  # Indicate whether the value is HTML or could be HTML.
+  #
+  # @param [any, nil] value
+  #
+  def html?: (untyped value) -> bool
 
   # Combine email addresses.
   #
@@ -172,6 +182,16 @@ class ApplicationMailer < ActionMailer::Base
   # @return [Hash]
   #
   def interpolation_values: (?(symHash|nil) vals, **untyped opt) -> symHash
+
+  # Converts the provide content to text.
+  #
+  # @param [String] body
+  #
+  # @return [String, nil]
+  #
+  def as_text
+    : (nil    body) -> nil
+    | (String body) -> String
 
   # Takes the same arguments as RenderingHelper#render but converts the
   # provided partial into text.
