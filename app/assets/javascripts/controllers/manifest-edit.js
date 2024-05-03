@@ -911,10 +911,12 @@ appSetup(MODULE, function() {
 
     /**
      * Initial adjustments for the grid display.
+     *
+     * @param {Selector} [grid]       Default: {@link $grid}.
      */
-    function initializeGridContent() {
-        OUT.debug('initializeGridContent');
-        const $cells = allDataCells(true);
+    function initializeGridContent(grid) {
+        OUT.debug('initializeGridContent; grid =', grid);
+        const $cells = dataCells(grid, true);
         initializeCellDisplays($cells);
         initializeCellInputs($cells);
         initializeTextareaColumns($cells);
@@ -1417,11 +1419,10 @@ appSetup(MODULE, function() {
     /**
      * Setup event handlers for a single data row.
      *
-     * @param {Selector} row
+     * @param {jQuery} $row
      */
-    function setupRowFunctionality(row) {
-        OUT.debug('setupRowFunctionality: row =', row);
-        const $row = dataRow(row);
+    function setupRowFunctionality($row) {
+        OUT.debug('setupRowFunctionality: $row =', $row);
         setupLookup($row);
         setupUploader($row);
         setupRowOperations($row);
@@ -1473,11 +1474,11 @@ appSetup(MODULE, function() {
     /**
      * Attach handlers for row control icon buttons.
      *
-     * @param {Selector} [row]     Default: all {@link rowControls}.
+     * @param {Selector} [$row]     Default: all {@link rowControls}.
      */
-    function setupRowOperations(row) {
-        OUT.debug('setupRowOperations: row =', row);
-        const $cell = controlsColumn(row);
+    function setupRowOperations($row) {
+        OUT.debug('setupRowOperations: $row =', $row);
+        const $cell = controlsColumn($row);
         setupCellNavGroup($cell);
         controlsColumnToggleAdd($cell);
     }
@@ -2153,12 +2154,11 @@ appSetup(MODULE, function() {
     /**
      * Initialize bibliographic lookup for a data row.
      *
-     * @param {Selector} row
+     * @param {jQuery} $row
      */
-    function setupLookup(row) {
-        OUT.debug('setupLookup: row =', row);
+    function setupLookup($row) {
+        OUT.debug('setupLookup: $row =', $row);
 
-        const $row    = dataRow(row);
         const $button = lookupButton($row);
 
         updateLookupCondition($row);
@@ -3210,12 +3210,11 @@ appSetup(MODULE, function() {
      * Inserted rows will have the same value for this as the template row from
      * which they were created.
      *
-     * @param {Selector} target
+     * @param {jQuery} $row
      *
      * @returns {number}
      */
-    function initializeDbRowValue(target) {
-        const $row = dataRow(target);
+    function initializeDbRowValue($row) {
         const attr = $row.attr(DB_ROW_ATTR);
         return attr ? setDbRowValue($row, attr) : dbRowValue($row);
     }
@@ -3263,12 +3262,11 @@ appSetup(MODULE, function() {
      * A value of 1 or greater indicates that the row has been inserted but has
      * not yet been finalized via Save.
      *
-     * @param {Selector} target
+     * @param {jQuery} $row
      *
      * @returns {number}
      */
-    function initializeDbRowDelta(target) {
-        const $row = dataRow(target);
+    function initializeDbRowDelta($row) {
         const attr = $row.attr(DB_DELTA_ATTR);
         return attr ? setDbRowDelta($row, attr) : dbRowDelta($row);
     }
@@ -3510,11 +3508,11 @@ appSetup(MODULE, function() {
     /**
      * Ensure that indicators have the appropriate tooltip from the start.
      *
-     * @param {Selector} target
+     * @param {jQuery} $row
      */
-    function initializeRowIndicators(target) {
-        //OUT.debug('initializeRowIndicators: target =', target);
-        const $panel = rowIndicatorPanel(target);
+    function initializeRowIndicators($row) {
+        //OUT.debug('initializeRowIndicators: $row =', $row);
+        const $panel = rowIndicatorPanel($row);
         $panel.find(INDICATOR).each((_, indicator) => {
             const $indicator = $(indicator);
             const tooltip    = $indicator.attr('title');
@@ -3987,11 +3985,11 @@ appSetup(MODULE, function() {
      * Attach handlers for editing in all of the data cells associated with
      * the row.
      *
-     * @param {Selector} row
+     * @param {jQuery} $row
      */
-    function setupDataCellEditing(row) {
-        OUT.debug('setupDataCellEditing: row =', row);
-        dataCells(row, true).each((_, cell) => setupCellNavGroup(cell));
+    function setupDataCellEditing($row) {
+        OUT.debug('setupDataCellEditing: $row =', $row);
+        dataCells($row, true).each((_, cell) => setupCellNavGroup(cell));
     }
 
     /**
