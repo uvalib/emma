@@ -272,7 +272,7 @@ appSetup(MODULE, function() {
      */
 
     /**
-     * @typedef {ItemResponse|{response: ItemResponse}} FinishEditResponse
+     * @typedef {UpdateResponse} FinishEditResponse
      */
 
     /**
@@ -883,13 +883,13 @@ appSetup(MODULE, function() {
     /**
      * Check whether the form is in a state where a save is permitted.
      *
-     * @param {Selector} [target]
+     * @param {Selector} [grid]       Default: {@link $grid}.
      *
      * @returns {boolean}             Changed status.
      */
-    function checkFormChanged(target) {
-        //OUT.debug('checkFormChanged: target =', target);
-        return checkGridChanged(target);
+    function checkFormChanged(grid) {
+        //OUT.debug('checkFormChanged: grid =', grid);
+        return checkGridChanged(grid);
     }
 
     // ========================================================================
@@ -1167,14 +1167,14 @@ appSetup(MODULE, function() {
     /**
      * Update row changed state to determine whether the grid has changed.
      *
-     * @param {Selector} [target]     Default: {@link allDataRows}
+     * @param {Selector} [grid]       Default: {@link $grid}.
      *
      * @returns {boolean}             False if no changes.
      */
-    function evaluateGridChanged(target) {
-        OUT.debug('evaluateGridChanged: target =', target);
+    function evaluateGridChanged(grid) {
+        OUT.debug('evaluateGridChanged: grid =', grid);
         const evaluate_row = (change, row) => updateRowChanged(row) || change;
-        return dataRows(target).toArray().reduce(evaluate_row, false);
+        return dataRows(grid).toArray().reduce(evaluate_row, false);
     }
 
     /**
@@ -1182,14 +1182,14 @@ appSetup(MODULE, function() {
      *
      * (No stored data values are updated.)
      *
-     * @param {Selector} [target]     Default: {@link allDataRows}
+     * @param {Selector} [grid]       Default: {@link $grid}.
      *
      * @returns {boolean}             False if no changes.
      */
-    function checkGridChanged(target) {
-        //OUT.debug('checkGridChanged: target =', target);
+    function checkGridChanged(grid) {
+        //OUT.debug('checkGridChanged: grid =', grid);
         const check_row = (change, row) => change || checkRowChanged(row);
-        return dataRows(target).toArray().reduce(check_row, false);
+        return dataRows(grid).toArray().reduce(check_row, false);
     }
 
     // ========================================================================
@@ -1204,19 +1204,19 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function allDataRows(hidden) {
-        return dataRows(null, hidden);
+        return dataRows(undefined, hidden);
     }
 
     /**
-     * All grid data rows for the given target.
+     * All data rows for the grid.
      *
-     * @param {Selector|null} [target]  Default: {@link $grid}.
-     * @param {boolean}       [hidden]  Include hidden rows.
+     * @param {Selector} [grid]       Default: {@link $grid}.
+     * @param {boolean}  [hidden]     Include hidden rows.
      *
      * @returns {jQuery}
      */
-    function dataRows(target, hidden) {
-        const tgt   = target || $grid;
+    function dataRows(grid, hidden) {
+        const tgt   = grid || $grid;
         const match = hidden ? DATA_ROW : VISIBLE_ROW;
         return selfOrDescendents(tgt, match);
     }
@@ -1224,7 +1224,7 @@ appSetup(MODULE, function() {
     /**
      * Get the single row container associated with the target.
      *
-     * @param {Selector} target
+     * @param {Selector} target       Row or cell.
      *
      * @returns {jQuery}
      */
@@ -1237,7 +1237,7 @@ appSetup(MODULE, function() {
     /**
      * Indicate whether the given row exists in the database (saved or not).
      *
-     * @param {Selector} target
+     * @param {Selector} target       Row or cell.
      *
      * @returns {boolean}
      */
@@ -1248,19 +1248,19 @@ appSetup(MODULE, function() {
     /**
      * All rows that are associated with database items.
      *
-     * @param {Selector} [target]     Default: {@link allDataRows}
+     * @param {Selector} [grid]       Default: {@link $grid}.
      *
      * @returns {jQuery}
      */
-    function activeDataRows(target) {
-        return dataRows(target).filter((_, row) => activeDataRow(row));
+    function activeDataRows(grid) {
+        return dataRows(grid).filter((_, row) => activeDataRow(row));
     }
 
     /**
      * Indicate whether the given row is an empty row which has never caused
      * the creation of a database item.
      *
-     * @param {Selector} target
+     * @param {Selector} target       Row or cell.
      *
      * @returns {boolean}
      */
@@ -1271,12 +1271,12 @@ appSetup(MODULE, function() {
     /**
      * All rows that are not associated with database items.
      *
-     * @param {Selector} [target]     Default: {@link allDataRows}
+     * @param {Selector} [grid]       Default: {@link $grid}.
      *
      * @returns {jQuery}
      */
-    function blankDataRows(target) {
-        return dataRows(target).filter((_, row) => blankDataRow(row));
+    function blankDataRows(grid) {
+        return dataRows(grid).filter((_, row) => blankDataRow(row));
     }
 
     /**
@@ -1285,7 +1285,7 @@ appSetup(MODULE, function() {
      * If the row doesn't have a *data-item-id* attribute it will be set here
      * if data has an *id* value.
      *
-     * @param {Selector}     target
+     * @param {Selector}     target   Row or cell.
      * @param {ManifestItem} data
      */
     function updateDataRow(target, data) {
@@ -3176,7 +3176,7 @@ appSetup(MODULE, function() {
      * Inserted rows will have the same value for this as the template row from
      * which they were created.
      *
-     * @param {Selector} target
+     * @param {Selector} target       Row or cell.
      *
      * @returns {number}
      */
@@ -3189,7 +3189,7 @@ appSetup(MODULE, function() {
     /**
      * Set the ManifestItem "row" column value for the row.
      *
-     * @param {Selector}                target
+     * @param {Selector}                target      Row or cell.
      * @param {string|number|undefined} setting
      *
      * @returns {number}
@@ -3226,7 +3226,7 @@ appSetup(MODULE, function() {
      * A value of 1 or greater indicates that the row has been inserted but has
      * not yet been finalized via Save.
      *
-     * @param {Selector} target
+     * @param {Selector} target       Row or cell.
      *
      * @returns {number}
      */
@@ -3242,7 +3242,7 @@ appSetup(MODULE, function() {
      * Clearing (setting to 0) declares the row to represent a real (persisted)
      * ManifestItem record.
      *
-     * @param {Selector}                     target
+     * @param {Selector}                     target     Row or cell.
      * @param {string|number|null|undefined} setting
      *
      * @returns {number}
@@ -3416,7 +3416,7 @@ appSetup(MODULE, function() {
     /**
      * The container for all indicators for the row.
      *
-     * @param {Selector} target
+     * @param {Selector} target       Row or cell.
      *
      * @returns {jQuery}
      */
@@ -3427,7 +3427,7 @@ appSetup(MODULE, function() {
     /**
      * All indicator value elements for the row.
      *
-     * @param {Selector} target
+     * @param {Selector} target       Row or cell.
      *
      * @returns {jQuery}
      */
@@ -3438,7 +3438,7 @@ appSetup(MODULE, function() {
     /**
      * Reset the given indicator to the starting state.
      *
-     * @param {Selector} target
+     * @param {Selector} target       Row or cell.
      * @param {string}   type
      *
      * @see "ManifestItem::Config::STATUS"
@@ -3451,7 +3451,7 @@ appSetup(MODULE, function() {
     /**
      * Modify the given indicator's CSS and displayed text.
      *
-     * @param {Selector} target
+     * @param {Selector} target       Row or cell.
      * @param {string}   type
      * @param {string}   [status]
      * @param {string}   [text]
@@ -3484,7 +3484,7 @@ appSetup(MODULE, function() {
     /**
      * updateRowIndicators
      *
-     * @param {Selector}                          target
+     * @param {Selector}                          target    Row or cell.
      * @param {ManifestItemData|object|undefined} data
      */
     function updateRowIndicators(target, data) {
@@ -3499,7 +3499,7 @@ appSetup(MODULE, function() {
     /**
      * resetRowIndicators
      *
-     * @param {Selector} target
+     * @param {Selector} target       Row or cell.
      */
     function resetRowIndicators(target) {
         //OUT.debug('resetRowIndicators: target =', target);
@@ -3665,7 +3665,7 @@ appSetup(MODULE, function() {
      *
      * (No changes are made to element attributes or data.)
      *
-     * @param {Selector} row
+     * @param {Selector} row          Row or cell.
      *
      * @returns {boolean}
      */
@@ -3682,7 +3682,7 @@ appSetup(MODULE, function() {
      *
      * (No changes are made to element attributes or data.)
      *
-     * @param {Selector} row
+     * @param {Selector} row          Row or cell.
      *
      * @returns {boolean}
      */
@@ -3700,7 +3700,7 @@ appSetup(MODULE, function() {
     /**
      * Remove the original value data item for the associated cell.
      *
-     * @param {Selector} row
+     * @param {Selector} row          Row or cell.
      */
     function clearRowChanged(row) {
         //OUT.debug('clearRowChanged: row =', row);
@@ -3784,14 +3784,14 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function allDataCells(hidden) {
-        return dataCells(null, hidden);
+        return dataCells(undefined, hidden);
     }
 
     /**
      * All grid data cells for the given target.
      *
-     * @param {Selector|null} [target]  Default: {@link dataRows}.
-     * @param {boolean}       [hidden]  Include hidden rows.
+     * @param {Selector} [target]     Default: {@link allDataRows}.
+     * @param {boolean}  [hidden]     Include hidden rows.
      *
      * @returns {jQuery}
      */
@@ -3806,13 +3806,13 @@ appSetup(MODULE, function() {
     /**
      * Get the single grid data cell associated with the target.
      *
-     * @param {Selector} target
+     * @param {Selector} cell         A cell or element inside a cell.
      *
      * @returns {jQuery}
      */
-    function dataCell(target) {
-        const func = 'dataCell'; //OUT.debug(`${func}: target =`, target);
-        return selfOrParent(target, DATA_CELL, func);
+    function dataCell(cell) {
+        const func = 'dataCell'; //OUT.debug(`${func}: cell =`, cell);
+        return selfOrParent(cell, DATA_CELL, func);
     }
 
     /**
@@ -3855,7 +3855,7 @@ appSetup(MODULE, function() {
     /**
      * Get the database ManifestItem table column associated with the target.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      *
      * @returns {string}
      */
@@ -3866,7 +3866,7 @@ appSetup(MODULE, function() {
     /**
      * Get the properties of the field associated with the target.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      *
      * @returns {Properties}
      */
@@ -3885,12 +3885,12 @@ appSetup(MODULE, function() {
     /**
      * Use received data to update cell(s) associated with data values.
      *
-     * @param {Selector} cell
-     * @param {*}        data        Converted to {@link Value}
-     * @param {boolean}  [changed]   Def.: check {@link getCellOriginalValue}
+     * @param {Selector} cell         A cell or element inside a cell.
+     * @param {*}        data         Converted to {@link Value}
+     * @param {boolean}  [changed]    Def.: check {@link getCellOriginalValue}
      * @param {boolean}  [valid]
      *
-     * @returns {boolean}           Whether the cell value changed.
+     * @returns {boolean}             Whether the cell value changed.
      */
     function dataCellUpdate(cell, data, changed, valid) {
         OUT.debug('dataCellUpdate: data =', data, cell);
@@ -3928,7 +3928,7 @@ appSetup(MODULE, function() {
     /**
      * Prepare the single data cell associated with the target.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell               A cell or element inside a cell.
      * @param {boolean}  [clear_errors]     If **true**, remove error status.
      *
      * @returns {jQuery}
@@ -3946,7 +3946,7 @@ appSetup(MODULE, function() {
     /**
      * Reset cell stored data values and refresh cell display.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell               A cell or element inside a cell.
      * @param {boolean}  [reset_uploader]   Also reset uploader cell.
      *
      * @returns {jQuery}
@@ -3966,7 +3966,7 @@ appSetup(MODULE, function() {
     /**
      * Refresh cell display.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell               A cell or element inside a cell.
      * @param {boolean}  [clear_errors]     If **true**, remove error status.
      *
      * @returns {jQuery}
@@ -4227,7 +4227,7 @@ appSetup(MODULE, function() {
      *
      * An undefined result means that the cell hasn't been evaluated.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      *
      * @returns {boolean|undefined}
      */
@@ -4238,7 +4238,7 @@ appSetup(MODULE, function() {
     /**
      * Set the related data cell's changed state.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      * @param {boolean}  [setting]    Default: **true**.
      *
      * @returns {boolean}
@@ -4254,7 +4254,7 @@ appSetup(MODULE, function() {
     /**
      * Set the related data cell's changed state to "undefined".
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      */
     function clearCellChanged(cell) {
         //OUT.debug('clearCellChanged: cell =', cell);
@@ -4264,7 +4264,7 @@ appSetup(MODULE, function() {
     /**
      * Change the related data cell's changed status.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      * @param {boolean}  setting
      *
      * @returns {boolean}
@@ -4280,7 +4280,7 @@ appSetup(MODULE, function() {
     /**
      * Refresh the related data cell's changed status.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      *
      * @returns {boolean}
      */
@@ -4314,7 +4314,7 @@ appSetup(MODULE, function() {
     /**
      * Indicate whether the related cell's data is currently valid.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      *
      * @returns {boolean}
      */
@@ -4327,7 +4327,7 @@ appSetup(MODULE, function() {
     /**
      * Set the related data cell's valid state.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      * @param {boolean}  [setting]    If **false**, make invalid.
      *
      * @returns {boolean}             **true** if set to valid.
@@ -4353,7 +4353,7 @@ appSetup(MODULE, function() {
     /**
      * Change the related data cell's validity status.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      * @param {boolean}  [setting]    Default: {@link evaluateCellValid}
      *
      * @returns {boolean}             True if valid.
@@ -4371,7 +4371,7 @@ appSetup(MODULE, function() {
      *
      * (No changes are made to element attributes or data.)
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      * @param {Value}    [current]    Default: {@link getCellCurrentValue}.
      *
      * @returns {boolean}
@@ -4410,7 +4410,7 @@ appSetup(MODULE, function() {
     /**
      * The original value of the associated cell.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      *
      * @returns {Value|undefined}
      */
@@ -4421,7 +4421,7 @@ appSetup(MODULE, function() {
     /**
      * Assign the original value for the associated cell.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      * @param {Value|*}  new_value
      *
      * @returns {Value}
@@ -4437,7 +4437,7 @@ appSetup(MODULE, function() {
     /**
      * Remove the original value data item for the associated cell.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      */
     function clearCellOriginalValue(cell) {
         //OUT.debug('clearCellOriginalValue: cell =', cell);
@@ -4458,7 +4458,7 @@ appSetup(MODULE, function() {
     /**
      * The current value of the associated cell.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      *
      * @returns {Value|undefined}
      */
@@ -4469,7 +4469,7 @@ appSetup(MODULE, function() {
     /**
      * Assign the current value for the associated cell.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      * @param {Value|*}  new_value
      *
      * @returns {Value}
@@ -4485,7 +4485,7 @@ appSetup(MODULE, function() {
     /**
      * Remove the current value data item for the associated cell.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      */
     function clearCellCurrentValue(cell) {
         //OUT.debug('clearCellCurrentValue: cell =', cell);
@@ -4499,25 +4499,25 @@ appSetup(MODULE, function() {
     /**
      * The display element for a single grid data cell.
      *
-     * @param {Selector} target
+     * @param {Selector} cell         A cell or element inside a cell.
      *
      * @returns {jQuery}
      */
-    function cellDisplay(target) {
+    function cellDisplay(cell) {
         const match   = CELL_DISPLAY;
-        const $target = $(target);
+        const $target = $(cell);
         return $target.is(match) ? $target : dataCell($target).children(match);
     }
 
     /**
      * Remove content from a data cell display element.
      *
-     * @param {Selector} target
+     * @param {Selector} cell               A cell or element inside a cell.
      * @param {boolean}  [skip_uploader]    If **true**, remove error status.
      */
-    function cellDisplayClear(target, skip_uploader) {
-        //OUT.debug('cellDisplayClear: target =', target);
-        const $cell = dataCell(target);
+    function cellDisplayClear(cell, skip_uploader) {
+        //OUT.debug('cellDisplayClear: cell =', cell);
+        const $cell = dataCell(cell);
         if (!$cell.is(UPLOADER_CELL)) {
             cellDisplay($cell).empty();
         } else if (!skip_uploader) {
@@ -4532,7 +4532,7 @@ appSetup(MODULE, function() {
     /**
      * Get the displayed value for a data cell.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      *
      * @returns {Value}
      */
@@ -4549,7 +4549,7 @@ appSetup(MODULE, function() {
     /**
      * Set the displayed value for a data cell.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      * @param {Value}    new_value
      */
     function setCellDisplayValue(cell, new_value) {
@@ -4572,7 +4572,7 @@ appSetup(MODULE, function() {
     /**
      * Refresh the cell display according to the data type.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell           A cell or element inside a cell.
      * @param {Value}    [new_value]    Default: from {@link cellDisplay}.
      */
     function updateCellDisplayValue(cell, new_value) {
@@ -4645,7 +4645,7 @@ appSetup(MODULE, function() {
     /**
      * Remove content from a data cell edit element.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      */
     function cellEditClear(cell) {
         //OUT.debug('cellEditClear:', cell);
@@ -4656,7 +4656,7 @@ appSetup(MODULE, function() {
     /**
      * Get the input value for a data cell.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      *
      * @returns {Value}
      */
@@ -4669,7 +4669,7 @@ appSetup(MODULE, function() {
     /**
      * Set the input value for a data cell.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      * @param {Value}    [new_value]  Default from displayed value.
      */
     function setCellEditValue(cell, new_value) {
@@ -4689,7 +4689,7 @@ appSetup(MODULE, function() {
     /**
      * Combine {@link startValueEdit} and {@link finishValueEdit}.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      * @param {object}   new_value
      */
     function atomicEdit(cell, new_value) {
@@ -4703,7 +4703,7 @@ appSetup(MODULE, function() {
     /**
      * Begin editing a cell.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      *
      * @return {boolean}              **false** if already editing.
      */
@@ -4727,7 +4727,7 @@ appSetup(MODULE, function() {
      * Inform the server that a row associated with a ManifestItem record is
      * being edited.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      *
      * @see "ManifestItemController#start_edit"
      */
@@ -4763,10 +4763,10 @@ appSetup(MODULE, function() {
     /**
      * End editing a cell.
      *
-     * @param {Selector} cell
-     * @param {*}        [new_value]    If **false** don't update value.
+     * @param {Selector} cell         A cell or element inside a cell.
+     * @param {*}        [new_value]  If **false** don't update value.
      *
-     * @return {boolean}                **false** if not currently editing.
+     * @return {boolean}              **false** if not currently editing.
      */
     function finishValueEdit(cell, new_value) {
         const func  = 'finishValueEdit';
@@ -4799,7 +4799,7 @@ appSetup(MODULE, function() {
     /**
      * Transition a data cell into edit mode.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      * @param {Value}    [new_value]  Default from displayed value.
      */
     function cellEditBegin(cell, new_value) {
@@ -4812,7 +4812,7 @@ appSetup(MODULE, function() {
     /**
      * Transition a data cell out of edit mode.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      *
      * @returns {Value|undefined}
      */
@@ -4840,7 +4840,7 @@ appSetup(MODULE, function() {
      * If a value is supplied, the associated record field is updated (or used
      * to create a new record).
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      * @param {Value}    [new_value]
      *
      * @see "ManifestItemController#start_edit"
@@ -4951,7 +4951,7 @@ appSetup(MODULE, function() {
                 const message =
                     (!Array.isArray(lines) && `${type}: ${lines}`)    ||
                     ((lines.length === 1)  && `${type}: ${lines[0]}`) ||
-                    (                         [type, ...lines])
+                    (                         [type, ...lines]);
                 if (count++) {
                     addFlashError(message);
                 } else {
@@ -5099,7 +5099,7 @@ appSetup(MODULE, function() {
     /**
      * Remember the active cell.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      */
     function setActiveCell(cell) {
         const func   = 'setActiveCell';
@@ -5124,7 +5124,7 @@ appSetup(MODULE, function() {
     /**
      * Indicate that the related data cell is being edited.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      */
     function registerActiveCell(cell) {
         OUT.debug('registerActiveCell: cell =', cell);
@@ -5183,7 +5183,7 @@ appSetup(MODULE, function() {
     /**
      * Set whether the data cell is being edited.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      * @param {boolean}  [setting]    If **false**, unset edit mode.
      */
     function setCellEditMode(cell, setting) {
@@ -5195,7 +5195,7 @@ appSetup(MODULE, function() {
     /**
      * Get whether the data cell is being edited.
      *
-     * @param {Selector} cell
+     * @param {Selector} cell         A cell or element inside a cell.
      *
      * @returns {boolean}
      */
@@ -5554,7 +5554,7 @@ appSetup(MODULE, function() {
      * which have never had any activity which would have lead to the creation
      * of a ManifestItem to be associated with the row.
      *
-     * @param {Selector} target
+     * @param {Selector} target       Row or cell.
      *
      * @returns {number|undefined}
      */
@@ -5566,7 +5566,7 @@ appSetup(MODULE, function() {
     /**
      * Set the database ID for the ManifestItem associated with the target.
      *
-     * @param {Selector}      target
+     * @param {Selector}      target  Row or cell.
      * @param {number|string} value
      *
      * @returns {number|undefined}
@@ -5586,7 +5586,7 @@ appSetup(MODULE, function() {
     /**
      * Remove the database ID for the ManifestItem associated with the target.
      *
-     * @param {Selector} target
+     * @param {Selector} target       Row or cell.
      */
     function clearManifestItemId(target) {
         const func = 'clearManifestItemId';
@@ -6017,9 +6017,9 @@ appSetup(MODULE, function() {
         if (isMissing($target)) {
             OUT.error(`${func}: no target element`);
         } else {
-            const classes   = Array.from($target[0].classList);
-            const old_class = classes.filter(cls => cls.startsWith(base));
-            $target.removeClass(old_class).addClass(`${base}${value}`);
+            const classes      = Array.from($target[0].classList);
+            const base_classes = classes.filter(cls => cls.startsWith(base));
+            $target.removeClass(base_classes).addClass(`${base}${value}`);
         }
     }
 
