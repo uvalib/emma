@@ -33,7 +33,7 @@ en:
 
       new_user:
         <<:             *TESTING
-        subject:        'Welcome to EMMA'
+        subject:        'Appropriate Use of EMMA'
         heading:        'EMMA Appropriate Use Guidelines'
         body:           ~ # @see app/views/account_mailer/_new_user.html.erb
 

@@ -362,7 +362,12 @@ class ApplicationMailer < ActionMailer::Base
     heading, body = msg.values_at(:heading, :body)
     opt[:format] = :html if body.nil? || body.is_a?(ActiveSupport::SafeBuffer)
     html = (opt[:format] == :html)
-    test = opt[:test] && msg[:testing].presence || {}
+
+    if opt[:test]
+      test = msg[:testing].presence || {}
+    else
+      test = msg[:testing] = {}
+    end
 
     if (test_body = test[:body].presence)
       test_body = format_body(test_body, **opt)
