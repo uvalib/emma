@@ -2560,7 +2560,7 @@ appSetup(MODULE, function() {
         serverItemSend(action, {
             caller:     func,
             params:     { manifest_item: data },
-            onSuccess:  (body => parseUpdateResponse($row, body)),
+            onSuccess:  (body => parseRowUpdateResponse($row, body)),
         });
     }
 
@@ -2575,52 +2575,9 @@ appSetup(MODULE, function() {
      * @see "Manifest::ItemMethods#pending_items_hash"
      * @see "ActiveModel::Errors"
      */
-    function parseUpdateResponse(row, body) {
-        OUT.debug('parseUpdateResponse: body =', body);
-        const data     = body?.response || body || {};
-        const items    = presence(data.items);
-        const pending  = presence(data.pending);
-        const problems = presence(data.problems);
-
-        // Update fields(s) echoed back from the server.  This may also include
-        // 'file_status' and/or 'data_status'
-        // @see "ManifestItemConcern#finish_editing"
-        const $row   = dataRow(row);
-        const db_id  = getManifestItemId($row);
-        const record = items && items[db_id];
-        if (isPresent(record)) {
-            updateDataRow($row, record);
-            if (pending && isPresent(statusData(record))) {
-                delete pending[db_id];
-            }
-        }
-
-        // Update status indicators
-        // @see "Manifest::ItemMethods#pending_items_hash"
-        if (pending) {
-            const $rows = allDataRows();
-            for (const [id, item] of Object.entries(pending)) {
-                const $row = isPresent(item) && rowForManifestItem(id, $rows);
-                if ($row) { updateRowIndicators($row, item) }
-            }
-        }
-
-        // Error message(s) to display.
-        // @see "ActiveModel::Errors"
-        if (problems) {
-            let count = 0;
-            for (const [type, lines] of Object.entries(problems)) {
-                const message =
-                    (!Array.isArray(lines) && `${type}: ${lines}`)    ||
-                    ((lines.length === 1)  && `${type}: ${lines[0]}`) ||
-                    (                         [type, ...lines])
-                if (count++) {
-                    addFlashError(message);
-                } else {
-                    flashError(message);
-                }
-            }
-        }
+    function parseRowUpdateResponse(row, body) {
+        OUT.debug('parseRowUpdateResponse: body =', body);
+        parseUpdateResponse(row, body);
     }
 
     // ========================================================================
@@ -3392,7 +3349,7 @@ appSetup(MODULE, function() {
         if (isEmpty(data)) { return {} }
         if (isUnsavedData(data)) {
             data.ready_status = 'unsaved';
-        } else if (!data.ready_status) {
+        } else if (!hasKey(data, 'ready_status') && !isInitialData(data)) {
             data.ready_status = 'ready';
         }
         return compact(toObject(STATUS_TYPE_VALUES, t => presence(data[t])));
@@ -4904,15 +4861,15 @@ appSetup(MODULE, function() {
      * Receive updated fields for the item, plus problem reports, plus invalid
      * fields for each item that would prevent a save from occurring.
      *
-     * @param {jQuery}             $cell
-     * @param {FinishEditResponse} body
+     * @param {jQuery}         $cell
+     * @param {UpdateResponse} body
      *
      * @see "ManifestItemConcern#finish_editing"
      * @see "Manifest::ItemMethods#pending_items_hash"
      * @see "ActiveModel::Errors"
      */
-    function parseFinishEditResponse($cell, body) {
-        OUT.debug('parseFinishEditResponse: body =', body);
+    function parseUpdateResponse($cell, body) {
+        OUT.debug('parseUpdateResponse: body =', body);
         const data     = body?.response || body || {};
         const items    = presence(data.items);
         const pending  = presence(data.pending);
@@ -4957,6 +4914,22 @@ appSetup(MODULE, function() {
                 }
             }
         }
+    }
+
+    /**
+     * Receive updated fields for the item, plus problem reports, plus invalid
+     * fields for each item that would prevent a save from occurring.
+     *
+     * @param {jQuery}             $cell
+     * @param {FinishEditResponse} body
+     *
+     * @see "ManifestItemConcern#finish_editing"
+     * @see "Manifest::ItemMethods#pending_items_hash"
+     * @see "ActiveModel::Errors"
+     */
+    function parseFinishEditResponse($cell, body) {
+        OUT.debug('parseFinishEditResponse: body =', body);
+        parseUpdateResponse($cell, body);
     }
 
     // ========================================================================

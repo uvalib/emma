@@ -499,13 +499,15 @@ module ManifestItemConcern
     file  = attr.key?(:file_status)  || attr.key?(:file_data)
     data  = attr.key?(:data_status)  || attr.except(*RECORD_KEYS).present?
     ready = attr.key?(:ready_status) || file || data
-    attr[:attr_opt] = { file: file, data: data, ready: ready }
+    opt   = { file: file, data: data, ready: ready, revalidate: true }
+    attr[:attr_opt] = attr[:attr_opt]&.reverse_merge(opt) || opt
+    check = attr[:attr_opt].values_at(:file, :data, :ready).any?
+
     update_record(rec, **attr, editing: false)
-    Hash(
-      items:    { rec.id => rec.fields.except(*NON_DATA_KEYS) },
-      pending:  (rec.manifest.pending_items_hash if file || data || ready),
-      problems: rec.errors.to_hash,
-    )
+
+    result = { items: { rec.id => rec.fields.except(*NON_DATA_KEYS) } }
+    result.merge!(pending:  rec.manifest.pending_items_hash) if check
+    result.merge!(problems: rec.errors.to_hash)
   end
 
   # ===========================================================================
