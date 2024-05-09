@@ -27,7 +27,7 @@
     vars = html_bold(vars)
   else
     vars = "ecs-tasks/#{vars}/environment.vars"
-    vars = terraform_link(File.basename(vars), vars)
+    vars = terraform_link(vars, File.basename(vars))
   end
   vars = safe_join([the, vars, file], ' ')
 

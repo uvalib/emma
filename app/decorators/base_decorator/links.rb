@@ -82,7 +82,7 @@ module BaseDecorator::Links
         if (type ||= local[:scope] || local[:controller] || Model.for(item))
           config_item("emma.#{type}.show.tooltip", fallback: '')
         end
-      make_link(label, path, **opt)
+      make_link(path, label, **opt)
     end
   end
 

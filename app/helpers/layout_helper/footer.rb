@@ -65,7 +65,7 @@ module LayoutHelper::Footer
     FOOT_CONFIG.map { |k, v|
       label = v[:label]&.to_s || k.to_s.capitalize
       if (url = v[:link])
-        value = url.include?('@') ? mail_to(url) : external_link(url, url)
+        value = url.include?('@') ? mail_to(url) : external_link(url)
       elsif v[:content].to_s.casecmp?('BUILD_VERSION')
         value = BUILD_VERSION
       else

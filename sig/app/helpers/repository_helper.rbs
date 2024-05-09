@@ -97,19 +97,19 @@ module RepositoryHelper
 
   # Produce a link to retrieve an EMMA file.
   #
-  # @param [String] label
-  # @param [String] url
-  # @param [Hash]   opt               Passed to #retrieval_link
+  # @param [String]      url
+  # @param [String, nil] label        Default: *path*.
+  # @param [Hash]        opt          Passed to #retrieval_link
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def emma_retrieval_link: (String label, String url, **untyped opt) -> ActiveSupport::SafeBuffer
+  def emma_retrieval_link: (String url, ?(String|nil) label, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Produce a link to retrieve an Internet Archive file.
   #
-  # @param [String] label
-  # @param [String] url
-  # @param [Hash]   opt               Passed to #retrieval_link
+  # @param [String]      url
+  # @param [String, nil] label        Default: *path*.
+  # @param [Hash]        opt          Passed to #retrieval_link
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -117,40 +117,40 @@ module RepositoryHelper
   # Encrypted DAISY files are handled differently; for an explanation:
   # @see IaDownloadConcern#ia_download_response
   #
-  def ia_retrieval_link: (String label, String url, **untyped opt) -> ActiveSupport::SafeBuffer
+  def ia_retrieval_link: (String url, ?(String|nil) label, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Produce a link to retrieve an ACE file.
   #
-  # @param [String] label
-  # @param [String] url
-  # @param [Hash]   opt               Passed to #ia_retrieval_link
+  # @param [String]      url
+  # @param [String, nil] label        Default: *path*.
+  # @param [Hash]        opt          Passed to #ia_retrieval_link
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def ace_retrieval_link: (String label, String url, **untyped opt) -> ActiveSupport::SafeBuffer
+  def ace_retrieval_link: (String url, ?(String|nil) label, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Produce a link to retrieve an OpenAlex file.
   #
-  # @param [String] label
-  # @param [String] url
-  # @param [Hash]   opt               Passed to #retrieval_link
+  # @param [String]      url
+  # @param [String, nil] label        Default: *path*.
+  # @param [Hash]        opt          Passed to #retrieval_link
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # === Implementation Notes
   # OpenAlex only has direct download of PDF files.
   #
-  def oa_retrieval_link: (String label, String url, **untyped opt) -> ActiveSupport::SafeBuffer
+  def oa_retrieval_link: (String url, ?(String|nil) label, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Produce a link to retrieve a content file.
   #
-  # @param [String] label
-  # @param [String] url
-  # @param [Hash]   opt               Passed to LinkHelper#download_link
+  # @param [String]      url
+  # @param [String, nil] label        Default: *path*.
+  # @param [Hash]        opt          Passed to LinkHelper#download_link
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def retrieval_link: (String label, String url, **untyped opt) -> ActiveSupport::SafeBuffer
+  def retrieval_link: (String url, ?(String|nil) label, **untyped opt) -> ActiveSupport::SafeBuffer
 
   private
 

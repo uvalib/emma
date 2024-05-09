@@ -151,7 +151,7 @@ module LayoutHelper::NavBar
         page = (config_text(:layout, :nav_bar, :current_page) if disabled)
         tip  = [*tip, "(#{page})"].compact.join("\n") if page.present?
         opt  = { class: css_classes(*classes), title: tip }
-        link = disabled ? html_span(label, **opt) : link_to(label, path, **opt)
+        link = disabled ? html_span(label, **opt) : link_to(label, path, opt)
         init = false unless hidden
 
         separator << link

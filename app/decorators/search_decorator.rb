@@ -481,7 +481,7 @@ class SearchDecorator
     return ERB::Util.h(label) unless url
     opt[:title] ||=
       config_text(:search, :source, :link_tooltip, repo: record_src(repo))
-    external_link(label, url, **opt)
+    external_link(url, label, **opt)
   end
 
   # Make a clickable link to retrieve a remediated file.
@@ -522,10 +522,10 @@ class SearchDecorator
       end
 
     case repo&.to_sym
-      when :emma            then emma_retrieval_link(label, url, **opt)
-      when :ace             then ace_retrieval_link( label, url, **opt)
-      when :internetArchive then ia_retrieval_link(  label, url, **opt)
-      when :openAlex        then oa_retrieval_link(  label, url, **opt)
+      when :emma            then emma_retrieval_link(url, label, **opt)
+      when :ace             then ace_retrieval_link( url, label, **opt)
+      when :internetArchive then ia_retrieval_link(  url, label, **opt)
+      when :openAlex        then oa_retrieval_link(  url, label, **opt)
       else Log.error { "#{__method__}: #{repo.inspect}: unexpected" } if repo
     end
   end

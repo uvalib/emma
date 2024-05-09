@@ -13,7 +13,7 @@
   unless c == 'sessions'
     label  = t('emma.user.sessions.sign_in.label')
     path   = sign_in_local_path
-    links << make_link(label, path, **link_opt)
+    links << make_link(path, label, **link_opt)
   end
 
   registerable = m.registerable? && (c != 'registrations')
@@ -31,7 +31,7 @@
     ctrlr = devise_module.pluralize
     label = t("emma.user.#{ctrlr}.new.label")
     path  = send("new_user_#{devise_module}_path")
-    make_link(label, path, **link_opt)
+    make_link(path, label, **link_opt)
   }
   links.concat(devise_modules)
 

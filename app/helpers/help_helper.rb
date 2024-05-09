@@ -73,7 +73,7 @@ module HelpHelper
           next if s.blank?
           s = ERB::Util.h(s) unless (safe = s.html_safe?)
           s.strip.gsub(%r{(?<=\s)https?://[^\s]+}) { |url|
-            external_link(url, url)
+            external_link(url)
           }.html_safe.then { |part|
             (safe && part.start_with?('<')) ? part : html_paragraph(part)
           }
@@ -283,7 +283,7 @@ module HelpHelper
     inner_tag = inner_opt.delete(:tag)  || :li
     links =
       help_links(*topics, type: link_type).map do |title, path|
-        html_tag(inner_tag, **inner_opt) { link_to(title, path) }
+        html_tag(inner_tag, **inner_opt) { make_link(path, title) }
       end
     html_tag(tag, *before, *links, *after, **opt)
   end
@@ -358,13 +358,13 @@ module HelpHelper
   #
   # @param [String]         label
   # @param [Symbol, String] topic
-  # @param [Hash]           opt       Passed to #link_to.
+  # @param [Hash]           opt       Passed to #make_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def help_jump(label, topic, **opt)
     path = help_path(id: topic, modal: modal?)
-    link_to(label, path, **opt)
+    make_link(path, label, **opt)
   end
 
   # ===========================================================================
@@ -660,7 +660,7 @@ module HelpHelper
         dir  = $1.delete_prefix(base)
         path = dir + ERB::Util.u(file)
         html_li do
-          external_link(name, path)
+          external_link(path, name)
         end
       end
     end

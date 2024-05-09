@@ -175,7 +175,7 @@ module HelpHelper
   #
   # @param [String]         label
   # @param [Symbol, String] topic
-  # @param [Hash]           opt       Passed to #link_to.
+  # @param [Hash]           opt       Passed to #make_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

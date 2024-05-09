@@ -123,7 +123,7 @@ module LayoutHelper::DevControls
     label = text[:label]
     tip   = Array.wrap(text[:tooltip]).join("\n")
     link  = opt.delete(:params).merge(param => false)
-    make_link(label, link, **opt, title: tip)
+    make_link(link, label, **opt, title: tip)
   end
 
   # A control for toggling application debug status.
@@ -178,7 +178,7 @@ module LayoutHelper::DevControls
     tip   = config_text(:dev, :toggle_debug, :tooltip, **t_opt)
 
     link  = opt.delete(:params).merge(param => !state)
-    make_link(label, link, **opt, title: tip)
+    make_link(link, label, **opt, title: tip)
   end
 
 end

@@ -34,8 +34,7 @@ module EnrollmentHelper
     path    = opt.delete(:path) || enroll_path
     opt.reverse_merge!('data-turbolinks': false)
     prepend_css!(opt, css)
-    # noinspection RubyMismatchedArgumentType
-    make_link(label, path, **opt)
+    make_link(path, label, **opt)
   end
 
   # Make a link to the enrollment page on the production system.

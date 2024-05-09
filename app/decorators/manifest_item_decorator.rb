@@ -931,7 +931,7 @@ class ManifestItemDecorator < BaseDecorator
       opt[:title] ||= text[:edit_tooltip]
       prepend_css!(opt, css)
       append_css!(opt, 'hidden') unless STATUS_SHOW_EDIT.include?(status)
-      make_link(label, path, **opt, 'data-turbolinks': false)
+      make_link(path, label, **opt, 'data-turbolinks': false)
     end
 
     # The URL path to the edit page scrolled to the indicated row.

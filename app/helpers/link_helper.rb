@@ -50,9 +50,9 @@ module LinkHelper
     html_opt[:title]  ||= config_lookup("#{action}.tooltip", ctrlr: ctrlr)
     # noinspection RubyMismatchedArgumentType
     if path.match?(/^https?:/)
-      external_link(label, path, **html_opt)
+      external_link(path, label, **html_opt)
     else
-      make_link(label, path, **html_opt)
+      make_link(path, label, **html_opt)
     end
   end
 
@@ -93,7 +93,7 @@ module LinkHelper
 
     if url
       # noinspection RubyMismatchedArgumentType
-      make_link(label, url, **opt)
+      make_link(url, label, **opt)
     else
       if opt[:tabindex].to_i == -1
         opt.except!(:tabindex, :role)
@@ -122,8 +122,8 @@ module LinkHelper
 
   # Produce a link with appropriate accessibility settings.
   #
-  # @param [String]       label
   # @param [String, Hash] path
+  # @param [String, nil]  label       Default: *path*.
   # @param [Hash]         opt         Passed to #link_to except for:
   # @param [Proc]         blk         Passed to #link_to.
   #
@@ -134,11 +134,11 @@ module LinkHelper
   # === Usage Notes
   # This method assumes that local paths are always relative.
   #
-  def make_link(label, path, **opt, &blk)
+  def make_link(path, label = nil, **opt, &blk)
     add_inferred_attributes!(:a, opt)
 
     http     = path.is_a?(String) && path.start_with?('http')
-    label    = opt.delete(:label) || label if opt.key?(:label)
+    label    = (opt.delete(:label) if opt.key?(:label)) || label || path
     named    = accessible_name?(label, **opt)
     title    = opt[:title]
     hidden   = opt[:'aria-hidden']
@@ -157,33 +157,33 @@ module LinkHelper
 
   # Produce a link to an external site which opens in a new browser tab.
   #
-  # @param [String] label
-  # @param [String] path
-  # @param [Hash]   opt
+  # @param [String]      path
+  # @param [String, nil] label        Default: *path*.
+  # @param [Hash]        opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #make_link
   #
-  def external_link(label, path, **opt, &blk)
+  def external_link(path, label = nil, **opt, &blk)
     opt[:target] = '_blank' unless opt.key?(:target)
-    make_link(label, path, **opt, &blk)
+    make_link(path, label, **opt, &blk)
   end
 
   # Produce a link to download an item to the client's browser.
   #
-  # @param [String] label
-  # @param [String] path
-  # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt
+  # @param [String]      path
+  # @param [String, nil] label        Default: *path*.
+  # @param [String]      css          Characteristic CSS class/selector.
+  # @param [Hash]        opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #external_link
   #
-  def download_link(label, path, css: '.download', **opt, &blk)
+  def download_link(path, label = nil, css: '.download', **opt, &blk)
     prepend_css!(opt, css)
-    external_link(label, path, **opt, &blk)
+    external_link(path, label, **opt, &blk)
   end
 
   # ===========================================================================
@@ -206,23 +206,22 @@ module LinkHelper
 
   # Produce a link to EMMA source code for display within the application.
   #
-  # @param [String, nil] label        Derived from *path* if not given.
   # @param [String]      path
+  # @param [String, nil] label        Derived from *path* if not given.
   # @param [Hash]        opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #external_link
   #
-  def source_code_link(label = nil, path, **opt, &blk)
+  def source_code_link(path, label = nil, **opt, &blk)
     if path.start_with?(SOURCE_CODE_ROOT)
       label ||= path.sub(%r{^#{SOURCE_CODE_ROOT}/}, '')
     else
       label ||= path
       path    = "#{SOURCE_CODE_ROOT}/#{path}"
     end
-    # noinspection RubyMismatchedArgumentType
-    external_link(label, path, **opt, &blk)
+    external_link(path, label, **opt, &blk)
   end
 
   # ===========================================================================
@@ -246,23 +245,22 @@ module LinkHelper
   # Produce a link to EMMA UVALIB configuration for display within the
   # application.
   #
-  # @param [String, nil] label        Derived from *path* if not given.
   # @param [String]      path
+  # @param [String, nil] label        Derived from *path* if not given.
   # @param [Hash]        opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #external_link
   #
-  def terraform_link(label = nil, path, **opt, &blk)
+  def terraform_link(path, label = nil, **opt, &blk)
     if path.start_with?(TERRAFORM_EMMA)
       label ||= path.sub(%r{^#{TERRAFORM_EMMA}/}, '')
     else
       label ||= path
       path    = "#{TERRAFORM_EMMA}/#{path}"
     end
-    # noinspection RubyMismatchedArgumentType
-    external_link(label, path, **opt, &blk)
+    external_link(path, label, **opt, &blk)
   end
 
   # ===========================================================================

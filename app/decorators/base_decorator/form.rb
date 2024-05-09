@@ -1069,7 +1069,7 @@ module BaseDecorator::Form
       when control.is_a?(Proc)     then control.call(label: label, **opt)
       when (input_type == :submit) then h.submit_tag(label, opt)
       when (input_type == :file)   then file_input_button(label, **opt)
-      when url                     then make_link(label, url, **opt)
+      when url                     then make_link(url, label, **opt)
       else                              html_button(label, **opt)
     end
   end

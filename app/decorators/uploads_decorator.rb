@@ -98,7 +98,7 @@ class UploadsDecorator < BaseCollectionDecorator
         append_css!(link_opt, 'disabled') if url   == curr_path
         append_css!(link_opt, 'hidden')   unless enabled
 
-        make_link(label, url, **link_opt)
+        make_link(url, label, **link_opt)
       end
 
     # Wrap the controls in a group.

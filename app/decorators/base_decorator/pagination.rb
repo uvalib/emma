@@ -426,7 +426,7 @@ module BaseDecorator::Pagination
     label  = safe_join([prefix, label, suffix].compact)
     # noinspection RubyMismatchedArgumentType
     if link
-      make_link(label, path, **opt)
+      make_link(path, label, **opt)
     else
       html_span(label, **append_css!(opt, 'disabled'))
     end

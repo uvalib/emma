@@ -162,7 +162,7 @@ module BaseDecorator::Controls
     # noinspection RubyMismatchedArgumentType
     case path
       when :button then html_button(icon, **opt)
-      else              make_link(icon, path, **opt)
+      else              make_link(path, icon, **opt)
     end
   end
 

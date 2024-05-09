@@ -73,7 +73,7 @@ module AwsHelper
     url    = s3_bucket_url(bucket, region: region)
     prepend_css!(opt, css)
     opt[:title] ||= 'Go to the AWS S3 console page for this bucket'
-    external_link(label, url, **opt)
+    external_link(url, label, **opt)
   end
 
   # ===========================================================================

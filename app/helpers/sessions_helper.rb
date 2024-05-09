@@ -63,7 +63,7 @@ module SessionsHelper
     end
     prepend_css!(opt, "#{provider}-login") if provider
     prepend_css!(opt, 'session-link', 'session-login')
-    make_link(label, path, **opt, title: SIGN_IN_TOOLTIP)
+    make_link(path, label, **opt, title: SIGN_IN_TOOLTIP)
   end
 
   # Sign out link.
@@ -86,7 +86,7 @@ module SessionsHelper
     path   ||= destroy_user_session_path
     prepend_css!(opt, "#{provider}-logout") if provider
     prepend_css!(opt, 'session-link', 'session-logout')
-    make_link(label, path, method: :delete, **opt, title: SIGN_OUT_TOOLTIP)
+    make_link(path, label, method: :delete, **opt, title: SIGN_OUT_TOOLTIP)
   end
 
   # ===========================================================================

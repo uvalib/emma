@@ -87,7 +87,7 @@ module ImageHelper
       link_opt = opt.slice!(:class, :style)
       link_opt[:tabindex] ||= -1
       opt[:'aria-hidden'] ||= true
-      image = make_link(image, link, **link_opt)
+      image = make_link(link, image, **link_opt)
     end
     html_div(image, **opt)
   end

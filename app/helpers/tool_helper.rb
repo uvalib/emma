@@ -82,7 +82,7 @@ module ToolHelper
     l_css  = %w[action]
     l_css << 'sign-in-required' unless allow
     # noinspection RubyMismatchedArgumentType
-    link   = make_link(label, path, **append_css(l_css))
+    link   = make_link(path, label, **append_css(l_css))
 
     n_css  = %w[notice]
     n_css << 'hidden' if allow
