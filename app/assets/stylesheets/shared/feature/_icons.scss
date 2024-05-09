@@ -9,7 +9,7 @@
 
 $HEAVY_X:   "\2716";    // ✖ HEAVY MULTIPLICATION X
 $MAGNIFIER: "\1F50D";   // 🔍 LEFT-POINTING MAGNIFYING GLASS
-$PENCIL:    "\1F589";   // 🖉 LOWER LEFT PENCIL
+$PEN:       "\1F58A";   // 🖊 LOWER LEFT BALLPOINT PEN
 
 //=============================================================================
 // Mixins
@@ -29,7 +29,7 @@ $PENCIL:    "\1F589";   // 🖉 LOWER LEFT PENCIL
     // NOTE: For future use:
 
     .symbol.magnifying_glass_icon::before { content: $MAGNIFIER; }
-    .symbol.pencil_icon::before           { content: $PENCIL; }
+    .symbol.pen_icon::before              { content: $PEN; }
     .symbol.X_icon::before                { content: $HEAVY_X; }
 }
 
@@ -50,7 +50,7 @@ $PENCIL:    "\1F589";   // 🖉 LOWER LEFT PENCIL
 
     padding: 0.0375rem 0.125rem;
 
-    .symbol { // $PENCIL
+    .symbol { // $PEN
         font-size: larger;
         transform: rotate(-5deg); // align with $MAGNIFIER
     }

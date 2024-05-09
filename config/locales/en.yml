@@ -385,8 +385,8 @@ en:
         tooltip:      'View this %{item}'
 
       edit:
-        icon:         "\U0001F589" # 🖉 LOWER LEFT PENCIL
-        spoken:       'pencil icon'
+        icon:         "\U0001F58A" # 🖊 LOWER LEFT BALLPOINT PEN
+        spoken:       'pen icon'
         tooltip:      'Modify this %{item}'
 
       delete:

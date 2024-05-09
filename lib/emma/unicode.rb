@@ -99,7 +99,7 @@ module Emma::Unicode
   OPEN_FILE_FOLDER  = "\u{1F4C2}" # 📂 OPEN FILE FOLDER
   SCROLL            = "\u{1F4DC}" # 📜 SCROLL
   MAGNIFIER         = "\u{1F50D}" # 🔍 LEFT-POINTING MAGNIFYING GLASS
-  PENCIL            = "\u{1F589}" # 🖉 LOWER LEFT PENCIL
+  PEN               = "\u{1F58A}" # 🖊 LOWER LEFT BALLPOINT PEN
   DELIVERY_TRUCK    = "\u{1F69A}" # 🚚 DELIVERY TRUCK
 
   # ===========================================================================

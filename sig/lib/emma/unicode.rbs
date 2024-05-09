@@ -83,7 +83,7 @@ module Emma::Unicode
 
   MAGNIFIER: String
 
-  PENCIL: String
+  PEN: String
 
   DELIVERY_TRUCK: String
 
