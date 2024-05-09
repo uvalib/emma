@@ -12,6 +12,8 @@ module SysHelper::Common
   include Emma::Common
   include Emma::Constants
 
+  include LinkHelper
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -20,6 +22,37 @@ module SysHelper::Common
 
   # @private
   SYS_CONFIGURATION = config_section('emma.sys').deep_freeze
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # A list of the "/sys" links available to the current user.
+  #
+  # @param [Symbol, String, Integer, nil] tag   Element wrapping #make_link.
+  # @param [Hash]                         opt   Passed to each #make_link.
+  #
+  # @return [Array<ActiveSupport::SafeBuffer>]
+  #
+  def action_links(tag: nil, **opt)
+    prepend_css!(opt, 'link')
+    [:index, *SysController::PAGES].map { |page|
+      next if page.to_s == params['action']
+      cfg = I18n.t("emma.sys.#{page}", default: {})
+      next if (role = cfg[:role]) && !current_user&.has_role?(role)
+      html_tag(tag, class: 'page-action') do
+        path  = get_path_for(:sys, page)
+        label = cfg[:label]
+        tip   = cfg[:tooltip]
+        l_opt = opt.merge(cfg[:link_opt] || {}).merge!(title: tip).compact
+        note  = tip ? html_div(class: 'note') { tip.delete_suffix('.') } : ''
+        # noinspection RubyMismatchedArgumentType
+        make_link(path, label, **l_opt) << note
+      end
+    }.compact
+  end
 
   # ===========================================================================
   # :section:
@@ -100,20 +133,19 @@ module SysHelper::Common
   # @return [ActiveSupport::SafeBuffer]
   #
   def dd_value(value, object_wrap: 100, css: 'value', **opt)
-    unless value.nil? || (value == EMPTY_VALUE)
-      if value.is_a?(ActiveSupport::ExecutionWrapper)
-        value = value.class.to_s
-        if value.start_with?('#<Class:')
-          value << ' (ActiveSupport::ExecutionWrapper)'
-        end
-      else
-        value = value.inspect
-        if (value.size > object_wrap) && value.start_with?('#<')
-          value.gsub!(/ +(@\w+=)/, ("\n" + '  \1')) and value.sub!(/>$/, "\n>")
-        end
+    if value.nil? || (value == EMPTY_VALUE)
+      value = EMPTY_VALUE
+    elsif value.is_a?(ActiveSupport::ExecutionWrapper)
+      value = value.class.to_s
+      if value.start_with?('#<Class:')
+        value << ' (ActiveSupport::ExecutionWrapper)'
+      end
+    elsif !value.is_a?(ActiveSupport::SafeBuffer)
+      value = value.inspect unless value.is_a?(String) && value.end_with?('%')
+      if (value.size > object_wrap) && value.start_with?('#<')
+        value.gsub!(/ +(@\w+=)/, ("\n" + '  \1')) and value.sub!(/>$/, "\n>")
       end
     end
-    value = value&.to_s || EMPTY_VALUE
     prepend_css!(opt, css)
     html_div(value, **opt)
   end

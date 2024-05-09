@@ -105,23 +105,22 @@ module LayoutHelper::PageControls
       ent = ent.first if ent.is_a?(Array) && !ent.many?
       case ent
         when Hash
-          ent = ent.slice(:ctrlr, :action, :id, :params, :label, :controller)
+          ent = ent.values.first.merge(action: ent.keys.first) unless ent.many?
         when Array
           ent = { ctrlr: ent[0], action: ent[1], id: ent[2] }
         else
           ent = { ctrlr: ctrlr,  action: ent }
       end
       ent.compact_blank!
-      ent.each_pair { |k, v| ent[k] = v.to_sym unless k == :label }
 
       act = ent[:action]
-      next log&.('no action') unless act.present?
+      next log&.("no action for entry #{ent.inspect}") unless act.present?
 
       ctl = ent[:ctrlr] = ent.delete(:controller) || ent[:ctrlr] || ctrlr
       sub = subject || model_class(ctl)
       next log&.("[#{ctl}, #{act}] skipped for #{sub}") unless can?(act, sub)
 
-      role = config_lookup('role', **ent.slice(:ctrlr, :action))
+      role = ent[:role] || config_lookup('role', **ent.slice(:ctrlr, :action))
       next log&.("#{ent} needs #{role} role") unless user_has_role?(role, user)
 
       ent
@@ -143,28 +142,33 @@ module LayoutHelper::PageControls
   #
   def page_controls(*entries, ctrlr: nil, action: nil, **path_opt)
     item_id  = path_opt.delete(:id)
-    link_opt = path_opt.extract!(:method).merge!(class: 'control')
-    append_css!(link_opt, path_opt[:class]) if path_opt[:class]
-    link_opt.merge!(path_opt[:link_opt])    if path_opt[:link_opt]
-    path_opt[:link_opt] = link_opt
-
     ctrlr    = ctrlr&.to_sym
     action   = action&.to_sym
     # noinspection RubyMismatchedArgumentType
     base     = action && base_action(action)
     special  = action && (action != base)
     action   = base if special && item_id
+    link_opt = path_opt.delete(:link_opt)&.dup || {}
+    link_opt.merge!(path_opt.extract!(:method))
+    prepend_css!(link_opt, 'control', path_opt.delete(:class))
 
     entries.map { |entry|
-      ctr, act, prm, lbl = entry.values_at(:ctrlr, :action, :params, :label)
-      state = []
+      ctr  = entry[:ctrlr]
+      act  = entry[:action]
+      cfg  = I18n.t("emma.#{ctr}.#{act}", default: {})
+      role = entry.delete(:role)   || cfg[:role]
+      next unless role.blank? || current_user&.has_role?(role)
+      lbl  = entry.delete(:label)  || cfg[:label]
+      prm  = entry.delete(:params) || cfg[:params] || {}
+      opt  = path_opt.merge(entry, prm)
+      opt[:link_opt] = opt[:link_opt]&.dup || cfg[:link_opt]&.dup || {}
+      opt[:link_opt].merge!(link_opt)
       if act && action && (ctr == ctrlr)
+        state = []
         state << 'current'  if base == base_action(act)
         state << 'disabled' if act  == action
+        append_css!(opt[:link_opt], *state) if state.present?
       end
-      opt = path_opt.merge(entry.except(:params, :label))
-      opt.merge!(prm) if prm.present?
-      opt[:link_opt] = append_css(link_opt, *state)
       link_to_action(lbl, **opt)
     }.compact.join("\n").html_safe
   end

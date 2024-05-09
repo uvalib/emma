@@ -5,8 +5,19 @@ module SysHelper::Common
 
   include Emma::Constants
 
+  include LinkHelper
+
   # @private
   SYS_CONFIGURATION: symHash
+
+  # A list of the "/sys" links available to the current user.
+  #
+  # @param [Symbol, String, Integer, nil] tag   Element wrapping #make_link.
+  # @param [Hash]                         opt   Passed to each #make_link.
+  #
+  # @return [Array<ActiveSupport::SafeBuffer>]
+  #
+  def action_links: (?tag: Symbol|String|Integer|nil, **untyped opt) -> Array[ActiveSupport::SafeBuffer]
 
   # Translate Hash keys and values into an element containing pairs of
   # dt and dd elements.

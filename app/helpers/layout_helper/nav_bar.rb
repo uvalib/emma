@@ -123,7 +123,7 @@ module LayoutHelper::NavBar
           hidden =
             case controller
               when :org        then !current_user
-              when :sys        then !current_user&.developer?
+              when :sys        then !current_user&.administrator?
               when :enrollment then !current_user&.administrator?
             end
         end
