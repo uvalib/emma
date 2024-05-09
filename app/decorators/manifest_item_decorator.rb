@@ -211,6 +211,7 @@ class ManifestItemDecorator < BaseDecorator
       opt[:'aria-labelledby'] = l_id = "label-#{opt[:id]}"
 
       if action == :lookup
+        opt.except!(*ICON_PROPERTIES)
         button = lookup_control(ACTION_ATTR => action, button: opt) or return
       else
         button = super(action, **opt) or return

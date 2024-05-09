@@ -22,15 +22,27 @@ module BaseDecorator::Controls
 
   # Valid properties for entries under #ICONS.
   #
-  # * :icon     [String]                Unicode character.
-  # * :spoken   [String]                Textual description of the character.
-  # * :tooltip  [String]                Tooltip on hover.
-  # * :path     [String, Symbol, Proc]  Activation action (see below).
-  # * :auto     [Boolean]               If *true* authorization is not checked.
-  # * :enabled  [Boolean, Proc]         If *false* do not show.
-  # * :visible  [Boolean, Proc]         If *false* make opaque.
+  # * :icon        [String]             Unicode character.
+  # * :spoken      [String]             Textual description of the character.
+  # * :tooltip     [String]             Tooltip on hover.
+  # * :path        [String,Symbol,Proc] Activation action (see below).
+  # * :auto        [Boolean]            If *true* authorization is not checked.
+  # * :enabled     [Boolean, Proc]      If *false* do not show.
+  # * :visible     [Boolean, Proc]      If *false* make opaque.
+  # * :if_enabled  [Hash]               Only "emma.bulk.grid.icons"
+  # * :if_disabled [Hash]               Only "emma.bulk.grid.icons"
   #
-  ICON_PROPERTIES = %i[icon spoken tooltip path auto enabled visible].freeze
+  ICON_PROPERTIES = %i[
+    icon
+    spoken
+    tooltip
+    path
+    auto
+    enabled
+    visible
+    if_enabled
+    if_disabled
+  ].freeze
 
   # Control icon definitions.
   #

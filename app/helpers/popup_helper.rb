@@ -108,6 +108,7 @@ module PopupHelper
     opt[:role]            ||= 'button'
     opt[:'aria-label']    ||= opt[:title]
     opt[:'aria-haspopup'] ||= 'dialog'
+    opt[:'data-original-tabindex'] ||= 0
     prepend_css!(opt, POPUP_TOGGLE_CLASS, type)
     if button.is_a?(Hash)
       merge_html_options!(opt, button)
