@@ -1,0 +1,31 @@
+<%# app/views/sys/analytics.html.erb -%>
+<%-
+  # Selected Matomo Analytics information
+
+  view_debug(__FILE__)
+
+  help  ||= nil # %i[sys analytics]
+  title ||= t('emma.sys.analytics.title')
+
+  unless modal?
+    label = t('emma.sys.analytics.label', default: title)
+    set_page_meta_title("System - #{label}")
+    set_page_description(title)
+  end
+
+-%>
+
+<%= scroll_to_top_target %>
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+
+<h2>Reports (last <%= analytics_day_range -%>)</h2>
+<%= analytics_reports_section %>
+
+<h2>Summary (last <%= analytics_day_range -%>)</h2>
+<%= analytics_info_section %>
+
+<%= page_notes_section %>
+<%= render 'sys/menu' unless modal? %>

@@ -3,6 +3,12 @@
 # @see https://analytics.lib.virginia.edu
 #
 module Matomo
+  include Emma::Common
+
+  include Emma::Constants
+
+  include Emma::Json
+
   PROD_SITE: Integer
 
   DEV_SITE: Integer
@@ -19,7 +25,15 @@ module Matomo
 
   OPT_OUT: String
 
+  TOKEN: String
+
   ENABLED: bool
+
+  # Default starting range value (to be subtracted from `Date.today`).
+  #
+  # @type [ActiveSupport::Duration]
+  #
+  DEFAULT_RANGE: ActiveSupport::Duration
 
   # Indicate whether Matomo analytics are in use.
   #
@@ -49,6 +63,42 @@ module Matomo
   #
   def self.script_url: () -> String
 
+  # Generate a URL to the Matomo analytics dashboard for the current EMMA
+  # deployment (or the production deployment on the desktop).
+  #
+  # @param [Hash] opt                 Passed to #make_path
+  #
+  # @return [String]
+  #
+  def self.analytics_url: (**untyped opt) -> String
+
+  # Used by #analytics_page_url to map API category to the corresponding
+  # interactive URL category.
+  #
+  # @type [Hash{String=>String}]
+  #
+  LIVE_CATEGORY: Hash[String,String]
+
+  # Used by #analytics_page_url to map API subcategory to the corresponding
+  # interactive URL subcategory.
+  #
+  # @type [Hash{String=>String}]
+  #
+  LIVE_SUBCATEGORY: Hash[String,String]
+
+  # Generate a URL to a specific Matomo analytics page for the current EMMA
+  # deployment (or the production deployment on the desktop).
+  #
+  # @param [Hash] opt                 Passed to #analytics_url except:
+  #
+  # @option opt [String] :category
+  # @option opt [String] :subcategory
+  # @option opt [String] :segment
+  #
+  # @return [String]
+  #
+  def self.analytics_page_url: (**untyped opt) -> String
+
   # Matomo JavaScript asset.
   #
   # This should be included at the end of `<head>`.
@@ -61,9 +111,191 @@ module Matomo
 
   # Element inserted to cause a page to be counted if JavaScript is disabled.
   #
-  # @param [Hash] opt
+  # @param [Hash] opt                 Passed to Matomo#image.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def self.no_js: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Get analytics summary information.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash{String=>any}]
+  #
+  def self.info: (**untyped opt) -> strHash
+
+  # Get analytics report graphs.
+  #
+  # @param [Symbol, nil] target       Target output format; default: :html.
+  # @param [Hash]        opt
+  #
+  # @return [Hash{String=>any}]
+  #
+  def self.reports: (?target: Symbol|nil, **untyped opt) -> strHash
+
+  # Perform a Matomo request.
+  #
+  # @param [Hash] opt                 Passed to #api_request_url.
+  #
+  # @return [Hash{String=>any}]
+  #
+  def self.api_request: (**untyped opt) ?{ (symHash|Array[symHash] result) -> symHash } -> strHash
+
+  # Build a Matomo request URL.
+  #
+  # @param [Hash] opt                 Passed to #api_request_parameters.
+  #
+  # @return [String]
+  #
+  def self.api_request_url: (**untyped opt) -> String
+
+  # Normalize Matomo request URL parameters.
+  #
+  # @param [Hash] opt
+  #
+  # @option opt [Symbol] :format      Response format; default: :json.
+  #
+  # @return [Hash]
+  #
+  # @see https://developer.matomo.org/api-reference/reporting-api#standard-api-parameters
+  # @see https://developer.matomo.org/api-reference/reporting-api#api-method-list
+  #
+  def self.api_request_parameters: (**untyped opt) -> symHash
+
+  # Map :date parameter values to their implied :period parameter values.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  DATE_PERIOD: Hash[Symbol,Symbol]
+
+  # Map :period parameter values to their implied :date parameter values.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  PERIOD_DATE: Hash[Symbol,Symbol]
+
+  # Set :date and :period URL parameters.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]
+  #
+  def self.date_period!: (symHash opt) -> symHash
+
+  # Set :module and :method URL parameters.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]
+  #
+  def self.module_method!: (symHash opt) -> symHash
+
+  # Set :idSite URL parameter.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]
+  #
+  def self.id_site!: (symHash opt) -> symHash
+
+  # Set :token_auth URL parameter.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]
+  #
+  def self.token_auth!: (symHash opt) -> symHash
+
+  # Set :token_auth URL parameter.
+  #
+  # @param [Hash]          opt
+  # @param [Symbol]        key
+  # @param [Array<Symbol>] alt_keys   Aliases that should not be passed to URL
+  #
+  # @return [Hash]
+  #
+  def self.from_bool!: (symHash opt, Symbol key, *Symbol alt_keys) -> symHash
+
+  # Allow/reject report by :module.
+  #
+  # @type [Hash{Symbol=>Boolean}]
+  #
+  REPORT_BY_MODULE: Hash[Symbol,bool]
+
+  # Allow/reject report by :action.
+  #
+  # Actions like :get and :getAll that are common to several modules must be
+  # *true* here and filtered by module.
+  #
+  # @type [Hash{Symbol=>Boolean}]
+  #
+  REPORT_BY_ACTION: Hash[Symbol,bool]
+
+  # Modules which should not display a second entry (evolution graph).
+  #
+  # @type [Array<Symbol>]
+  #
+  NO_EVOLUTION: symArray
+
+  # Modules which should not display a second entry (evolution graph) for the
+  # 'get' action.
+  #
+  # @type [Array<Symbol>]
+  #
+  NO_GET_EVOLUTION: symArray
+
+  # process_report_result
+  #
+  # @param [Array<Hash>, Hash, nil] values
+  # @param [Symbol, nil]            target
+  #
+  # @return [Hash]
+  #
+  def self.process_report_result: ((Array[symHash]|symHash|nil) values, target: Symbol|nil, **untyped _ignored) -> symHash
+
+  # Construct a `<dt>` name from a report value.
+  #
+  # @param [Hash{Symbol=>any}]
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def self.report_label: (symHash value) -> ActiveSupport::SafeBuffer
+
+  # Generate an HTML `<img>` element.
+  #
+  # @param [String] src
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def self.image: (src: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Generate an HTML `<a>` active link to external site.
+  #
+  # @param [String]      url
+  # @param [String, nil] label        Default: *url*.
+  # @param [Hash]        opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def self.out_link: (String url, ?(String|nil) label, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Generate an HTML element.
+  #
+  # @param [Symbol, String]                         tag
+  # @param [ActiveSupport::SafeBuffer, String, nil] content
+  # @param [Hash]                                   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def self.element: (Symbol|String tag, ?(String|nil) content, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Replace most HTML elements with the text they enclose.
+  #
+  # @param [String, nil] text
+  #
+  # @return [String]
+  #
+  def self.sanitize: (String|nil text) -> String
 end

@@ -1,0 +1,47 @@
+# View helper for Matomo Analytics information.
+#
+module SysHelper::Analytics
+  include SysHelper::Common
+
+  include LinkHelper
+
+  # Generate an active HTML link to the Matomo analytics site.
+  #
+  # @param [String, nil] label        Display the URL if *nil*.
+  # @param [Hash, nil]   matomo       Passed to Matomo#analytics_url.
+  # @param [Hash]        opt          Passed to #external_link.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def analytics_link: (?(String|nil) label, matomo: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # A descriptive phrase for the range of days covered by displayed analytics
+  # information.
+  #
+  # @return [String]
+  #
+  def analytics_day_range: () -> String
+
+  # Analytics summary information.
+  #
+  # @param [Hash] matomo              To Matomo#info.
+  # @param [Hash] opt                 To #dt_dd_section.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def analytics_info_section: (?matomo: symHash|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Analytics report graphs.
+  #
+  # @param [Hash]   matomo            To Matomo#reports.
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               To #dt_dd_section.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def analytics_reports_section: (?matomo: symHash|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (Module base) -> void
+end

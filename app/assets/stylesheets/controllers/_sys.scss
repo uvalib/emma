@@ -260,13 +260,68 @@ body.sys {
 
         dd {
 
-            @include value-inspection;
+            margin:  0;
+            padding: 0.25rem;
 
-            max-height:     5.5rem;
-            max-width:      max-content;
-            margin:         0;
-            padding:        0.25rem;
-            overflow:       auto;
+            &:not(:has(img)) {
+
+                @include value-inspection;
+
+                max-height: 5.5rem;
+                max-width:  max-content;
+                overflow:   auto;
+            }
+
+            &:has(img) {
+                min-height: 300px; // Matomo graphs always have height of 290.
+                min-width:  max-content;
+            }
+
+            .value:has(img) {
+                padding:             1rem 0;
+                background-image:    url('loading-balls.gif');
+                background-repeat:   no-repeat;
+                background-position: left;
+            }
+        }
+    }
+
+    // For the '/sys/analytics' report graphs.
+    .pairs.analytics-reports {
+
+        gap: 1.5rem 1.25rem;
+
+        .button {
+
+            @include button.basic;
+
+            display: inline-block;
+            padding: 1px 3px;
+        }
+
+        .action-name {
+            margin-top:     0.75rem;
+            padding-bottom: 1px;
+            border-bottom:  2px solid gray;
+        }
+
+        div.action-description {
+
+            max-height: 12.5rem;
+            overflow-y: auto;
+
+            > :first-child {
+                margin-top: 0;
+            }
+
+            > :last-child {
+                margin-bottom: 0;
+            }
+        }
+
+        dt {
+            padding-left:  0.5rem;
+            padding-right: 0.5rem;
         }
     }
 

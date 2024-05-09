@@ -47,6 +47,7 @@ en:
           - database
           - mailers
           - jobs
+          - analytics
 
       # =======================================================================
       # Tables
@@ -90,6 +91,25 @@ en:
         label:          'Main'
         title:          'EMMA System Information'
         tooltip:        'EMMA system information'
+        _endpoint:      true
+
+      # =======================================================================
+
+      analytics:
+        label:          'Analytics'
+        title:          'Matomo Analytics'
+        tooltip:        'View selected analytics information'
+        description_html:
+          >-
+          <p>
+            Reports from %{analytics_link} for this EMMA deployment for the
+            last %{analytics_day_range}.
+          </p>
+          <p>
+            Reports which are available both as summaries (totals) and
+            "evolutions" (time-based graphs) have two entries.
+            Other reports are only provided in one mode or the other.
+          </p>
         _endpoint:      true
 
       # =======================================================================
