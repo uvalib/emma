@@ -522,7 +522,7 @@ class ManifestItemDecorator < BaseDecorator
           # valid field values.
           html_dl do
             opt = { class: 'label' } # First pair only
-            { field[:dt] => field[:dd] }.merge!(prop[:pairs]).map do |val, lbl|
+            { cfg[:dt] => cfg[:dd] }.merge!(prop[:pairs]).map do |val, lbl|
               val = html_dt(val, **opt)
               lbl = html_dd(lbl, **opt)
               opt = {}

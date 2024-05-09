@@ -147,6 +147,7 @@
         padding-top:    0       #{$important};
         padding-bottom: 0       #{$important};
         overflow-x:     visible #{$important};
+        overflow-y:     clip    #{$important};
         visibility:     hidden  #{$important};
     }
 }
@@ -164,6 +165,7 @@
         margin-right:   0       #{$important};
         padding-left:   0       #{$important};
         padding-right:  0       #{$important};
+        overflow-x:     clip    #{$important};
         overflow-y:     visible #{$important};
         visibility:     hidden  #{$important};
     }

@@ -282,6 +282,7 @@ table.manifest_item-grid {
     $value-pad:             $cell-pad * 0.5;
     $max-column-width:      25vw;
     $max-file-column-width: 33vw;
+    $file-popup-min-height: 20vh;
 
     // Until "display: subgrid" exists, this is necessary so that individual
     // grid cells are the items being controlled by the grid.
@@ -1241,7 +1242,7 @@ table.manifest_item-grid {
                             flex-direction: row;
                             align-items:    baseline;
                             gap:            0.5rem 1rem;
-                            min-height:     20vh;
+                            min-height:     $file-popup-min-height;
                             padding:        1rem 1rem 0;
                             font-size:      large;
                             font-weight:    bold;
@@ -1651,6 +1652,13 @@ table.manifest_item-grid {
     //=========================================================================
     // Variations
     //=========================================================================
+
+    // Ensure that even if there is only one row, if "File Name" is clicked
+    // then there is room for the entire popup panel to be displayed within
+    // the confines of the grid.
+    &:has(.popup-panel:not(.hidden)) {
+        min-height: 2 * $file-popup-min-height;
+    }
 
     &.head-expanded {
 

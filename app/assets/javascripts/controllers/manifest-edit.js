@@ -2224,7 +2224,7 @@ appSetup(MODULE, function() {
                     const label = `${update_type} ${items}`;
                     const cells = dataFields($cells, fields).toArray();
                     const names = cells.map(cell =>
-                        $(cell).find('.label .text').text()
+                        $(cell).find('.label .text').first().text()
                     ).sort().join(', ');
                     const type  = `<span class="type">${label}:</span>`;
                     const list  = `<span class="list">${names}.</span>`;

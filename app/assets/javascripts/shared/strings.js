@@ -55,17 +55,15 @@ export function camelCase(item) {
 /**
  * Convert a singular to the plural form.
  *
- * @param {string}               item
- * @param {number|boolean|Array} [v]
+ * @param {string}                      item
+ * @param {boolean|number|string|Array} [v]
  *
  * @returns {string}
  */
 export function pluralize(item, v) {
-    if (!item)                                  { return item }
-    if (typeof item !== 'string')               { return item }
-    if (Array.isArray(v) && (v.length === 1))   { return item }
-    if (v === false)                            { return item }
-    if ((v !== true) || (Number(v) === 1))      { return item }
+    if (!item || (typeof item !== 'string'))        { return item }
+    if ((v === false) || (v === 1) || (v === '1'))  { return item }
+    if (Array.isArray(v) && (v.length === 1))       { return item }
 
     const upr = (item === item.toUpperCase());
     const str = upr ? item.toLowerCase() : item;
