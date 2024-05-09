@@ -27,18 +27,18 @@ module Aws::S3
         start = timestamp
         super
           .tap { __ext_log(start, *args) }
-      rescue => e
-        __ext_log(e)
-        raise e
+      rescue => error
+        __ext_log(error)
+        raise error
       end
 
       def build_request(operation_name, params = {})
         start = timestamp
         super
           .tap { __ext_log(start, operation_name, params) }
-      rescue => e
-        __ext_log(e)
-        raise e
+      rescue => error
+        __ext_log(error)
+        raise error
       end
 
       # =======================================================================
@@ -55,9 +55,9 @@ module Aws::S3
           start = timestamp
           super(params, options, &blk)
             .tap { __ext_log(meth, start, params, options) }
-        rescue => e
-          __ext_log(e)
-          raise e
+        rescue => error
+          __ext_log(error)
+          raise error
         end
       end
 

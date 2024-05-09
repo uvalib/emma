@@ -34,7 +34,7 @@ module BaseCollectionDecorator::Table
   # @param [String, nil]  path        Default: `#table_path`.
   # @param [Integer, nil] rows        Number of records currently rows.
   # @param [String]       css         Characteristic CSS class/selector.
-  # @param [Hash]         opt         Passed to #make_link.
+  # @param [Hash]         opt         Passed to enclosing element.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

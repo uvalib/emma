@@ -29,72 +29,72 @@ module Aws::S3
         start = timestamp
         super
           .tap { __ext_log(start, options) }
-      rescue => e
-        __ext_log(e)
-        raise e
+      rescue => error
+        __ext_log(error)
+        raise error
       end
 
       def upload(options = {}, &blk)
         start = timestamp
         super
           .tap { __ext_log(start, options) }
-      rescue => e
-        __ext_log(e)
-        raise e
+      rescue => error
+        __ext_log(error)
+        raise error
       end
 
       def initiate_upload(options)
         start = timestamp
         super
           .tap { __ext_log(start, options) }
-      rescue => e
-        __ext_log(e)
-        raise e
+      rescue => error
+        __ext_log(error)
+        raise error
       end
 
       def complete_upload(upload_id, parts, options)
         start = timestamp
         super
           .tap { __ext_log(start, upload_id, parts, options) }
-      rescue => e
-        __ext_log(e)
-        raise e
+      rescue => error
+        __ext_log(error)
+        raise error
       end
 
       def upload_parts(upload_id, options, &blk)
         start = timestamp
         super
           .tap { __ext_log(start, upload_id, options) }
-      rescue => e
-        __ext_log(e)
-        raise e
+      rescue => error
+        __ext_log(error)
+        raise error
       end
 
       def abort_upload(upload_id, options, errors)
         start = timestamp
         super
           .tap { __ext_log(start, upload_id, options, errors) }
-      rescue => e
-        __ext_log(e)
-        raise e
+      rescue => error
+        __ext_log(error)
+        raise error
       end
 
       def read_to_part_body(read_pipe)
         start = timestamp
         super
           .tap { __ext_log(start) { { '@tempfile': @tempfile } } }
-      rescue => e
-        __ext_log(e)
-        raise e
+      rescue => error
+        __ext_log(error)
+        raise error
       end
 
       def upload_in_threads(read_pipe, completed, options)
         start = timestamp
         super
           .tap { __ext_log(start, options) }
-      rescue => e
-        __ext_log(e)
-        raise e
+      rescue => error
+        __ext_log(error)
+        raise error
       end
 
     end

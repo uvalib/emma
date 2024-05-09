@@ -711,9 +711,9 @@ class BaseDecorator < Draper::Decorator
         #next unless loc&.first&.include?('/decor')
         __output "#{ldr}.#{m} ->\t#{loc&.join(':')}"
       end
-    rescue => err
+    rescue => error
       # noinspection RubyScope
-      __output "#{typ} METHOD SKIPPING #{self} - #{err}"
+      __output "#{typ} METHOD SKIPPING #{self} - #{error}"
     end
 
     # =========================================================================

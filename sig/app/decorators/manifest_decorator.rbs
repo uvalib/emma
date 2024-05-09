@@ -102,7 +102,7 @@ class ManifestDecorator < BaseDecorator
     #
     # @param [String, nil] label
     # @param [String] css             Characteristic CSS class/selector.
-    # @param [Hash]   opt             Passed to #make_link.
+    # @param [Hash]   opt             Passed to #link_to_action.
     #
     # @return [ActiveSupport::SafeBuffer]
     #

@@ -535,7 +535,7 @@ module LayoutHelper::SearchBar
   # search_clear_button
   #
   # @param [String] css                     Characteristic CSS class/selector.
-  # @param [Hash]   opt                     Passed to #link_to except for:
+  # @param [Hash]   opt                     Passed to #icon_button except for:
   #
   # @option opt [String, Boolean] :unique   Passed to #unique_id.
   # @option opt [Integer]         :index    Passed to #unique_id.
@@ -543,7 +543,6 @@ module LayoutHelper::SearchBar
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see file:javascripts/feature/advanced-search.js *clearSearchTerm()*
-  # @see LinkHelper#icon_button
   #
   def search_clear_button(css: '.search-clear', **opt)
     id_opt = opt.extract!(:unique, :index)

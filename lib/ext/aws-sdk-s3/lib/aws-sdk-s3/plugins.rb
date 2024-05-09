@@ -37,9 +37,9 @@ module Aws
               { size: chunk_size, payload: body_payload.class }
             end
           end
-      rescue => e
-        __ext_log(e)
-        raise e
+      rescue => error
+        __ext_log(error)
+        raise error
       end
 
     end

@@ -29,7 +29,7 @@ module ToolHelper
   # @param [Hash]      config
   # @param [User, nil] user           Default: `current_user`
   # @param [String]    css            Characteristic CSS class/selector.
-  # @param [Hash]      opt            Passed to #link_to.
+  # @param [Hash]      opt            Passed to #make_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

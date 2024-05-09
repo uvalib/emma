@@ -4855,7 +4855,7 @@ appSetup(MODULE, function() {
             return;
         }
 
-        let data, action, on_success;
+        let data, action, response;
         if (new_value) {
             const field = cellDbColumn($cell);
             data        = { [field]: new_value.toString() };
@@ -4863,11 +4863,11 @@ appSetup(MODULE, function() {
             data.delta  = dbRowDelta($row);
         }
         if (db_id) {
-            action     = `finish_edit/${db_id}`;
-            on_success = parseFinishEditResponse;
+            action   = `finish_edit/${db_id}`;
+            response = parseFinishEditResponse;
         } else if (data) {
-            action     = `create/${manifest}`;
-            on_success = parseCreateResponse;
+            action   = `create/${manifest}`;
+            response = parseCreateResponse;
         } else {
             OUT.debug(`${func}: nothing to transmit`);
             return;
@@ -4878,7 +4878,7 @@ appSetup(MODULE, function() {
         serverItemSend(action, {
             caller:     func,
             params:     params,
-            onSuccess:  body => on_success($cell, body),
+            onSuccess:  body => response($cell, body),
         });
     }
 

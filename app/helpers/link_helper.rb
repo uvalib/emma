@@ -74,7 +74,7 @@ module LinkHelper
   # @param [String, nil] icon         Default: DEFAULT_ICON
   # @param [String, nil] text         Default: 'Action'
   # @param [String, nil] url          Default: '#'
-  # @param [Hash]        opt          Passed to #link_to or #html_span except:
+  # @param [Hash]        opt          To #make_link or #html_span except for:
   #
   # @option opt [String] :symbol      Overrides *symbol*
   # @option opt [String] :text        Overrides *text*
