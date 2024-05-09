@@ -87,8 +87,7 @@ module Matomo
   # @return [String]
   #
   def self.analytics_url(**opt)
-    opt[:date]   = :today   if opt.values_at(:date, :period).blank?
-    opt[:idSite] = DEV_SITE if staging_deployment?
+    opt[:date] = :today if opt.values_at(:date, :period).blank?
     date_period!(opt)
     id_site!(opt)
     make_path(ROOT, module: 'CoreHome', action: 'index', **opt)
@@ -399,7 +398,8 @@ module Matomo
   # @return [Hash]
   #
   def self.id_site!(opt)
-    opt[:idSite] = opt.delete(:site) || opt[:idSite] || PROD_SITE
+    opt[:idSite]   = opt.delete(:site) if opt.key?(:site)
+    opt[:idSite] ||= staging_deployment? ? DEV_SITE : PROD_SITE
     opt
   end
 
