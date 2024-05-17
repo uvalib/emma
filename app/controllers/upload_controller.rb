@@ -845,8 +845,8 @@ class UploadController < ApplicationController
     @list = log ? recs.() : Log.silence(&recs)
     respond_to do |format|
       format.html { redirect_to prm.merge!(format: :json) }
-      format.json { render_json index_values }
-      format.xml  { render_xml  index_values(item: :entry) }
+      format.json { render_json index_values(@list) }
+      format.xml  { render_xml  index_values(@list, item: :entry) }
     end
   rescue CanCan::AccessDenied => error
     error_response(error)
