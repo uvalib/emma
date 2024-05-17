@@ -318,11 +318,11 @@ class AccountDecorator
     super
   end
 
-  # Single-select menu - drop-down.
+  # Single-select menu - dropdown.
   #
-  # @param [String]      name
-  # @param [Array]       value
-  # @param [Hash]        opt          Passed to super
+  # @param [String] name
+  # @param [Array]  value
+  # @param [Hash]   opt               Passed to super
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -391,7 +391,7 @@ class AccountDecorator
 
   # min_length_note
   #
-  # @param [String, nil] note
+  # @param [String, nil]  note
   # @param [Integer, nil] min
   # @param [Hash]         opt
   #

@@ -497,7 +497,7 @@ class ManifestDecorator
 
   public
 
-  # Single-select menu - drop-down.
+  # Single-select menu - dropdown.
   #
   # @param [String]      name
   # @param [Array]       value

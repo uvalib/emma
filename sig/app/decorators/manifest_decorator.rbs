@@ -268,7 +268,7 @@ class ManifestDecorator
   #
   def grid_head_control_headers: (**untyped opt) -> Array[ActiveSupport::SafeBuffer]
 
-  # Single-select menu - drop-down.
+  # Single-select menu - dropdown.
   #
   # @param [String]      name
   # @param [Array]       value

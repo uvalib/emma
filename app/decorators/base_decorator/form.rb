@@ -362,7 +362,7 @@ module BaseDecorator::Form
   # @private
   MENU_SINGLE_OPT = %i[name base fixed readonly constraints row].freeze
 
-  # Single-select menu - drop-down.
+  # Single-select menu - dropdown.
   #
   # @param [String]      name
   # @param [Array]       value        Selected value(s) from `range#values`.

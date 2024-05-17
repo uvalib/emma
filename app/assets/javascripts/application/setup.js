@@ -335,6 +335,8 @@ export function appEventTarget(k, caller) {
 /**
  * Remove all window/document event listeners registered with
  * {@link window.APP_PAGE.Event}.
+ *
+ * @returns {undefined}
  */
 function removeEvents() {
     const func   = 'removeEvents';

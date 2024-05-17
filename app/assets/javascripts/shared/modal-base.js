@@ -460,7 +460,6 @@ export class ModalBase extends BaseClass {
             }
         }
 
-        // noinspection FunctionWithInconsistentReturnsJS
         /**
          * Allow **Escape** key from within the `<iframe>` to close the modal
          * popup. <p/>
@@ -469,6 +468,8 @@ export class ModalBase extends BaseClass {
          * continue to intercept key press events.
          *
          * @param {KeyboardEvt} event
+         *
+         * @returns {EventHandlerReturn}
          */
         function onIframeKeyUp(event) {
             const key = keyCombo(event);

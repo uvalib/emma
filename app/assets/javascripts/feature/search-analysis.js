@@ -1156,7 +1156,6 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
             return class_name && this._button_tray.find(selector(class_name));
         }
 
-        // noinspection FunctionWithInconsistentReturnsJS
         /**
          * Assign event handlers to the indicated button if it matches
          * {@link button_class}.

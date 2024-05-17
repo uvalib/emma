@@ -22,6 +22,7 @@ handleEvent($script, 'load',             loadFonts);
 
 function loadFonts() {
     try {
+        // noinspection JSUnresolvedReference
         Typekit.load();
     } catch(error) {
         console.warn('Could not load Typekit:', error.message);
