@@ -653,7 +653,14 @@ const GRID_NAV = Object.freeze({
 // Functions
 // ============================================================================
 
-let $grid_role = ACTIVE;
+/**
+ * The function to be called to initialize static table navigation logic for
+ * all non-grid tables on the page.
+ */
+export function initializeTables() {
+    const $tables = $(`[role="${PASSIVE}"]`);
+    $tables.each((_, table) => initializeTableNavigation(table));
+}
 
 /**
  * The function to be called to initialize static table navigation logic. <p/>
@@ -661,12 +668,22 @@ let $grid_role = ACTIVE;
  * This is appropriate for tables matching **`[role="table"]`** where only cell
  * navigation is required.
  *
+ * If *table* does not have a role it will be set to {@link PASSIVE}, however
+ * if it explicitly has the {@link ACTIVE} role it will be skipped.
+ *
  * @param {Selector} table
  */
 export function initializeTableNavigation(table) {
-    OUT.debug('initializeTableNavigation: table =', table);
-    $grid_role = PASSIVE;
-    initializeGridNavigation(table);
+    const func = 'initializeTableNavigation'; OUT.debug(`${func}:`, table);
+    let $table = gridFor(table);
+    if (isMissing($table)) {
+        OUT.debug(`${func}: setting role=${PASSIVE} for:`, table);
+        $table = $(table).attr('role', PASSIVE);
+    } else if ($table.attr('role') === ACTIVE) {
+        OUT.warn(`${func}: skipping grid:`, table);
+        return;
+    }
+    setupNavigation($table);
 }
 
 /**
@@ -675,29 +692,57 @@ export function initializeTableNavigation(table) {
  * This is appropriate for tables matching **`[role="grid"]`** where both cell
  * and intra-cell navigation (within control nav groups) are required.
  *
+ * If *grid* does not have a role it will be set to {@link ACTIVE}.
+ *
  * @param {Selector} grid
  */
 export function initializeGridNavigation(grid) {
-    OUT.debug('initializeGridNavigation: grid =', grid);
-    const $grid = ensureFocusable(grid);
-    setupGridRows($grid);
-    setupGridNavigation($grid);
+    const func = 'initializeGridNavigation'; OUT.debug(`${func}:`, grid);
+    let $grid  = gridFor(grid);
+    if (isMissing($grid)) {
+        OUT.debug(`${func}: setting role=${ACTIVE} for:`, grid);
+        $grid = $(grid).attr('role', ACTIVE);
+    } else if ($grid.attr('role') === PASSIVE) {
+        OUT.warn(`${func}: skipping non-grid:`, grid);
+        return;
+    }
+    setupNavigation($grid);
 }
 
 /**
  * The function to be called to renumber grid elements and initialize grid
  * cell navigation logic for any new cells.
+ * 
+ * This should be called only on a grid which has been previously set up with
+ * {@link initializeGridNavigation}.
  *
  * @param {Selector} grid
  */
 export function updateGridNavigation(grid) {
-    OUT.debug('updateGridNavigation: grid =', grid);
-    setupGridRows(grid);
+    const func  = 'updateGridNavigation'; OUT.debug(`${func}:`, grid);
+    const $grid = gridFor(grid);
+    if ($grid.attr('role') === ACTIVE) {
+        setupGridRows($grid);
+    } else {
+        OUT.warn(`${func}: skipping non-grid:`, grid);
+    }
 }
 
 // ============================================================================
-// Functions - grid rows
+// Functions - grid setup
 // ============================================================================
+
+/**
+ * Setup navigation for grids and tables.
+ *
+ * @param {jQuery} $grid
+ */
+function setupNavigation($grid) {
+    //OUT.debug('setupNavigation: $grid =', $grid);
+    ensureFocusable($grid);
+    setupGridRows($grid);
+    setupGridNavigation($grid);
+}
 
 /**
  * Assign grid location to each visible grid cell, and update $grid
@@ -706,11 +751,10 @@ export function updateGridNavigation(grid) {
  * Any new cells (e.g. cells in rows inserted since this function was last run)
  * have additional setup applied to them.
  *
- * @param {Selector} grid
+ * @param {jQuery} $grid
  */
-function setupGridRows(grid) {
-    const func  = 'setupGridRows'; OUT.debug(`${func}: grid =`, grid);
-    const $grid = gridFor(grid);
+function setupGridRows($grid) {
+    const func  = 'setupGridRows'; OUT.debug(`${func}: $grid =`, $grid);
     const $rows = gridRows($grid);
     const $temp = $grid.find(ROW).filter(HIDDEN); // Hidden template rows.
 
@@ -754,9 +798,7 @@ function setupGridColumns(row, row_number) {
         const $cell = $(col_element);
         $cell.attr('aria-colindex', col);
         if (!$cell.attr('tabindex')) { $cell.attr('tabindex', 0) }
-        if (!getGridLocation($cell)) {
-            setupCellNavigation($cell);
-        }
+        if (!getGridLocation($cell)) { setupCellNavigation($cell) }
         setGridLocation($cell, num, col);
         neutralizeFocusables($cell); // NOTE: _not_ neutralizeCellFocusables
     });
@@ -1741,7 +1783,7 @@ function scrollIntoView(cell, grid) {
  */
 function neutralizeCellFocusables($cell, plus_cell = true) {
     const func = 'neutralizeCellFocusables'; //OUT.debug(`${func}:`, $cell);
-    if (!isTable()) {
+    if (isActiveGrid($cell)) {
         const group = NavGroup.instanceFor($cell);
         if (!group) {
             neutralizeFocusables($cell.children());
@@ -1763,7 +1805,7 @@ function neutralizeCellFocusables($cell, plus_cell = true) {
  */
 function restoreCellFocusables($cell, plus_cell = false) {
     const func = 'restoreCellFocusables'; //OUT.debug(`${func}:`, $cell);
-    if (!isTable()) {
+    if (isActiveGrid($cell)) {
         const group = NavGroup.instanceFor($cell);
         if (!group) {
             restoreFocusables($cell.children());
@@ -1781,13 +1823,16 @@ function restoreCellFocusables($cell, plus_cell = false) {
 // ============================================================================
 
 /**
- * Indicate whether the target grid has cells containing simple content (i.e.,
- * no cells should contain control groups).
+ * Indicate whether the `<table>` associated with the target has any cells with
+ * interactive content -- as opposed to only cells with simple content (i.e.,
+ * cells with no control groups).
+ *
+ * @param {Selector} target
  *
  * @returns {boolean}
  */
-function isTable() {
-    return $grid_role === PASSIVE;
+function isActiveGrid(target) {
+    return gridFor(target).attr('role') === ACTIVE;
 }
 
 /**
@@ -1799,19 +1844,7 @@ function isTable() {
  */
 function gridFor(target) {
     const func = 'gridFor'; //OUT.debug(`${func}: target =`, target);
-    return selfOrParent(target, `[role="${$grid_role}"]`, func);
-}
-
-/**
- * The grid row which is or contains the target.
- *
- * @param {Selector} target
- *
- * @returns {jQuery}
- */
-function gridRow(target) {
-    const func = 'gridRow'; //OUT.debug(`${func}: target =`, target);
-    return selfOrParent(target, ROW, func);
+    return selfOrParent(target, GRID, func);
 }
 
 /**
@@ -1829,14 +1862,13 @@ function gridCell(target) {
 /**
  * The displayed row(s) of the indicated grid.
  *
- * @param {Selector} grid
- * @param {number}   [row_number]     If given, limit to that ordinal row.
+ * @param {jQuery} $grid
+ * @param {number} [row_number]       If given, limit to that ordinal row.
  *
  * @returns {jQuery}
  */
-function gridRows(grid, row_number) {
-    //OUT.debug(`gridRows(${row_number}): grid =`, grid);
-    const $grid = gridFor(grid);
+function gridRows($grid, row_number) {
+    //OUT.debug(`gridRows(${row_number}): $grid =`, $grid);
     const $rows = $grid.find(ROW).not(HIDDEN);
     return row_number ? oneBasedIndex($rows, row_number) : $rows;
 }

@@ -8,7 +8,7 @@
 import { AppDebug }                  from '../application/debug';
 import { appSetup }                  from '../application/setup';
 import { Analytics }                 from '../shared/analytics';
-import { initializeTableNavigation } from '../shared/grids';
+import { initializeTables }          from '../shared/grids';
 import { InlinePopup }               from '../shared/inline-popup';
 import { ModalDialog }               from '../shared/modal-dialog';
 
@@ -20,7 +20,7 @@ AppDebug.file('controllers/generic', MODULE);
 appSetup(MODULE, function() {
 
     // Initialize any non-grid tables.
-    $('[role="table"]').each((_, table) => initializeTableNavigation(table));
+    initializeTables();
 
     // Initialize any modals that have not already been initialized by an
     // earlier "../controllers/*" module.
