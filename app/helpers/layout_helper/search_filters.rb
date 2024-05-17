@@ -54,14 +54,26 @@ module LayoutHelper::SearchFilters
           reverse[:suffix] ||= SortOrder::REVERSE_SUFFIX
           reverse[:except] &&= Array.wrap(reverse[:except])
         end
-        default   = cfg[:default] || cfg[:_default]
-        values    = cfg[:values]  || cfg[:menu]&.values
-        default ||= EnumType.default_for(values) if values.is_a?(Symbol)
-        values    = EnumType.pairs_for(values)   if values.is_a?(Symbol)
-        default ||= values.default               if values.is_a?(EnumType)
-        values    = values.pairs                 if values.is_a?(EnumType)
-        values    = values.map(&:to_s)           if values.is_a?(Array)
-        default   = default.to_sym               if default.is_a?(String)
+        default = cfg[:default] || cfg[:_default]
+        values  = cfg[:values]  || cfg[:menu]&.values
+        values  = values.to_sym if values.is_a?(String)
+        case values
+          when Symbol
+            default ||= EnumType.default_for(values)
+            default   = default.to_sym if default.is_a?(String)
+            values    = EnumType.pairs_for(values)
+          when EnumType
+            default ||= values.default
+            default   = default.to_sym if default.is_a?(String)
+            values    = values.pairs
+          when Array
+            default   = default.to_s unless default.is_a?(String)
+            values    = values.map(&:to_s).map { |v| [v, v] }.to_h
+          when Hash
+            # Already present as label/value pairs.
+          else
+            Log.error("search_filters.#{menu_name}.values: #{values.inspect}")
+        end
         cfg[:values]  = values.presence
         cfg[:default] = default.presence
       end
