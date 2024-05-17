@@ -36,6 +36,7 @@ module BaseDecorator::Menu
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see RouteHelper#get_path_for
+  # @see TestHelper::SystemTests::Common#item_menu_select
   #
   def items_menu(
     action:      nil,

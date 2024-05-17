@@ -206,12 +206,12 @@ class UploadsTest < ApplicationSystemTestCase
       assert_selector '.uploaded-filename.complete', wait: 5
 
       # Add field data.
-      select 'EMMA',            from: 'value-Repository'
-      select 'Moving Image',    from: 'value-Type'
-      select 'RTF',             from: 'value-Format'
-      select 'True',            from: 'value-Complete'
-      select 'Born Accessible', from: 'value-Status'
-      check  'Armenian'         # inside 'value-Language'
+      menu_select 'EMMA',            from: 'value-Repository'
+      menu_select 'Moving Image',    from: 'value-Type'
+      menu_select 'RTF',             from: 'value-Format'
+      menu_select 'True',            from: 'value-Complete'
+      menu_select 'Born Accessible', from: 'value-Status'
+      check       'Armenian'         # inside 'value-Language'
       fill_in 'value-Identifier', with: '' # remove bogus identifier
       fill_in 'value-Title',      with: "#{title } - #{tag}"
       fill_in 'value-Creator',    with: "#{author} - #{tag}"

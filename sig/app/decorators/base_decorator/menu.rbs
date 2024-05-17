@@ -24,6 +24,7 @@ module BaseDecorator::Menu
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see RouteHelper#get_path_for
+  # @see TestHelper::SystemTests::Common#item_menu_select
   #
   def items_menu: (?action: Symbol|String|nil, ?constraints: symHash|nil, ?secondary: bool|nil, ?sort: symHash|nil, ?prompt: String|nil, ?table: symHash|nil, ?id: String|nil, ?name: String|Symbol, ?ujs: String|symHash, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 

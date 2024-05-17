@@ -169,6 +169,9 @@ group :test do
   gem 'capybara-lockstep'
   gem 'selenium-webdriver'
 
+  # For Select2 menus.
+  gem 'capybara-select-2'
+
   # For test coverage.
   gem 'simplecov'
 

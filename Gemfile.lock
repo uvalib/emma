@@ -136,6 +136,7 @@ GEM
       capybara (>= 3.0)
       ruby2_keywords
       selenium-webdriver (>= 4.0)
+    capybara-select-2 (0.5.1)
     cgi (0.4.1)
     coercible (1.0.0)
       descendants_tracker (~> 0.0.1)
@@ -407,6 +408,7 @@ DEPENDENCIES
   cancancan
   capybara
   capybara-lockstep
+  capybara-select-2
   cssbundling-rails
   csv
   declarative-option (~> 0.1.0)

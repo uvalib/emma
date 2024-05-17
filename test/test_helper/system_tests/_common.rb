@@ -195,12 +195,37 @@ module TestHelper::SystemTests::Common
   # @param [String] name
   # @param [Hash]   opt               Passed to Capybara::Node::Actions#select
   #
-  # @return [Capybara::Node::Element]
+  # @return [void]
+  #
+  # @see BaseDecorator::Menu#items_menu
   #
   def item_menu_select(value, name:, **opt)
-    menu = all(%Q(select[name="#{name}"])).last
-    # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-    select value, from: menu[:id], **opt
+    selector = %Q{select[name="#{name}"]:not([data-secondary])}
+    menu_select(value, from: selector, **opt)
+  end
+
+  # Select a menu item either from a simple HTML `<select>` menu or one that
+  # is managed by Select2.
+  #
+  # @param [String] value
+  # @param [String] from
+  # @param [Hash]   opt               Passed to Capybara::Node::Finders#find
+  #
+  # @return [void]
+  #
+  def menu_select(value, from:, **opt)
+    opt[:exact_text] = true unless opt.key?(:exact_text)
+    case from
+      when /^select/ then selector = from
+      when /^\[/     then selector = "select#{from}"
+      else                selector = "select##{from}"
+    end
+    menu = find(selector, **opt)
+    if menu[:class]&.split(' ')&.include?('select2-hidden-accessible')
+      select2(value, css: "#{selector} + .select2-container", **opt)
+    else
+      menu.select(value, **opt)
+    end
   end
 
   # ===========================================================================

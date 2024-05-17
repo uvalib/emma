@@ -359,6 +359,10 @@ module Capybara
   end
 end
 
+module CapybaraSelect2
+  def select2: (*untyped args) -> void
+end
+
 # NOTE: why is RubyMine not using plugins/ruby/rubystubs/rubystubs33/exception.rb
 class Comparable
 end

@@ -19,6 +19,7 @@ require 'capybara-lockstep'
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 
   include TestHelper::SystemTests
+  include CapybaraSelect2
 
   if NO_JAVASCRIPT
 

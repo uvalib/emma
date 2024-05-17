@@ -11,6 +11,8 @@
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   include TestHelper::SystemTests
 
+  include CapybaraSelect2
+
   HEADLESS: bool
 
   BROWSER: Symbol

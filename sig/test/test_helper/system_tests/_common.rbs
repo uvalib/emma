@@ -116,9 +116,22 @@ module TestHelper::SystemTests::Common
   # @param [String] name
   # @param [Hash]   opt               Passed to Capybara::Node::Actions#select
   #
-  # @return [Capybara::Node::Element]
+  # @return [void]
   #
-  def item_menu_select: (String value, String name, **untyped opt) -> Capybara::Node::Element
+  # @see BaseDecorator::Menu#items_menu
+  #
+  def item_menu_select: (String value, String name, **untyped opt) -> void
+
+  # Select a menu item either from a simple HTML `<select>` menu or one that
+  # is managed by Select2.
+  #
+  # @param [String] value
+  # @param [String] from
+  # @param [Hash]   opt               Passed to Capybara::Node::Finders#find
+  #
+  # @return [void]
+  #
+  def menu_select: (String value, String from, **untyped opt) -> void
 
   # Return the variant of the action which indicates generation of a menu.
   #
