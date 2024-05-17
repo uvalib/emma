@@ -126,14 +126,20 @@ export function delayedBy(wait, callback) {
 /**
  * Set an event handler without concern that it may already set.
  *
- * @param {Selector}           element
- * @param {string}             name         Event name.
- * @param {jQueryEventHandler} callback     Event handler.
+ * @param {Selector}                                element
+ * @param {string}                                  name        Event name.
+ * @param {jQueryEventHandler|jQueryEventHandler[]} callback    Event handlers.
  *
  * @returns {jQuery}
  */
 export function handleEvent(element, name, callback) {
-    return $(element).off(name, callback).on(name, callback);
+    const $element = $(element);
+    if (Array.isArray(callback)) {
+        callback.forEach(cb => $element.off(name, cb).on(name, cb));
+    } else {
+        $element.off(name, callback).on(name, callback);
+    }
+    return $element;
 }
 
 /**

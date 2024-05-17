@@ -121,6 +121,13 @@ $control-height:         2.25rem;
 
         @include header.control-interior;
 
+        // A Select2 single-select control instance.
+        .select2-selection--single {
+            .select2-selection__rendered {
+                padding-left: 4px;
+            }
+        }
+
         // After Select2 initializes, multi-select `<select>` elements will be
         // visually hidden in favor of the replacement that Select2 manages.
         // Since there is a noticeable span of time between the initial page
@@ -710,19 +717,20 @@ $control-height:         2.25rem;
                 margin-right: calc(3 * $gap-x);
             }
 
-            > * {
-                min-height: $control-height;
-            }
-
             select {
-                height: 2rem;
-                width:  100%;
+                height:      2rem;
+                width:       100%;
+                font-size:   larger;
             }
 
             input[type="date"] {
                 height:      1.75rem;
                 width:       97.5%;
                 font-family: inherit;
+            }
+
+            .select2-selection--single {
+                padding-top:   2px;
             }
 
             .select2-selection--multiple {

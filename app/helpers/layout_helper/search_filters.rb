@@ -754,7 +754,7 @@ module LayoutHelper::SearchFilters
 
     # Setup the <select> menu element.
     option_tags = options_for_select(pairs, selected)
-    select_opt  = { 'data-placeholder': any_label, 'data-default': default }
+    select_opt  = { 'data-unset': any_label, 'data-default': default }
     select_opt[:'aria-labelledby'] = label_id              if label_id
     select_opt[:multiple]          = multiple              if multiple
     select_opt[:disabled]          = disabled              if disabled
@@ -762,7 +762,7 @@ module LayoutHelper::SearchFilters
     menu = select_tag(url_prm, option_tags, select_opt)
 
     # Add CSS classes which indicate the position of the control.
-    prepend_grid_cell_classes!(opt, css, mode, **local)
+    prepend_grid_cell_classes!(opt, css, mode, 'advanced', **local)
     if immediate_search?
       search_form(target, url_prm, **opt) { menu }
     else

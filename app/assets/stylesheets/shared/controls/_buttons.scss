@@ -3,6 +3,7 @@
 // Definitions supporting button controls.
 
 @use 'shared/variables' as v;
+@use 'shared/functions' as f;
 @use 'shared/mixins'    as x;
 
 // ============================================================================
@@ -67,6 +68,18 @@
     }
 
     @include x.hover-highlight;
+}
+
+/// Style like a dropdown menu control button.
+///
+@mixin menu {
+
+    @include x.control-shadow;
+
+    font-size:     large;
+    background:    f.lighter(v.$button-accent, 90%);
+    border:        1px solid v.$uppy-file-input;
+    border-radius: 0.25rem;
 }
 
 /// Make a link look and act like a browser button.

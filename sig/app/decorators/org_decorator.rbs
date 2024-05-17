@@ -130,4 +130,14 @@ class OrgDecorator
   # @return [Hash]
   #
   def form_hidden: (**untyped opt) -> symHash
+
+  # Single-select menu - dropdown.
+  #
+  # @param [String] name
+  # @param [Array]  value
+  # @param [Hash]   opt               Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_form_menu_single: (String name, anyArray value, **untyped opt) -> ActiveSupport::SafeBuffer
 end

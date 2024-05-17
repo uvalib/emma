@@ -3,11 +3,11 @@
 
 import { AppDebug }                       from '../application/debug';
 import { appSetup }                       from '../application/setup';
-import { arrayWrap, maxSize }             from '../shared/arrays';
+import { arrayWrap }                      from '../shared/arrays';
 import { Emma }                           from '../shared/assets';
 import { debounce, handleEvent, isEvent } from '../shared/events';
 import { turnOffAutocomplete }            from '../shared/form';
-import { compact, deepFreeze, toObject }  from '../shared/objects';
+import { compact, deepFreeze }            from '../shared/objects';
 import { randomizeName }                  from '../shared/random';
 import { urlParameters }                  from '../shared/url';
 import {
@@ -27,6 +27,12 @@ import {
     isPresent,
     notDefined,
 } from '../shared/definitions';
+import {
+    DATA_ORIGINAL,
+    getOriginalMenuValue,
+    initializeMenuControls,
+    setOriginalMenuValue,
+} from "../shared/menu";
 
 
 const MODULE = 'AdvancedSearch';
@@ -142,80 +148,6 @@ appSetup(MODULE, function() {
     const DEBOUNCE_DELAY = 1000; // milliseconds
 
     // ========================================================================
-    // Constants - multi-select menus
-    // ========================================================================
-
-    /**
-     * Selector for `<select>` elements managed by Select2.
-     *
-     * @readonly
-     * @type {string}
-     */
-    const SELECT2_MULTI_SELECT = '.select2-hidden-accessible';
-
-    /**
-     * Events exposed by Select2.
-     *
-     * @readonly
-     * @type {string[]}
-     */
-    const MULTI_SELECT_EVENTS = deepFreeze([
-        'change',
-        'change.select2',
-        'select2:clearing',
-        'select2:clear',
-        'select2:opening',
-        'select2:open',
-        'select2:selecting',
-        'select2:select',
-        'select2:unselecting',
-        'select2:unselect',
-        'select2:closing',
-        'select2:close'
-    ]);
-
-    /**
-     * The length of the longest Select2 event name.
-     *
-     * @readonly
-     * @type {number}
-     *
-     * @see logSelectEvent
-     */
-    const MULTI_SELECT_EVENTS_WIDTH = maxSize(MULTI_SELECT_EVENTS);
-
-    // noinspection JSUnusedLocalSymbols
-    /**
-     * Select2 events which precede the change which causes a new search to be
-     * performed.
-     *
-     * @readonly
-     * @type {string[]}
-     */
-    const PRE_CHANGE_EVENTS =
-        deepFreeze(['select2:selecting', 'select2:unselecting']);
-
-    /**
-     * Select2 events which follow a change which causes a new search to be
-     * performed.
-     *
-     * @readonly
-     * @type {string[]}
-     */
-    const POST_CHANGE_EVENTS =
-        deepFreeze(['select2:select', 'select2:unselect']);
-
-    /**
-     * Select2 events which should detect whether to suppress the opening of
-     * the drop-down menu.
-     *
-     * @readonly
-     * @type {string[]}
-     */
-    const CHECK_SUPPRESS_MENU_EVENTS =
-        deepFreeze(['select2:opening']);
-
-    // ========================================================================
     // Variables
     // ========================================================================
 
@@ -308,22 +240,6 @@ appSetup(MODULE, function() {
     const $search_filters = $filter_controls.find(SEARCH_FILTER);
 
     /**
-     * Single-select dropdown menus.
-     *
-     * @type {jQuery}
-     */
-    const $single_select_menus =
-        $search_filters.filter('.single').children('select');
-
-    /**
-     * Multi-select dropdown menus.
-     *
-     * @type {jQuery}
-     */
-    const $multi_select_menus =
-        $search_filters.filter('.multiple').children('select');
-
-    /**
      * Indicate whether search filters take immediate effect (causing a new
      * search using the selected value).
      *
@@ -344,7 +260,6 @@ appSetup(MODULE, function() {
             toggleHidden($advanced_toggle, true);
             toggleHidden($reset_button,    true);
         } else {
-
             guaranteeSearchButton();
             reorderSearchControls();
 
@@ -372,21 +287,13 @@ appSetup(MODULE, function() {
                     setFilterPanelState(is_open);
                 }
             }
-
-            initializeSingleSelect();
-            initializeMultiSelect();
         }
 
         const url_params = urlParameters();
         initializeSearchTerms(url_params);
         initializeSearchFilters(url_params);
-
-        if (IMMEDIATE_SEARCH) {
-            initializeSearchFormParams();
-            initializeSearchFilterParams();
-            persistImmediateSearch();
-        }
-
+        initializeImmediateSearch();
+        initializeMenus();
         updateSearchReady();
         monitorSearchFields();
         turnOffAutocomplete($search_input);
@@ -479,19 +386,28 @@ appSetup(MODULE, function() {
             const name  = $menu.attr('name');
             const type  = name.replace('[]', '');
             const param = params[type] || $menu.attr('data-default');
-            let value;
-            if ((type === name) && Array.isArray(param)) {
-                value = param.pop();
-            } else {
-                value = param;
-            }
-            if (value !== $menu.val()) {
-                $menu.val(value);
-                if ($menu.is(SELECT2_MULTI_SELECT)) {
-                    initializeSelect2Menu($menu);
-                }
-            }
+            const array = (type === name) && Array.isArray(param);
+            const value = array ? param.pop() : param;
+            $menu.val(value);
         });
+    }
+
+    /**
+     * Initialize search filter menus.
+     *
+     * NOTE: This must be invoked after URL parameters have been processed.
+     *
+     * @param {boolean} [immediate]
+     */
+    function initializeMenus(immediate = IMMEDIATE_SEARCH) {
+        /** @type {MenuOptions} */
+        const opt = { on_change: updateSearchReady };
+        if (immediate) {
+            opt.immediate = preChange;
+        } else {
+            opt.form_id   = getSearchForm().attr('id');
+        }
+        initializeMenuControls($search_filters, opt);
     }
 
     /**
@@ -533,6 +449,23 @@ appSetup(MODULE, function() {
         });
     }
 
+    // ========================================================================
+    // Functions - initialization -- immediate mode
+    // ========================================================================
+
+    /**
+     * Initialize operation for immediate action when a filter is selected.
+     *
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is **true**.
+     */
+    function initializeImmediateSearch() {
+        if (!IMMEDIATE_SEARCH) { return }
+        OUT.debug('initializeImmediateSearch');
+        initializeSearchFormParams();
+        initializeSearchFilterParams();
+        persistImmediateSearch();
+    }
+
     /**
      * Add *immediate=true* as a hidden input to the search form and all
      * filter controls (menu form wrappers).
@@ -546,6 +479,20 @@ appSetup(MODULE, function() {
         const value = 'true';
         addHiddenInputTo($form, value, { name: name, id: `${id}-${name}` });
         setSearchFilterParams(name, value);
+    }
+
+    /**
+     * Actions before a multi-select menu selection is changed.
+     *
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is **true**.
+     *
+     * @param {ElementEvt} event
+     */
+    function preChange(event) {
+        const $menu = $(event.currentTarget || event.target);
+        OUT.debug('preChange: $menu =', $menu);
+        // setSearchFormParamsFromFilters($menu);
+        // setSearchFilterParamsFromFilters($menu);
     }
 
     // ========================================================================
@@ -947,7 +894,7 @@ appSetup(MODULE, function() {
      * @param {Selector}        target          Passed to {@link getSearchRow}
      * @param {string|string[]} [new_terms]     New search terms (default: '').
      * @param {string}          [caller]        For logging.
-     * @param {boolean}         [set_original]  If true update *data-original*.
+     * @param {boolean}         [set_original]  Update {@link DATA_ORIGINAL}.
      *
      * @returns {string|undefined}
      */
@@ -970,15 +917,15 @@ appSetup(MODULE, function() {
         updateSearchClear($input);
 
         if (notDefined(set_original)) {
-            const original = $input.attr('data-original');
+            const original = $input.attr(DATA_ORIGINAL);
             if (notDefined(original)) {
-                $input.attr('data-original', '');
+                $input.attr(DATA_ORIGINAL, '');
             } else if (terms === original) {
                 terms = undefined;
             }
             updateSearchReady();
         } else if (set_original) {
-            $input.attr('data-original', terms);
+            $input.attr(DATA_ORIGINAL, terms);
         }
         return terms;
     }
@@ -1081,8 +1028,8 @@ appSetup(MODULE, function() {
             if (!name) {
                 skip = 'ignored';
             } else if (new_only) {
-                const original_value = $input.attr('data-original') || '';
-                const original_type  = $menu.attr('data-original');
+                const original_value = $input.attr(DATA_ORIGINAL) || '';
+                const original_type  = getOriginalMenuValue($menu);
                 if (original_type && (type !== original_type)) {
                     // Whatever the value, if the type has changed then this
                     // constitutes a new search, so this type should appear in
@@ -1094,7 +1041,7 @@ appSetup(MODULE, function() {
                 } else if (hidden) {
                     skip = 'hidden';
                 } else if (value === original_value) {
-                    skip = `"${value}" same as data-original`;
+                    skip = `"${value}" same as ${DATA_ORIGINAL}`;
                 }
             } else if (hidden) {
                 skip = 'hidden';
@@ -1151,7 +1098,7 @@ appSetup(MODULE, function() {
      * @param {Selector}        target          Passed to {@link getSearchRow}
      * @param {string}          new_type        Sets the new search type.
      * @param {string}          [caller]        For logging.
-     * @param {boolean}         [set_original]  If true update *data-original*.
+     * @param {boolean}         [set_original]  Update {@link DATA_ORIGINAL}.
      *
      * @returns {string|undefined}
      */
@@ -1172,15 +1119,15 @@ appSetup(MODULE, function() {
         $input.siblings(SEARCH_TYPE_LABEL).html(config.label);
 
         if (notDefined(set_original)) {
-            const original = $menu.attr('data-original');
+            const original = getOriginalMenuValue($menu);
             if (notDefined(original)) {
-                $menu.attr('data-original', '');
+                setOriginalMenuValue($menu, '');
             } else if (type === original) {
                 type = undefined;
             }
             updateSearchReady();
         } else if (set_original) {
-            $menu.attr('data-original', type);
+            setOriginalMenuValue($menu, type);
         }
         return type;
     }
@@ -1191,7 +1138,7 @@ appSetup(MODULE, function() {
      * @param {ElementEvt} event
      */
     function updatedSearchType(event) {
-        const func   = 'updatedSearchType';
+        const func   = 'updatedSearchType'; OUT.debug(`${func}:`, event);
         const target = event.currentTarget || event.target;
         const $menu  = getSearchInputSelect(target);
         const type   = $menu.val();
@@ -1244,7 +1191,7 @@ appSetup(MODULE, function() {
      * @returns {{type: string, query: string|string[]}}
      */
     function allSearchFilters(target, caller, new_only) {
-        const func    = caller || 'allSearchFilters';
+        const func    = caller || 'allSearchFilters'; OUT.debug(func);
         const filters = {}
         const array   = (item) => {
             if (isEmpty(item))       { return [] }
@@ -1265,12 +1212,12 @@ appSetup(MODULE, function() {
             } else if (isHidden($ctrl)) {
                 skip = 'hidden';
             } else if (new_only) {
-                const original = $menu.attr('data-original');
+                const original = getOriginalMenuValue($menu);
                 const val      = value.toString();
                 if (notDefined(original) && !val) {
                     skip = 'empty value';
                 } else if (val === array(original).toString()) {
-                    skip = `"${val}" same as data-original`;
+                    skip = `"${val}" same as ${DATA_ORIGINAL}`;
                 }
             }
 
@@ -1297,226 +1244,8 @@ appSetup(MODULE, function() {
      * @returns {{type: string, query: string|string[]}}
      */
     function newSearchFilters(target) {
-        return allSearchFilters(target, 'newSearchFilters', true);
-    }
-
-    // ========================================================================
-    // Functions - search filters - menus
-    // ========================================================================
-
-    /**
-     * Initialize single-select menus.
-     */
-    function initializeSingleSelect() {
-        const $menus = $single_select_menus;
-        initializeGenericMenu($menus);
-        handleEvent($menus, 'change', updateSearchReady);
-    }
-
-    /**
-     * Initialize Select2 for multi-select menus.
-     *
-     * @see https://select2.org/configuration/options-api
-     * @see https://select2.org/programmatic-control/events
-     */
-    function initializeMultiSelect() {
-        const $menus = $multi_select_menus.not(SELECT2_MULTI_SELECT);
-        if (isMissing($menus)) {
-            OUT.debug('initializeMultiSelect: none found');
-            return;
-        }
-        initializeGenericMenu($menus);
-        initializeSelect2Menu($menus);
-
-        if (OUT.debugging()) {
-            MULTI_SELECT_EVENTS.forEach(type => {
-                handleEvent($menus, type, logSelectEvent);
-            });
-        }
-
-        POST_CHANGE_EVENTS.forEach(type => {
-            handleEvent($menus, type, updateSearchReady);
-        });
-
-        if (IMMEDIATE_SEARCH) {
-/*
-            PRE_CHANGE_EVENTS.forEach(type => {
-                handleEvent($menus, type, preChange);
-            });
-*/
-            POST_CHANGE_EVENTS.forEach(type => {
-                handleEvent($menus, type, multiSelectPostChange);
-            });
-            CHECK_SUPPRESS_MENU_EVENTS.forEach(type => {
-                handleEvent($menus, type, suppressMenuOpen);
-            });
-        }
-    }
-
-    /**
-     * General menu setup.
-     *
-     * @param {Selector} menu
-     */
-    function initializeGenericMenu(menu) {
-        const form_id = !IMMEDIATE_SEARCH && getSearchForm().attr('id');
-        $(menu).each((_, m) => {
-            const $menu = $(m);
-            const value = $menu.val() || '';
-            $menu.attr('data-original', value);
-            if (form_id) {
-                $menu.attr('form', form_id);
-            }
-        });
-    }
-
-    /**
-     * Setup one or more `<select>` elements managed by Select2.
-     *
-     * @param {Selector} menu
-     */
-    function initializeSelect2Menu(menu) {
-        const $menus = $(menu);
-        $menus.select2({
-            width:      '100%',
-            allowClear: true,
-            debug:      OUT.debugging(),
-            language:   select2Language(),
-        });
-
-        // Nodes which Firefox Accessibility expects to be labelled:
-        const aria_attrs     = ['aria-label', 'aria-labelledby'];
-        const to_be_labelled = '[aria-haspopup], [tabindex]';
-        $menus.each((_, m) => {
-            const $menu = $(m);
-            const attrs = compact(toObject(aria_attrs, a => $menu.attr(a)));
-            if (isPresent(attrs)) {
-                // noinspection JSCheckFunctionSignatures
-                $menu.siblings().find(to_be_labelled).attr(attrs);
-            }
-        });
-    }
-
-    /**
-     * Generate message translations for Select2.
-     *
-     * @returns {object}
-     *
-     * @see https://select2.org/i18n
-     * @see file:node_modules/select2/src/js/select2/i18n/en.js
-     */
-    function select2Language() {
-        const text = {
-          //errorLoading:    'The results could not be loaded.',
-          //inputTooLong:    'Please delete {n} character',
-          //inputTooShort:   'Please enter {n} or more characters',
-          //loadingMore:     'Loading more results…',
-          //maximumSelected: 'You can only select {n} item',
-          //noResults:       'No results found',
-          //searching:       'Searching…',
-            removeAllItems:  Emma.Messages.search_filters.remove_all,
-        };
-        const translations = {};
-        for (const [name, value] of Object.entries(text)) {
-            let fn;
-            switch (name) {
-                case 'inputTooLong':
-                    fn = (args) =>{
-                        const overage = args.input.length - args.maximum;
-                        const result  = value.replace(/{n}/, `${overage}`);
-                        return (overage === 1) ? result : `${result}s`;
-                    };
-                    break;
-                case 'inputTooShort':
-                    fn = (args) =>{
-                        const remaining = args.minimum - args.input.length;
-                        return value.replace(/{n}/, `${remaining}`);
-                    };
-                    break;
-                case 'maximumSelected':
-                    fn = (args) =>{
-                        const limit  = args.maximum;
-                        const result = value.replace(/{n}/, limit);
-                        return (limit === 1) ? result : `${result}s`;
-                    };
-                    break;
-                default:
-                    fn = () => value;
-                    break;
-            }
-            translations[name] = fn;
-        }
-        return translations;
-    }
-
-/*
-    /!**
-     * Actions before a multi-select menu selection is changed.
-     *
-     * @note Only applicable if {@link IMMEDIATE_SEARCH} is **true**.
-     *
-     * @note Not currently used.
-     *
-     * @param {ElementEvt} event
-     *!/
-    function preChange(event) {
-        const $menu = $(event.currentTarget || event.target);
-        // setSearchFormParamsFromFilters($menu);
-        // setSearchFilterParamsFromFilters($menu);
-    }
-*/
-
-    /**
-     * Cause the current event to be remembered for coordination with
-     * {@link suppressMenuOpen}.
-     *
-     * @note Only applicable if {@link IMMEDIATE_SEARCH} is **true**.
-     *
-     * @param {ElementEvt} event
-     */
-    function multiSelectPostChange(event) {
-        const $menu = $(event.currentTarget || event.target);
-        $menu.prop('ongoing-event', event.type);
-    }
-
-    /**
-     * If in the midst of an ongoing event (adding or removing a selection)
-     * then suppress the opening of the menu. <p/>
-     *
-     * This way, deselecting a facet selection performs its action without the
-     * unnecessary opening-and-closing of the drop down menu.
-     *
-     * @note Only applicable if {@link IMMEDIATE_SEARCH} is **true**.
-     *
-     * @param {ElementEvt} event
-     */
-    function suppressMenuOpen(event) {
-        const $menu = $(event.currentTarget || event.target);
-        if ($menu.prop('ongoing-event')) {
-            event.preventDefault();
-            event.stopImmediatePropagation();
-            $menu.removeProp('ongoing-event').select2('close');
-        }
-    }
-
-    /**
-     * Log a Select2 event.
-     *
-     * @param {ElementEvt} event
-     */
-    function logSelectEvent(event) {
-        const type = `${event.type}`.padEnd(MULTI_SELECT_EVENTS_WIDTH);
-        const menu = event.currentTarget || event.target;
-        let target = '';
-      //if (menu.localName) { target += menu.localName }
-        if (menu.id)        { target += '#' + menu.id }
-      //if (menu.className) { target += '.' + menu.className }
-      //if (menu.type)      { target += `[${menu.type}]` }
-        // noinspection JSCheckFunctionSignatures
-        const $selected = $(menu).siblings().find('[aria-activedescendant]');
-        const selected  = $selected.attr('aria-activedescendant');
-        if (selected) { target += ' ' + selected }
-        OUT.debug('SELECT2', type, target);
+        const func = 'newSearchFilters';
+        return allSearchFilters(target, func, true);
     }
 
     // ========================================================================

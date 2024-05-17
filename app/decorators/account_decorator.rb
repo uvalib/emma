@@ -327,6 +327,7 @@ class AccountDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_form_menu_single(name, value, **opt)
+    append_css!(opt, 'menu-control', 'advanced')
     form_menu_role_constraints!(opt)
     super(name, value, **opt)
   end

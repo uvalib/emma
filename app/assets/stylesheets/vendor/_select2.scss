@@ -2,26 +2,42 @@
 
 // @use '../../../node_modules/select2/dist/css/select2.css';
 
-@use 'shared/variables' as *;
-@use 'shared/mixins'    as *;
+@use 'shared/variables'        as *;
+@use 'shared/mixins'           as *;
+@use 'shared/controls/buttons' as button;
 
 //=============================================================================
 // Overrides of Select2 styles (node_modules/select2/dist/css/select2.css)
 //=============================================================================
 
-.select2-results__options {
-    overscroll-behavior: contain;
-}
-
-.select2-container--default {
+.select2-container {
 
     // Although it's not present in select2.min.css, this wrapper is generated
     // by Select2 and needs to be adjusted so that .select2-selection--multiple
     // is sized according to the containing element.
     .selection {
-        display: inline-block;
+        display: block;
         height:  inherit;
         width:   inherit;
+    }
+}
+
+.select2-results__options {
+    overscroll-behavior: contain;
+}
+
+// Styles applied when using the default Select2 theme.
+.select2-container--default {
+
+    // A single-select control instance.
+    .select2-selection--single {
+
+        height: auto;
+
+        // @see initializeSingleSelectMenus()
+        .select2-selection__placeholder {
+            color: $fg-color;
+        }
     }
 
     // A multi-select control instance.
@@ -89,62 +105,77 @@
             }
         }
     }
-}
 
-// When the menu is dropped-down, Select2 dynamically appends the container
-// element to the end of <body>.
-.select2-container--open {
-
-    // The dropped-down menu used as a replacement for <select> drop-down and
-    // appended to <body>.
+    // The element appended to <body> which is used as a replacement for open
+    // <select> dropdown menu.
     .select2-dropdown {
-        min-width: max-content; // Needed if page zoomed.
-    }
 
-    .select2-results > .select2-results__options {
-        max-height: 20vh;
-    }
+        // Dropdown menu items that are selected or could be selected.
+        .select2-results__option--selectable {
 
-    // Drop-down menu items that are selected or could be selected.
-    .select2-results__option--selectable {
+            // Setup so that ::after content is pushed to the right while still
+            // allowing the appended check mark to align with the first line of
+            // the value in the case of values which must be wrapped.
 
-        // Setup so that ::after content is pushed to the right while still
-        // allowing the appended check mark to align with the first line of the
-        // value in the case of values which must be wrapped.
-        display:         flex;
-        flex-direction:  row;
-        justify-content: space-between;
-        align-items:     baseline;
-        line-height:     1.25;
+            display:         flex;
+            flex-direction:  row;
+            justify-content: space-between;
+            align-items:     baseline;
+            line-height:     1.25;
 
-        // A currently-selected value within the drop-down menu.
-        &.select2-results__option--selected {
+            // Currently-selected item(s) of a dropdown menu.
+            &.select2-results__option--selected {
 
-            // Annotate currently-selected values with a checkmark.
-            &::after {
-                content: $CHECK;
-            }
+                // Annotate currently-selected item(s) with a checkmark.
+                &::after {
+                    content: $CHECK;
+                }
 
-            // When hovering over a selected value indicate that clicking will
-            // remove it.
-            &.select2-results__option--highlighted::after {
-                content: $HEAVY_X;
-            }
-
-            // Present currently-selected values in a different color as well
-            // (unless being hovered over).
-            &:not(.select2-results__option--highlighted) {
-                background-color: $selected-bg;
+                // Present currently-selected item(s) in a different color
+                // (unless being hovered over).
+                &:not(.select2-results__option--highlighted) {
+                    background-color: $selected-bg;
+                }
             }
         }
 
-        // An unselected value within the drop-down menu.
-        &:not(.select2-results__option--selected) {
+        //=====================================================================
+        // Variations
+        //=====================================================================
 
-            // When hovering over an unselected value indicate that clicking
-            // will add it.
-            &.select2-results__option--highlighted::after {
-                content: $CHECK;
+        // The dropdown generated for a single-select menu.
+        &.single {
+
+            // Dropdown menu items that are selected or could be selected.
+            .select2-results__option--selectable {
+
+                // An unselected item within a dropdown menu.
+                &:not(.select2-results__option--selected) {
+
+                    // When hovering over an unselected item indicate that
+                    // clicking will add it.
+                    &.select2-results__option--highlighted::after {
+                        content: $CHECK;
+                    }
+                }
+            }
+        }
+
+        // The dropdown generated for a multi-select menu.
+        &.multiple {
+
+            // Dropdown menu items that are selected or could be selected.
+            .select2-results__option--selectable {
+
+                // Currently-selected item(s) of a dropdown menu.
+                &.select2-results__option--selected {
+
+                    // When hovering over a selected item indicate that
+                    // clicking will remove it.
+                    &.select2-results__option--highlighted::after {
+                        content: $HEAVY_X;
+                    }
+                }
             }
         }
     }

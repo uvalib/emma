@@ -130,7 +130,7 @@ en:
             min:        0
             max:        ~
             label:      'Format'
-            tooltip:    'Limit by remediated content type'
+            tooltip:    'Limit to one or more remediated content types'
 
           format_feature:
             min:        0

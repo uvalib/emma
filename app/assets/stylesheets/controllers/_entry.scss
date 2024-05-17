@@ -332,18 +332,19 @@ form.select-entry {
 
     select {
 
-        @include control-shadow;
+        @include button.menu;
 
-        max-width:     100%;
-        padding:       2px;
-        font-size:     large;
-        background:    lighter($button-accent, 90%);
-        border:        1px solid #14457f;
-        border-radius: 0.125rem;
+        width:   max-content;
+        padding: 2px;
+    }
 
-        option:first-of-type {
-            //display: none;
-        }
+    // A Select2 single-select control instance.
+    .select2-selection--single {
+        @include button.menu;
+    }
+
+    .select2-selection__rendered {
+        display: inline-block;
     }
 }
 

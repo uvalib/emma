@@ -23,6 +23,7 @@ module BaseDecorator::Menu
   #
   # @param [Symbol, String, nil] action      Default: `context[:action]`
   # @param [Hash, nil]           constraints
+  # @param [Boolean, nil]        secondary
   # @param [Hash, nil]           sort
   # @param [String, nil]         prompt
   # @param [Hash{Symbol=>Hash}]  table
@@ -39,6 +40,7 @@ module BaseDecorator::Menu
   def items_menu(
     action:      nil,
     constraints: nil,
+    secondary:   nil,
     sort:        nil,
     prompt:      nil,
     table:       nil,
@@ -65,19 +67,21 @@ module BaseDecorator::Menu
     id     ||= unique_id(name)
     l_opt    = { for: id, class: 'sr-only' }
     label    = h.label_tag(name, prompt, l_opt)
-
-    sort = sort.dup         if sort.is_a?(Hash)
-    sort = {}               if sort.nil?
-    sort = { sort => :asc } unless sort.is_a?(Hash)
-    sort.merge!(created_at: :desc)
-    cons = constraints || {}
-    menu = model.pairs(sort: sort, **cons) { |r| [items_menu_label(r), r.id] }
-
     prompt ||= items_menu_prompt
-    ujs      = { onchange: ujs } unless ujs.is_a?(Hash)
-    s_opt    = { id: id, name: name, prompt: prompt, **ujs }
-    menu     = h.options_for_select(menu)
-    menu     = h.select_tag(name, menu, s_opt)
+
+    sort  = sort.dup         if sort.is_a?(Hash)
+    sort  = {}               if sort.nil?
+    sort  = { sort => :asc } unless sort.is_a?(Hash)
+    sort.merge!(created_at: :desc)
+    cons  = constraints || {}
+    pairs = model.pairs(sort: sort, **cons) { |r| [items_menu_label(r), r.id] }
+    pairs = h.options_for_select(pairs)
+
+    ujs   = { onchange: ujs } unless ujs.is_a?(Hash)
+    s_opt = { id: id, name: name, prompt: prompt, **ujs }
+    s_opt.merge!(class: 'advanced single')
+    s_opt.merge!('data-secondary': true) if secondary
+    menu  = h.select_tag(name, pairs, s_opt)
 
     opt[:method] ||= :get
     prepend_css!(opt, css)

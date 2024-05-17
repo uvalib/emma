@@ -11,6 +11,7 @@ module BaseDecorator::Menu
   #
   # @param [Symbol, String, nil] action      Default: `context[:action]`
   # @param [Hash, nil]           constraints
+  # @param [Boolean, nil]        secondary
   # @param [Hash, nil]           sort
   # @param [String, nil]         prompt
   # @param [Hash{Symbol=>Hash}]  table
@@ -24,7 +25,7 @@ module BaseDecorator::Menu
   #
   # @see RouteHelper#get_path_for
   #
-  def items_menu: (?action: Symbol|String|nil, ?constraints: symHash|nil, ?sort: symHash|nil, ?prompt: String|nil, ?table: symHash|nil, ?id: String|nil, ?name: String|Symbol, ?ujs: String|symHash, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+  def items_menu: (?action: Symbol|String|nil, ?constraints: symHash|nil, ?secondary: bool|nil, ?sort: symHash|nil, ?prompt: String|nil, ?table: symHash|nil, ?id: String|nil, ?name: String|Symbol, ?ujs: String|symHash, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # @private
   ITEM_PROMPT: String

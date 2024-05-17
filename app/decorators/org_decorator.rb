@@ -232,6 +232,19 @@ class OrgDecorator
     end
   end
 
+  # Single-select menu - dropdown.
+  #
+  # @param [String]      name
+  # @param [Array]       value
+  # @param [Hash]        opt          Passed to super
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_form_menu_single(name, value, **opt)
+    append_css!(opt, 'menu-control', 'advanced')
+    super(name, value, **opt)
+  end
+
 end
 
 __loading_end(__FILE__)
