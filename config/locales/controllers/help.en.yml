@@ -393,7 +393,7 @@ en:
           asset:        'help/drop_down.png'
           alt:
             >-
-            Opened search format drop-down menu with "DAISY" format selection
+            Opened search format dropdown menu with "DAISY" format selection
             highlighted.
 
         ia_timeout:
@@ -435,14 +435,14 @@ en:
           asset:        'help/search_type_opened.png'
           alt:
             >-
-            Search type menu (opened) with a drop-down list of search types
+            Search type menu (opened) with a dropdown menu of search types
             "ISBN/DOI/etc.", "Title", "Creator", "Publisher", and "Keyword".
 
         shibboleth_login:
           asset:        'help/shibboleth_login.png'
           alt:
             >-
-            The InCommon login form with a drop-down menu to select your
+            The InCommon login form with a dropdown menu to select your
             institution.
 
         # =====================================================================
