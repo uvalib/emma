@@ -66,22 +66,25 @@ module AwsConcern
   # @return [Array<Symbol>]
   #
   def get_aws_repositories(default: nil, **prm)
+    emma     = EmmaRepository.default.to_sym
     values   = params_values(prm, *REPOSITORY_PARAMS).presence
     values ||= default && Array.wrap(default).compact.presence
     if values.nil? || values.include?('*')
-      EmmaRepository.values.map(&:to_sym).excluding(:ace)
+      Api::Common::S3_QUEUE_REPOSITORY.excluding(:ace).sort << emma
     else
-      values.map! { |v|
+      values.map! do |v|
         case v.to_s.downcase
           when 'emma'                    then :emma
           when 'ia', /internet.*archive/ then :internetArchive
           when 'ac', 'ace', /ace/        then :internetArchive
           else Log.debug { "#{__method__}: #{v.inspect}: invalid" }
         end
-      }.compact.uniq
-    end.tap do |result|
-      emma = EmmaRepository.default.to_sym
-      result << emma if result.delete(emma)
+      end
+      values.compact!
+      values.sort!
+      values.uniq!
+      values << emma if values.delete(emma)
+      values
     end
   end
 
