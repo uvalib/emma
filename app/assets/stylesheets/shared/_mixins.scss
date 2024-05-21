@@ -18,8 +18,8 @@
 @mixin width-available($fall-back: 50%) {
     width: $fall-back;
     width: -webkit-fill-available;      // NOTE: valid but flagged by RubyMine
-    width: -moz-available;
-    width: available;
+    width: -moz-available;              // NOTE: valid but flagged by RubyMine
+    width: available;                   // NOTE: valid but flagged by RubyMine
 }
 
 /// Set max width to the available width.
@@ -33,7 +33,7 @@
     max-width: $fall-back;
     max-width: -webkit-fill-available;  // NOTE: valid but flagged by RubyMine
     max-width: -moz-available;          // NOTE: valid but flagged by RubyMine
-    max-width: available;
+    max-width: available;               // NOTE: valid but flagged by RubyMine
 }
 
 /// Set width to fit the content.
@@ -46,7 +46,7 @@
 @mixin width-fit-content($fall-back: auto) {
     width: $fall-back;
     width: -webkit-fit-content;         // NOTE: valid but flagged by RubyMine
-    width: -moz-fit-content;
+    width: -moz-fit-content;            // NOTE: valid but flagged by RubyMine
     width: fit-content;
 }
 
@@ -65,7 +65,7 @@
     height: $fall-back;
     height: -webkit-fill-available;     // NOTE: valid but flagged by RubyMine
     height: -moz-available;             // NOTE: valid but flagged by RubyMine
-    height: available;
+    height: available;                  // NOTE: valid but flagged by RubyMine
 }
 
 /// Set height to fit the content.
