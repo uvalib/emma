@@ -82,9 +82,9 @@ module Api::Shared::TitleMethods
 
   # The title and subtitle of this catalog title.
   #
-  # @return [String]
+  # @return [ActiveSupport::SafeBuffer]
   #
-  def full_title: () -> String
+  def full_title: () -> ActiveSupport::SafeBuffer
 
   # The type of work containing an article (if relevant).
   #
@@ -169,12 +169,6 @@ module Api::Shared::TitleMethods
   # @return [Array<String>]
   #
   def description_list: () -> strArray
-
-  # Sanitizer for catalog title contents.
-  #
-  # @type [Sanitize]
-  #
-  CONTENT_SANITIZE: Sanitize
 
   # The synopsis or description with rudimentary formatting.
   #

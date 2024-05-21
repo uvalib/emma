@@ -105,6 +105,26 @@ module Api::Shared::CommonMethods
   #
   def get_values: (*Symbol fields, ?target: Api::Record|nil) -> strArray
 
+  # HTML elements accepted by #CONTENT_SANITIZE.
+  #
+  # @type [Array<String>]
+  #
+  ALLOWED_ELEMENTS: strArray
+
+  # Sanitizer for catalog title contents.
+  #
+  # @type [Sanitize]
+  #
+  SANITIZE: Sanitize
+
+  # Return HTML with elements limited to #ALLOWED_ELEMENTS.
+  #
+  # @param [String] value
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def sanitized: (String value) -> ActiveSupport::SafeBuffer
+
   # A traversal through the hierarchy rooted at the class instance which
   # holds all of the metadata for a single lookup result item.
   #

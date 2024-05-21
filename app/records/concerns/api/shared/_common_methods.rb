@@ -5,8 +5,13 @@
 
 __loading_begin(__FILE__)
 
+require 'sanitize'
+
 # General shared methods.
 #
+#--
+# noinspection RubyTooManyMethodsInspection
+#++
 module Api::Shared::CommonMethods
 
   include Emma::Common
@@ -190,6 +195,42 @@ module Api::Shared::CommonMethods
       values = meth && Array.wrap(target.try(meth)).compact_blank
       break values.map(&:to_s) if values.present?
     } || []
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # HTML elements accepted by #CONTENT_SANITIZE.
+  #
+  # @type [Array<String>]
+  #
+  ALLOWED_ELEMENTS = %w[
+    b
+    br
+    em
+    i
+    strong
+    sub
+    sup
+  ].freeze
+
+  # Sanitizer for catalog title contents.
+  #
+  # @type [Sanitize]
+  #
+  SANITIZE = Sanitize.new(elements: ALLOWED_ELEMENTS)
+
+  # Return HTML with elements limited to #ALLOWED_ELEMENTS.
+  #
+  # @param [String] value
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def sanitized(value)
+    SANITIZE.fragment(value).html_safe
   end
 
   # ===========================================================================

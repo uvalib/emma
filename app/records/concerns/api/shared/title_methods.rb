@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'sanitize'
-
 # Methods mixed in to record elements related to catalog titles.
 #
 #--
@@ -157,7 +155,7 @@ module Api::Shared::TitleMethods
 
   # The title and subtitle of this catalog title.
   #
-  # @return [String]
+  # @return [ActiveSupport::SafeBuffer]
   #
   def full_title
     ti = title_values&.first
@@ -170,7 +168,7 @@ module Api::Shared::TitleMethods
       # the base title itself.
       ti = "#{ti}: #{st}" unless significant(ti).include?(significant(st))
     end
-    ti || st || '???'
+    sanitized(ti || st || '???')
   end
 
   # ===========================================================================
@@ -312,12 +310,6 @@ module Api::Shared::TitleMethods
 
   public
 
-  # Sanitizer for catalog title contents.
-  #
-  # @type [Sanitize]
-  #
-  CONTENT_SANITIZE = Sanitize.new(elements: %w[br b i em strong])
-
   # The synopsis or description with rudimentary formatting.
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -358,7 +350,7 @@ module Api::Shared::TitleMethods
     text.gsub!(/(<br.>){3,}/,            '<br/><br/>')      # [13]
     text.sub!( /\A(<br.>)+/,             '')                # [14]
     text.sub!( /(<br.>)+\z/,             '')                # [15]
-    CONTENT_SANITIZE.fragment(text).html_safe
+    sanitized(text)
   end
 
   # ===========================================================================
