@@ -19,27 +19,6 @@
     set_page_meta_title(title)
     set_page_description(title)
   end
-
-  label_opt     = { class: 'label' }
-  value_opt     = { class: 'value' }
-
-  usr_label     = t('emma.user.passwords.new.username')
-  usr_label    += ':' unless usr_label.end_with?(':')
-  usr_label_opt = label_opt
-  usr_value_opt = value_opt.merge(autocomplete: 'email')
-
-  submit_label  = t('emma.user.passwords.new.submit')
-  submit_opt    = { class: 'submit-button best-choice' }
-
-  cancel_label  = t('emma.user.passwords.new.cancel')
-  cancel_opt    = { class: 'cancel-button' }
-
-  form_opt = {
-    as:   resource_name,
-    url:  password_path(resource_name),
-    html: { class: 'sign-in-form', method: :post }
-  }
-
 -%>
 
 <%= page_heading(title, help: help) %>
@@ -48,18 +27,6 @@
 <%= render 'devise/shared/error_messages', resource: user %>
 
 <%= page_directions_section %>
-<%= form_for(user, form_opt) do |f| %>
-
-  <div class="field">
-    <%= f.label       :email, usr_label, usr_label_opt %>
-    <%= f.email_field :email, usr_value_opt %>
-  </div>
-
-  <div class="actions">
-    <%= f.submit submit_label, submit_opt %>
-    <%= link_to  cancel_label, :back, cancel_opt %>
-  </div>
-
-<%- end -%>
+<%= render 'user/passwords/reset', page: true %>
 
 <%= page_notes_section %>

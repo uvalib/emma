@@ -1,0 +1,59 @@
+<%# app/views/user/passwords/_reset.html.erb -%>
+<%-
+  # EMMA password reset.
+
+  view_debug(__FILE__)
+
+  user ||= resource || resource_class.new
+  page ||= false
+  inline = !page
+
+  label_opt     = { class: 'label' }
+  value_opt     = { class: 'value' }
+
+  usr_label     = t('emma.user.passwords.new.username')
+  usr_label    += ':' unless page || usr_label.end_with?(':')
+  usr_label_opt = label_opt
+  usr_value_opt = { **value_opt, autocomplete: 'email' }
+
+  submit_label  = t('emma.user.passwords.new.submit')
+  submit_css    = 'submit-button'
+  submit_css    = "#{submit_css} best-choice" if page
+  submit_opt    = { class: submit_css }
+
+  cancel_label  = t('emma.user.passwords.new.cancel')
+  cancel_opt    = { class: 'cancel-button' }
+
+  form_label    = nil
+  form_html     = { class: 'sign-in-form reset' }
+  if inline
+    fl_css      = 'form-label'
+    fl_id       = css_randomize(fl_css)
+    fl_opt      = { class: fl_css, id: fl_id, 'aria-hidden': true }
+    form_label  = t('emma.user.passwords.new.label')
+    form_label  = html_span(form_label, **fl_opt)
+    form_html[:'aria-labelledby'] = fl_id
+    append_css!(form_html, 'inline', 'obscured')
+  end
+  form_opt = {
+    as:   resource_name,
+    url:  password_path(resource_name),
+    html: form_html
+  }
+-%>
+
+<%= form_for(user, form_opt) do |f| %>
+
+  <%= form_label %>
+
+  <div class="field">
+    <%= f.label       :email, usr_label, usr_label_opt %>
+    <%= f.email_field :email, usr_value_opt %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit submit_label, submit_opt %>
+    <%= link_to  cancel_label, :back, cancel_opt if page %>
+  </div>
+
+<%- end -%>

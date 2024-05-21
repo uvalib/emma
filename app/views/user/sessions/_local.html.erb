@@ -1,43 +1,58 @@
 <%# app/views/user/sessions/_local.html.erb -%>
 <%-
-  # Local (EMMA authentication) inline sign-in prompt.
+  # Local (EMMA authentication) sign-in prompt.
 
   view_debug(__FILE__)
 
   user ||= resource || resource_class.new
+  page ||= false
+  inline = !page
 
   label_opt     = { class: 'label' }
   value_opt     = { class: 'value' }
 
   usr_label     = t('emma.user.sessions.sign_in.username')
-  usr_label    += ':' unless usr_label.end_with?(':')
+  usr_label    += ':' unless page || usr_label.end_with?(':')
   usr_label_opt = label_opt
-  usr_value_opt = value_opt.merge(autocomplete: 'email')
+  usr_value_opt = { **value_opt, autocomplete: 'email' }
 
   pwd_label     = t('emma.user.sessions.sign_in.password')
-  pwd_label    += ':' unless pwd_label.end_with?(':')
+  pwd_label    += ':' unless page || pwd_label.end_with?(':')
   pwd_label_opt = label_opt
-  pwd_value_opt = value_opt.merge(autocomplete: 'current-password')
+  pwd_value_opt = { **value_opt, autocomplete: 'current-password' }
 
   submit_label  = t('emma.user.sessions.sign_in.submit')
-  submit_opt    = { class: 'submit-button' }
+  submit_css    = 'submit-button'
+  submit_css    = "#{submit_css} best-choice" if page
+  submit_opt    = { class: submit_css }
 
-  rec_label     = t('emma.user.passwords.new.label')
-  rec_tooltip   = t('emma.user.passwords.new.tooltip', default: nil)
-  rec_opt       = rec_tooltip ? { title: rec_tooltip } : {}
-  rec_url       = new_password_path(resource_name)
+  cancel_label  = t('emma.user.sessions.new.cancel')
+  cancel_opt    = { class: 'cancel-button' }
 
-  fl_id         = css_randomize('form-label')
-  fl_opt        = { class: 'form-label', id: fl_id, 'aria-hidden': true }
-  form_label    = t('emma.user.sessions.sign_in.label')
-  form_label    = html_span(form_label, **fl_opt)
+  reset         = page  && devise_mapping.recoverable?
+  reset_label   = reset && t('emma.user.passwords.new.label')
+  reset_tooltip = reset && t('emma.user.passwords.new.tooltip', default: nil)
+  reset_opt     = reset && reset_tooltip && { title: reset_tooltip } || {}
+  reset_url     = reset && new_password_path(resource_name)
 
+  remember      = devise_mapping.rememberable?
+
+  form_label    = nil
+  form_html     = { class: 'sign-in-form' }
+  if inline
+    fl_css      = 'form-label'
+    fl_id       = css_randomize(fl_css)
+    fl_opt      = { class: fl_css, id: fl_id, 'aria-hidden': true }
+    form_label  = t('emma.user.sessions.sign_in.label')
+    form_label  = html_span(form_label, **fl_opt)
+    form_html[:'aria-labelledby'] = fl_id
+    append_css!(form_html, 'inline', 'obscured')
+  end
   form_opt = {
     as:   resource_name,
     url:  session_path(resource_name),
-    html: { class: 'sign-in-form inline obscured', 'aria-labelledby': fl_id },
+    html: form_html
   }
-
 -%>
 
 <%= form_for(user, form_opt) do |f| %>
@@ -56,15 +71,16 @@
 
   <div class="actions">
     <%= f.submit submit_label, submit_opt %>
+    <%= link_to  cancel_label, :back, cancel_opt if page %>
   </div>
 
-  <%- if devise_mapping.recoverable? -%>
+  <%- if reset -%>
     <div class="links">
-      <%= link_to rec_label, rec_url, rec_opt %>
+      <%= link_to reset_label, reset_url, reset_opt %>
     </div>
   <%- end -%>
 
-  <%- if devise_mapping.rememberable? -%>
+  <%- if remember -%>
     <div class="options">
       <%= f.check_box :remember_me %>
       <%= f.label     :remember_me %>

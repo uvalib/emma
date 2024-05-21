@@ -1,6 +1,7 @@
 // app/assets/stylesheets/controllers/_user_sessions.scss
 
 @use 'shared/variables'        as *;
+@use 'shared/mixins'           as *;
 @use 'shared/controls/buttons' as button;
 
 //=============================================================================
@@ -35,7 +36,6 @@ body.user_sessions {
             [username] 1fr
             [password] 1fr
             [actions]  max-content
-            [links]    1fr
             [options]  1fr;
         gap:        1rem 3rem;
         margin-top: calc(2 * $page-padding-y);
@@ -77,7 +77,7 @@ body.user_sessions {
     }
 
     // @see file:app/views/user/sessions/_local.html.erb
-    // @see file:app/views/user/sessions/_token.html.erb
+    // @see file:app/views/user/passwords/_reset.html.erb
     .sign-in-form.inline {
 
         $bg: ghostwhite;
@@ -124,16 +124,6 @@ body.user_sessions {
             }
         }
 
-        .field + .field,
-        .field + .actions {
-            @media #{$wide-screen} {
-                box-shadow: -2rem 0 0 0 $bg;
-            }
-            @media #{$medium-width} {
-                box-shadow: -0.125rem 0 0 0 $bg;
-            }
-        }
-
         .field {
 
             @media #{$narrow-screen} {
@@ -159,7 +149,7 @@ body.user_sessions {
             }
 
             .value {
-                @media #{$medium-width} {
+                @media #{$not-narrow-screen} {
                     width: 100%;
                 }
                 @media #{$narrow-screen} {
@@ -182,6 +172,20 @@ body.user_sessions {
                     padding: 4px 12px;
                 }
             }
+        }
+
+        .field + .field,
+        .field + .actions {
+            @media #{$wide-screen} {
+                box-shadow: -2rem 0 0 0 $bg;
+            }
+            @media #{$medium-width} {
+                box-shadow: -0.125rem 0 0 0 $bg;
+            }
+        }
+
+        .field + .actions {
+            justify-content: end;
         }
 
         .links,
@@ -224,6 +228,27 @@ body.user_sessions {
             .links,
             .options {
                 display: none;
+            }
+        }
+
+        // @see file:app/views/user/passwords/_reset.html.erb
+        &.reset {
+
+            .field {
+
+                grid-column: 2/4;
+
+                label {
+                    white-space: nowrap;
+                }
+
+                input {
+                    @include width-available;
+                }
+            }
+
+            .submit-button {
+                width: 4.375rem;
             }
         }
     }

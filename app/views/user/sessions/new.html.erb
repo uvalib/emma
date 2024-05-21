@@ -26,6 +26,7 @@
 <div class="sign-in-links">
   <%= render 'user/sessions/omniauth' %>
   <%= render 'user/sessions/local' %>
+  <%= render 'user/passwords/reset' if devise_mapping.recoverable? %>
   <%= render 'user/sessions/synthetic' %>
 </div>
 
