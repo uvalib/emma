@@ -167,7 +167,7 @@ en:
           _endpoint:    true
 
         sign_in:
-          label:        'EMMA local sign-in'
+          label:        'Local EMMA sign-in'
           title:        'Sign in with an EMMA user account local password'
           submit:       'Sign in'
           cancel:       'Cancel'
@@ -188,7 +188,7 @@ en:
       passwords:
 
         new:
-          label:        'EMMA password reset'
+          label:        'Local password reset'
           tooltip:      'Click to reset your password'
           title:        'Reset your password'
           description:
