@@ -12,15 +12,6 @@ module ObjectExt
   # @see Hash#rdup
   #
   def rdup: () -> (untyped | self)
-
-  # A stand-in for #inspect for more limited output.
-  #
-  # @param [any, nil] item            Default: `self`.
-  # @param [Integer]  max
-  #
-  # @return [String]
-  #
-  def summary: (?untyped item, ?max: Integer) -> String
 end
 
 class Object
