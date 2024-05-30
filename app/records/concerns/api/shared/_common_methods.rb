@@ -158,7 +158,7 @@ module Api::Shared::CommonMethods
     /([^\w#{allowed}]|\s)+$/
   end
 
-  CLEAN_EXCEPT        = %q(!?'"]\)-).freeze
+  CLEAN_EXCEPT        = %q{!?'"])-}.freeze
   CLEAN_EXCEPT_PERIOD = ".#{CLEAN_EXCEPT}".freeze
 
   CLEAN_REGEXP        = clean_regexp(CLEAN_EXCEPT).freeze

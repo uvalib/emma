@@ -155,7 +155,7 @@ module JobMethods
   # @return [String]
   #
   def service
-    %Q(#{job_service}->>'value')
+    "#{job_service}->>'value'"
   end
 
   # SQL fragment representing the stream name in the data.
@@ -165,7 +165,7 @@ module JobMethods
   # @return [String]
   #
   def stream_name
-    %Q(#{job_options}->>'stream_name')
+    "#{job_options}->>'stream_name'"
   end
 
   # ===========================================================================

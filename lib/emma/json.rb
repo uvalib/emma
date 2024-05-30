@@ -181,8 +181,8 @@ module Emma::Json
         key   = $2.to_s
         val   = $3.to_s
         align = key_max && (n = positive(key_max - key.size)) && (' ' * n)
-        key   = %Q("#{key}") unless ruby_keys
-        val   = 'nil'        if ruby_keys && val.match?(/null,?/)
+        key   = quote(key)            unless ruby_keys
+        val.sub!(/null(,?)/, 'nil\1') if ruby_keys
         "#{space}#{key}: #{align}#{val}"
       end
     end
