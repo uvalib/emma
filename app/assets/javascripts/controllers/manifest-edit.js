@@ -1289,11 +1289,18 @@ appSetup(MODULE, function() {
      *
      * @param {Selector}     target   Row or cell.
      * @param {ManifestItem} data
+     *
+     * @returns {EmmaData}            Updated fields.
      */
     function updateDataRow(target, data) {
         const func = 'updateDataRow';
         OUT.debug(`${func}: data =`, data, 'target =', target);
-        if (isEmpty(data)) { return }
+
+        /** @type {EmmaData} */
+        const updated = {};
+        if (isEmpty(data)) {
+            return updated;
+        }
         const $row = dataRow(target);
 
         if (isPresent(data.id)) {
@@ -1302,7 +1309,7 @@ appSetup(MODULE, function() {
                 setManifestItemId($row, data.id);
             } else if (db_id !== data.id) {
                 OUT.error(`${func}: row ID = ${db_id}; data.id = ${data.id}`);
-                return;
+                return updated;
             }
         }
         if (hasKey(data, 'row')) {
@@ -1335,6 +1342,7 @@ appSetup(MODULE, function() {
                 const old_value = getCellCurrentValue($cell);
                 if (!old_value || new_value.differsFrom(old_value)) {
                     dataCellUpdate($cell, new_value, true, new_value.valid);
+                    updated[data_field] = new_value.value;
                     changed = true;
                 } else if (new_value.valid) {
                     updateCellValid($cell, true);
@@ -1363,14 +1371,13 @@ appSetup(MODULE, function() {
                 cellDisplay($cell).attr('title', tooltip);
             }
         });
-        if (changed) {
-            updateRowChanged($row, true);
-            updateFormChanged();
-        }
 
+        if (changed) { updateRowChanged($row, true) }
+        if (changed) { updateFormChanged() }
         updateRowIndicators($row, data);
         updateRowDetailsItems($row, data);
         updateLookupCondition($row);
+        return updated;
     }
 
     // ========================================================================
@@ -2779,7 +2786,10 @@ appSetup(MODULE, function() {
             // Save uploaded EMMA metadata (including received file data).
             if (isPresent(emma_data)) {
                 // noinspection JSCheckFunctionSignatures
-                updateDataRow($row, emma_data);
+                const updated = updateDataRow($row, emma_data);
+                if (isPresent(updated)) {
+                    postRowUpdate($row, updated);
+                }
             }
 
             if (error) {
