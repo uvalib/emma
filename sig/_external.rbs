@@ -725,6 +725,9 @@ end
 class Sanitize
 end
 
+module Singleton
+end
+
 class Shrine
   class Attacher
     module InstanceMethods

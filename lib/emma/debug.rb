@@ -121,6 +121,7 @@ module Emma::Debug
       value   = value.session if value.respond_to?(:session)
       value ||= try(:session)
       if value.respond_to?(:to_hash)
+        # noinspection RubyMismatchedReturnType
         value.to_hash
       elsif value.respond_to?(:each)
         Hash.new.tap { |result| value.each { |k, v| result[k] = v } }
@@ -157,6 +158,7 @@ module Emma::Debug
       value ||= try(:request)
       value = value.headers if value.respond_to?(:headers)
       if value.respond_to?(:to_hash)
+        # noinspection RubyMismatchedReturnType
         value.to_hash
       elsif value.respond_to?(:each)
         Hash.new.tap do |result|

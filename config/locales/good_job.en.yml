@@ -1,6 +1,10 @@
----
+# config/locales/good_job.en.yml
+#
+# Messages used by the GoodJob dashboard.
+
 en:
   good_job:
+
     actions:
       destroy:                    'Destroy'
       discard:                    'Discard'
@@ -8,6 +12,7 @@ en:
       inspect:                    'Inspect'
       reschedule:                 'Reschedule'
       retry:                      'Retry'
+
     batches:
       index:
         older_batches:            'Older batches'
@@ -31,14 +36,15 @@ en:
         callback_jobs:            'Callback Jobs'
       table:
         no_batches_found:         'No batches found.'
+
     cron_entries:
       actions:
-        disable:                  'Disable cron entry'
-        enable:                   'Enable cron entry'
-        enqueue:                  'Enqueue cron entry now'
         confirm_disable:          'Are you sure you want to disable this cron entry?'
         confirm_enable:           'Are you sure you want to enable this cron entry?'
         confirm_enqueue:          'Are you sure you want to enqueue this cron entry?'
+        disable:                  'Disable cron entry'
+        enable:                   'Enable cron entry'
+        enqueue:                  'Enqueue cron entry now'
       disable:
         notice:                   'Cron entry has been disabled.'
       enable:
@@ -46,11 +52,12 @@ en:
       enqueue:
         notice:                   'Cron entry has been enqueued.'
       index:
-        title:                    'Cron Schedules'
         no_cron_schedules_found:  'No cron schedules found.'
+        title:                    'Cron Schedules'
       pending_migrations:         'Requires pending GoodJob database migration.'
       show:
         cron_entry_key:           'Cron Entry Key'
+
     datetime:
       distance_in_words:
         about_x_hours:
@@ -90,12 +97,14 @@ en:
         x_years:
           one:                    '1 year'
           other:                  '%{count} years'
+
     duration:
       hours:                      '%{hour}h %{min}m'
       less_than_10_seconds:       '%{sec}s'
       milliseconds:               '%{ms}ms'
       minutes:                    '%{min}m %{sec}s'
       seconds:                    '%{sec}s'
+
     error_event:
       discarded:                  'Discarded'
       handled:                    'Handled'
@@ -103,10 +112,12 @@ en:
       retried:                    'Retried'
       retry_stopped:              'Retry stopped'
       unhandled:                  'Unhandled'
+
     helpers:
       relative_time:
         future:                   'in %{time}'
         past:                     '%{time} ago'
+
     jobs:
       actions:
         confirm_destroy:          'Are you sure you want to destroy the job?'
@@ -164,6 +175,7 @@ en:
         no_jobs_found:            'No jobs found.'
         toggle_actions:           'Toggle Actions'
         toggle_all_jobs:          'Toggle all jobs'
+
     models:
       batch:
         created:                  'Created'
@@ -186,6 +198,7 @@ en:
         attempts:                 'Attempts'
         priority:                 'Priority'
         queue:                    'Queue'
+
     number:
       format:
         delimiter:                ','
@@ -203,6 +216,7 @@ en:
             thousand:             'K'
             trillion:             'T'
             unit:                 ''
+
     processes:
       index:
         cron_enabled:             'Cron enabled'
@@ -212,6 +226,7 @@ en:
         started:                  'Started'
         title:                    'Processes'
         updated:                  'Updated'
+
     shared:
       boolean:
         'false':                  'No'
@@ -241,6 +256,7 @@ en:
       secondary_navbar:
         inspiration:              'Asynchronous jobs dashboard for EMMA'
         last_updated:             'Last updated'
+
     status:
       discarded:                  'Discarded'
       queued:                     'Queued'

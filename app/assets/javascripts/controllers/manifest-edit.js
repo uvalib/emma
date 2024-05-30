@@ -2695,8 +2695,8 @@ appSetup(MODULE, function() {
         }
 
         /**
-         * This event occurs between the ".forbidden" and ".forbidden" events.
-         * <p/>
+         * This event occurs between the "file-added" and "upload-started"
+         * events. <p/>
          *
          * The current value of the submission's database ID applied to the
          * upload endpoint URL in order to correlate the upload with the
