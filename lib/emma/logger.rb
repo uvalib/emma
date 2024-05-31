@@ -189,6 +189,13 @@ module Emma
     #
     class Formatter < ::Logger::Formatter
 
+      # Adjust log duration values so that the numerical value is separated
+      # from the time unit.
+      #
+      # @type [Boolean]
+      #
+      UVA_AWS_MOD = true
+
       # Width of severity column.
       #
       # @type [Integer]
@@ -207,18 +214,23 @@ module Emma
       #
       AWS_FILL = '_'
 
+      # Common end portion of format leaders.
+      #
+      # @type [String]
+      #
+      LEADER_END = "%<sev>-#{SEV}s -- %<prg>-#{PRG}s: "
+
       # Time not shown in favor of the CloudWatch timestamp.
       #
       # @type [String]
       #
-      AWS_LEADER =              "[%<pid>d] %<sev>-#{SEV}s -- %<prg>-#{PRG}s: "
+      AWS_LEADER = "[%<pid>d] #{LEADER_END}"
 
       # Like Logger::Formatter::Format but with the progname aligned.
       #
       # @type [String]
       #
-      STD_LEADER =
-                "%{chr}, [%{tim} #%<pid>d] %<sev>-#{SEV}s -- %<prg>-#{PRG}s: "
+      STD_LEADER = "%{chr}, [%{tim} #%<pid>d] #{LEADER_END}"
 
       # =======================================================================
       # :section: Logger::Formatter overrides
@@ -240,6 +252,7 @@ module Emma
       #
       def call(severity, time, progname, msg)
         ldr = leader(severity, time, progname)
+        msg = format_duration(msg) if UVA_AWS_MOD && msg.is_a?(String)
         msg2str(msg).split("\n").map { |txt| "#{ldr}#{txt}\n" }.join
       end
 
@@ -309,6 +322,18 @@ module Emma
         tag  << char * fill if fill.positive?
         part << nil         if item.end_with?(':')
         [tag, *part].join(':')
+      end
+
+      # Add a space between the value and unit (ms) of all time durations.
+      #
+      # (This is needed to support UVALIB metrics based on AWS log filters.)
+      #
+      # @param [String, nil] txt
+      #
+      # @return [String]
+      #
+      def format_duration(txt)
+        txt.to_s.gsub(/(\A|[^[:word:]])(\d+)(ms)([^[:word:]]|\z)/, '\1\2 \3\4')
       end
 
     end

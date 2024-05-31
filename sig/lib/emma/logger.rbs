@@ -88,6 +88,13 @@ module Emma
     # facilitate filtering.
     #
     class Formatter < ::Logger::Formatter
+      # Adjust log duration values so that the numerical value is separated
+      # from the time unit.
+      #
+      # @type [Boolean]
+      #
+      UVA_AWS_MOD: bool
+
       # Width of severity column.
       #
       # @type [Integer]
@@ -105,6 +112,12 @@ module Emma
       # @type [String]
       #
       AWS_FILL: String
+
+      # Common end portion of format leaders.
+      #
+      # @type [String]
+      #
+      LEADER_END: String
 
       # Time not shown in favor of the CloudWatch timestamp.
       #
@@ -169,6 +182,16 @@ module Emma
       # @return [String]
       #
       def right_fill: (untyped item, Integer width, ?String char) -> String
+
+      # Add a space between the value and unit (ms) of all time durations.
+      #
+      # (This is needed to support UVALIB metrics based on AWS log filters.)
+      #
+      # @param [String, nil] txt
+      #
+      # @return [String]
+      #
+      def format_duration: (String|nil txt) -> String
     end
   end
 end
