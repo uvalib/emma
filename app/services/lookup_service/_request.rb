@@ -257,6 +257,7 @@ class LookupService::Request
         new(re_symbolize_keys(hash))
       end
 
+      # noinspection RbsMissingTypeSignature
       def self.inherited(subclass)
         make_serializers(subclass)
       end

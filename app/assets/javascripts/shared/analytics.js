@@ -1,8 +1,9 @@
 // app/assets/javascripts/shared/analytics.js
 //
 // This module involves working with the Matomo tracker.
-//
 // The Matomo script is loaded via the <head> section of the page.
+//
+// noinspection JSUnresolvedReference
 
 
 import { AppDebug }                         from '../application/debug';

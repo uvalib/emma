@@ -1,4 +1,6 @@
 // app/assets/javascripts/shared/submit-response.js
+//
+// noinspection JSValidateTypes
 
 
 import { AppDebug }             from '../application/debug';

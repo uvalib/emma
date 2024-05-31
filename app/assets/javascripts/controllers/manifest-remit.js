@@ -1986,6 +1986,7 @@ appSetup(MODULE, function() {
     function initializeSubmissionMonitor() {
         OUT.debug('initializeSubmissionMonitor');
 
+        // noinspection JSCheckFunctionSignatures
         SubmitModal.setupFor($monitor, {
             rejected:   onSubmissionRejected,
             onResponse: onSubmissionResponse,

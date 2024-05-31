@@ -340,6 +340,9 @@ class BaseDecorator < Draper::Decorator
     | (Symbol, ?Class)     -> void
     | (Class)              -> void
 
+  # Override BaseDecorator#new so that instances of this terminal subclass
+  # can be created.
+  def self.new: (?(untyped|nil) obj, **untyped opt) -> untyped
 
   @ar_class:    Class | nil
   @other_class: Array[Class]

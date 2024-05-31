@@ -464,6 +464,7 @@ export function setupFor(root) {
         isDefined($icon.attr('role'))     || $icon.attr('role',     'button');
         isDefined($icon.attr('tabindex')) || $icon.attr('tabindex', 0);
         addCopyNote($icon);
+        // noinspection JSCheckFunctionSignatures
         handleClickAndKeypress($icon, copyOutput);
     }
 

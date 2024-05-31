@@ -699,6 +699,7 @@ class Search::Record::TitleRecord < Search::Api::Record
       def <=>(other)
         other_min = other.try(:minimum) || other.try(:[], :min) || 0
         other_max = other.try(:maximum) || other.try(:[], :max) || other_min
+        # noinspection RubyMismatchedReturnType
         (minimum <=> other_min).nonzero? || (maximum <=> other_max)
       end
 
@@ -863,6 +864,7 @@ class Search::Record::TitleRecord < Search::Api::Record
       other = Number.new(other) if other && !other.is_a?(Number)
       other_min, other_max = other&.number_range || [0, 0]
       self_min,  self_max  = number_range
+      # noinspection RubyMismatchedReturnType
       (self_min <=> other_min)&.nonzero? || (self_max <=> other_max)
     end
 

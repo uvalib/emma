@@ -341,6 +341,7 @@ class ScalarType
   def self.generate_serializer(base = self)
     define_serializer(base)
     base.class_exec do
+      # noinspection RbsMissingTypeSignature
       def self.inherited(subclass)
         generate_serializer(subclass)
       end

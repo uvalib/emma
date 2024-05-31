@@ -499,6 +499,7 @@ class GridMoveBy extends GridMoveTo {
      * @returns {RowColDelta}
      */
     getDelta() {
+        // noinspection JSValidateTypes
         return { row_delta: this.row_delta, col_delta: this.col_delta };
     }
 

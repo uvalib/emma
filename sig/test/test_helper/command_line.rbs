@@ -22,4 +22,8 @@ module TestHelper::CommandLine
   def cli_env_value
     : (?(Array[String|Symbol]|String|Symbol|nil) value, var: String, default: symArray) -> symArray
     | (?(Array[String|Symbol]|String|Symbol|nil) value, var: String, default: nil)      -> (symArray | nil)
+
+  private
+
+  def self.included: (Module base) -> void
 end

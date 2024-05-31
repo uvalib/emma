@@ -258,4 +258,8 @@ module TestHelper::Utility
   # @return [nil]                     If *opt* includes search terms.
   #
   def index_redirect: (?dst: Symbol|String|Proc|nil, ?user: untyped, **untyped opt) ?{ () -> (Symbol|String|Proc|nil) } -> (String | nil)
+
+  private
+
+  def self.included: (Module base) -> void
 end

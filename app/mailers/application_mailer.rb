@@ -213,9 +213,9 @@ class ApplicationMailer < ActionMailer::Base
     end
 
     # Prepare message content for the current format.
-    body = msg.html_safe? ? lines.map!(&:html_safe) : lines
-    body = format_body(lines, format: :html).join("\n").html_safe
-    result.merge!(body: body)
+    lines.map!(&:html_safe) if msg.html_safe?
+    lines = format_body(lines, format: :html).join("\n").html_safe
+    result.merge!(body: lines)
   end
 
   # ===========================================================================

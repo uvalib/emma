@@ -50,6 +50,16 @@ interface _Each[out A]
 end
 
 # NOTE: why is RubyMine not using gems/rbs-*/core/builtin.rb
+interface _ToA[T]
+  def to_a: () -> Array[T]
+end
+
+# NOTE: why is RubyMine not using gems/rbs-*/core/builtin.rb
+interface _ToH[K, V]
+  def to_h: () -> Hash[K, V]
+end
+
+# NOTE: why is RubyMine not using gems/rbs-*/core/builtin.rb
 interface _ToInt
   def to_int: () -> Integer
 end
@@ -57,6 +67,11 @@ end
 # NOTE: why is RubyMine not using gems/rbs-*/core/builtin.rb
 interface _ToIO
   def to_io: () -> IO
+end
+
+# NOTE: why is RubyMine not using gems/rbs-*/core/builtin.rb
+interface _ToS
+  def to_s: () -> String
 end
 
 # NOTE: why is RubyMine not using gems/rbs-*/core/builtin.rb
@@ -320,9 +335,25 @@ class Array[unchecked out Elem] < Object
     | [V] (V                object) -> [V]
 end
 
+module Aws
+  module S3
+    class Bucket
+    end
+    class Client < ::Seahorse::Client::Base
+    end
+    class Object
+    end
+    class Resource
+    end
+  end
+end
+
 # NOTE: Due to active_support/core_ext/numeric/deprecated_conversions.rb
 class BigDecimal
   prepend ActiveSupport::NumericWithFormat
+end
+
+class Binding
 end
 
 # NOTE: overrides .gem_rbs_collection/cancancan/3.5/cancancan.rbs
@@ -463,6 +494,9 @@ end
 # NOTE: why is RubyMine not using gems/rbs-*/core/enumerator.rb
 class Enumerator[unchecked out Elem, out Return] < Object
   include Enumerable[Elem]
+  def each
+    : () { (Elem arg0) -> untyped } -> Return
+    | () -> self
 end
 
 # NOTE: overrides gems/rbs-*/stdlib/erb/0/erb.rbs
@@ -500,6 +534,9 @@ end
 # NOTE: Due to active_support/core_ext/numeric/deprecated_conversions.rb
 class Float
   prepend ActiveSupport::NumericWithFormat
+end
+
+module Forwardable
 end
 
 module GoodJob
@@ -599,6 +636,13 @@ module Kernel
 
   def class: () -> Class
 
+end
+
+class Logger
+  class Formatter
+  end
+  module Severity
+  end
 end
 
 # NOTE: overrides gems/rbs-*/core/module.rbs
@@ -722,7 +766,21 @@ module Representable
   end
 end
 
+class RuntimeError < StandardError
+end
+
 class Sanitize
+end
+
+module Seahorse
+  module Client
+    class Base
+    end
+  end
+end
+
+class Set[unchecked out A]
+  include Enumerable[A]
 end
 
 module Singleton
@@ -762,6 +820,9 @@ module Sprockets
   end
 end
 
+class StandardError < Exception
+end
+
 # NOTE: overrides gems/rbs-*/core/string.rbs
 class String
   def start_with?: (*(string|Regexp) prefixes) -> bool
@@ -771,6 +832,10 @@ end
 class StringIO
 end
 
+class Struct[Elem]
+  include Enumerable[Elem]
+end
+
 # NOTE: overrides plugins/ruby/rubystubs/rubystubs33/symbol.rb
 class Symbol
   def match?: (Regexp|string pattern, ?int offset) -> bool
@@ -778,6 +843,9 @@ end
 
 # NOTE: why is RubyMine not using ruby/3.3.0/tempfile.rbs
 class Tempfile
+end
+
+class Thread < Object
 end
 
 module Workflow

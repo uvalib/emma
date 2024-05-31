@@ -43,6 +43,7 @@ module LookupService::WorldCat::Action::Records
       terms[:limit] ||= LimitTerms.new
       terms[:limit].add(:lang_code, 'eng')
     end
+    # noinspection RubyMismatchedArgumentType
     opt[:query] = make_query(terms)
 
     opt = get_parameters(__method__, **opt)
@@ -215,8 +216,8 @@ module LookupService::WorldCat::Action::Records
   #   '/search/worldcat/opensearch', however this does not work.
   #
   def get_opensearch_records(terms, **opt)
-    terms   = query_terms(terms, opt)
-    opt[:q] = make_query(terms)
+    q_terms = query_terms(terms, opt)
+    opt[:q] = make_query(q_terms)
     opt = get_parameters(__method__, **opt)
     api(:get, 'catalog/search/worldcat/opensearch', **opt)
     api_return(Lookup::WorldCat::Message::OpenSearch)

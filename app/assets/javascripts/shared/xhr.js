@@ -1,4 +1,6 @@
 // app/assets/javascripts/shared/xhr.js
+//
+// noinspection JSUnresolvedReference, TailRecursionJS
 
 
 import { AppDebug }           from '../application/debug';

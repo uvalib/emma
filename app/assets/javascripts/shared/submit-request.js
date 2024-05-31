@@ -1,6 +1,6 @@
 // app/assets/javascripts/shared/submit-request.js
 //
-// noinspection JSUnusedGlobalSymbols
+// noinspection JSUnusedGlobalSymbols, JSValidateTypes
 
 
 import { AppDebug }             from '../application/debug';
