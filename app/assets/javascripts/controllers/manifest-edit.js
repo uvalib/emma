@@ -2693,10 +2693,20 @@ appSetup(MODULE, function() {
          * @param {ElementEvt} [event]    Ignored.
          */
         function onSelect(event) {
-            OUT.debug(`${func}: onSelect: event =`, event);
+            const cb_func = `${func}: onSelect`;
+            OUT.debug(`${cb_func}: event =`, event);
             clearFlash();
+            const ensure_item_record = () => {
+                if (!getManifestItemId($row)) {
+                    OUT.debug(`${cb_func}: triggering manifest item creation`);
+                    createManifestItem($row);
+                }
+            };
             if (!manifestId()) {
-                createManifest();
+                OUT.debug(`${cb_func}: triggering manifest creation`);
+                createManifest(undefined, ensure_item_record);
+            } else {
+                ensure_item_record();
             }
         }
 
@@ -5588,6 +5598,35 @@ appSetup(MODULE, function() {
         const $rows = rows ? $(rows) : allDataRows();
         const $row  = $rows.filter(`[${ITEM_ATTR}="${id}"]`);
         if (isPresent($row)) { return $row }
+    }
+
+    /**
+     * Post "/manifest_item/create" to create a new ManifestItem record.
+     *
+     * @param {Selector}     grid_row
+     * @param {Manifest}     [data]
+     * @param {XmitCallback} [callback]
+     */
+    function createManifestItem(grid_row, data, callback) {
+        const func     = 'createManifestItem';
+        const $row     = dataRow(grid_row);
+        const row      = dbRowValue($row);
+        const delta    = dbRowDelta($row);
+        const params   = { row: row, delta: delta, ...data };
+        const manifest = manifestId();
+        OUT.debug(`${func}: manifest =`, manifest);
+
+        if (!manifest) {
+            OUT.error(`${func}: no manifest ID`);
+            return;
+        }
+
+        serverItemSend(`create/${manifest}`, {
+            caller:     func,
+            params:     params,
+            onSuccess:  body => parseCreateResponse($row, body),
+            onComplete: callback,
+        });
     }
 
     // ========================================================================
