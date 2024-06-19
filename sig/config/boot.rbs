@@ -25,6 +25,14 @@ PRODUCTION_BASE_URL: String
 #
 STAGING_BASE_URL: String
 
+# This constant is defined to mark sections of code that are present only to
+# give context information to RubyMine -- for example, "include" statements
+# which allow RubyMine to indicate which methods are overrides.
+#
+# (This constant is required to be a non-false value.)
+#
+ONLY_FOR_DOCUMENTATION: true
+
 # Controls whether '0' and '1' are interpreted as boolean values for URL
 # parameters or ENV setting values.
 #
@@ -84,38 +92,22 @@ module GlobalProperty
 
   private
 
-  attr_accessor application_deployed: bool?
+  INFO_ARGS: symArray
+
+  attr_writer application_deployed: bool?
   attr_writer aws_deployment: Symbol
   attr_writer application_deployment: Symbol
-  attr_accessor production_deployment: bool?
-  attr_accessor staging_deployment: bool?
-  attr_accessor in_debugger: bool?
-  attr_accessor in_local_docker: bool?
-  attr_accessor in_rails: bool?
-  attr_accessor in_rake: bool?
-  attr_accessor live_rails: bool?
-  attr_accessor sanity_check: bool?
-
-  INFO_ARGS: symArray
+  attr_writer production_deployment: bool?
+  attr_writer staging_deployment: bool?
+  attr_writer in_debugger: bool?
+  attr_writer in_local_docker: bool?
+  attr_writer in_rails: bool?
+  attr_writer in_rake: bool?
+  attr_writer live_rails: bool?
+  attr_writer sanity_check: bool?
 
   public
 
-  def application_deployed?: () -> bool
-  def not_deployed?: () -> bool
-  def aws_deployment: () -> Symbol
-  def application_deployment: () -> Symbol
-  def production_deployment?: () -> bool
-  def staging_deployment?: () -> bool
-  def in_debugger?: () -> bool
-  def in_local_docker?: () -> bool
-  def rails_application?: () -> bool
-  def rake_task?: () -> bool
-  def live_rails_application?: () -> bool
-  def sanity_check?: () -> bool
-
-end
-
-class Object
   # Indicate whether this is a deployed instance.
   #
   def application_deployed?: () -> bool
@@ -165,14 +157,10 @@ class Object
   #
   def rails_application?: () -> bool
 
-  @in_rails: bool
-
   # Indicate whether this instance is being run as "rake" or "rails" with a
   # Rake task argument.
   #
   def rake_task?: () -> bool
-
-  @in_rake:  bool
 
   # Indicate whether this is the Rails application not under test.
   #
@@ -181,4 +169,10 @@ class Object
   # Indicate whether desktop-only validations are appropriate.
   #
   def sanity_check?: () -> bool
+
+end
+
+class Object
+  include GlobalProperty
+  extend  GlobalProperty
 end

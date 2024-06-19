@@ -38,6 +38,14 @@ PRODUCTION_BASE_URL = 'https://emma.lib.virginia.edu'
 #
 STAGING_BASE_URL = 'https://emma-dev.lib.virginia.edu'
 
+# This constant is defined to mark sections of code that are present only to
+# give context information to RubyMine -- for example, "include" statements
+# which allow RubyMine to indicate which methods are overrides.
+#
+# (This constant is required to be a non-false value.)
+#
+ONLY_FOR_DOCUMENTATION = true
+
 # =============================================================================
 # Support methods
 # =============================================================================
@@ -142,24 +150,34 @@ module GlobalProperty
 
   extend self
 
-  private
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
 
-  attr_accessor :application_deployed
-  attr_writer   :aws_deployment
-  attr_writer   :application_deployment
-  attr_accessor :production_deployment
-  attr_accessor :staging_deployment
-  attr_accessor :in_debugger
-  attr_accessor :in_local_docker
-  attr_accessor :in_rails
-  attr_accessor :in_rake
-  attr_accessor :live_rails
-  attr_accessor :sanity_check
+  private
 
   INFO_ARGS = %w[-h -H --help -D --describe -T --tasks -n --dry-run].freeze
 
+  attr_writer :application_deployed
+  attr_writer :aws_deployment
+  attr_writer :application_deployment
+  attr_writer :production_deployment
+  attr_writer :staging_deployment
+  attr_writer :in_debugger
+  attr_writer :in_local_docker
+  attr_writer :in_rails
+  attr_writer :in_rake
+  attr_writer :live_rails
+  attr_writer :sanity_check
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   public
 
+  # Indicate whether this is a deployed instance.
+  #
   def application_deployed?
     return @application_deployed unless @application_deployed.nil?
     if ENV['AWS_DEFAULT_REGION']
@@ -169,42 +187,71 @@ module GlobalProperty
     end
   end
 
+  # Indicate whether this is a desktop instance.
+  #
   def not_deployed?
     !application_deployed?
   end
 
+  # The true deployment type.
+  #
+  # @return [Symbol]
+  #
   def aws_deployment
     return @aws_deployment unless @aws_deployment.nil?
     @aws_deployment = application_deployed? ? :production : :staging
   end
 
+  # The deployment type.  Desktop development should use 'staging' resources.
+  #
+  # @return [Symbol]
+  #
+  # @see https://gitlab.com/uvalib/terraform-infrastructure/-/blob/master/emma.lib.virginia.edu/ecs-tasks/production/environment.vars
+  # @see https://gitlab.com/uvalib/terraform-infrastructure/-/blob/master/emma.lib.virginia.edu/ecs-tasks/staging/environment.vars
+  #
   def application_deployment
     return @application_deployment unless @application_deployment.nil?
     @application_deployment =
       ENV['DEPLOYMENT']&.downcase&.to_sym || aws_deployment
   end
 
+  # Indicate whether this is the production service instance.
+  #
   def production_deployment?
     return @production_deployment unless @production_deployment.nil?
     @production_deployment = (application_deployment == :production)
   end
 
+  # Indicate whether this is the staging service instance.
+  #
   def staging_deployment?
     return @staging_deployment unless @staging_deployment.nil?
     @staging_deployment =
       application_deployed? && (application_deployment == :staging)
   end
 
+  # Indicate whether this instance is being run from the interactive debugger.
+  #
+  # === Usage Notes
+  # For interactive debugging RubyMine uses 'ruby-debug-ide'.
+  #
   def in_debugger?
     return @in_debugger unless @in_debugger.nil?
     @in_debugger = !!ENV['DEBUGGER_STORED_RUBYLIB']
   end
 
+  # Indicate whether this instance is being run from a Docker container on a
+  # development machine.
+  #
   def in_local_docker?
     return @in_local_docker unless @in_local_docker.nil?
     @in_local_docker = (ENV['USER'] == 'docker') && not_deployed?
   end
 
+  # For use within initialization code to branch between code that is intended
+  # for the Rails application versus code that is run in other contexts (e.g.,
+  # rake).
+  #
   def rails_application?
     return @in_rails unless @in_rails.nil?
     v   = (ENV['RUBYMINE_CONFIG'] == 'rails') # desktop only
@@ -217,6 +264,9 @@ module GlobalProperty
     @in_rails = v
   end
 
+  # Indicate whether this instance is being run as "rake" or "rails" with a
+  # Rake task argument.
+  #
   def rake_task?
     return @in_rake unless @in_rake.nil?
     v   = (ENV['RUBYMINE_CONFIG'] == 'rake') # desktop only
@@ -227,11 +277,15 @@ module GlobalProperty
     @in_rake = v
   end
 
+  # Indicate whether this is the Rails application not under test.
+  #
   def live_rails_application?
     return @live_rails unless @live_rails.nil?
     @live_rails = rails_application? && (ENV['RAILS_ENV'] != 'test')
   end
 
+  # Indicate whether desktop-only validations are appropriate.
+  #
   def sanity_check?
     return @sanity_check unless @sanity_check.nil?
     @sanity_check = live_rails_application? && not_deployed?
@@ -239,96 +293,19 @@ module GlobalProperty
 
 end
 
-# =============================================================================
-# Global properties
-# =============================================================================
+class Object
 
-public
+  GlobalProperty.instance_methods.each do |method|
+    define_method(method) { GlobalProperty.send(method) }
+  end
 
-# Indicate whether this is a deployed instance.
-#
-def application_deployed?
-  GlobalProperty.application_deployed?
-end
+  unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+    include GlobalProperty
+    extend  GlobalProperty
+    # :nocov:
+  end
 
-# Indicate whether this is a desktop instance.
-#
-def not_deployed?
-  GlobalProperty.not_deployed?
-end
-
-# The true deployment type.
-#
-# @return [Symbol]
-#
-def aws_deployment
-  GlobalProperty.aws_deployment
-end
-
-# The deployment type.  Desktop development should use 'staging' resources.
-#
-# @return [Symbol]
-#
-# @see https://gitlab.com/uvalib/terraform-infrastructure/-/blob/master/emma.lib.virginia.edu/ecs-tasks/production/environment.vars
-# @see https://gitlab.com/uvalib/terraform-infrastructure/-/blob/master/emma.lib.virginia.edu/ecs-tasks/staging/environment.vars
-#
-def application_deployment
-  GlobalProperty.application_deployment
-end
-
-# Indicate whether this is the production service instance.
-#
-def production_deployment?
-  GlobalProperty.production_deployment?
-end
-
-# Indicate whether this is the staging service instance.
-#
-def staging_deployment?
-  GlobalProperty.staging_deployment?
-end
-
-# Indicate whether this instance is being run from the interactive debugger.
-#
-# === Usage Notes
-# For interactive debugging RubyMine uses 'ruby-debug-ide'.
-#
-def in_debugger?
-  GlobalProperty.in_debugger?
-end
-
-# Indicate whether this instance is being run from a Docker container on a
-# development machine.
-#
-def in_local_docker?
-  GlobalProperty.in_local_docker?
-end
-
-# For use within initialization code to branch between code that is intended
-# for the Rails application versus code that is run in other contexts (e.g.,
-# rake).
-#
-def rails_application?
-  GlobalProperty.rails_application?
-end
-
-# Indicate whether this instance is being run as "rake" or "rails" with a
-# Rake task argument.
-#
-def rake_task?
-  GlobalProperty.rake_task?
-end
-
-# Indicate whether this is the Rails application not under test.
-#
-def live_rails_application?
-  GlobalProperty.live_rails_application?
-end
-
-# Indicate whether desktop-only validations are appropriate.
-#
-def sanity_check?
-  GlobalProperty.sanity_check?
 end
 
 # =============================================================================

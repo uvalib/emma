@@ -10,14 +10,6 @@ require '_trace'
 
 __loading_begin(__FILE__)
 
-# This constant is defined to mark sections of code that are present only to
-# give context information to RubyMine -- for example, "include" statements
-# which allow RubyMine to indicate which methods are overrides.
-#
-# (This constant is required to be a non-false value.)
-#
-ONLY_FOR_DOCUMENTATION = true
-
 # =============================================================================
 # Loader methods - require
 # =============================================================================
