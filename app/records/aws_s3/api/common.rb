@@ -9,12 +9,8 @@ require 'aws-sdk-s3'
 
 # Shared values and methods.
 #
-# @see Api::Common
-#
 module AwsS3::Api::Common
-
   include Api::Common
-
 end
 
 __loading_end(__FILE__)

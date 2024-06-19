@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# AwsS3Service::Common
+# Service implementation methods.
 #
 module AwsS3Service::Common
 

@@ -264,8 +264,8 @@ export function server(controller, callback) {
 /**
  * Post to a "manifest" controller endpoint.
  *
- * @param {string|SendOptions} action
- * @param {SendOptions}        [send_options]
+ * @param {string}      action
+ * @param {SendOptions} [send_options]
  */
 export function serverBulkSend(action, send_options) {
     const func       = 'serverBulkSend';

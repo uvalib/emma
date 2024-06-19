@@ -7,8 +7,6 @@ __loading_begin(__FILE__)
 
 # Shared values and methods.
 #
-# @see Api::Common
-#
 module Lookup::RemoteService::Api::Common
   include Api::Common
 end

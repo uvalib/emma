@@ -1,4 +1,4 @@
-# SearchService::Common
+# Service implementation methods.
 #
 module SearchService::Common
   include ApiService::Common

@@ -231,7 +231,7 @@ en:
       boolean:
         'false':                  'No'
         'true':                   'Yes'
-      error: Error
+      error:                      'Error'
       filter:
         all:                      'All'
         all_jobs:                 'All jobs'

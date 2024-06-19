@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# LookupService::RemoteService::Common
+# Service implementation methods.
 #
 module LookupService::RemoteService::Common
 

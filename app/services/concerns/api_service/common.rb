@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# ApiService::Common
+# Service implementation methods.
 #
 module ApiService::Common
 

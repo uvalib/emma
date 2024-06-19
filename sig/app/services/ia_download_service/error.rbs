@@ -3,12 +3,12 @@
 # === Usage Notes
 # This is generally *not* the base class for exceptions in the
 # IaDownloadService namespace:  Variants based on the error types defined under
-# "emma.error.api" are derived from the related ApiService class; e.g.:
+# "en.emma.error.api" are derived from the related ApiService class; e.g.:
 #
 #   `IaDownloadService::AuthError < ApiService::AuthError`
 #
-# Only a distinct error type defined under "emma.error.ia_download" would
-# derive from this class; e.g. if "emma.error.ia_download.unique" existed it
+# Only a distinct error type defined under "en.emma.error.ia_download" would
+# derive from this class; e.g. if "en.emma.error.ia_download.unique" existed it
 # would be defined as:
 #
 #   `IaDownloadService::UniqueError < IaDownloadService::Error`

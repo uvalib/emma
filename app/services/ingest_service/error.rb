@@ -9,13 +9,13 @@ __loading_begin(__FILE__)
 #
 # === Usage Notes
 # This is generally *not* the base class for exceptions in the IngestService
-# namespace:  Variants based on the error types defined under "emma.error.api"
-# are derived from the related ApiService class; e.g.:
+# namespace:  Variants based on the error types defined under
+# "en.emma.error.api" are derived from the related ApiService class; e.g.:
 #
 #   `IngestService::AuthError < ApiService::AuthError`
 #
-# Only a distinct error type defined under "emma.error.ingest" would derive
-# from this class; e.g. if "emma.error.ingest.unique" existed it would be
+# Only a distinct error type defined under "en.emma.error.ingest" would derive
+# from this class; e.g. if "en.emma.error.ingest.unique" existed it would be
 # defined as:
 #
 #   `IngestService::UniqueError < IngestService::Error`

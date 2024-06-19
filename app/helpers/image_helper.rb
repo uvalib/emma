@@ -63,11 +63,8 @@ module ImageHelper
   #                                     is a link.
   # @param [String, nil]  alt         Passed to #image_tag.
   # @param [Integer, nil] row         Grid row of the element.
-  # @param [Hash]         opt         Passed to #html_div except for:
-  #
-  # @option opt [String] :link        If *true* make the image a link to
-  #                                     the given path.
-  # @option opt [String] :alt         Passed to #image_tag.
+  # @param [Hash]         opt         Passed to #html_div except for options
+  #                                     passed to #make_link if *link* given.
   #
   # @return [ActiveSupport::SafeBuffer]   HTML image or placeholder.
   # @return [nil]                         If *url* is invalid.

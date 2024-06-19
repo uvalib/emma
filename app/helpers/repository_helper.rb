@@ -129,10 +129,10 @@ module RepositoryHelper
 
   protected
 
-  # Get a value from "emma.repository.#(repo)" or the fallback value from
-  # "emma.repository._template".
+  # Get a value from "en.emma.repository.#(repo)" or the fallback value from
+  # "en.emma.repository._template".
   #
-  # @note "emma.repository._template.#(key)" is expected to be non-nil.
+  # @note "en.emma.repository._template.#(key)" is expected to be non-nil.
   #
   # @param [Symbol]   key
   # @param [any, nil] repo            EmmaRepository, String, Symbol

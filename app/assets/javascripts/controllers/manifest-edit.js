@@ -712,7 +712,6 @@ appSetup(MODULE, function() {
 
         // Inform the server to allow it to recalculate row/delta values and
         // update related ManifestItem records.
-        /** @type {ManifestSaveMessage} */
         serverManifestSend(`save/${manifest}`, {
             caller:    func,
             onSuccess: onSuccess,
@@ -831,8 +830,8 @@ appSetup(MODULE, function() {
     /**
      * Re-import manifest items from CSV row data.
      *
-     * @note This is not functional and is just here to serve as a reminder
-     *  that this use-case needs to be considered.
+     * @note This is not currently used and is here to serve as a reminder that
+     *  this use-case needs to be considered.
      *
      * @param {string} data
      * @param {string} [_filename]     For diagnostics only.
@@ -3116,7 +3115,8 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * updateGridRowCount
+     * Respond to the given increase (or decrease) in the number of displayed
+     * grid rows.
      *
      * @param {number} by
      */
@@ -3447,7 +3447,8 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * updateRowIndicators
+     * Modify status indicators for a row based on the status values given by
+     * *data*.
      *
      * @param {Selector}                          target    Row or cell.
      * @param {ManifestItemData|object|undefined} data
@@ -3462,7 +3463,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * resetRowIndicators
+     * Clear all status indicators for a row.
      *
      * @param {Selector} target       Row or cell.
      */
@@ -5405,16 +5406,16 @@ appSetup(MODULE, function() {
     function setManifestName(new_name, callback) {
         // noinspection JSValidateTypes
         /** @type {Manifest} */
-        const params = { name: new_name }
+        const data = { name: new_name };
         if (manifestId()) {
-            updateManifest(params, callback);
+            updateManifest(data, callback);
         } else {
-            createManifest(params, callback);
+            createManifest(data, callback);
         }
     }
 
     /**
-     * createManifest
+     * Post "/manifest/create" to create a new Manifest record.
      *
      * @param {Manifest}     [data]
      * @param {XmitCallback} [callback]
@@ -5439,7 +5440,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * updateManifest
+     * Post "/manifest/update" to modify an existing Manifest record.
      *
      * @param {Manifest}     data
      * @param {XmitCallback} [callback]
@@ -5917,15 +5918,15 @@ appSetup(MODULE, function() {
         const func = 'serverItemSend';
         const opt  = { ...send_options };
         opt.caller       ||= func;
-        opt.onCommStatus ||= onCommStatus
+        opt.onCommStatus ||= onCommStatus;
         serverSend(ctr_act, opt);
     }
 
     /**
      * Post to a Manifest controller endpoint.
      *
-     * @param {string|SendOptions} action
-     * @param {SendOptions}        [send_options]
+     * @param {string}      action
+     * @param {SendOptions} [send_options]
      *
      * @see serverBulkSend
      */
@@ -5933,7 +5934,7 @@ appSetup(MODULE, function() {
         const func = 'serverManifestSend';
         const opt  = { ...send_options };
         opt.caller       ||= func;
-        opt.onCommStatus ||= onCommStatus
+        opt.onCommStatus ||= onCommStatus;
         serverBulkSend(action, opt);
     }
 

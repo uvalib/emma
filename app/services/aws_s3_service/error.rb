@@ -9,13 +9,13 @@ __loading_begin(__FILE__)
 #
 # === Usage Notes
 # This is generally *not* the base class for exceptions in the AwsS3Service
-# namespace:  Variants based on the error types defined under "emma.error.api"
-# are derived from the related ApiService class; e.g.:
+# namespace:  Variants based on the error types defined under
+# "en.emma.error.api" are derived from the related ApiService class; e.g.:
 #
 #   `AwsS3Service::AuthError < ApiService::AuthError`
 #
-# Only a distinct error type defined under "emma.error.aws_s3" would derive
-# from this class; e.g. if "emma.error.aws_s3.unique" existed it would be
+# Only a distinct error type defined under "en.emma.error.aws_s3" would derive
+# from this class; e.g. if "en.emma.error.aws_s3.unique" existed it would be
 # defined as:
 #
 #   `AwsS3Service::UniqueError < AwsS3Service::Error`

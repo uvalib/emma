@@ -1,4 +1,4 @@
-# ApiService::Common
+# Service implementation methods.
 #
 module ApiService::Common
   include Emma::Common

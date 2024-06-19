@@ -12,8 +12,6 @@ module ManifestItem::Config
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see file:config/locales/types/manifest_item.en.yml
-  #
   MANIFEST_ITEM_TYPES: Hash[Symbol,symHash]
 
   # Values for each status column which indicate an unblocked status.

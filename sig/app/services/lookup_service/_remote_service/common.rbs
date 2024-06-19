@@ -1,4 +1,4 @@
-# LookupService::RemoteService::Common
+# Service implementation methods.
 #
 module LookupService::RemoteService::Common
   include ApiService::Common

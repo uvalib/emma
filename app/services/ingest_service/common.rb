@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# IngestService::Common
+# Service implementation methods.
 #
 module IngestService::Common
 

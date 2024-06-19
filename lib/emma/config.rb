@@ -141,7 +141,7 @@ module Emma::Config
 
   # The configuration item specified by *key* or alternate *default* locations.
   #
-  # If *path* is an array, the first element is used as the I18n#translate key
+  # If *key* is an array, the first element is used as the I18n#translate key
   # and the remaining elements are passed as the :default option.
   #
   # @param [any]           key        I18n path(s) (Symbol, String, Array)

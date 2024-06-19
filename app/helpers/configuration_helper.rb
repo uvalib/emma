@@ -180,6 +180,9 @@ module ConfigurationHelper
   #
   # @return [Array<Array<Symbol>>]
   #
+  # @example For path == [["a.b", "c", "d"], "e"]
+  #   [["a.b", "a", "b"], "c"] -> [[:a, :b, :e], [:c, :e], [:d, :e]]
+  #
   def config_flatten_order(*path, depth: 0)
     result = []
     path.map! { |p| p.is_a?(Array) ? p.compact_blank : p }.compact_blank!

@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# IaDownloadService::Common
+# Service implementation methods.
 #
 module IaDownloadService::Common
 

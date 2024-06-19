@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# SubmissionService::Common
+# Service implementation methods.
 #
 module SubmissionService::Common
 

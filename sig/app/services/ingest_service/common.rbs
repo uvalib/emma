@@ -1,4 +1,4 @@
-# IngestService::Common
+# Service implementation methods.
 #
 module IngestService::Common
   include ApiService::Common

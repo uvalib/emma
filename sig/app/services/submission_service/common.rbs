@@ -1,4 +1,4 @@
-# SubmissionService::Common
+# Service implementation methods.
 #
 module SubmissionService::Common
   include ApiService::Common
@@ -16,14 +16,6 @@ module SubmissionService::Common
 
   # @return [Float, nil]
   attr_accessor end_time: Float | nil
-
-  def request: () -> SubmissionService::Request
-
-  def result: () -> (SubmissionService::Request | nil)
-
-  def start_time: () -> (Float | nil)
-
-  def end_time: () -> (Float | nil)
 
   # Indicate whether the request sequence has begun.
   #

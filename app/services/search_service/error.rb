@@ -9,13 +9,13 @@ __loading_begin(__FILE__)
 #
 # === Usage Notes
 # This is generally *not* the base class for exceptions in the SearchService
-# namespace:  Variants based on the error types defined under "emma.error.api"
-# are derived from the related ApiService class; e.g.:
+# namespace:  Variants based on the error types defined under
+# "en.emma.error.api" are derived from the related ApiService class; e.g.:
 #
 #   `SearchService::AuthError < ApiService::AuthError`
 #
-# Only a distinct error type defined under "emma.error.search" would derive
-# from this class; e.g. if "emma.error.search.unique" existed it would be
+# Only a distinct error type defined under "en.emma.error.search" would derive
+# from this class; e.g. if "en.emma.error.search.unique" existed it would be
 # defined as:
 #
 #   `SearchService::UniqueError < SearchService::Error`

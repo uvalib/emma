@@ -29,8 +29,8 @@ module BaseDecorator::Controls
   # * :auto        [Boolean]            If *true* authorization is not checked.
   # * :enabled     [Boolean, Proc]      If *false* do not show.
   # * :visible     [Boolean, Proc]      If *false* make opaque.
-  # * :if_enabled  [Hash]               Only "emma.bulk.grid.icons"
-  # * :if_disabled [Hash]               Only "emma.bulk.grid.icons"
+  # * :if_enabled  [Hash]               Only "en.emma.bulk.grid.icons"
+  # * :if_disabled [Hash]               Only "en.emma.bulk.grid.icons"
   #
   ICON_PROPERTIES = %i[
     icon

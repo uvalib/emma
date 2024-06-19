@@ -259,7 +259,7 @@ module Upload::WorkflowMethods
   #
   # @return [Symbol]
   #
-  # @see "emma.workflow"
+  # @see #WORKFLOW_GROUP
   #
   def workflow_group: (?(String|Symbol|nil) target_state) -> Symbol
 

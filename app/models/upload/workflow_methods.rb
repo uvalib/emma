@@ -81,7 +81,7 @@ module Upload::WorkflowMethods
       states.map { |state| [state, group] }
     }.sort.to_h.freeze
 
-  # Each workflow state should be associated with exactly one "emma.workflow"
+  # Each workflow state should be associated with exactly one #WORKFLOW_GROUP
   # state grouping.
   if sanity_check?
     {}.tap do |states_groups|
@@ -131,8 +131,8 @@ module Upload::WorkflowMethods
       entry[:states].map { |state| [state,  group] }
     }.sort.to_h.freeze
 
-  # Each workflow state should be associated with exactly one
-  # "emma.upload.state_group" entry.
+  # Each workflow state should be associated with exactly one #STATE_GROUP
+  # entry.
   if sanity_check?
     {}.tap do |states_groups|
       STATE_GROUP.each_pair do |group, entry|
@@ -505,7 +505,7 @@ module Upload::WorkflowMethods
   #
   # @return [Symbol]
   #
-  # @see "emma.workflow"
+  # @see #WORKFLOW_GROUP
   #
   def workflow_group(target_state = nil)
     target_state ||= active_state
@@ -534,7 +534,7 @@ module Upload::WorkflowMethods
   #
   # @return [Symbol]
   #
-  # @see "emma.upload.state_group"
+  # @see #STATE_GROUP
   #
   def state_group(target_state = nil)
     target_state ||= active_state

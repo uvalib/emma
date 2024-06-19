@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# SearchService::Common
+# Service implementation methods.
 #
 module SearchService::Common
 

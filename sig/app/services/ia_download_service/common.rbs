@@ -1,4 +1,4 @@
-# IaDownloadService::Common
+# Service implementation methods.
 #
 module IaDownloadService::Common
   include ApiService::Common
