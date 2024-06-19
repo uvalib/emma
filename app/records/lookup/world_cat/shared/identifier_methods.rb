@@ -22,7 +22,7 @@ module Lookup::WorldCat::Shared::IdentifierMethods
   #
   # @type [Array<Symbol>]
   #
-  IDENTIFIER_FIELDS = %i[dc_identifier oclcterms_recordIdentifier]
+  IDENTIFIER_FIELDS = %i[dc_identifier oclcterms_recordIdentifier].freeze
 
   # ===========================================================================
   # :section: Lookup::RemoteService::Shared::IdentifierMethods overrides

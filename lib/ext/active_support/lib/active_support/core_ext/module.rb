@@ -32,6 +32,12 @@ module ModuleExt
     self
   end
 
+  # Report modules and classes as frozen to avoid inadvertent freezing.
+  #
+  def deep_frozen?
+    true
+  end
+
   # Attempt to get a constant without raising an exception.
   #
   # @param [Symbol, String] name

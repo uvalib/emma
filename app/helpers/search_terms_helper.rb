@@ -86,7 +86,7 @@ module SearchTermsHelper
   #
   # TODO: This may be questionable...
   #
-  SEARCH_KEYS = %i[keyword sort limit language prefix]
+  SEARCH_KEYS = %i[keyword sort limit language prefix].freeze
 
   # Controllers which supply their own search capabilities.
   #

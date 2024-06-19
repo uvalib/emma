@@ -23,7 +23,7 @@ module RepositoryHelper
   #
   IA_DIRECT_LINK_PATTERNS = [
     /[_.]daisy\.zip$/,
-  ].freeze
+  ].deep_freeze
 
   # ===========================================================================
   # :section:

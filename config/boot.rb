@@ -13,7 +13,7 @@ public
 #
 # @type [Time]
 #
-BOOT_TIME = Time.now
+BOOT_TIME = Time.now.freeze
 
 # The TeamCity build version.
 #
@@ -24,7 +24,7 @@ BOOT_TIME = Time.now
 #
 BUILD_VERSION =
   Dir['buildtag.*'].map { |name| name.to_s.sub(/^.*buildtag\./, '') }.join(',')
-    .tap { |result| result.replace('unknown') if result.empty? }
+    .tap { |result| result.replace('unknown') if result.empty? }.freeze
 
 # For use by the application in desktop (non-deployed) testing.
 #

@@ -29,7 +29,7 @@ module ManifestItem::FileData
     name:     { type: :reference, description: 'Local File' },
     data:     { type: :storage,   description: 'Immediate Data File' },
     uploader: { type: :storage,   description: 'Uploader Data' },
-  }.freeze
+  }.deep_freeze
 
   FILE_DATA_REFERENCE =
     FILE_DATA_TYPES.select { |_, v| v[:type] == :reference }.keys.freeze

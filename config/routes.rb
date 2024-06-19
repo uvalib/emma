@@ -7,9 +7,9 @@
 Rails.application.routes.draw do
 
   CURRENT    ||= ParamsHelper::CURRENT_ID
-  VIA_ANY    ||= { via: %i[put patch post get] }
-  VIA_CREATE ||= { via: %i[put patch post] }
-  VIA_UPDATE ||= { via: %i[put patch] }
+  VIA_ANY    ||= { via: %i[put patch post get] }.deep_freeze
+  VIA_CREATE ||= { via: %i[put patch post] }.deep_freeze
+  VIA_UPDATE ||= { via: %i[put patch] }.deep_freeze
 
   # ===========================================================================
   # Home page

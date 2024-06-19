@@ -38,6 +38,12 @@ module HashExt
     freeze
   end
 
+  # Indicate whether the Hash and all of its constituent parts are frozen.
+  #
+  def deep_frozen?
+    frozen? && all? { |k, v| k.deep_frozen? && v.deep_frozen? }
+  end
+
   # Recursive duplication.
   #
   # @return [Hash]

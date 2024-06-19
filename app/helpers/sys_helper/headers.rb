@@ -222,7 +222,7 @@ module SysHelper::Headers
   #
   # @type [Regexp]
   #
-  HEADER_NAME = /^[a-z_][a-z0-9_.-]*\??$/i
+  HEADER_NAME = /^[a-z_][a-z0-9_.-]*\??$/i.freeze
 
   # Build a sorted list of request header names.
   #

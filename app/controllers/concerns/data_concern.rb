@@ -298,7 +298,7 @@ module DataConcern
   #
   # @type [Array<String>]
   #
-  BOGUS_TITLE_PREFIXES = %w(RWL IA_BULK)
+  BOGUS_TITLE_PREFIXES = %w[RWL IA_BULK].freeze
 
   # Words used in :rem_comments during development/testing to denote
   # submissions which are not meant to be presented in search results.

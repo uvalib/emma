@@ -54,7 +54,7 @@ module Lookup::Crossref::Shared::TitleMethods
     'report-series':        'Report Series',
     'standard':             'Standard',
     'standard-series':      'Standard Series',
-  }.stringify_keys.freeze
+  }.stringify_keys.deep_freeze
 
   # ===========================================================================
   # :section: Api::Shared::TitleMethods overrides

@@ -25,6 +25,12 @@ module ObjectExt
     freeze
   end
 
+  # Indicate whether the object and its constituent parts are frozen.
+  #
+  def deep_frozen?
+    frozen?
+  end
+
   # Recursive duplication support.
   #
   # @see Hash#rdup

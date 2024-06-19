@@ -30,7 +30,7 @@ class Api::Serializer::Xml < Api::Serializer
   #
   # @type [String]
   #
-  XML_PROLOG = %q(<?xml version="1.0" encoding="UTF-8"?>)
+  XML_PROLOG = %q(<?xml version="1.0" encoding="UTF-8"?>).freeze
 
   # ===========================================================================
   # :section: Api::Serializer overrides

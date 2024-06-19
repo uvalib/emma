@@ -645,7 +645,7 @@ class ManifestDecorator
   STATUS_MESSAGE = {
     offline: config_text(:status, :offline),
     dynamic: '',
-  }.freeze
+  }.deep_freeze
 
   # An area for transient status messages updated by the client if there are
   # problems communicating with the server.

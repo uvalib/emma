@@ -79,7 +79,7 @@ module Upload::WorkflowMethods
   REVERSE_WORKFLOW_GROUP =
     WORKFLOW_GROUP.flat_map { |group, states|
       states.map { |state| [state, group] }
-    }.sort.to_h.freeze
+    }.sort.to_h.deep_freeze
 
   # Each workflow state should be associated with exactly one #WORKFLOW_GROUP
   # state grouping.
@@ -129,7 +129,7 @@ module Upload::WorkflowMethods
   REVERSE_STATE_GROUP =
     STATE_GROUP.flat_map { |group, entry|
       entry[:states].map { |state| [state,  group] }
-    }.sort.to_h.freeze
+    }.sort.to_h.deep_freeze
 
   # Each workflow state should be associated with exactly one #STATE_GROUP
   # entry.

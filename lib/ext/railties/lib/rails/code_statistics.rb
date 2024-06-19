@@ -13,8 +13,8 @@ module CodeStatisticsExt
 
   require_relative './code_statistics_calculator'
 
-  EXTENSIONS = CodeStatisticsCalculatorExt::PATTERNS.keys
-  FILE_REGEX = Regexp.new('^(?!\.).*?\.(%s)$' % EXTENSIONS.join('|'))
+  EXTENSIONS = CodeStatisticsCalculatorExt::PATTERNS.keys.freeze
+  FILE_REGEX = Regexp.new('^(?!\.).*?\.(%s)$' % EXTENSIONS.join('|')).freeze
   NON_CODE   = [
     /^config/i,
     /script/i,
@@ -22,7 +22,7 @@ module CodeStatisticsExt
     /^test /i,
     /tests?$/i,
     /views?$/i,
-  ].freeze
+  ].deep_freeze
 
   def calculate_directory_statistics(directory, pattern = FILE_REGEX)
     super

@@ -272,19 +272,19 @@ class RunState < Hash
     hr:  'hour',
     dy:  'day',
     wk:  'week'
-  }.stringify_keys!.freeze
+  }.stringify_keys!.deep_freeze
 
   # A regular expression pattern fragment for time units.
   #
   # @type [String]
   #
-  UNITS = ABBREV_UNIT.values.map { |u| "#{u}s?" }.join('|')
+  UNITS = ABBREV_UNIT.values.map { |u| "#{u}s?" }.join('|').freeze
 
   # A regular expression pattern fragment for time unit abbreviations.
   #
   # @type [String]
   #
-  ABBREVS = ABBREV_UNIT.keys.map { |u| "#{u}s?" }.join('|')
+  ABBREVS = ABBREV_UNIT.keys.map { |u| "#{u}s?" }.join('|').freeze
 
   # Transform a value into either a duration (as an integral number of seconds)
   # or a fixed timestamp.

@@ -20,7 +20,8 @@ module HeadHelper::Stylesheets
   private
 
   # @type [Array<String,Hash,Array(String,Hash)>]
-  DEFAULT_PAGE_STYLESHEETS = HEAD_CONFIG[:stylesheets]&.compact_blank || []
+  DEFAULT_PAGE_STYLESHEETS =
+    HEAD_CONFIG[:stylesheets]&.compact_blank&.deep_freeze || []
 
   # ===========================================================================
   # :section:

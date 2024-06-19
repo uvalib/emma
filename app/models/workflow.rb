@@ -86,15 +86,15 @@ module Workflow::Base::Roles
 
   public
 
-  IF_USER       = { if: ->(wf) { wf.user_wf? } }
-  IF_SUBMITTER  = { if: ->(wf) { wf.submitter_wf? } }
-  IF_REVIEWER   = { if: ->(wf) { wf.reviewer_wf? } }
-  IF_ADMIN      = { if: ->(wf) { wf.admin_wf? } }
-  IF_SYSTEM     = { if: ->(wf) { wf.system_wf? } }
-  IF_DEV        = { if: ->(wf) { wf.developer_wf? } }
+  IF_USER       = { if: ->(wf) { wf.user_wf? } }.freeze
+  IF_SUBMITTER  = { if: ->(wf) { wf.submitter_wf? } }.freeze
+  IF_REVIEWER   = { if: ->(wf) { wf.reviewer_wf? } }.freeze
+  IF_ADMIN      = { if: ->(wf) { wf.admin_wf? } }.freeze
+  IF_SYSTEM     = { if: ->(wf) { wf.system_wf? } }.freeze
+  IF_DEV        = { if: ->(wf) { wf.developer_wf? } }.freeze
 
-  IF_SYS_DEBUG  = { if: ->(wf) { DEBUG_WORKFLOW && wf.system_wf? } }
-  IF_DEV_DEBUG  = { if: ->(wf) { DEBUG_WORKFLOW && wf.developer_wf? } }
+  IF_SYS_DEBUG  = { if: ->(wf) { DEBUG_WORKFLOW && wf.system_wf? } }.freeze
+  IF_DEV_DEBUG  = { if: ->(wf) { DEBUG_WORKFLOW && wf.developer_wf? } }.freeze
 
   # ===========================================================================
   # :section:
@@ -984,9 +984,9 @@ class Workflow::Base
 
   public
 
-  IF_DEBUG    = { if: ->(*)  { DEBUG_WORKFLOW } }
-  IF_COMPLETE = { if: ->(wf) { wf.user_wf? && wf.complete? } }
-  IF_READY    = { if: ->(wf) { wf.user_wf? && wf.ready? } }
+  IF_DEBUG    = { if: ->(*)  { DEBUG_WORKFLOW } }.freeze
+  IF_COMPLETE = { if: ->(wf) { wf.user_wf? && wf.complete? } }.freeze
+  IF_READY    = { if: ->(wf) { wf.user_wf? && wf.ready? } }.freeze
 
   # ===========================================================================
   # :section:

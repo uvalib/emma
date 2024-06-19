@@ -13,7 +13,7 @@
 #
 # @type [Hash]
 #
-CORS_OPTIONS = { debug: DEBUG_CORS }
+CORS_OPTIONS = { debug: DEBUG_CORS }.freeze
 
 Rails.configuration.middleware.insert_before 0, Rack::Cors, CORS_OPTIONS do
 

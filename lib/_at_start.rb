@@ -24,6 +24,6 @@ NATIVE_METHODS =
   if sanity_check?
     [Module, NilClass, Object, Array, Hash].map { |mod|
       defined = (mod.methods + mod.instance_methods).sort.uniq
-      [mod, defined]
-    }.to_h
+      [mod, defined.freeze]
+    }.to_h.freeze
   end

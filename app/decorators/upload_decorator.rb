@@ -533,7 +533,7 @@ class UploadDecorator
   #
   # @type [Array<String,Symbol,Regexp>]
   #
-  FIELD_FILTERS = [:phase, /^edit/, /^review/].freeze
+  FIELD_FILTERS = [:phase, /^edit/, /^review/].deep_freeze
 
   # Fields and configurations augmented with a :value entry containing the
   # current field value.

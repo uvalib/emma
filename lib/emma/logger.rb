@@ -166,7 +166,7 @@ module Emma
       /#{START}GoodJob::Execution Load/,
       /#{START}GoodJob::Lockable Unlock/,
       /#{START}Processing by HealthController#check/,
-    ].freeze
+    ].deep_freeze
 
     # Indicate whether the given log entry should be skipped if log output is
     # going to AWS CloudWatch.

@@ -14,6 +14,10 @@ module HashExt
   #
   def deep_freeze: () -> self
 
+  # Indicate whether the Hash and all of its constituent parts are frozen.
+  #
+  def deep_frozen?: () -> bool
+
   # Recursive duplication.
   #
   # @return [Hash]

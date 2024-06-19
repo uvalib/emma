@@ -18,7 +18,8 @@ module HeadHelper::Scripts
   private
 
   # @type [Array<String,Hash,Array(String,Hash)>]
-  DEFAULT_PAGE_JAVASCRIPTS = HEAD_CONFIG[:javascripts]&.compact_blank || []
+  DEFAULT_PAGE_JAVASCRIPTS =
+    HEAD_CONFIG[:javascripts]&.compact_blank&.deep_freeze || []
 
   # ===========================================================================
   # :section:

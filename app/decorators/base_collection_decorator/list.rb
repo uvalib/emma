@@ -106,7 +106,7 @@ module BaseCollectionDecorator::List
   #
   # @type [Array<Symbol>]
   #
-  LIST_CONTROL_METHODS = %i[list_results list_filter list_styles]
+  LIST_CONTROL_METHODS = %i[list_results list_filter list_styles].freeze
 
   # Optional controls to modify the display or generation of the item list in
   # the order of display.

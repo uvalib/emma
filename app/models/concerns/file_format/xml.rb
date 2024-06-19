@@ -222,7 +222,7 @@ module FileFormat::Xml
   TYPE_ROLE =
     ROLE_TYPE.flat_map { |role, types|
       Array.wrap(types).map { |type| [type, role] }
-    }.to_h.freeze
+    }.to_h.deep_freeze
 
   # role_type
   #

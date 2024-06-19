@@ -599,13 +599,14 @@ module BaseDecorator::Fields
   #--
   # noinspection SpellCheckingInspection
   #++
-  SECTION_TITLE_RE = /^(PART|[CDILMVX]+\.?|[cdilmvx]+\.|\d+\.|v\.) +(.*)/
+  SECTION_TITLE_RE =
+    /^(PART|[CDILMVX]+\.?|[cdilmvx]+\.|\d+\.|v\.) +(.*)/.freeze
 
   # For use with String#scan to step through quote/attribute pairs.
   #
   # @type [Regexp]
   #
-  BLURB_RE = /([^\n]*?[[:punct:]]) *-- *([^\n]+?\.\s+|[^\n]+\s*)/
+  BLURB_RE = /([^\n]*?[[:punct:]]) *-- *([^\n]+?\.\s+|[^\n]+\s*)/.freeze
 
   # Reformat descriptions which are structured in a way that one would find
   # in MARC metadata.

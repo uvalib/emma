@@ -209,7 +209,7 @@ module HtmlHelper::Attributes
     th:    %i[role],
     tr:    %i[role aria-rowindex],
     td:    %i[aria-colindex],
-  }.freeze
+  }.deep_freeze
 
   # Expected :role values for a given HTML tag.
   #

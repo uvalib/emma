@@ -159,7 +159,7 @@ module SearchModesHelper
     file_only:  :file_results?,
     debug_only: :search_debug?,
     dev_only:   :search_dev?,
-  }
+  }.freeze
 
   # Indicate whether the guard condition is satisfied.
   #

@@ -43,7 +43,7 @@ module DataHelper
     /^active_/,
     'schema_migrations',
     'ar_internal_metadata',
-  ].freeze
+  ].deep_freeze
 
   # Produce a list of sorted table names.
   #

@@ -23,13 +23,13 @@ module TestHelper::Common
   #
   # @type [String]
   #
-  HELPER_DIR = File.expand_path(File.dirname(__FILE__))
+  HELPER_DIR = File.expand_path(File.dirname(__FILE__)).freeze
 
   # The full directory path for "/test".
   #
   # @type [String]
   #
-  TESTS_DIR  = File.expand_path("#{HELPER_DIR}/..")
+  TESTS_DIR  = File.expand_path("#{HELPER_DIR}/..").freeze
 
   # The full directory path for "/test/system".
   #

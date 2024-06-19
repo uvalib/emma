@@ -38,7 +38,7 @@ module Record::EmmaIdentification
   SID_LETTER_MATCH = ('[%c-%c]' % SID_LETTERS).freeze
 
   # @type [Regexp]
-  SID_PATTERN = /^#{SID_PREFIX}\h{8,}#{SID_LETTER_MATCH}\d\d$/
+  SID_PATTERN = /^#{SID_PREFIX}\h{8,}#{SID_LETTER_MATCH}\d\d$/.freeze
 
   # ===========================================================================
   # :section:

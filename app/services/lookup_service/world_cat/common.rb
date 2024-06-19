@@ -19,9 +19,9 @@ module LookupService::WorldCat::Common
 
   public
 
-  WORLDCAT_REGISTRY_ID  = ENV['WORLDCAT_REGISTRY']
-  WORLDCAT_PRINCIPAL_ID = ENV['WORLDCAT_PRINCIPAL']
-  WORLDCAT_WSKEY        = ENV['WORLDCAT_API_KEY']
+  WORLDCAT_REGISTRY_ID  = ENV['WORLDCAT_REGISTRY'].freeze
+  WORLDCAT_PRINCIPAL_ID = ENV['WORLDCAT_PRINCIPAL'].freeze
+  WORLDCAT_WSKEY        = ENV['WORLDCAT_API_KEY'].freeze
 
   #--
   # noinspection SpellCheckingInspection

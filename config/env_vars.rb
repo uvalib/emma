@@ -160,7 +160,7 @@ SIGN_IN_AS = (:sign_in_as if ENV['RAILS_ENV'] == 'test')
 # Mailer properties
 # =============================================================================
 
-MAILER_SENDER = ENV.fetch('MAILER_SENDER', 'emmahelp@virginia.edu')
+MAILER_SENDER = ENV.fetch('MAILER_SENDER', 'emmahelp@virginia.edu').freeze
 
 MAILER_URL_HOST =
   case
@@ -348,7 +348,7 @@ LOG_SILENCER_ENDPOINTS =
     endpoints << %r{^/periodical}
     endpoints << %r{^/title}
     endpoints << %r{^/v2}
-  end
+  end.map(&:freeze).freeze
 
 # =============================================================================
 # Output

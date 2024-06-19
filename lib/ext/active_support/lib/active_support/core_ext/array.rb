@@ -40,6 +40,12 @@ module ArrayExt
     freeze
   end
 
+  # Indicate whether the Array and all of its constituent parts are frozen.
+  #
+  def deep_frozen?
+    frozen? && all?(&:deep_frozen?)
+  end
+
   # Recursive duplication.
   #
   # @return [Array]

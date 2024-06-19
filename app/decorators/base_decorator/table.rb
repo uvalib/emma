@@ -42,11 +42,11 @@ module BaseDecorator::Table
   #
   MODEL_TABLE_OPT = [
     :model,
-    MODEL_TABLE_DATA_OPT  = %i[partial pageable sortable],
-    MODEL_TABLE_HEAD_OPT  = %i[sticky dark],
-    MODEL_TABLE_ENTRY_OPT = %i[outer_tag inner_tag],
-    MODEL_TABLE_ROW_OPT   = %i[row col],
-    MODEL_TABLE_PART_OPT  = %i[thead tbody tfoot],
+    MODEL_TABLE_DATA_OPT  = %i[partial pageable sortable].freeze,
+    MODEL_TABLE_HEAD_OPT  = %i[sticky dark].freeze,
+    MODEL_TABLE_ENTRY_OPT = %i[outer_tag inner_tag].freeze,
+    MODEL_TABLE_ROW_OPT   = %i[row col].freeze,
+    MODEL_TABLE_PART_OPT  = %i[thead tbody tfoot].freeze,
   ].flatten.freeze
 
   # ===========================================================================

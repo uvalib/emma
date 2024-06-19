@@ -90,7 +90,7 @@ module Import::IaBulk
     uploader:             :skip,                      # NOTE: [4]
     version:              [:emma_version,             :string_value],
     volume:               [:bib_seriesPosition,       :string_value],
-  }.freeze
+  }.deep_freeze
 
   # Each "format" provided gets mapping into several :emma_data fields.
   #

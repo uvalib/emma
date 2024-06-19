@@ -30,7 +30,7 @@ module HtmlHelper::Symbols
     ([^<]*)             # _5 - HTML node contents
     (< */ *\3 *>)       # _6 - HTML tag close
     ([^<]*)             # _7 - trailing text
-  }x
+  }x.freeze
 
   # If the text has any symbols in it, hide them from screen readers.
   #

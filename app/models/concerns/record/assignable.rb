@@ -282,7 +282,7 @@ module Record::Assignable
   #
   # @type [String,Regexp]
   #
-  LINE_SPLIT = /[;\n]+/
+  LINE_SPLIT = /[;\n]+/.freeze
 
   # String by which array attribute values are combined into strings.
   #

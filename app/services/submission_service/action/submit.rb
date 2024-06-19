@@ -678,7 +678,7 @@ module SubmissionService::Action::Submit
     success: 'succeeded',
     failure: '%{meth} failed',
     timeout: 'timed out',
-  }
+  }.freeze
 
   # Perform a submission step on the given record(s) accumulating successes and
   # failures.

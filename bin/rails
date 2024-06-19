@@ -6,6 +6,6 @@
 ENV['RAILS_LOG_TO_STDOUT'] ||= 'true' if %w[c console].include?($*.first)
 
 # Run Rails command.
-APP_PATH = File.expand_path('../config/application', __dir__)
+APP_PATH = File.expand_path('../config/application', __dir__).freeze
 require_relative '../config/boot'
 require 'rails/commands'

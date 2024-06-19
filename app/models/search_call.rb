@@ -260,13 +260,14 @@ class SearchCall < ApplicationRecord
           [param, [column, key]]
         }.to_h
       [column, params]
-    }.to_h
+    }.to_h.deep_freeze
 
   # URL parameters which map into attributes.
   #
   # @type [Hash{Symbol=>Array<Symbol>}]
   #
-  PARAMETER_MAP = JSON_COLUMN_PARAMETERS.values.flat_map(&:to_a).sort.uniq.to_h
+  PARAMETER_MAP =
+    JSON_COLUMN_PARAMETERS.values.flat_map(&:to_a).sort.uniq.to_h.deep_freeze
 
   # ===========================================================================
   # :section: ApplicationRecord overrides

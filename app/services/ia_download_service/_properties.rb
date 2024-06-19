@@ -59,7 +59,7 @@ module IaDownloadService::Properties
   }.map { |name, parts|
     parts = parts.join('; ') if parts.is_a?(Array)
     "#{name}=#{parts}"
-  }.join('; ')
+  }.join('; ').freeze
 
   # ===========================================================================
   # :section: ApiService::Properties overrides

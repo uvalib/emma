@@ -184,7 +184,7 @@ module SessionConcern
   #
   # @type [Array<Symbol>]
   #
-  LAST_OP_NO_ABBREV = %i[redirect]
+  LAST_OP_NO_ABBREV = %i[redirect].freeze
 
   # Maximum size for the rendered result of #last_operation['params'].
   #

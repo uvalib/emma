@@ -45,7 +45,7 @@ module Representable
 
     else
 
-      DEBUG_MODES = [:input, :output, true, false, nil]
+      DEBUG_MODES = [:input, :output, true, false, nil].freeze
       DEBUG_REPRESENTABLE.tap do |value|
         raise "invalid: #{value.inspect}" unless DEBUG_MODES.include?(value)
       end

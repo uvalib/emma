@@ -16,6 +16,10 @@ module ArrayExt
   #
   def deep_freeze: () -> self
 
+  # Indicate whether the Array and all of its constituent parts are frozen.
+  #
+  def deep_frozen?: () -> bool
+
   # Recursive duplication.
   #
   # @return [Array]
