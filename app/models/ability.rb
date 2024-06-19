@@ -217,14 +217,11 @@ class Ability
 
   # Assign the ability to perform as a system administrator.
   #
-  # @param [User] user
+  # @param [User] _user               Unused.
   #
   # @return [void]
   #
-  #--
-  # noinspection RubyUnusedLocalVariable
-  #++
-  def act_as_administrator(user, **)
+  def act_as_administrator(_user, **)
     can :manage, :all
     cannot :show_current, Org
     cannot :edit_current, Org
@@ -239,10 +236,9 @@ class Ability
   # @return [void]
   #
   def act_as_manager(user, **constraints)
-    meth = constraints[:meth] || __method__
+    constraints[:meth] ||= __method__
+    set_org!(constraints, user) or return
     act_as_full_member(user, **constraints)
-    constraints[:org] ||= org_for(user, caller: meth) or
-      return Log.warn { "#{meth}: no org for #{user.inspect}" }
     can_manage_user(**constraints)
     can_manage_org(**constraints)
     cannot :edit_select,   Org
@@ -258,6 +254,7 @@ class Ability
   # @return [void]
   #
   def act_as_full_member(user, **constraints)
+    constraints[:meth] ||= __method__
     act_as_staff(user, **constraints)
     can :download, Upload
     can :retrieve, Upload
@@ -272,6 +269,7 @@ class Ability
   # @return [void]
   #
   def act_as_staff(user, **constraints)
+    constraints[:meth] ||= __method__
     act_as_guest(user, **constraints)
     can_manage_account(user, **constraints)
     can_manage_user_submissions(user, **constraints)
@@ -286,6 +284,7 @@ class Ability
   # @return [void]
   #
   def act_as_guest(user, **constraints)
+    constraints[:meth] ||= __method__
     act_as_anonymous(user, **constraints)
     act_as_org_user(user, **constraints)
     can :dashboard, :all
@@ -315,9 +314,8 @@ class Ability
   # @return [void]
   #
   def act_as_org_user(user, **constraints)
-    meth = constraints[:meth] || __method__
-    constraints[:org] ||= org_for(user, caller: meth) or
-      return Log.warn { "#{meth}: no org for #{user.inspect}" }
+    constraints[:meth] ||= __method__
+    set_org!(constraints, user) or return
     can_view_content(Org,  **constraints)
     can_view_content(User, **constraints)
     can_view_group_submissions(user, **constraints)
@@ -430,9 +428,8 @@ class Ability
   # @return [void]
   #
   def can_manage_group_submissions(user, **constraints)
-    meth = constraints[:meth] || __method__
-    constraints[:org] ||= org_for(user, caller: meth) or
-      return Log.warn { "#{meth}: no org for #{user.inspect}" }
+    constraints[:meth] ||= __method__
+    set_org!(constraints, user) or return
     can_manage_submissions(**constraints)
     can_manage_bulk_submissions(**constraints)
   end
@@ -458,10 +455,10 @@ class Ability
   # @return [void]
   #
   def can_manage_submissions(model = Upload, **constraints)
-    meth = constraints.delete(:meth) || __method__
+    constraints[:meth] ||= __method__
 
     # === Basic record management
-    can_manage_records(model, meth: meth, **constraints)
+    can_manage_records(model, **constraints)
 
     # === Record modification
     can :start_edit,  model, constraints
@@ -480,9 +477,8 @@ class Ability
   # @return [void]
   #
   def can_view_group_submissions(user, **constraints)
-    meth = constraints[:meth] || __method__
-    constraints[:org] ||= org_for(user, caller: meth) or
-      return Log.warn { "#{meth}: no org for #{user.inspect}" }
+    constraints[:meth] ||= __method__
+    set_org!(constraints, user) or return
     can_view_submissions(**constraints)
     can_view_bulk_submissions(**constraints)
   end
@@ -519,22 +515,18 @@ class Ability
   # Define a set of capabilities on a given model type which allows full
   # control over instances which meet the given constraints.
   #
-  # @param [Class]        model
-  # @param [Boolean, nil] no_bulk
-  # @param [Symbol, nil]  meth          For diagnostics.
-  # @param [Hash]         constraints
+  # @param [Class] model
+  # @param [Hash]  constraints
   #
   # @return [void]
   #
-  def can_manage_records(model, no_bulk: nil, meth: nil, **constraints)
-    meth ||= __method__
-    if no_bulk.nil? && constraints.present?
-      no_bulk = identity_keys(model).intersect?(constraints.keys)
-    end
-    Log.debug { "#{meth}: no_bulk for #{constraints} #{model}" } if no_bulk
+  def can_manage_records(model, **constraints)
+    constraints[:meth] ||= __method__
+    no_bulk = constraints[:no_bulk]
+    no_bulk = set_no_bulk!(constraints, model, 'no_bulk for') if no_bulk.nil?
 
     # === Basic record management
-    can_manage_content(model, no_bulk: no_bulk, meth: meth, **constraints)
+    can_manage_content(model, **constraints)
 
     # === Record creation
     can :new,           model
@@ -570,22 +562,18 @@ class Ability
   #
   # This includes modification of records, but not creation or deletion.
   #
-  # @param [Class]        model
-  # @param [Boolean, nil] no_bulk
-  # @param [Symbol, nil]  meth          For diagnostics.
-  # @param [Hash]         constraints
+  # @param [Class] model
+  # @param [Hash]  constraints
   #
   # @return [void]
   #
-  def can_manage_content(model, no_bulk: nil, meth: nil, **constraints)
-    meth ||= __method__
-    if no_bulk.nil? && constraints.present?
-      no_bulk = identity_keys(model).intersect?(constraints.keys)
-    end
-    Log.debug { "#{meth}: #{model}: limited by #{constraints}" } if no_bulk
+  def can_manage_content(model, **constraints)
+    constraints[:meth] ||= __method__
+    no_bulk = constraints[:no_bulk]
+    no_bulk = set_no_bulk!(constraints, model, 'limited by') if no_bulk.nil?
 
     # === List/view resources
-    can_view_content(model, meth: meth, **constraints)
+    can_view_content(model, **constraints)
 
     # === Modify resource
     can :edit_current,    model, constraints
@@ -607,16 +595,12 @@ class Ability
   # Define a set of capabilities on a given model type which allows visibility
   # for instances which meet the given constraints.
   #
-  # @param [Class]      model
-  # @param [Symbol,nil] meth          For diagnostics.
-  # @param [Hash]       constraints
+  # @param [Class] model
+  # @param [Hash]  constraints
   #
   # @return [void]
   #
-  #--
-  # noinspection RubyUnusedLocalVariable
-  #++
-  def can_view_content(model, meth: nil, **constraints)
+  def can_view_content(model, **constraints)
     can :index,        model, constraints
     can :list,         model, constraints
     can :list_org,     model, constraints
@@ -625,6 +609,52 @@ class Ability
     can :show_select,  model, constraints
     can :show,         model
     can :view,         model
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Set `constraints[:org]` if not already assigned.
+  #
+  # @param [Hash] constraints
+  # @param [User] user
+  #
+  # @return [Boolean]                 False if :org could not be set.
+  #
+  def set_org!(constraints, user)
+    unless (org = constraints[:org])
+      meth = constraints[:meth] || __method__
+      org  = org_for(user, caller: meth)
+      Log.warn { "#{meth}: no org for #{user.inspect}" } unless org
+      constraints.merge!(org: org) if org
+    end
+    org.present?
+  end
+
+  # Set `constraints[:no_bulk]` if not already assigned.
+  #
+  # @param [Hash]        constraints
+  # @param [Class]       model
+  # @param [String, nil] label
+  #
+  # @return [Boolean]                 Value of `constraints[:no_bulk]`.
+  #
+  def set_no_bulk!(constraints, model, label = nil)
+    unless constraints.key?(:no_bulk)
+      cons    = constraints.except(:meth)
+      keys    = cons.keys
+      no_bulk = keys.present? && identity_keys(model).intersect?(keys)
+      Log.debug do
+        meth  = constraints[:meth] || __method__
+        label = [label, constraints.except(:meth, :no_bulk)].compact.join(' ')
+        "#{meth}: #{model}: #{label}"
+      end if no_bulk
+      constraints.merge!(no_bulk: no_bulk)
+    end
+    constraints[:no_bulk]
   end
 
   # ===========================================================================
@@ -741,7 +771,7 @@ class Ability
   def prep_conditions(action, subject, conditions)
     action = action.compact.map!(&:to_sym) if action.is_a?(Array)
     action = action.to_sym                 if action.is_a?(String)
-    conditions.compact_blank!
+    conditions.map! { |arg| arg.except(:meth, :no_bulk) }.compact_blank!
     conditions.map! { |arg| normalize_id_keys(arg, subject) }
     return action, subject, conditions
   end

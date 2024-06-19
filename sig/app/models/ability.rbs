@@ -126,11 +126,11 @@ class Ability
 
   # Assign the ability to perform as a system administrator.
   #
-  # @param [User] user
+  # @param [User] _user               Unused.
   #
   # @return [void]
   #
-  def act_as_administrator: (User user, **untyped _ignored) -> void
+  def act_as_administrator: (User _user, **untyped _ignored) -> void
 
   # Assign the ability to perform as an EMMA member organization manager.
   #
@@ -299,40 +299,53 @@ class Ability
   # Define a set of capabilities on a given model type which allows full
   # control over instances which meet the given constraints.
   #
-  # @param [Class]        model
-  # @param [Boolean, nil] no_bulk
-  # @param [Symbol, nil]  meth          For diagnostics.
-  # @param [Hash]         constraints
+  # @param [Class] model
+  # @param [Hash]  constraints
   #
   # @return [void]
   #
-  def can_manage_records: (Class model, ?no_bulk: bool|nil, ?meth: Symbol|nil, **untyped constraints) -> void
+  def can_manage_records: (Class model, **untyped constraints) -> void
 
   # Define a set of capabilities on a given model type which allows basic
   # control over instances which meet the given constraints.
   #
   # This includes modification of records, but not creation or deletion.
   #
-  # @param [Class]        model
-  # @param [Boolean, nil] no_bulk
-  # @param [Symbol, nil]  meth          For diagnostics.
-  # @param [Hash]         constraints
+  # @param [Class] model
+  # @param [Hash]  constraints
   #
   # @return [void]
   #
-  def can_manage_content: (Class model, ?no_bulk: bool|nil, ?meth: Symbol|nil, **untyped constraints) -> void
+  def can_manage_content: (Class model, **untyped constraints) -> void
 
   # Define a set of capabilities on a given model type which allows visibility
   # for instances which meet the given constraints.
   #
-  # @param [Class]              model
-  # @param [Array, Symbol, nil] skip          Action(s) to skip.
-  # @param [Symbol,nil]         meth          For diagnostics.
-  # @param [Hash]               constraints
+  # @param [Class] model
+  # @param [Hash]  constraints
   #
   # @return [void]
   #
-  def can_view_content: (Class model, ?skip: symArray|Symbol|nil, ?meth: Symbol|nil, **untyped constraints) -> void
+  def can_view_content: (Class model, **untyped constraints) -> void
+
+  # Set `constraints[:org]` if not already assigned.
+  #
+  # @param [Hash] constraints
+  # @param [User] user
+  #
+  # @return [Boolean]                 False if :org could not be set.
+  #
+  def set_org!: (symHash constraints, User user) -> bool
+
+  # Set `constraints[:no_bulk]` if not already assigned.
+  #
+  # @param [Hash]        constraints
+  # @param [Class]       model
+  # @param [String, nil] label
+  #
+  # @return [Boolean]                 Value of `constraints[:no_bulk]`.
+  #
+  def set_no_bulk!: (symHash constraints, Class model, ?(String|nil) label) -> bool
 
   # Check if the user has permission to perform a given action on an object.
   #
