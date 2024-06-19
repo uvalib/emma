@@ -2634,33 +2634,34 @@ appSetup(MODULE, function() {
      * Update field(s) of multiple ManifestItem records.
      *
      * @param {object|string} items
-     * @param {object}        [opt]
+     * @param {object}        [options]
      *
      * @see "ManifestItemController#bulk_fields"
      */
-    function sendFieldUpdates(items, opt = {}) {
-        const func     = opt?.caller || 'sendFieldUpdates';
+    function sendFieldUpdates(items, options) {
+        const opt      = { ...options };
+        const caller   = opt.caller;            delete opt.caller;
+        const method   = opt.method || 'PUT';   delete opt.method;
+        const headers  = { ...opt.headers };    delete opt.headers;
+        const params   = { data: items, ...(opt.params || opt) };
+
+        const func     = caller || 'sendFieldUpdates';
         const manifest = manifestId();
-        const method   = 'PUT';
-        const action   = `bulk/fields/${manifest}`;
-        const content  = 'multipart/form-data';
-        const accept   = 'text/html';
-        OUT.debug(`${func}: items =`, items);
+        OUT.debug(`${func}: manifest = ${manifest}; items =`, items);
 
         if (!manifest) {
             OUT.error(`${func}: no manifest ID`);
             return;
         }
 
-        const hdr = opt?.headers;
-        if (hdr) { delete opt.headers }
-        const prm = opt?.params || opt;
+        headers['Accept']       ||= 'text/html';
+        headers['Content-Type'] ||= 'multipart/form-data';
 
-        serverSend(action, {
+        serverSend(`bulk/fields/${manifest}`, {
             caller:  func,
             method:  method,
-            params:  { data: items, ...prm },
-            headers: { 'Content-Type': content, Accept: accept, ...hdr },
+            params:  params,
+            headers: headers,
         });
     }
 

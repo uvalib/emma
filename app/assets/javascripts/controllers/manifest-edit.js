@@ -696,9 +696,10 @@ appSetup(MODULE, function() {
      * @see "ManifestConcern#save_changes"
      */
     function saveUpdates(event) {
-        const func     = 'saveUpdates'; OUT.debug(`${func}: event =`, event);
-        const manifest = manifestId();
+        const func     = 'saveUpdates';
         const $button  = $(event.currentTarget || event.target);
+        const manifest = manifestId();
+        OUT.debug(`${func}: manifest = ${manifest}; event =`, event);
 
         cancelActiveCell();             // Abandon any active edit.
         finalizeDataRows('original');   // Update "original" cell values.
@@ -750,9 +751,10 @@ appSetup(MODULE, function() {
      * @see "ManifestConcern#cancel_changes"
      */
     function cancelUpdates(event) {
-        const func     = 'cancelUpdates'; OUT.debug(`${func}: event =`, event);
+        const func     = 'cancelUpdates';
         const manifest = manifestId();
         const finalize = () => cancelAction($cancel);
+        OUT.debug(`${func}: manifest = ${manifest}; event =`, event);
 
         cancelActiveCell();             // Abandon any active edit.
         deleteRows(blankDataRows());    // Eliminate rows unseen by the server.
@@ -815,16 +817,16 @@ appSetup(MODULE, function() {
      * @param {string} [filename]     For diagnostics only.
      */
     function importData(data, filename) {
-        const func   = 'importData';
-        const type   = dataType(data);
-        const params = { data: data, type: type, caller: func };
-        const $last  = allDataRows().last();
+        const func  = 'importData';
+        const type  = dataType(data);
+        const opt   = { caller: func, type: type };
+        const $last = allDataRows().last();
         if (getManifestItemId($last)) {
-            params.row   = dbRowValue($last);
-            params.delta = dbRowDelta($last);
+            opt.row   = dbRowValue($last);
+            opt.delta = dbRowDelta($last);
         }
         OUT.debug(`${func}: from "${filename}": type "${type}"; data =`, data);
-        sendCreateRecords(data, params);
+        sendCreateRecords(data, opt);
     }
 
     /**
@@ -834,13 +836,14 @@ appSetup(MODULE, function() {
      *  this use-case needs to be considered.
      *
      * @param {string} data
-     * @param {string} [_filename]     For diagnostics only.
+     * @param {string} [filename]     For diagnostics only.
      */
-    function reImportData(data, _filename) {
-        const func   = 'reImportData';
-        const type   = dataType(data);
-        const params = { data: data, type: type, caller: func };
-        sendUpdateRecords(data, params);
+    function reImportData(data, filename) {
+        const func = 'reImportData';
+        const type = dataType(data);
+        const opt  = { caller: func, type: type };
+        OUT.debug(`${func}: from "${filename}": type "${type}"; data =`, data);
+        sendUpdateRecords(data, opt);
    }
 
     // ========================================================================
@@ -1243,7 +1246,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}
      */
     function activeDataRow(target) {
-        return getManifestItemId(target);
+        return !!getManifestItemId(target);
     }
 
     /**
@@ -1727,56 +1730,60 @@ appSetup(MODULE, function() {
      * Create multiple ManifestItem records.
      *
      * @param {object|string} items
-     * @param {object}        [opt]
+     * @param {object}        [options]
      *
      * @see "ManifestItemController#bulk_create"
      */
-    function sendCreateRecords(items, opt = {}) {
-        const caller = opt?.caller || 'sendCreateRecords';
-        sendUpsertRecords(items, { caller, ...opt, create: true });
+    function sendCreateRecords(items, options) {
+        const func = 'sendCreateRecords';
+        const opt  = { caller: func, ...options, create: true };
+        sendUpsertRecords(items, opt);
     }
 
     /**
      * Update multiple ManifestItem records.
      *
      * @param {object|string} items
-     * @param {object}        [opt]
+     * @param {object}        [options]
      *
      * @see "ManifestItemController#bulk_update"
      */
-    function sendUpdateRecords(items, opt = {}) {
-        const caller = opt?.caller || 'sendUpdateRecords';
-        sendUpsertRecords(items, { caller, ...opt, create: false });
+    function sendUpdateRecords(items, options) {
+        const func = 'sendUpdateRecords';
+        const opt  = { caller: func, ...options, create: false };
+        sendUpsertRecords(items, opt);
     }
 
     /**
      * Create/update multiple ManifestItem records.
      *
      * @param {object|string} items
-     * @param {object}        [opt]
+     * @param {object}        [options]
      */
-    function sendUpsertRecords(items, opt = {}) {
-        const func      = opt?.caller || 'sendUpsertRecords';
-        const manifest  = manifestId();
-        const operation = opt?.create ? 'create' : 'update';
-        const action    = `bulk/${operation}/${manifest}`;
-        const content   = 'multipart/form-data';
-        const accept    = 'text/html';
-        OUT.debug(`${func}: items =`, items);
+    function sendUpsertRecords(items, options) {
+        const opt      = { ...options };
+        const caller   = opt.caller;           delete opt.caller;
+        const create   = opt.create;           delete opt.create;
+        const headers  = { ...opt.headers };   delete opt.headers;
+        const params   = { ...(opt.params || opt), data: items };
+
+        const func     = caller || 'sendUpsertRecords';
+        const op       = create ? 'create' : 'update';
+        const manifest = manifestId();
+        OUT.debug(`${func}: (${op}) manifest = ${manifest}; items =`, items);
 
         if (!manifest) {
             OUT.error(`${func}: no manifest ID`);
             return;
         }
 
-        const hdr = opt?.headers;
-        if (hdr) { delete opt.headers }
-        const prm = opt?.params || opt;
+        headers['Accept']       ||= 'text/html';
+        headers['Content-Type'] ||= 'multipart/form-data';
 
-        serverItemSend(action, {
+        serverItemSend(`bulk/${op}/${manifest}`, {
             caller:     func,
-            params:     { data: items, ...prm },
-            headers:    { 'Content-Type': content, Accept: accept, ...hdr },
+            params:     params,
+            headers:    headers,
             onSuccess:  processReceivedItems,
         });
     }
@@ -1942,21 +1949,20 @@ appSetup(MODULE, function() {
     function sendDeleteRecords(items, intermediate) {
         const func     = 'sendDeleteRecords';
         const manifest = manifestId();
-        const action   = `bulk/destroy/${manifest}`;
-        const content  = 'multipart/form-data';
-        const accept   = 'application/json';
-        const id_list  = arrayWrap(items);
-        OUT.debug(`${func}: items =`, items);
+        OUT.debug(`${func}: manifest = ${manifest}; items =`, items);
 
         if (!manifest) {
             OUT.error(`${func}: no manifest ID`);
             return;
         }
 
-        serverItemSend(action, {
+        const accept   = 'application/json';
+        const content  = 'multipart/form-data';
+
+        serverItemSend(`bulk/destroy/${manifest}`, {
             caller:     func,
             method:     'DELETE',
-            params:     { ids: id_list },
+            params:     { ids: arrayWrap(items) },
             headers:    { 'Content-Type': content, Accept: accept },
             onSuccess:  processDeleteResponse,
         });
@@ -2552,18 +2558,24 @@ appSetup(MODULE, function() {
      * @see "ManifestItemController#start_edit"
      */
     function postRowUpdate(changed_row, new_values) {
-        const func = 'postRowUpdate';
+        const func  = 'postRowUpdate';
+        const $row  = dataRow(changed_row);
+        const item  = getManifestItemId($row);
+
+        if (!item) {
+            OUT.error(`${func}: no record ID for $row =`, $row);
+            return;
+        }
         if (isEmpty(new_values)) {
             OUT.error(`${func}: no data field changes`);
             return;
         }
-        const $row   = dataRow(changed_row);
-        const db_id  = getManifestItemId($row);
-        const action = `row_update/${db_id}`;
-        const row    = dbRowValue($row);
-        const delta  = dbRowDelta($row);
-        const data   = { row: row, delta: delta, ...new_values };
-        serverItemSend(action, {
+
+        const row   = dbRowValue($row);
+        const delta = dbRowDelta($row);
+        const data  = { row: row, delta: delta, ...new_values };
+
+        serverItemSend(`row_update/${item}`, {
             caller:     func,
             params:     { manifest_item: data },
             onSuccess:  (body => parseRowUpdateResponse($row, body)),
@@ -2671,12 +2683,11 @@ appSetup(MODULE, function() {
         const $row     = dataRow(row);
         const features = { debugging: DEBUG };
         const instance = new MultiUploader($row, ITEM_MODEL, features, cbs);
-        const exists   = instance.isUppyInitialized();
         const func     = 'uploader';
         let name_shown;
 
         // Clear display elements of an existing uploader.
-        if (exists) {
+        if (instance.isUppyInitialized()) {
             instance.$root.find(FILE_SELECT).remove();
             instance.$root.find(MultiUploader.DISPLAY).empty();
         }
@@ -4708,7 +4719,7 @@ appSetup(MODULE, function() {
      * @see "ManifestItemController#start_edit"
      */
     function postStartEdit(cell) {
-        const func = 'postStartEdit';
+        const func  = 'postStartEdit'; OUT.debug(`${func}: cell =`, cell);
 
         if (!manifestId()) {
             OUT.debug(`${func}: triggering manifest creation`);
@@ -4718,18 +4729,17 @@ appSetup(MODULE, function() {
 
         const $cell = dataCell(cell);
         const $row  = dataRow($cell);
-        const db_id = getManifestItemId($row);
-        if (!db_id) {
-            OUT.debug(`${func}: no db_id for $row =`, $row);
+        const item  = getManifestItemId($row);
+
+        if (!item) {
+            OUT.error(`${func}: no record ID for $row =`, $row);
             return;
         }
 
-        OUT.debug(`${func}: $row = `, $row);
-        const action = `start_edit/${db_id}`;
-        const row    = dbRowValue($row);
-        const delta  = dbRowDelta($row);
+        const row   = dbRowValue($row);
+        const delta = dbRowDelta($row);
 
-        serverItemSend(action, {
+        serverItemSend(`start_edit/${item}`, {
             caller:     func,
             params:     { row: row, delta: delta },
             onError:    () => finishValueEdit($cell),
@@ -4825,7 +4835,7 @@ appSetup(MODULE, function() {
         const func     = 'postFinishEdit';
         const $cell    = dataCell(cell);
         const $row     = dataRow($cell);
-        const db_id    = getManifestItemId($row);
+        const item     = getManifestItemId($row);
         const manifest = manifestId();
 
         if (!manifest) {
@@ -4833,25 +4843,25 @@ appSetup(MODULE, function() {
             return;
         }
 
-        let data, action, response;
+        let data, action, params, response;
         if (new_value) {
             const field = cellDbColumn($cell);
-            data        = { [field]: new_value.toString() };
-            data.row    = dbRowValue($row);
-            data.delta  = dbRowDelta($row);
+            const row   = dbRowValue($row);
+            const delta = dbRowDelta($row);
+            data = { row: row, delta: delta, [field]: new_value.toString() };
         }
-        if (db_id) {
-            action   = `finish_edit/${db_id}`;
+        if (item) {
+            action   = `finish_edit/${item}`;
+            params   = data ? { manifest_item: data } : {};
             response = parseFinishEditResponse;
         } else if (data) {
             action   = `create/${manifest}`;
+            params   = { manifest_item: data };
             response = parseCreateResponse;
         } else {
             OUT.debug(`${func}: nothing to transmit`);
             return;
         }
-        const params = data ? { manifest_item: data } : {};
-        OUT.debug(`${func}: params =`, params);
 
         serverItemSend(action, {
             caller:     func,
@@ -5433,12 +5443,10 @@ appSetup(MODULE, function() {
     function createManifest(data, callback) {
         const func   = 'createManifest';
         const params = { ...data };
-        const method = params.method || 'POST';
-        const id     = params.id;
-        OUT.debug(`${func}: id = ${id}`);
+        const method = params.method || 'POST'; delete params.method;
+        OUT.debug(`${func}: manifest = ${params.id || '-'}`);
 
         params.name ||= $title_text.text();
-        delete params.method;
 
         serverManifestSend('create', {
             caller:     func,
@@ -5456,22 +5464,20 @@ appSetup(MODULE, function() {
      * @param {XmitCallback} [callback]
      */
     function updateManifest(data, callback) {
-        const func   = 'updateManifest';
-        const params = { ...data };
-        const method = params.method || 'PUT';
-        const id     = params.id || manifestId();
-        OUT.debug(`${func}: id = ${id}`);
+        const func     = 'updateManifest';
+        const params   = { ...data };
+        const method   = params.method || 'PUT';    delete params.method;
+        const manifest = params.id || manifestId(); delete params.id;
+        OUT.debug(`${func}: manifest = ${manifest}`);
 
-        if (isMissing(id)) {
+        if (isMissing(manifest)) {
             const error = 'no manifest ID';
             OUT.error(`${func}: ${error}`);
             callback?.(undefined, undefined, error, new XMLHttpRequest());
             return;
         }
-        delete params.id;
-        delete params.method;
 
-        serverManifestSend(`update/${id}`, {
+        serverManifestSend(`update/${manifest}`, {
             caller:     func,
             method:     method,
             params:     params,

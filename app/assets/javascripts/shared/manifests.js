@@ -8,7 +8,7 @@ import { pageAction, pageAttributes } from './controller';
 import { isMissing }                  from './definitions';
 import { flashError, flashMessage }   from './flash';
 import { selfOrParent }               from './html';
-import { compact, hasKey }            from './objects';
+import { hasKey }                     from './objects';
 
 
 const MODULE = 'Manifest';
@@ -273,7 +273,8 @@ export function serverBulkSend(action, send_options) {
     const override   = send_options?.controller;
     if (typeof action !== 'string') {
         OUT.error(`${func}: invalid action`, action);
-    } else if (override && (override !== controller)) {
+    }
+    if (override && (override !== controller)) {
         OUT.warn(`${func}: ignored controller override "${override}"`);
     }
     serverSend([controller, action], send_options);
@@ -301,13 +302,13 @@ export function serverBulkSend(action, send_options) {
  */
 export function serverSend(ctr_act, send_options) {
     const func = 'serverItemSend';
-    let ctrlr, action, opt;
+    const opt  = { ...send_options };
+    let ctrlr, action;
     if (Array.isArray(ctr_act))      { [ctrlr, action] = ctr_act } else
     if (typeof ctr_act === 'string') { action = ctr_act }          else
-    if (typeof ctr_act === 'object') { opt    = ctr_act }
-    opt    ||= { ...send_options };
-    action ||= opt.action;
+    if (typeof ctr_act === 'object') { Object.assign(opt, ctr_act) }
     ctrlr  ||= opt.controller;
+    action ||= opt.action;
 
     const params   = opt.params  || {};
     const headers  = opt.headers || {};
@@ -316,14 +317,13 @@ export function serverSend(ctr_act, send_options) {
     const cb_err   = opt.onError;
     const cb_done  = opt.onComplete;
     const cb_comm  = opt.onCommStatus;
-    const caller   = compact([opt.caller, func]).join(': ');
+    const debug    = OUT.debugging();
+    const caller   = debug && (opt.caller ? `${opt.caller}: ${func}` : func);
     const callback = (result, warning, error, xhr) => {
-        if (OUT.debugging()) {
-                       OUT.debug(`${caller}: result  =`, result);
-            warning && OUT.debug(`${caller}: warning =`, warning);
-            error   && OUT.debug(`${caller}: error   =`, error);
-            xhr     && OUT.debug(`${caller}: xhr     =`, xhr);
-        }
+        debug            && OUT.debug(`${caller}: result  =`, result);
+        debug && warning && OUT.debug(`${caller}: warning =`, warning);
+        debug && error   && OUT.debug(`${caller}: error   =`, error);
+        debug && xhr     && OUT.debug(`${caller}: xhr     =`, xhr);
         let [err, warn, offline] = [error, warning, !xhr.status];
         if (!err && !warn && !offline) {
             cb_ok?.(result, warn, err, xhr);
@@ -339,7 +339,7 @@ export function serverSend(ctr_act, send_options) {
         cb_done?.(result, warn, err, xhr);
         cb_comm?.(!offline, warn, err, xhr);
     }
-    if (OUT.debugging()) {
+    if (debug) {
         OUT.debug(`${caller}: ctrlr   = "${ctrlr || apiController()}"`);
         OUT.debug(`${caller}: action  = "${action}"`);
         OUT.debug(`${caller}: params  =`, params);
