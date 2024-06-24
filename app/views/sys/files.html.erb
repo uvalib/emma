@@ -16,17 +16,8 @@
   # Root directories that will not be included in the recursive listing.
   ignore  = %w[.git node_modules tmp]
   ignore += %w[.gem_rbs_collection .idea sig] if not_deployed?
-  ignore  = ignore.join("\n")
 
-  names   = '.[^.]* *'
-  dirs    = `ls -dv #{names} | fgrep -v -x "#{ignore}"`.squish
-  ls_opt  = 'hlp'
-
-  command = [
-    "ls -dv#{ls_opt} #{names}",                 # In place of root-level lines.
-    'echo',
-    "ls -ARv#{ls_opt} #{dirs} | sed '1,/^$/d'"  # Skip root-level output lines.
-  ].join(";\n")
+  lines = ls_command(names: %w[.[^.]* *], ignore: ignore)
 
 -%>
 
@@ -36,7 +27,7 @@
 
 <%= page_directions_section %>
 
-<%= render 'sys/command', command: command %>
+<%= render 'sys/command', lines: lines %>
 
 <%= page_notes_section %>
 <%= render 'sys/menu' unless modal? %>

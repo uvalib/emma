@@ -81,6 +81,41 @@ module SysHelper::Common
   #
   def sys_table: ((anyHash|Array[[untyped,untyped]]) pairs, (Symbol|anyHash) headers, ?sort: bool, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  # Run a system command and return its output.
+  #
+  # If *command* is an array, it is treated as a sequence of alternate commands
+  # which are tried in order until one of them is successful.
+  #
+  # @param [String, Array<String>] command
+  #
+  # @return [String]
+  #
+  def run_command: (String|strArray commannd) -> String
+
+  # Run the system `ls` command.
+  #
+  # All items at the root are listed and will be recursed into except for the
+  # root names present in *ignore*.
+  #
+  # @param [String, nil]                root
+  # @param [String, Array<String>, nil] names
+  # @param [String, Array<String>, nil] ignore  Do not recurse into these.
+  # @param [String]                     ls_opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def ls_command: (?root: String|nil, ?names: String|strArray|nil, ?ignore: String|strArray|nil, ?ls_opt: String) -> ActiveSupport::SafeBuffer
+
+  # Create an `ls` output line, with the name as a link to view it if it is a
+  # file.
+  #
+  # @param [String]      line
+  # @param [String, nil] base         Root for file paths.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def ls_entry: (String line, ?(String|nil) base) -> ActiveSupport::SafeBuffer
+
   private
 
   def self.included: (Module base) -> void

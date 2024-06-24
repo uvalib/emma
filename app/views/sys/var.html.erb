@@ -1,0 +1,32 @@
+<%# app/views/sys/var.html.erb -%>
+<%-
+  # Host system /var directory.
+
+  view_debug(__FILE__)
+
+  help  ||= nil # %i[sys var]
+  title ||= t('emma.sys.var.title')
+
+  unless modal?
+    label = t('emma.sys.var.label', default: title)
+    set_page_meta_title("System - #{label}")
+    set_page_description(title)
+  end
+
+  root    = '/var'
+  ignore  = %w[backups cache lib local]
+  ignore += %w[games snap] if not_deployed?
+  lines   = ls_command(root: root, ignore: ignore)
+
+-%>
+
+<%= scroll_to_top_target %>
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+
+<%= render 'sys/command', lines: lines %>
+
+<%= page_notes_section %>
+<%= render 'sys/menu' unless modal? %>

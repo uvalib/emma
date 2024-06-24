@@ -92,6 +92,15 @@ class SysController < ApplicationController
     redirect_to sys_path_for(__method__)
   end
 
+  # === GET /sys/view
+  #
+  # Display the contents of a file.
+  #
+  def view
+    __log_activity
+    __debug_route
+  end
+
   # An endpoint is defined for each configured page that hasn't already been
   # defined here.  Pages that are not just redirects should have a template in
   # "/app/views/sys".

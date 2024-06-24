@@ -43,6 +43,7 @@ en:
           - environment
           - processes
           - disk_space
+          - var
           - files
           - database
           - mailers
@@ -211,6 +212,24 @@ en:
         label:          'Settings'
         title:          'Application Settings'
         tooltip:        'Dynamic feature toggles and application settings'
+        role:           developer
+        _endpoint:      true
+
+      # =======================================================================
+
+      var:
+        label:          'System /var'
+        title:          'System /var Directory'
+        tooltip:        'View contents of the system /var directory'
+        role:           developer
+        _endpoint:      true
+
+      # =======================================================================
+
+      view:
+        label:          'View'
+        title:          'System File Content'
+        tooltip:        'View contents of a system file'
         role:           developer
         _endpoint:      true
 

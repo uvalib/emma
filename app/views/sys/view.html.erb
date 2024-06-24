@@ -1,0 +1,30 @@
+<%# app/views/sys/view.html.erb -%>
+<%-
+  # Display the contents of a file.
+
+  view_debug(__FILE__)
+
+  file  ||= params[:file]
+  help  ||= nil # %i[sys view]
+  title ||= t('emma.sys.view.title')
+
+  unless modal?
+    label = file || t('emma.sys.var.label', default: title)
+    set_page_meta_title("System - #{label}")
+    set_page_description(title)
+  end
+
+  lines ||= File.read(file) || 'NONE'
+
+-%>
+
+<%= scroll_to_top_target %>
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+
+<%= render 'sys/command', lines: lines %>
+
+<%= page_notes_section %>
+<%= render 'sys/menu' unless modal? %>

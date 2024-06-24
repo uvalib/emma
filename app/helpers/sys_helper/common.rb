@@ -220,6 +220,113 @@ module SysHelper::Common
   # :section:
   # ===========================================================================
 
+  public
+
+  # Run a system command and return its output.
+  #
+  # If *command* is an array, it is treated as a sequence of alternate commands
+  # which are tried in order until one of them is successful.
+  #
+  # @param [String, Array<String>] command
+  #
+  # @return [String]
+  #
+  def run_command(command)
+    err_file = nil
+    if command.is_a?(Array)
+      command[0...-1].each do |cmd|
+        lines = `(#{cmd}) 2>/dev/null`.strip.presence and return lines
+      end
+      command = command.last
+    end
+    return "#{__method__}: no command given" if command.blank?
+    err_file = Tempfile.new(__method__.to_s)
+    result   = `(#{command}) 2>"#{err_file.path}"`.strip.presence
+    err_file.rewind
+    errors   = err_file.read
+    result   = "#{result}\n\n#{errors}" if errors.present?
+    result.presence || "COULD NOT RUN #{command.inspect}"
+  ensure
+    err_file&.close
+    # noinspection RubyMismatchedReturnType
+    err_file&.unlink
+  end
+
+  # Run the system `ls` command.
+  #
+  # All items at the root are listed and will be recursed into except for the
+  # root names present in *ignore*.
+  #
+  # @param [String, nil]                root
+  # @param [String, Array<String>, nil] names
+  # @param [String, Array<String>, nil] ignore  Do not recurse into these.
+  # @param [String]                     ls_opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def ls_command(root: nil, names: %w[.[^.]* *], ignore: nil, ls_opt: 'hlp')
+    names  = Array.wrap(names).compact_blank
+    names.map! { |name| "#{root}/#{name}" } if root
+    names  = names.join(' ')
+    ignore = Array.wrap(ignore).compact_blank.presence
+    ignore.map! { |name| "#{root}/#{name}" } if root
+    ignore = ignore.join("\n")
+
+    dirs   = "ls -dv #{names}"
+    dirs   = %Q(#{dirs} | grep -v -x "#{ignore}") if ignore
+    dirs   = `#{dirs}`.squish
+    cmd    = [
+      "ls -dv#{ls_opt} #{names}",             # In place of root-level lines
+      'echo',
+      "ls -ARv#{ls_opt} #{dirs} | sed '1,/^$/d'" # Skip root-level output lines
+    ].join(";\n")
+
+    lines  = run_command(cmd)
+    blocks = lines.split("\n\n")
+
+    first  = blocks.shift.split("\n").map! { |line| ls_entry(line, root) }
+    first  = first.join("\n").html_safe
+
+    blocks.map! do |block|
+      entries = block.split("\n")
+      line_1, line_2 = entries.shift(2)
+      base = line_1.delete_suffix(':')
+      entries.map! { |line| ls_entry(line, base) }
+      [line_1, line_2, *entries].join("\n").html_safe
+    end
+    [first, *blocks].join("\n\n").html_safe
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Create an `ls` output line, with the name as a link to view it if it is a
+  # file.
+  #
+  # @param [String]      line
+  # @param [String, nil] base         Root for file paths.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def ls_entry(line, base = nil)
+    part = line.split(/\s+/)
+    name = (part.last if part.size == 9)
+    if name.nil? || name.match?(/[[:punct:]]$/)
+      ERB::Util.h(line)
+    else
+      pos  = line.rindex(name)
+      path = '/sys/view?file=%s' % (base ? File.join(base, name) : name)
+      ERB::Util.h(line[0...pos]) << external_link(path, name)
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   private
 
   def self.included(base)

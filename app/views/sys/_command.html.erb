@@ -5,21 +5,9 @@
   view_debug(__FILE__)
 
   command ||= nil
-  lines   ||= nil
+  lines   ||= run_command(command)
 
-  if lines.nil?
-    view_abort(__FILE__, ':command not passed via "locals"') unless command
-    commands = command.is_a?(Array) ? command.dup : Array.wrap(command)
-    command  = commands.pop
-    commands.presence&.each { |cmd|
-      break if (lines = `(#{cmd}) 2>/dev/null`.strip.presence)
-    }
-    lines ||=
-      if command
-        `(#{command}) 2>&1`.strip.presence || "COULD NOT RUN `#{command}`"
-      end
-    lines ||= 'NO OUTPUT'
-  end
+  view_abort(__FILE__, ':command not passed via "locals"') unless lines
 
 -%>
 

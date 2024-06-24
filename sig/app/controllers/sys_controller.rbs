@@ -45,6 +45,12 @@ class SysController < ApplicationController
   #
   def mailers: () -> void
 
+  # === GET /sys/view
+  #
+  # Display the contents of a file.
+  #
+  def view: () -> void
+
   # An endpoint is defined for each configured page that hasn't already been
   # defined here.  Pages that are not just redirects should have a template in
   # "/app/views/sys".
