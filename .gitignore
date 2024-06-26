@@ -23,6 +23,10 @@
 /public/assets/
 /public/assets-test/
 
+# Ignore links set up by bin/asset_build
+/public/javascripts
+/public/stylesheets
+
 # Ignore generated sitemaps.
 /public/sitemap*
 /public/Sitemap/*

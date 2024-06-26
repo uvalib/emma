@@ -1,0 +1,121 @@
+#! /bin/bash
+#
+# Build assets from package.json.
+#
+# With no arguments, both JavaScript and SCSS files are compiled.  On the
+# desktop, links are created in "/public" to allow sourcemaps to reference
+# local code directories through the web server.
+:
+#==============================================================================
+# Constants
+#==============================================================================
+
+ASSET_PATH='app/assets'
+JS_PATH="$ASSET_PATH/javascripts"
+CSS_PATH="$ASSET_PATH/stylesheets"
+BUILD_PATH="$ASSET_PATH/builds"
+ASSET_ROOT="https://raw.githubusercontent.com/uvalib/emma/master/$ASSET_PATH"
+
+LOCAL=''    # Default: deployed
+TEST=''     # Default: production
+DEV=''      # Default: normal
+
+[ "$DEPLOYMENT" = 'local' ] && LOCAL='true'
+[ "$RAILS_ENV"  = 'test' ]  && TEST='true'
+[ "$LOCAL" -a ! "$TEST" ]   && DEV='true'
+
+#==============================================================================
+# Variables
+#==============================================================================
+
+ES_BUILD='true'
+SASS_BUILD='true'
+SOURCE_MAP='true'
+COMPRESSED='true'
+
+[ "$TEST" ] && SOURCE_MAP=''
+[ "$DEV"  ] && COMPRESSED=''
+
+#==============================================================================
+# Parse command line arguments
+#==============================================================================
+
+case "$1" in
+    esbuild|javascript) SASS_BUILD='' ;;
+    sass|scss|css)      ES_BUILD='' ;;
+esac
+
+#==============================================================================
+# Compile JavaScript
+#==============================================================================
+
+if [ "$ES_BUILD" ] ; then
+
+    # Process JavaScript sources.
+    INPUT="$JS_PATH/application.js"
+    OUTPUT="--outdir=$BUILD_PATH"
+    INCLUDE=''
+    OPT='--bundle'
+    MAP_OPT='--sourcemap'
+    [ "$LOCAL" ] || MAP_OPT="$MAP_OPT --source-root=$ASSET_ROOT/javascripts/"
+    TARGET_OPT='--target=chrome125,edge125,firefox126,opera110,safari16'
+    COMPRESS_OPT='--minify'
+    [ "$SOURCE_MAP" ] || MAP_OPT=''
+    [ "$COMPRESSED" ] || COMPRESS_OPT=''
+    (set -x;
+    esbuild $INPUT $OUTPUT $INCLUDE $OPT $MAP_OPT $TARGET_OPT $COMPRESS_OPT)
+
+    # Ensure that relative references are accessible via the web server.
+    if [ "$DEV" ]; then
+        LINK='public/javascripts'
+        [ -s "$LINK" ] || ln -s "../$JS_PATH" "$LINK"
+    fi
+
+fi
+
+#==============================================================================
+# Compile SCSS
+#==============================================================================
+
+if [ "$SASS_BUILD" ] ; then
+
+    # Process SCSS sources.
+    INPUT="$CSS_PATH/application.sass.scss"
+    OUTPUT="$BUILD_PATH/application.css"
+    INCLUDE="-I node_modules -I $CSS_PATH"
+    OPT=''
+    MAP_OPT=''
+    TARGET_OPT=''
+    COMPRESS_OPT='--style=compressed'
+    [ "$SOURCE_MAP" ] || MAP_OPT='--no-source-map'
+    [ "$COMPRESSED" ] || COMPRESS_OPT=''
+    (set -x;
+    sass $INPUT $OUTPUT $INCLUDE $OPT $MAP_OPT $TARGET_OPT $COMPRESS_OPT)
+
+    # Ensure that relative references are accessible via the web server.
+    if [ "$DEV" ]; then
+        LINK='public/stylesheets'
+        [ -s "$LINK" ] || ln -s "../$CSS_PATH" "$LINK"
+    fi
+
+    # Modify map file paths to be relative references if local or remote
+    # references otherwise.
+    if [ "$SOURCE_MAP" ] ; then
+        case "$MAP_OPT" in
+            *absolute*) ABSOLUTE='true' ;;
+            *)          ABSOLUTE='' ;;
+        esac
+        SED_SCRIPT=''
+        if [ "$ABSOLUTE" -a "$DEV" ]; then
+            SED_SCRIPT="s,file://`pwd`/$ASSET_PATH,..,g"
+        elif [ "$ABSOLUTE" ]; then
+            SED_SCRIPT="s,file://`pwd`/$ASSET_PATH,$ASSET_ROOT,g"
+        elif [ ! "$DEV" ]; then
+            SED_SCRIPT='s,"../,"'$ASSET_ROOT'/,g'
+        fi
+        if [ "$SED_SCRIPT" ]; then
+            sed -E --in-place "$SED_SCRIPT" "$BUILD_PATH/application.css.map"
+        fi
+    fi
+
+fi
