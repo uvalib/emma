@@ -4,12 +4,12 @@
 
 
 import { AppDebug }                      from '../application/debug';
-import { arrayWrap, maxSize }            from "./arrays";
+import { arrayWrap, maxSize }            from './arrays';
 import { Emma }                          from './assets';
-import { selector }                      from "./css";
+import { selector }                      from './css';
 import { isMissing, isPresent }          from './definitions';
 import { handleEvent }                   from './events';
-import { selfOrDescendents }             from "./html";
+import { selfOrDescendents }             from './html';
 import { compact, deepFreeze, toObject } from './objects';
 
 

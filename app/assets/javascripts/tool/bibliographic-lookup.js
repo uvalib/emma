@@ -7,7 +7,7 @@
 
 import { AppDebug }                       from '../application/debug';
 import { LookupChannel }                  from '../channels/lookup-channel';
-import { arrayWrap, intersects }          from "../shared/arrays";
+import { arrayWrap, intersects }          from '../shared/arrays';
 import { Emma }                           from '../shared/assets';
 import { selector, toggleHidden }         from '../shared/css';
 import { turnOffAutocomplete }            from '../shared/form';

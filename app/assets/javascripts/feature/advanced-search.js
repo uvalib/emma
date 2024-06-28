@@ -32,7 +32,7 @@ import {
     getOriginalMenuValue,
     initializeMenuControls,
     setOriginalMenuValue,
-} from "../shared/menu";
+} from '../shared/menu';
 
 
 const MODULE = 'AdvancedSearch';

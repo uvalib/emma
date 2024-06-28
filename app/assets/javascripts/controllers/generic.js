@@ -10,7 +10,7 @@ import { appSetup }                  from '../application/setup';
 import { Analytics }                 from '../shared/analytics';
 import { initializeTables }          from '../shared/grids';
 import { InlinePopup }               from '../shared/inline-popup';
-import { initializeMenuControls }    from "../shared/menu";
+import { initializeMenuControls }    from '../shared/menu';
 import { ModalDialog }               from '../shared/modal-dialog';
 
 
