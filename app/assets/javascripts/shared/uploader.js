@@ -702,7 +702,111 @@ class BaseUploader extends BaseClass {
         /** @type {Uppy.UppyOptions} */
         const opt = { ...this._options, ...options?.uppy };
         opt.id ||= `uppy-${this.$root.attr('id') || 0}`;
+        opt.onBeforeFileAdded ||= this._onBeforeFileAdded.bind(this);           // NOTE: EMMA-129
+        opt.onBeforeUpload    ||= this._onBeforeUpload.bind(this);              // NOTE: EMMA-129
         return opt;
+    }
+
+    /**
+     * Called at the start of {@link Uppy.addFile} and {@link Uppy.addFiles}.
+     *
+     * If it returns *false* the file will be rejected and won't be part of the
+     * upload.  If it returns an UppyFile, that is assumed to be a replacement
+     * for the original in the Uppy #checkAndUpdateFileState method.
+     *
+     * @note This is currently overridden only to provide a way to report on
+     *  the nature of each file before it is uploaded.
+     *
+     * @param {UppyFile}                 file
+     * @param {Object.<string,UppyFile>} files  Table of already-added files.
+     *
+     * @returns {UppyFile|bool}
+     *
+     * @protected
+     */
+    _onBeforeFileAdded(file, files) {                                           // NOTE: EMMA-129
+        const func = '*** _onBeforeFileAdded ***';
+        console.warn(`${func}:`, file, '; files =', files); // TODO: remove
+        if (file.data instanceof Blob) {
+            file.data.text().then(v => {
+                const data_text   = `${func}: data.text()`;
+                const well_formed = v.isWellFormed();
+                const normalized  = v.normalize();
+                console.log(`${data_text}.isWellFormed() =`, well_formed);
+                console.log(`${data_text}.length =`, v.length);
+                console.log(`${data_text} =`, v);
+                if (normalized.length !== v.length) {
+                    const data_norm = `${data_text}.normalize()`;
+                    console.log(`${data_norm}.length =`, normalized.length);
+                    //console.log(`${data_norm} =`, normalized);
+                }
+                if (!well_formed) {
+                    const data_wf = `${data_text}.toWellFormed()`;
+                    const val     = v.toWellFormed();
+                    const nrm     = val.normalize();
+                    console.log(`${data_wf}.length =`, val.length);
+                    console.log(`${data_wf} =`, val);
+                    if (nrm.length !== val.length) {
+                        const data_nrm_wf = `${data_wf}.normalize()`;
+                        const nrm_wf      = nrm.isWellFormed();
+                        console.log(`${data_nrm_wf}.isWellFormed() =`, nrm_wf);
+                        console.log(`${data_nrm_wf}.length =`, nrm.length);
+                        //console.log(`${data_nrm_wf} =`, nrm);
+                    }
+                }
+            });
+            file.data.arrayBuffer().then(v => {
+                console.log(`${func}: data.arrayBuffer() =`, v);
+            });
+        }
+        return !Object.hasOwn(files, file.id);
+    }
+
+    /**
+     * Called in {@link Uppy.upload} before the 'upload' event.
+     *
+     * If it returns *false* the upload will be aborted.  If it returns an
+     * Object, that is assumed to be a replacement for the original file table.
+     *
+     * @note This is currently overridden to supplant the generation of a
+     *  FormData via {@link XHRUpload.createFormDataUpload} by constructing it
+     *  here with the addition of a character set to avoid misinterpretation.
+     *
+     * @param {Object.<string,UppyFile>} files
+     *
+     * @returns {Object.<string,UppyFile>|bool}
+     *
+     * @protected
+     *
+     * @see 'XHRUpload#uploadLocalFile2'
+     * @see XHRUpload.createFormDataUpload
+     */
+    _onBeforeUpload(files) {                                                    // NOTE: EMMA-129
+        const func = '*** _onBeforeUpload ***';
+        console.warn(`${func}: files =`, files); // TODO: remove
+        const upload = this._uppy.getPlugin('XHRUpload');
+        for (const [id, file] of Object.entries(files)) {
+            if (file.data instanceof Blob) {
+                const size = file.data.size;
+                const meta = file.meta || {};
+                const name = meta.name;
+                const type = meta.type || 'application/octet-stream';
+                const data = file.data.slice(0, size, `${type};charset=utf-8`);
+                // noinspection JSUnresolvedReference
+                const opts = upload.getOptions(file);
+                const post = new FormData();
+                // noinspection JSUnresolvedReference
+                upload.addMetadata(post, meta, opts);
+                if (name) {
+                    post.append(opts.fieldName, data, name);
+                } else {
+                    post.append(opts.fieldName, data);
+                }
+                // noinspection JSValidateTypes
+                file.data = post;
+            }
+        }
+        return files;
     }
 
     /**
@@ -719,6 +823,7 @@ class BaseUploader extends BaseClass {
 
         xhr_opt.headers  = { ...xhr_opt.headers, ...headers };
         xhr_opt.headers['X-CSRF-Token'] ||= Rails.csrfToken();
+        //xhr_opt.headers['Content-Encoding'] ||= '';                           // NOTE: EMMA-129 -- testing -- attempt to indicate no compression
 
         xhr_opt.endpoint         ||= this._pathProperty.upload;
         xhr_opt.fieldName        ||= 'file';
@@ -726,6 +831,9 @@ class BaseUploader extends BaseClass {
         xhr_opt.getResponseError ||= this._xhrGetResponseError.bind(this);
         xhr_opt.limit            ||= 1; // NOTE: just to silence warning
         xhr_opt.timeout          ||= 0; // this.upload_timeout; // NOTE: none for now
+
+        // NOTE: see _onBeforeUpload                                            // NOTE: EMMA-129 -- testing -- override FormData to set charset
+        if (!Object.hasOwn(xhr_opt, 'formData')) { xhr_opt.formData = false }   // NOTE: EMMA-129 -- testing -- override FormData to set charset
 
         return xhr_opt;
     }
