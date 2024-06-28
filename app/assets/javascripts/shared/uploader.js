@@ -2,7 +2,7 @@
 
 
 import { AppDebug }                              from '../application/debug';
-import { arrayWrap }                             from './arrays';
+import { arrayWrap, uniq }                       from './arrays';
 import { Emma }                                  from './assets';
 import { BaseClass }                             from './base-class';
 import { pageAction }                            from './controller';
@@ -211,6 +211,50 @@ const STATE     = Emma.Messages.uploader.state;
 const PAUSED    = Emma.Messages.uploader.paused.toUpperCase();
 const RESUMED   = Emma.Messages.uploader.resumed.toUpperCase();
 
+/**
+ * The names of events defined by Uppy.
+ *
+ * @type {string[]}
+ *
+ * @see Uppy.UppyEventMap
+ */
+const UPPY_EVENTS = [
+    'back-online',
+    'cancel-all',
+    'complete',
+    'error',
+    'file-added',
+    'file-removed',
+    'files-added',
+    'info-hidden',
+    'info-visible',
+    'is-offline',
+    'is-online',
+    'pause-all',
+    'plugin-added',
+    'plugin-remove',
+    'postprocess-complete',
+    'postprocess-progress',
+    'preprocess-complete',
+    'preprocess-progress',
+    'progress',
+    'reset-progress',
+    'restored',
+    'restriction-failed',
+    'resume-all',
+    'retry-all',
+  //'state-update',         // Redundant and too frequent to be useful.
+    'upload',
+    'upload-error',
+    'upload-pause',
+    'upload-progress',
+    'upload-retry',
+    'upload-stalled',
+    'upload-start',
+    'upload-started',
+    'upload-success',
+];
+
 // ============================================================================
 // Class BaseUploader
 // ============================================================================
@@ -335,6 +379,14 @@ class BaseUploader extends BaseClass {
         debug:       this.feature.debugging,
         autoProceed: true,
     };
+
+    /**
+     * Used to track the handling of known Uppy events.
+     *
+     * @type {string[]}
+     * @private
+     */
+    _unhandled_events = [...UPPY_EVENTS];
 
     // ========================================================================
     // Constructor
@@ -726,6 +778,20 @@ class BaseUploader extends BaseClass {
     // ========================================================================
 
     /**
+     * Add a handler for an Uppy event.
+     *
+     * @param {string}   event
+     * @param {function} callback
+     *
+     * @protected
+     */
+    _uppyEvent(event, callback) {
+        // noinspection JSCheckFunctionSignatures
+        this._uppy.on(event, callback);
+        delete this._unhandled_events[event];
+    }
+
+    /**
      * Setup handlers for Uppy events that drive the workflow of uploading
      * a file and creating a database entry from it.
      *
@@ -748,14 +814,13 @@ class BaseUploader extends BaseClass {
             this.feature.status_bar    = true;
         }
 
-        this._uppy.on('upload',          onFileUploadStart);
-        this._uppy.on('upload-progress', onFileUploadProgress);
-        this._uppy.on('upload-error',    onFileUploadError);
-        this._uppy.on('upload-success',  onFileUploadSuccess);
+        this._uppyEvent('upload',          onFileUploadStart);
+        this._uppyEvent('upload-progress', onFileUploadProgress);
+        this._uppyEvent('upload-error',    onFileUploadError);
+        this._uppyEvent('upload-success',  onFileUploadSuccess);
 
         if (this.feature.image_preview) {
-            // noinspection JSCheckFunctionSignatures
-            this._uppy.on('thumbnail:generated', onThumbnailGenerated);
+            this._uppyEvent('thumbnail:generated', onThumbnailGenerated);
         }
     }
 
@@ -889,26 +954,22 @@ class BaseUploader extends BaseClass {
      */
     _setupMessages() {
         this._debug('_setupMessages');
-
+        let evt;
         const show_info  = this._uppyInfo.bind(this);
         const show_popup = this._uppyPopup.bind(this);
         const show_warn  = this._uppyWarn.bind(this);
         const show_error = this._uppyError.bind(this);
         const debug      = this._debugUppy.bind(this);
         const warn       = this._warn.bind(this);
-        const uppy       = this._uppy;
-        let event;
 
-        // noinspection JSCheckFunctionSignatures
-        uppy.on((event = 'upload-started'), function(file) {
-            warn(event, file);
+        this._uppyEvent((evt = 'upload-started'), function(file) {
+            warn(`${evt}`, file);
             const name = file.name || file;
             show_info(`${STATE.uploading} "${name}"`);
         });
 
-        // noinspection JSCheckFunctionSignatures
-        uppy.on((event = 'upload-pause'), function(file_id, is_paused) {
-            debug(event, file_id, is_paused);
+        this._uppyEvent((evt = 'upload-pause'), function(file_id, is_paused) {
+            debug(`${evt}`, file_id, is_paused);
             if (is_paused) {
                 show_info(PAUSED);
             } else {
@@ -916,42 +977,40 @@ class BaseUploader extends BaseClass {
             }
         });
 
-        uppy.on((event = 'upload-retry'), function(file_id) {
-            debug(event, file_id);
+        this._uppyEvent((evt = 'upload-retry'), function(file_id) {
+            debug(`${evt}`, file_id);
             show_warn(`${STATE.retrying}...`);
         });
 
-        uppy.on((event = 'retry-all'), function(files) {
-            debug(event, files);
+        this._uppyEvent((evt = 'retry-all'), function(files) {
+            debug(`${evt}`, files);
             const count   = files ? files.length : 0;
             const uploads = (count === 1) ? 'upload' : `${count} uploads`;
             show_warn(`${STATE.retrying} ${uploads}...`);
         });
 
-        // noinspection JSCheckFunctionSignatures
-        uppy.on((event = 'pause-all'), function() {
-            debug(event);
+        this._uppyEvent((evt = 'pause-all'), function() {
+            debug(`${evt}`);
             show_info(STATE.paused);
         });
 
-        uppy.on((event = 'cancel-all'), function() {
-            debug(event);
+        this._uppyEvent((evt = 'cancel-all'), function(reason) {
+            debug(`${evt}`, reason);
             show_warn(STATE.canceled);
         });
 
-        // noinspection JSCheckFunctionSignatures
-        uppy.on((event = 'resume-all'), function() {
-            debug(event);
+        this._uppyEvent((evt = 'resume-all'), function() {
+            debug(`${evt}`);
             show_warn(STATE.resumed);
         });
 
-        uppy.on((event = 'restriction-failed'), function(file, msg) {
-            warn(event, file, msg);
+        this._uppyEvent((evt = 'restriction-failed'), function(file, msg) {
+            warn(`${evt}`, file, msg);
             show_error(msg);
         });
 
-        uppy.on((event = 'error'), function(msg) {
-            warn(event, msg);
+        this._uppyEvent((evt = 'error'), function(msg) {
+            warn(`${evt}`, msg);
             show_error(msg);
         });
 
@@ -964,29 +1023,9 @@ class BaseUploader extends BaseClass {
      */
     _setupDebugging() {
         this._debug('_setupDebugging');
+        const debug  = this._debugUppy.bind(this);
+        const events = [...this._unhandled_events];
 
-        const events = [
-            'back-online',
-            'complete',
-            'file-added',
-            'file-removed',
-            'files-added',
-            'info-hidden',
-            'info-visible',
-            'is-offline',
-            'is-online',
-            'plugin-remove',
-            'postprocess-complete',
-            'postprocess-progress',
-            'preprocess-complete',
-            'preprocess-progress',
-            'progress',
-            'reset-progress',
-            'restored',
-          //'state-update',         // Redundant and too frequent to be useful.
-          //'upload-progress',      // Handled via _onFileUploadProgress().
-            'upload-stalled',
-        ];
         if (this.feature.dashboard) {
             events.push(
                 'dashboard:modal-open',
@@ -1007,14 +1046,12 @@ class BaseUploader extends BaseClass {
             events.push('s3-multipart:part-uploaded');
         }
 
-        const debug = this._debugUppy.bind(this);
-
         // Echo the included Uppy events on the console.
-        events.forEach(event => {
+        uniq(events).forEach(event => {
             const evt = event.toUpperCase().replace(':', ': ');
             const tag = '*** ' + evt.replaceAll('-', ' ');
-            // noinspection JSCheckFunctionSignatures
-            this._uppy.on(event, (...args) => debug(tag, ...compact(args)));
+            const fun = (...args) => debug(tag, ...compact(args));
+            this._uppyEvent(event, fun);
         });
     }
 
@@ -1882,8 +1919,8 @@ export class MultiUploader extends BaseUploader {
      */
     _setupHandlers() {
         super._setupHandlers();
-        this._uppy.on('upload',   () => this.openDisplay());
-        this._uppy.on('complete', () => this.closeDisplay());
+        this._uppyEvent('upload',   () => this.openDisplay());
+        this._uppyEvent('complete', () => this.closeDisplay());
     }
 
     // ========================================================================
