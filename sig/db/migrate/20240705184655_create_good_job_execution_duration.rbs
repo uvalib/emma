@@ -1,0 +1,3 @@
+class CreateGoodJobExecutionDuration < ActiveRecord::Migration
+  def change: () -> untyped
+end
