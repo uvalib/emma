@@ -21,58 +21,6 @@ en:
         storage:        true
 
       # =======================================================================
-      # Messages (overriding "en.emma.messages")
-      # =======================================================================
-
-      messages:
-
-        field:          'field'
-
-        details:
-
-          # @see ManifestItemDecorator::SharedGenericMethods#type_details
-
-          dd:           'Displayed as'
-          dt:           'Data value'
-          one_or_more:  'one or more'
-          type:         'type'
-          type_desc:    'Description of %{type} to come...'
-
-          boolean:
-            name:       'TRUE or FALSE value'
-
-          date:
-            name:       'date [YYYYMMDD]'
-            desc:
-              |-
-              A date value with the full year, month, and day (each preceded by
-              zeros if necessary).  E.g. 19900401 for April 1, 1990.
-
-          enum:
-            name:       '%{type} value'
-           #desc:       (Generated list of EnumType values)
-
-          string:
-            name:       'string'
-            desc:       'A sequence of characters with no newlines'
-
-          text:
-            name:       'string'
-            desc:       'Sequences of characters separated by newlines'
-
-        row_details:
-          label:        'Item Details'
-
-        submit:
-          edit_label:   'Edit'
-          edit_tooltip: 'Modify this manifest item'
-          item_name:    'Item name'
-          item_select:  'Select item %{number} for submission'
-
-        uploader:
-          error:        'unknown uploader error'
-
-      # =======================================================================
       # Layout
       # =======================================================================
 

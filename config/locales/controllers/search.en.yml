@@ -23,32 +23,6 @@ en:
         search:         true
 
       # =======================================================================
-      # Messages (overriding "en.emma.messages")
-      # =======================================================================
-
-      messages:
-
-        invalid:        '%{id} is not a valid %{TYPE}'
-        not_standard:   '%{term} is not a standard identifier'
-
-        mode:
-          tooltip:        'Search results output mode'
-
-        popup:
-          placeholder:    'Loading record...'
-          tooltip:        'View this repository record'
-
-        record:
-          first_tooltip:  'This is the first record on the page'
-          prev_tooltip:   'Go to the previous record'
-          next_tooltip:   'Go to the next record'
-          last_tooltip:   'This is the last record on the page'
-
-        source:
-          link_tooltip:   'View this item on the %{repo} website'
-          retrieval_tip:  'Retrieve the %{fmt} file from %{repo}'
-
-      # =======================================================================
       # Search endpoint
       # =======================================================================
 

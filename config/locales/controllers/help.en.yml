@@ -11,17 +11,6 @@ en:
       tooltip:          'EMMA system documentation'
 
       # =======================================================================
-      # Messages (overriding "en.emma.messages")
-      # =======================================================================
-
-      messages:
-
-        contents:       'Help contents'
-        label:          'Help'
-        placeholder:    'Loading help topic...'
-        toc_heading:    'Online help topics'
-
-      # =======================================================================
       # Layout
       # =======================================================================
 

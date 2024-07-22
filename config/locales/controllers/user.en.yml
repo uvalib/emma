@@ -20,16 +20,6 @@ en:
         length:         '%{min} character minimum'
 
       # =======================================================================
-      # Messages (overriding "en.emma.messages")
-      # =======================================================================
-
-      messages:
-
-        confirmation:   'Are you sure?'
-        privileged:     '%{Role}-only feature'
-        role_failure:   'Insufficient privilege for this operation'
-
-      # =======================================================================
       # Layout
       # =======================================================================
 

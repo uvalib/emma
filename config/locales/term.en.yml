@@ -1,0 +1,829 @@
+# config/locales/term.en.yml
+#
+# Label and message values.
+#
+# For a given model/controller, a named item will be found in descending order
+# of specificity.  E.g., for `config_term(:name)`
+
+en:
+
+  emma:
+
+    term:
+
+      # =======================================================================
+      # GENERAL term definitions
+      # =======================================================================
+
+      _vocabulary:            &VOCABULARY
+
+        EMMA:                 'EMMA'
+
+        _off:                 'off'
+        _on:                  'on'
+        a:                    'a'
+        administrator:        'EMMA administrator'
+        all:                  'all'
+        also:                 'also'
+        an:                   'an'
+        another:              'another'
+        attention:            'attention'
+        controls:             'controls'
+        entry:                'entry'
+        error:                'error'
+        field:                'field'
+        file:                 'file'
+        for:                  'for'
+        from:                 'from'
+        invalid:              'invalid'
+        item:                 'item'
+        match:                'match'
+        one:                  'one'
+        or:                   'or'
+        original:             'original'
+        other:                'other'
+        problem:              'problem'
+        require:              'require'
+        required:             'required'
+        resolved:             'resolved'
+        result:               'result'
+        still:                'still'
+        the:                  'the'
+        this:                 'this'
+        type:                 'type'
+
+      _common:                &COMMON
+
+        invalid_id:           'Invalid identifier'
+        no_match:             'No records match %{id}'
+        not_created:          'Not created'
+        not_found:            'Record %{id} not found'
+
+        auth:
+          no_data:            'No auth data received'
+          no_user:            'Could not locate user account'
+
+        aws:
+          no_records:         'no records'
+          no_sids:            'no submission IDs'
+          prefix:             'Prefix'
+          bucket:
+            label:            'AWS'
+            empty:            'EMPTY'
+            more:             '[%{count} more]'
+
+        configuration:
+          fail:               'Fatal configuration error'
+
+        details:
+          tooltip:            'Click to show details'
+
+        dev:
+
+          hide_dev_controls:
+            label:            'Suppress'
+            tooltip:
+              - 'Click to stop showing these controls'
+              - 'Supply "&%{param}=true" to restore them.'
+              - ''
+              - 'NOTE: DOES NOT AFFECT session["app.debug"]'
+              - '(Toggle this off first to remove all dev-only enhancements.)'
+
+          toggle_debug:
+            ctrlr_label:      '%{ctrlr} debug %{state}'
+            label:            'Debug %{state}'
+            tooltip:          'Click to turn %{state}'
+
+        engine:
+          reset:
+            label:            '[RESTORE DEFAULT]'
+            tooltip:          'Click to restore the default %{service} engine'
+
+        field:
+          readonly:           'This cannot be changed for an existing EMMA entry'
+          validation:
+            empty:            'empty value'
+            no_server:        'Could not contact server for validation'
+            too_big:          'Too many characters.'
+            too_small:        'Not enough characters.'
+
+        fields:
+          invalid_id:         'This is not a valid %{TYPE} identifier.'
+          invalid_lang:       'The underlying data contains this value instead of a valid ISO 639 language code'
+          valid_lang:         'Provided value: %s'
+
+        flash:
+          more:               'more'
+          total:              '%{count} total'
+          client:
+            no_fetch:         'could not fetch message'
+            no_data:          'no data for message'
+            bad_data:         'unexpected data type'
+
+        form:
+          cancel:             'Cancel'
+          cancel_first:       'Cancel this submission before retrying'
+          filter:             'Filter input fields by state:'
+          no_fields:          'NO FIELDS'
+          no_lookup:          'Bibliographic metadata is inherited from the original repository entry.'
+          success:            'Changes saved'
+          unchangeable:       'NOT CHANGEABLE WHILE THE SERVER IS OFFLINE'
+          unmodifiable:       'System-generated; not modifiable.'
+          unset:              '(unset)'
+          update:             'Change'
+          action:
+            create:           'create'
+            created:          'created'
+            update:           'update'
+            updated:          'updated'
+
+        grid:
+          controls_lbl:       'Row controls'
+          row_controls:       'Controls for row %{row}'
+
+        hierarchy:
+          complete:           'Complete Work'
+          file_term:          'copy'
+
+        ia_download:
+          response:           '%{service} response: %{body}'
+          retry:              'Close this browser tab and retry the original download link.'
+
+        image:
+          alt:                'Illustration'
+
+        ingest:
+          missing_field:      'missing field'
+          missing_title:      '[TITLE MISSING]'
+          unknown:            'UNKNOWN PROBLEM'
+
+        layout:
+          menu:
+            all_items:        'All %{items}'
+            my_items:         'My %{items}'
+            org_items:        'Organization %{items}'
+          nav_bar:
+            current_page:     'Current page'
+          skip_nav:
+            label:            'Skip directly to'
+            main:             'Main Content'
+
+        link:
+          icon_action:        'Action'
+          new_tab:            'opens in a new window'
+
+        list:
+          no_entries:         'Empty results'
+          no_records:         'NO RECORDS'
+          no_results:         'NONE FOUND'
+          one_entry:          'Entry'
+          unit:               'title'
+
+        menu:
+          item_prompt:        'Select %{an} %{item}'
+
+        password:
+          length:             '%{min} character minimum'
+
+        popup:
+          click:              'Click'
+          label:              'Popup'
+          close:
+            icon:             'X'
+            label:            'Close'
+            tooltip:          'Close this popup'
+          control:
+            label:            'Button'
+
+        record:
+          invalid_data:       'INTERNAL ERROR: data class %{class}'
+          invalid_field:      'illegal value'
+          invalid_sid:        'Invalid EMMA submission ID %{sid}'
+          item:               'id: %{id}'
+          missing:            '(missing)'
+          no_identifier:      'No identifier provided'
+          not_added:          'Not added'
+          not_created:        '%{type} not created'
+          not_found:          '%{type} %{id} not found'
+          not_removed:        'Not removed'
+          not_updated:        'Not updated'
+          submission:         'submission %{sid}'
+          failure:
+            no_repo:          'No repository given'
+            no_items:         'No items given'
+            no_create:        'Repository submissions are disabled'
+            no_edit:          'Repository modification requests are disabled'
+            no_remove:        'Repository removal requests are disabled'
+          upload:
+            failure:          'missing request env data'
+            invalid:          'invalid file'
+            blank:            'invalid response body'
+
+        repository:
+          general:
+            name:             'an external repository'
+            tooltip:          'From %{name}'
+          item:
+            name:             'external'
+            tooltip:          'This is %{an} %{name} repository item'
+
+        scroll_to_top:
+          top:
+            label:            '' # TODO: UP_TRIANGLE
+            tooltip:          'Go back to the top of the main content area'
+          down:
+            label:            '' # TODO: DOWN_TRIANGLE
+            tooltip:          'Align with the top of the main content area'
+
+        search_analysis:
+          early_exile:        'A LATER PAGE OF SEARCH RESULTS HAS ITEM(S) MATCHING THIS ONE'
+          late_exile:         'THIS ITEM BELONGS ON AN EARLIER PAGE OF SEARCH RESULTS'
+          error:              'THIS ITEM IS OUT-OF-SEQUENCE'
+          fields:             'specific metadata field(s)'
+          jump:               'Jump to the first occurrence on the page of this identity'
+          tooltip:            'Relevancy based on'
+
+        search_bar:
+          input_select:
+            tooltip:          'Search Type'
+          row_add:
+            tooltip:          'Include another search term typ.'
+          row_remove:
+            tooltip:          'Remove this search term'
+          search_button:
+            ready:
+              tooltip:        ''
+            not_ready:
+              tooltip:        'To perform a new search, add/modify search terms or filter selections.'
+          search_clear:
+            tooltip:          'Clear search terms'
+
+        search_filters:
+          fixed_value:        'NOTE: this value is fixed for results by title.'
+          placeholder:        '(select)'
+          remove_all:         'Remove all selected values'
+
+        selected:
+          invalid:            'Record %{item} is not in the database'
+          no_match:           'No index entries match %{item}'
+          removing:           'Removing index entry %{item}'
+          title:              'Record %{item} details:'
+
+        session:
+          expired:            'Your session has expired'
+          unknown_user:       'unknown user'
+
+        status:
+          offline:            'EMMA is offline'
+
+        submission:
+          all_resolved:       'all files resolved'
+          all_selected:       'all selected'
+          blocked:            'Files must be resolved before the submission process can begin'
+          conn_error:         'Connection error'
+          none_saved:         'None of the items in the manifest have been completed and saved'
+          not_selectable:     'not selectable until resolved'
+          ready_for_upload:   'ready for upload'
+          refresh:            'Refresh this page to re-authenticate.'
+          some_selected:      'some selected'
+          still_needed:       'still needed'
+          submitted:          'submitted'
+          submitted_as:       'submitted as entry'
+          failed:
+            cancel:           'Cancel failed'
+            pause:            'Pause failed'
+            resume:           'Resume failed'
+            submit:           'Submission failed'
+          monitor:
+            close:            'Errors'
+            description:      'Listing of completed submission attempts'
+            diagnostics:      'Diagnostics'
+            diagnostics_tip:  'View WebSocket communications'
+            errors:           'Errors'
+            failures:         'Submission Errors'
+            messages:         'Messages'
+            successes:        'Submitted Items'
+            title:            'Bulk Submission Monitor'
+          service:
+            db_error:         'unknown database error'
+            indexed:          'indexed'
+            stored:           'stored'
+            unknown:          'unknown error'
+            uploaded:         'uploaded'
+          status:
+            complete:         'Completed'
+            done:             'Worker done'
+            starting:         'Working'
+            step:             'Submission step'
+            unexpected:       'unexpected'
+
+        table:
+          all_records:        'See all records'
+          rows_here:          '%{rows} displayed here'
+          sort:
+            none:             'Unsorted; click to sort on this column'
+            ascending:        'Sorted; click to reverse-sort on this column'
+            descending:       'Reverse-sorted; click to stop sorting on this column'
+
+        uploader:
+          error:              'FILE UPLOAD ERROR'
+          paused:             'paused'
+          placeholder:        'Uploading...'
+          results:            'Upload results'
+          resumed:            'resumed'
+          state:
+            canceled:         'Uploading CANCELED'
+            paused:           'Uploading PAUSED'
+            resumed:          'Uploading RESUMED'
+            retrying:         'Retrying'
+            uploading:        'Uploading'
+
+      _generic:
+
+        <<:                   *COMMON
+
+        action:
+
+          new:                &ACTION_NEW
+            action:           'create'
+            actioned:         'created'
+
+          create:
+            <<:               *ACTION_NEW
+
+          edit:               &ACTION_EDIT
+            action:           'update'
+            actioned:         'updated'
+
+          update:
+            <<:               *ACTION_EDIT
+
+          delete:             &ACTION_DELETE
+            action:           'remove'
+            actioned:         'removed'
+
+          destroy:
+            <<:               *ACTION_DELETE
+
+      # =======================================================================
+      # FEATURE: FRAME API migration term definitions
+      # =======================================================================
+
+      api_migrate:
+
+        changes:              'Record %{rid}'
+        empty_column:         'EMPTY DATABASE COLUMN'
+        no_changes:           'NO CHANGES'
+        no_data:              'NO DATA'
+        summary:              '%{count} records in %{table} table'
+
+      # =======================================================================
+      # FEATURE: Lookup term definitions
+      # =======================================================================
+
+      lookup:
+
+        description:          'Search for additional bibliographic details'
+        field_is:             'field is'
+        no_changes:           'No fields changed'
+
+        cancel_tip:           "Don't make any changes to submission field values"
+        commit_tip:           'Replace submission field values with these changes'
+
+        lookup:               'Lookup'
+        cancel:               'Cancel'
+        commit:               'Update'
+        query:                'Query'
+        terms:                'Query'
+        separators:           'Term Separators'
+        searching:            'Searching'
+        results:              'Results'
+        errors:               'Errors'
+        diagnostics:          'Diagnostics'
+
+        lock:
+          label:              'keep'
+          tooltip:            'Click to prevent this data field from being replaced'
+
+        unlock:
+          label:              'change'
+          tooltip:            'Click to allow this data field to be replaceable'
+
+        column:
+          selection:              'USE'
+          tag:                    'FROM'
+          dc_identifier:          'IDENTIFIER'
+          dc_title:               'TITLE'
+          dc_creator:             'AUTHOR/CREATOR'
+          dc_publisher:           'PUBLISHER'
+          emma_publicationDate:   'DATE'
+          dcterms_dateCopyright:  'YEAR'
+          dc_description:         'DESCRIPTION'
+
+      # =======================================================================
+      # FEATURE: Math Detective term definitions
+      # =======================================================================
+
+      md:
+
+        clipboard:
+          access:             'Change settings to allow clipboard access'
+          copied:             '(copied)'
+          failed:             '(failed)'
+          saved:              'saved in the clipboard'
+          unknown:            'unknown error'
+          data:
+            image:            'Image'
+            no_image:         'No image'
+            nothing:          'Nothing'
+          input:
+            label:            'Clipboard image'
+            paste:            'Paste'
+            file_name:        '(clipboard)'
+
+        copy:
+          tooltip:            'Copy this output to clipboard'
+          icon:               '' # TODO: CLIPBOARD_ICON
+
+        error:
+          label:              'No equations detected'
+          placeholder:        'NONE'
+
+        file:
+          input:
+            label:            'Image file'
+
+        output:
+          label:              'Status'
+          placeholder:        'NONE'
+
+        preview:
+          title:              'Selected Image'
+          label:              'Preview of selected file'
+
+        mathml:
+          title:              'Equation(s) as MathML'
+
+        latex:
+          title:              'Equation(s) as LaTeX'
+
+        spoken:
+          title:              'Equation(s) as spoken English'
+
+        results:
+          title:              'Math Detective API Response Data'
+
+        response:
+          error:              'ERROR'
+          fatal:              'FATAL'
+          unknown:            'unknown error'
+          no_item:            'could not find item'
+          size_limit:         'API only accepts images <= 5 megabytes'
+          bad_http:           'unexpected HTTP'
+          no_data:            'No image data supplied'
+          no_req:             'Missing request identifier to check'
+
+        status:
+          label:              'Status'
+          placeholder:        'NONE'
+
+          starting:           'STARTING'
+          failed:             'FAILED'
+          fetching:           'FETCHING'
+          submitting:         'SUBMITTING'
+          initializing:       'INITIALIZING'
+          timeout:            'TIMEOUT'
+
+      # =======================================================================
+      # CONTROLLER: Account term definitions
+      # =======================================================================
+
+      account:
+
+        success:              'EMMA user account was successfully %{actioned}.'
+        failure:              'Could not %{action} EMMA user account: %{error}'
+
+        failed:               'FAILED'
+
+        self_create:          'You already have an EMMA account'
+        self_delete:          'Cannot delete your own account'
+
+        select:               'Select an EMMA user account'
+        model_name:           'EMMA User Account'
+        id_readonly:          'Cannot change the account identifier'
+
+        ability:
+          title:              'Authorization for user %{user}'
+          column:             # In this order:
+            model:            'Model'
+            action:           'Action'
+            status:           'Can perform?'
+
+        details:
+          title:              'Account Details'
+
+      # =======================================================================
+      # CONTROLLER: Data term definitions
+      # =======================================================================
+
+      data:
+
+        records:              '%{count} record'
+
+        field:
+          total:              'TOTAL'
+          invalid:            'This is not a valid EMMA data field'
+
+      # =======================================================================
+      # CONTROLLER: Enrollment term definitions
+      # =======================================================================
+
+      enrollment:
+
+        success:              'XXX EMMA enrollment was successfully %{actioned}.'
+        failure:              'Could not %{action} EMMA enrollment: %{error}'
+
+        model_name:           'Enrollment Request'
+        select:               'Select an enrollment request'
+
+        details:
+          title:              'Enrollment Request Details'
+
+        enroll:
+          link:               'Enroll your organization now'
+          production:
+            link:             'Click here to enroll on the EMMA production system.'
+
+      # =======================================================================
+      # CONTROLLER: Health term definitions
+      # =======================================================================
+
+      health:
+
+        unavailable:          'EMMA system unavailable'
+
+      # =======================================================================
+      # CONTROLLER: Help term definitions
+      # =======================================================================
+
+      help:
+
+        contents:             'Help contents'
+        label:                'Help'
+        placeholder:          'Loading help topic...'
+        toc_heading:          'Online help topics'
+
+      # =======================================================================
+      # CONTROLLER: Home term definitions
+      # =======================================================================
+
+      home:
+
+      # =======================================================================
+      # CONTROLLER: Manifest term definitions
+      # =======================================================================
+
+      manifest:
+
+        select_any:           'Select an existing manifest'
+        select_own:           'Select a manifest you created'
+
+        create_button:        'Create'
+        default_name:         'Started %B %d, %Y at %l:%M %P'
+        new_label:            'Start a new manifest'
+        no_items:             'Use the %{control} control above to start a new manifest.'
+
+        heading:
+          leader:             'Manifest:'
+          edit_label:         'Edit'
+          edit_tooltip:       'Click to change the title of this manifest'
+
+        selected:
+          title:              'Selected manifest details:'
+          invalid:            'No index entries match %{item}'
+
+      # =======================================================================
+      # CONTROLLER: ManifestItem term definitions
+      # =======================================================================
+
+      manifest_item:
+
+        field:                'field'
+
+        success:              'Operation successful %{name}'
+        failure:              'Could not proceed: %{error}'
+
+        details:
+
+          # @see ManifestItemDecorator::SharedGenericMethods#type_details
+
+          dd:                 'Displayed as'
+          dt:                 'Data value'
+          one_or_more:        'one or more'
+          type:               'type'
+          type_desc:          'Description of %{type} to come...'
+
+          boolean:
+            name:             'TRUE or FALSE value'
+
+          date:
+            name:             'date [YYYYMMDD]'
+            desc:
+              |-
+              A date value with the full year, month, and day (each preceded by
+              zeros if necessary).  E.g. 19900401 for April 1, 1990.
+
+          enum:
+            name:             '%{type} value'
+           #desc:             (Generated list of EnumType values)
+
+          string:
+            name:             'string'
+            desc:             'A sequence of characters with no newlines'
+
+          text:
+            name:             'string'
+            desc:             'Sequences of characters separated by newlines'
+
+        row_details:
+          label:              'Item Details'
+
+        submit:
+          edit_label:         'Edit'
+          edit_tooltip:       'Modify this manifest item'
+          item_name:          'Item name'
+          item_select:        'Select item %{number} for submission'
+
+        uploader:
+          error:              'unknown uploader error'
+
+      # =======================================================================
+      # CONTROLLER: Organization term definitions
+      # =======================================================================
+
+      org:
+
+        success:              'XXX EMMA member organization was successfully %{actioned}.'
+        failure:              'Could not %{action} EMMA member organization: %{error}'
+
+        model_name:           'EMMA Member Organization'
+        select:               'Select an EMMA member organization'
+        self_delete:          'Cannot delete your own organization'
+
+        details:
+          title:              'Organization Details'
+
+        internal:
+          id:                 0
+          short_name:         '(EMMA)'
+          long_name:          '(no organization)'
+
+      # =======================================================================
+      # CONTROLLER: Search term definitions
+      # =======================================================================
+
+      search:
+
+        invalid:              '%{id} is not a valid %{TYPE}'
+        not_standard:         '%{term} is not a standard identifier'
+
+        mode:
+          tooltip:            'Search results output mode'
+
+        popup:
+          placeholder:        'Loading record...'
+          tooltip:            'View this repository record'
+
+        record:
+          first_tooltip:      'This is the first record on the page'
+          prev_tooltip:       'Go to the previous record'
+          next_tooltip:       'Go to the next record'
+          last_tooltip:       'This is the last record on the page'
+
+        source:
+          link_tooltip:       'View this item on the %{repo} website'
+          retrieval_tip:      'Retrieve the %{fmt} file from %{repo}'
+
+      # =======================================================================
+      # CONTROLLER: SearchCall term definitions
+      # =======================================================================
+
+      search_call:
+
+        null_search:          'Null search'
+
+      # =======================================================================
+      # CONTROLLER: System term definitions
+      # =======================================================================
+
+      sys:
+
+        commit:               'Commit'
+        from_constant:        'value from constant'
+        from_env_var:         'from ENV variable'
+        invalid_value:        'invalid value %{value}'
+        no_env_var:           'ENV variable not present'
+
+      # =======================================================================
+      # CONTROLLER: Tool term definitions
+      # =======================================================================
+
+      tool:
+
+        sign_in:              '(sign-in required)'
+
+      # =======================================================================
+      # CONTROLLER: Upload term definitions
+      # =======================================================================
+
+      upload:
+
+        success:              'Operation successful on EMMA entry %{name}'
+        failure:              'Could not proceed: %{error}'
+
+        select_any:           'Select an existing EMMA entry'
+        select_own:           'Select an EMMA entry you created'
+
+        check_status:
+          tooltip:            'Check the status of this submission'
+          placeholder:        'Checking...'
+
+        uploaded_file:
+          leader:             'Selected file:'
+          blank:              ''
+
+        parent_select:
+          title:
+            >-
+            Please indicate the EMMA entry for the original repository item.
+            If possible, enter the standard identifier (ISBN, DOI, OCLC, etc.)
+            or the full title of the original work.
+          cancel:             'Cancel'
+
+        state_group:
+          label:              'Select records based on their submission state:'
+
+        filter:
+          label:              'On this page:'
+          legend:             'Choose the %{model} submission state to display:'
+
+        filter_options:
+          label:              'Select/de-select state groups to display'
+          select:             'Show "%{filter}"'
+          select_all:         'Select all filters'
+
+        delete_options:       &DELETE_OPTIONS
+          emergency:          'Attempt to remove index entries for bogus non-EMMA items?'
+          force:              'Try to remove index entries of items not in the database?'
+          truncate:           'Reset "uploads" id field to 1? (Applies only when all records are being removed.)'
+
+        record:
+          not_created:        'Entry not created'
+          not_found:          'Entry %{id} not found'
+
+        bulk_results:
+          label:              'Previous upload results:'
+
+        bulk_options:
+          prefix:             'Title prefix:'
+          batch:              'Batch size:'
+
+        bulk_file_select:
+          label:              'Select'
+
+        bulk_delete_options:
+          <<:                 *DELETE_OPTIONS
+          selected:           'Items to delete:'
+
+        non_native:
+          create:             'Request %{sid} submitted to %{repo}'
+          edit:               'Change request %{sid} submitted to %{repo}'
+          remove:             'Removal request %{sid} submitted to %{repo}'
+
+      # =======================================================================
+      # CONTROLLER: User term definitions
+      # =======================================================================
+
+      user:                   &USER
+
+        confirmation:         'Are you sure?'
+        privileged:           '%{Role}-only feature'
+        role_failure:         'Insufficient privilege for this operation'
+
+      user_sessions:
+        <<:                   *USER
+
+      user_passwords:
+        <<:                   *USER
+
+      user_registrations:
+        <<:                   *USER
+
+      user_confirmations:
+        <<:                   *USER
+
+      user_unlocks:
+        <<:                   *USER
+
+      user_omniauth_callbacks:
+        <<:                   *USER

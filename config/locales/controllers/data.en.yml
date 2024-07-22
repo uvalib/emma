@@ -13,14 +13,6 @@ en:
       # Messages (overriding "en.emma.messages")
       # =======================================================================
 
-      messages:
-
-        records:        '%{count} record'
-
-        field:
-          total:        'TOTAL'
-          invalid:      'This is not a valid EMMA data field'
-
       # =======================================================================
       # Layout
       # =======================================================================

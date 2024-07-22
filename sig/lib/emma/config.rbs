@@ -78,13 +78,13 @@ module Emma::Config
   # The first returned element should be used as the key for I18n#translate and
   # the remaining elements should be used passed as the :default option.
   #
-  # @param [Array<Symbol>]  base
-  # @param [Symbol, nil]    item
-  # @param [Symbol, String] root
+  # @param [Array<Symbol,String>] base
+  # @param [Symbol, String, nil]  item
+  # @param [Symbol, String]       root
   #
   # @return [Array<Symbol>]
   #
-  def config_text_keys: (*Symbol base, (Symbol|nil) item, ?root: Symbol|String) -> symArray
+  def config_term_keys: (*(Symbol|String) base, (Symbol|String|nil) item, ?root: Symbol|String) -> symArray
 
   # @private
   CONFIG_ITEM_OPT: symArray
@@ -183,30 +183,29 @@ module Emma::Config
   def config_entry_fetch: ((String|Symbol) key, ?(String|Symbol|Array[String|Symbol]|nil) other, **untyped opt) -> (untyped | nil)
 
   # Text value from the most specific match found for *item* within the
-  # configuration location(s) specified by *base* under #config_text_keys.
+  # configuration location(s) specified by *base* under #config_term_keys.
   #
-  # @param [Array<Symbol>] base
-  # @param [Symbol]        item
-  # @param [Hash]          opt        To #config_item.
+  # @param [Array<Symbol,String>] base
+  # @param [Symbol, String]       item
+  # @param [Hash]                 opt   To #config_entry.
   #
   # @return [String]
   #
-  def config_text: (*Symbol base, Symbol item, **untyped opt) -> String
+  def config_term: (*(Symbol|String|nil) base, (Symbol|String) item, **untyped opt) -> String
 
   # Configuration text section built up from all of the matches found within
-  # the configuration locations under #config_text_keys.
+  # the configuration locations under #config_term_keys.
   #
   # If *opt* interpolation values are given they will be attempted on all
   # strings copied from the section.
   #
-  # @param [Array<Symbol>] base
-  # @param [Symbol]        item
-  # @param [Hash]          opt        Optional interpolation values except
-  #                                     #CONFIG_ITEM_OPT to #config_section
+  # @param [Array<Symbol,String>] base
+  # @param [Symbol, String]       item
+  # @param [Hash]                 opt   To #config_section
   #
   # @return [Hash]
   #
-  def config_text_section: (*Symbol base, Symbol item, **untyped opt) -> symHash
+  def config_term_section: (*(Symbol|String) base, (Symbol|String) item, **untyped opt) -> symHash
 
   # Attempt to apply interpolations to *item*.
   #

@@ -19,34 +19,6 @@ en:
         database:       true
 
       # =======================================================================
-      # Messages (overriding "en.emma.messages")
-      # =======================================================================
-
-      messages:
-
-        success:        'EMMA user account was successfully %{actioned}.'
-        failure:        'Could not %{action} EMMA user account: %{error}'
-
-        failed:         'FAILED'
-
-        self_create:    'You already have an EMMA account'
-        self_delete:    'Cannot delete your own account'
-
-        select:         'Select an EMMA user account'
-        model_name:     'EMMA User Account'
-        id_readonly:    'Cannot change the account identifier'
-
-        ability:
-          title:        'Authorization for user %{user}'
-          column:       # In this order:
-            model:      'Model'
-            action:     'Action'
-            status:     'Can perform?'
-
-        details:
-          title:        'Account Details'
-
-      # =======================================================================
       # Search endpoint
       # =======================================================================
 

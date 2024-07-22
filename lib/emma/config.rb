@@ -141,30 +141,43 @@ module Emma::Config
   # The first returned element should be used as the key for I18n#translate and
   # the remaining elements should be used passed as the :default option.
   #
-  # @param [Array<Symbol>]  base
-  # @param [Symbol, nil]    item
-  # @param [Symbol, String] root
+  # @param [Array<Symbol,String>] base
+  # @param [Symbol, String, nil]  item
+  # @param [Symbol, String]       root
   #
   # @return [Array<Symbol>]
   #
-  def config_text_keys(*base, item, root: CONFIG_ROOT)
-    keys = []
+  def config_term_keys(*base, item, root: CONFIG_ROOT)
     base.flatten!
+    base.compact!
+    return []            if base.blank? && item.blank?
+    return [item.to_sym] if base.blank? && item.start_with?(root)
+    term = []
+    page = []
     while base.present?
-      if base.many?
-        type, subtype = base[0], base[1..-1]
-        keys << [root, *type, *subtype, 'messages']
-        keys << [root, *type, 'messages', *subtype]
-        keys << [root, 'messages', *type, *subtype]
-        keys << [root, 'messages', *subtype]
+      type, subtype = base[0], base[1..-1]
+      if subtype.present?
+        term << [root, :term, type, :action, *subtype]
+        page << [root, :page, type, :action, *subtype]
+        term << [root, :term, type, *subtype]
+        page << [root, :page, type, *subtype]
+        term << [root, :term, :_generic, :action, type, *subtype]
+        term << [root, :term, :_generic, :action, *subtype]
+        term << [root, :term, :_generic, type, *subtype]
+        term << [root, :term, :_generic, *subtype]
       else
-        keys << [root, *base, 'messages']
-        keys << [root, 'messages', *base]
+        term << [root, :term, :_generic, :action, type]
+        term << [root, :term, :_generic, type]
+        term << [root, :term, type]
+        page << [root, :page, type]
       end
       base.pop
     end
-    keys.map! { |key| Array.wrap(key).join('.').to_sym }
-    keys << :"#{root}.messages" if item.present?
+    if item.present?
+      term << [root, :term, :_vocabulary]
+      term << [root, :term, :_common]
+    end
+    keys = [*term, *page]
     config_keys(keys, *item)
   end
 
@@ -354,39 +367,36 @@ module Emma::Config
   public
 
   # Text value from the most specific match found for *item* within the
-  # configuration location(s) specified by *base* under #config_text_keys.
+  # configuration location(s) specified by *base* under #config_term_keys.
   #
-  # @param [Array<Symbol>] base
-  # @param [Symbol]        item
-  # @param [Hash]          opt        To #config_item.
+  # @param [Array<Symbol,String>] base
+  # @param [Symbol, String]       item
+  # @param [Hash]                 opt   To #config_entry.
   #
   # @return [String]
   #
-  def config_text(*base, item, **opt)
-    keys = config_text_keys(*base, item)
-    config_item(keys, **opt) || [*base, item].flatten.compact.join(' ')
+  def config_term(*base, item, **opt)
+    keys = config_term_keys(*base, item)
+    config_entry(keys, **opt) || [*base, item].flatten.compact.join(' ')
   end
 
   # Configuration text section built up from all of the matches found within
-  # the configuration locations under #config_text_keys.
+  # the configuration locations under #config_term_keys.
   #
   # If *opt* interpolation values are given they will be attempted on all
   # strings copied from the section.
   #
-  # @param [Array<Symbol>] base
-  # @param [Symbol]        item
-  # @param [Hash]          opt        Optional interpolation values except
-  #                                     #CONFIG_ITEM_OPT to #config_section
+  # @param [Array<Symbol,String>] base
+  # @param [Symbol, String]       item
+  # @param [Hash]                 opt   To #config_section
   #
   # @return [Hash]
   #
-  def config_text_section(*base, item, **opt)
+  def config_term_section(*base, item, **opt)
     base, item = [[item], nil] if base.empty?
-    c_opt = opt.extract!(*CONFIG_ITEM_OPT, *I18N_OPT)
-    keys  = config_text_keys(*base, item)
-    vals  = keys.reverse.map { |k| config_section(k, **c_opt) }.compact_blank!
-    hash  = vals.select { |v| v.is_a?(Hash) }.prepend({}).reduce(&:rmerge!)
-    opt.presence && config_deep_interpolate(hash, **opt) || hash
+    keys = config_term_keys(*base, item).reverse
+    vals = keys.map { |k| config_section(k, **opt) }.compact_blank!
+    vals.select { |v| v.is_a?(Hash) }.prepend({}).reduce(&:rmerge!)
   end
 
   # ===========================================================================

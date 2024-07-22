@@ -19,27 +19,6 @@ en:
         database:       true
 
       # =======================================================================
-      # Messages (overriding "en.emma.messages")
-      # =======================================================================
-
-      messages:
-
-        success:        'XXX EMMA member organization was successfully %{actioned}.'
-        failure:        'Could not %{action} EMMA member organization: %{error}'
-
-        model_name:     'EMMA Member Organization'
-        select:         'Select an EMMA member organization'
-        self_delete:    'Cannot delete your own organization'
-
-        details:
-          title:        'Organization Details'
-
-        internal:
-          id:           0
-          short_name:   '(EMMA)'
-          long_name:    '(no organization)'
-
-      # =======================================================================
       # Search endpoint
       # =======================================================================
 

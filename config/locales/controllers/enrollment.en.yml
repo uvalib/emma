@@ -19,26 +19,6 @@ en:
         database:       true
 
       # =======================================================================
-      # Messages (overriding "en.emma.messages")
-      # =======================================================================
-
-      messages:
-
-        success:        'XXX EMMA enrollment was successfully %{actioned}.'
-        failure:        'Could not %{action} EMMA enrollment: %{error}'
-
-        model_name:     'Enrollment Request'
-        select:         'Select an enrollment request'
-
-        details:
-          title:        'Enrollment Request Details'
-
-        enroll:
-          link:         'Enroll your organization now'
-          production:
-            link:       'Click here to enroll on the EMMA production system.'
-
-      # =======================================================================
       # Search endpoint
       # =======================================================================
 
