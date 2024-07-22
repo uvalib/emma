@@ -102,7 +102,7 @@ appSetup(MODULE, function() {
     /**
      * @typedef {UppyFile} UploadFile
      *
-     * @property {UppyFile.InternalMetadata & SubmitData} meta
+     * @property {object & SubmitData} meta
      */
 
     // ========================================================================

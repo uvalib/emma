@@ -50,6 +50,144 @@ const DEBUG  = true;
 AppDebug.file('shared/uploader', MODULE, DEBUG);
 
 // ============================================================================
+// Temporary (?) type definitions for Uppy
+//
+// NOTE: As of Uppy 4.0.0, which is implemented in TypeScript, JSDoc type
+//  comments relating to Uppy do not resolve in a way that's helpful, so they
+//  are explicitly defined here.  (It's not clear whether this is the fault of
+//  RubyMine, Uppy, or my own misunderstanding.)
+// ============================================================================
+
+/**
+ * @typedef FileProcessingInfo
+ *
+ * @property {'determinate'|'indeterminate'} mode
+ * @property {string}                        [message]
+ * @property {number}                        [value]
+ *
+ * @see file://${PROJ_DIR}/node_modules/@uppy/utils/src/FileProgress.ts
+ */
+
+/**
+ * @typedef FileProgress
+ *
+ * @property {boolean}              [uploadComplete]
+ * @property {number}               [percentage]
+ * @property {number|null}          bytesTotal
+ * @property {FileProcessingInfo}   [preprocess]
+ * @property {FileProcessingInfo}   [postprocess]
+ * @property {number}               uploadStarted
+ * @property {number}               bytesUploaded
+ *
+ * @see file://${PROJ_DIR}/node_modules/@uppy/utils/src/FileProgress.ts
+ */
+
+/**
+ * @typedef UppyFileRemote
+ *
+ * @property {Object.<string,*>}    [body]
+ * @property {string}               companionUrl
+ * @property {string}               [host]
+ * @property {string}               [provider]
+ * @property {string}               [providerName]
+ * @property {string}               requestClientId
+ * @property {string}               url
+ */
+
+/**
+ * @typedef UppyFileResponse
+ *
+ * @property {object}   [body]
+ * @property {number}   status
+ * @property {number}   [bytesUploaded]
+ * @property {string}   [uploadURL]
+ */
+
+/**
+ * @typedef {Uppy.UppyFile} UppyFile
+ *
+ * @property {Blob|File}        data
+ * @property {string|null}      [error]
+ * @property {string}           extension
+ * @property {string}           id
+ * @property {boolean}          [isPaused]
+ * @property {boolean}          [isRestored]
+ * @property {boolean}          isRemote
+ * @property {boolean}          isGhost
+ * @property {object}           meta
+ * @property {string}           [name]
+ * @property {string}           [preview]
+ * @property {FileProgress}     progress
+ * @property {string[]}         [missingRequiredMetaFields]
+ * @property {UppyFileRemote}   [remote]
+ * @property {string|null}      [serverToken]
+ * @property {number|null}      size
+ * @property {string}           [source]
+ * @property {string}           type
+ * @property {string}           [uploadURL]
+ * @property {UppyFileResponse} [response]
+ *
+ * @see file://${PROJ_DIR}/node_modules/@uppy/utils/src/UppyFile.ts
+ */
+
+/**
+ * @typedef {Object.<string,UppyFile>} UppyFiles
+ */
+
+/**
+ * @typedef UppyOptions
+ *
+ * @property {string}                       [id]
+ * @property {boolean}                      [autoProceed]
+ * @property {boolean}                      [allowMultipleUploads] Deprecated
+ * @property {boolean}                      [allowMultipleUploadBatches]
+ * @property {object}                       [logger]
+ * @property {boolean}                      [debug]
+ * @property {object}                       [restrictions]
+ * @property {object}                       [meta]
+ * @property {function(UppyFile,UppyFiles)} [onBeforeFileAdded]
+ * @property {function(UppyFiles)}          [onBeforeUpload]
+ * @property {object}                       [locale]
+ * @property {object}                       [store]
+ * @property {number}                       [infoTimeout]
+ */
+
+/**
+ * @typedef {
+ *  function(xhr: XMLHttpRequest, retryCount: number): void|Promise<void>
+ * } XhrCallback
+ */
+
+/**
+ * @typedef {function(xhr: XMLHttpRequest): boolean} XhrRetryCallback
+ */
+
+/**
+ * @typedef XhrUploadOpts
+ *
+ * @property {object}                       [locale]
+ * @property {string}                       [id]
+ * @property {string}                       endpoint
+ * @property {string}                       [method]
+ * @property {boolean}                      [formData]
+ * @property {string}                       [fieldName]
+ * @property {object}                       [headers]
+ * @property {number}                       [timeout]
+ * @property {number}                       [limit]
+ * @property {XMLHttpRequestResponseType}   [responseType]
+ * @property {boolean}                      [withCredentials]
+ * @property {XhrCallback}                  [onBeforeRequest]
+ * @property {XhrRetryCallback}             [shouldRetry]
+ * @property {XhrCallback}                  [onAfterResponse]
+ * @property {boolean|string[]}             [allowedMetaFields]
+ * @property {boolean}                      [bundle]
+ *
+ * @see https://uppy.io/docs/xhr-upload/#api
+ * @see file://${PROJ_DIR}/node_modules/@uppy/core/src/BasePlugin.ts  "PluginOpts"
+ * @see file://${PROJ_DIR}/node_modules/@uppy/xhr-upload/src/index.ts "XhrUploadOpts"
+ */
+
+// ============================================================================
 // Type definitions
 // ============================================================================
 
@@ -224,7 +362,8 @@ const RESUMED   = Emma.Messages.uploader.resumed.toUpperCase();
  *
  * @type {string[]}
  *
- * @see Uppy.UppyEventMap
+ * @see file://${PROJ_DIR}/node_modules/@uppy/core/src/Uppy.ts "_UppyEventMap"
+ * @see file://${PROJ_DIR}/node_modules/@uppy/core/src/Uppy.ts "UppyEventMap"
  */
 const UPPY_EVENTS = [
     'back-online',
@@ -246,8 +385,9 @@ const UPPY_EVENTS = [
     'preprocess-complete',
     'preprocess-progress',
     'progress',
-    'reset-progress',
     'restored',
+    'restore-confirmed',
+    'restore-canceled',
     'restriction-failed',
     'resume-all',
     'retry-all',
@@ -259,7 +399,6 @@ const UPPY_EVENTS = [
     'upload-retry',
     'upload-stalled',
     'upload-start',
-    'upload-started',
     'upload-success',
 ];
 
@@ -351,7 +490,7 @@ class BaseUploader extends BaseClass {
      * @property {boolean}              [force]
      * @property {string}               [controller]
      * @property {string}               [action]
-     * @property {Uppy.UppyOptions}     [uppy]
+     * @property {UppyOptions}          [uppy]
      * @property {UppyPluginOptions}    [plugin]
      * @property {function(Selector)}   [added]
      */
@@ -381,7 +520,7 @@ class BaseUploader extends BaseClass {
     /**
      * Default options for the Uppy instance.
      *
-     * @type {Uppy.UppyOptions}
+     * @type {UppyOptions}
      */
     _options = {
         debug:       this.feature.debugging,
@@ -651,7 +790,6 @@ class BaseUploader extends BaseClass {
             const plugin_opt = { target: opt[tgt], ...p_opt, ...opt[tgt_opt] };
             plugin_opt.target &&= this._locateTarget(plugin_opt.target);
             plugin_opt.target ||= this._defaultTarget(p_key);
-            // noinspection JSCheckFunctionSignatures
             uppy.use(plugin, plugin_opt);
             return true;
         };
@@ -673,9 +811,9 @@ class BaseUploader extends BaseClass {
 
         if (this._plugin.aws) {
             const aws_opt = {
-                // limit:     2,
-                timeout:      this.upload.timeout,
-                companionUrl: 'https://companion.myapp.com/', // TODO: ???
+              //limit:      2,
+                timeout:    this.upload.timeout,
+                endpoint:   'https://companion.myapp.com/', // TODO: ???
             };
             load_plugin('aws', aws_opt);
         }
@@ -703,11 +841,11 @@ class BaseUploader extends BaseClass {
      *
      * @param {UploaderOptions} [options]
      *
-     * @returns {Uppy.UppyOptions}
+     * @returns {UppyOptions}
      * @protected
      */
     _uppyOptions(options) {
-        /** @type {Uppy.UppyOptions} */
+        /** @type {UppyOptions} */
         const opt = { ...this._options, ...options?.uppy };
         opt.id                ||= `uppy-${this.$root.attr('id') || 0}`;
         opt.onBeforeFileAdded ||= this._onBeforeFileAdded.bind(this);
@@ -723,8 +861,8 @@ class BaseUploader extends BaseClass {
      * for the original in the Uppy #checkAndUpdateFileState method.  Any other
      * return indicates that the file should be uploaded as-is.
      *
-     * @param {UppyFile}                 file
-     * @param {Object.<string,UppyFile>} files  Table of already-added files.
+     * @param {UppyFile}  file
+     * @param {UppyFiles} files  Table of already-added files.
      *
      * @returns {UppyFile|boolean}
      *
@@ -776,9 +914,9 @@ class BaseUploader extends BaseClass {
      * Object, that is assumed to be a replacement for the original file table.
      * Any other return indicates that the upload should proceed as-is.
      *
-     * @param {Object.<string,UppyFile>} files
+     * @param {UppyFiles} files
      *
-     * @returns {Object.<string,UppyFile>|boolean}
+     * @returns {UppyFiles|boolean}
      *
      * @protected
      */
@@ -808,8 +946,8 @@ class BaseUploader extends BaseClass {
      *
      * @protected
      *
-     * @see 'XHRUpload#uploadLocalFile'
      * @see XHRUpload.createFormDataUpload
+     * @see  * @see file://${PROJ_DIR}/node_modules/@uppy/xhr-upload/src/index.ts "XHRUpload#uploadLocalFile"
      */
     _forceCharset(file, charset = 'utf-8') {
         const func = `_forceCharset(${charset})`;
@@ -847,24 +985,26 @@ class BaseUploader extends BaseClass {
     /**
      * Options for the XHRUpload plugin.
      *
-     * @param {object} [opt]
-     * @param {object} [headers]
+     * @param {XhrUploadOpts} [opt]
+     * @param {object}        [headers]
      *
-     * @returns {object}    Uppy.XHRUploadOptions
+     * @returns {XhrUploadOpts}
      * @protected
+     *
+     * @see https://uppy.io/docs/xhr-upload/#api
      */
     _xhrOptions(opt, headers) {
+        /** @type {XhrUploadOpts} */
         const xhr_opt = { ...opt };
 
         xhr_opt.headers  = { ...xhr_opt.headers, ...headers };
         xhr_opt.headers['X-CSRF-Token'] ||= Rails.csrfToken();
 
-        xhr_opt.endpoint         ||= this._pathProperty.upload;
-        xhr_opt.fieldName        ||= 'file';
-        xhr_opt.getResponseData  ||= this._xhrGetResponseData.bind(this);
-        xhr_opt.getResponseError ||= this._xhrGetResponseError.bind(this);
-        xhr_opt.limit            ||= 1; // NOTE: just to silence warning
-        xhr_opt.timeout          ||= 0; // this.upload_timeout; // NOTE: none for now
+        xhr_opt.endpoint        ||= this._pathProperty.upload;
+        xhr_opt.fieldName       ||= 'file';
+        xhr_opt.limit           ||= 1; // NOTE: just to silence warning
+        xhr_opt.timeout         ||= 0; // this.upload_timeout; // NOTE: for now
+        xhr_opt.onBeforeRequest ||= this._xhrBeforeRequest.bind(this);
 
         if (FORCE_CHARSET && !Object.hasOwn(xhr_opt, 'formData')) {
             xhr_opt.formData = false;
@@ -874,46 +1014,48 @@ class BaseUploader extends BaseClass {
     }
 
     /**
-     * Called to extract response data from the upload endpoint.
+     * Called before the upload action is started.
      *
-     * @param {text}           body
+     * Prior to Uppy 4.0.0, the "getResponseError" callback supported the
+     * ability to replace the default NetworkError with an Error instance that
+     * contained the flash message generated by the server.  Now, with that
+     * callback removed, this function must override the "onload" handler set
+     * within the Uppy "fetcher" function in order to add the flash message to
+     * the response object for {@link _onFileUploadError} to use.
+     *
      * @param {XMLHttpRequest} xhr
+     * @param {number}         retry_count
      *
-     * @returns {object}
      * @protected
      *
-     * @see https://uppy.io/docs/xhr-upload/#getresponsedata
+     * @see https://uppy.io/docs/xhr-upload/#onafterresponse
+     * @see file://${PROJ_DIR}/node_modules/@uppy/utils/src/fetcher.ts
      */
-    _xhrGetResponseData(body, xhr) {
-        this._debug('_xhrGetResponseData; xhr =', xhr, 'body =', body);
-        const caller = 'Uppy.XHRUpload';
-        return (xhr['responseObj'] = fromJSON(body, caller) || {});
-    }
-
-    /**
-     * Called if the upload endpoint responds with a non-2xx status code.
-     *
-     * @param {text}           body
-     * @param {XMLHttpRequest} xhr
-     *
-     * @returns {Error}
-     * @protected
-     *
-     * @see https://uppy.io/docs/xhr-upload/#getresponseerror
-     */
-    _xhrGetResponseError(body, xhr) {
-        this._debug('_xhrGetResponseError; xhr =', xhr, 'body =', body);
-        const caller = 'Uppy.XHRUpload';
-        const flash  = compact(extractFlashMessage(xhr));
-        const resp   = xhr['responseObj'] || fromJSON(body, caller);
-        let message  = (resp?.message || body)?.trim() || this.upload_error;
-        if (isPresent(flash)) {
-            const nl = (flash.length > 1) ? "\n" : ' ';
-            message  = message.replace(/([^:])$/, '$1:') + nl + flash.join(nl);
-        } else {
-            message  = message.replace(/:$/, '');
+    _xhrBeforeRequest(xhr, retry_count) {
+        this._debug('_xhrBeforeRequest; xhr =', xhr, 'retry =', retry_count);
+        const uppy_onload = xhr.onload;
+        xhr.onload = async () => {
+            this._debug('_xhrBeforeRequest | onload | init xhr =', xhr);
+            const status  = xhr.status;
+            const state   = xhr.readyState;
+            const net_err = !status || ((state !== 0) && (state !== 4));
+            const ok      = !net_err && (200 <= status) && (status < 300);
+            if (!ok && !net_err) {
+                const resp  = fromJSON(xhr.response, 'Uppy.XHRUpload');
+                const text  = resp?.message || xhr.response;
+                let msg     = text?.trim() || this.upload_error;
+                const flash = compact(extractFlashMessage(xhr));
+                if (isPresent(flash)) {
+                    const nl = (flash.length > 1) ? "\n" : ' ';
+                    msg = msg.replace(/([^:])$/, '$1:') + nl + flash.join(nl);
+                } else {
+                    msg = msg.replace(/:$/, '');
+                }
+                xhr['flash-message'] = msg;
+                this._debug('_xhrBeforeRequest | onload | now xhr =', xhr);
+            }
+            await uppy_onload(undefined);
         }
-        return new Error(message);
     }
 
     // ========================================================================
@@ -929,7 +1071,6 @@ class BaseUploader extends BaseClass {
      * @protected
      */
     _uppyEvent(event, callback) {
-        // noinspection JSCheckFunctionSignatures
         this._uppy.on(event, callback);
         delete this._unhandled_events[event];
     }
@@ -963,6 +1104,7 @@ class BaseUploader extends BaseClass {
         this._uppyEvent('upload-success',  onFileUploadSuccess);
 
         if (this.feature.image_preview) {
+            // noinspection JSCheckFunctionSignatures
             this._uppyEvent('thumbnail:generated', onThumbnailGenerated);
         }
     }
@@ -975,7 +1117,7 @@ class BaseUploader extends BaseClass {
      */
 
     /**
-     * This event occurs between the "file-added" and "upload-started" events.
+     * This event occurs between the "file-added" and "upload-start" events.
      * <p/>
      *
      * The current value of the submission's database ID applied to the upload
@@ -1040,12 +1182,26 @@ class BaseUploader extends BaseClass {
      * @param {{status: number, body: string}} [response]
      *
      * @protected
+     *
+     * @see _xhrBeforeRequest
      */
     _onFileUploadError(file, error, response) {
         this._warn('_onFileUploadError', file, error, response);
+
+        // If _xhrBeforeRequest has added 'flash-message' to the response, then
+        // replace the Uppy-generated message so that the "onError" callback
+        // can display the server-generated message to the user.
+        // noinspection JSUnresolvedReference
+        const req   = error?.request || {};
+        const flash = req['flash-message'];
+        if (flash) {
+            error.message = flash;
+        }
+
         this._uppyInfoClear();
         // noinspection JSValidateTypes
         this.onError?.(file, error, response);
+        // noinspection JSUnresolvedReference
         this._uppy.getFiles().forEach(file => this._uppy.removeFile(file.id));
     }
 
@@ -1105,10 +1261,12 @@ class BaseUploader extends BaseClass {
         const debug      = this._debugUppy.bind(this);
         const warn       = this._warn.bind(this);
 
-        this._uppyEvent((evt = 'upload-started'), function(file) {
-            warn(`${evt}`, file);
-            const name = file.name || file;
-            show_info(`${STATE.uploading} "${name}"`);
+        this._uppyEvent((evt = 'upload-start'), function(files) {
+            warn(`${evt}`, files);
+            files.forEach(file => {
+                const name = file.name || file;
+                show_info(`${STATE.uploading} "${name}"`);
+            });
         });
 
         this._uppyEvent((evt = 'upload-pause'), function(file_id, is_paused) {
@@ -2273,10 +2431,10 @@ export class BulkUploader extends BaseUploader {
      * header to specify that the record's **:file_data** column should be
      * updated without modifying **:update_time** or other columns.
      *
-     * @param {object} [opt]
-     * @param {object} [headers]
+     * @param {XhrUploadOpts} [opt]
+     * @param {object}        [headers]
      *
-     * @returns {object}    Uppy.XHRUploadOptions
+     * @returns {XhrUploadOpts}
      * @protected
      *
      * @see "ManifestItemController#upload"
