@@ -54,49 +54,6 @@ class EnumType < ScalarType
 
     @@enumerations: Hash[Symbol,symHash]
 
-    # Add enumeration values from configuration entries.
-    #
-    # @param [String, Hash]        arg
-    # @param [Symbol, String, nil] name
-    #
-    # @return [Hash{Symbol=>Hash}]
-    #
-    # -
-    # === Variations
-    # +
-    #
-    # @overload add_enumeration(i18n_path, name)
-    #   A configuration entry where the last part of the path is a string that
-    #   when camelized is the same as the name of the class being defined.
-    #   (E.g. "en.emma.type.manifest_item.file_path" for class FilePath.)
-    #   @param [String]              i18n_path
-    #   @return [Hash{Symbol=>Hash}]
-    #
-    # @overload add_enumeration(i18n_path, name)
-    #   A configuration entry where the last part of the path is a string that
-    #   @param [String]              i18n_path
-    #   @param [Symbol, String]      name
-    #   @return [Hash{Symbol=>Hash}]
-    #
-    # @overload add_enumeration(i18n_path, name)
-    #   @param [Hash]                config
-    #   @param [Symbol, String, nil] name
-    #   @return [Hash{Symbol=>Hash}]
-    #
-    #def add_enumeration
-    #  : (anyHash arg,  (Symbol|String)     name) -> Hash[Symbol,symHash]
-    #  | (String  arg, ?(Symbol|String|nil) name) -> Hash[Symbol,symHash]
-
-    # add_enumerations_from
-    #
-    # @param [String] i18n_path
-    #
-    # @return [Hash{Symbol=>Hash}]
-    #
-    # @note Currently unused.
-    #
-    #def add_enumerations_from: (String i18n_path) -> Hash[Symbol,symHash]
-
     # Called from API record definitions to provide this base class with the
     # values that will be accessed implicitly from subclasses.
     #
@@ -139,17 +96,6 @@ class EnumType < ScalarType
     # @return [String]
     #
     def default_for: ((Symbol|String) entry) -> String
-
-    private
-
-    # get_configuration
-    #
-    # @param [String]                   i18n_path
-    # @param [Array<Symbol>,Symbol,nil] default
-    #
-    # @return [Hash, Array<String>, nil]
-    #
-    #def get_configuration: (String i18n_path, default: symArray|Symbol|nil) -> (symHash | strArray | nil)
   end
 
   extend Enumerations

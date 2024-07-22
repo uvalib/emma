@@ -93,72 +93,6 @@ class EnumType < ScalarType
 
     public
 
-    # Add enumeration values from configuration entries.
-    #
-    # @param [String, Hash]        arg
-    # @param [Symbol, String, nil] name
-    #
-    # @return [Hash{Symbol=>Hash}]
-    #
-    #--
-    # === Variations
-    #++
-    #
-    # @overload add_enumeration(i18n_path, name)
-    #   A configuration entry where the last part of the path is a string that
-    #   when camelized is the same as the name of the class being defined.
-    #   (E.g. "en.emma.type.manifest_item.file_path" for class FilePath.)
-    #   @param [String]              i18n_path
-    #   @return [Hash{Symbol=>Hash}]
-    #
-    # @overload add_enumeration(i18n_path, name)
-    #   A configuration entry where the last part of the path is a string that
-    #   @param [String]              i18n_path
-    #   @param [Symbol, String]      name
-    #   @return [Hash{Symbol=>Hash}]
-    #
-    # @overload add_enumeration(i18n_path, name)
-    #   @param [Hash]                config
-    #   @param [Symbol, String, nil] name
-    #   @return [Hash{Symbol=>Hash}]
-    #
-=begin
-    def add_enumeration(arg, name = nil)
-      key = name.presence
-      key = key.underscore if key.is_a?(String)
-      case arg
-        when String
-          part  = arg.split('.')
-          name  = part.last       if name.blank?
-          arg   = "#{arg}.#{key}" if key && (key != part.last)
-          entry = get_configuration(arg.to_s)
-        when Hash
-          raise 'name required for Hash argument' if name.blank?
-          key   = key&.to_sym
-          entry = arg[key] || arg
-        else
-          raise "invalid type #{arg.class}"
-      end
-      add_enumerations(name => entry)
-    end
-=end
-
-    # add_enumerations_from
-    #
-    # @param [String] i18n_path
-    #
-    # @return [Hash{Symbol=>Hash}]
-    #
-    # @note Currently unused.
-    #
-=begin
-    def add_enumerations_from(i18n_path)
-      config = get_configuration(i18n_path)
-      raise "'#{i18n_path}' is not a Hash" unless config.is_a?(Hash)
-      add_enumerations(config)
-    end
-=end
-
     # Called from API record definitions to provide this base class with the
     # values that will be accessed implicitly from subclasses.
     #
@@ -229,33 +163,6 @@ class EnumType < ScalarType
     def default_for(entry)
       enumerations.dig(entry.to_sym, :default)
     end
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    private
-
-    # get_configuration
-    #
-    # @param [String]                   i18n_path
-    # @param [Array<Symbol>,Symbol,nil] default
-    #
-    # @return [Hash, Array<String>, nil]
-    #
-=begin
-    def get_configuration(i18n_path, default: nil)
-      config_item(i18n_path, default: default).tap do |config|
-        raise "'#{i18n_path}' is empty" if config.blank?
-        if config.is_a?(Hash)
-          items = config.reject { |k, _| k.start_with?('_') }
-          raise "'#{i18n_path}' has no items" if items.blank?
-        elsif !config.is_a?(Array)
-          raise "'#{i18n_path}' is not a Hash or Array"
-        end
-      end
-    end
-=end
 
   end
 
