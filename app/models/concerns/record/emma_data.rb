@@ -42,21 +42,6 @@ module Record::EmmaData
 
   public
 
-  # EMMA data fields configuration.
-  #
-  # @type [Hash]
-  #
-  EMMA_DATA_CONFIG =
-    config_section('emma.upload.record.emma_data').select { |_, v|
-      v[:max].nil? || positive(v[:max]) if v.is_a?(Hash)
-    }.deep_freeze
-
-  # EMMA data field names.
-  #
-  # @type [Array<Symbol>]
-  #
-  EMMA_DATA_KEYS = EMMA_DATA_CONFIG.keys.freeze
-
   # EMMA data fields that default to the current time.
   #
   # @type [Array<Symbol>]

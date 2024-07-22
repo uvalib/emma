@@ -168,7 +168,7 @@ class ManifestItemDecorator < BaseDecorator
     # @return [ActionConfig]
     #
     def model_form_fields(**)
-      json_fields, db_fields = partition_hash(super, :file_data, :emma_data)
+      json_fields, db_fields = partition_hash(super, *compound_fields)
       emma_data = json_fields[:emma_data]&.slice(*EMMA_DATA_FIELDS)
       db_fields.merge!(emma_data) if emma_data.present?
       ActionConfig.wrap(db_fields)

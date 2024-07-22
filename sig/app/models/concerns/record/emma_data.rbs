@@ -25,18 +25,6 @@ module Record::EmmaData
   #
   EMMA_DATA_HASH: bool
 
-  # EMMA data fields configuration.
-  #
-  # @type [Hash]
-  #
-  EMMA_DATA_CONFIG: symHash
-
-  # EMMA data field names.
-  #
-  # @type [Array<Symbol>]
-  #
-  EMMA_DATA_KEYS: symArray
-
   # EMMA data fields that default to the current time.
   #
   # @type [Array<Symbol>]

@@ -254,7 +254,7 @@ class UploadDecorator < BaseDecorator
     # @return [Array<Symbol>]
     #
     def compound_fields
-      %i[file_data emma_data edit_file_data edit_emma_data]
+      (columns = super) + columns.map { |col| :"edit_#{col}" }
     end
 
     # =========================================================================
