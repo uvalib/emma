@@ -53,21 +53,21 @@ end
 
 # Status values for the remediated file associated with the item.
 #
-# @see "en.emma.manifest_item.type.file_status"
+# @see "en.emma.type.manifest_item.file_status"
 #
 class FileStatus < EnumType
 end
 
 # Status values for the metadata associated with the item.
 #
-# @see "en.emma.manifest_item.type.data_status"
+# @see "en.emma.type.manifest_item.data_status"
 #
 class DataStatus < EnumType
 end
 
 # Status values for the submission status of the item.
 #
-# @see "en.emma.manifest_item.type.ready_status"
+# @see "en.emma.type.manifest_item.ready_status"
 #
 class ReadyStatus < EnumType
 end

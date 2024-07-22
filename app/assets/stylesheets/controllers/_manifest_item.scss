@@ -454,26 +454,26 @@ table.manifest_item-grid {
                         &.warning           { @include warning  ($prop); }
                         &.complete          { @include complete ($prop); }
 
-                        // @see "en.emma.manifest_item.type.*"
+                        // @see "en.emma.type.manifest_item.*"
                         &.value-missing     { @include initial  ($prop); }
                         &.value-invalid     { @include error    ($prop); }
                         &.value-complete    { @include complete ($prop); }
 
-                        // @see "en.emma.manifest_item.type.file_status"
+                        // @see "en.emma.type.manifest_item.file_status"
                         &.value-hidden      { @include error    ($prop); }
                         &.value-corrupt     { @include error    ($prop); }
                         &.value-bad_read    { @include error    ($prop); }
                         &.value-name_only   { @include warning  ($prop); }
                         &.value-url_only    { @include warning  ($prop); }
 
-                        // @see "en.emma.manifest_item.type.data_status"
+                        // @see "en.emma.type.manifest_item.data_status"
                         &.value-minimal     { @include warning  ($prop); }
                         &.value-no_bib      { @include error    ($prop); }
                         &.value-min_bib     { @include warning  ($prop); }
                         &.value-no_rem      { @include error    ($prop); }
                         &.value-min_rem     { @include warning  ($prop); }
 
-                        // @see "en.emma.manifest_item.type.ready_status"
+                        // @see "en.emma.type.manifest_item.ready_status"
                         &.value-unsaved     { @include initial  ($prop); }
                         &.value-ready       { @include complete ($prop); }
                         &.value-db_fail     { @include error    ($prop); }

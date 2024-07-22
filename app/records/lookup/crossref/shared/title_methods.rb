@@ -119,7 +119,7 @@ module Lookup::Crossref::Shared::TitleMethods
   # @return [String]
   #
   # @see #CROSSREF_ITEM_TYPE
-  # @see 'en.emma.search.type.SeriesType'
+  # @see "en.emma.type.search.SeriesType"
   #
   def series_type
     type = super(:type).to_s.downcase
