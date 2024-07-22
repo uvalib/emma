@@ -21,7 +21,7 @@ module EmmaHelper
   #
   # @type [Hash{Symbol=>any}]
   #
-  EMMA_PARTNER_CONFIG = config_section('emma.grant.partner').deep_freeze
+  EMMA_PARTNER_CONFIG = config_section(:grant, :partner).deep_freeze
 
   # Past or present EMMA grant partners.
   #

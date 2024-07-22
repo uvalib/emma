@@ -393,6 +393,108 @@ module Emma::Config
 
   public
 
+  # Return a description of differences between two values.
+  #
+  # @param [any, nil]       v1
+  # @param [any, nil]       v2
+  # @param [String, Symbol] n1
+  # @param [String, Symbol] n2
+  # @param [Boolean]        exact
+  # @param [Boolean]        verbose
+  #
+  # @return [String, nil]
+  #
+  def cfg_diff(v1, v2, n1: nil, n2: nil, exact: false, verbose: true, **)
+    o1, o2 = v1, v2
+    n1, n2 = (n1 || 'value1'), (n2 || 'value2')
+    added  = missing = nil
+    opt    = { exact: exact }
+
+    diff =
+      if v1 == v2
+        nil # No difference.
+
+      elsif (t1, t2 = v1.class, v2.class) && !(t1 <= t2) && !(t2 <= t1)
+        ["#{n1} is_a #{t1}   ....but....   #{n2} is_a #{t2}"]
+
+      elsif v1.is_a?(String) && !exact && (v1.squish == v2.squish)
+        nil # Only differ by white space.
+
+      elsif !v1.respond_to?(:each)
+        v1, v2 = [v1, v2].map { |v| cfg_inspect(v) }
+        ["#{n1} == #{v1}   ....but....   #{n2} == #{v2}"]
+
+      elsif (s1, s2 = v1.size, v2.size) && s1.zero? && s2.zero?
+        nil # Both items are empty.
+
+      elsif s1.zero? || s2.zero?
+        ["#{n1} size #{s1}   ....but....   #{n2} size #{s2}"]
+
+      elsif v1.is_a?(Array)
+        missing = v1 - v2
+        added   = v2 - v1
+        v1, v2  = v1.excluding(*missing), v2.excluding(*added)
+        v1, v2  = v1.sort_by(&:to_s), v2.sort_by(&:to_s) unless exact
+        [v1.size, v2.size].min.times.map { |i|
+          cfg_diff(v1[i], v2[i], n1: "#{n1}[#{i}]", n2: "#{n2}[#{i}]", **opt)
+        }.compact
+
+      else # if v1.is_a?(Hash)
+        k1, k2  = v1.keys, v2.keys
+        missing = v1.slice(*(k1 - k2))
+        added   = v2.slice(*(k2 - k1))
+        k1.excluding(*missing.keys).map { |k|
+          cfg_diff(v1[k], v2[k], n1: "#{n1}[:#{k}]", n2: "#{n2}[:#{k}]", **opt)
+        }.compact
+      end
+
+    if (values = missing).present?
+      vals = cfg_inspect(values)
+      vals.prepend("keys #{values.keys.inspect} ->\n\t") if values.is_a?(Hash)
+      diff.unshift("#{n2}   --missing--   #{vals}")
+    end
+    if (values = added).present?
+      vals = cfg_inspect(values)
+      vals.prepend("keys #{values.keys.inspect} ->\n\t") if values.is_a?(Hash)
+      diff.unshift("#{n2}   +++added+++   #{vals}")
+    end
+    if diff.present?
+      diff.unshift("#{n2} = #{o2.inspect}") if verbose
+      diff.unshift("#{n1} = #{o1.inspect}") if verbose
+      diff.join("\n")
+    end
+  end
+
+  # Render a value description for #cfg_diff.
+  #
+  # @param [any, nil] value
+  # @param [Integer]  limit
+  #
+  # @return [String]
+  #
+  def cfg_inspect(value, limit: 64_000) # TODO: was 64
+    case value
+      when Hash
+        value = value.map { |k, v| "#{k}: #{cfg_inspect(v, limit: limit)}" }
+        '{ %s }' % value.join(', ').truncate(limit * 2)
+      when Array
+        value = value.map { |v| cfg_inspect(v, limit: limit) }
+        '[%s]' % value.join(', ').truncate(limit * 2)
+      when String
+        value = value.inspect
+        value = value.truncate(limit) << '"' if value.size > limit
+        value.to_s
+      else
+        value.inspect.truncate(limit)
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Included in custom exception variants.
   #
   module MissingTranslationBase

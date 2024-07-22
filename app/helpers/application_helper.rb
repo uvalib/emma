@@ -45,7 +45,7 @@ module ApplicationHelper
   #
   # @type [Hash]
   #
-  APP_CONFIG = config_section('emma.application').deep_freeze
+  APP_CONFIG = config_section(:application).deep_freeze
 
   # The controllers for the application.
   #

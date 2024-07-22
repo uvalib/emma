@@ -142,8 +142,7 @@ module LayoutHelper::SearchFilters
           when Hash
             values[:values].is_a?(Hash) ? values[:values].invert : values
           when String
-            values = "emma.#{values}" unless values.start_with?('emma.')
-            I18n.t(values, default: {}).invert
+            config_item(values).invert
           else
             # noinspection RailsParamDefResolve
             values = values.try(:pairs) || values.try(:values) || values

@@ -215,6 +215,28 @@ module Emma::Config
   #
   def config_deep_interpolate: [T] (T item, **untyped opt) -> T
 
+  # Return a description of differences between two values.
+  #
+  # @param [any, nil]       v1
+  # @param [any, nil]       v2
+  # @param [String, Symbol] n1
+  # @param [String, Symbol] n2
+  # @param [Boolean]        exact
+  # @param [Boolean]        verbose
+  #
+  # @return [String, nil]
+  #
+  def cfg_diff: (untyped v1, untyped v2, ?n1: String|Symbol|nil, ?n2: String|Symbol|nil, ?exact: bool, ?verbose: bool, **untyped _ignored) -> (String | nil)
+
+  # Render a value description for #cfg_diff.
+  #
+  # @param [any, nil] value
+  # @param [Integer]  limit
+  #
+  # @return [String]
+  #
+  def cfg_inspect: (untyped value, ?limit: Integer) -> String
+
   # Included in custom exception variants.
   #
   module MissingTranslationBase

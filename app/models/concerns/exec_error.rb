@@ -21,7 +21,7 @@ class ExecError < RuntimeError
   #
   # @type [String]
   #
-  DEFAULT_ERROR = I18n.t('emma.error._default', default: 'unknown').freeze
+  DEFAULT_ERROR = config_item(:error, :_default)&.freeze || 'unknown'
 
   # ===========================================================================
   # :section:

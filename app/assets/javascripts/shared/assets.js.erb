@@ -671,7 +671,7 @@ export const Emma = (function() {
     };
 
     /** @type {ActionProperties} */
-    const Lookup =          o$('<%= js config_section("emma.lookup") %>');
+    const Lookup =          o$('<%= js config_section(:lookup) %>');
 
     /** @type {ModelProperties} */
     const Org =             o$('<%= js OrgDecorator.js_properties %>'),

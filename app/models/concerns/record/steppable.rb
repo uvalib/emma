@@ -59,7 +59,7 @@ module Record::Steppable
   # @see file:config/locales/state_table.en.yml
   #
   STATE_TABLES =
-    config_section('emma.state_table').transform_values { |leaf_classes|
+    config_section(:state_table).transform_values { |leaf_classes|
       leaf_classes.transform_values do |states|
         states.transform_values { |entry|
           next unless entry.is_a?(Hash)

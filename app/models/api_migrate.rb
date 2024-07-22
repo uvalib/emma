@@ -27,7 +27,7 @@ class ApiMigrate
   # @type [Hash{Symbol=>Hash}]
   #
   CONFIGURATION_ENTRY =
-    config_section('emma.api_migrate').map { |name, entries|
+    config_section(:api_migrate).map { |name, entries|
       next if name.start_with?('_')
       entries =
         entries.map { |field, entry|

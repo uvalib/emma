@@ -33,7 +33,7 @@ module HelpHelper
   #
   # @type [Hash]
   #
-  HELP_CONFIG = config_section('emma.help').deep_freeze
+  HELP_CONFIG = config_section(:help).deep_freeze
 
   # Help topics and values.
   #

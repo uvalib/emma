@@ -91,7 +91,7 @@ class ManifestDecorator < BaseDecorator
     #
     # @type [Hash{Symbol=>Hash}]
     #
-    BULK_SUBMIT_CFG = config_section('emma.bulk.submit').deep_freeze
+    BULK_SUBMIT_CFG = config_section(:bulk, :submit).deep_freeze
 
     # =========================================================================
     # :section: BaseDecorator::Controls overrides

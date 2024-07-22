@@ -48,6 +48,12 @@ module ManifestItem::Config
     ready_status: %i[ready complete],
   }.deep_freeze
 
+  if sanity_check?
+    arg  = [STATUS_READY.keys, STATUS_VALID.keys]
+    opt  = { n1: :STATUS_READY, n2: :STATUS_VALID }
+    diff = cfg_diff(*arg, **opt).presence and raise(diff)
+  end
+
   # ManifestItem record columns containing summary status information.
   #
   # @type [Array<Symbol>]

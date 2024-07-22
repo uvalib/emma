@@ -342,7 +342,7 @@ class ApplicationMailer < ActionMailer::Base
   # @return [Hash]
   #
   def email_elements(key, **opt)
-    cfg = config_section("emma.mail.#{key}").deep_dup
+    cfg = config_section(:mail, key).deep_dup
     opt = { test: !production_deployment? }.merge!(params, opt)
     msg = fetch_message(cfg, **opt)
     msg = msg ? cfg.merge(msg) : cfg

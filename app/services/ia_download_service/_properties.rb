@@ -21,7 +21,7 @@ module IaDownloadService::Properties
   #
   # @type [Hash]
   #
-  CONFIGURATION = config_section('emma.service.ia_download').deep_freeze
+  CONFIGURATION = config_section(:service, :ia_download).deep_freeze
 
   # Maximum length of redirection chain.
   #

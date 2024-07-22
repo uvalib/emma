@@ -102,7 +102,7 @@ module ApiService::Properties
   # @return [Hash]
   #
   def configuration
-    config_section("emma.service.#{service_name}")
+    config_section(:service, service_name)
   end
 
   # The URL for the API connection.

@@ -27,7 +27,7 @@ module SubmissionService::Properties
   # @type [Hash]
   #
   CONFIGURATION =
-    config_section('emma.service.submission').transform_values { |config|
+    config_section(:service, :submission).transform_values { |config|
       if config.is_a?(Hash)
         config.dup.tap do |cfg|
           cfg[:timeout]  = positive_float(cfg[:timeout]).to_f * SECONDS
@@ -189,7 +189,7 @@ module SubmissionService::Properties
   # @type [Hash{Symbol=>Hash}]
   #
   SUBMIT_STEPS_TABLE =
-    config_section('emma.bulk.step').map { |step, entry|
+    config_section(:bulk, :step).map { |step, entry|
       entry = entry.dup
       entry[:label]   ||= "#{step} status".titleize
       entry[:css]     ||= "#{step}-status"

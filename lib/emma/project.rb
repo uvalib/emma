@@ -19,31 +19,31 @@ module Emma::Project
   #
   # @type [String]
   #
-  PROJECT_SITE = config_item('emma.project.site').freeze
+  PROJECT_SITE = config_item(:project, :site).freeze
 
   # The email address for project information.
   #
   # @type [String]
   #
-  PROJECT_EMAIL = config_item('emma.project.email').freeze
+  PROJECT_EMAIL = config_item(:project, :email).freeze
 
   # The web site for the "emma-users" mailing list.
   #
   # @type [String]
   #
-  MAILING_LIST_SITE = config_item('emma.mailing_list.site').freeze
+  MAILING_LIST_SITE = config_item(:mailing_list, :site).freeze
 
   # The email address for the "emma-users" mailing list.
   #
   # @type [String]
   #
-  MAILING_LIST_EMAIL = config_item('emma.mailing_list.email').freeze
+  MAILING_LIST_EMAIL = config_item(:mailing_list, :email).freeze
 
   # The email address for general information.
   #
   # @type [String]
   #
-  CONTACT_EMAIL = config_item('emma.contact.email').freeze
+  CONTACT_EMAIL = config_item(:contact, :email).freeze
 
   # The email address for support.
   #
@@ -55,7 +55,7 @@ module Emma::Project
   #
   # @type [String]
   #
-  ENROLL_EMAIL = config_item('emma.enroll.email').freeze
+  ENROLL_EMAIL = config_item(:enroll, :email).freeze
 
 end
 

@@ -193,7 +193,8 @@ class Api::Error < ExecError
     def error_config
       @error_config ||=
         [:api, service].compact.reduce({}) do |result, section|
-          result.merge!(config_section("emma.error.#{section}"))
+          cfg = config_section(:error, section)
+          result.merge!(cfg) if cfg.present?
         end
     end
 
