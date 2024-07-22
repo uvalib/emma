@@ -28,8 +28,6 @@ module FileFormat
   #
   # @type [Array<Symbol>]
   #
-  # @see file:config/locales/types.en.yml
-  #
   TYPES = config_section(:type, :search, :DublinCoreFormat).keys.freeze
 
   # Placeholder for an unknown format.
@@ -444,7 +442,7 @@ module FileFormat
         }.deep_freeze
     end
 
-    # Get properties from a configuration section.
+    # Get properties from a format configuration section.
     #
     # @param [String, Symbol] section
     #

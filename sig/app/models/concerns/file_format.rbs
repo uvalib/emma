@@ -15,8 +15,6 @@ module FileFormat
   #
   # @type [Array<Symbol>]
   #
-  # @see file:config/locales/types.en.yml
-  #
   TYPES: symArray
 
   # Placeholder for an unknown format.
@@ -257,7 +255,7 @@ module FileFormat
   #
   def self.configuration: (*(symHash|String|Symbol) base_sections, String|Symbol section) -> symHash
 
-  # Get properties from a configuration section.
+  # Get properties from a format configuration section.
   #
   # @param [String, Symbol] section
   #
