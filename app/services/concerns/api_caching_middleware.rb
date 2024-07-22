@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'caching_middleware'
-
 # Caching for items from an external API.
 #
 class ApiCachingMiddleware < Faraday::Middleware

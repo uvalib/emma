@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'middleware'
-
 # Send/receive messages to/from a remote service.
 #
 # @see file:lib/emma/config.rb

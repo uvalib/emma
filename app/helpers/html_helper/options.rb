@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'attributes'
-
 # Shared view helper HTML support methods.
 #
 module HtmlHelper::Options

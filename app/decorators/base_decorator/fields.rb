@@ -258,7 +258,7 @@ module BaseDecorator::Fields
   # @type [Hash{Symbol=>Array<Class>}]
   #
   RENDER_FIELD_TYPE_TABLE = {
-    check:    [Boolean, TrueClass, FalseClass],
+    check:    [TrueClass, FalseClass, TrueFalse, Boolean],
     date:     [IsoDate, IsoDay, Date],
     datetime: [DateTime, ActiveSupport::TimeWithZone],
     number:   [Integer, BigDecimal],

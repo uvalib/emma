@@ -29,9 +29,6 @@ module Emma
     # Initialize configuration defaults.
     config.load_defaults 7.1
 
-    # The 7.1 default is not compatible with the current directory layout.
-    config.add_autoload_paths_to_load_path = true
-
     # Eager load code on boot.
     config.eager_load = true
 
