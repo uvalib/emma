@@ -589,7 +589,7 @@ module UploadWorkflow::External
     # Save the Upload record to the database.
     item = db_insert(data)
     unless item.is_a?(Upload)
-      return nil, [config_text(:upload, :record, :not_created)]
+      return nil, [config_term(:upload, :record, :not_created)]
     end
     return item, item.errors unless item.errors.blank?
 
@@ -619,16 +619,16 @@ module UploadWorkflow::External
     __debug_items("UPLOAD WF #{__method__}", binding)
     if (id = data[:id]).blank?
       if (id = data[:submission_id]).blank?
-        return nil, [config_text(:upload, :record, :not_created)]
+        return nil, [config_term(:upload, :record, :not_created)]
       elsif !Upload.valid_sid?(id)
-        return nil, [config_text(:upload, :record, :invalid_sid, sid: id)]
+        return nil, [config_term(:upload, :record, :invalid_sid, sid: id)]
       end
     end
 
     # Fetch the Upload record and update it in the database.
     item = db_update(data)
     unless item.is_a?(Upload)
-      return nil, [config_text(:upload, :record, :not_found, id: id)]
+      return nil, [config_term(:upload, :record, :not_found, id: id)]
     end
     return item, item.errors unless item.errors.blank?
 
@@ -724,7 +724,7 @@ module UploadWorkflow::External
         msg << retained.map(&:menu_label).join(', ')
         msg.join(': ')
       end
-      not_removed = config_text(:upload, :record, :not_removed)
+      not_removed = config_term(:upload, :record, :not_removed)
       retained.map! { |item| FlashPart.new(item, not_removed) }
     end
     if model_options.repo_remove && removals.present?
@@ -1317,7 +1317,7 @@ module UploadWorkflow::External
   #
   # @type [Hash{Symbol=>String}]
   #
-  REPO_FAILURE = config_text_section(:record, :failure).deep_freeze
+  REPO_FAILURE = config_term_section(:record, :failure).deep_freeze
 
   # Failure messages for "partner repository workflow" requests.
   #

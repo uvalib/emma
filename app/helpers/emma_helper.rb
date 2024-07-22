@@ -153,7 +153,7 @@ module EmmaHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def emma_administrator(label = nil)
-    label ||= config_text(:administrator)
+    label ||= config_term(:administrator)
     contact_email(label)
   end
 

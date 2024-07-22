@@ -112,12 +112,12 @@ module PopupHelper
     prepend_css!(opt, POPUP_TOGGLE_CLASS, type)
     if button.is_a?(Hash)
       merge_html_options!(opt, button)
-      label = opt.delete(:label) || label || text || config_text(:popup,:label)
+      label = opt.delete(:label) || label || text || config_term(:popup,:label)
       html_button(label, **opt)
     elsif button
       html_div(button, **opt)
     elsif text
-      text ||= label || config_text(:popup, :click)
+      text ||= label || config_term(:popup, :click)
       html_span(text, **opt)
     else
       icon_button(**opt)
@@ -154,9 +154,9 @@ module PopupHelper
     closer_opt = prepend_css(closer, closer_css, 'icon')
     closer_opt[:tabindex]     ||= 0
     closer_opt[:role]         ||= 'button'
-    closer_opt[:title]        ||= config_text(:popup, :close, :tooltip)
+    closer_opt[:title]        ||= config_term(:popup, :close, :tooltip)
     closer_opt[:'aria-label'] ||= closer_opt[:title]
-    close_icon = closer_opt.delete(:icon) || config_text(:popup, :close, :icon)
+    close_icon = closer_opt.delete(:icon) || config_term(:popup, :close, :icon)
     close_icon = html_span(**closer_opt) { symbol_icon(close_icon) }
 
     # Popup panel contents supplied by the block.
@@ -172,7 +172,7 @@ module PopupHelper
       controls.map! do |control|
         if control.is_a?(Hash)
           tag = control[:tag]   || :button
-          lbl = control[:label] || config_text(:popup, :control, :label)
+          lbl = control[:label] || config_term(:popup, :control, :label)
           html_tag(tag, lbl, **control.except(:tag, :label))
         else
           ERB::Util.h(control)
@@ -182,7 +182,7 @@ module PopupHelper
     controls = [] unless controls.is_a?(Array)
     if controls.none? { |ctl| ctl.include?(closer_css) }
       b_opt = prepend_css(close, closer_css, 'text')
-      label = b_opt.delete(:label) || config_text(:popup, :close, :label)
+      label = b_opt.delete(:label) || config_term(:popup, :close, :label)
       b_opt[:title]        ||= closer_opt[:title]
       b_opt[:'aria-label'] ||= b_opt[:title] if label.html_safe?
       controls << html_button(label, **b_opt)

@@ -243,7 +243,7 @@ class EnrollmentDecorator < BaseDecorator
     # @return [String]
     #
     def items_menu_prompt(**)
-      config_text(:enrollment, :select)
+      config_term(:enrollment, :select)
     end
 
     # Descriptive term for an item of the given type.
@@ -254,7 +254,7 @@ class EnrollmentDecorator < BaseDecorator
     # @return [String]
     #
     def model_item_name(model: nil, capitalize: true)
-      model ? super : config_text(:enrollment, :model_name)
+      model ? super : config_term(:enrollment, :model_name)
     end
 
     # =========================================================================

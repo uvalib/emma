@@ -405,7 +405,7 @@ module BaseDecorator::List
   #
   # @type [String]
   #
-  NO_RESULTS = config_text(:list, :no_results).freeze
+  NO_RESULTS = config_term(:list, :no_results).freeze
 
   # An indicator that can be used to stand for an empty list.
   #
@@ -686,8 +686,8 @@ module BaseDecorator::List
     html_div(container, outer_parts, **outer_opt)
   end
 
-  ONE_ENTRY  = config_text(:list, :one_entry).freeze
-  NO_ENTRIES = config_text(:list, :no_entries).freeze
+  ONE_ENTRY  = config_term(:list, :one_entry).freeze
+  NO_ENTRIES = config_term(:list, :no_entries).freeze
 
   # list_item_number_label
   #

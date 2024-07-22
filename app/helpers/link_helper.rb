@@ -84,7 +84,7 @@ module LinkHelper
   #
   def icon_button(icon: nil, text: nil, url: nil, **opt)
     icon        ||= DEFAULT_ICON
-    text        ||= opt[:title] || config_text(:link, :icon_action)
+    text        ||= opt[:title] || config_term(:link, :icon_action)
     opt[:title] ||= text
 
     sr_only = html_span(text, class: 'text sr-only')
@@ -116,7 +116,7 @@ module LinkHelper
   # @type [String]
   #
   NEW_TAB =
-    config_text(:link, :new_tab).then { |v|
+    config_term(:link, :new_tab).then { |v|
       (v.start_with?('(','[') && v.end_with?(')',']')) ? v : "(#{v})"
     }.freeze
 

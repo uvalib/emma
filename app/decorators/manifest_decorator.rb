@@ -192,7 +192,7 @@ class ManifestDecorator < BaseDecorator
     #
     def items_menu_prompt(user: nil, **)
       user = nil if user == :all
-      config_text(:manifest, (user ? :select_own : :select_any))
+      config_term(:manifest, (user ? :select_own : :select_any))
     end
 
     # =========================================================================
@@ -209,8 +209,8 @@ class ManifestDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def no_items(css: '.no-items', **opt)
-      ctrl = new_button(config_text(:manifest, :create_button))
-      desc = config_text(:manifest, :no_items, control: ctrl)
+      ctrl = new_button(config_term(:manifest, :create_button))
+      desc = config_term(:manifest, :no_items, control: ctrl)
       prepend_css!(opt, css)
       h.page_description_section(desc, **opt)
     end
@@ -230,7 +230,7 @@ class ManifestDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def new_button(label = nil, css: '.new-button', **opt)
-      label ||= config_text(:manifest, :new_label)
+      label ||= config_term(:manifest, :new_label)
       prepend_css!(opt, css)
       link_to_action(label, action: :new, link_opt: opt)
     end
@@ -577,7 +577,7 @@ class ManifestDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def manifest_page_heading(help: nil, **opt)
-    text  = config_text_section(:manifest, :heading)
+    text  = config_term_section(:manifest, :heading)
     name  = object.name
 
     t_lbl = html_span(class: 'text label') { text[:leader]}
@@ -643,7 +643,7 @@ class ManifestDecorator
   # @type [Hash{Symbol=>String}]
   #
   STATUS_MESSAGE = {
-    offline: config_text(:status, :offline),
+    offline: config_term(:status, :offline),
     dynamic: '',
   }.deep_freeze
 

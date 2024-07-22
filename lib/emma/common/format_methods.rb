@@ -384,7 +384,7 @@ module Emma::Common::FormatMethods
     term  = term.split(NAMED_REF_AN).second || term if term.match?(/%[{<]/)
     first = term.lstrip[0]
     vowel = first && 'aeiou'.include?(first.downcase)
-    config_text(vowel ? :an : :a)
+    config_term(vowel ? :an : :a)
   end
 
   # ===========================================================================

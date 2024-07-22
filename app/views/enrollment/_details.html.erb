@@ -13,7 +13,7 @@
   skip    = [*skip]
   heading =
     if (level == 1) && !skip.include?(:title)
-      title ||= config_text(:enrollment, :details, :title)
+      title ||= config_term(:enrollment, :details, :title)
       html_tag((level + 1), title, class: 'details-heading')
     end
 

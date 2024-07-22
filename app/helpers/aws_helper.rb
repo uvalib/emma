@@ -24,7 +24,7 @@ module AwsHelper
 
   public
 
-  S3_EMPTY_BUCKET  = config_text(:aws, :bucket, :empty).freeze
+  S3_EMPTY_BUCKET  = config_term(:aws, :bucket, :empty).freeze
   S3_PREFIX_LIMIT  = 10
   S3_OBJECT_VALUES = %i[key size last_modified].freeze
 
@@ -68,7 +68,7 @@ module AwsHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def s3_bucket_link(bucket, css: '.aws-link', **opt)
-    label  = opt.delete(:label) || config_text(:aws, :bucket, :label)
+    label  = opt.delete(:label) || config_term(:aws, :bucket, :label)
     region = opt.delete(:region)
     url    = s3_bucket_url(bucket, region: region)
     prepend_css!(opt, css)
@@ -236,7 +236,7 @@ module AwsHelper
       if limit && (row > limit)
         more = (row == limit.succ) ? (total[p] - row + 1) : 0
         next unless more.positive?
-        more = config_text(:aws, :bucket, :more, count: more)
+        more = config_term(:aws, :bucket, :more, count: more)
         more = link_to(more, '#') if html # TODO: JavaScript
         obj  = { prefix: more }
       end
@@ -407,7 +407,7 @@ module AwsHelper
     end.tap do |result|
       key = result[:key] || result[:object_key]
       if key.present? && result[:prefix].blank?
-        result[:prefix] = item ? prefix_of(key) : config_text(:aws, :prefix)
+        result[:prefix] = item ? prefix_of(key) : config_term(:aws, :prefix)
       end
     end
   end

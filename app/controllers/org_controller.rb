@@ -120,7 +120,7 @@ class OrgController < ApplicationController
     return redirect_to action: :show_select              if identifier.blank?
     return redirect_to without_id(action: :show_current) if current_id?
     @item = find_record
-    raise config_text(:org, :not_found, id: identifier)  if @item.blank?
+    raise config_term(:org, :not_found, id: identifier)  if @item.blank?
   rescue CanCan::AccessDenied => error
     error_response(error)
   rescue => error
@@ -184,7 +184,7 @@ class OrgController < ApplicationController
     return redirect_to action: :edit_select              if identifier.blank?
     return redirect_to without_id(action: :edit_current) if current_id?
     @item = edit_record
-    raise config_text(:org, :not_found, id: identifier)  if @item.blank?
+    raise config_term(:org, :not_found, id: identifier)  if @item.blank?
   rescue CanCan::AccessDenied => error
     error_response(error)
   rescue => error
@@ -229,10 +229,10 @@ class OrgController < ApplicationController
     __log_activity
     __debug_route
     return redirect_to action: :delete_select if identifier.blank?
-    raise config_text(:org, :self_delete)     if current_id?
+    raise config_term(:org, :self_delete)     if current_id?
     @list = delete_records.list&.records
     unless @list.present? || last_operation_path&.include?('/destroy')
-      raise config_text(:org, :no_match, id: identifier_list)
+      raise config_term(:org, :no_match, id: identifier_list)
     end
   rescue CanCan::AccessDenied => error
     error_response(error)
@@ -248,7 +248,7 @@ class OrgController < ApplicationController
   def destroy(back: delete_select_org_path)
     __log_activity
     __debug_route
-    raise config_text(:org, :self_delete) if current_id?
+    raise config_term(:org, :self_delete) if current_id?
     @list = destroy_records
     post_response(:ok, @list, redirect: back)
   rescue CanCan::AccessDenied => error

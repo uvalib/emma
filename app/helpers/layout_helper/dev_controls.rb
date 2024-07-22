@@ -119,7 +119,7 @@ module LayoutHelper::DevControls
   #
   def dev_hide_dev_controls(**opt)
     param = :dev_controls
-    text  = config_text_section(:dev, :hide_dev_controls, param: param)
+    text  = config_term_section(:dev, :hide_dev_controls, param: param)
     label = text[:label]
     tip   = Array.wrap(text[:tooltip]).join("\n")
     link  = opt.delete(:params).merge(param => false)
@@ -170,12 +170,12 @@ module LayoutHelper::DevControls
     t_opt = {}
     t_opt[:ctrlr] = ctrlr.to_s.titleize if ctrlr
 
-    t_opt[:state] = config_text(state ? :_on : :_off).upcase
+    t_opt[:state] = config_term(state ? :_on : :_off).upcase
     label = ctrlr ? :ctrlr_label : :label
-    label = config_text(:dev, :toggle_debug, label, **t_opt)
+    label = config_term(:dev, :toggle_debug, label, **t_opt)
 
-    t_opt[:state] = config_text(state ? :_off : :_on)
-    tip   = config_text(:dev, :toggle_debug, :tooltip, **t_opt)
+    t_opt[:state] = config_term(state ? :_off : :_on)
+    tip   = config_term(:dev, :toggle_debug, :tooltip, **t_opt)
 
     link  = opt.delete(:params).merge(param => !state)
     make_link(link, label, **opt, title: tip)

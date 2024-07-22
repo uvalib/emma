@@ -46,7 +46,7 @@ module Record::Rendering
   #
   # @note From Upload::RenderMethods#DEFAULT_LABEL
   #
-  DEFAULT_LABEL = config_text(:record, :missing)
+  DEFAULT_LABEL = config_term(:record, :missing).freeze
 
   # Show the label or identifier for the given item.
   #
@@ -62,7 +62,7 @@ module Record::Rendering
     label   = item.try(:label)
     ident ||= label.nil?
     ident &&= item.try(:identifier) || item_identity(item)
-    ident &&= config_text(:record, :item, id: ident)
+    ident &&= config_term(:record, :item, id: ident)
     # noinspection RubyMismatchedReturnType
     (label && ident) && "#{label} (#{ident})" || label || ident || default
   end

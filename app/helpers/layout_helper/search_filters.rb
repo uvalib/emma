@@ -671,7 +671,7 @@ module LayoutHelper::SearchFilters
     l_opt = m_opt = opt
     if opt[:disabled]
       append_css!(opt, :disabled)
-      note  = config_text(:search_filters, :fixed_value)
+      note  = config_term(:search_filters, :fixed_value)
       m_opt = append_tooltip!(opt.dup, note)
     end
     menu  = menu_control(menu_name, label_id: l_id, **m_opt) or return
@@ -746,7 +746,7 @@ module LayoutHelper::SearchFilters
 
     # Prepend a placeholder if not present.
     any_label =
-      config[:placeholder] || config_text(:search_filters, :placeholder)
+      config[:placeholder] || config_term(:search_filters, :placeholder)
     if default.blank? && pairs.none? { |_, value| value == any_value }
       pairs = [[any_label, any_value]] + pairs unless multiple
     end

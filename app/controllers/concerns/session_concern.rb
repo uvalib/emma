@@ -125,7 +125,7 @@ module SessionConcern
     user   ||= resource
     user     = user[:uid] || user['uid'] if user.is_a?(Hash)
     user     = user.account              if user.respond_to?(:account)
-    user     = user.to_s.presence || config_text(:session, :unknown_user)
+    user     = user.to_s.presence || config_term(:session, :unknown_user)
     # noinspection RubyMismatchedReturnType
     config_item("emma.user.sessions.#{action}.#{status}", user: user)
   end
@@ -294,7 +294,7 @@ module SessionConcern
   #
   def session_expired_handler(exception)
     __debug_exception('[session expired] RESCUE_FROM', exception)
-    msg = [config_text(:session, :expired)]
+    msg = [config_term(:session, :expired)]
     msg << exception.message unless exception.message == exception.class.name
     msg = msg.compact_blank.join(' - ')
     respond_to do |format|

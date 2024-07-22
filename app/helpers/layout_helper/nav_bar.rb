@@ -148,7 +148,7 @@ module LayoutHelper::NavBar
         separator = html_span('|', class: css_classes(*classes, *sep_css))
 
         # The link (inactive if already on the associated page).
-        page = (config_text(:layout, :nav_bar, :current_page) if disabled)
+        page = (config_term(:layout, :nav_bar, :current_page) if disabled)
         tip  = [*tip, "(#{page})"].compact.join("\n") if page.present?
         opt  = { class: css_classes(*classes), title: tip }
         link = disabled ? html_span(label, **opt) : link_to(label, path, opt)

@@ -25,7 +25,7 @@ module Ingest::Shared::TransformMethods
   #
   # @type [String, nil]
   #
-  MISSING_TITLE = config_text(:ingest, :missing_title).deep_freeze
+  MISSING_TITLE = config_term(:ingest, :missing_title).deep_freeze
 
   # ===========================================================================
   # :section:

@@ -170,7 +170,7 @@ class Manifest < ApplicationRecord
   # @return [String]
   #
   def self.default_name
-    DateTime.now.strftime(config_text(:manifest, :default_name)).squish
+    DateTime.now.strftime(config_term(:manifest, :default_name)).squish
   end
 
 end

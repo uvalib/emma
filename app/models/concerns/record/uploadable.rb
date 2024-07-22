@@ -259,9 +259,9 @@ module Record::Uploadable
       # noinspection RubyScope
       err =
         case
-          when stat.nil?          then config_text(:record, :upload, :failure)
-          when stat != 200        then config_text(:record, :upload, :invalid)
-          when body&.first.blank? then config_text(:record, :upload, :blank)
+          when stat.nil?          then config_term(:record, :upload, :failure)
+          when stat != 200        then config_term(:record, :upload, :invalid)
+          when body&.first.blank? then config_term(:record, :upload, :blank)
         end
       file_attacher.errors.add(:file, :invalid, message: err) if err
     end

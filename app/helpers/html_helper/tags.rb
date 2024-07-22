@@ -239,7 +239,7 @@ module HtmlHelper::Tags
   # @return [ActiveSupport::SafeBuffer]
   #
   def html_details(summary, *content, id: nil, title: nil, **opt, &blk)
-    title ||= config_text(:details, :tooltip)
+    title ||= config_term(:details, :tooltip)
     summary = html_tag(:summary, summary, id: id, title: title)
     content = html_div(*content, class: 'content', &blk)
     html_tag(:details, **opt) do

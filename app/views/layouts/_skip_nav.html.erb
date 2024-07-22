@@ -4,7 +4,7 @@
 
   lbl_id  = lbl_class = 'skip-nav-heading'
   menu    = render_skip_nav('aria-labelledby': lbl_id).presence or return
-  label ||= config_text(:layout, :skip_nav, :label)
+  label ||= config_term(:layout, :skip_nav, :label)
   label  += ':' unless label.end_with?(':')
 
 -%>

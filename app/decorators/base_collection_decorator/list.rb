@@ -58,7 +58,7 @@ module BaseCollectionDecorator::List
     prepend_css!(opt, css)
     trace_attrs!(opt)
     space  = html_div(**opt)
-    notice = html_div(**opt) { config_text(:list, :no_records) }
+    notice = html_div(**opt) { config_term(:list, :no_records) }
     space << notice
   end
 

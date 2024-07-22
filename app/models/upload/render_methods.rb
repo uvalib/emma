@@ -42,7 +42,7 @@ module Upload::RenderMethods
   #
   # @type [String]
   #
-  DEFAULT_LABEL = config_text(:record, :missing)
+  DEFAULT_LABEL = config_term(:record, :missing).freeze
 
   # Show the submission ID if it can be determined for the given item
   # annotated with the file associated with the submission.
@@ -57,7 +57,7 @@ module Upload::RenderMethods
     label   = Upload.sid_value(item)
     ident ||= label.nil?
     ident &&= Upload.id_value(item)
-    ident &&= config_text(:record, :item, id: ident)
+    ident &&= config_term(:record, :item, id: ident)
     label ||= ident
     file    = (item[:filename] || item['filename'] if item.is_a?(Hash))
     file  ||= item.try(:filename)

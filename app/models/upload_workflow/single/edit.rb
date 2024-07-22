@@ -139,7 +139,7 @@ module UploadWorkflow::Single::Edit::Actions
     else # "partner repository workflow"
       sid  = record.submission_id.inspect
       repo = Upload.repository_name(record)
-      msg  = config_text(:upload, :non_native, :edit, sid: sid, repo: repo)
+      msg  = config_term(:upload, :non_native, :edit, sid: sid, repo: repo)
       self.succeeded << msg
     end
   end

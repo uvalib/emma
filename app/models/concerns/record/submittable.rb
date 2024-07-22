@@ -484,7 +484,7 @@ module Record::Submittable
     #
     # @note From UploadWorkflow::External#REPO_FAILURE
     #
-    REPO_FAILURE = config_text_section(:record, :failure).deep_freeze
+    REPO_FAILURE = config_term_section(:record, :failure).deep_freeze
 
     # Submit a new item through the "partner repository workflow".
     #
@@ -931,7 +931,7 @@ module Record::Submittable
       # Save the record to the database.
       item = db_insert(data)
       unless item.is_a?(type)
-        return nil, [config_text(:record, :not_created, type: type)]
+        return nil, [config_term(:record, :not_created, type: type)]
       end
       return item, item.errors unless item.errors.blank?
 
@@ -967,9 +967,9 @@ module Record::Submittable
       __debug_items("ENTRY WF #{__method__}", binding)
       if (id = data[:id]).blank?
         if (id = data[:submission_id]).blank?
-          return nil, [config_text(:record, :no_identifier)]
+          return nil, [config_term(:record, :no_identifier)]
         elsif !valid_sid?(id)
-          return nil, [config_text(:record, :invalid_sid, sid: id)]
+          return nil, [config_term(:record, :invalid_sid, sid: id)]
         end
       end
       type = record_class
@@ -977,7 +977,7 @@ module Record::Submittable
       # Fetch the record and update it in the database.
       item = db_update(data)
       unless item.is_a?(type)
-        return nil, [config_text(:record, :not_found, type: type, id: id)]
+        return nil, [config_term(:record, :not_found, type: type, id: id)]
       end
       return item, item.errors unless item.errors.blank?
 
@@ -1078,7 +1078,7 @@ module Record::Submittable
           msg << retained.map { |item| item_label(item) }.join(', ')
           msg.join(': ')
         end
-        not_removed = config_text(:record, :not_removed)
+        not_removed = config_term(:record, :not_removed)
         retained.map! { |item| FlashPart.new(item, not_removed) }
       end
       if model_options.repo_remove && removals.present?

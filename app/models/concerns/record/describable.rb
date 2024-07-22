@@ -207,7 +207,7 @@ module Record::Describable
     def describe_submission(model = nil, **opt)
       model ||= self_for_instance_method(__method__)
       sid = describe_sid(model, **opt)
-      config_text(:record, :submission, sid: sid.inspect)
+      config_term(:record, :submission, sid: sid.inspect)
     end
 
     # A replacement value for '%{user}' in #sprintf formats.

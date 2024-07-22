@@ -73,7 +73,7 @@ module BaseDecorator::Form
   public
 
   # @private
-  UNMODIFIABLE = config_text(:form, :unmodifiable).freeze
+  UNMODIFIABLE = config_term(:form, :unmodifiable).freeze
 
   # Render field/value pairs.
   #
@@ -357,7 +357,7 @@ module BaseDecorator::Form
   end
 
   # @private
-  UNSET_MENU_ITEM = config_text(:form, :unset).freeze
+  UNSET_MENU_ITEM = config_term(:form, :unset).freeze
 
   # @private
   MENU_SINGLE_OPT = %i[name base fixed readonly constraints row].freeze
@@ -779,14 +779,14 @@ module BaseDecorator::Form
   #
   # @type [String]
   #
-  UPDATE_LABEL = config_text(:form, :update).freeze
+  UPDATE_LABEL = config_term(:form, :update).freeze
   UPDATE_CSS   = 'update'
 
   # Label for line-editor cancel button.
   #
   # @type [String]
   #
-  CANCEL_LABEL = config_text(:form, :cancel).freeze
+  CANCEL_LABEL = config_term(:form, :cancel).freeze
   CANCEL_CSS   = 'cancel'
 
   # Generate a form for inline use.
@@ -1179,7 +1179,7 @@ module BaseDecorator::Form
   # @type [String]
   #
   FIELD_GROUP_NAME = 'field-group'
-  FILTER_LEGEND    = config_text(:form, :filter).freeze
+  FILTER_LEGEND    = config_term(:form, :filter).freeze
 
   # Control for filtering which fields are displayed.
   #
@@ -1244,8 +1244,8 @@ module BaseDecorator::Form
   #
   # @type [String]
   #
-  NO_FIELDS = config_text(:form, :no_fields).freeze
-  THIS      = config_text(:form, :this).freeze
+  NO_FIELDS = config_term(:form, :no_fields).freeze
+  THIS      = config_term(:form, :this).freeze
 
   # Hidden row that is shown only when no field rows are being displayed.
   #

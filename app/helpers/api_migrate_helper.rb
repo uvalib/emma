@@ -29,7 +29,7 @@ module ApiMigrateHelper
       html_div(class: 'summary') do
         count = report[:count] || 0
         table = report[:table] || '???'
-        config_text(:api_migrate, :summary, count: count, table: table.inspect)
+        config_term(:api_migrate, :summary, count: count, table: table.inspect)
       end
     record_changes =
       html_ul(class: 'record-list') do
@@ -54,7 +54,7 @@ module ApiMigrateHelper
   #
   def api_record_changes(rid, entry, level)
     html_li(class: 'record-results', id: rid) do
-      heading = config_text(:api_migrate, :changes, rid: rid)
+      heading = config_term(:api_migrate, :changes, rid: rid)
       heading = html_tag(level, heading, class: 'record-id')
       changes = api_field_section(rid, entry, :changes, (level + 1))
       results = api_field_section(rid, entry, :results, (level + 1))
@@ -82,7 +82,7 @@ module ApiMigrateHelper
       html_div(class: css, 'aria-describedby': id) do
         entry[part.to_sym].presence&.map do |column, field|
           send("api_field_#{part}", column, field, (level + 1))
-        end || html_div(class: 'field') { config_text(:api_migrate, :no_data) }
+        end || html_div(class: 'field') { config_term(:api_migrate, :no_data) }
       end
     label << info
   end
@@ -107,7 +107,7 @@ module ApiMigrateHelper
               change_table_line(*field_values, row: row)
             end
         else
-          html_div(class: 'field') { config_text(:api_migrate, :no_changes) }
+          html_div(class: 'field') { config_term(:api_migrate, :no_changes) }
         end
       end
     # noinspection RubyMismatchedReturnType, RubyMismatchedArgumentType
@@ -134,7 +134,7 @@ module ApiMigrateHelper
         UploadDecorator.new.render_json_data(fields)
       else
         append_css!(f_opt, 'empty open')
-        html_div(class: 'field') { config_text(:api_migrate, :empty_column) }
+        html_div(class: 'field') { config_term(:api_migrate, :empty_column) }
       end
     column = html_tag(level, column, class: 'column')
     fields = html_div(fields, **f_opt)

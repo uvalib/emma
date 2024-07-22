@@ -53,7 +53,7 @@ class User::RegistrationsController < Devise::RegistrationsController
   def new
     __log_activity
     __debug_route
-    raise config_text(:account, :self_create) if current_user
+    raise config_term(:account, :self_create) if current_user
     super
   rescue => error
     auth_failure_redirect(message: error)

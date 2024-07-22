@@ -106,7 +106,7 @@ class OrgDecorator < BaseDecorator
     # @return [String]
     #
     def items_menu_prompt(**)
-      config_text(:org, :select)
+      config_term(:org, :select)
     end
 
     # Descriptive term for an item of the given type.
@@ -117,7 +117,7 @@ class OrgDecorator < BaseDecorator
     # @return [String]
     #
     def model_item_name(model: nil, capitalize: true)
-      model ? super : config_text(:org, :model_name)
+      model ? super : config_term(:org, :model_name)
     end
 
   end

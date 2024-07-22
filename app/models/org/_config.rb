@@ -17,7 +17,7 @@ module Org::Config
   #
   # @type [Hash{Symbol=>Integer,String}]
   #
-  INTERNAL = config_text_section(:org, :internal).deep_freeze
+  INTERNAL = config_term_section(:org, :internal).deep_freeze
 
   # The internal organization identifier.  This may be assigned as an :org_id
   # indicating an internal EMMA user, however no persisted Org record has this

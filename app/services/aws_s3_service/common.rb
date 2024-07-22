@@ -65,11 +65,11 @@ module AwsS3Service::Common
     repo  = opt.delete(:repo)
     items = items.flatten
     if operation == :aws_create
-      raise request_error(config_text(:aws, :no_records)) if items.blank?
+      raise request_error(config_term(:aws, :no_records)) if items.blank?
     else
       opt[:bucket] ||= bucket_for(repo || items.first)
       items = items.map { |key| submission_id(key) }.compact
-      raise request_error(config_text(:aws, :no_sids)) if items.blank?
+      raise request_error(config_term(:aws, :no_sids)) if items.blank?
     end
     send(operation, *items, **opt)
 

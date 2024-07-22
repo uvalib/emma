@@ -524,7 +524,7 @@ module DataHelper
       field_opt = { class: 'field-name' }
       unless EMMA_DATA_FIELDS.include?(field)
         append_css!(field_opt, 'invalid')
-        field_opt[:title] = config_text(:data, :field, :invalid)
+        field_opt[:title] = config_term(:data, :field, :invalid)
       end
       field  = html_div(field, **field_opt)
       values = html_db_field_values(values, id: anchor)
@@ -547,7 +547,7 @@ module DataHelper
       total  = values.values.sum
       values = values.map { |value, count| [count, Array.wrap(value)] }
       values.sort_by! { |count, value| [-count, value.join("\n")] }
-      values.prepend([total, config_text(:data, :field, :total)])
+      values.prepend([total, config_term(:data, :field, :total)])
       values.map.with_index do |count_item, index|
         count, item = count_item
         classes = %w[value-count value-item]

@@ -137,7 +137,7 @@ class SearchCallDecorator
         v_opt[:'data-value'] = v
         if v == SearchTerm::NULL_SEARCH
           star_opt = append_css(v_opt, 'star')
-          star_opt[:title] = config_text(:search_call, :null_search)
+          star_opt[:title] = config_term(:search_call, :null_search)
           html_span(ASTERISK, **star_opt)
         elsif v.is_a?(String) && v.match?(/\s/)
           quote(html_span(v, **v_opt))
@@ -167,7 +167,7 @@ class SearchCallDecorator
   #
   def search_call_connector(**opt)
     prepend_css!(opt, 'or')
-    connector = html_span(**opt) { config_text(:search_call, :or).upcase }
+    connector = html_span(**opt) { config_term(:search_call, :or).upcase }
     " #{connector} ".html_safe
   end
 

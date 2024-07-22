@@ -146,9 +146,9 @@ module LogoHelper
   #
   def repository_tooltip(item, name = nil)
     key    = item.is_a?(Model) ? :item : :general
-    name ||= repository_name(item) || config_text(:repository, key, :name)
+    name ||= repository_name(item) || config_term(:repository, key, :name)
     opt    = (key == :item) ? { an: indefinite_article(name) } : {}
-    config_text(:repository, key, :tooltip, name: name, **opt)
+    config_term(:repository, key, :tooltip, name: name, **opt)
   end
 
   # ===========================================================================

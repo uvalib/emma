@@ -154,9 +154,9 @@ module AuthConcern
   def set_auth_data(src)
     src  = src.env                    if src.respond_to?(:env)
     src  = src['omniauth.auth']       if src.is_a?(Hash)
-    src  = src.presence               or raise config_text(:auth, :no_data)
+    src  = src.presence               or raise config_term(:auth, :no_data)
     auth = OmniAuth::AuthHash.new(src)
-    user = User.from_omniauth(auth)   or raise config_text(:auth, :no_user)
+    user = User.from_omniauth(auth)   or raise config_term(:auth, :no_user)
     session['omniauth.auth'] = auth
     user
   end

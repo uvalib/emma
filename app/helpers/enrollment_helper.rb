@@ -30,7 +30,7 @@ module EnrollmentHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def enroll_link(label = nil, css: '.enroll-link', **opt)
-    label ||= config_text(:enrollment, :enroll, :link)
+    label ||= config_term(:enrollment, :enroll, :link)
     path    = opt.delete(:path) || enroll_path
     opt.reverse_merge!('data-turbolinks': false)
     prepend_css!(opt, css)
@@ -46,7 +46,7 @@ module EnrollmentHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def production_enroll_link(label = nil, css: '.production', **opt)
-    label      ||= config_text(:enrollment, :enroll, :production, :link)
+    label      ||= config_term(:enrollment, :enroll, :production, :link)
     opt[:path] ||= PRODUCTION_BASE_URL + enroll_path
     append_css!(opt, css)
     enroll_link(label, **opt)

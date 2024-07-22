@@ -71,12 +71,12 @@ module ImageHelper
   #
   def image_element(url, link: nil, alt: nil, row: nil, **opt)
     return if url.blank?
-    alt ||= config_text(:image, :alt)
+    i_opt = { alt: alt || config_term(:image, :alt) }
     image =
       if ASYNCHRONOUS_IMAGES
-        image_placeholder(url, alt: alt)
+        image_placeholder(url, **i_opt)
       else
-        image_tag(url, alt: alt)
+        image_tag(url, i_opt)
       end
     row = positive(row)
     append_css!(opt, "row-#{row}") if row

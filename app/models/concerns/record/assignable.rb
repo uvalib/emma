@@ -294,7 +294,7 @@ module Record::Assignable
   #
   # @type [String]
   #
-  INVALID_FIELD = config_text(:record, :invalid_field).freeze
+  INVALID_FIELD = config_term(:record, :invalid_field).freeze
 
   # Indicate whether the value is valid for *type*.
   #

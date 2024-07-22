@@ -25,7 +25,7 @@ module SysHelper::Settings
   public
 
   # @private
-  COMMIT_LABEL = config_text(:sys, :commit).freeze
+  COMMIT_LABEL = config_term(:sys, :commit).freeze
 
   # ===========================================================================
   # :section:
@@ -142,19 +142,19 @@ module SysHelper::Settings
     tip = []
     if env
       cls << 'from-env'
-      tip << config_text(:sys, :from_env_var)
+      tip << config_term(:sys, :from_env_var)
     else
-      tip << config_text(:sys, :no_env_var)
+      tip << config_term(:sys, :no_env_var)
     end
     if obj
       cls << 'from-obj'
-      tip << config_text(:sys, :from_constant)
+      tip << config_term(:sys, :from_constant)
     end
     if value.nil? || (value == EMPTY_VALUE)
       cls << 'missing'
     elsif !boolean?(value)
       cls << 'invalid'
-      tip << config_text(:sys, :invalid_value, value: value.inspect)
+      tip << config_term(:sys, :invalid_value, value: value.inspect)
     end
 
     opt  = { class: css_classes('radio-group line', *cls) }
@@ -191,13 +191,13 @@ module SysHelper::Settings
     tip = []
     if env
       cls << 'from-env'
-      tip << config_text(:sys, :from_env_var)
+      tip << config_term(:sys, :from_env_var)
     else
-      tip << config_text(:sys, :no_env_var)
+      tip << config_term(:sys, :no_env_var)
     end
     if obj
       cls << 'from-obj'
-      tip << config_text(:sys, :from_constant)
+      tip << config_term(:sys, :from_constant)
     end
 
     # noinspection RubyMismatchedArgumentType
@@ -266,7 +266,7 @@ module SysHelper::Settings
   def app_flag_radio_button(flag, value, on:)
     checked = on ? true?(value) : false?(value)
     control = radio_button_tag(flag, on, checked)
-    label   = config_text(on ? :_on : :_off).upcase
+    label   = config_term(on ? :_on : :_off).upcase
     label   = label_tag(flag, label, value: on)
     control << label
   end

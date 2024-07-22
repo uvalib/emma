@@ -16,13 +16,13 @@
   panel_id = panel_css = toggle = nil
   if item.is_a?(User)
     name      = item.id
-    heading   = config_text(:account, :selected, :title, item: name)
+    heading   = config_term(:account, :selected, :title, item: name)
     panel_css = 'selected-details'
     panel_id  = css_randomize(panel_css)
     toggle    = toggle_button(id: panel_id)
   else
     name      = html_span(item, class: 'item')
-    heading   = config_text(:account, :selected, :invalid, item: name)
+    heading   = config_term(:account, :selected, :invalid, item: name)
   end
 
 -%>

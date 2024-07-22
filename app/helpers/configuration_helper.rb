@@ -132,7 +132,7 @@ module ConfigurationHelper
         cfg  = controller_configuration.dig(*full_path)
         break cfg[item] if cfg.is_a?(Hash) && cfg.key?(item)
       end
-    raise config_text(:configuration, :fail) if entry.nil? && fatal
+    raise config_term(:configuration, :fail) if entry.nil? && fatal
     return default                           if entry.nil?
 
     # Use count-specific definitions if present.

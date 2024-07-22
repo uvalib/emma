@@ -15,7 +15,7 @@
     help_links(list).each { |name, path| skip_nav_append(name => path) }
   end
 
-  toc_heading = config_text(:help, :toc_heading)
+  toc_heading = config_term(:help, :toc_heading)
   toc_heading += ':' unless toc_heading.end_with?(':')
 
 -%>

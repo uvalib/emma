@@ -89,8 +89,8 @@ module BaseCollectionDecorator::Table
     }
   end
 
-  ALL_RECORDS = config_text(:table, :all_records).freeze
-  ROWS_HERE   = config_text(:table, :rows_here).freeze
+  ALL_RECORDS = config_term(:table, :all_records).freeze
+  ROWS_HERE   = config_term(:table, :rows_here).freeze
 
   # Render a link to a page for access to the full contents of a table.
   #

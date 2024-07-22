@@ -88,7 +88,7 @@ module HelpHelper
   #
   # @type [String]
   #
-  HELP_PLACEHOLDER = config_text(:help, :placeholder).freeze
+  HELP_PLACEHOLDER = config_term(:help, :placeholder).freeze
 
   # ===========================================================================
   # :section:
@@ -128,10 +128,10 @@ module HelpHelper
 
     unless opt.dig(:panel, :'aria-label')
       opt[:panel] = opt[:panel]&.dup || {}
-      opt[:panel][:'aria-label'] ||= config_text(:help, :contents)
+      opt[:panel][:'aria-label'] ||= config_term(:help, :contents)
     end
 
-    opt[:'aria-label'] ||= config_text(:help, :label)
+    opt[:'aria-label'] ||= config_term(:help, :label)
     opt[:'data-iframe']  = attr[:id] = css_id
 
     prepend_css!(opt, css)

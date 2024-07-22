@@ -550,7 +550,7 @@ module ManifestItemConcern
         if !file_data
           # NOTE: Should not happen normally if status is 200...
           Log.debug { "#{meth}: unexpected response item #{entry.inspect}" }
-          entry  = config_text(:manifest_item, :uploader, :error)
+          entry  = config_term(:manifest_item, :uploader, :error)
           status = 400
         elsif !update_time
           record.set_field_direct(:file_data, file_data)

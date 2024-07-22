@@ -109,7 +109,7 @@ class AccountController < ApplicationController
     return redirect_to action: :show_select              if identifier.blank?
     return redirect_to without_id(action: :show_current) if current_id?
     @item = find_record
-    raise config_text(:account, :not_found, id: identifier) if @item.blank?
+    raise config_term(:account, :not_found, id: identifier) if @item.blank?
   rescue CanCan::AccessDenied => error
     error_response(error)
   rescue => error
@@ -194,7 +194,7 @@ class AccountController < ApplicationController
     return redirect_to action: :edit_select               if identifier.blank?
     return redirect_to without_id(action: :edit_current)  if current_id?
     @item = edit_record
-    raise config_text(:account, :not_found, id: identifier) if @item.blank?
+    raise config_term(:account, :not_found, id: identifier) if @item.blank?
   rescue CanCan::AccessDenied => error
     error_response(error)
   rescue => error
@@ -236,10 +236,10 @@ class AccountController < ApplicationController
     __log_activity
     __debug_route
     return redirect_to action: :delete_select if identifier.blank?
-    raise config_text(:account, :self_delete) if current_id?
+    raise config_term(:account, :self_delete) if current_id?
     @list = delete_records.list&.records
     unless @list.present? || last_operation_path&.include?('/destroy')
-      raise config_text(:account, :no_match, id: identifier_list)
+      raise config_term(:account, :no_match, id: identifier_list)
     end
   rescue CanCan::AccessDenied => error
     error_response(error)
@@ -257,7 +257,7 @@ class AccountController < ApplicationController
   def destroy(back: delete_select_account_path)
     __log_activity
     __debug_route
-    raise config_text(:account, :self_delete) if current_id?
+    raise config_term(:account, :self_delete) if current_id?
     @list = destroy_records
     post_response(:ok, @list, redirect: back)
   rescue CanCan::AccessDenied => error
@@ -353,7 +353,7 @@ class AccountController < ApplicationController
     __debug_route
     return redirect_to action: :show if identifier.present?
     @item = find_record(current_id)
-    raise config_text(:account, :not_found, id: identifier) if @item.blank?
+    raise config_term(:account, :not_found, id: identifier) if @item.blank?
     respond_to do |format|
       format.html { render 'account/show' }
       format.json { render 'account/show' }
@@ -377,7 +377,7 @@ class AccountController < ApplicationController
     __debug_route
     return redirect_to action: :edit if identifier.present?
     @item = edit_record(current_id)
-    raise config_text(:account, :not_found, id: identifier) if @item.blank?
+    raise config_term(:account, :not_found, id: identifier) if @item.blank?
     respond_to do |format|
       format.html { render 'account/edit' }
       format.json { render 'account/edit' }

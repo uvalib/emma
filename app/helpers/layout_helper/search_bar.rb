@@ -216,7 +216,7 @@ module LayoutHelper::SearchBar
   # @return [ActiveSupport::SafeBuffer]
   #
   def search_row_add(**opt)
-    opt[:title] ||= config_text(:search_bar, :row_add, :tooltip)
+    opt[:title] ||= config_term(:search_bar, :row_add, :tooltip)
     opt[:icon]  ||= HEAVY_PLUS
     search_row_control('add', **opt)
   end
@@ -228,7 +228,7 @@ module LayoutHelper::SearchBar
   # @return [ActiveSupport::SafeBuffer]
   #
   def search_row_remove(**opt)
-    opt[:title] ||= config_text(:search_bar, :row_remove, :tooltip)
+    opt[:title] ||= config_term(:search_bar, :row_remove, :tooltip)
     opt[:icon]  ||= HEAVY_MINUS
     search_row_control('remove', **opt)
   end
@@ -259,7 +259,7 @@ module LayoutHelper::SearchBar
 
     prepend_css!(opt, css)
     opt[:id]           ||= unique_id(css, **id_opt) if id_opt.present?
-    opt[:title]        ||= config_text(:search_bar, :input_select, :tooltip)
+    opt[:title]        ||= config_term(:search_bar, :input_select, :tooltip)
     opt[:'aria-label'] ||= opt[:title]
     # NOTE: Blank name so that it is not included with form submission data.
     select_tag('', option_tags, opt)
@@ -487,10 +487,10 @@ module LayoutHelper::SearchBar
   end
 
   SEARCH_READY_TOOLTIP =
-    config_text(:search_bar, :search_button, :ready, :tooltip).freeze
+    config_term(:search_bar, :search_button, :ready, :tooltip).freeze
 
   SEARCH_NOT_READY_TOOLTIP =
-    config_text(:search_bar, :search_button, :not_ready, :tooltip).freeze
+    config_term(:search_bar, :search_button, :not_ready, :tooltip).freeze
 
   # Generate a form submit control.
   #
@@ -548,7 +548,7 @@ module LayoutHelper::SearchBar
     id_opt = opt.extract!(:unique, :index)
     opt.except!(:field, *MENU_OPT)
     prepend_css!(opt, css)
-    opt[:title] ||= config_text(:search_bar, :search_clear, :tooltip)
+    opt[:title] ||= config_term(:search_bar, :search_clear, :tooltip)
     opt[:icon]  ||= CLEAR_SEARCH_ICON
     opt[:url]   ||= '#'
     opt[:id]    ||= unique_id(css, **id_opt)

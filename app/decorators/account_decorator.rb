@@ -146,7 +146,7 @@ class AccountDecorator < BaseDecorator
     # @return [String]
     #
     def items_menu_prompt(**)
-      config_text(:account, :select)
+      config_term(:account, :select)
     end
 
     # Descriptive term for an item of the given type.
@@ -157,7 +157,7 @@ class AccountDecorator < BaseDecorator
     # @return [String]
     #
     def model_item_name(model: nil, capitalize: true)
-      model ? super : config_text(:account, :model_name)
+      model ? super : config_term(:account, :model_name)
     end
 
     # =========================================================================
@@ -170,7 +170,7 @@ class AccountDecorator < BaseDecorator
     #
     # @type [String]
     #
-    EMAIL_FIELD_READONLY = config_text(:account, :id_readonly).freeze
+    EMAIL_FIELD_READONLY = config_term(:account, :id_readonly).freeze
 
     # Input placeholder to indicate that the password field does not need to be
     # filled out.
@@ -344,7 +344,7 @@ class AccountDecorator
     action = opt.delete(:action) || context[:action]
     edit   = (action == :edit)
     opt[:readonly] = true                                if edit
-    opt[:title]    = config_text(:account, :id_readonly) if edit
+    opt[:title]    = config_term(:account, :id_readonly) if edit
     opt.reverse_merge!(autocomplete: 'email')
     super
   end
@@ -430,7 +430,7 @@ class AccountDecorator
   ].freeze
 
   ABILITY_COLUMNS =
-    config_text_section(:account, :ability, :column).deep_freeze
+    config_term_section(:account, :ability, :column).deep_freeze
 
   # A table of abilities.
   #

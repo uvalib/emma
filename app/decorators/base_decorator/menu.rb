@@ -99,7 +99,7 @@ module BaseDecorator::Menu
   protected
 
   # @private
-  ITEM_PROMPT = config_text(:menu, :item_prompt).freeze
+  ITEM_PROMPT = config_term(:menu, :item_prompt).freeze
 
   # The name of the controller used in generating link paths.
   #

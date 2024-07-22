@@ -17,7 +17,7 @@
   end
 
   count   = positive(item.size - 1) || 0
-  records = config_text(:data, :records, count: count).pluralize(count)
+  records = config_term(:data, :records, count: count).pluralize(count)
   title   = [title, records].join(' - ')
 
 -%>

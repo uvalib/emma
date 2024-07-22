@@ -253,7 +253,7 @@ module HealthConcern
   ensure
     warn_only = !entry[:restart] || lockout
     degraded  = !healthy && warn_only
-    message ||= lockout  && config_text(:health, :unavailable)
+    message ||= lockout  && config_term(:health, :unavailable)
     message ||= degraded && entry[:degraded]
     message ||= healthy ? entry[:healthy] : entry[:failed]
     message ||= time_span(start)

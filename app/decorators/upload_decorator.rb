@@ -383,8 +383,8 @@ class UploadDecorator < BaseDecorator
     #
     def items_menu_prompt(user: nil, **)
       case user
-        when nil, :all then config_text(:upload, :select_any)
-        else                config_text(:upload, :select_own)
+        when nil, :all then config_term(:upload, :select_any)
+        else                config_term(:upload, :select_own)
       end
     end
 
@@ -406,9 +406,9 @@ class UploadDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def uploaded_filename_display(leader: nil, css: FILE_NAME_CLASS, **opt)
-      leader ||= config_text(:upload, :uploaded_file, :leader)
+      leader ||= config_term(:upload, :uploaded_file, :leader)
       leader   = html_span(leader, class: 'leader')
-      filename = config_text(:upload, :uploaded_file, :blank)
+      filename = config_term(:upload, :uploaded_file, :blank)
       filename = html_span(filename, class: 'filename')
       prepend_css!(opt, css)
       trace_attrs!(opt)
@@ -737,7 +737,7 @@ class UploadDecorator
     path   = send(path, id: id, modal: true) if path.is_a?(Symbol)
 
     opt[:'data-iframe'] = attr[:id] = css_id
-    opt[:title]          ||= config_text(:upload, :check_status, :tooltip)
+    opt[:title]          ||= config_term(:upload, :check_status, :tooltip)
     opt[:control]        ||= {}
     opt[:control][:icon] ||= icon
     opt[:panel]  = append_css(opt[:panel], 'refetch z-order-capture')
@@ -749,7 +749,7 @@ class UploadDecorator
       p_opt[:'data-path'] = path
       p_opt[:'data-attr'] = attr.to_json
       p_txt   = p_opt.delete(:text)
-      p_txt ||= config_text(:upload, :check_status, :placeholder)
+      p_txt ||= config_term(:upload, :check_status, :placeholder)
       html_div(p_txt, **p_opt)
     end
   end
@@ -898,7 +898,7 @@ class UploadDecorator
 
     # Directions.
     t_id   = "#{id}-title"
-    title  = config_text(:upload, :parent_select, :title)
+    title  = config_term(:upload, :parent_select, :title)
     title  = html_div(title, id: t_id, class: 'search-title')
 
     # Text input.
@@ -910,7 +910,7 @@ class UploadDecorator
     submit = html_div(submit, class: 'search-button', **b_opt, **t_opt)
 
     # Cancel button.
-    cancel = config_text(:upload, :parent_select, :cancel)
+    cancel = config_term(:upload, :parent_select, :cancel)
     cancel = html_div(cancel, class: 'search-cancel', **b_opt, **t_opt)
 
     opt[:'aria-describedby'] ||= t_id

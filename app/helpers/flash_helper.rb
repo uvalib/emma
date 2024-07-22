@@ -452,9 +452,9 @@ module FlashHelper
   #
   def flash_omission(count = nil, html: false, **)
     if count
-      text = config_text(:flash, :total, count: count)
+      text = config_term(:flash, :total, count: count)
     else
-      text = config_text(:flash, :more)
+      text = config_term(:flash, :more)
     end
     text = "[#{text}]"
     html ? %Q(<div class="line">#{text}</div>).html_safe : "\n#{text}"

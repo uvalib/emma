@@ -738,7 +738,7 @@ class ApiMigrate
           when true?(emma_data[:rem_complete])           then :all
           else                                                :unknown
         end
-      '(%s)'.upcase % config_text(default)
+      '(%s)'.upcase % config_term(default)
     end
 
     # =========================================================================

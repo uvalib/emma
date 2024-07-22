@@ -134,7 +134,7 @@ module BaseDecorator::Links
   public
 
   # @private
-  ANOTHER = config_text(:another).freeze
+  ANOTHER = config_term(:another).freeze
 
   # A list of controller action links.  If the current action is provided,
   # the associated action link will be appear at the top of the list, except

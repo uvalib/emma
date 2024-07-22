@@ -425,11 +425,11 @@ class SearchDecorator
     opt = {}
     if (enabled = index && (index > paginator.first_index))
       opt[:icon]     = UP_TRIANGLE
-      opt[:title]    = config_text(:search, :record, :prev_tooltip)
+      opt[:title]    = config_term(:search, :record, :prev_tooltip)
       opt[:url]      = '#value-Title-%d' % (index - 1)
     else
       opt[:icon]     = DELTA
-      opt[:title]    = config_text(:search, :record, :first_tooltip)
+      opt[:title]    = config_term(:search, :record, :first_tooltip)
       opt[:tabindex] = -1
     end
     prepend_css!(opt, css)
@@ -451,11 +451,11 @@ class SearchDecorator
     opt = {}
     if (enabled = index && (index < paginator.last_index))
       opt[:icon]     = DOWN_TRIANGLE
-      opt[:title]    = config_text(:search, :record, :next_tooltip)
+      opt[:title]    = config_term(:search, :record, :next_tooltip)
       opt[:url]      = '#value-Title-%d' % (index + 1)
     else
       opt[:icon]     = REVERSE_DELTA
-      opt[:title]    = config_text(:search, :record, :last_tooltip)
+      opt[:title]    = config_term(:search, :record, :last_tooltip)
       opt[:tabindex] = -1
     end
     prepend_css!(opt, css)
@@ -480,7 +480,7 @@ class SearchDecorator
     label ||= CGI.unescape(object.emma_repositoryRecordId)
     return ERB::Util.h(label) unless url
     opt[:title] ||=
-      config_text(:search, :source, :link_tooltip, repo: record_src(repo))
+      config_term(:search, :source, :link_tooltip, repo: record_src(repo))
     external_link(url, label, **opt)
   end
 
@@ -511,7 +511,7 @@ class SearchDecorator
       if allowed
         fmt = object.dc_format.to_s.underscore.upcase.tr('_', ' ')
         rep = download_src(repo)
-        config_text(:search, :source, :retrieval_tip, fmt: fmt, repo: rep)
+        config_term(:search, :source, :retrieval_tip, fmt: fmt, repo: rep)
       else
         fmt = object.label
         rep = repo || EmmaRepository.default
@@ -582,7 +582,7 @@ class SearchDecorator
     css_id = opt[:'data-iframe'] || attr[:id] || "record-frame-#{rid}"
 
     opt[:'data-iframe'] = attr[:id] = css_id
-    opt[:title]          ||= config_text(:search, :popup, :tooltip)
+    opt[:title]          ||= config_term(:search, :popup, :tooltip)
     opt[:control]        ||= {}
     opt[:control][:text] ||= ERB::Util.h(rid)
 
@@ -592,7 +592,7 @@ class SearchDecorator
       p_opt[:'data-path'] = UploadDecorator.show_path(id: rid, modal: true)
       p_opt[:'data-attr'] = attr.to_json
       p_txt   = p_opt.delete(:text)
-      p_txt ||= config_text(:search, :popup, :placeholder)
+      p_txt ||= config_term(:search, :popup, :placeholder)
       html_div(p_txt, **p_opt)
     end
   end

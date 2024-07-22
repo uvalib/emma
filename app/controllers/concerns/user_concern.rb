@@ -123,9 +123,9 @@ module UserConcern
   #
   def role_failure(msg = nil)
     if msg.nil?
-      msg = config_text(:user, :role_failure)
+      msg = config_term(:user, :role_failure)
     elsif msg.is_a?(Symbol)
-      msg = config_text(:user, :privileged, role: msg).capitalize
+      msg = config_term(:user, :privileged, role: msg).capitalize
       msg = "#{params[:action]}: #{msg}" if params[:action]
     end
     session['app.devise.failure.message'] = msg

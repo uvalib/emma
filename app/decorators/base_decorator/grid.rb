@@ -389,7 +389,7 @@ module BaseDecorator::Grid
   public
 
   # @private
-  CONTROLS_LABEL = config_text(:grid, :controls_lbl).freeze
+  CONTROLS_LABEL = config_term(:grid, :controls_lbl).freeze
 
   # @private
   CONTROLS_CELL_CLASS = 'controls-cell'
@@ -514,7 +514,7 @@ module BaseDecorator::Grid
   public
 
   # @private
-  ROW_CONTROLS = config_text(:grid, :row_controls).freeze
+  ROW_CONTROLS = config_term(:grid, :row_controls).freeze
 
   # grid_row
   #

@@ -97,7 +97,7 @@ class EnrollmentController < ApplicationController
     id = identifier
     return redirect_to action: :show_select if id.blank?
     @item = find_record
-    raise config_text(:enrollment, :not_found, id: id) if @item.blank?
+    raise config_term(:enrollment, :not_found, id: id) if @item.blank?
   rescue CanCan::AccessDenied => error
     error_response(error)
   rescue => error
@@ -174,7 +174,7 @@ class EnrollmentController < ApplicationController
     __debug_route
     return redirect_to action: :edit_select if identifier.blank?
     @item = edit_record
-    raise config_text(:enrollment, :not_found, id: identifier) if @item.blank?
+    raise config_term(:enrollment, :not_found, id: identifier) if @item.blank?
   rescue CanCan::AccessDenied => error
     error_response(error)
   rescue => error
@@ -219,7 +219,7 @@ class EnrollmentController < ApplicationController
     return redirect_to action: :delete_select if identifier.blank?
     @list = delete_records.list&.records
     unless @list.present? || last_operation_path&.include?('/destroy')
-      raise config_text(:enrollment, :no_match, id: identifier_list)
+      raise config_term(:enrollment, :no_match, id: identifier_list)
     end
   rescue CanCan::AccessDenied => error
     error_response(error)
@@ -302,7 +302,7 @@ class EnrollmentController < ApplicationController
     __debug_route
     __debug_request
     @item = finalize_enrollment
-    raise config_text(:enrollment, :not_found, id: identifier) if @item.blank?
+    raise config_term(:enrollment, :not_found, id: identifier) if @item.blank?
     generate_new_users_emails if new_users_email?
     if request_xhr?
       render json: @item.as_json

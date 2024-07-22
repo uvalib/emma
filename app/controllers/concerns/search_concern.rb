@@ -204,9 +204,9 @@ module SearchConcern
       if id&.valid?
         ids << val
       elsif id
-        err << config_text(:search, :invalid, id: val.inspect, type: id.type)
+        err << config_term(:search, :invalid, id: val.inspect, type: id.type)
       else
-        err << config_text(:search, :not_standard, term: term.inspect)
+        err << config_term(:search, :not_standard, term: term.inspect)
       end
     end
     { valid: err.blank?, ids: ids, errors: err }

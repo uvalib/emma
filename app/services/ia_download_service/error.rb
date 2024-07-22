@@ -64,7 +64,7 @@ class IaDownloadService::Error < ApiService::Error
       result = []
       if (body = extract_body(src)).present?
         c_opt = { service: service_name, body: body }
-        result << config_text(:ia_download, :response, **c_opt)
+        result << config_term(:ia_download, :response, **c_opt)
         if (notes = added_messages(body)).present?
           result.concat(notes).map!.with_index do |line, count|
             html_opt = { class: 'line' }
@@ -87,7 +87,7 @@ class IaDownloadService::Error < ApiService::Error
     # @type [Hash{String,Regexp=>String}]
     #
     IA_MESSAGES = {
-      /refresh this page/ => config_text(:ia_download, :retry)
+      /refresh this page/ => config_term(:ia_download, :retry)
     }.deep_freeze
 
     # Produce additional line(s) to be displayed in the flash message along

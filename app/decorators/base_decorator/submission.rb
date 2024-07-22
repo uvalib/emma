@@ -41,17 +41,17 @@ module BaseDecorator::Submission
 
   # @private
   # @type [Hash{Symbol=>String}]
-  SUBMIT_MSGS = config_text_section(:submission, :monitor).deep_freeze
+  SUBMIT_TERMS = config_term_section(:submission, :monitor).deep_freeze
 
-  SUBMIT_TITLE      = SUBMIT_MSGS[:title]
-  SUBMIT_DESC       = SUBMIT_MSGS[:description]
-  SUBMIT_CLOSE      = SUBMIT_MSGS[:close]
-  SUBMIT_SUCCESSES  = SUBMIT_MSGS[:successes]
-  SUBMIT_FAILURES   = SUBMIT_MSGS[:failures]
-  SUBMIT_MESSAGES   = SUBMIT_MSGS[:messages]
-  SUBMIT_ERRORS     = SUBMIT_MSGS[:errors]
-  SUBMIT_DIAG       = SUBMIT_MSGS[:diagnostics]
-  SUBMIT_DIAG_TIP   = SUBMIT_MSGS[:diagnostics_tip]
+  SUBMIT_TITLE      = SUBMIT_TERMS[:title]
+  SUBMIT_DESC       = SUBMIT_TERMS[:description]
+  SUBMIT_CLOSE      = SUBMIT_TERMS[:close]
+  SUBMIT_SUCCESSES  = SUBMIT_TERMS[:successes]
+  SUBMIT_FAILURES   = SUBMIT_TERMS[:failures]
+  SUBMIT_MESSAGES   = SUBMIT_TERMS[:messages]
+  SUBMIT_ERRORS     = SUBMIT_TERMS[:errors]
+  SUBMIT_DIAG       = SUBMIT_TERMS[:diagnostics]
+  SUBMIT_DIAG_TIP   = SUBMIT_TERMS[:diagnostics_tip]
 
   # ===========================================================================
   # :section:

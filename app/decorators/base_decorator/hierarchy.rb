@@ -77,8 +77,8 @@ module BaseDecorator::Hierarchy
   #
   # @type [String, nil]
   #
-  FILE_TERM     = config_text(:hierarchy, :file_term).freeze
-  COMPLETE_WORK = config_text(:hierarchy, :complete).freeze
+  FILE_TERM     = config_term(:hierarchy, :file_term).freeze
+  COMPLETE_WORK = config_term(:hierarchy, :complete).freeze
 
   # Data for all of the lines that represent a hierarchical entry.
   #

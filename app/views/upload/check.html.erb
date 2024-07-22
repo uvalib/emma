@@ -10,7 +10,7 @@
   help  ||= nil # %i[upload check]
   title ||= t('emma.upload.check.title')
 
-  error ||= config_text(:upload, :invalid_id)
+  error ||= config_term(:upload, :invalid_id)
 
   unless modal?
     set_page_meta_title(title)

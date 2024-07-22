@@ -727,9 +727,9 @@ module BaseDecorator::Fields
 
   protected
 
-  VALID_LANG   = config_text(:fields, :valid_lang).freeze
-  INVALID_LANG = config_text(:fields, :invalid_lang).freeze
-  INVALID_ID   = config_text(:fields, :invalid_id).freeze
+  VALID_LANG   = config_term(:fields, :valid_lang).freeze
+  INVALID_LANG = config_term(:fields, :invalid_lang).freeze
+  INVALID_ID   = config_term(:fields, :invalid_id).freeze
 
   # Wrap invalid language values in a *span*.
   #

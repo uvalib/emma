@@ -40,22 +40,22 @@ module BaseDecorator::Lookup
 
   # @private
   # @type [Hash{Symbol=>String}]
-  LOOKUP_MSGS = config_text_section(:lookup).deep_freeze
+  LOOKUP_TERMS = config_term_section(:lookup).deep_freeze
 
-  LOOKUP_DESC       = LOOKUP_MSGS[:description]
-  LOOKUP_LABEL      = LOOKUP_MSGS[:lookup]
-  CANCEL_LABEL      = LOOKUP_MSGS[:cancel]
-  COMMIT_LABEL      = LOOKUP_MSGS[:commit]
-  CANCEL_TIP        = LOOKUP_MSGS[:cancel_tip]
-  COMMIT_TIP        = LOOKUP_MSGS[:commit_tip]
+  LOOKUP_DESC       = LOOKUP_TERMS[:description]
+  LOOKUP_LABEL      = LOOKUP_TERMS[:lookup]
+  CANCEL_LABEL      = LOOKUP_TERMS[:cancel]
+  COMMIT_LABEL      = LOOKUP_TERMS[:commit]
+  CANCEL_TIP        = LOOKUP_TERMS[:cancel_tip]
+  COMMIT_TIP        = LOOKUP_TERMS[:commit_tip]
 
-  QUERY_LABEL       = LOOKUP_MSGS[:query]
-  SEPARATORS_LABEL  = LOOKUP_MSGS[:separators]
-  SEARCHING_LABEL   = LOOKUP_MSGS[:searching]
+  QUERY_LABEL       = LOOKUP_TERMS[:query]
+  SEPARATORS_LABEL  = LOOKUP_TERMS[:separators]
+  SEARCHING_LABEL   = LOOKUP_TERMS[:searching]
 
-  RESULTS_LABEL     = LOOKUP_MSGS[:results]
-  ERRORS_LABEL      = LOOKUP_MSGS[:errors]
-  DIAG_LABEL        = LOOKUP_MSGS[:diagnostics]
+  RESULTS_LABEL     = LOOKUP_TERMS[:results]
+  ERRORS_LABEL      = LOOKUP_TERMS[:errors]
+  DIAG_LABEL        = LOOKUP_TERMS[:diagnostics]
 
   # ===========================================================================
   # :section:

@@ -2,7 +2,7 @@
 <%-
   # Application page layout.
 
-  main_lbl = config_text(:layout, :skip_nav, :main)
+  main_lbl = config_term(:layout, :skip_nav, :main)
   main_id  = 'main'
 
   append_page_classes('debug') if session_debug?

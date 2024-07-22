@@ -28,7 +28,7 @@ module BaseDecorator::Submission
 
   # @private
   # @type [Hash{Symbol=>String}]
-  SUBMIT_MSGS: Hash[Symbol, String]
+  SUBMIT_TERMS: Hash[Symbol, String]
 
   SUBMIT_TITLE: String
 

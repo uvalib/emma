@@ -35,8 +35,8 @@ module ScrollHelper
     type:     'button',
     class:    'scroll-to-top',
     label:    UP_TRIANGLE, # TODO: I18n
-    tooltip:  config_text(:scroll_to_top, :top, :tooltip),
-  }.freeze
+    tooltip:  config_term(:scroll_to_top, :top, :tooltip),
+  }.deep_freeze
 
   # Default properties for the scroll-down-to-top button.
   #
@@ -46,8 +46,8 @@ module ScrollHelper
     type:     'button',
     class:    'scroll-down-to-top',
     label:    DOWN_TRIANGLE, # TODO: I18n
-    tooltip:  config_text(:scroll_to_top, :down, :tooltip),
-  }
+    tooltip:  config_term(:scroll_to_top, :down, :tooltip),
+  }.deep_freeze
 
   # ===========================================================================
   # :section:

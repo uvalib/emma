@@ -357,8 +357,8 @@ class ManifestItemDecorator < BaseDecorator
       (:repository unless ManifestItem::ALLOW_NIL_REPOSITORY)
     ].compact.freeze
 
-    FIELD    = config_text(:manifest_item, :field).freeze
-    REQUIRED = config_text(:manifest_item, :required).freeze
+    FIELD    = config_term(:manifest_item, :field).freeze
+    REQUIRED = config_term(:manifest_item, :required).freeze
 
     # The names of ManifestItem columns that are not rendered.
     #
@@ -503,7 +503,7 @@ class ManifestItemDecorator < BaseDecorator
         when /^text/     then name = many ? :text : :string
         else                  name = nil
       end
-      cfg    = config_text_section(:manifest_item, :details)
+      cfg    = config_term_section(:manifest_item, :details)
       field  = cfg[name] || {}
       name   = (prop[:type_name] || field[:name] || type) % { type: type }
       name   = name.pluralize if many
@@ -531,7 +531,7 @@ class ManifestItemDecorator < BaseDecorator
           end
         end
       desc ||=
-        config_text(:manifest_item, :details, :type_desc, type: type.inspect)
+        config_term(:manifest_item, :details, :type_desc, type: type.inspect)
       desc   = Array.wrap(desc).map { |v| v.html_safe? ? v : html_div(v) }
 
       html_details(first, *desc, &blk)
@@ -685,7 +685,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     def submission_status_header(row: HEADER_ROW, css: '.head', **opt)
       ctrl = nil
-      name = config_text(:manifest_item, :submit, :item_name)
+      name = config_term(:manifest_item, :submit, :item_name)
       stat = SUBMIT_STEPS
       prepend_css!(opt, css)
       submit_status_element(ctrl, name, stat, row: row, **opt)
@@ -781,7 +781,7 @@ class ManifestItemDecorator < BaseDecorator
         cb_id  = "checkbox-#{base}"
         lbl_id = "label-#{base}"
         number = { number: opt[:'data-number'] }
-        label  = config_text(:manifest_item, :submit, :item_select, **number)
+        label  = config_term(:manifest_item, :submit, :item_select, **number)
         label  = label.squeeze
         label  = h.label_tag(cb_id, label, id: lbl_id)
         cb     = h.check_box_tag(cb_id)
@@ -824,7 +824,7 @@ class ManifestItemDecorator < BaseDecorator
         sep   = ' / '
         first = [*part[:title], *part[:author], *part[:identifier]].take(2)
         first = first.join(sep)
-        text  = config_text_section(:manifest_item, :submit)
+        text  = config_term_section(:manifest_item, :submit)
         part.transform_keys! { |k| text[k] || k.capitalize }
         uniq  = hex_rand
         r_opt = { index: uniq, separator: sep, no_fmt: true, no_help: true }
@@ -926,7 +926,7 @@ class ManifestItemDecorator < BaseDecorator
     # @see file:javascripts/controllers/manifest-edit.js *scrollToCenter()*
     #
     def submit_status_link(_type, status, row: nil, css: '.fix', **opt)
-      text  = config_text_section(:manifest_item, :submit)
+      text  = config_term_section(:manifest_item, :submit)
       label = text[:edit_label]
       path  = edit_row_path(row)
       opt[:title] ||= text[:edit_tooltip]
@@ -1010,7 +1010,7 @@ class ManifestItemDecorator < BaseDecorator
       index   = opt.delete(:index)
       unique ||= index || hex_rand
       id_base = [row, unique].compact.join('-')
-      summary = config_text(:manifest_item, :row_details, :label)
+      summary = config_term(:manifest_item, :row_details, :label)
       content =
         DETAILS_FIELDS.map do |field|
           v_id  = "#{field}-detail-#{id_base}"

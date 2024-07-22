@@ -73,7 +73,7 @@ class UploadsDecorator < BaseCollectionDecorator
 
     # A label preceding the group of buttons (screen-reader only).
     p_id   = "label-#{GROUP_CLASS}"
-    prefix = config_text(:upload, :state_group, :label)
+    prefix = config_term(:upload, :state_group, :label)
     prefix = html_div(prefix, id: p_id, class: 'sr-only')
 
     # Create buttons for each state group that has entries.
@@ -176,7 +176,7 @@ class UploadsDecorator < BaseCollectionDecorator
       end
 
     # Text before the radio buttons:
-    prefix = config_text(:upload, :filter, :label)
+    prefix = config_term(:upload, :filter, :label)
     prefix = html_span(prefix, class: 'prefix', 'aria-hidden': true)
     controls.unshift(prefix)
 
@@ -186,7 +186,7 @@ class UploadsDecorator < BaseCollectionDecorator
     group = html_div(controls, **opt)
 
     # A label for the group (screen-reader only).
-    legend = config_text(:upload, :filter, :legend, model: model_type)
+    legend = config_term(:upload, :filter, :legend, model: model_type)
     legend = html_legend(legend, class: 'sr-only')
 
     # Include the group in a panel with accompanying label.
@@ -216,7 +216,7 @@ class UploadsDecorator < BaseCollectionDecorator
 
     # A label preceding the group (screen-reader only).
     l_id   = "#{base}-label"
-    label  = config_text(:upload, :filter_options, :label)
+    label  = config_term(:upload, :filter_options, :label)
     label  = html_div(label, id: l_id, class: 'sr-only')
 
     # Checkboxes.
@@ -227,8 +227,8 @@ class UploadsDecorator < BaseCollectionDecorator
         cb_name  = "#{name}[]"
         cb_value = group
         lbl, chk = properties.values_at(:label, :checked)
-        lbl &&= config_text(:upload, :filter_options, :select, filter: lbl)
-        lbl ||= config_text(:upload, :filter_options, :select_all)
+        lbl &&= config_term(:upload, :filter_options, :select, filter: lbl)
+        lbl ||= config_term(:upload, :filter_options, :select_all)
         chk = counts[group]&.positive?                     if chk.nil?
         chk = active_state_group?(group, properties, list) if chk.nil?
         cb_opt.merge!(label: lbl, checked: chk, id: "#{cb_value}-#{base}")
@@ -252,7 +252,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @type [Hash{Symbol=>String}]
   #
-  DELETE_OPTIONS = config_text_section(:upload, :delete_options).deep_freeze
+  DELETE_OPTIONS = config_term_section(:upload, :delete_options).deep_freeze
 
   # delete_submit_option_keys
   #
@@ -356,7 +356,7 @@ class UploadsDecorator < BaseCollectionDecorator
   def bulk_op_results(css: '.bulk-op-results', **opt)
     l_sel = "#{css}-label"
     l_id  = unique_id(l_sel)
-    label = config_text(:upload, :bulk_results, :label)
+    label = config_term(:upload, :bulk_results, :label)
     label = html_div(label, id: l_id, class: css_classes(l_sel, 'hidden'))
 
     prepend_css!(opt, css)
@@ -422,7 +422,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @type [Hash{Symbol=>String}]
   #
-  BULK_OPTIONS = config_text_section(:upload, :bulk_options).deep_freeze
+  BULK_OPTIONS = config_term_section(:upload, :bulk_options).deep_freeze
 
   # Generate a form with controls for uploading a file, entering metadata, and
   # submitting.
@@ -564,7 +564,7 @@ class UploadsDecorator < BaseCollectionDecorator
   def bulk_op_file_select(f, meth, **opt)
     l_opt = { class: 'file-select', role: 'button', tabindex: 0 }
     l_opt = merge_html_options(opt, l_opt)
-    label = config_text(:upload, :bulk_file_select, :label)
+    label = config_term(:upload, :bulk_file_select, :label)
     label = f.label(meth, label, l_opt)
 
     i_opt = { class: 'control-button', tabindex: -1 }
@@ -583,7 +583,7 @@ class UploadsDecorator < BaseCollectionDecorator
   public
 
   BULK_DELETE_LABEL =
-    config_text_section(:upload, :bulk_delete_options).deep_freeze
+    config_term_section(:upload, :bulk_delete_options).deep_freeze
 
   # Generate a form with controls for getting a list of identifiers to pass on
   # to the "/upload/delete" page.

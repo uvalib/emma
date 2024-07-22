@@ -100,7 +100,7 @@ module UploadWorkflow::Single::Data
         Log.debug { "#{__method__}: nil ignored for existing record" }
       elsif !data.is_a?(Upload) && !data.is_a?(Hash)
         Log.warn { "#{__method__}: #{data.class} invalid for existing record" }
-        msg = config_text(:upload, :record, :invalid_data, class: data.class)
+        msg = config_term(:upload, :record, :invalid_data, class: data.class)
         failed << msg
       else
         opt = record_data(data)

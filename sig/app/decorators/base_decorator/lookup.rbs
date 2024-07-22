@@ -27,7 +27,7 @@ module BaseDecorator::Lookup
 
   # @private
   # @type [Hash{Symbol=>String}]
-  LOOKUP_MSGS: Hash[Symbol, String]
+  LOOKUP_TERMS: Hash[Symbol, String]
 
   LOOKUP_DESC: String
 
