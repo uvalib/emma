@@ -400,7 +400,7 @@ class AccountDecorator
   #
   def min_length_note(note = nil, min: nil, **opt)
     min  ||= MINIMUM_PASSWORD_LENGTH or return
-    note ||= I18n.t('emma.user.password.length', min: min)
+    note ||= config_term(:password, :length, min: min)
     form_input_note(note, **opt) if note
   end
 

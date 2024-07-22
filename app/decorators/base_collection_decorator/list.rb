@@ -84,7 +84,7 @@ module BaseCollectionDecorator::List
   def index_controls(row: nil, **opt)
     trace_attrs!(opt)
     list   = opt.delete(:list) || object || []
-    unit   = opt.delete(:unit) || config_text(:list, :unit)
+    unit   = opt.delete(:unit)
 
     ctrls  = list_controls(**opt)
     links  = pagination_controls

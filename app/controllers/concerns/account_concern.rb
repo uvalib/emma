@@ -396,49 +396,6 @@ module AccountConcern
   end
 
   # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # Configured account record fields.
-  #
-  # @return [ActionConfig]            Frozen result.
-  #
-  def account_fields(...)
-    Model.configuration_fields(:account)[:all]
-  end
-
-  # Get the appropriate message to display.
-  #
-  # @param [Symbol]       action
-  # @param [Symbol]       outcome
-  # @param [ActionConfig] config
-  #
-  # @return [String, nil]
-  #
-  def message_for(action, outcome, config = account_fields)
-    # noinspection RubyMismatchedReturnType
-    [action, :generic, :messages].find do |k|
-      (v = config.dig(k, outcome)) and (break v)
-    end
-  end
-
-  # Get the appropriate terms for message interpolations.
-  #
-  # @param [Symbol]       action
-  # @param [ActionConfig] config
-  #
-  # @return [Hash]
-  #
-  def interpolation_terms(action, config = account_fields)
-    result = config.dig(action, :terms) || config.dig(action, :term) || {}
-    action = result[:action] ||= action.to_s
-    result[:actioned] ||= (action + (action.end_with?('e') ? 'd' : 'ed'))
-    result
-  end
-
-  # ===========================================================================
   # :section: ResponseConcern overrides
   # ===========================================================================
 
