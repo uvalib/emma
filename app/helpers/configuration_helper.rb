@@ -110,6 +110,12 @@ module ConfigurationHelper
   #   * "en.emma.generic.button1.label"
   #   * "en.emma.generic.button2.label"
   #
+  # === Implementation Notes
+  # Ideally, this method should be moved into Emma::Config, however, because it
+  # takes a very different approach to constructing the list of YAML path(s) to
+  # check, the functionality is not easily merged into the existing methods in
+  # that module.
+  #
   def config_lookup(
     *path,
     ctrlr:   nil,

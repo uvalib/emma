@@ -16,13 +16,24 @@ module Emma::Config
     include Singleton
 
     # All "en.emma.*" configuration values.
+    #
+    # @return [Hash]                    Frozen
+    #
     def self.all: () -> symHash
 
     # All "en.emma.*" configuration values.
+    #
+    # @return [Hash]                    Frozen
+    #
     def all: () -> symHash
 
     @all: symHash
 
+    # Acquire "en.emma.*" configuration values.
+    #
+    # @return [Hash]                    Deep frozen
+    # @return [nil]                     Failed to find "en.(CONFIG_ROOT)"
+    #
     def fetch_all: (?initialize: bool) -> (symHash | nil)
 
     # Recursively process a portion of a configuration hierarchy, in particular
@@ -38,7 +49,7 @@ module Emma::Config
 
   # All "en.emma.*" configuration values.
   #
-  # @return [Hash]
+  # @return [Hash]                    Deep frozen
   #
   def config_all: () -> symHash
 

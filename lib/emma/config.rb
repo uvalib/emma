@@ -30,14 +30,35 @@ module Emma::Config
 
     include Singleton
 
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
     # All "en.emma.*" configuration values.
+    #
+    # @return [Hash]                    Deep frozen
+    #
     def self.all = instance.all
 
     # All "en.emma.*" configuration values.
+    #
+    # @return [Hash]                    Deep frozen
+    #
     def all = @all ||= fetch_all || fetch_all(initialize: true)
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
 
     protected
 
+    # Acquire "en.emma.*" configuration values.
+    #
+    # @return [Hash]                    Deep frozen
+    # @return [nil]                     Failed to find "en.(CONFIG_ROOT)"
+    #
     def fetch_all(initialize: false)
       if initialize
         require 'active_support/i18n'
