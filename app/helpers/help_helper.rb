@@ -565,7 +565,7 @@ module HelpHelper
       # noinspection RubyMismatchedReturnType
       names.find do |name|
         if (value = cfg[:"#{name}_html"]&.strip).present?
-          return value.html_safe
+          return value.html_safe? ? value : value.html_safe
         end
         if (value = cfg[name]&.strip).present?
           return value.match?(/[[:punct:]]$/) ? value : "#{value}."

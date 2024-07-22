@@ -47,7 +47,27 @@ module Emma::Config
         I18n.load_path.uniq!
         I18n::Railtie.initialize_i18n(Rails.application)
       end
-      I18n.t(CONFIG_ROOT, default: nil)
+      process(I18n.t(CONFIG_ROOT, default: nil))
+    end
+
+    # Recursively process a portion of a configuration hierarchy, in particular
+    # ensuring that the values for '*_html' keys are made HTML-safe.
+    #
+    # @param [any, nil]     item
+    # @param [Boolean, nil] html
+    #
+    # @return [any, nil]
+    #
+    def process(item, html = nil)
+      if item.is_a?(Hash)
+        item = item.map { |k, v|
+          v = process(v, k.try(:end_with?, '_html'))
+          [k, v]
+        }.to_h
+      elsif item.is_a?(String)
+        item = item.html_safe if html && !item.html_safe?
+      end
+      item.freeze
     end
 
   end
@@ -66,32 +86,32 @@ module Emma::Config
 
   public
 
-  # YAML 1.1 boolean values (which cannot be used as keys).
+  # Form an I18n path.
   #
-  # @type [Array<String>]
+  # @param [Array<String,Symbol,nil>] path
   #
-  YAML_BOOLEAN = %w(true false on off y n yes no).freeze
-
-  # @private
-  YAML_KEY_FIX = /\.(#{YAML_BOOLEAN.join('|')})$/i.freeze
+  # @return [Symbol]
+  #
+  def config_key(*path)
+    key = path.compact.map!(&:to_s)
+    key.map! { |k| k.split('.') }.flatten! if key.join.include?('.')
+    key.map! { |k| config_key_fix(k) }
+    key.join('.').to_sym
+  end
 
   # Generate I18n paths.
   #
   # The first returned element should be used as the key for I18n#translate and
   # the remaining elements should be used passed as the :default option.
   #
-  # @param [any, nil] base
-  # @param [Array]    path
+  # @param [Array<String,Symbol,nil>, String, Symbol, nil] base
+  # @param [Array<String,Symbol,nil>]                      path
   #
   # @return [Array<Symbol>]
   #
   def config_keys(base, *path)
-    keys = base.is_a?(Array) ? base.flatten : [base]
-    keys.map! do |key|
-      key = [key, *path].compact.map!(&:to_s)
-      key.map! { |k| k.split('.') }.flatten! if key.join.include?('.')
-      key.map! { |k| k.sub(YAML_KEY_FIX, '_\1') }
-      key.join('.').to_sym
+    Array.wrap(base).map do |key|
+      config_key(*key, *path)
     end
   end
 
@@ -134,42 +154,107 @@ module Emma::Config
   public
 
   # @private
-  CONFIG_ITEM_OPT = %i[fallback default cfg_warn cfg_fatal].freeze
+  CONFIG_ITEM_OPT = %i[fallback default cfg_warn cfg_fatal root].freeze
 
   # @private
   I18N_OPT = %i[throw raise locale].freeze
 
-  # The configuration item specified by *key* or alternate *default* locations.
+  # The configuration entry specified by *key* or alternate *default*
+  # locations.
   #
   # If *key* is an array, the first element is used as the I18n#translate key
   # and the remaining elements are passed as the :default option.
   #
-  # @param [any]           key        I18n path(s) (Symbol, String, Array)
-  # @param [any, nil]      fallback   Returned if the item is not found.
-  # @param [any, nil]      default    Passed to I18n#translate.
-  # @param [Symbol,String] root
-  # @param [Hash]          opt        Passed to I18n#translate except:
+  # @param [any]      key             I18n path(s) (Symbol, String, Array)
+  # @param [any, nil] fallback        Returned if the item is not found.
+  # @param [any, nil] default         Passed to I18n#translate.
+  # @param [Hash]     opt             Passed to I18n#translate except:
   #
   # @option opt [Boolean] :cfg_fatal  Raise if the item is not found.
   # @option opt [Boolean] :cfg_warn   Log a warning if the item is not found.
   #
   # @return [any, nil]                Or the type of *fallback*.
   #
-  def config_item(key, fallback: nil, default: nil, root: CONFIG_ROOT, **opt)
-    key, default = key.first, [*key[1..-1], *default] if key.is_a?(Array)
-    other = default && Array.wrap(default).compact.presence
-    key   = key.to_s
-    key   = "#{root}.#{key}" unless key.split('.').first == root
+  def config_entry(key, fallback: nil, default: nil, **opt)
     c_opt = opt.extract!(*CONFIG_ITEM_OPT)
     i_opt = opt.extract!(*I18N_OPT)
+    if key.is_a?(Array)
+      key = key.map { |k| config_path_fix(k.to_sym, **c_opt) }
+      key, default = key.first, [*key[1..-1], *default].compact.presence
+    else
+      key = config_path_fix(key, **c_opt)
+      default &&= Array.wrap(default).compact.presence
+    end
     if c_opt[:cfg_fatal] || c_opt[:cfg_warn] || i_opt[:raise]
       c_opt[:cfg_fatal] = false if c_opt[:cfg_warn]
-      item = config_item_fetch(key, other, **c_opt, **i_opt, **opt)
+      item = config_entry_fetch(key, default, **c_opt, **i_opt, **opt)
     else
-      other << nil if other.is_a?(Array)
-      item = config_item_get(key, default: other, **i_opt, **opt)
+      default << nil if default
+      item = config_entry_get(key, default: default, **i_opt, **opt)
     end
-    opt.presence && config_interpolate(item, **opt) || item || fallback
+    opt.presence && config_deep_interpolate(item, **opt) || item || fallback
+  end
+
+  # The configuration item path specified by *path*.
+  #
+  # @param [Array<String,Symbol>] path
+  # @param [Hash]                 opt   To #config_entry.
+  #
+  # @return [any, nil]
+  #
+  def config_item(*path, **opt)
+    key = config_key(*path)
+    config_entry(key, **opt)
+  end
+
+  # The configuration section path specified by *path*.
+  #
+  # @param [Array<String,Symbol>] path
+  # @param [Hash]                 opt   To #config_entry.
+  #
+  # @return [Hash]
+  #
+  def config_section(*path, **opt)
+    key = config_key(*path)
+    config_entry(key, **opt) || {}
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # YAML 1.1 boolean values (which cannot be used as keys).
+  #
+  # @type [Array<String>]
+  #
+  YAML_BOOLEAN = %w(true false on off y n yes no).freeze
+
+  # @private
+  YAML_KEY_FIX = /\.(#{YAML_BOOLEAN.join('|')})$/i.freeze
+
+  # Adjust key values to match the actual keys in the configuration file.
+  #
+  # @param [Symbol, String] key
+  #
+  # @return [String]
+  #
+  def config_key_fix(key)
+    k = key.to_s
+    k.include?('/') ? k.underscore.tr('/', '_') : k.sub(YAML_KEY_FIX, '_\1')
+  end
+
+  # Ensure an absolute path through the configuration hierarchy.
+  #
+  # @param [Symbol, String] path
+  # @param [Symbol, String] root
+  #
+  # @return [Symbol]
+  #
+  def config_path_fix(path, root: CONFIG_ROOT, **)
+    path = "#{root}.#{path}" unless path.start_with?("#{root}.")
+    path.to_sym
   end
 
   # Get an item from configuration.
@@ -182,25 +267,23 @@ module Emma::Config
   #
   # @return [any, nil]
   #
-  def config_item_get(key, root: CONFIG_ROOT, **opt)
+  def config_entry_get(key, root: CONFIG_ROOT, **opt)
     unless key.is_a?(String) || key.is_a?(Symbol)
       raise ArgumentError, "#{__method__}: disallowed key #{key.inspect}"
     end
-    fatal = opt[:raise]
+    root  = root.end_with?('.') ? root.to_s : "#{root}."
     c_opt = opt.extract!(*CONFIG_ITEM_OPT)
-    keys, vals = [], []
+    keys, literals = [], []
     Array.wrap(c_opt[:default]).each do |v|
-      break vals << v unless v.is_a?(Symbol) # A literal (non-key) value.
+      break literals << v unless v.is_a?(Symbol) # A literal (non-key) value.
       keys << v # Only include the keys before the first literal value.
     end
-    fallback = c_opt[:fallback] || vals.first
-    missing  = nil
-    prefix   = "#{root}."
-    if key.start_with?(prefix)
-      result = found = nil
+    # noinspection RubyMismatchedArgumentType
+    if key.start_with?(root)
+      result = found = missing = nil
       [key, *keys].find do |k|
-        if k.start_with?(prefix)
-          path = k.to_s.delete_prefix(prefix).split('.').map!(&:to_sym)
+        if k.start_with?(root)
+          path = k.to_s.delete_prefix(root).split('.').map!(&:to_sym)
           k = path.pop
           v = config_all
           v = v.dig(*path) if path.present?
@@ -212,12 +295,12 @@ module Emma::Config
         end
         break (result = v) if found
       end
-      raise MissingTranslation.new(key, *keys) if fatal && !found
-      result || fallback
+      raise MissingTranslation.new(key, *keys) unless found || !opt[:raise]
     else
-      keys << nil unless fatal
-      I18n.t(key, default: keys, **opt) || fallback
+      keys << nil unless opt[:raise]
+      result = I18n.t(key, default: keys, **opt)
     end
+    result || c_opt[:fallback] || literals.first
   end
 
   # Fetch a configuration item and raise an exception if not found.
@@ -231,30 +314,16 @@ module Emma::Config
   #
   # @return [any, nil]
   #
-  def config_item_fetch(key, other = nil, **opt)
+  def config_entry_fetch(key, other = nil, **opt)
     default = ([*other, *opt[:default]].compact if other || opt[:default])
     c_opt   = opt.extract!(*CONFIG_ITEM_OPT)
     Log.warn { "#{__method__}: fallback not allowed" } if c_opt.key?(:fallback)
     opt[:default] = default if default.present?
-    config_item_get(key, raise: true, **opt)
+    config_entry_get(key, raise: true, **opt)
   rescue I18n::MissingTranslation, I18n::MissingTranslationData => error
     error = MissingTranslationBase.wrap(error)
     raise error unless false?(c_opt[:cfg_fatal])
     Log.warn("#{__method__}: #{error.message}") unless false?(c_opt[:cfg_warn])
-  end
-
-  # The configuration section specified by *key* or *default* locations.
-  #
-  # @param [any]  key                 I18n path(s) (Symbol, String, Array)
-  # @param [Hash] opt                 To #config_deep_interpolate except for
-  #                                     #CONFIG_ITEM_OPT to #config_item.
-  #
-  # @return [Hash]                    Or the type of *fallback*.
-  #
-  def config_section(key, **opt)
-    c_opt = opt.extract!(*CONFIG_ITEM_OPT, *I18N_OPT)
-    item  = config_item(key, **c_opt)
-    opt.presence && config_deep_interpolate(item, **opt) || item || {}
   end
 
   # ===========================================================================
@@ -304,19 +373,6 @@ module Emma::Config
   # ===========================================================================
 
   public
-
-  # Attempt to apply interpolations to *item*.
-  #
-  # @param [any, nil] item            String
-  # @param [Hash]     opt             Passed to #interpolate
-  #
-  # @return [String, any, nil]
-  #
-  def config_interpolate(item, **opt)
-    return item unless item.is_a?(String) && opt.present?
-    opt[:id] = Emma::Common::FormatMethods.quote(opt[:id]) if opt.key?(:id)
-    Emma::Common::FormatMethods.interpolate(item, **opt)
-  end
 
   # Attempt to apply interpolations to all strings in *item*.
   #

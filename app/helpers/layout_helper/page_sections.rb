@@ -135,9 +135,15 @@ module LayoutHelper::PageSections
     # noinspection RubyMismatchedReturnType
     types.find do |t|
       if (text = entry[:"#{t}_html"]).present?
-        return Array.wrap(text).compact.map!(&:html_safe).join("\n").html_safe
+        case text
+          when Array then return text.compact.join("\n").html_safe
+          else            return text.html_safe? ? text : text.html_safe
+        end
       elsif (text = entry[t.to_sym]).present?
-        return text.is_a?(Array) ? text.map { |v| v.to_s.strip } : text.strip
+        case text
+          when Array then return text.map { |v| v.to_s.strip }
+          else            return text.strip
+        end
       end
     end
   end

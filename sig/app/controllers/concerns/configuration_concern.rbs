@@ -9,7 +9,7 @@ module ConfigurationConcern
   #
   # @return [Symbol]
   #
-  def config_key: () -> Symbol
+  def controller_key: () -> Symbol
 
   # Labels for item units operated on by this controller.
   #

@@ -25,6 +25,15 @@ module Emma::Config
 
     def fetch_all: (?initialize: bool) -> (symHash | nil)
 
+    # Recursively process a portion of a configuration hierarchy, in particular
+    # ensuring that the values for '*_html' keys are made HTML-safe.
+    #
+    # @param [any, nil]     item
+    # @param [Boolean, nil] html
+    #
+    # @return [any, nil]
+    #
+    def process: [T] (T item, ?(bool|nil) html) -> T
   end
 
   # All "en.emma.*" configuration values.
@@ -33,26 +42,25 @@ module Emma::Config
   #
   def config_all: () -> symHash
 
-  # YAML 1.1 boolean values (which cannot be used as keys).
+  # Form an I18n path.
   #
-  # @type [Array<String>]
+  # @param [Array<String,Symbol,nil>] path
   #
-  YAML_BOOLEAN: strArray
-
-  # @private
-  YAML_KEY_FIX: Regexp
+  # @return [Symbol]
+  #
+  def config_key: (*(Symbol|String|nil) path) -> Symbol
 
   # Generate I18n paths.
   #
   # The first returned element should be used as the key for I18n#translate and
   # the remaining elements should be used passed as the :default option.
   #
-  # @param [any, nil] base
-  # @param [Array]    path
+  # @param [Array<String,Symbol,nil>, String, Symbol, nil] base
+  # @param [Array<String,Symbol,nil>]                      path
   #
   # @return [Array<Symbol>]
   #
-  def config_keys: ((Symbol|String|nil|Array[Symbol|String|nil]) base, *(Symbol|String|nil) path) -> symArray
+  def config_keys: ((Array[Symbol|String|nil]|Symbol|String|nil) base, *(Symbol|String|nil) path) -> symArray
 
   # Configuration sections that may hold message values for *item*.
   #
@@ -73,25 +81,70 @@ module Emma::Config
   # @private
   I18N_OPT: symArray
 
-  # The configuration item specified by *key* or alternate *default* locations.
+  # The configuration entry specified by *key* or alternate *default*
+  # locations.
   #
   # If *key* is an array, the first element is used as the I18n#translate key
   # and the remaining elements are passed as the :default option.
   #
-  # @param [any]           key        I18n path(s) (Symbol, String, Array)
-  # @param [any, nil]      fallback   Returned if the item is not found.
-  # @param [any, nil]      default    Passed to I18n#translate.
-  # @param [Symbol,String] root
-  # @param [Hash]          opt        Passed to I18n#translate except:
+  # @param [any]      key             I18n path(s) (Symbol, String, Array)
+  # @param [any, nil] fallback        Returned if the item is not found.
+  # @param [any, nil] default         Passed to I18n#translate.
+  # @param [Hash]     opt             Passed to I18n#translate except:
   #
   # @option opt [Boolean] :cfg_fatal  Raise if the item is not found.
   # @option opt [Boolean] :cfg_warn   Log a warning if the item is not found.
   #
   # @return [any, nil]                Or the type of *fallback*.
   #
-  def config_item
-    :     ((String|Symbol|Array[String|Symbol]) key, ?fallback: nil, ?default: String|Symbol|Array[String|Symbol]|nil, ?root: Symbol|String, **untyped opt) -> (untyped | nil)
-    | [T] ((String|Symbol|Array[String|Symbol]) key,  fallback: T,   ?default: String|Symbol|Array[String|Symbol]|nil, ?root: Symbol|String, **untyped opt) -> (untyped | T | nil)
+  def config_entry
+    :     ((String|Symbol|Array[String|Symbol]) key, ?fallback: nil, ?default: String|Symbol|Array[String|Symbol]|nil, **untyped opt) -> (untyped | nil)
+    | [T] ((String|Symbol|Array[String|Symbol]) key,  fallback: T,   ?default: String|Symbol|Array[String|Symbol]|nil, **untyped opt) -> (untyped | T | nil)
+
+  # The configuration item path specified by *path*.
+  #
+  # @param [Array<String,Symbol>] path
+  # @param [Hash]                 opt   To #config_entry.
+  #
+  # @return [any, nil]
+  #
+  def config_item: ((String|Symbol|Array[String|Symbol]) path, **untyped opt) -> (untyped | nil)
+
+  # The configuration section path specified by *path*.
+  #
+  # @param [Array<String,Symbol>] path
+  # @param [Hash]                 opt   To #config_entry.
+  #
+  # @return [Hash]
+  #
+  def config_section: ((String|Symbol|Array[String|Symbol]) path, **untyped opt) -> symHash
+
+  #
+  # @type [Array<String>]
+  #
+  YAML_BOOLEAN: strArray
+
+  # @private
+  YAML_KEY_FIX: Regexp
+
+  # Adjust key values to match the actual keys in the configuration file.
+  #
+  # @param [Symbol, String] key
+  #
+  # @return [String]
+  #
+  def config_key_fix: (Symbol|String key) -> String
+
+  # Ensure an absolute path through the configuration hierarchy.
+  #
+  # @param [Symbol, String] path
+  # @param [Symbol, String] root
+  #
+  # @return [Symbol]
+  #
+  def config_path_fix
+    : (String path, ?root: String|Symbol, **untyped _ignored) -> String
+    | (Symbol path, ?root: String|Symbol, **untyped _ignored) -> Symbol
 
   # Get an item from configuration.
   #
@@ -103,7 +156,7 @@ module Emma::Config
   #
   # @return [any, nil]
   #
-  def config_item_get: ((String|Symbol) key, ?root: Symbol|String, **untyped options) -> (untyped | nil)
+  def config_entry_get: ((String|Symbol) key, ?root: Symbol|String, **untyped options) -> (untyped | nil)
 
   # Fetch a configuration item and raise an exception if not found.
   #
@@ -116,17 +169,7 @@ module Emma::Config
   #
   # @return [any, nil]
   #
-  def config_item_fetch: ((String|Symbol) key, ?(String|Symbol|Array[String|Symbol]|nil) other, **untyped opt) -> (untyped | nil)
-
-  # The configuration section specified by *key* or *default* locations.
-  #
-  # @param [any]  key                 I18n path(s) (Symbol, String, Array)
-  # @param [Hash] opt                 To #config_deep_interpolate except for
-  #                                     #CONFIG_ITEM_OPT to #config_item.
-  #
-  # @return [Hash]                    Or the type of *fallback*.
-  #
-  def config_section: ((String|Symbol|Array[String|Symbol]) key, **untyped opt) -> symHash
+  def config_entry_fetch: ((String|Symbol) key, ?(String|Symbol|Array[String|Symbol]|nil) other, **untyped opt) -> (untyped | nil)
 
   # Text value from the most specific match found for *item* within the
   # configuration location(s) specified by *base* under #config_text_keys.

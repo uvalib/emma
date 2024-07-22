@@ -23,7 +23,7 @@ module ConfigurationConcern
   #
   # @return [Symbol]
   #
-  def config_key
+  def controller_key
     self_class.name.underscore.split('_')[...-1].join('_').to_sym
   end
 
@@ -39,7 +39,7 @@ module ConfigurationConcern
   # @return [Hash]
   #
   def unit(**opt)
-    opt[:ctrlr] ||= config_key
+    opt[:ctrlr] ||= controller_key
     config_interpolations(**opt)
   end
 
