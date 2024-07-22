@@ -140,7 +140,7 @@ module RepositoryHelper
   # @return [String]
   #
   def repository_config_value(key, repo = nil)
-    cfg  = Api::Common::REPOSITORY_CONFIG
+    cfg  = EmmaRepository::CONFIGURATION
     repo = repo.value if repo.is_a?(EmmaRepository)
     repo = (repo.to_sym.presence if repo.is_a?(String) || repo.is_a?(Symbol))
     repo && cfg.dig(repo, key) || cfg.dig(:_template, key)

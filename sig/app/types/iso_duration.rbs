@@ -1,0 +1,70 @@
+# ISO 8601 duration.
+#
+# @see https://en.wikipedia.org/wiki/ISO_8601#Durations
+#
+class IsoDuration < ScalarType
+  module Methods
+    include ScalarType::Methods
+
+    # Valid values for this type start with one of these patterns.
+    #
+    # By the standard, the lowest-order component may be fractional.
+    #
+    # @type [Hash{Symbol=>Regexp}]
+    #
+    START_PATTERN: Hash[Symbol,Regexp]
+
+    # Valid values for this type match one of these patterns.
+    #
+    # @type [Hash{Symbol=>Regexp}]
+    #
+    MATCH_PATTERN: Hash[Symbol,Regexp]
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [any, nil] v
+    #
+    def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [any, nil] v             String, Date, Time, IsoDate
+    #
+    # @return [String]
+    #
+    def normalize: (untyped v) -> String
+
+    # Translate an ActiveSupport::Duration into an ISO 8601 duration.
+    #
+    # @param [ActiveSupport::Duration] duration
+    #
+    # @return [String]
+    #
+    def from_duration: (ActiveSupport::Duration duration) -> String
+
+    # @private
+    EPSILON: Float
+
+    # fractional
+    #
+    # @param [Float]               value1
+    # @param [Float, Integer, nil] value2
+    # @param [Integer]             multiplier
+    #
+    # @return [Array(Float, any)]
+    #
+    def fractional: (Float value1, (Float|Integer|nil) value2, Integer multiplier) -> [Float, untyped]
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [any, nil] v               Default: #value.
+  #
+  def valid?: (?untyped v) -> bool
+end

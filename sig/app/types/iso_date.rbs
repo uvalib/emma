@@ -1,0 +1,255 @@
+# ISO 8601 general date.
+#
+# @see http://xml.coverpages.org/ISO-FDIS-8601.pdf
+#
+class IsoDate < ScalarType
+  module Methods
+    include ScalarType::Methods
+
+    YEAR: String
+
+    MONTH: String
+
+    DAY: String
+
+    DATE: String
+
+    HOUR: String
+
+    MINUTE: String
+
+    SECOND: String
+
+    FRACTION: String
+
+    TIME: String
+
+    ZULU: String
+
+    H_OFFSET: String
+
+    M_OFFSET: String
+
+    ZONE: String
+
+    # Valid values for this type start with one of these patterns.
+    #
+    # @type [Hash{Symbol=>Regexp}]
+    #
+    START_PATTERN: Hash[Symbol,Regexp]
+
+    # Valid values for this type match one of these patterns.
+    #
+    # @type [Hash{Symbol=>Regexp}]
+    #
+    MATCH_PATTERN: Hash[Symbol,Regexp]
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [any, nil] v
+    #
+    def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [any, nil] v   String,IsoDate,IsoDay,IsoYear,DateTime,Date,Time
+    #
+    # @return [String, nil]
+    #
+    def normalize: (untyped v) -> (String | nil)
+
+    # Type-cast an object to an instance of this type.
+    #
+    # @param [any, nil] v             Value to use or transform.
+    # @param [Hash]     opt           Options passed to #create.
+    #
+    # @return [IsoDate, nil]
+    #
+    def cast: (untyped v, **untyped opt) -> (IsoDate | nil)
+
+    # Create a new instance of this type.
+    #
+    # @param [any, nil] v
+    # @param [Hash]     opt           Options passed to #initialize.
+    #
+    # @return [IsoDate, nil]
+    #
+    def create: (untyped v, **untyped opt) -> (IsoDate | nil)
+
+    # Prepare a date string for normalization.
+    #
+    # @param [any, nil] v   String,IsoDate,IsoDay,IsoYear,DateTime,Date,Time
+    #
+    # @return [any, nil]
+    #
+    def strip_copyright
+      :     (String  v) -> String
+      | [T] (T       v) -> T
+
+    # Transform *v* into a ISO 8601 form.
+    #
+    # @param [any, nil] v   String,IsoDate,IsoDay,IsoYear,DateTime,Date,Time
+    #
+    # @return [String, nil]
+    #
+    def datetime_convert: (untyped v) -> (String | nil)
+
+    # Transform *v* into "YYYY-MM-DD" form.
+    #
+    # @param [any, nil] v   String,IsoDate,IsoDay,IsoYear,DateTime,Date,Time
+    #
+    # @return [String, nil]
+    #
+    def day_convert: (untyped v) -> (String | nil)
+
+    # Transform *v* into a 4-digit year.
+    #
+    # @param [any, nil] v   String,IsoDate,IsoDay,IsoYear,DateTime,Date,Time
+    #
+    # @return [String, nil]
+    #
+    def year_convert: (untyped v) -> (String | nil)
+
+    # Transform a value into ISO 8601 form.
+    #
+    # @param [any, nil] value         String, Date, Time, IsoDate
+    #
+    # @return [String, nil]
+    #
+    def datetime_parse: (untyped value) -> (String | nil)
+
+    # Transform a value into "YYYY-MM-DD" form.
+    #
+    # @param [any, nil] value         String, Date, Time, IsoDate
+    #
+    # @return [String, nil]
+    #
+    def date_parse: (untyped value) -> (String | nil)
+
+    # Transform a date string into a usable form.
+    #
+    # Because DateTime#parse doesn't cope with American date formats, dates of
+    # the form "M/D/Y" are converted to "YYYY-MM-DD", however forms like
+    # "YYYY/MM/..." are preserved (since DateTime#parse can deal with those).
+    #
+    # Note that "YYYY/DD/MM" will still be a problem because "DD" will be
+    # interpreted as month and "MM" will be interpreted as day.
+    #
+    # @param [any, nil] value         String, Date, Time, IsoDate
+    #
+    # @return [String, Date, Time, IsoDate, any, nil]
+    #
+    def translate: [T] (T value) -> T
+
+    # Remove fractional seconds and normalize +00:00 to Z.
+    #
+    # @param [String, nil] value
+    #
+    # @return [String]
+    #
+    # === Implementation Notes
+    # Fractional seconds are rounded unless >= 59 seconds.  In that case, the
+    # fractional part is truncated in order to avoid a potential cascade of
+    # changes to minute, hour, etc.
+    #
+    def datetime_clean: ((String|nil) value) -> String
+
+    MM: String
+
+    DD: String
+
+    YY: String
+
+    AMERICAN_DATE: Regexp
+
+    # Transform an American-style date string into a usable form.
+    #
+    # Because DateTime#parse doesn't cope with American date formats, dates of
+    # the form "M/D/Y" are converted to "YYYY-MM-DD", however forms like
+    # "YYYY/MM/..." are preserved (since DateTime#parse can deal with those).
+    #
+    # Note that "YYYY/DD/MM" will still be a problem because "DD" will be
+    # interpreted as month and "MM" will be interpreted as day.
+    #
+    # @param [String] value
+    #
+    # @return [String]
+    #
+    def american_date_translate: (String value) -> String
+
+    OPTIONAL_SECONDS: String
+
+    OPTIONAL_MINUTES: String
+
+    OPTIONAL_TIME: String
+
+    OPTIONAL_DAY: String
+
+    OPTIONAL_MONTH: String
+
+    ASN_1_DATETIME: Regexp
+
+    ASN_1_TIMEZONE: Regexp
+
+    # Transform an ISO/IEC 8824 (ASN.1) date string into a usable form.
+    #
+    # @param [any, nil] value         String
+    #
+    # @return [String]
+    #
+    # @see http://www.verypdf.com/pdfinfoeditor/pdf-date-format.htm
+    #
+    def pdf_date_translate: (untyped value) -> String
+
+    # Indicate whether *v* represents a year value.
+    #
+    # @param [any, nil] v
+    #
+    def year?: (?untyped v) -> bool
+
+    # Indicate whether *v* represents a day value.
+    #
+    # @param [any, nil] v
+    #
+    def day?: (?untyped v) -> bool
+
+    # Indicate whether *v* represents a full ISO 8601 date value.
+    #
+    # @param [any, nil] v
+    #
+    def complete?: (?untyped v) -> bool
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [String, any, nil] v       Default: #value.
+  #
+  def valid?: (?untyped v) -> bool
+
+  # Indicate whether the instance represents a year value, or indicate whether
+  # *v* represents a year value.
+  #
+  # @param [any, nil] v
+  #
+  def year?: (?untyped v) -> bool
+
+  # Indicate whether the instance represents a day value, or indicate whether
+  # *v* represents a day value.
+  #
+  # @param [any, nil] v
+  #
+  def day?: (?untyped v) -> bool
+
+  # Indicate whether the instance represents a full ISO 8601 date value, or
+  # indicate whether *v* represents a full ISO 8601 date value.
+  #
+  # @param [any, nil] v
+  #
+  def complete?: (?untyped v) -> bool
+end

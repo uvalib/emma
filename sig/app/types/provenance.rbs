@@ -1,0 +1,12 @@
+# API schema - DublinCoreFields - Provenance
+#
+# "Source of this instance of the work"
+#
+# @note Deprecated with API 0.0.5
+#
+# @see "en.emma.type.search.Provenance"
+# @see https://www.dublincore.org/specifications/dublin-core/dcmi-terms/terms/provenance                                                  DCMI Metadata Terms Format
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/DublinCoreFields/dc_provenance   JSON schema specification
+#
+class Provenance < EnumType
+end

@@ -1,0 +1,72 @@
+# API schema - EmmaRepository
+#
+# "Identifier for a repository"
+#
+# @see "en.emma.repository.*"
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.6#/components/schemas/EmmaRepository  JSON schema specification
+#
+class EmmaRepository < EnumType
+  # Partner repository configurations.
+  #
+  # @type [Hash{Symbol=>any}]
+  #
+  CONFIGURATION: symHash
+
+  # The default repository for uploads.
+  #
+  # @type [String]
+  #
+  # @see "en.emma.repository._default"
+  #
+  DEFAULT: String
+
+  # Values associated with each past or present source repository.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # @see "en.emma.repository"
+  # @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.6#/components/schemas/EmmaRepository  JSON schema specification
+  #
+  ENTRY: Hash[Symbol,symHash]
+
+  # Values associated with each currently-active source repository.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # @see "en.emma.repository"
+  # @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.6#/components/schemas/EmmaRepository  JSON schema specification
+  #
+  ACTIVE: Hash[Symbol,symHash]
+
+  # The repositories that require the "partner repository workflow".
+  #
+  # @type [Array<Symbol>]
+  #
+  PARTNER: symArray
+
+  # The repositories that can handle "partner repository workflow" requests.
+  #
+  # If the repository is not also in #PARTNER then related
+  # submissions are handled as EMMA-native, but with the additional step of
+  # reflecting the submission in the S3 bucket.
+  #
+  # @type [Array<Symbol>]
+  #
+  S3_QUEUE: symArray
+
+  # The repositories that require the "partner repository workflow".
+  #
+  # @type [Array<Symbol>]
+  #
+  def self.partner: () -> symArray
+
+  # The repositories that can handle "partner repository workflow" requests.
+  #
+  # If the repository is not also in #PARTNER then related
+  # submissions are handled as EMMA-native, but with the additional step of
+  # reflecting the submission in the S3 bucket.
+  #
+  # @type [Array<Symbol>]
+  #
+  def self.s3_queue: () -> symArray
+end

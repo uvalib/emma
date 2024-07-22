@@ -1,19 +1,16 @@
-# config/locales/types/search.en.yml
+# config/locales/type/search.en.yml
 #
 # Data type enumerations for the EMMA Unified Search API.
 #
-# @see Search::Api::Common::CONFIGURATION
-# @see Search::Api::Common::ENUMERATIONS
-# @see Search::Api::Common::ENUMERATION_TYPES
-# @see Search::Api::Common::ENUMERATION_DEFAULTS
+# @see EnumType::SEARCH_TYPES
 
 en:
 
   emma:
 
-    search:
+    type:
 
-      type:
+      search:
 
         # =====================================================================
         # API schema - EmmaCommonFields
@@ -62,7 +59,7 @@ en:
           publisher:                'Publisher'
           volunteer:                'Volunteer'
 
-        DublinCoreFormat: # NOTE: identical to 'en.emma.format'
+        DublinCoreFormat:
           brf:                      'BRF'
           daisy:                    'DAISY'
           daisyAudio:               'DAISY Audio'
@@ -243,11 +240,3 @@ en:
         SearchGroup:
           emma_titleId:             'By Title ID'
           emma_repositoryRecordId:  'By Repo ID'
-
-        # =====================================================================
-        # Other
-        # =====================================================================
-
-        TrueFalse:
-          'false':                  'False'
-          'true':                   'True'

@@ -26,7 +26,7 @@ module ManifestItem::Config
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  MANIFEST_ITEM_TYPES = config_section('emma.manifest_item.type').deep_freeze
+  TYPE_CONFIGURATION = EnumType::CONFIGURATION[:manifest_item]
 
   # Values for each status column which indicate an unblocked status.
   #
@@ -58,15 +58,7 @@ module ManifestItem::Config
   #
   # @type [Hash{Symbol=>Hash{Symbol=>String}}]
   #
-  STATUS = MANIFEST_ITEM_TYPES.slice(*STATUS_COLUMNS).freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  EnumType.add_enumerations(MANIFEST_ITEM_TYPES)
+  STATUS = TYPE_CONFIGURATION.slice(*STATUS_COLUMNS).freeze
 
   # ===========================================================================
   # :section:
@@ -100,18 +92,30 @@ end
 #
 # @see "en.emma.manifest_item.type.file_status"
 #
-class FileStatus < EnumType; end
+class FileStatus < EnumType
+
+  define_enumeration(ManifestItem::Config::STATUS[:file_status])
+
+end
 
 # Status values for the metadata associated with the item.
 #
 # @see "en.emma.manifest_item.type.data_status"
 #
-class DataStatus < EnumType; end
+class DataStatus < EnumType
+
+  define_enumeration(ManifestItem::Config::STATUS[:data_status])
+
+end
 
 # Status values for the submission status of the item.
 #
 # @see "en.emma.manifest_item.type.ready_status"
 #
-class ReadyStatus < EnumType; end
+class ReadyStatus < EnumType
+
+  define_enumeration(ManifestItem::Config::STATUS[:ready_status])
+
+end
 
 __loading_end(__FILE__)

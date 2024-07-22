@@ -1,0 +1,66 @@
+# ISO 639-2 alpha-3 language code.
+#
+class IsoLanguage < ScalarType
+  module Methods
+    include ScalarType::Methods
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [any, nil] v             String
+    #
+    def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [any, nil] v             String
+    #
+    # @return [String]
+    #
+    def normalize: (untyped v) -> String
+
+    # Return the associated three-letter language code.
+    #
+    # @param [any, nil] value         String
+    #
+    # @return [String, nil]
+    #
+    def code: (untyped value) -> (String | nil)
+
+    # Find a matching language entry.
+    #
+    # @param [any, nil] value         String
+    #
+    # @return [ISO_639, nil]
+    #
+    def find: (untyped value) -> (ISO_639 | nil)
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # Assign a new value to the instance.
+  #
+  # @param [any, nil] v
+  # @param [Hash]     opt             Passed to ScalarType#set
+  #
+  # @return [String, nil]
+  #
+  def set: (untyped v, **untyped opt) -> (String | nil)
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [any, nil] v               Default: #value.
+  #
+  def valid?: (?untyped v) -> bool
+
+  # Return the associated three-letter language code.
+  #
+  # @param [any, nil] v               Default: #value.
+  #
+  # @return [String, nil]
+  #
+  def code: (?untyped v) -> (String | nil)
+end

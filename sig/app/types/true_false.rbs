@@ -1,0 +1,6 @@
+# TrueFalse
+#
+# @see "en.emma.type.generic.TrueFalse"
+#
+class TrueFalse < EnumType
+end

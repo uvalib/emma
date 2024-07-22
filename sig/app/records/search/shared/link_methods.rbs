@@ -23,6 +23,8 @@ module Search::Shared::LinkMethods
 
   # Original repository content file download URL.
   #
+  # @raise [RuntimeError]             If EmmaRepository#ACTIVE entry is invalid
+  #
   # @return [String, nil]
   #
   def record_download_url: () -> (String | nil)
@@ -30,7 +32,7 @@ module Search::Shared::LinkMethods
   # Create a URL manufactured from "en.emma.repository.*.title_path" for the
   # associated work on the web site of the original repository.
   #
-  # @raise [RuntimeError]             If #REPOSITORY entry is invalid.
+  # @raise [RuntimeError]             If EmmaRepository#ACTIVE entry is invalid
   #
   # @return [String, nil]
   #
@@ -39,11 +41,19 @@ module Search::Shared::LinkMethods
   # Create a URL on the original repository for acquiring the content file
   # associated with the item.
   #
-  # @raise [RuntimeError]             If #REPOSITORY entry is invalid.
+  # @raise [RuntimeError]             If EmmaRepository#ACTIVE entry is invalid
   #
   # @return [String, nil]
   #
   def generate_download_url: () -> (String | nil)
+
+  # Return the configuration for the given repository.
+  #
+  # @param [Symbol, String] src
+  #
+  # @return [Hash{Symbol=>any}]
+  #
+  def configuration_for: (Symbol|String src) -> symHash
 
   # Form an absolute path from a relative path based on the current request and
   # the source repository.

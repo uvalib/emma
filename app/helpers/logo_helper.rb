@@ -21,7 +21,7 @@ module LogoHelper
   #
   # @type [Array<Symbol>]
   #
-  LOGO_TYPE = config_section('emma.repository._template.logo').keys.freeze
+  LOGO_TYPE = EmmaRepository::CONFIGURATION.dig(:_template, :logo).keys.freeze
 
   # ===========================================================================
   # :section:
@@ -131,7 +131,7 @@ module LogoHelper
   #
   def repository_logo(src, type = nil)
     repo = normalize_repository(src)
-    logo = repo && Api::Common::REPOSITORY.dig(repo.to_sym, :logo)
+    logo = repo && EmmaRepository::ACTIVE.dig(repo.to_sym, :logo)
     logo = logo[type&.to_sym] || logo[LOGO_TYPE.first] if logo.is_a?(Hash)
     # noinspection RubyMismatchedReturnType
     logo

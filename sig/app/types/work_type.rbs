@@ -1,0 +1,9 @@
+# "Describes the type of work"
+#
+# @note Rejected for API 0.0.5
+#
+# @see "en.emma.type.search.WorkType"
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/EmmaCommonFields/emma_workType   JSON schema specification
+#
+class WorkType < EnumType
+end

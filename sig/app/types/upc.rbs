@@ -1,0 +1,124 @@
+# UPC identifier.
+#
+class Upc < PublicationIdentifier
+  PREFIX: String
+
+  TYPE: Symbol
+
+  module Methods
+    include PublicationIdentifier::Methods
+
+    # A valid UPC has at least this many digits.
+    #
+    # Some forms have supplemental digits in addition to the base UPC number.
+    #
+    # @type [Integer]
+    #
+    UPC_DIGITS: Integer
+
+    # If a value has a number of digits within this range it could be either a
+    # valid UPC or intended as an UPC but with one too few or one too many
+    # digits.
+    #
+    # @type [Range]
+    #
+    CANDIDATE_RANGE: Range[Integer]
+
+    # A pattern matching any of the expected UPC prefixes.
+    #
+    # @type [Regexp]
+    #
+    UPC_PREFIX: Regexp
+
+    # Pattern fragment for a valid separator between groups of UPC digits.
+    #
+    # @type [String]
+    #
+    SEPARATOR: String
+
+    # A pattern matching the form of a UPC identifier.
+    #
+    # @type [Regexp]
+    #
+    UPC_IDENTIFIER: Regexp
+
+    # A pattern matching the form of a (possibly invalid) UPC identifier.
+    #
+    # @type [Regexp]
+    #
+    UPC_CANDIDATE: Regexp
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [any, nil] v
+    #
+    def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [any, nil] v
+    #
+    # @return [String]
+    #
+    def normalize: (untyped v) -> String
+
+    # Indicate whether the given value appears to include a UPC.
+    #
+    # @param [any, nil] v
+    #
+    def candidate?: (untyped v) -> bool
+
+    # Extract the base identifier of a possible UPC.
+    #
+    # @param [any, nil] v
+    #
+    # @return [String, nil]
+    #
+    def identifier: (untyped v) -> (String | nil)
+
+    # Strip the characteristic prefix of the including class.
+    #
+    # @param [any, nil] v
+    #
+    # @return [String]
+    #
+    def remove_prefix: (untyped v) -> String
+
+    # Indicate whether the value is a valid UPC.
+    #
+    # @param [any, nil] v
+    #
+    def upc?: (untyped v) -> bool
+
+    # If the value is a UPC return it in a normalized form or *nil* otherwise.
+    #
+    # @param [any, nil] v
+    # @param [Boolean]  log
+    # @param [Boolean]  validate      If *true*, return *nil* if the checksum
+    #                                   provided in *v* is invalid.
+    #
+    # @return [String, nil]
+    #
+    def to_upc: (untyped v, ?log: bool, ?validate: bool) -> (String | nil)
+
+    # Calculate the UPC checksum for the supplied array of digits.
+    #
+    # @param [String, Array<String,Integer>] digits
+    #
+    # @return [String]                  Single-character decimal digit.
+    #
+    def checksum: ((String|Array[String|Integer]) digits) -> String
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [any, nil] v               Default: #value.
+  #
+  def valid?: (?untyped v) -> bool
+end

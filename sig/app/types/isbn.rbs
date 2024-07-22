@@ -1,0 +1,206 @@
+# ISBN identifier.
+#
+class Isbn < PublicationIdentifier
+  PREFIX: String
+
+  TYPE: Symbol
+
+  module Methods
+    include PublicationIdentifier::Methods
+
+    # Number of digits in an ISBN-10.
+    #
+    # @type [Integer]
+    #
+    ISBN_10_DIGITS: Integer
+
+    # Number of digits in an ISBN-13.
+    #
+    # @type [Integer]
+    #
+    ISBN_13_DIGITS: Integer
+
+    # If a value has a number of digits within this range it could be either a
+    # valid ISBN or intended as an ISBN but with one too few or one too many
+    # digits.
+    #
+    # @type [Range]
+    #
+    CANDIDATE_RANGE: Range[Integer]
+
+    # A pattern matching any of the expected ISBN prefixes.
+    #
+    # @type [Regexp]
+    #
+    ISBN_PREFIX: Regexp
+
+    # Pattern fragment for a valid separator between groups of ISBN digits.
+    #
+    # @type [String]
+    #
+    SEPARATOR: String
+
+    # A pattern matching the form of an ISBN identifier.
+    #
+    # @type [Regexp]
+    #
+    ISBN_IDENTIFIER: Regexp
+
+    # A pattern matching the form of a (possibly invalid) ISBN identifier.
+    #
+    # @type [Regexp]
+    #
+    ISBN_CANDIDATE: Regexp
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [any, nil] v
+    #
+    def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [any, nil] v
+    #
+    # @return [String]
+    #
+    def normalize: (untyped v) -> String
+
+    # Indicate whether the given value appears to include an ISBN.
+    #
+    # @param [any, nil] v
+    #
+    # === Usage Notes
+    # If *v* matches #ISBN_PREFIX then the method returns *true* even if the
+    # actual number is invalid; the caller is expected to differentiate between
+    # valid and invalid cases and handle each appropriately.
+    #
+    def candidate?: (untyped v) -> bool
+
+    # Extract the base identifier of a possible ISBN.
+    #
+    # @param [any, nil] v
+    #
+    # @return [String, nil]
+    #
+    def identifier: (untyped v) -> (String | nil)
+
+    # Strip the characteristic prefix of the including class.
+    #
+    # @param [any, nil] v
+    #
+    # @return [String]
+    #
+    def remove_prefix: (untyped v) -> String
+
+    # Indicate whether the value is a valid ISBN.
+    #
+    # @param [any, nil] v
+    #
+    def isbn?: (untyped v) -> bool
+
+    # Indicate whether the string is a valid ISBN-13.
+    #
+    # @param [any, nil] v
+    #
+    def isbn13?: (untyped v) -> bool
+
+    # Indicate whether the value is a valid ISBN-10.
+    #
+    # @param [any, nil] v
+    #
+    def isbn10?: (untyped v) -> bool
+
+    # If the value is an ISBN return it in a normalized form.
+    #
+    # @param [any, nil] v
+    # @param [Hash]     opt             Passed to #to_isbn13.
+    #
+    # @return [String, nil]
+    #
+    def to_isbn
+      : (String  v, **untyped opt) -> (String | nil)
+      | (untyped v, **untyped opt) -> nil
+
+    # If the value is an ISBN-13; if it is an ISBN-10, convert it to the
+    # equivalent ISBN-13; otherwise return *nil*.
+    #
+    # @param [any, nil] v
+    # @param [Boolean]  log
+    #
+    # @return [String, nil]
+    #
+    def to_isbn13
+      : (String  v, ?log: bool) -> (String | nil)
+      | (untyped v, ?log: bool) -> nil
+
+    # If the value is an ISBN-10 return it; if it is an ISBN-13 that starts
+    # with "978", convert it to the equivalent ISBN-10; otherwise return *nil*.
+    #
+    # @param [any, nil] v
+    # @param [Boolean]  log
+    #
+    # @return [String, nil]
+    #
+    def to_isbn10
+      : (String  v, ?log: bool) -> (String | nil)
+      | (untyped v, ?log: bool) -> nil
+
+    # Generic ISBN checksum.
+    #
+    # @param [String]  isbn
+    # @param [Boolean] validate         If *true* an exception is raised if the
+    #                                     check digit is erroneous.
+    #
+    # @raise [RuntimeError]             If *isbn* contains a check digit but it
+    #                                     is not valid.
+    #
+    # @return [String, nil]
+    #
+    def checksum: (String isbn, ?validate: bool) -> (String | nil)
+
+    # Calculate the ISBN-13 checksum for the supplied array of digits.
+    #
+    # @param [String, Array<String,Integer>] digits
+    #
+    # @return [String]                  Single-character decimal digit.
+    #
+    # @see https://www.isbn-international.org/content/isbn-users-manual
+    #
+    def isbn13_checksum: ((String|Array[String|Integer]) digits) -> String
+
+    # Calculate the ISBN-10 checksum for the supplied array of digits.
+    #
+    # @param [String, Array<String,Integer>] digits
+    #
+    # @return [String]                  Single-character decimal digit or 'X'.
+    #
+    # @see https://en.wikipedia.org/wiki/Check_digit#ISBN_10
+    #
+    def isbn10_checksum: ((String|Array[String|Integer]) digits) -> String
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [any, nil] v               Default: #value.
+  #
+  def valid?: (?untyped v) -> bool
+
+  # Indicate whether the instance is a valid ISBN-13.
+  #
+  # @param [any, nil] v               Default: #value.
+  #
+  def isbn13?: (?untyped v) -> bool
+
+  # Indicate whether the instance is a valid ISBN-10.
+  #
+  # @param [any, nil] v               Default: #value.
+  #
+  def isbn10?: (?untyped v) -> bool
+end

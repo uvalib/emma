@@ -37,7 +37,7 @@ module Search::Shared::LinkMethods
 
   # Original repository content file download URL.
   #
-  # @raise [RuntimeError]             If #REPOSITORY entry is invalid.
+  # @raise [RuntimeError]             If EmmaRepository#ACTIVE entry is invalid
   #
   # @return [String, nil]
   #
@@ -54,14 +54,14 @@ module Search::Shared::LinkMethods
   # Create a URL manufactured from "en.emma.repository.*.title_path" for the
   # associated work on the web site of the original repository.
   #
-  # @raise [RuntimeError]             If #REPOSITORY entry is invalid.
+  # @raise [RuntimeError]             If EmmaRepository#ACTIVE entry is invalid
   #
   # @return [String, nil]
   #
   def generate_title_url
     id   = emma_repositoryRecordId&.presence or return
     src  = emma_repository&.presence&.to_sym or return
-    cfg  = REPOSITORY[src].presence          or raise "#{src}: invalid source"
+    cfg  = configuration_for(src)            or raise "#{src}: invalid source"
     path = cfg[:title_path]                  or raise 'no title_path'
     path = absolute_path(path, src) || path
     make_path(path, id)
@@ -73,7 +73,7 @@ module Search::Shared::LinkMethods
   # Create a URL on the original repository for acquiring the content file
   # associated with the item.
   #
-  # @raise [RuntimeError]             If #REPOSITORY entry is invalid.
+  # @raise [RuntimeError]             If EmmaRepository#ACTIVE entry is invalid
   #
   # @return [String, nil]
   #
@@ -81,7 +81,7 @@ module Search::Shared::LinkMethods
     id   = emma_repositoryRecordId&.presence or return
     src  = emma_repository&.presence&.to_sym or return
     fmt  = dc_format&.presence&.to_sym       or return
-    cfg  = REPOSITORY[src].presence          or raise "#{src}: invalid source"
+    cfg  = configuration_for(src)            or raise "#{src}: invalid source"
     fmt  = cfg.dig(:download_fmt, fmt)       or raise "#{fmt}: invalid format"
     url  = cfg[:download_url]
     url  = url[fmt] if url.is_a?(Hash)
@@ -100,6 +100,16 @@ module Search::Shared::LinkMethods
   # ===========================================================================
 
   protected
+
+  # Return the configuration for the given repository.
+  #
+  # @param [Symbol, String] src
+  #
+  # @return [Hash{Symbol=>any}]
+  #
+  def configuration_for(src)
+    EmmaRepository::ACTIVE[src&.to_sym].presence
+  end
 
   # Form an absolute path from a relative path based on the current request and
   # the source repository.

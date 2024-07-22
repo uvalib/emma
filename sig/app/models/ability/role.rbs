@@ -1,12 +1,9 @@
 module Ability::Role
-  # @private
-  ROLE_TYPE_CONFIGURATION: symHash
-
   # Role prototypes.
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  ROLE_CONFIG: Hash[Symbol,symHash]
+  PROTOTYPE_CONFIG: Hash[Symbol,symHash]
 
   # Role capabilities.
   #
@@ -29,12 +26,4 @@ module Ability::Role
   private
 
   def self.included: (Module base) -> void
-end
-
-# @see Ability::Role#ROLE_CONFIG
-class RolePrototype < EnumType
-end
-
-# @see Ability::Role#CAPABILITY_CONFIG
-class RoleCapability < EnumType
 end

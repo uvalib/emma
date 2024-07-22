@@ -1,0 +1,115 @@
+# LCCN (LoC Control Number) identifier.
+#
+# @see http://www.loc.gov/marc/lccn_structure.html
+#
+class Lccn < PublicationIdentifier
+  PREFIX: String
+
+  TYPE: Symbol
+
+  module Methods
+    include PublicationIdentifier::Methods
+
+    # Pre-2001 LCCNs have at least 13 characters; after that, 12 characters.
+    #
+    # The first characters (three prior to 2001, otherwise two) are alphabetic,
+    # but they may also be given as spaces.  It's not unlikely that they would
+    # be omitted from non-MARC metadata renderings.
+    #
+    # Pre-2001, the final character (supplement number) may also be given as a
+    # space.
+    #
+    # @type [Range]
+    #
+    LCCN_DIGITS: Range[Integer]
+
+    # If a value has a number of digits within this range it could be either a
+    # valid LCCN or intended as an LCCN but with one too few or one too many
+    # digits.
+    #
+    # @type [Range]
+    #
+    LCCN_RANGE: Range[Integer]
+
+    # A pattern matching any of the expected LCCN prefixes.
+    #
+    # @type [Regexp]
+    #
+    LCCN_PREFIX: Regexp
+
+    # A pattern matching the form of an LCCN identifier.
+    #
+    # @type [Regexp]
+    #
+    LCCN_IDENTIFIER: Regexp
+
+    # A pattern matching the form of a (possibly invalid) LCCN identifier.
+    #
+    # @type [Regexp]
+    #
+    LCCN_CANDIDATE: Regexp
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [any, nil] v
+    #
+    def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [any, nil] v
+    #
+    # @return [String]
+    #
+    def normalize: (untyped v) -> String
+
+    # Indicate whether the given value appears to include an LCCN.
+    #
+    # @param [any, nil] v
+    #
+    def candidate?: (untyped v) -> bool
+
+    # Extract the base identifier of a possible LCCN.
+    #
+    # @param [any, nil] v
+    #
+    # @return [String, nil]
+    #
+    def identifier: (untyped v) -> (String | nil)
+
+    # Strip the characteristic prefix of the including class.
+    #
+    # @param [any, nil] v
+    #
+    # @return [String]
+    #
+    def remove_prefix: (untyped v) -> String
+
+    # Indicate whether the value is a valid LCCN.
+    #
+    # @param [any, nil] v
+    #
+    def lccn?: (untyped v) -> bool
+
+    # If the value is a LCCN return it in a normalized form or *nil* otherwise.
+    #
+    # @param [any, nil] v
+    # @param [Boolean]  log
+    #
+    # @return [String, nil]
+    #
+    def to_lccn: (untyped v, ?log: bool) -> (String | nil)
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [any, nil] v               Default: #value.
+  #
+  def valid?: (?untyped v) -> bool
+end

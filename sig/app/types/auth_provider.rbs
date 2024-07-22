@@ -1,0 +1,8 @@
+# A symbolic indication of an authentication source.
+#
+# @note Currently this is only :shibboleth and may not be especially useful.
+#
+# @see AUTH_PROVIDERS
+#
+class AuthProvider < EnumType
+end

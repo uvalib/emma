@@ -1,0 +1,109 @@
+# DOI identifier.
+#
+# - UTF-8 Unicode characters
+# - Case-insensitive for ASCII Unicode characters
+# - Case-sensitive for non-ASCII Unicode characters
+#
+# @see https://www.doi.org/doi_handbook/2_Numbering.html
+#
+class Doi < PublicationIdentifier
+  PREFIX: String
+
+  TYPE: Symbol
+
+  module Methods
+    include PublicationIdentifier::Methods
+
+    # A pattern matching any of the expected DOI prefixes.
+    #
+    # @type [Regexp]
+    #
+    DOI_PREFIX: Regexp
+
+    # A pattern matching the form of an DOI identifier.
+    #
+    # @type [Regexp]
+    #
+    DOI_IDENTIFIER: Regexp
+
+    # A pattern matching the form of a (possibly invalid) DOI identifier.
+    #
+    # @type [Regexp]
+    #
+    DOI_CANDIDATE: Regexp
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [any, nil] v
+    #
+    def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [any, nil] v
+    #
+    # @return [String]
+    #
+    def normalize: (untyped v) -> String
+
+    # Indicate whether the given value appears to include a DOI.
+    #
+    # @param [any, nil] v
+    #
+    # === Usage Notes
+    # If *v* matches #DOI_PREFIX then the method returns *true* even if the
+    # actual number is invalid; the caller is expected to differentiate between
+    # valid and invalid cases and handle each appropriately.
+    #
+    def candidate?: (untyped v) -> bool
+
+    # Extract the base identifier of a possible DOI.
+    #
+    # @param [any, nil] v
+    #
+    # @return [String, nil]
+    #
+    def identifier: (untyped v) -> (String | nil)
+
+    # Strip the characteristic prefix of the including class.
+    #
+    # @param [any, nil] v
+    #
+    # @return [String]
+    #
+    # === Implementation Notes
+    # Accounts for not-quite-valid forms like "doi:https://doi.org/..." by
+    # repeating prefix removal.
+    #
+    def remove_prefix: (untyped v) -> String
+
+    # Indicate whether the value is a valid DOI.
+    #
+    # @param [any, nil] v
+    #
+    def doi?: (untyped v) -> bool
+
+    # If the value is a DOI return it in a normalized form or *nil* otherwise.
+    #
+    # @param [any, nil] v
+    # @param [Boolean]  log
+    #
+    # @return [String, nil]
+    #
+    def to_doi
+      : (String  v, ?log: bool) -> (String | nil)
+      | (untyped v, ?log: bool) -> nil
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [any, nil] v               Default: #value.
+  #
+  def valid?: (?untyped v) -> bool
+end

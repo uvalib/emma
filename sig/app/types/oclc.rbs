@@ -1,0 +1,130 @@
+# OCN (OCLC Control Number) identifier.
+#
+# @see https://www.oclc.org/developer/news/2012/oclc-control-number-expansion-in-2013.en.html
+#
+class Oclc < PublicationIdentifier
+  PREFIX: String
+
+  TYPE: Symbol
+
+  module Methods
+    include PublicationIdentifier::Methods
+
+    # The minimum/maximum number of digits associated with each expected OCN
+    # prefix.
+    #
+    # @type [Hash{Symbol=>Array<Integer,nil>}]
+    #
+    OCLC_FORMAT: Hash[Symbol,Array[Integer|nil]]
+
+    # A valid OCN has a number of digits in this range.
+    #
+    # @type [Range]
+    #
+    OCLC_DIGITS: Range[Integer]
+
+    # If a value has a number of digits within this range it could be either a
+    # valid OCLC or intended as an OCLC but with too few or one too many
+    # digits.
+    #
+    # @type [Range]
+    #
+    # === Implementation Notes
+    # The minimum is a heuristic to account for OCLC numbers that were not
+    # left-zero-filled to give the number 8 digits.
+    #
+    CANDIDATE_RANGE: Range[Integer]
+
+    # A pattern matching any of the expected OCN prefixes.
+    #
+    # @type [Regexp]
+    #
+    OCLC_PREFIX: Regexp
+
+    # A pattern matching the form of an OCN identifier.
+    #
+    # @type [Regexp]
+    #
+    OCLC_IDENTIFIER: Regexp
+
+    # A pattern matching the form of a (possibly invalid) OCN identifier.
+    #
+    # @type [Regexp]
+    #
+    OCLC_CANDIDATE: Regexp
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [any, nil] v
+    #
+    def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [any, nil] v
+    #
+    # @return [String]
+    #
+    def normalize: (untyped v) -> String
+
+    # Indicate whether the given value appears to include an OCN.
+    #
+    # @param [any, nil] v
+    #
+    # === Usage Notes
+    # If *v* matches #OCLC_PREFIX then the method returns *true* even if the
+    # actual number is invalid; the caller is expected to differentiate between
+    # valid and invalid cases and handle each appropriately.  The one exception
+    # is if the prefix is "on" -- here the remainder must be a valid OCLC
+    # number (otherwise words like "one" are interpreted as "oclc:e").
+    #
+    def candidate?: (untyped v) -> bool
+
+    # Extract the base identifier of a possible OCN.
+    #
+    # @param [any, nil] v
+    #
+    # @return [String, nil]
+    #
+    def identifier: (untyped v) -> (String | nil)
+
+    # Strip the characteristic prefix of the including class.
+    #
+    # @param [any, nil] v
+    #
+    # @return [String]
+    #
+    def remove_prefix: (untyped v) -> String
+
+    # Indicate whether the value is a valid OCN.
+    #
+    # @param [any, nil] v
+    #
+    def oclc?: (untyped v) -> bool
+
+    # If the value is an OCN return it in a normalized form or *nil* otherwise.
+    #
+    # If the string has a prefix then the number of included digits must match
+    # the number specified by the prefix.  If the string is only digits then it
+    # will be zero-filled on the left to make a valid OCN.
+    #
+    # @param [any, nil] v
+    # @param [Boolean]  log
+    #
+    # @return [String, nil]
+    #
+    def to_oclc: (untyped v, ?log: bool) -> (String | nil)
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [any, nil] v               Default: #value.
+  #
+  def valid?: (?untyped v) -> bool
+end

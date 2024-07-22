@@ -70,7 +70,7 @@ module AwsConcern
     values   = params_values(prm, *REPOSITORY_PARAMS).presence
     values ||= default && Array.wrap(default).compact.presence
     if values.nil? || values.include?('*')
-      Api::Common::S3_QUEUE_REPOSITORY.excluding(:ace).sort << emma
+      EmmaRepository.s3_queue.excluding(:ace).sort << emma
     else
       values.map! do |v|
         case v.to_s.downcase

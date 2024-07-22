@@ -1,0 +1,33 @@
+# ISO 8601 day.
+#
+class IsoDay < IsoDate
+  module Methods
+    include IsoDate::Methods
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [any, nil] v
+    #
+    def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [any, nil] v             String, Date, Time, IsoDate
+    #
+    # @return [String, nil]
+    #
+    def normalize: (untyped v) -> (String | nil)
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [any, nil] v               Default: #value.
+  #
+  def valid?: (?untyped v) -> bool
+end

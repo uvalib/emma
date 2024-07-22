@@ -1,0 +1,126 @@
+# ISSN identifier.
+#
+class Issn < PublicationIdentifier
+  PREFIX: String
+
+  TYPE: Symbol
+
+  module Methods
+    include PublicationIdentifier::Methods
+
+    # A valid ISSN has this number of digits ([0-9X]).
+    #
+    # @type [Integer]
+    #
+    ISSN_DIGITS: Integer
+
+    # If a value has a number of digits within this range it could be either a
+    # valid ISSN or intended as an ISSN but with one too few or one too many
+    # digits.
+    #
+    # @type [Range]
+    #
+    CANDIDATE_RANGE: Range[Integer]
+
+    # A pattern matching any of the expected ISSN prefixes.
+    #
+    # @type [Regexp]
+    #
+    ISSN_PREFIX: Regexp
+
+    # Pattern fragment for a valid separator between groups of ISSN digits.
+    #
+    # @type [String]
+    #
+    SEPARATOR: String
+
+    # A pattern matching the form of an ISSN identifier.
+    #
+    # @type [Regexp]
+    #
+    ISSN_IDENTIFIER: Regexp
+
+    # A pattern matching the form of a (possibly invalid) ISSN identifier.
+    #
+    # @type [Regexp]
+    #
+    ISSN_CANDIDATE: Regexp
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [any, nil] v
+    #
+    def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [any, nil] v
+    #
+    # @return [String]
+    #
+    def normalize: (untyped v) -> String
+
+    # Indicate whether the given value appears to include an ISSN.
+    #
+    # @param [any, nil] v
+    #
+    def candidate?: (untyped v) -> bool
+
+    # Extract the base identifier of a possible ISSN.
+    #
+    # @param [any, nil] v
+    #
+    # @return [String, nil]
+    #
+    def identifier: (untyped v) -> (String | nil)
+
+    # Strip the characteristic prefix of the including class.
+    #
+    # @param [any, nil] v
+    #
+    # @return [String]
+    #
+    def remove_prefix: (untyped v) -> String
+
+    # Indicate whether the value is a valid ISSN.
+    #
+    # @param [any, nil] v
+    #
+    def issn?: (untyped v) -> bool
+
+    # If the value is an ISSN return it in a normalized form or *nil* otherwise
+    #
+    # @param [any, nil] v
+    # @param [Boolean]  log
+    # @param [Boolean]  validate      If *true*, return *nil* if the checksum
+    #                                   provided in *v* is invalid.
+    #
+    # @return [String, nil]
+    #
+    def to_issn
+      : (String  v, ?log: bool, ?validate: bool) -> (String | nil)
+      | (untyped v, ?log: bool, ?validate: bool) -> nil
+
+    # Calculate the ISSN checksum for the supplied array of digits.
+    #
+    # @param [String, Array<String,Integer>] digits
+    #
+    # @return [String]                  Single-character decimal digit or 'X'.
+    #
+    # @see https://www.issn.org/understanding-the-issn/assignment-rules/issn-manual/#2-1-construction-of-issn
+    #
+    def checksum: ((String|Array[String|Integer]) digits) -> String
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [any, nil] v               Default: #value.
+  #
+  def valid?: (?untyped v) -> bool
+end

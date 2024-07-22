@@ -1,0 +1,199 @@
+Boolean: Class
+
+# Base class for custom scalar types.
+#
+class ScalarType
+  include Comparable
+
+  include Emma::Common
+
+  include Emma::Constants
+
+  include Emma::TypeMethods
+
+  module Methods
+    include Emma::Common
+
+    include Emma::Constants
+
+    # Default value for items of this type.
+    #
+    # @return [String]
+    #
+    def default: () -> String
+
+    # Indicate whether *v* matches the default value.
+    #
+    # @param [any, nil] v
+    #
+    def default?: (untyped v) -> bool
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [any, nil] v
+    #
+    def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [any, nil] v
+    #
+    # @return [String]
+    #
+    def normalize: (untyped v) -> String
+
+    # Resolve an item into its value.
+    #
+    # @param [any, nil] v
+    #
+    # @return [any, nil]
+    #
+    def clean: (untyped v) -> untyped
+
+    # Type-cast an object to an instance of this type.
+    #
+    # @param [any, nil] v             Value to use or transform.
+    # @param [Hash]     opt           Options passed to #create.
+    #
+    # @return [superclass, nil]
+    #
+    def cast: (untyped v, **untyped opt) -> (self | nil)
+
+    # Create a new instance of this type.
+    #
+    # @param [any, nil] v             Value to use or transform.
+    # @param [Hash]     opt           Options passed to #initialize.
+    #
+    # @return [superclass, nil]
+    #
+    def create: (untyped v, **untyped opt) -> (self | nil)
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # The value wrapped by this instance.
+  #
+  # @return [String, nil]
+  #
+  attr_reader value: String | nil
+
+  # Initialize a new instance.
+  #
+  # @param [any, nil] v               Optional initial value.
+  # @param [Hash]     opt             Options passed to #set.
+  #
+  def initialize: (?untyped v, **untyped opt) -> void
+
+  # Assign a new value to the instance.
+  #
+  # @param [any, nil] v
+  #
+  # @return [String, nil]
+  #
+  def value=: (untyped v) -> (String | nil)
+
+  @value: untyped
+
+  # Assign a new value to the instance.
+  #
+  # @param [any, nil] v
+  # @param [Boolean]  invalid         If *true* allow invalid value.
+  # @param [Boolean]  allow_nil       If *false* use #default if necessary.
+  # @param [Boolean]  warn            If *true* log invalid.
+  #
+  # @return [String, nil]
+  #
+  def set
+    : (untyped v, ?invalid: bool,  allow_nil: false, ?warn: bool, **untyped _ignored) -> String
+    | (untyped v, ?invalid: bool, ?allow_nil: bool,  ?warn: bool, **untyped _ignored) -> (String | nil)
+
+  # Indicate whether the instance is valid, or indicate whether *v* would be a
+  # valid value.
+  #
+  # @param [any, nil] v
+  #
+  def valid?: (?untyped v) -> bool
+
+  # Transform value into a valid form.
+  #
+  # @param [any, nil] v
+  #
+  # @return [String]
+  #
+  def normalize: (?untyped v) -> String
+
+  # Return the string representation of the instance value.
+  #
+  # @return [String]
+  #
+  def to_s: () -> String
+
+  # Return the inspection of the instance value.
+  #
+  # @return [String]
+  #
+  def inspect: () -> String
+
+  # Indicate whether the instance has a blank value.
+  #
+  def blank?: () -> bool
+
+  # Value needed to make instances comparable.
+  #
+  # @return [Integer]
+  #
+  def hash: () -> Integer
+
+  # Value needed to make instances comparable.
+  #
+  # @param [any, nil] other
+  #
+  def eql?: (untyped other) -> bool
+
+  # Return the value as represented within JSON.
+  #
+  # @return [String]
+  #
+  def to_json: () -> String
+
+  # Return the value as represented within JSON.
+  #
+  # @return [String]
+  #
+  def as_json: () -> String
+
+  # Comparison operator required by the Comparable mixin.
+  #
+  # @param [any, nil] other
+  #
+  # @return [Integer]   -1 if self is later, 1 if self is earlier
+  #
+  def <=>: (untyped other) -> (-1 | 0 | +1)
+
+  # The natural language presentation for the current enumeration value.
+  #
+  # @return [String]
+  #
+  def label: () -> String
+
+  # Create a serializer class associated with the given *base*.
+  #
+  # @param [Class] base
+  #
+  # @return [void]
+  #
+  def self.define_serializer: (?Class base) -> void
+
+  # Create a serializer class associated with the given *base* and arrange for
+  # any subclasses to have their own serializers.
+  #
+  # @param [Class] base
+  #
+  # @return [void]
+  #
+  def self.generate_serializer: (?Class base) -> void
+end

@@ -1,0 +1,10 @@
+# Role capabilities.
+#
+# A "role capability" describes a user-level ability which implies a set of
+# lower-level functionalities (e.g. CRUD on a particular database table).
+#
+# @see "en.emma.type.ability.RoleCapability"
+# @see Ability
+#
+class RoleCapability < EnumType
+end

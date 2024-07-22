@@ -1,0 +1,246 @@
+# A generic "standard identifier" for a published work, as well as the base
+# class for specific identifier types.
+#
+# === API description
+# The lowercase scheme and identifier for a publication.  For example,
+# isbn:97800110001. Only alphanumeric characters are accepted. No spaces or
+# other symbols are accepted. Dashes will be stripped from the stored
+# identifier. Accepted schemes are ISBN, ISSN, LCCN, UPC, OCLC, and DOI.
+#
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/PublicationIdentifier  JSON schema specification
+#
+class PublicationIdentifier < ScalarType
+  module Methods
+    include ScalarType::Methods
+
+    # The subclass of PublicationIdentifier.
+    #
+    # @return [Class<PublicationIdentifier>]
+    #
+    def identifier_subclass: () -> Class
+
+    # class_type
+    #
+    # @return [Symbol]
+    #
+    def class_type: () -> Symbol
+
+    # class_prefix
+    #
+    # @return [String]
+    #
+    def class_prefix: () -> String
+
+    # The name of the represented identifier type.
+    #
+    # @param [any, nil] v
+    #
+    # @return [Symbol]
+    #
+    def type: (?untyped v) -> Symbol
+
+    # The identifier type portion of the value.
+    #
+    # @param [any, nil] v
+    #
+    # @return [String]
+    #
+    def prefix: (?untyped v) -> String
+
+    # The identifier number portion of the value.
+    #
+    # @param [any, nil] v
+    #
+    # @return [String]
+    #
+    def number: (untyped v) -> String
+
+    # Split a value into a type prefix and a number.
+    #
+    # @param [any, nil] v
+    #
+    # @return [Array(String, String)]
+    #
+    def parts: (untyped v) -> [String, String]
+
+    # Indicate whether *v* would be a valid value for an item of this type.
+    #
+    # @param [any, nil] v
+    #
+    def valid?: (untyped v) -> bool
+
+    # Transform *v* into a valid form.
+    #
+    # @param [any, nil] v
+    #
+    # @return [String]
+    #
+    def normalize: (untyped v) -> String
+
+    # Type-cast a value to a PublicationIdentifier.
+    #
+    # @param [any, nil] v             Value to use or transform.
+    # @param [Boolean]  invalid       If *true* allow invalid value.
+    #
+    # @return [PublicationIdentifier] Possibly invalid identifier.
+    # @return [nil]                   If *v* is not any kind of identifier.
+    #
+    def cast
+      : (untyped v,  invalid: true,  **untyped _ignored) -> PublicationIdentifier
+      | (untyped v, ?invalid: false, **untyped _ignored) -> (PublicationIdentifier | nil)
+
+    # Create a new instance.
+    #
+    # @param [any, nil]       v       Identifier number.
+    # @param [Symbol, String] type    Determined from *v* if missing.
+    #
+    # @return [PublicationIdentifier] Possibly invalid identifier.
+    # @return [nil]                   If *v* is not any kind of identifier.
+    #
+    def create
+      : (String  v, ?(String|Symbol|nil) `type`, **untyped _ignored) -> (PublicationIdentifier | nil)
+      | (untyped v, ?(String|Symbol|nil) `type`, **untyped _ignored) -> nil
+
+    # Indicate whether a value could be used as a PublicationIdentifier.
+    #
+    # @param [any, nil] v
+    #
+    def candidate?: (untyped v) -> bool
+
+    # Extract the base identifier of a possible PublicationIdentifier.
+    #
+    # @param [any, nil] v
+    #
+    # @return [String, nil]
+    #
+    def identifier: (untyped v) -> (String | nil)
+
+    # Strip the characteristic prefix of the including class.
+    #
+    # @param [any, nil] v
+    #
+    # @return [String]
+    #
+    def remove_prefix: (untyped v) -> String
+
+    # Indicate whether the given value has the characteristic prefix.
+    #
+    # @param [any, nil] v
+    #
+    def prefix?: (untyped v) -> bool
+
+    private
+
+    def self.included: (Module base) -> void
+  end
+
+  include Methods
+
+  # The identifier number portion of the value.
+  #
+  # @param [any, nil] v               Default: #value.
+  #
+  # @return [String, nil]
+  #
+  def number: (?untyped v) -> (String | nil)
+
+  # Split a value into a type prefix and a number.
+  #
+  # @param [any, nil] v               Default: #value.
+  #
+  # @return [Array(String, String)]
+  #
+  def parts: (?untyped v) -> [String, String]
+
+  # Indicate whether the instance is valid.
+  #
+  # @param [any, nil] v               Default: #value.
+  #
+  def valid?: (?untyped v) -> bool
+
+  # Assign a new value to the instance, allowing for the possibility of an
+  # invalid identifier value.
+  #
+  # If *v* has the wrong kind of prefix then the result will be blank (and
+  # therefore invalid).
+  #
+  # @param [any, nil] v
+  #
+  # @return [String]
+  #
+  def set: (untyped v, **untyped _ignored) -> String
+
+  # Return the string representation of the instance value.
+  #
+  # @return [String]
+  #
+  def to_s: () -> String
+
+  # Identifier subclasses.
+  #
+  # @return [Array<Class<PublicationIdentifier>>]
+  #
+  # == Implementation Notes
+  # This value is `PublicationIdentifier.subclasses` but ordered to facilitate
+  # PublicationIdentifier::Methods#create.
+  #
+  def self.identifier_classes: () -> Array[Class]
+
+  self.@identifier_classes: Array[Class]
+
+  # Identifier type names.
+  #
+  # @return [Array<Symbol>]
+  #
+  def self.identifier_types: () -> symArray
+
+  self.@identifier_types: symArray
+
+  # Table of identifier subclasses.
+  #
+  # @return [Hash{Symbol=>Class<PublicationIdentifier>}]
+  #
+  def self.subclass_map: () -> Hash[Symbol,Class]
+
+  self.@subclass_map: Hash[Symbol,Class]
+
+  # Retrieve the matching identifier subclass.
+  #
+  # @param [Symbol, String, Class<PublicationIdentifier>, nil] type
+  #
+  # @return [Class<PublicationIdentifier>, nil]
+  #
+  def self.subclass: (?(Symbol|String|Class|nil) `type`) -> (Class | nil)
+
+  # Create an array of identifier candidate strings.
+  #
+  # @param [String, PublicationIdentifier, Array, nil] value
+  #
+  # @return [Array<String>]
+  #
+  def self.split: ((String | PublicationIdentifier | nil | Array[String|PublicationIdentifier|nil]) value) -> strArray
+
+  # Create an array of identifier instances from candidate string(s).
+  #
+  # @param [String, PublicationIdentifier, Array, nil] value
+  # @param [Boolean]                                   invalid
+  #
+  # @return [Array<PublicationIdentifier>]
+  # @return [Array<PublicationIdentifier,nil>]          If *invalid* is *true*.
+  #
+  def self.objects
+    : ((lookupItems|lookupItem|nil) value,  invalid: true) -> Array[PublicationIdentifier|nil]
+    | ((lookupItems|lookupItem|nil) value, ?invalid: bool) -> lookupRequestItems
+
+  # Create a table of identifier instances from candidate string(s).
+  #
+  # @param [String, PublicationIdentifier, Array, nil] value
+  # @param [Boolean]                                   invalid
+  #
+  # @return [Hash{String=>PublicationIdentifier}]
+  # @return [Hash{String=>PublicationIdentifier,nil}]   If *invalid* is *true*.
+  #
+  def self.object_map
+    : ((lookupItems|lookupItem|nil) value,  invalid: true) -> Hash[String,(PublicationIdentifier|nil)]
+    | ((lookupItems|lookupItem|nil) value, ?invalid: bool) -> Hash[String,PublicationIdentifier]
+end

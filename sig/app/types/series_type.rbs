@@ -1,0 +1,6 @@
+# FRAME metadata - SeriesType
+#
+# @see "en.emma.type.search.SeriesType"
+#
+class SeriesType < EnumType
+end

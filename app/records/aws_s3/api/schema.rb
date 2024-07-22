@@ -27,24 +27,6 @@ module AwsS3::Api::Schema
     'AwsS3'
   end
 
-  # A table of schema property enumeration types mapped to literals which are
-  # their default values.
-  #
-  # @return [Hash{Symbol=>String}]
-  #
-  def enumeration_defaults
-    @enumeration_defaults ||= Search::ENUMERATION_DEFAULTS # TODO: ???
-  end
-
-  # The enumeration types that may be given as the second argument to
-  # #attribute, #has_one, or #has_many definitions.
-  #
-  # @return [Array<Symbol>]
-  #
-  def enumeration_types
-    @enumeration_types ||= Search::ENUMERATION_TYPES # TODO: ???
-  end
-
 end
 
 __loading_end(__FILE__)

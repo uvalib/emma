@@ -1,14 +1,16 @@
-# config/locales/types/ability.en.yml
+# config/locales/type/ability.en.yml
 #
 # Data type enumerations for roles.
+#
+# @see Ability::Role
 
 en:
 
   emma:
 
-    role:
+    type:
 
-      type:
+      ability:
 
         RolePrototype:
 
@@ -79,27 +81,34 @@ en:
         RoleCapability:
 
           # Description implicitly begins with the phrase "The ability to...".
+          # Prototype indicates the lowest supporting role prototype.
 
           searching:
             label:        'Searching'
             description:  'get search results from the EMMA Federated Index'
+            prototype:    guest
 
           submitting:
             label:        'Submitting'
             description:  'create/edit/delete EMMA submissions'
+            prototype:    staff
 
           downloading:
             label:        'Downloading'
             description:  'create/edit/delete EMMA submissions'
+            prototype:    member
 
           managing:
             label:        'Managing'
             description:  'modify EMMA member organizations and their users'
+            prototype:    manager
 
           administering:
             label:        'Administering'
             description:  'create/edit/delete all data records'
+            prototype:    administrator
 
           developing:
             label:        'Developing'
             description:  'create/edit/delete all data records'
+            prototype:    developer

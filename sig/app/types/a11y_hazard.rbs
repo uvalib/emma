@@ -1,0 +1,11 @@
+# API schema - SchemaOrgFields - AccessibilityHazard
+#
+# "Accessibility hazards of this instance derived from schema.org"
+#
+# @see "en.emma.type.search.A11yHazard"
+# @see https://schema.org/accessibilityHazard
+# @see https://www.w3.org/community/reports/a11y-discov-vocab/CG-FINAL-vocabulary-20230718/#accessibilityHazard                                 W3C WebSchemas Accessibility Terms
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/SchemaOrgFields/s_accessibilityHazard  JSON schema specification
+#
+class A11yHazard < EnumType
+end

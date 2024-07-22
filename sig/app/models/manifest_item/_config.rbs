@@ -12,7 +12,7 @@ module ManifestItem::Config
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  MANIFEST_ITEM_TYPES: Hash[Symbol,symHash]
+  TYPE_CONFIGURATION: Hash[Symbol,symHash]
 
   # Values for each status column which indicate an unblocked status.
   #

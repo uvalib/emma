@@ -1,0 +1,7 @@
+# EMMA Unified Search API - SearchSort
+#
+# @see "en.emma.type.search.SearchSort"
+# @see https://api.swaggerhub.com/apis/bus/emma-federated-search-api/0.0.5#/paths/search/get/parameters[name=sort]  JSON API specification
+#
+class SearchSort < EnumType
+end

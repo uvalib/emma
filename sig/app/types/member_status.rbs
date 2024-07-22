@@ -1,0 +1,7 @@
+# A value for an account or organization which indicates the state of that
+# entity with respect to EMMA membership standing.
+#
+# @see "en.emma.type.account.MemberStatus"
+#
+class MemberStatus < EnumType
+end

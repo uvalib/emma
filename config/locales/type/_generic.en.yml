@@ -1,0 +1,105 @@
+# config/locales/type/_generic.en.yml
+#
+# Generic data types.
+#
+# @see EnumType::GENERIC_TYPES
+
+en:
+
+  emma:
+
+    type:
+
+      generic:
+
+        TrueFalse:
+          'false':      'False'
+          'true':       'True'
+
+        # These are the language choices presented in the book submission forms
+        # on catalog.bookshare.org.  Note that some of these are actually only
+        # defined in ISO 639-3; the rest can also be found in ISO 639-2,
+        # although Bookshare only accepts the "alternate" codes in some cases
+        # (as noted below).
+        #
+        # The '_primary' array lists the codes of the languages that should be
+        # at the head of a list of language selection choices.
+
+        language:
+          _primary:     [eng, spa]
+          afr:          'Afrikaans'
+          amh:          'Amharic'
+          anp:          'Angika'
+          ara:          'Arabic'
+          arm:          'Armenian'
+          asm:          'Assamese'
+          aus:          'Australian Languages'
+          baq:          'Basque'
+          ben:          'Bengali'
+          tkb:          'Buksa Tharu'           # NOTE: ISO 639-3
+          bul:          'Bulgarian'
+          yue:          'Cantonese'             # NOTE: ISO 639-3
+          cat:          'Catalan'
+          ccp:          'Chakma'                # NOTE: ISO 639-3
+          chi:          'Chinese'
+          ctg:          'Chittagonian'          # NOTE: ISO 639-3
+          the:          'Chitwania Tharu'       # NOTE: ISO 639-3
+          hrv:          'Croatian'
+          ces:          'Czech'                 # NOTE: not 'cze'
+          thl:          'Dangaura Tharu'        # NOTE: ISO 639-3
+          dan:          'Danish'
+          dut:          'Dutch'
+          eng:          'English'
+          fil:          'Filipino'
+          fin:          'Finnish'
+          fre:          'French'
+          ger:          'German'
+          ell:          'Greek'                 # NOTE: not 'gre'
+          guj:          'Gujarati'
+          heb:          'Hebrew'
+          hin:          'Hindi'
+          hun:          'Hungarian'
+          ind:          'Indonesian'
+          ita:          'Italian'
+          jpn:          'Japanese'
+          jav:          'Javanese'
+          kan:          'Kannada'
+          tkt:          'Kathoriya Tharu'       # NOTE: ISO 639-3
+          thq:          'Kochila Tharu'         # NOTE: ISO 639-3
+          kok:          'Konkani'
+          kor:          'Korean'
+          lat:          'Latin'
+          mal:          'Malayalam'
+          cmn:          'Mandarin'              # NOTE: ISO 639-3
+          mri:          'Maori'                 # NOTE: not 'mao'
+          mar:          'Marathi'
+          new:          'Nepal Bhasa'
+          nep:          'Nepali'
+          nor:          'Norwegian'
+          orm:          'Oromo'
+          pol:          'Polish'
+          por:          'Portuguese'
+          pan:          'Punjabi, Eastern'
+          pnb:          'Punjabi, Western'
+          thr:          'Rana Tharu'            # NOTE: ISO 639-3
+          rkt:          'Rangpuri'              # NOTE: ISO 639-3
+          ron:          'Romanian'
+          rus:          'Russian'
+          skr:          'Saraiki'               # NOTE: ISO 639-3
+          srp:          'Serbian'
+          sin:          'Sinhala'
+          slv:          'Slovenian'
+          soi:          'Sonha'                 # NOTE: ISO 639-3
+          spa:          'Spanish'
+          swa:          'Swahili'
+          swe:          'Swedish'
+          syl:          'Sylheti'               # NOTE: ISO 639-3
+          tgl:          'Tagalog'
+          tam:          'Tamil'
+          tel:          'Telugu'
+          tur:          'Turkish'
+          urd:          'Urdu'
+          vie:          'Vietnamese'
+          wel:          'Welsh'
+          yid:          'Yiddish'
+          zul:          'Zulu'

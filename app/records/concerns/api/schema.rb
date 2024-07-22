@@ -144,7 +144,10 @@ module Api::Schema
   # @return [Hash{Symbol=>String}]
   #
   def enumeration_defaults
-    must_be_overridden
+    @enumeration_defaults ||=
+      EnumType::SEARCH_TYPES.transform_values { |cfg|
+        cfg[:_default] || ''
+      }.deep_freeze
   end
 
   # The enumeration types that may be given as the second argument to
@@ -153,7 +156,7 @@ module Api::Schema
   # @return [Array<Symbol>]
   #
   def enumeration_types
-    must_be_overridden
+    @enumeration_types ||= EnumType::SEARCH_TYPES.keys.freeze
   end
 
   # enumeration_default

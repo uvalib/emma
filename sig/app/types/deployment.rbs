@@ -1,0 +1,6 @@
+# Application deployment type.
+#
+# @see "en.emma.application.deployment"
+#
+class Deployment < EnumType
+end

@@ -13,42 +13,35 @@ module Ability::Role
 
   public
 
-  # @private
-  ROLE_TYPE_CONFIGURATION = config_section('emma.role.type').deep_freeze
-
   # Role prototypes.
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  ROLE_CONFIG = ROLE_TYPE_CONFIGURATION[:RolePrototype]
+  PROTOTYPE_CONFIG = EnumType::CONFIGURATION.dig(:ability, :RolePrototype)
 
   # Role capabilities.
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  CAPABILITY_CONFIG = ROLE_TYPE_CONFIGURATION[:RoleCapability]
+  CAPABILITY_CONFIG = EnumType::CONFIGURATION.dig(:ability, :RoleCapability)
 
   # Role capabilities for each role prototype.
   #
   # @type [Hash{Symbol=>Array<Symbol>}]
   #
   CAPABILITIES =
-    ROLE_CONFIG.transform_values do |entry|
+    PROTOTYPE_CONFIG.transform_values { |entry|
       Array.wrap(entry[:capability]).compact_blank.map!(&:to_sym)
-    end
+    }.deep_freeze
 
   # A mapping of role capability to the lowest role prototype supporting it.
   #
   # @type [Hash{Symbol,Symbol}]
   #
-  CAPABILITY_ROLE = {
-    developing:     :developer,
-    administering:  :administrator,
-    managing:       :manager,
-    downloading:    :member,
-    submitting:     :staff,
-    searching:      :guest,
-  }.freeze
+  CAPABILITY_ROLE =
+    CAPABILITY_CONFIG.transform_values { |entry|
+      entry[:prototype]&.to_sym || :guest
+    }.deep_freeze
 
   if sanity_check?
     CAPABILITIES.map { |role, capabilities|
@@ -64,21 +57,12 @@ module Ability::Role
         raise 'CAPABILITY_ROLE invalid keys: %s' % invalid.join(', ')
       end
     end
-    (CAPABILITY_ROLE.values - ROLE_CONFIG.keys).tap do |invalid|
+    (CAPABILITY_ROLE.values - PROTOTYPE_CONFIG.keys).tap do |invalid|
       if invalid.present?
         raise 'CAPABILITY_ROLE invalid values: %s' % invalid.join(', ')
       end
     end
   end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  EnumType.add_enumerations(
-    RolePrototype:  ROLE_CONFIG.transform_values { |v| v[:label] },
-    RoleCapability: CAPABILITY_CONFIG.transform_values { |v| v[:label] },
-  )
 
   # ===========================================================================
   # :section:
@@ -92,18 +76,5 @@ module Ability::Role
   end
 
 end
-
-# =============================================================================
-# Generate top-level classes associated with each enumeration entry so that
-# they can be referenced without prepending a namespace.
-# =============================================================================
-
-public
-
-# @see Ability#ROLE_CONFIG
-class RolePrototype < EnumType; end
-
-# @see Ability#CAPABILITY_CONFIG
-class RoleCapability < EnumType; end
 
 __loading_end(__FILE__)

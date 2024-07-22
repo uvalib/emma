@@ -36,9 +36,9 @@ module AwsS3Service::Properties
   # @type [Hash{Symbol=>Hash{Symbol=>String}}]
   #
   S3_BUCKET =
-    Api::Common::REPOSITORY_ENTRY.transform_values { |property|
+    EmmaRepository::ENTRY.transform_values { |property|
 =begin # TODO: restore when S3 buckets for BS and HT have been removed
-    Api::Common::REPOSITORY.transform_values { |property|
+    EmmaRepository::ACTIVE.transform_values { |property|
 =end
       next if false?(property[:s3])
       key  = property[:symbol]

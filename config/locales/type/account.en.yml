@@ -1,14 +1,16 @@
-# config/locales/types/account.en.yml
+# config/locales/type/account.en.yml
 #
 # Data type enumerations for user accounts.
+#
+# @see EnumType::ACCOUNT_TYPES
 
 en:
 
   emma:
 
-    account:
+    type:
 
-      type:
+      account:
 
         MemberStatus:
 

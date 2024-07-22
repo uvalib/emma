@@ -1,0 +1,7 @@
+# API schema - RemediationFields - RemediatedAspects
+#
+# @see "en.emma.type.search.RemediatedAspects"
+# @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/RemediationFields/rem_remediatedAspects  JSON schema specification
+#
+class RemediatedAspects < EnumType
+end

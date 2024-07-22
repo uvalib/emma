@@ -1,14 +1,16 @@
-# config/locales/types/manifest_item.en.yml
+# config/locales/type/manifest_item.en.yml
 #
 # Data type enumerations for ManifestItems.
+#
+# @see ManifestItem::TYPE_CONFIGURATION
 
 en:
 
   emma:
 
-    manifest_item:
+    type:
 
-      type:
+      manifest_item:
 
         # =====================================================================
         # Status values

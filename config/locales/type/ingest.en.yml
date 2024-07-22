@@ -1,4 +1,4 @@
-# config/locales/types/ingest.en.yml
+# config/locales/type/ingest.en.yml
 #
 # Data type enumerations for the EMMA Unified Ingest API.
 #
@@ -8,8 +8,8 @@ en:
 
   emma:
 
-    ingest:
+    type:
 
-      type:
+      ingest:
 
-        # @see file:config/locales/types/search.en.yml
+        # @see file:config/locales/type/search.en.yml

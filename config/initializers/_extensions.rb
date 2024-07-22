@@ -8,8 +8,11 @@
 
 Rails.logger.progname = '____' if Rails.logger && Rails.logger.progname.blank?
 
-# === Loader debugging
-Rails.autoloaders.main.log! if DEBUG_ZEITWERK
+# === Loader setup
+Rails.autoloaders.each do |autoloader|
+  autoloader.inflector.inflect('a11y_api' => 'A11yAPI')
+  autoloader.log! if DEBUG_ZEITWERK
+end
 
 # === Threads debugging
 Concurrent.use_simple_logger(Logger::DEBUG) if DEBUG_THREADS
