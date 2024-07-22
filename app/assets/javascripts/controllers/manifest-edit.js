@@ -14,7 +14,7 @@ import { InlinePopup }                     from '../shared/inline-popup';
 import { keyCombo }                        from '../shared/keyboard';
 import { LookupModal }                     from '../shared/lookup-modal';
 import { LookupRequest }                   from '../shared/lookup-request';
-import { ModalHideHooks, ModalShowHooks }  from '../shared/modal_hooks';
+import { ModalHideHooks, ModalShowHooks }  from '../shared/modal-hooks';
 import { randomizeName }                   from '../shared/random';
 import { pluralize }                       from '../shared/strings';
 import { timestamp }                       from '../shared/time';

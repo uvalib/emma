@@ -1,4 +1,4 @@
-// app/assets/javascripts/shared/modal_hooks.js
+// app/assets/javascripts/shared/modal-hooks.js
 
 
 import { AppDebug }      from '../application/debug';
@@ -10,7 +10,7 @@ import { isPresent }     from './definitions';
 const MODULE = 'ModalHooks';
 const DEBUG  = false;
 
-AppDebug.file('shared/modal_hooks', MODULE, DEBUG);
+AppDebug.file('shared/modal-hooks', MODULE, DEBUG);
 
 // ============================================================================
 // Class ModalHooks

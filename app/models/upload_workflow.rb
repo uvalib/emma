@@ -1768,7 +1768,7 @@ class UploadWorkflow < Workflow::Base
 
   public
 
-  # Return the workflow type which is a key under 'en.emma.workflow'.
+  # Return the workflow type which is a key under "en.emma.workflow".
   #
   # @return [Symbol]
   #

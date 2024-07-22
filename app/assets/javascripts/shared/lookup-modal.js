@@ -17,7 +17,7 @@ import { HTML_BREAK }                     from './html';
 import { renderJson }                     from './json';
 import { LookupRequest }                  from './lookup-request';
 import { ModalDialog }                    from './modal-dialog';
-import { ModalHideHooks, ModalShowHooks } from './modal_hooks';
+import { ModalHideHooks, ModalShowHooks } from './modal-hooks';
 import { randomizeName }                  from './random';
 import { camelCase, capitalize }          from './strings';
 import {

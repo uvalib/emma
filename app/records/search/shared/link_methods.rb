@@ -51,7 +51,7 @@ module Search::Shared::LinkMethods
 
   public
 
-  # Create a URL manufactured from 'en.emma.repository.*.title_path' for the
+  # Create a URL manufactured from "en.emma.repository.*.title_path" for the
   # associated work on the web site of the original repository.
   #
   # @raise [RuntimeError]             If #REPOSITORY entry is invalid.

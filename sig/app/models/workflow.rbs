@@ -652,7 +652,7 @@ class Workflow::Base
   #
   def self.final_state: () -> Symbol
 
-  # Return the workflow type which is a key under 'en.emma.workflow'.
+  # Return the workflow type which is a key under "en.emma.workflow".
   #
   # @return [Symbol]
   #

@@ -10,7 +10,7 @@ import { decodeObject }                   from './decode';
 import { handleEvent }                    from './events';
 import { scrollIntoView }                 from './html';
 import { keyCombo }                       from './keyboard';
-import { ModalHideHooks, ModalShowHooks } from './modal_hooks';
+import { ModalHideHooks, ModalShowHooks } from './modal-hooks';
 import { NavGroup }                       from './nav-group';
 import {
     currentFocusablesIn,

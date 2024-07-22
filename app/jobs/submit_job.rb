@@ -239,8 +239,8 @@ class SubmitJobCallbackJob < ApplicationJob
   # nature of this execution (which allows a single job class to be defined to
   # handle each of these events).
   #
-  # @param {GoodJob::Batch} batch
-  # @param {Hash}           options
+  # @param [GoodJob::Batch] batch
+  # @param [Hash]           options
   #
   # @see GoodJob::BatchRecord#_continue_discard_or_finish
   #
@@ -266,7 +266,7 @@ class SubmitJobCallbackJob < ApplicationJob
   # NOTE: `batch.properties` must include :stream_name (or :stream_id) in
   #   order to direct the ActionCable response to the client.
   #
-  # @param {GoodJob::Batch} batch
+  # @param [GoodJob::Batch] batch
   #
   def on_finish(batch)
     __debug_job('*** BATCH FINISHED - all jobs have finished') do
@@ -294,7 +294,7 @@ class SubmitJobCallbackJob < ApplicationJob
 
   # Invoked if no GoodJob jobs were discarded.
   #
-  # @param {GoodJob::Batch} batch
+  # @param [GoodJob::Batch] batch
   #
   def on_success(batch)
     __debug_job('*** BATCH SUCCESS - all jobs have succeeded') { batch }
@@ -302,7 +302,7 @@ class SubmitJobCallbackJob < ApplicationJob
 
   # Invoked when GoodJob job(s) are discarded.
   #
-  # @param {GoodJob::Batch} batch
+  # @param [GoodJob::Batch] batch
   #
   def on_discard(batch)
     __debug_job('*** BATCH DISCARD - job(s) have been discarded') { batch }

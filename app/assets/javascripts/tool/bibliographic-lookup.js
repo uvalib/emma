@@ -17,7 +17,7 @@ import { LOOKUP_BUTTON, LookupModal }     from '../shared/lookup-modal';
 import { LookupRequest }                  from '../shared/lookup-request';
 import { PANEL }                          from '../shared/modal-base';
 import { ModalDialog }                    from '../shared/modal-dialog';
-import { ModalHideHooks, ModalShowHooks } from '../shared/modal_hooks';
+import { ModalHideHooks, ModalShowHooks } from '../shared/modal-hooks';
 import { dupObject, hasKey, toObject }    from '../shared/objects';
 import { randomizeName }                  from '../shared/random';
 import { camelCase, capitalize }          from '../shared/strings';

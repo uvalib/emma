@@ -3,7 +3,7 @@
 # frozen_string_literal: true
 # warn_indent:           true
 #
-# Copied from $GEM_PATH/gems/activestorage-7.1.0/db/migrate/20170806125915_create_active_storage_tables.rb
+# Copied from $GEM_HOME/gems/activestorage-7.1.0/db/migrate/20170806125915_create_active_storage_tables.rb
 # and adjusted per https://edgeguides.rubyonrails.org/action_text_overview.html
 #
 # NOTE: With Rails 7.1, it became necessary to add this in order to get tests

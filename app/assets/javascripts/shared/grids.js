@@ -713,7 +713,7 @@ export function initializeGridNavigation(grid) {
 /**
  * The function to be called to renumber grid elements and initialize grid
  * cell navigation logic for any new cells.
- * 
+ *
  * This should be called only on a grid which has been previously set up with
  * {@link initializeGridNavigation}.
  *

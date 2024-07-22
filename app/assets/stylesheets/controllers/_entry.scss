@@ -1215,6 +1215,10 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
                 padding-bottom: 0.5rem;
                 border-bottom:  2px solid gray;
 
+                //=============================================================
+                // Columns
+                //=============================================================
+
                 @include grid.column-classes($max-columns, auto);
 
                 // Redefine the generated classes for non-desktop form factors

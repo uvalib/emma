@@ -176,7 +176,7 @@ module ApiService::Properties
   #
   # @type [Hash{Symbol=>String}]
   #
-  # @see file:config/locales/service.en.yml *en.emma.service.*.endpoint*
+  # @see "en.emma.service.*.endpoint"
   #
   def engines
     meth = "#{service_name}.#{__method__}"

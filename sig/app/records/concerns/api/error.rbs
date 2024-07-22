@@ -116,7 +116,7 @@ class Api::Error < ExecError
     # @return [nil]                   If *allow_nil* is set to *true* and no
     #                                   default message is defined.
     #
-    # @see file:config/locales/error.en.yml *en.emma.error.api*
+    # @see "en.emma.error.api"
     #
     def default_message: (?source: Symbol|String|nil, ?type: Symbol|String|nil, ?fallback: String|bool) -> (String | nil)
 

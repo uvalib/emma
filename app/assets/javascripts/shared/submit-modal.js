@@ -14,7 +14,7 @@ import { isEmpty, isPresent }             from './definitions';
 import { htmlDecode }                     from './html';
 import { renderJson }                     from './json';
 import { ModalDialog }                    from './modal-dialog';
-import { ModalHideHooks, ModalShowHooks } from './modal_hooks';
+import { ModalHideHooks, ModalShowHooks } from './modal-hooks';
 import { isObject }                       from './objects';
 import { asString, isString }             from './strings';
 import { SubmitStepResponse }             from './submit-response';

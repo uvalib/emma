@@ -816,7 +816,6 @@ $control-height:         2.25rem;
 
     &.shadow {
 
-        // noinspection CssReplaceWithShorthandSafely
         .search-filter-container {
             @media #{$wide-screen}   { padding: 1.25rem; }
             @media #{$medium-width}  { padding: 0.75rem; }

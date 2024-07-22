@@ -424,6 +424,7 @@ appSetup(MODULE, function() {
             const n     = idx + base_n;
             const $row  = $(row);
             $row.children('td').each((_, cell) => {
+                // noinspection JSUnresolvedReference
                 const cls = cell.className.split(' ').map(c => {
                     switch (true) {
                         case (c === first_cls):    return '';

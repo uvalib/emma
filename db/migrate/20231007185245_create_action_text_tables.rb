@@ -3,7 +3,7 @@
 # frozen_string_literal: true
 # warn_indent:           true
 #
-# Copied from $GEM_PATH/gems/actiontext-7.1.0/db/migrate/20180528164100_create_action_text_tables.rb
+# Copied from $GEM_HOME/gems/actiontext-7.1.0/db/migrate/20180528164100_create_action_text_tables.rb
 # and adjusted per https://edgeguides.rubyonrails.org/action_text_overview.html
 #
 # NOTE: With Rails 7.1, it became necessary to add this in order to get tests

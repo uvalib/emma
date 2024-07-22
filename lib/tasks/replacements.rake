@@ -3,7 +3,7 @@
 # frozen_string_literal: true
 # warn_indent:           true
 #
-# Overrides of $GEM_PATH/gems/railties-*/lib/rails/test_unit/testing.rake task
+# Overrides of $GEM_HOME/gems/railties-*/lib/rails/test_unit/testing.rake task
 # definitions.
 
 %w[all system models controllers].each do |name|

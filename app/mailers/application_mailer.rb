@@ -225,15 +225,15 @@ class ApplicationMailer < ActionMailer::Base
   protected
 
   # Separator which indicates a division between paragraphs for text format.
-  # 
+  #
   # @type [String]
-  # 
+  #
   PARAGRAPH = "\n\n"
 
   # The width of text format lines.
-  # 
+  #
   # @type [Integer]
-  # 
+  #
   WIDTH = 80
 
   # Transform source content into an array of paragraphs.

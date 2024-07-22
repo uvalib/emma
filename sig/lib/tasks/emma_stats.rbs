@@ -1,10 +1,10 @@
 # Replacement for the directories hard-wired into the standard :stats task in
 # order to report on code in "non-standard" directories and to report on SCSS.
 #
-# @type [Hash{String=>String}]
+# @type [Array<(String,String)>]
 #
 # === Implementation Notes
 # Overrides of ::CodeStatistics and ::CodeStatisticsCalculator are required
 # to report on CSS/SCSS/SASS.
 #
-EMMA_STATS_DIRECTORIES: Hash[String,String]
+EMMA_STATS_DIRECTORIES: Array[[String,String]]

@@ -102,7 +102,7 @@ class Enrollment < ApplicationRecord
   protected
 
   # Normalize a value from :org_users, supplying roles if missing.
-  # 
+  #
   # @param [Array<Hash>, Hash, nil] users
   #
   # @return [Array<Hash>]
