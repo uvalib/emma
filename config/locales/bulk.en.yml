@@ -281,7 +281,7 @@ en:
 
       submit:
 
-        buttons:        # @see "en.emma.manifest.remit.*"
+        buttons:        # @see "en.emma.page.manifest.action.remit.*"
           - start
           - stop
           - pause

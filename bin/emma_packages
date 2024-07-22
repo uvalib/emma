@@ -2,7 +2,7 @@
 #
 # emma_packages
 #
-# Generate replacement YAML lines for "en.emma.head" in config/locales/en.yml.
+# Generate replacement YAML lines for "en.emma.page._generic.head".
 #
 # * Prior to running this script, to ensure that the packages are up-to-date:
 #   - Run "yarn outdated" to check for changes.

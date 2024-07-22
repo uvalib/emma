@@ -40,7 +40,7 @@ module Manifest::ItemMethods
   #
   # @return [Integer]
   #
-  # @see "en.emma.manifest.index.display_fields"
+  # @see "en.emma.page.manifest.action.index.display_fields"
   #
   def item_count: (?(Manifest|String|ActiveRecord::Reflection|nil) manifest, **untyped _ignored) -> Integer
 
@@ -51,7 +51,7 @@ module Manifest::ItemMethods
   #
   # @return [Integer]
   #
-  # @see "en.emma.manifest.index.display_fields"
+  # @see "en.emma.page.manifest.action.index.display_fields"
   #
   def saved_item_count: (?(Manifest|String|ActiveRecord::Reflection|nil) manifest, **untyped _ignored) -> Integer
 
@@ -62,7 +62,7 @@ module Manifest::ItemMethods
   #
   # @return [Integer]
   #
-  # @see "en.emma.manifest.index.display_fields"
+  # @see "en.emma.page.manifest.action.index.display_fields"
   #
   def pending_item_count: (?(Manifest|String|ActiveRecord::Reflection|nil) manifest, **untyped _ignored) -> Integer
 

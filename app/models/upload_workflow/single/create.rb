@@ -278,7 +278,7 @@ class UploadWorkflow::Single::Create < UploadWorkflow::Single
     end
 
     # =========================================================================
-    # = Create new entry (en.emma.upload.state_group.create)
+    # = Create new entry (en.emma.page.upload.state_group.create)
     # =========================================================================
 
     state :creating do
@@ -308,7 +308,7 @@ class UploadWorkflow::Single::Create < UploadWorkflow::Single
     end
 
     # =========================================================================
-    # Review sub-sequence (en.emma.upload.state_group.review)
+    # Review sub-sequence (en.emma.page.upload.state_group.review)
     # =========================================================================
 
     state :scheduling do
@@ -354,7 +354,7 @@ class UploadWorkflow::Single::Create < UploadWorkflow::Single
     end
 
     # =========================================================================
-    # Submission sub-sequence (en.emma.upload.state_group.submission)
+    # Submission sub-sequence (en.emma.page.upload.state_group.submission)
     # =========================================================================
 
     state :staging do
@@ -375,7 +375,7 @@ class UploadWorkflow::Single::Create < UploadWorkflow::Single
     end
 
     # =========================================================================
-    # Finalization sub-sequence (en.emma.upload.state_group.finalization)
+    # Finalization sub-sequence (en.emma.page.upload.state_group.finalization)
     # =========================================================================
 
     state :indexing do
@@ -390,7 +390,7 @@ class UploadWorkflow::Single::Create < UploadWorkflow::Single
     end
 
     # =========================================================================
-    # Terminal states (en.emma.upload.state_group.done)
+    # Terminal states (en.emma.page.upload.state_group.done)
     # =========================================================================
 
     state :suspended do
@@ -417,7 +417,7 @@ class UploadWorkflow::Single::Create < UploadWorkflow::Single
     end
 
     # =========================================================================
-    # Pseudo states (en.emma.upload.state_group.pseudo)
+    # Pseudo states (en.emma.page.upload.state_group.pseudo)
     # =========================================================================
 
     state :resuming

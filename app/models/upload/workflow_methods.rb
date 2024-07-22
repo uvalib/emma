@@ -54,8 +54,7 @@ module Upload::WorkflowMethods
   #
   # @type [Hash{Symbol=>Array<Symbol>}]
   #
-  # @see "emma.workflow"
-  # @see file:config/locales/workflow.en.yml
+  # @see "en.emma.workflow"
   #
   WORKFLOW_GROUP =
     Workflow::Base::CONFIGURATION.map { |group, states|
@@ -113,8 +112,7 @@ module Upload::WorkflowMethods
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see "emma.upload.state_group"
-  # @see file:config/locales/controllers/upload.en.yml
+  # @see "en.emma.page.upload.state_group"
   #
   STATE_GROUP =
     config_page_section(:upload, :state_group).transform_values { |entry|

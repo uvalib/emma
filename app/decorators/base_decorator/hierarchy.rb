@@ -87,7 +87,7 @@ module BaseDecorator::Hierarchy
   #
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
   #
-  # @see *en.emma.search.field_hierarchy*
+  # @see "en.emma.page.search.field_hierarchy"
   #
   def item_lines(hierarchy, opt)
     item_index = [opt[:index]]
@@ -117,7 +117,7 @@ module BaseDecorator::Hierarchy
   #
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
   #
-  # @see "en.emma.search.field_hierarchy.title"
+  # @see "en.emma.page.search.field_hierarchy.title"
   #
   def title_level_lines(main_section, main_index, main_prop, opt)
     file_section_lines(main_section, main_index, main_prop, opt)
@@ -138,7 +138,7 @@ module BaseDecorator::Hierarchy
   #
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
   #
-  # @see "en.emma.search.field_hierarchy.parts"
+  # @see "en.emma.page.search.field_hierarchy.parts"
   #
   def part_level_lines(main_section, main_index, main_prop, opt)
     many_parts = main_section.many?
@@ -179,7 +179,7 @@ module BaseDecorator::Hierarchy
   #
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
   #
-  # @see "en.emma.search.field_hierarchy.parts.*"
+  # @see "en.emma.page.search.field_hierarchy.parts.*"
   #
   def part_section_lines(part, part_index, part_prop, opt)
     skip_opt = { meth: __method__, except: { array: :formats } }
@@ -207,7 +207,7 @@ module BaseDecorator::Hierarchy
   #
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
   #
-  # @see "en.emma.search.field_hierarchy.parts.files"
+  # @see "en.emma.page.search.field_hierarchy.parts.files"
   #
   def part_lines(part_section, part_key, part_index, part_prop, opt)
     opt[:term] = FILE_TERM unless (original_term = opt[:term])
@@ -248,7 +248,7 @@ module BaseDecorator::Hierarchy
   #
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
   #
-  # @see "en.emma.search.field_hierarchy.parts.files"
+  # @see "en.emma.page.search.field_hierarchy.parts.files"
   #
   def format_section_lines(format, format_index, format_prop, opt)
     skip_opt = { meth: __method__, except: { array: :files } }
@@ -298,10 +298,10 @@ module BaseDecorator::Hierarchy
   #
   # @return [Array<Hash>]
   #
-  # @see "en.emma.search.field_hierarchy.title.*"
-  # @see "en.emma.search.field_hierarchy.parts.*"
-  # @see "en.emma.search.field_hierarchy.parts.formats.*"
-  # @see "en.emma.search.field_hierarchy.parts.formats.files.*"
+  # @see "en.emma.page.search.field_hierarchy.title.*"
+  # @see "en.emma.page.search.field_hierarchy.parts.*"
+  # @see "en.emma.page.search.field_hierarchy.parts.formats.*"
+  # @see "en.emma.page.search.field_hierarchy.parts.formats.files.*"
   #
   def file_section_lines(section, section_index, section_prop, opt)
     skip_opt = { meth: __method__, except: { hash: '*' } }
@@ -321,11 +321,11 @@ module BaseDecorator::Hierarchy
   #
   # @return [Array<Hash>]
   #
-  # @see "en.emma.search.field_hierarchy.**.bibliographic"
-  # @see "en.emma.search.field_hierarchy.**.repository"
-  # @see "en.emma.search.field_hierarchy.**.index"
-  # @see "en.emma.search.field_hierarchy.**.remediation"
-  # @see "en.emma.search.field_hierarchy.**.accessibility"
+  # @see "en.emma.page.search.field_hierarchy.**.bibliographic"
+  # @see "en.emma.page.search.field_hierarchy.**.repository"
+  # @see "en.emma.page.search.field_hierarchy.**.index"
+  # @see "en.emma.page.search.field_hierarchy.**.remediation"
+  # @see "en.emma.page.search.field_hierarchy.**.accessibility"
   #
   def field_lines(pairs, field_prop, opt)
     property_pairs(pairs: pairs, **opt).map { |_field, prop|

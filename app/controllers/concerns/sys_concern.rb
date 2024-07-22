@@ -23,6 +23,8 @@ module SysConcern
   #
   # @type [Array<Symbol>]
   #
+  # @see "en.emma.page.sys.action"
+  #
   SYS_PAGES =
     CONTROLLER_CONFIGURATION.dig(:sys, :action).keys.excluding(
       :index, :view

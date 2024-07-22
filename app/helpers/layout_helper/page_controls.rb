@@ -90,7 +90,8 @@ module LayoutHelper::PageControls
   # @return [Array<Hash>>]            Ctrlr/action entries with optional label.
   # @return [nil]                     No authorized actions were found.
   #
-  # @see "en.emma.*.page_controls.actions"
+  # @see "en.emma.page.*.page_controls.actions"
+  # @see "en.emma.page.*.action.page_controls.actions"
   #
   def page_control_actions(ctrlr:, action:)
     cfg_opt = { ctrlr: ctrlr, action: action, mode: false }

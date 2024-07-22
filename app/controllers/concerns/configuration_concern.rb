@@ -19,7 +19,8 @@ module ConfigurationConcern
 
   public
 
-  # The configuration key for the controller for use with "emma.#{config_key}".
+  # The configuration key for the controller for use with "en.emma.page.*",
+  # "en.emma.term.*", etc.
   #
   # @return [Symbol]
   #

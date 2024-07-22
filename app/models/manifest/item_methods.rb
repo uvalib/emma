@@ -90,7 +90,7 @@ module Manifest::ItemMethods
   #
   # @return [Integer]
   #
-  # @see "en.emma.manifest.index.display_fields"
+  # @see "en.emma.page.manifest.action.index.display_fields"
   #
   def item_count(manifest = nil, **)
     related_items_count(manifest, :active)
@@ -102,7 +102,7 @@ module Manifest::ItemMethods
   #
   # @return [Integer]
   #
-  # @see "en.emma.manifest.index.display_fields"
+  # @see "en.emma.page.manifest.action.index.display_fields"
   #
   def saved_item_count(manifest = nil, **)
     related_items_count(manifest, :saved)
@@ -115,7 +115,7 @@ module Manifest::ItemMethods
   #
   # @return [Integer]
   #
-  # @see "en.emma.manifest.index.display_fields"
+  # @see "en.emma.page.manifest.action.index.display_fields"
   #
   def pending_item_count(manifest = nil, **)
     related_items_count(manifest, :pending)

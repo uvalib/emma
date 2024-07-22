@@ -9,6 +9,8 @@ module SysConcern
   #
   # @type [Array<Symbol>]
   #
+  # @see "en.emma.page.sys.action"
+  #
   SYS_PAGES: symArray
 
   private

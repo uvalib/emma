@@ -3,8 +3,8 @@
 # EMMA submission workflows.
 #
 # Note that the groupings of states into phase grouping is *very* similar to
-# entries under "emma.upload.state_group" but here the states are organized
-# specifically to support the purposes of submission workflow.
+# entries under "en.emma.page.upload.state_group" but here the states are
+# organized specifically to support the purposes of submission workflow.
 
 en:
 

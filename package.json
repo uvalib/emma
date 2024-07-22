@@ -34,6 +34,6 @@
     "build:css": "bin/asset_build sass"
   },
   "development-notes": [
-    "@see 'en.emma.head.stylesheets' for CSS files added to page <head>"
+    "@see 'en.emma.page._generic.head.stylesheets' for CSS files added to page <head>"
   ]
 }

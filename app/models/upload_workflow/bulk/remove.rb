@@ -189,7 +189,7 @@ class UploadWorkflow::Bulk::Remove < UploadWorkflow::Bulk
     end
 
     # =========================================================================
-    # = Bulk delete (en.emma.upload.state_group.remove)
+    # = Bulk delete (en.emma.page.upload.state_group.remove)
     # =========================================================================
 
     state :removing do
@@ -203,7 +203,7 @@ class UploadWorkflow::Bulk::Remove < UploadWorkflow::Bulk
     end
 
     # =========================================================================
-    # Submission sub-sequence (en.emma.upload.state_group.submission)
+    # Submission sub-sequence (en.emma.page.upload.state_group.submission)
     # =========================================================================
 
     state :staging do
@@ -222,7 +222,7 @@ class UploadWorkflow::Bulk::Remove < UploadWorkflow::Bulk
     end
 
     # =========================================================================
-    # Finalization sub-sequence (en.emma.upload.state_group.finalization)
+    # Finalization sub-sequence (en.emma.page.upload.state_group.finalization)
     # =========================================================================
 
     state :indexing do
@@ -234,7 +234,7 @@ class UploadWorkflow::Bulk::Remove < UploadWorkflow::Bulk
     end
 
     # =========================================================================
-    # Terminal states (en.emma.upload.state_group.done)
+    # Terminal states (en.emma.page.upload.state_group.done)
     # =========================================================================
 
     state :failed do
@@ -254,7 +254,7 @@ class UploadWorkflow::Bulk::Remove < UploadWorkflow::Bulk
     end
 
     # =========================================================================
-    # Pseudo states (en.emma.upload.state_group.pseudo)
+    # Pseudo states (en.emma.page.upload.state_group.pseudo)
     # =========================================================================
 
     state :resuming

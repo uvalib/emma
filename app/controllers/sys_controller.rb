@@ -107,7 +107,7 @@ class SysController < ApplicationController
   #
   # @type [Array<Symbol>]
   #
-  # @see file:config/locales/controllers/sys.en.yml *en.emma.sys*
+  # @see SysConcern#SYS_PAGES
   #
   PAGES = SYS_PAGES
   PAGES.excluding(*instance_methods(false)).each do |page|

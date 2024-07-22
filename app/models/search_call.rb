@@ -104,8 +104,8 @@ class SearchCall < ApplicationRecord
       reserved = json_columns.keys
       reserved.concat json_columns.values.flat_map { |cfg| cfg[:keys]&.keys }
 
-      # Extract keys from "en.emma.search_type" but transformed based on the
-      # translations defined in the :params element.
+      # Extract keys from "en.emma.page._index_search.search_type" but
+      # transformed based on the translations defined in the :params element.
       json_columns[:query][:keys] =
         SearchTermsHelper::QUERY_PARAMETERS[:search].map { |type|
           key = json_columns.dig(:query, :params, type) || type

@@ -52,7 +52,7 @@ module ConfigurationHelper
   def config_lookup_order: (?(String|Symbol|nil) ctrlr, ?(String|Symbol|nil) action) -> Array[symArray]
 
   # Find the best match from config/locales for the given partial path, first
-  # looking under "en.emma.(ctrlr)", then under 'en.emma.generic'.
+  # looking under "en.emma.page.(ctrlr)", then under "en.emma".
   #
   # @param [String, Array]       path       Partial I18n path.
   # @param [Symbol, String, nil] ctrlr
@@ -71,26 +71,20 @@ module ConfigurationHelper
   #
   # @return [any, nil]                The specified value or *default*.
   #
-  # @example Simple path - [:button, :label]
+  # @example Simple path - [:item, :property]
   # Returns the most specific configuration match from the list:
-  #   * "en.emma.(ctrlr).(action).button.label"
-  #   * "en.emma.(ctrlr).generic.button.label"
-  #   * "en.emma.(ctrlr).button.label"
-  #   * "en.emma.generic.(action).button.label"
-  #   * "en.emma.generic.button.label"
+  #   * "en.emma.page.(ctrlr).action.(action).item.property"
+  #   * "en.emma.page.(ctrlr).item.property"
+  #   * "en.emma.item.property"
   #
-  # @example Branching path - [[:button1, :button2], :label]
+  # @example Branching path - [[:item1, :item2], :property]
   # Returns the most specific configuration match from the list:
-  #   * "en.emma.(ctrlr).(action).button1.label"
-  #   * "en.emma.(ctrlr).(action).button2.label"
-  #   * "en.emma.(ctrlr).generic.button1.label"
-  #   * "en.emma.(ctrlr).generic.button2.label"
-  #   * "en.emma.(ctrlr).button1.label"
-  #   * "en.emma.(ctrlr).button2.label"
-  #   * "en.emma.generic.(action).button1.label"
-  #   * "en.emma.generic.(action).button2.label"
-  #   * "en.emma.generic.button1.label"
-  #   * "en.emma.generic.button2.label"
+  #   * "en.emma.page.(ctrlr).action.(action).item1.property"
+  #   * "en.emma.page.(ctrlr).action.(action).item2.property"
+  #   * "en.emma.page.(ctrlr).item1.property"
+  #   * "en.emma.page.(ctrlr).item2.property"
+  #   * "en.emma.item1.property"
+  #   * "en.emma.item2.property"
   #
   # === Implementation Notes
   # Ideally, this method should be moved into Emma::Config, however, because it

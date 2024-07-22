@@ -353,14 +353,16 @@ module LayoutHelper::SearchFilters
   # The names and properties of all of the search filter menus and default
   # values.
   #
+  # TODO: resolve bias toward :search controller
+  #
   # @type [Hash{Symbol=>Hash}]
   #
   SEARCH_FILTERS_ROOT =
     config_page_section(:search, :search_filters).deep_freeze
 
-  # The value 'en.emma.search_filters._default' contains each of the properties
-  # that can be expressed for a menu.  If a property there has a non-nil value,
-  # then that value is used as the default for that property.
+  # The value "en.emma.page.search.search_filters._default" contains each of
+  # the properties that can be expressed for a menu.  If a property there has a
+  # non-nil value, then that value is used as the default for that property.
   #
   # @type [Hash]
   #
@@ -448,7 +450,7 @@ module LayoutHelper::SearchFilters
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         No controls were found for *target*.
   #
-  # @see file:config/locales/en.yml *en.emma.search_filters*
+  # @see "en.emma.page.*.search_filters"
   # @see #blank_menu
   # @see #sort_menu
   # @see #size_menu
@@ -1027,7 +1029,6 @@ module LayoutHelper::SearchFilters
   # @see GridHelper#grid_cell_classes
   #
   def control_label(name, target: nil, label: nil, css: '.menu-label', **opt)
-    # Labels shouldn't have the 'col-last' CSS class.
     local   = opt.extract!(:config, *MENU_OPT).except!(:col_max)
     config  = local[:config] || current_menu_config(name, target: target)
     url_prm = (config[:url_param] || name).to_sym

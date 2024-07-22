@@ -89,7 +89,7 @@ module SessionsHelper
 
   protected
 
-  # Get link label from the config/locales/controllers/user.en.yml.
+  # Get link label from "en.emma.page.user_sessions".
   #
   # @param [String, Symbol]      action
   # @param [String, Symbol, nil] provider

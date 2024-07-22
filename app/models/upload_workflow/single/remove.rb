@@ -204,7 +204,7 @@ class UploadWorkflow::Single::Remove < UploadWorkflow::Single
     end
 
     # =========================================================================
-    # = Remove existing entry (en.emma.upload.state_group.remove)
+    # = Remove existing entry (en.emma.page.upload.state_group.remove)
     # =========================================================================
 
     state :removing do
@@ -218,7 +218,7 @@ class UploadWorkflow::Single::Remove < UploadWorkflow::Single
     end
 
     # =========================================================================
-    # Submission sub-sequence (en.emma.upload.state_group.submission)
+    # Submission sub-sequence (en.emma.page.upload.state_group.submission)
     # =========================================================================
 
     state :staging do
@@ -238,7 +238,7 @@ class UploadWorkflow::Single::Remove < UploadWorkflow::Single
     end
 
     # =========================================================================
-    # Finalization sub-sequence (en.emma.upload.state_group.finalization)
+    # Finalization sub-sequence (en.emma.page.upload.state_group.finalization)
     # =========================================================================
 
     state :indexing do
@@ -253,7 +253,7 @@ class UploadWorkflow::Single::Remove < UploadWorkflow::Single
     end
 
     # =========================================================================
-    # Terminal states (en.emma.upload.state_group.done)
+    # Terminal states (en.emma.page.upload.state_group.done)
     # =========================================================================
 
     state :suspended do
@@ -280,7 +280,7 @@ class UploadWorkflow::Single::Remove < UploadWorkflow::Single
     end
 
     # =========================================================================
-    # Pseudo states (en.emma.upload.state_group.pseudo)
+    # Pseudo states (en.emma.page.upload.state_group.pseudo)
     # =========================================================================
 
     state :resuming

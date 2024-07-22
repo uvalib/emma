@@ -95,7 +95,7 @@ module Emma::Config
 
   # All "en.emma.*" configuration values.
   #
-  # @return [Hash]
+  # @return [Hash]                    Deep frozen
   #
   def config_all
     Emma::Config::Data.all

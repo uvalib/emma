@@ -41,7 +41,7 @@ module BaseDecorator::Hierarchy
   #
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
   #
-  # @see *en.emma.search.field_hierarchy*
+  # @see "en.emma.page.search.field_hierarchy"
   #
   def item_lines: (symHash hierarchy, symHash opt) -> Array[symHash|ActiveSupport::SafeBuffer]
 
@@ -55,7 +55,7 @@ module BaseDecorator::Hierarchy
   #
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
   #
-  # @see "en.emma.search.field_hierarchy.title"
+  # @see "en.emma.page.search.field_hierarchy.title"
   #
   def title_level_lines: (symHash main_section, anyArray main_index, symHash main_prop, symHash opt) -> Array[symHash|ActiveSupport::SafeBuffer]
 
@@ -74,7 +74,7 @@ module BaseDecorator::Hierarchy
   #
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
   #
-  # @see "en.emma.search.field_hierarchy.parts"
+  # @see "en.emma.page.search.field_hierarchy.parts"
   #
   def part_level_lines: (Array[symHash] main_section, anyArray main_index, symHash main_prop, symHash opt) -> Array[symHash|ActiveSupport::SafeBuffer]
 
@@ -87,7 +87,7 @@ module BaseDecorator::Hierarchy
   #
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
   #
-  # @see "en.emma.search.field_hierarchy.parts.*"
+  # @see "en.emma.page.search.field_hierarchy.parts.*"
   #
   def part_section_lines: (symHash part, anyArray part_index, symHash part_prop, symHash opt) -> Array[symHash|ActiveSupport::SafeBuffer]
 
@@ -108,7 +108,7 @@ module BaseDecorator::Hierarchy
   #
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
   #
-  # @see "en.emma.search.field_hierarchy.parts.files"
+  # @see "en.emma.page.search.field_hierarchy.parts.files"
   #
   def part_lines: (Array[symHash] part_section, Symbol part_key, anyArray part_index, symHash part_prop, symHash opt) -> Array[symHash|ActiveSupport::SafeBuffer]
 
@@ -122,7 +122,7 @@ module BaseDecorator::Hierarchy
   #
   # @return [Array<Hash,ActiveSupport::SafeBuffer>]
   #
-  # @see "en.emma.search.field_hierarchy.parts.files"
+  # @see "en.emma.page.search.field_hierarchy.parts.files"
   #
   def format_section_lines: (symHash format, anyArray format_index, symHash format_prop, symHash opt) -> Array[symHash|ActiveSupport::SafeBuffer]
 
@@ -152,10 +152,10 @@ module BaseDecorator::Hierarchy
   #
   # @return [Array<Hash>]
   #
-  # @see "en.emma.search.field_hierarchy.title.*"
-  # @see "en.emma.search.field_hierarchy.parts.*"
-  # @see "en.emma.search.field_hierarchy.parts.formats.*"
-  # @see "en.emma.search.field_hierarchy.parts.formats.files.*"
+  # @see "en.emma.page.search.field_hierarchy.title.*"
+  # @see "en.emma.page.search.field_hierarchy.parts.*"
+  # @see "en.emma.page.search.field_hierarchy.parts.formats.*"
+  # @see "en.emma.page.search.field_hierarchy.parts.formats.files.*"
   #
   def file_section_lines: (symHash section, anyArray section_index, symHash section_prop, symHash opt) -> Array[symHash]
 
@@ -168,11 +168,11 @@ module BaseDecorator::Hierarchy
   #
   # @return [Array<Hash>]
   #
-  # @see "en.emma.search.field_hierarchy.**.bibliographic"
-  # @see "en.emma.search.field_hierarchy.**.repository"
-  # @see "en.emma.search.field_hierarchy.**.index"
-  # @see "en.emma.search.field_hierarchy.**.remediation"
-  # @see "en.emma.search.field_hierarchy.**.accessibility"
+  # @see "en.emma.page.search.field_hierarchy.**.bibliographic"
+  # @see "en.emma.page.search.field_hierarchy.**.repository"
+  # @see "en.emma.page.search.field_hierarchy.**.index"
+  # @see "en.emma.page.search.field_hierarchy.**.remediation"
+  # @see "en.emma.page.search.field_hierarchy.**.accessibility"
   #
   def field_lines: (symHash pairs, symHash field_prop, symHash opt) -> Array[symHash]
 

@@ -38,7 +38,7 @@ en:
         # Search query terms
         # =====================================================================
 
-        query:          # @see 'en.emma.search_type'
+        query:          # @see "en.emma.page._index_search.search_type"
           min:          0
           max:          1
           label:        'Search term(s)'
@@ -49,7 +49,7 @@ en:
           type:         json
 
           # ===================================================================
-          # JSON keys matching "en.emma.search_type"
+          # JSON keys matching "en.emma.page._index_search.search_type.*"
           # ===================================================================
 
           identifier:
@@ -106,7 +106,7 @@ en:
         # Applied search filters
         # =====================================================================
 
-        filter:         # @see 'en.emma.search_filters'
+        filter:         # @see "en.emma.page._index_search.search_filters"
           min:          0
           max:          ~
           label:        'Filter(s)'
@@ -117,7 +117,7 @@ en:
           type:         json
 
           # ===================================================================
-          # JSON keys matching "en.emma.search_type" with "service: search"
+          # JSON keys matching "en.emma.page._index_search.search_filters.*"
           # ===================================================================
 
           a11y_feature:
