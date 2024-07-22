@@ -31,13 +31,14 @@ module ImageHelper
   #
   # @type [String]
   #
-  PLACEHOLDER_IMAGE_ASSET = I18n.t('emma.placeholder.image.asset').freeze
+  IMAGE_PLACEHOLDER_ASSET =
+    config_page(:image, :placeholder, :image, :asset).freeze
 
   # Asynchronous image placeholder image CSS class.
   #
   # @type [String]
   #
-  PLACEHOLDER_IMAGE_CLASS = 'placeholder'
+  IMAGE_PLACEHOLDER_CLASS = 'placeholder'
 
   # Asynchronous image placeholder image alt text.
   #
@@ -48,7 +49,7 @@ module ImageHelper
   # (for the brief time that the placeholder image might be unavailable) is
   # disruptive to the entire display layout.
   #
-  PLACEHOLDER_IMAGE_ALT = ''
+  IMAGE_PLACEHOLDER_ALT = ''
 
   # ===========================================================================
   # :section:
@@ -78,14 +79,13 @@ module ImageHelper
       else
         image_tag(url, i_opt)
       end
+    if link.present?
+      opt[:'aria-hidden'] = true
+      l_opt = opt.slice!(:class, :style)
+      image = make_link(link, image, tabindex: -1, **l_opt)
+    end
     row = positive(row)
     append_css!(opt, "row-#{row}") if row
-    if link.present?
-      link_opt = opt.slice!(:class, :style)
-      link_opt[:tabindex] ||= -1
-      opt[:'aria-hidden'] ||= true
-      image = make_link(link, image, **link_opt)
-    end
     html_div(image, **opt)
   end
 
@@ -95,20 +95,28 @@ module ImageHelper
   # *url* in 'data-path'.
   #
   # @param [String]      url
-  # @param [String, nil] image        Default: 'loading-balls.gif'
+  # @param [String, nil] image        Default: #image_placeholder_asset.
   # @param [String]      css          Characteristic CSS class/selector.
   # @param [Hash]        opt          Passed to #image_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def image_placeholder(url, image: nil, css: PLACEHOLDER_IMAGE_CLASS, **opt)
-    image    ||= asset_path(PLACEHOLDER_IMAGE_ASSET)
+  def image_placeholder(url, image: nil, css: IMAGE_PLACEHOLDER_CLASS, **opt)
+    image    ||= image_placeholder_asset
     data       = opt.slice(:alt).merge!(path: url)
     opt[:data] = opt[:data]&.merge(data) || data
-    opt[:alt]  = PLACEHOLDER_IMAGE_ALT
+    opt[:alt]  = IMAGE_PLACEHOLDER_ALT
     prepend_css!(opt, css)
     # noinspection RubyMismatchedReturnType
     image_tag(image, opt)
+  end
+
+  # Current path to the #IMAGE_PLACEHOLDER_ASSET.
+  #
+  # @return [String]
+  #
+  def image_placeholder_asset
+    asset_path(IMAGE_PLACEHOLDER_ASSET)
   end
 
   # ===========================================================================

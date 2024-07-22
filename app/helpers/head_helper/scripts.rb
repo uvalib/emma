@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 module HeadHelper::Scripts
 
   include HeadHelper::Common
+  include ImageHelper
 
   # ===========================================================================
   # :section:
@@ -183,13 +184,11 @@ module HeadHelper::Scripts
   # @see file:app/assets/javascripts/shared/assets.js.erb
   #
   def page_script_settings(**opt)
-    asset_overrides = {
-      OverrideScriptSettings:  script_settings,
-      Image_placeholder_asset: asset_path(ImageHelper::PLACEHOLDER_IMAGE_ASSET)
-    }.merge!(**opt)
+    opt[:OverrideScriptSettings]  ||= script_settings
+    opt[:Image_placeholder_asset] ||= image_placeholder_asset
     <<~HEREDOC.squish.html_safe
       <script type="text/javascript">
-        window.ASSET_OVERRIDES = #{js(asset_overrides)};
+        window.ASSET_OVERRIDES = #{js(opt)};
       </script>
     HEREDOC
   end

@@ -3,6 +3,8 @@
 module HeadHelper::Scripts
   include HeadHelper::Common
 
+  include ImageHelper
+
   private
 
   # @type [Array<String,Hash,Array(String,Hash)>]

@@ -17,13 +17,13 @@ module ImageHelper
   #
   # @type [String]
   #
-  PLACEHOLDER_IMAGE_ASSET: String
+  IMAGE_PLACEHOLDER_ASSET: String
 
   # Asynchronous image placeholder image CSS class.
   #
   # @type [String]
   #
-  PLACEHOLDER_IMAGE_CLASS: String
+  IMAGE_PLACEHOLDER_CLASS: String
 
   # Asynchronous image placeholder image alt text.
   #
@@ -34,7 +34,7 @@ module ImageHelper
   # (for the brief time that the placeholder image might be unavailable) is
   # disruptive to the entire display layout.
   #
-  PLACEHOLDER_IMAGE_ALT: String
+  IMAGE_PLACEHOLDER_ALT: String
 
   # Create an HTML image element.
   #
@@ -57,13 +57,19 @@ module ImageHelper
   # *url* in 'data-path'.
   #
   # @param [String]      url
-  # @param [String, nil] image        Default: 'loading-balls.gif'
+  # @param [String, nil] image        Default: #image_placeholder_asset.
   # @param [String]      css          Characteristic CSS class/selector.
   # @param [Hash]        opt          Passed to #image_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def image_placeholder: (String url, ?image: String|nil, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Current path to the #IMAGE_PLACEHOLDER_ASSET.
+  #
+  # @return [String]
+  #
+  def image_placeholder_asset: () -> String
 
   private
 
