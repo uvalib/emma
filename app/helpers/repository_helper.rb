@@ -102,7 +102,7 @@ module RepositoryHelper
   public
 
   # Return the term for the indicated repository needed for
-  # "emma.search.messages.source.link_tooltip".
+  # "en.emma.term.search.source.link_tooltip".
   #
   # @param [any, nil] repo            EmmaRepository, String, Symbol
   #
@@ -113,7 +113,7 @@ module RepositoryHelper
   end
 
   # Return the term for the indicated repository needed for
-  # "emma.search.messages.source.retrieval_tip".
+  # "en.emma.term.search.source.retrieval_tip".
   #
   # @param [any, nil] repo            EmmaRepository, String, Symbol
   #
