@@ -11,11 +11,28 @@ module ConfigurationHelper
 
   include Emma::Common
 
+  extend self
+
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   public
+
+  # Configuration values for the current page.
+  #
+  # @param [String, Symbol] ctrlr     Default `params[:controller]`
+  # @param [String, Symbol] action    Default `params[:action]`
+  # @param [Hash]           opt       To #config_page_section.
+  #
+  # @return [Hash]
+  #
+  def current_config_page_section(ctrlr: nil, action: nil, **opt)
+    action ||= params[:action].presence     or raise 'no params[:action]'
+    ctrlr  ||= params[:controller].presence or raise 'no params[:controller]'
+    ctrlr    = ctrlr.to_s.tr('/', '_')
+    config_page_section(ctrlr, action, **opt)
+  end
 
   # Determine the path through the configuration hierarchy for the given
   # controller/action pair.
@@ -26,13 +43,14 @@ module ConfigurationHelper
   # @param [String, Symbol, nil] ctrlr
   # @param [String, Symbol, nil] action
   #
-  # @return [Array(Symbol,Symbol)]
+  # @return [Array(Symbol, Symbol)]
+  # @return [Array(Symbol, nil)]
+  # @return [Array(nil,    nil)]
   #
-  def config_path(ctrlr = nil, action = nil)
-    [ctrlr, action].compact_blank!.map! do |s|
-      s.to_s.underscore.split('/').join('_').to_sym
-    end
+  def config_path(ctrlr, action = nil)
+    [ctrlr, action].map! { |s| s.to_s.underscore.tr('/.', '_').to_sym if s }
   end
+  protected :config_path
 
   # controller_configuration
   #
@@ -44,9 +62,11 @@ module ConfigurationHelper
   def controller_configuration(ctrlr = nil, action = nil)
     result = ApplicationHelper::CONTROLLER_CONFIGURATION
     return result unless ctrlr
-    path = config_path(ctrlr, action)
+    ctrlr, action = config_path(ctrlr, action)
+    path = action ? [ctrlr, :action, action] : [ctrlr]
     result.dig(*path) || {}
   end
+  protected :controller_configuration
 
   # config_lookup_order
   #
@@ -56,18 +76,13 @@ module ConfigurationHelper
   # @return [Array<Array<Symbol>>]
   #
   def config_lookup_order(ctrlr = nil, action = nil)
-    ctr, sub, act = path = config_path(ctrlr, action)
-    sub, act = [nil, sub] if action && (path.size == 2)
+    ctrlr, action = config_path(ctrlr, action)
     result = []
-    result << [ctr, sub, act]      if ctr && sub && act
-    result << [ctr, sub, :generic] if ctr && sub
-    result << [ctr, sub]           if ctr && sub
-    result << [ctr, act]           if ctr && act
-    result << [ctr, :generic]      if ctr
-    result << [ctr]                if ctr
-    result << [:generic, act]      if act
-    result << [:generic]
+    result << [ctrlr, :action, action] if ctrlr && action
+    result << [ctrlr]                  if ctrlr
+    result
   end
+  protected :config_lookup_order
 
   # Find the best match from config/locales for the given partial path, first
   # looking under "en.emma.(ctrlr)", then under 'en.emma.generic'.
@@ -192,7 +207,7 @@ module ConfigurationHelper
   def config_flatten_order(*path, depth: 0)
     result = []
     path.map! { |p| p.is_a?(Array) ? p.compact_blank : p }.compact_blank!
-    while path.present? && !path.first.is_a?(Array)
+    until path.first.is_a?(Array) || path.blank?
       part = path.shift
       unless part.is_a?(Symbol) || (part.is_a?(String) && part.include?('.'))
         part = part.to_s.to_sym

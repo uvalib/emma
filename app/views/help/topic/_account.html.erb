@@ -4,7 +4,7 @@
 
   view_debug(__FILE__)
 
-  topic             = t('emma.help.topic.account')
+  topic             = config_section('help.topic.account')
   administrator     = current_user&.administrator?
  #manager           = current_user&.manager? && !administrator
 
@@ -28,13 +28,14 @@
   edit_title        = (edit[:title]     if edit)
   delete_title      = (delete[:title]   if delete)
 
-  list_all_label    = (t('emma.account.list_all.label')     if list_all)
-  list_org_label    = (t('emma.account.list_org.label')     if list_org)
-  list_own_label    = (t('emma.account.show_current.label') if list_own)
-  edit_own_label    = (t('emma.account.edit_current.label') if edit_own)
-  new_label         = (t('emma.account.new.label')          if new)
-  edit_label        = (t('emma.account.edit.label')         if edit)
-  delete_label      = (t('emma.account.delete.label')       if delete)
+  cfg               = config_page_section(:account, :action)
+  list_all_label    = (cfg.dig(:list_all,     :label) if list_all)
+  list_org_label    = (cfg.dig(:list_org,     :label) if list_org)
+  list_own_label    = (cfg.dig(:show_current, :label) if list_own)
+  edit_own_label    = (cfg.dig(:edit_current, :label) if edit_own)
+  new_label         = (cfg.dig(:new,          :label) if new)
+  edit_label        = (cfg.dig(:edit,         :label) if edit)
+  delete_label      = (cfg.dig(:delete,       :label) if delete)
 
   list_all_btn      = (help_button(list_all_label)  if list_all)
   list_org_btn      = (help_button(list_org_label)  if list_org)
@@ -46,7 +47,7 @@
 
   # Nav action menu
 
-  nav_menu_item     = t('emma.account.label')
+  nav_menu_item     = config_page(:account, :label)
   action_menu_label = 'Account Actions'
   action_menu       = list_all ? :account_actions_admin : :account_actions
   action_menu       = help_image(action_menu)

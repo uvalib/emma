@@ -29,8 +29,8 @@ module ToolHelper
   # @return [Hash{Symbol=>Hash}]
   #
   TOOL_ITEMS =
-    config_section('emma.tool').map { |k, v|
-      next unless v.is_a?(Hash) && v[:_endpoint] && (k != :index)
+    config_page_section(:tool, :action).except(:index).map { |k, v|
+      next if k.start_with?('_')
       p = v[:path].presence
       v = v.merge(path: p.to_sym).freeze if p.is_a?(String) && !p.include?('/')
       [k, v]
@@ -104,7 +104,8 @@ module ToolHelper
   # @raise [CanCan::AccessDenied]   User is not authorized.
   #
   def tool_authorized?(action, user: nil, config: nil, check: false)
-    config ||= TOOL_ITEMS[action] or raise %Q("en.emma.tool.#{action}" is bad)
+    config ||= TOOL_ITEMS[action]
+    raise %Q("en.emma.page.tool.#{action}" is bad) unless config
     auth     = config[:authorization]
     allow    = auth.nil? || false?(auth)
     allow  ||= ((user || current_user).present? if true?(auth))

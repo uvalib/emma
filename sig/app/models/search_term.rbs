@@ -86,4 +86,12 @@ class SearchTerm
   # Indicate whether this instance is associated with multiple field values.
   #
   def multiple?: () -> bool
+
+  # Indicate whether the instance is equivalent to another value.
+  #
+  # @param [SearchTerm, any, nil] other
+  #
+  # @return [Boolean]
+  #
+  def ==: (untyped other) -> bool
 end

@@ -29,7 +29,7 @@ module HealthConcern
   #
   # @see file:config/locales/controllers/health.en.yml
   #
-  HEALTH_SUBSYSTEMS = config_section('emma.health.subsystem').deep_freeze
+  HEALTH_SUBSYSTEMS = config_section(:health, :subsystems).deep_freeze
 
   # Default health check subsystem failure message.
   #

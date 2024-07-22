@@ -4,7 +4,7 @@
 
   view_debug(__FILE__)
 
-  topic             = t('emma.help.topic.enrollment')
+  topic             = config_section('help.topic.enrollment')
   administrator     = current_user&.administrator?
   anonymous         = !administrator
 
@@ -24,12 +24,13 @@
   edit_title        = (edit[:title]         if edit)
   delete_title      = (delete[:title]       if delete)
 
-  list_all_label    = (t('emma.enrollment.index.label')       if list_all)
-  show_select_label = (t('emma.enrollment.show_select.label') if show_select)
-  show_label        = (t('emma.enrollment.show.label')        if show)
-  new_label         = (t('emma.enrollment.new.label')         if new)
-  edit_label        = (t('emma.enrollment.edit.label')        if edit)
-  delete_label      = (t('emma.enrollment.delete.label')      if delete)
+  cfg               = config_page_section(:enrollment, :action)
+  list_all_label    = (cfg.dig(:index,       :label) if list_all)
+  show_select_label = (cfg.dig(:show_select, :label) if show_select)
+  show_label        = (cfg.dig(:show,        :label) if show)
+  new_label         = (cfg.dig(:new,         :label) if new)
+  edit_label        = (cfg.dig(:edit,        :label) if edit)
+  delete_label      = (cfg.dig(:delete,      :label) if delete)
 
   list_all_btn      = (help_button(list_all_label)    if list_all)
   show_select_btn   = (help_button(show_select_label) if show_select)
@@ -40,7 +41,7 @@
 
   # Nav action menu
 
-  nav_menu_item     = t('emma.enrollment.label')
+  nav_menu_item     = config_page(:enrollment, :label)
   action_menu_label = 'Enrollment Actions'
   action_menu       = help_image(:enrollment_actions)
 

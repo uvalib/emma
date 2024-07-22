@@ -3,6 +3,18 @@
 module ConfigurationHelper
   include Emma::Common
 
+  extend ::ConfigurationHelper
+
+  # Configuration values for the current page.
+  #
+  # @param [String, Symbol] ctrlr     Default `params[:controller]`
+  # @param [String, Symbol] action    Default `params[:action]`
+  # @param [Hash]           opt       To #config_page_section.
+  #
+  # @return [Hash]
+  #
+  def current_config_page_section: (?ctrlr: String|Symbol|nil, ?action: String|Symbol|nil, **untyped opt) -> symHash
+
   # Determine the path through the configuration hierarchy for the given
   # controller/action pair.
   #
@@ -12,11 +24,14 @@ module ConfigurationHelper
   # @param [String, Symbol, nil] ctrlr
   # @param [String, Symbol, nil] action
   #
-  # @return [Array(Symbol,Symbol)]
+  # @return [Array(Symbol, Symbol)]
+  # @return [Array(Symbol, nil)]
+  # @return [Array(nil,    nil)]
   #
   def config_path
-    : ((String|Symbol|nil) ctrlr, ?(String|Symbol|nil) action) -> [Symbol,Symbol]
-    | ()                                                       -> [Symbol,Symbol]
+    : (String|Symbol ctrlr, String|Symbol action)              -> [Symbol, Symbol]
+    | (String|Symbol ctrlr, ?nil          action)              -> [Symbol, nil]
+    | (nil           ctrlr, ?nil          action)              -> [nil,    nil]
 
   # controller_configuration
   #

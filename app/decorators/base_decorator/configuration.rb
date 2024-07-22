@@ -95,6 +95,16 @@ module BaseDecorator::Configuration
     ApplicationHelper::CONTROLLER_CONFIGURATION[type] || {}.freeze
   end
 
+  # Get the action configuration for the current model.
+  #
+  # @param [Symbol,String] action
+  #
+  # @return [Hash{Symbol=>Hash}, nil]
+  #
+  def action_config(action)
+    controller_config.dig(:action, action.to_sym)
+  end
+
   # Get configured record fields relevant to the given context for the model.
   #
   # @param [Symbol] action            Def: `context[:action]`

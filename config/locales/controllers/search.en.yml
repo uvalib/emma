@@ -8,140 +8,212 @@ en:
 
     search:
 
-      # NOTE: Some of these definitions require parameters to be supplied:
-      #
-      # %{terms}        Current list of search terms.
+#     # NOTE: Some of these definitions require parameters to be supplied:
+#     #
+#     # %{terms}        Current list of search terms.
 
-      unit:
-        brief:          'record'
-        long:           'metadata record'
-      label:            'Search'
-      title:            'Unified Search'
-      tooltip:          'Unified search for metadata records'
+#     unit: # NOTE: to "en.emma.page.search"
+#       brief:          '/x/ record'
+#       long:           '/x/ metadata record'
+#     label:            '/x/ Search' # NOTE: to "en.emma.page.search"
+#     title:            '/x/ Unified Search' # NOTE: to "en.emma.page.search"
+#     tooltip:          '/x/ Unified search for metadata records' # NOTE: to "en.emma.page.search"
 
-      subsystem:
-        search:         true
+      # =======================================================================
+      # Subsystems
+      # =======================================================================
+
+#     subsystem:
+#       search:         true
+#       database:       false # NOTE: added to facilitate comparison
+#       redis:          false # NOTE: added to facilitate comparison
+#       storage:        false # NOTE: added to facilitate comparison
+#       ingest:         false # NOTE: added to facilitate comparison
 
       # =======================================================================
       # Search endpoint
       # =======================================================================
 
-      search:
-        action:         index
+#     search: # NOTE: to "en.emma.page._generic.search"
+#       action:         index
 
       # =======================================================================
       # Layout
       # =======================================================================
 
-      search_bar:
-        enabled:        true
-        min_rows:       3
-        max_rows:       ~
+#     search_type: # NOTE: added to facilitate comparison
 
-      page_controls:
-        label:
-          one:          'Manage this record:'
-          many:         'Record Actions:'
+#       identifier: # NOTE: added to facilitate comparison
+#         url_param:      identifier
+#         name:           '/x/ ISBN / DOI / etc.'
+#         label:          '/x/ Standard identifier:'
+#         tooltip:
+#                         >-
+#                         /x/ Search for creative works or specific editions/issues by a standard
+#                         identifier (ISBN, DOI, OCLC, UPC, etc.)
+#         placeholder:    '/x/ Enter an identifier...'
+
+#       title: # NOTE: added to facilitate comparison
+#         url_param:      title
+#         name:           '/x/ Title'
+#         label:          '/x/ Title terms:'
+#         tooltip:
+#                         >-
+#                         /x/ Search for one or more terms matching the title of a work
+#         placeholder:    '/x/ Enter title terms...'
+
+#       creator: # NOTE: added to facilitate comparison
+#         url_param:      creator
+#         name:           '/x/ Creator'
+#         label:          '/x/ Creator terms:'
+#         tooltip:
+#                         >-
+#                         /x/ Search for one or more terms matching the author or creator of a work
+#         placeholder:    '/x/ Enter author/creator terms...'
+
+#       publisher: # NOTE: added to facilitate comparison
+#         url_param:      publisher
+#         name:           '/x/ Publisher'
+#         label:          '/x/ Publisher terms:'
+#         tooltip:
+#                         >-
+#                         /x/ Search for one or more terms matching the publisher of a work
+#         placeholder:    '/x/ Enter publisher terms...'
+
+#       q: # NOTE: added to facilitate comparison
+#         url_param:      q
+#         name:           '/x/ Keyword'
+#         label:          '/x/ Search terms:'
+#         tooltip:
+#                         >-
+#                         /x/ Search for one or more keywords matching anywhere in the
+#                         description of entries
+#         placeholder:    '/x/ Enter search terms...'
+
+#     search_bar: # NOTE: to "en.emma.page.search.search_bar"
+#       enabled:        true
+#       min_rows:       3
+#       max_rows:       ~
+
+#       label:            '/x/ %{Item} Search' # NOTE: added to facilitate comparison
+
+#       button: # NOTE: added to facilitate comparison
+#         label:          '/x/ Search'
+
+#       advanced: # NOTE: added to facilitate comparison
+#         label:          '/x/ More ▼'
+#         tooltip:        '/x/ Show additional search filters'
+#         open:
+#           label:        '/x/ Less ▲'
+#           tooltip:      '/x/ Hide additional search filters'
+
+#     search_filters: # NOTE: added to facilitate comparison
+#       enabled:       true
+
+#     page_controls: # NOTE: to "en.emma.page.search.page_controls"
+#       label:
+#         one:          '/x/ Manage this record:'
+#         many:         '/x/ Record Actions:'
 
       # =======================================================================
       # Controls
       # =======================================================================
 
-      results:
+#     results: # NOTE: to "en.emma.page.search.results"
 
-        _template:      &SEARCH_RESULTS_TYPE
-          label:        'Search Results Mode'
-          class:        ~
-          tooltip:      ~
-          enabled:      true # @see SearchModesHelper#permitted_by?
-          default:      ~
+#       _template:      &SEARCH_RESULTS_TYPE
+#         label:        '/x/ Search Results Mode'
+#         class:        ~
+#         tooltip:      ~
+#         enabled:      true # @see SearchModesHelper#permitted_by?
+#         default:      ~
 
-        title:
-          <<:           *SEARCH_RESULTS_TYPE
-          label:        'Results By Title'
-          class:        'title_results'
-          default:      true
+#       title:
+#         <<:           *SEARCH_RESULTS_TYPE
+#         label:        '/x/ Results By Title'
+#         class:        '/x/ title_results'
+#         default:      true
 
-        file:
-          <<:           *SEARCH_RESULTS_TYPE
-          label:        'Results By File'
-          class:        'file_results'
+#       file:
+#         <<:           *SEARCH_RESULTS_TYPE
+#         label:        '/x/ Results By File'
+#         class:        '/x/ file_results'
 
-      styles:
+#     styles: # NOTE: to "en.emma.page.search.styles"
 
-        _colorize:      &SEARCH_STYLE
-          label:        'Mark'
-          class:        'colorize-button'
-          ident:        'metadata field'
-          field:        '' # Indicates topic has no matching metadata field.
-          tooltip:      'Mark entries with the same %{ident} in the same color'
-          enabled:      debug_only
+#       _colorize:      &SEARCH_STYLE
+#         label:        '/x/ Mark'
+#         class:        'colorize-button'
+#         ident:        'metadata field'
+#         field:        '' # Indicates topic has no matching metadata field.
+#         tooltip:      '/x/ Mark entries with the same %{ident} in the same color'
+#         enabled:      debug_only
 
-        # NOTE: The order here is the reverse of the order of display.
+#       # NOTE: The order here is the reverse of the order of display.
 
-        restore:
-          <<:           *SEARCH_STYLE
-          label:        'Debug'
-          class:        'restore-button'
-          tooltip:
-            >-
-            Click to turn off debugging controls and return to normal display
-            of search results
-          field:        ~ # Indicates that this is not a topic button.
+#       restore:
+#         <<:           *SEARCH_STYLE
+#         label:        '/x/ Debug'
+#         class:        'restore-button'
+#         tooltip:
+#           >-
+#           Click to turn off debugging controls and return to normal display
+#           of search results
+#         field:        ~ # Indicates that this is not a topic button.
 
-        by_repo_id:
-          <<:           *SEARCH_STYLE
-          label:        'Repo ID'
-          ident:        '"repository record ID"'
-          field:        'field-RepositoryRecordId'
-          enabled:      [dev_only, debug_only]
+#       by_repo_id:
+#         <<:           *SEARCH_STYLE
+#         label:        '/x/ Repo ID'
+#         ident:        '"repository record ID"'
+#         field:        'field-RepositoryRecordId'
+#         enabled:      [dev_only, debug_only]
 
-        by_identifier:
-          <<:           *SEARCH_STYLE
-          label:        'ISBN'
-          ident:        'standard identifier'
-          field:        'field-Identifier'
-          enabled:      [dev_only, debug_only]
+#       by_identifier:
+#         <<:           *SEARCH_STYLE
+#         label:        '/x/ ISBN'
+#         ident:        'standard identifier'
+#         field:        'field-Identifier'
+#         enabled:      [dev_only, debug_only]
 
-        by_title_text:
-          <<:           *SEARCH_STYLE
-          label:        'Title'
-          ident:        'title text'
-          enabled:      [dev_only, debug_only]
+#       by_title_text:
+#         <<:           *SEARCH_STYLE
+#         label:        '/x/ Title'
+#         ident:        'title text'
+#         enabled:      [dev_only, debug_only]
 
-        by_title_id:
-          <<:           *SEARCH_STYLE
-          label:        'Title ID'
-          ident:        '"title ID"'
-          field:        'field-TitleId'
+#       by_title_id:
+#         <<:           *SEARCH_STYLE
+#         label:        '/x/ Title ID'
+#         ident:        '"title ID"'
+#         field:        'field-TitleId'
 
-        field_groups:
-          <<:           *SEARCH_STYLE
-          label:        'Fields'
-          class:        'field_groups-button'
-          field:        ~
-          tooltip:      'Highlight field groups'
+#       field_groups:
+#         <<:           *SEARCH_STYLE
+#         label:        '/x/ Fields'
+#         class:        'field_groups-button'
+#         field:        ~
+#         tooltip:      '/x/ Highlight field groups'
 
-        format_counts:
-          <<:           *SEARCH_STYLE
-          label:        'Formats'
-          class:        'format_counts-button'
-          field:        ~
-          tooltip:      'Show/hide format counts'
-          enabled:      [title_only, debug_only]
+#       format_counts:
+#         <<:           *SEARCH_STYLE
+#         label:        '/x/ Formats'
+#         class:        'format_counts-button'
+#         field:        ~
+#         tooltip:      '/x/ Show/hide format counts'
+#         enabled:      [title_only, debug_only]
 
-        collapsed:
-          <<:           *SEARCH_STYLE
-          label:        'Collapse'
-          class:        'collapsed-button'
-          field:        ~
-          tooltip:      'Collapse/expand all search result items'
-          enabled:      [file_only, debug_only]
+#       collapsed:
+#         <<:           *SEARCH_STYLE
+#         label:        '/x/ Collapse'
+#         class:        'collapsed-button'
+#         field:        ~
+#         tooltip:      '/x/ Collapse/expand all search result items'
+#         enabled:      [file_only, debug_only]
 
-      pagination:
-        count:
-          one:          '%{item}'
-          many:         '%{items}'
+#     pagination: # NOTE: to "en.emma.page.search.pagination"
+#       count:
+#         one:          '/x/ %{item}'
+#         many:         '/x/ %{items}'
 
       # =======================================================================
       # Fields
@@ -151,145 +223,145 @@ en:
       #     displayed for emma_repositoryRecordId; @see #record_title_url.
       # =======================================================================
 
-      display_fields:
+#     display_fields: # NOTE: to "en.emma.page.search.display_fields"
 
-        dc_title:
-          cond:
-            only:     [index]
+#       dc_title:
+#         cond:
+#           only:     [index]
 
-        emma_retrievalLink:
-          help:       [download, emma]
+#       emma_retrievalLink:
+#         help:       [download, emma]
 
-        emma_webPageLink:
-          # NOTE: If emma_webPageLink is present it is used as the URL for
-          # the link displayed for emma_repositoryRecordId.
-          # (@see #record_title_url)
-          cond:
-            only:     []
+#       emma_webPageLink:
+#         # NOTE: If emma_webPageLink is present it is used as the URL for
+#         # the link displayed for emma_repositoryRecordId.
+#         # (@see #record_title_url)
+#         cond:
+#           only:     []
 
-      field_hierarchy:
+#     field_hierarchy: # NOTE: to "en.emma.page.search.field_hierarchy"
 
-        title:
-          bibliographic:
-            - dc_title
-            - bib_seriesType
-            - emma_version
-            - bib_version
-            - bib_series
-            - dc_creator
-            - dc_publisher
-            - dcterms_dateCopyright
-            - emma_publicationDate
-            - dc_type
-            - dc_language
-            - dc_description
-            - dc_subject
-            - dc_identifier
-            - dc_relation
-            - dc_rights
-          repository:
-            - emma_repository
-#           - emma_collection     # NOTE: only shown if the same for all files
-          index:
-            - emma_titleId        # NOTE: only shown if the same for all files
+#       title:
+#         bibliographic:
+#           - dc_title
+#           - bib_seriesType
+#           - emma_version
+#           - bib_version
+#           - bib_series
+#           - dc_creator
+#           - dc_publisher
+#           - dcterms_dateCopyright
+#           - emma_publicationDate
+#           - dc_type
+#           - dc_language
+#           - dc_description
+#           - dc_subject
+#           - dc_identifier
+#           - dc_relation
+#           - dc_rights
+#         repository:
+#           - emma_repository
+##          - emma_collection     # NOTE: only shown if the same for all files
+#         index:
+#           - emma_titleId        # NOTE: only shown if the same for all files
 
-        parts:
-          bibliographic:
-            - bib_seriesPosition
+#       parts:
+#         bibliographic:
+#           - bib_seriesPosition
 
-          formats:
-            bibliographic:
-              - dc_format
+#         formats:
+#           bibliographic:
+#             - dc_format
 
-            files:
-              remediation:
-                - rem_status
-#               - rem_complete    # NOTE: folded into rem_coverage
-                - rem_coverage
-                - rem_comments
-                - rem_remediationComments
-                - emma_lastRemediationNote
-                - rem_remediatedAspects
-                - rem_remediation
-                - rem_textQuality
-                - rem_quality
-              accessibility:
-                - s_accessibilitySummary
-                - s_accessibilityFeature
-                - s_accessibilityControl
-                - s_accessibilityHazard
-                - s_accessMode
-                - s_accessModeSufficient
-              bibliographic:
-                - emma_formatFeature
-              repository:
-#               - emma_collection # NOTE: shown when not the same for all files
-                - emma_retrievalLink
-                - rem_source
-                - rem_metadataSource
-                - rem_remediatedBy
-                - rem_remediationDate
-                - emma_lastRemediationDate
-                - dcterms_dateAccepted
-                - emma_repositoryUpdateDate
-                - emma_repositoryMetadataUpdateDate
-                - emma_repositoryRecordId
-#               - emma_webPageLink used as the href for emma_repositoryRecordId
-              index:
-                - emma_formatVersion
-                - emma_recordId
-                - emma_titleId    # NOTE: shown when not the same for all files
+#           files:
+#             remediation:
+#               - rem_status
+##              - rem_complete    # NOTE: folded into rem_coverage
+#               - rem_coverage
+#               - rem_comments
+#               - rem_remediationComments
+#               - emma_lastRemediationNote
+#               - rem_remediatedAspects
+#               - rem_remediation
+#               - rem_textQuality
+#               - rem_quality
+#             accessibility:
+#               - s_accessibilitySummary
+#               - s_accessibilityFeature
+#               - s_accessibilityControl
+#               - s_accessibilityHazard
+#               - s_accessMode
+#               - s_accessModeSufficient
+#             bibliographic:
+#               - emma_formatFeature
+#             repository:
+##              - emma_collection # NOTE: shown when not the same for all files
+#               - emma_retrievalLink
+#               - rem_source
+#               - rem_metadataSource
+#               - rem_remediatedBy
+#               - rem_remediationDate
+#               - emma_lastRemediationDate
+#               - dcterms_dateAccepted
+#               - emma_repositoryUpdateDate
+#               - emma_repositoryMetadataUpdateDate
+#               - emma_repositoryRecordId
+##              - emma_webPageLink used as the href for emma_repositoryRecordId
+#             index:
+#               - emma_formatVersion
+#               - emma_recordId
+#               - emma_titleId    # NOTE: shown when not the same for all files
 
       # =======================================================================
       # Pages
       # =======================================================================
 
-      index:            &INDEX
-        label:          'Search'
-        title:          'EMMA Unified Search'
-        tooltip:        'Find more metadata records with %{terms}'
+#     index:            &INDEX # NOTE: to "en.emma.page.search.action.index"
+#       label:          '/x/ Search'
+#       title:          '/x/ EMMA Unified Search'
+#       tooltip:        '/x/ Find more metadata records with %{terms}'
 
-        display_fields: # @see 'en.emma.search.record'
-          - !ruby/symbol all
+#       display_fields: # @see "en.emma.record.search" # NOTE: to "en.emma.page.search.action.index.display_fields"
+#         - !ruby/symbol all
 
-        _endpoint:      true
-
-      # =======================================================================
-
-      direct:
-        <<: *INDEX
+#       _endpoint:      true
 
       # =======================================================================
 
-      show:
-        label:          'Record'
-        title:          'EMMA Index Record'
-        tooltip:        'See details about this metadata record'
-
-        display_fields: # @see 'en.emma.search.record'
-          - !ruby/symbol all
-
-        _endpoint:      true
+#     direct: # NOTE: to "en.emma.page.search.action.direct"
+#       <<: *INDEX
 
       # =======================================================================
 
-      advanced:
-        label:          'Advanced'
-        title:          'EMMA Unified Search'
-        tooltip:        'Combine multiple search terms and search limiters'
-        text_html:
-          >-
-          <p>
-            A search term is required to begin.
-            The search will vary depending on your choice of Keyword,
-            Creator, Title, or ISBN/DOI/etc. as the search criterion.
-            There are also several filters, whose behavior is documented in
-            Help (the "question mark" button next to the title).
-          </p>
+#     show: # NOTE: to "en.emma.page.search.action.show"
+#       label:          '/x/ Record'
+#       title:          '/x/ EMMA Index Record'
+#       tooltip:        '/x/ See details about this metadata record'
 
-        display_fields: # @see 'en.emma.search.record'
-          - !ruby/symbol all
+#       display_fields: # @see "en.emma.record.search" # NOTE: to "en.emma.page.search.action.show.display_fields"
+#         - !ruby/symbol all
 
-        _endpoint:      true
+#       _endpoint:      true
+
+      # =======================================================================
+
+#     advanced: # NOTE: to "en.emma.page.search.action.advanced"
+#       label:          '/x/ Advanced'
+#       title:          '/x/ EMMA Unified Search'
+#       tooltip:        '/x/ Combine multiple search terms and search limiters'
+#       text_html:
+#         >-
+#         <p>
+#           /x/ A search term is required to begin.
+#           The search will vary depending on your choice of Keyword,
+#           Creator, Title, or ISBN/DOI/etc. as the search criterion.
+#           There are also several filters, whose behavior is documented in
+#           Help (the "question mark" button next to the title).
+#         </p>
+
+#       display_fields: # @see "en.emma.record.search" # NOTE: to "en.emma.page.search.action.advanced.display_fields"
+#         - !ruby/symbol all
+
+#       _endpoint:      true
 
       # =======================================================================

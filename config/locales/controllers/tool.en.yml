@@ -6,65 +6,99 @@ en:
 
     tool:
 
-      label:              'Tools'
-      title:              'Standalone Utilities'
-      tooltip:            'Standalone utilities supporting remediation'
+#     label:              '/x/ Tools' # NOTE: to "en.emma.page.tool"
+#     title:              '/x/ Standalone Utilities' # NOTE: to "en.emma.page.tool"
+#     tooltip:            '/x/ Standalone utilities supporting remediation' # NOTE: to "en.emma.page.tool"
+
+      # =======================================================================
+      # Search endpoint
+      # =======================================================================
+
+#     search: # NOTE: added to facilitate comparison
+#       action: index
 
       # =======================================================================
       # Layout
       # =======================================================================
 
-      search_bar:
-        enabled:          false
+#     search_type: # NOTE: added to facilitate comparison
 
-      search_filters:
-        enabled:          false
+#       q: # NOTE: added to facilitate comparison
+#         url_param:      q
+#         name:           '/x/ Keyword'
+#         label:          '/x/ Search terms:'
+#         tooltip:
+#                         >-
+#                         /x/ Search for one or more keywords matching anywhere in the
+#                         description of entries
+#         placeholder:    '/x/ Enter search terms...'
+
+#     search_bar: # NOTE: to "en.emma.page.tool.search_bar"
+#       enabled:          false
+
+#       label:            '/x/ %{Item} Search' # NOTE: added to facilitate comparison
+#       min_rows:         1 # NOTE: added to facilitate comparison
+#       max_rows:         1 # NOTE: added to facilitate comparison
+
+#       button: # NOTE: added to facilitate comparison
+#         label:          '/x/ Search'
+
+#       advanced: # NOTE: added to facilitate comparison
+#         label:          '/x/ More ▼'
+#         tooltip:        '/x/ Show additional search filters'
+#         open:
+#           label:        '/x/ Less ▲'
+#           tooltip:      '/x/ Hide additional search filters'
+
+#     search_filters: # NOTE: to "en.emma.page.tool.search_filters"
+#       enabled:          false
 
       # =======================================================================
       # Pages
       # =======================================================================
 
-      index:
-        label:            'Tools'
-        title:            'Standalone Utilities'
-        authorization:    false
-        _endpoint:        true
+#     index: # NOTE: to "en.emma.page.tool.action.index"
+#       label:            '/x/ Tools'
+#       title:            '/x/ Standalone Utilities'
+#       tooltip:          '/x/ Standalone Utilities'
+#       authorization:    false
+#       _endpoint:        true
 
       # =======================================================================
 
-      md:
-        label:            'Math Detective'
-        title:            'Math Detective API trial'
-        path:             md_trial_path
-        description_html:
-          >-
-          This page allows you to process an image file (JPEG, PNG,
-          <em>etc.</em>) through Benetech's Math Detective, a backend service
-          for the automated conversion of equations in images to an accessible
-          form.
-        notes:
-          >-
-          This is a standalone service and not currently integrated into the
-          EMMA submission process.
+#     md: # NOTE: to "en.emma.page.tool.action.md"
+#       label:            '/x/ Math Detective'
+#       title:            '/x/ Math Detective API trial'
+#       path:             md_trial_path
+#       description_html:
+#         >-
+#         /x/ This page allows you to process an image file (JPEG, PNG,
+#         <em>etc.</em>) through Benetech's Math Detective, a backend service
+#         for the automated conversion of equations in images to an accessible
+#         form.
+#       notes:
+#         >-
+#         /x/ This is a standalone service and not currently integrated into the
+#         EMMA submission process.
 
-          Technical questions about the nature of Math Detective can be posed
-          on the FRAME/EMMA Slack or forwarded to Benetech directly.
+#         /x/ Technical questions about the nature of Math Detective can be posed
+#         on the FRAME/EMMA Slack or forwarded to Benetech directly.
 
-        authorization:    true
-        _endpoint:        true
+#       authorization:    true
+#       _endpoint:        true
 
       # =======================================================================
 
-      lookup:
-        label:            'Bibliographic Lookup'
-        title:            'Bibliographic Lookup'
-        path:             bib_lookup_path
-        notes:
-          >-
-          This page accesses on-going work which will be integrated into the
-          individual EMMA submission form and the bulk manifest.
+#     lookup: # NOTE: to "en.emma.page.tool.action.lookup"
+#       label:            '/x/ Bibliographic Lookup'
+#       title:            '/x/ Bibliographic Lookup'
+#       path:             bib_lookup_path
+#       notes:
+#         >-
+#         /x/ This page accesses on-going work which will be integrated into the
+#         individual EMMA submission form and the bulk manifest.
 
-          What you see here is not the intended final form of the feature.
+#         /x/ What you see here is not the intended final form of the feature.
 
-        authorization:    true
-        _endpoint:        true
+#       authorization:    true
+#       _endpoint:        true

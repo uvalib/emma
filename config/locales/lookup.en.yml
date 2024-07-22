@@ -1,0 +1,24 @@
+# config/locales/features/lookup.en.yml
+#
+# Bibliographic lookup
+
+en:
+
+  emma:
+
+    lookup:
+
+      label:      'Lookup'
+      tooltip:    'Lookup bibliographic information'
+
+      if_enabled:
+        tooltip:
+          >-
+          Try to fill in missing bibliographic information from external search
+          services
+
+      if_disabled:
+        tooltip:
+          >-
+          Please supply either a standard identifier (ISBN, DOI, etc) or
+          a title and an author

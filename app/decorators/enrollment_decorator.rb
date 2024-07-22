@@ -274,7 +274,7 @@ class EnrollmentDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def finalize_button(label = nil, css: '.finalize-button', **opt)
-      config   = config_item('emma.enrollment.finalize')
+      config   = config_page_section(:enrollment, :finalize)
       label  ||= config[:label]
 
       mail_opt = opt.extract!(*AccountMailer::URL_PARAMETERS)

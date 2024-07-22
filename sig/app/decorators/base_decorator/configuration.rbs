@@ -55,6 +55,14 @@ module BaseDecorator::Configuration
   #
   def controller_config: (?(Symbol|nil) `type`) -> Hash[Symbol,symHash]
 
+  # Get the action configuration for the current model.
+  #
+  # @param [Symbol,String] action
+  #
+  # @return [Hash{Symbol=>Hash}, nil]
+  #
+  def action_config: (Symbol|String action) -> (Hash[Symbol,symHash] | nil)
+
   # Get configured record fields relevant to the given context for the model.
   #
   # @param [Symbol] action            Def: `context[:action]`

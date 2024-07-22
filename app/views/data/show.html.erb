@@ -7,11 +7,12 @@
   item  ||= @item || []
   name  ||= @name
 
+  cfg   ||= current_config_page_section(table: name.inspect)
   help  ||= nil # %i[data show]
-  title ||= t('emma.data.show.title', table: name.inspect)
+  title ||= cfg[:title]
 
   unless modal?
-    label = t('emma.data.show.label', default: title)
+    label = cfg[:label] || title
     set_page_meta_title(label)
     set_page_description(title)
   end

@@ -22,7 +22,7 @@ module TreeHelper
   #
   # @type [Hash]
   #
-  TREE_CTRL_CFG = config_section('emma.tree.control').deep_freeze
+  TREE_CTRL_CFG = config_page_section(:tree, :control).deep_freeze
 
   # Label for button to open a collapsed tree.
   #

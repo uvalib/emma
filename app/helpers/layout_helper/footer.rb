@@ -25,7 +25,7 @@ module LayoutHelper::Footer
   # @type [Hash]
   #
   FOOT_CONFIG =
-    config_section('emma.foot').select { |_, v|
+    config_page_section(:foot).select { |_, v|
       v.is_a?(Hash) && v.present?
     }.deep_freeze
 

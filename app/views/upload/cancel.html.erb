@@ -4,8 +4,9 @@
 
   view_debug(__FILE__)
 
+  cfg   ||= current_config_page_section
   help  ||= nil # %i[upload cancel]
-  title ||= t('emma.upload.cancel.title')
+  title ||= cfg[:title]
 
   error ||= config_term(:upload, :invalid_id)
 

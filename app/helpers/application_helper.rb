@@ -25,21 +25,11 @@ module ApplicationHelper
   # @type [Hash{Symbol=>Hash}]
   #
   CONTROLLER_CONFIGURATION =
-    config_all.select { |k, config|
-      next true if k == :generic
-      next unless config.is_a?(Hash)
-      config.any? do |_, cfg|
-        next unless cfg.is_a?(Hash)
-        cfg[:_endpoint] || cfg.any? { |_, v| v.is_a?(Hash) && v[:_endpoint] }
-      end
-    }.then { |configs|
-      configs = configs.transform_values { |config| config.except(:record) }
-      devise  = configs[:user].select { |_, v| v.is_a?(Hash) && v.key?(:new) }
-      user    = configs[:user].except(*devise.keys)
-      devise.transform_keys! { |k| :"user_#{k}" }
-      devise.transform_values! { |cfg| user.deep_dup.deep_merge!(cfg) }
-      configs.merge!(user: user, **devise)
-    }.deep_freeze
+    config_all[:page].map { |ctrlr, config|
+      next if ctrlr.start_with?('_')
+      action = config[:action].reject { |k, _| k.start_with?('_') }
+      [ctrlr, config.merge(action: action)]
+    }.compact.to_h.deep_freeze
 
   # Configuration for application properties.
   #
@@ -51,7 +41,7 @@ module ApplicationHelper
   #
   # @type [Array<Symbol>]
   #
-  APP_CONTROLLERS = CONTROLLER_CONFIGURATION.except(:generic).keys.freeze
+  APP_CONTROLLERS = CONTROLLER_CONFIGURATION.keys.freeze
 
   # ===========================================================================
   # :section:

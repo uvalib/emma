@@ -21,7 +21,7 @@ module SysHelper::Common
   protected
 
   # @private
-  SYS_CONFIGURATION = config_section('emma.sys').deep_freeze
+  SYS_CONFIGURATION = config_page_section(:sys).deep_freeze
 
   # ===========================================================================
   # :section:
@@ -40,7 +40,7 @@ module SysHelper::Common
     prepend_css!(opt, 'link')
     [:index, *SysController::PAGES].map { |page|
       next if page.to_s == params['action']
-      cfg = I18n.t("emma.sys.#{page}", default: {})
+      cfg = SYS_CONFIGURATION.dig(:action, page)
       next if (role = cfg[:role]) && !current_user&.has_role?(role)
       html_tag(tag, class: 'page-action') do
         path  = get_path_for(:sys, page)

@@ -5,7 +5,7 @@
 
   restore_system_availability =
     unless RunState::STATIC || RunState.available?
-      label = t('emma.health.run_state.restore')
+      label = config_page(:health, :run_state, :restore)
       path  = set_run_state_health_path(state: :available)
       make_link(path, label, class: 'restore-availability', method: :put)
     end

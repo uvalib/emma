@@ -4,7 +4,7 @@
 
   view_debug(__FILE__)
 
-  topic             = t('emma.help.topic.upload')
+  topic             = config_section('help.topic.upload')
   administrator     = current_user&.administrator?
  #manager           = current_user&.manager? && !administrator
 
@@ -28,13 +28,14 @@
   delete_title      = (delete[:title]   if delete)
   admin_title       = (admin[:title]    if admin)
 
-  list_all_label    = (t('emma.upload.list_all.label') if list_all)
-  list_org_label    = (t('emma.upload.list_org.label') if list_org)
-  list_own_label    = (t('emma.upload.list_own.label') if list_own)
-  new_label         = (t('emma.upload.new.label')      if new)
-  edit_label        = (t('emma.upload.edit.label')     if edit)
-  delete_label      = (t('emma.upload.delete.label')   if delete)
-  admin_label       = (t('emma.upload.admin.label')    if admin)
+  cfg               = config_page_section(:upload, :action)
+  list_all_label    = (cfg.dig(:list_all, :label) if list_all)
+  list_org_label    = (cfg.dig(:list_org, :label) if list_org)
+  list_own_label    = (cfg.dig(:list_own, :label) if list_own)
+  new_label         = (cfg.dig(:new,      :label) if new)
+  edit_label        = (cfg.dig(:edit,     :label) if edit)
+  delete_label      = (cfg.dig(:delete,   :label) if delete)
+  admin_label       = (cfg.dig(:admin,    :label) if admin)
 
   list_all_btn      = (help_button(list_all_label)  if list_all)
   list_org_btn      = (help_button(list_org_label)  if list_org)
@@ -46,7 +47,7 @@
 
   # Nav action menu
 
-  nav_menu_item     = t('emma.upload.label')
+  nav_menu_item     = config_page(:upload, :label)
   action_menu_label = 'Upload Actions'
   action_menu       = list_all ? :upload_actions_admin : :upload_actions
   action_menu       = help_image(action_menu)

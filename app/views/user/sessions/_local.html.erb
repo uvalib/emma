@@ -8,30 +8,32 @@
   page ||= false
   inline = !page
 
+  cfg           = config_page_section(:user_sessions, :sign_in)
   label_opt     = { class: 'label' }
   value_opt     = { class: 'value' }
 
-  usr_label     = t('emma.user.sessions.sign_in.username')
+  usr_label     = cfg[:username]
   usr_label    += ':' unless page || usr_label.end_with?(':')
   usr_label_opt = label_opt
   usr_value_opt = { **value_opt, autocomplete: 'email' }
 
-  pwd_label     = t('emma.user.sessions.sign_in.password')
+  pwd_label     = cfg[:password]
   pwd_label    += ':' unless page || pwd_label.end_with?(':')
   pwd_label_opt = label_opt
   pwd_value_opt = { **value_opt, autocomplete: 'current-password' }
 
-  submit_label  = t('emma.user.sessions.sign_in.submit')
+  submit_label  = cfg[:submit]
   submit_css    = 'submit-button'
   submit_css    = "#{submit_css} best-choice" if page
   submit_opt    = { class: submit_css }
 
-  cancel_label  = t('emma.user.sessions.new.cancel')
+  cancel_label  = cfg[:cancel]
   cancel_opt    = { class: 'cancel-button' }
 
   reset         = page  && devise_mapping.recoverable?
-  reset_label   = reset && t('emma.user.passwords.new.label')
-  reset_tooltip = reset && t('emma.user.passwords.new.tooltip', default: nil)
+  reset_cfg     = reset && config_page_section(:user_passwords, :new)
+  reset_label   = reset && reset_cfg[:label]
+  reset_tooltip = reset && reset_cfg[:tooltip]
   reset_opt     = reset && reset_tooltip && { title: reset_tooltip } || {}
   reset_url     = reset && new_password_path(resource_name)
 
@@ -43,8 +45,7 @@
     fl_css      = 'form-label'
     fl_id       = css_randomize(fl_css)
     fl_opt      = { class: fl_css, id: fl_id, 'aria-hidden': true }
-    form_label  = t('emma.user.sessions.sign_in.label')
-    form_label  = html_span(form_label, **fl_opt)
+    form_label  = html_span(cfg[:label], **fl_opt)
     form_html[:'aria-labelledby'] = fl_id
     append_css!(form_html, 'inline', 'obscured')
   end

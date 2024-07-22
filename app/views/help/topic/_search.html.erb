@@ -4,7 +4,7 @@
 
   view_debug(__FILE__)
 
-  topic             = t('emma.help.topic.search')
+  topic             = config_section('help.topic.search')
   administrator     = current_user&.administrator?
 
   overview          =  topic[:overview]
@@ -62,7 +62,7 @@
 
   # Controls
 
-  search            = config_item('emma.search_bar.button.label') || '[?]'
+  search            = config_page(:search_bar, :button, :label) || '[?]'
   search            = help_span(search, class: 'search-button')
   x                 = LayoutHelper::SearchBar::CLEAR_SEARCH_ICON
   x                 = html_span(x, title: 'X')

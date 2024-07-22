@@ -5,10 +5,11 @@
   view_debug(__FILE__)
 
   state ||= @state || RunState.current
-  title ||= t("emma.health.run_state.state.#{state}.title", default: nil)
-  title ||= t('emma.health.run_state.title', default: nil)
-  title ||= state.available? ? 'AVAILABLE' : 'UNAVAILABLE'
+
+  cfg   ||= current_config_page_section
   help  ||= nil # %i[health run_state]
+  title ||= cfg.dig(:state, state.status, :title) || cfg.dig(:state, :title)
+  title ||= state.available? ? 'AVAILABLE' : 'UNAVAILABLE'
 
   unless modal?
     set_page_meta_title(title)

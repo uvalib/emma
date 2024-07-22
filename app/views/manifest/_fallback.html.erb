@@ -8,10 +8,12 @@
   item     = item.id if item.respond_to?(:id)
 
   action ||= params[:action]
-  config   = "emma.manifest.#{action}"
-  title  ||= t("#{config}.title", default: nil)
-  title  ||= t("#{config}.label", default: :'emma.manifest.label')
-  error  ||= t("#{config}.failure", id: item, default: "ERROR record #{item}")
+  cfg    ||= action && config_page_section(:manifest, action)
+  title  ||= cfg&.dig(:title) || cfg&.dig(:label)
+  title  ||= config_page(:manifest, :label)
+  error  ||= cfg&.dig(:failure)
+  error  &&= error % { id: item }
+  error  ||= "ERROR record #{item}"
 
   unless modal?
     set_page_meta_title(title)

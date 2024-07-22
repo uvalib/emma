@@ -6,8 +6,11 @@
 
   user  ||= @resource
 
+  cfg   ||= current_config_page_section
   help  ||= nil
-  title ||= t('emma.user.confirmations.new.title')
+  title ||= cfg[:title]
+
+  diff = cfg_diff(cfg, config_page_section(:user_confirmations, :new)) and raise(diff) # TODO: remove
 
   set_page_robots(:noindex, :nofollow) unless modal?
 
@@ -18,15 +21,15 @@
   label_opt     = { class: 'label' }
   value_opt     = { class: 'value' }
 
-  usr_label     = t('emma.user.confirmations.new.username')
+  usr_label     = cfg[:username]
   usr_label    += ':' unless usr_label.end_with?(':')
   usr_label_opt = label_opt
   usr_value_opt = value_opt.merge(autocomplete: 'email', value: email)
 
-  submit_label  = t('emma.user.confirmations.new.submit')
+  submit_label  = cfg[:submit]
   submit_opt    = { class: 'submit-button best-choice' }
 
-  cancel_label  = t('emma.user.confirmations.new.cancel')
+  cancel_label  = cfg[:cancel]
   cancel_opt    = { class: 'cancel-button' }
 
   form_opt = {

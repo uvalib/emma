@@ -1172,7 +1172,9 @@ class Search::Record::TitleRecord < Search::Api::Record
   # @type [Hash{Symbol=>Hash}]
   #
   FIELD_HIERARCHY =
-    symbolize_values(config_section('emma.search.field_hierarchy')).deep_freeze
+    config_page_section(:search, :field_hierarchy).then { |tree|
+      symbolize_values(tree)
+    }.deep_freeze
 
   # HIERARCHY_PATHS
   #

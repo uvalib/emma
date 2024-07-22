@@ -1,12 +1,14 @@
 <%# app/views/layouts/_search_bar.html.erb -%>
 <%-
   # Search input and related controls.
-  form_id  ||= unique_id('search-bar')
+  classes    = 'layout-section search bar'
+  unique     = hex_rand
+  form_id    = unique_id('search-bar', unique: unique)
   position ||= :complete
   target   ||= search_input_target
-  search_bar = target && search_bar_container(id: form_id, target: target)
+  search_bar =
+    target && search_bar_container(id: form_id, target: target, unique: unique)
   return unless search_bar.present?
-  classes    = 'layout-section search bar'
 -%>
 
 <div class="<%= classes -%>" data-target="<%= target -%>" role="search">

@@ -1,0 +1,613 @@
+# config/locales/help.en.yml
+#
+# Help topics.
+
+en:
+
+  emma:
+
+    help:
+
+      # =======================================================================
+      # Topics
+      #
+      # In order to make use of the common "_template" definitions, each topic
+      # must define:
+      #
+      #   topic:  The lowercase form of the topic name.
+      #   Topic:  The titlecase form of the topic name.
+      #
+      # For a given topic, *content* may have one of several values:
+      #
+      # * String      - a single paragraph displayed for the topic.
+      # * Array       - multiple paragraphs displayed for the topic.
+      # * Missing/nil - content is in the partial "help/topic/_TOPIC.html.erb".
+      # =======================================================================
+
+      topic:
+
+        _template:      &TOPIC_TEMPLATE
+          label:        'EMMA %{Topic} Help'
+          title:        'EMMA %{Topic}'
+          tooltip:      'Help with EMMA %{topic}'
+          intro:        'Information on how to %{topic} in EMMA.'
+          content:      'COMING SOON...' # Use ~ to indicate an ERB template.
+          enabled:      true
+
+        sign_in:
+          <<:           *TOPIC_TEMPLATE
+          topic:        'sign-in'
+          Topic:        'Sign-in'
+          title:        'Signing in to EMMA'
+          intro:        'Information on EMMA authentication.'
+          content:      ~ # @see file:app/views/help/topic/_sign_in.html.erb
+
+        search:
+          <<:           *TOPIC_TEMPLATE
+          topic:        'search'
+          Topic:        'Search'
+          title:        'Searching in EMMA'
+          tooltip:      'Help with searching in EMMA'
+          content:      ~ # @see file:app/views/help/topic/_search.html.erb
+
+          overview:
+            title:      'OVERVIEW'
+
+          types:
+            title:      'Search Types'
+
+            q_type:
+              title:    'Keyword Search'
+
+            title_type:
+              title:    'Title Search'
+
+            creator_type:
+              title:    'Creator Search'
+
+            id_type:
+              title:    'Identifier Search'
+
+          filters:
+            title:      'Filters'
+
+            single:
+              title:    'Simple Filters'
+
+            repo:
+              title:    'Repository'
+
+            multi:
+              title:    'Multi-select Filters'
+
+            format:
+              title:    'Format'
+
+            feature:
+              title:    'Feature'
+
+            access:
+              title:    'Accessibility'
+
+          results:
+            title:      'Search Result Controls'
+
+            sort:
+              title:    'Sort By'
+
+            size:
+              title:    'Page Size'
+
+          display:
+            title:      'Search Display Modes'
+
+            by_title:
+              title:    'Results By Title'
+
+            by_file:
+              title:    'Results By File'
+
+          url_params:
+            title:      'URL Engine Parameters'
+
+        download:
+          <<:           *TOPIC_TEMPLATE
+          topic:        'downloads'
+          Topic:        'Download'
+          title:        'Downloading from EMMA'
+          tooltip:      'Help with downloading files'
+          content:      ~ # @see file:app/views/help/topic/_download.html.erb
+
+          ace:
+            title:      'Downloading an ACE / Scholars Portal item'
+
+          ia:
+            title:      'Downloading an Internet Archive item'
+
+          oa:
+            title:      'Downloading an OpenAlex item'
+
+          emma:
+            title:      'Downloading an EMMA item'
+
+        upload:
+          <<:           *TOPIC_TEMPLATE
+          topic:        'uploads'
+          Topic:        'Upload'
+          title:        'Uploading to EMMA'
+          tooltip:      'Help with uploading files to EMMA'
+          content:      ~ # @see file:app/views/help/topic/_upload.html.erb
+
+          overview:
+            title:      'OVERVIEW'
+
+          list_all:
+            title:      'List all EMMA submissions'
+
+          list_org:
+            title:      "List your organization's EMMA submissions"
+
+          list_own:
+            title:      'List your past and current EMMA submissions'
+
+          new:
+            title:      'Submitting a new item to EMMA'
+
+          edit:
+            title:      'Updating an existing EMMA entry'
+
+          delete:
+            title:      'Removing an existing EMMA entry'
+
+          admin:
+            title:      'EMMA entry cloud storage administration'
+
+        manifest:
+          <<:           *TOPIC_TEMPLATE
+          topic:        'upload multiple items'
+          Topic:        'Bulk Upload'
+          title:        'EMMA Bulk Upload Manifests'
+          tooltip:      'Help with EMMA bulk uploads'
+          content:      ~ # @see file:app/views/help/topic/_manifest.html.erb
+
+          overview:
+            title:      'OVERVIEW'
+
+          grid:
+            title:      'Working with bulk upload manifests'
+            import:     'CSV file import'
+            edit:       'Manual item creation'
+
+          submission:
+            title:      'Bulk upload submissions'
+            step:
+              data:
+                label:  'Validation'
+                title:  'Correct and Save Items'
+              file:
+                label:  'File Status'
+                title:  'Identify Files'
+              store:
+                label:  'Storage Status'
+                title:  'File Uploading and Storage'
+              index:
+                label:  'Indexing Status'
+                title:  'Indexing Status'
+              entry:
+                label:  'Entry Status'
+                title:  'Entry Status'
+
+          list_all:
+            title:      'List all bulk upload manifests'
+
+          list_org:
+            title:      "List your organization's bulk upload manifests"
+
+          list_own:
+            title:      'List your bulk upload manifests'
+
+          new:
+            title:      'Creating a new bulk upload manifest'
+
+          edit:
+            title:      'Updating a bulk upload manifest'
+
+          delete:
+            title:      'Removing a bulk upload manifest'
+
+          remit:
+            title:      'Submit a bulk upload manifest'
+
+        lookup_tool:
+          <<:           *TOPIC_TEMPLATE
+          topic:        'bibliographic lookup'
+          Topic:        'Bibliographic Lookup Tool'
+          tooltip:      'Help with this feature'
+          intro:
+            >-
+            This is a temporary interface to code being developed to support
+            improving the usefulness of EMMA submissions by making it easy to
+            fill in missing bibliographic metadata.
+          content:      ~ # @see file:app/views/help/topic/_lookup_tool.html.erb
+
+        account:
+          <<:           *TOPIC_TEMPLATE
+          topic:        'accounts'
+          Topic:        'Account'
+          title:        'EMMA Account'
+          tooltip:      'Help with EMMA account maintenance'
+          intro:        'Information about EMMA user accounts.'
+          content:      ~ # @see file:app/views/help/topic/_account.html.erb
+
+          overview:
+            title:      'OVERVIEW'
+
+          list_all:
+            title:      'List all EMMA user accounts'
+
+          list_org:
+            title:      "List your organization's EMMA user accounts"
+
+          show_current:
+            title:      'View details of your EMMA user account'
+
+          edit_current:
+            title:      'Updating your EMMA user account'
+
+          new:
+            title:      'Creating a new EMMA user account'
+
+          edit:
+            title:      'Updating an existing EMMA user account'
+
+          delete:
+            title:      'Removing an existing EMMA user account'
+
+          show:
+            title:      'View details of an EMMA user account'
+
+          show_select:
+            title:      'View details of a selected EMMA user account'
+
+          edit_select:
+            title:      'Updating a selected EMMA user account'
+
+        organization:
+          <<:           *TOPIC_TEMPLATE
+          topic:        'organizations'
+          Topic:        'Organization'
+          title:        'EMMA Member Organization'
+          tooltip:      'Help with EMMA member organization maintenance'
+          intro:        'Information about EMMA member organizations.'
+          content:      ~ # @see file:app/views/help/topic/_organization.html.erb
+
+          overview:
+            title:      'OVERVIEW'
+
+          list_all:
+            title:      'List all EMMA member organizations'
+
+          show_select:
+            title:      'View details of a selected EMMA member organization'
+
+          show_current:
+            title:      'View details of your EMMA member organization'
+
+          edit_current:
+            title:      'Updating your EMMA member organization'
+
+          new:
+            title:      'Creating an EMMA member organization'
+
+          edit:
+            title:      'Updating an EMMA member organization'
+
+          delete:
+            title:      'Removing an EMMA member organization'
+
+          add_user:
+            title:      'Adding a new user to an organization'
+
+          edit_user:
+            title:      'Updating an existing user in an organization'
+
+          remove_user:
+            title:      'Removing an existing user from an organization'
+
+          show:
+            title:      'View details of an EMMA member organization'
+
+          edit_select:
+            title:      'Updating a selected EMMA member organization'
+
+        enrollment:
+          <<:           *TOPIC_TEMPLATE
+          topic:        'enrollment'
+          Topic:        'Enrollment'
+          title:        'EMMA Enrollment Requests'
+          tooltip:      'Help with EMMA enrollment request maintenance'
+          intro:        'How to enroll your organization as an EMMA member.'
+          content:      ~ # @see file:app/views/help/topic/_enrollment.html.erb
+
+          overview:
+            title:      'OVERVIEW'
+
+          index:
+            title:      'List all EMMA enrollment requests'
+
+          show:
+            title:      'View details of an EMMA enrollment request'
+
+          new:
+            title:      'Creating an EMMA enrollment request'
+
+          edit:
+            title:      'Updating an EMMA enrollment request'
+
+          delete:
+            title:      'Removing an EMMA enrollment request'
+
+          show_select:
+            title:      'Viewing a selected EMMA enrollment request'
+
+          edit_select:
+            title:      'Updating a selected EMMA enrollment request'
+
+          delete_select:
+            title:      'Removing a selected EMMA enrollment request'
+
+      # =======================================================================
+      # Illustrations
+      # =======================================================================
+
+      image:
+
+        sign_in_links:
+          asset:        'help/sign_in_links.png'
+          alt:          'Sign-in options links.'
+
+        drop_down:
+          asset:        'help/drop_down.png'
+          alt:
+            >-
+            Opened search format dropdown menu with "DAISY" format selection
+            highlighted.
+
+        ia_timeout:
+          asset:        'help/ia_timeout.png'
+          alt:
+            >-
+            Alert message with Internet Archive download service response:
+            "Sorry, we need more time to finish generating your ebook.
+            Please refresh this page after a few minutes."
+            And the EMMA note:
+            Close this browser tab and retry the original download link.
+
+        local_login:
+          asset:        'help/local_login.png'
+          alt:
+            >-
+            The "local sign-in" button with Account and Password fields and a
+            "Sign in" submit button.
+
+        one_selection:
+          asset:        'help/one_selection.png'
+          alt:
+            >-
+            Multi-select "Format" menu with "DAISY" as the single selection.
+
+        two_selections:
+          asset:        'help/two_selections.png'
+          alt:
+            >-
+            Multi-select "Format" menu with two selections: "DAISY" and "EPUB".
+
+        search_type_closed:
+          asset:        'help/search_type_closed.png'
+          alt:
+            >-
+            Search type menu (closed) with "Keyword" selected.
+
+        search_type_opened:
+          asset:        'help/search_type_opened.png'
+          alt:
+            >-
+            Search type menu (opened) with a dropdown menu of search types
+            "ISBN/DOI/etc.", "Title", "Creator", "Publisher", and "Keyword".
+
+        shibboleth_login:
+          asset:        'help/shibboleth_login.png'
+          alt:
+            >-
+            The InCommon login form with a dropdown menu to select your
+            institution.
+
+
+        # =====================================================================
+        # Single submission
+        # =====================================================================
+
+        upload_actions:
+          asset:        'help/upload_actions.png'
+          alt:
+            >-
+            Upload action button panel ("My List", "Org List", "Create",
+            "Change", and "Remove") with "My List" highlighted, indicating that
+            the current page lists EMMA submissions made by this account.
+
+        upload_actions_admin:
+          asset:        'help/upload_actions_admin.png'
+          alt:
+            >-
+            Upload action button panel ("My List", "List All", "Create",
+            "Change", and "Remove") with "My List" highlighted, indicating that
+            the current page lists EMMA submissions made by this account.
+
+        source_menu:
+          asset:        'help/source_menu.png'
+          alt:
+            >-
+            A portion of the upload submission form showing radio buttons to
+            filter the fields on the page, and with the Source Repository menu
+            in its initial closed state showing "(unset)".
+
+        source_menu_open:
+          asset:        'help/source_menu_open.png'
+          alt:
+            >-
+            A portion of the upload submission form showing radio buttons to
+            filter the fields on the page, and with the Source Repository menu
+            opened to show selections "EMMA", "ACE", "Internet Archive", and
+            "OpenAlex".
+
+        source_menu_repo:
+          asset:        'help/source_menu_repo.png'
+          alt:
+            >-
+            A portion of the upload submission form showing radio buttons to
+            filter the fields on the page, with "Internet Archive" selected as
+            the "Source Repository", and a mini-form with an input for a
+            standard identifier or title, with "Search" and "Cancel" buttons.
+
+        source_selected_fields:
+          asset:        'help/source_selected_fields.png'
+          alt:
+            >-
+            A portion of the upload submission form showing radio buttons to
+            filter the fields on the page, with "Completed fields" selected to
+            show that selecting the "parent" EMMA source entry has pre-filled
+            bibliographic fields for the submission derived from an original
+            item from Internet Archive.
+
+
+        # =====================================================================
+        # Bulk submission
+        # =====================================================================
+
+        manifest_actions:
+          asset:        'help/manifest_actions.png'
+          alt:
+            >-
+            Bulk upload action button panel ("My List", "Org List", "Create",
+            "Change", "Remove", and "Submit") with "My List" highlighted,
+            indicating that the current page lists bulk upload manifests made
+            by this account.
+
+        manifest_actions_admin:
+          asset:        'help/manifest_actions_admin.png'
+          alt:
+            >-
+            Bulk upload action button panel ("My List", "List All", "Create",
+            "Change", "Remove", and "Submit") with "My List" highlighted,
+            indicating that the current page lists bulk upload manifests made
+            by this account.
+
+        manifest_title:
+          asset:        'help/manifest_title.png'
+          alt:
+            >-
+            An example auto-generated manifest title, followed by an "Edit"
+            button and a help button for the page.
+
+        manifest_title_edit:
+          asset:        'help/manifest_title_edit.png'
+          alt:
+            >-
+            An example auto-generated manifest title being edited in a text
+            input, followed by "Change" and "Cancel" buttons.
+
+        submission_columns:
+          asset:        'help/submission_columns.png'
+          alt:
+            >-
+            The heading row of the bulk upload submission grid showing a
+            checkbox which can be used to check/uncheck all items, and column
+            headers "Item Name", "Validation", "File Status", "Storage Status",
+            "Indexing Status", and "Entry Status".
+
+        unsaved:
+          asset:        'help/unsaved.png'
+          alt:
+            >-
+            The UNSAVED submission status marker, with an "Edit" button to jump
+            to that item in the manifest edit grid.
+
+        data_missing:
+          asset:        'help/data_missing.png'
+          alt:
+            >-
+            The DATA ERROR submission status marker, with an "Edit" button to
+            jump to that item in the manifest edit grid.
+
+        file_missing:
+          asset:        'help/file_needed.png' # TODO: don't have this yet
+          alt:
+            >-
+            The FILE MISSING submission status marker, with an "Edit" button to
+            jump to that item in the manifest edit grid.
+
+        file_needed:
+          asset:        'help/file_needed.png'
+          alt:
+            >-
+            The FILE NEEDED submission status marker, including the name of the
+            remediated file that needs to be supplied.
+
+        not_started:
+          asset:        'help/not_started.png'
+          alt:
+            >-
+            The NOT STARTED status marker, which indicates a submission step
+            not yet reached for the given item.
+
+        succeeded:
+          asset:        'help/succeeded.png'
+          alt:
+            >-
+            The OK status marker, which indicates a submission step that has
+            been successfully completed for the given item.
+
+
+
+        # =====================================================================
+        # Accounts
+        # =====================================================================
+
+        account_actions:
+          asset:        'help/account_actions.png'
+          alt:
+            >-
+            Account action button panel ("Details", "Modify", "Org List") with
+            "Details" highlighted, indicating that the current page lists
+            information about the current account.
+
+        account_actions_admin:
+          asset:        'help/account_actions_admin.png'
+          alt:
+            >-
+            Account action button panel ("Details", "Modify", "List All") with
+            "List All" highlighted, indicating that the current page is a
+            listing of all EMMA accounts.
+
+
+        # =====================================================================
+        # Organizations
+        # =====================================================================
+
+        org_actions_manager:
+          asset:        'help/org_actions_manager.png'
+          alt:
+            >-
+            Organization action button panel ("Details", "Modify", "Add User",
+            "Edit User", "Remove User") with "Details" highlighted, indicating
+            that the current page lists information the user's EMMA member
+            organization.
+
+        org_actions_admin:
+          asset:        'help/org_actions_admin.png'
+          alt:
+            >-
+            Organization action button panel ("List All", "Show Org", "Create",
+            "Change", "Remove", "Add User", "Edit User", "Remove User") with
+            "List All" highlighted, indicating that the current page is a
+            listing of all EMMA member organizations.

@@ -717,25 +717,27 @@ module FlashHelper
   # @param [Symbol, String, nil]   meth
   # @param [Boolean, nil]          html
   # @param [String, nil]           separator
-  # @param [Hash]                  opt        Passed to #config_item.
+  # @param [Hash]                  opt        Passed to #config_entry.
   #
   # @return [String]                          # Even if html is *true*.
   #
   def flash_template(msg, topic:, meth: nil, html: nil, separator: nil, **opt)
-    t_key = (topic.to_sym == :success) ? :name : :error
     if msg.is_a?(Array)
-      opt[t_key] = msg.compact_blank.join(separator || (html ? "\n" : ', '))
-    else
-      opt[t_key] = msg
+      msg = msg.compact_blank.join(separator || (html ? "\n" : ', '))
     end
-    scope = flash_i18n_scope
+    i_key = (topic.to_sym == :success) ? :name : :error
+    scope = flash_i18n_scope.presence
     keys  = []
-    keys << :"emma.#{scope}.#{meth}" if meth
-    keys << :"emma.#{scope}.error"
-    keys << :"emma.#{scope}"
-    keys << :'emma.error'
-    keys.map! { |base| :"#{base}.#{topic}" }
-    config_item(keys, **opt) || ExecError::DEFAULT_ERROR
+    keys << :"emma.page.#{scope}.action.#{meth}.#{topic}" if scope && meth
+    keys << :"emma.page.#{scope}.#{meth}.#{topic}"        if scope && meth
+    keys << :"emma.page.#{scope}.error.#{topic}"          if scope
+    keys << :"emma.page.#{scope}.#{topic}"                if scope
+    keys << :"emma.error.#{scope}.#{meth}.#{topic}"       if scope && meth
+    keys << :"emma.error.#{meth}.#{topic}"                if meth
+    keys << :"emma.error.#{scope}.#{topic}"               if scope
+    keys << :"emma.error.#{topic}"
+    # noinspection RubyMismatchedReturnType
+    config_entry(keys, i_key => msg, fallback: ExecError::DEFAULT_ERROR, **opt)
   end
 
   # I18n scope based on the current class context.

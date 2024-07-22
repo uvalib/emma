@@ -406,7 +406,7 @@ module FlashHelper
   # @param [Symbol, String, nil]   meth
   # @param [Boolean, nil]          html
   # @param [String, nil]           separator
-  # @param [Hash]                  opt        Passed to #config_item.
+  # @param [Hash]                  opt        Passed to #config_entry.
   #
   # @return [String]                          # Even if html is *true*.
   #

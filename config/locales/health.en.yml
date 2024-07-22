@@ -1,0 +1,47 @@
+# config/locales/health.en.yml
+#
+# HealthController monitored subsystems.
+
+en:
+
+  emma:
+
+    health:
+
+      subsystems:
+
+        default:        &DEFAULT
+          restart:      false
+          failed:       'Unknown error'
+
+        invalid:
+          <<:           *DEFAULT
+          method:       false
+          failed:       'NOT A VALID SUBSYSTEM'
+
+        database:
+          <<:           *DEFAULT
+          restart:      true
+          failed:       'Database connection error'
+
+        redis:
+          <<:           *DEFAULT
+          restart:      true
+          healthy:      'NOT IMPLEMENTED' # TODO: future
+          failed:       'Redis unresponsive'
+
+        storage:
+          <<:           *DEFAULT
+          healthy:      'NOT IMPLEMENTED' # TODO: future
+          degraded:     'AWS storage degraded'
+          failed:       'AWS storage failing'
+
+        search:
+          <<:           *DEFAULT
+          degraded:     'Unified Search service degraded'
+          failed:       'Unified Search service unresponsive'
+
+        ingest:
+          <<:           *DEFAULT
+          degraded:     'Unified Ingest service degraded'
+          failed:       'Unified Ingest service failing'

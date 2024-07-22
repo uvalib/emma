@@ -4,9 +4,9 @@
 
   view_debug(__FILE__)
 
+  cfg   ||= config_page_section(:user_sessions, :sign_in)
   help  ||= nil
-  title ||= t('emma.user.sessions.sign_in.title', default: nil)
-  title ||= t('emma.user.sessions.sign_in.label', default: 'Sign in')
+  title ||= cfg[:title] || cfg[:label] || 'Sign in'
 
   unless modal?
     set_page_meta_title(title)

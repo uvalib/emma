@@ -155,7 +155,7 @@ module LayoutHelper::PageControls
     entries.map { |entry|
       ctr  = entry[:ctrlr]
       act  = entry[:action]
-      cfg  = I18n.t("emma.#{ctr}.#{act}", default: {})
+      cfg  = config_page_section(ctr, act)
       role = entry.delete(:role)   || cfg[:role]
       next unless role.blank? || current_user&.has_role?(role)
       lbl  = entry.delete(:label)  || cfg[:label]

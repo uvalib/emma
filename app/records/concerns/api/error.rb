@@ -225,11 +225,10 @@ class Api::Error < ExecError
     def service_name(source: nil, key: :_name, fallback: 'remote service')
       source ||= service
       keys = []
-      keys << :"emma.error.#{source}" if source
-      keys << :'emma.error.api'
-      keys.map! { |base| :"#{base}.#{key}" }
+      keys << :"emma.error.#{source}.#{key}" if source
+      keys << :"emma.error.api.#{key}"
       # noinspection RubyMismatchedReturnType
-      config_item(keys, fallback: fallback)
+      config_entry(keys, fallback: fallback)
     end
 
     # =========================================================================
@@ -244,6 +243,7 @@ class Api::Error < ExecError
     # @param [Symbol, String, nil] source     Source repository
     # @param [Symbol, String, nil] type       Error type.
     # @param [String, Boolean]     fallback
+    # @param [Hash]                opt        Passed to #config_entry.
     #
     # @return [String]                The appropriate error message.
     # @return [nil]                   If *allow_nil* is set to *true* and no
@@ -251,22 +251,18 @@ class Api::Error < ExecError
     #
     # @see "en.emma.error.api"
     #
-    def default_message(source: nil, type: nil, fallback: true)
+    def default_message(source: nil, type: nil, fallback: true, **opt)
       source ||= service
       type   ||= error_type
+      fallback = "#{type&.capitalize || 'API'} error" if true?(fallback)
+      opt[:fallback] = fallback if fallback.is_a?(String)
       name = service_name(source: source)
-      opt  = { service: name, Service: name.upcase_first }
-      case fallback
-        when String then opt[:fallback] = fallback
-        when true   then opt[:fallback] = "#{type&.capitalize || 'API'} error"
-      end
       keys = []
-      keys << :"#{source}.#{type}"  if source && type
-      keys << :"api.#{type}"        if type
-      keys << :"#{source}._default" if source
-      keys << :'api._default'
-      keys.map! { |key| :"emma.error.#{key}" }
-      config_item(keys, **opt)
+      keys << :"emma.error.#{source}.#{type}"   if source && type
+      keys << :"emma.error.api.#{type}"         if type
+      keys << :"emma.error.#{source}._default"  if source
+      keys << :'emma.error.api._default'
+      config_entry(keys, service: name, Service: name.upcase_first, **opt)
     end
 
     # =========================================================================

@@ -11,18 +11,21 @@
 
   fail if sanity_check? && list && (list.keys != names)
 
+  cfg   ||= current_config_page_section
   help  ||= nil # %i[data]
-  title ||= t('emma.data.index.title')
+  title ||= cfg[:title]
 
   unless modal?
-    label = t('emma.data.index.label', default: title)
+    label = cfg[:label] || title
     set_page_meta_title(label)
     set_page_description(title)
   end
 
-  submission_paths = {
-    t('emma.data.submissions.label') => data_submissions_path(format: :html),
-    t('emma.data.counts.label')      => data_counts_path(format: :html),
+  submissions_label = config_page(:data, :submissions, :label)
+  counts_label      = config_page(:data, :data, :counts, :label)
+  submission_paths  = {
+    submissions_label => data_submissions_path(format: :html),
+    counts_label      => data_counts_path(format: :html),
   }
 
   if list.present?
@@ -42,14 +45,14 @@
 
 <%= page_description_section %>
 
-<h2><%= t('emma.data.index.submissions.title') -%></h2>
+<h2><%= cfg.dig(:submissions, :title) -%></h2>
 <ul class="database-table-links">
   <%- submission_paths.each_pair do |name, path| -%>
     <li><%= link_to(name, path) -%></li>
   <%- end -%>
 </ul>
 
-<h2><%= t('emma.data.index.tables.title') -%></h2>
+<h2><%= cfg.dig(:tables, :title) -%></h2>
 <ul class="database-table-links">
   <%- paths.each_pair do |name, path| -%>
     <%- count = counts[name] || 0 -%>

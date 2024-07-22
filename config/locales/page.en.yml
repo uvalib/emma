@@ -1,0 +1,4390 @@
+# config/locales/page.en.yml
+#
+# General application values
+
+en:
+
+  emma:
+
+    page:
+
+      # =======================================================================
+      # GENERAL: base page definitions
+      # =======================================================================
+
+      _generic:             &GENERIC
+
+        # NOTE: Some of these definitions require parameters to be supplied:
+        #
+        # %{item}           Singular form of the entity.
+        # %{items}          Plural form of the entity.
+        # %{Item}           Capitalized singular form of the entity.
+        # %{Items}          Capitalized plural form of the entity.
+
+        unit:
+          brief:            'item'
+          long:             'item'
+        label:              '%{Items}'
+        title:              '%{Items}'
+        tooltip:            'Search for %{items}'
+
+        # =====================================================================
+        # Search endpoint
+        # =====================================================================
+
+        search:
+          action:           index
+
+        # =====================================================================
+        # HTML page header and footer
+        # =====================================================================
+
+        head:
+
+          title:
+            prefix:         ''
+            suffix:         'EMMA'
+
+          description:
+            prefix:         'Print-disability accessible content'
+
+          favicon:
+            asset:          'favicon.ico'
+
+          stylesheets:
+            # NOTE: Handled via HeadHelper::Stylesheets#page_stylesheets
+            - 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css'
+            - 'https://releases.transloadit.com/uppy/v3.1.1/uppy.min.css'
+
+          javascripts:
+            # NOTE: Now handling by Yarn through /package.json.
+            - ~
+
+        foot:
+
+          website:
+            label:          'Website'
+            link:           'https://emma.uvacreate.virginia.edu'
+
+          contact:
+            label:          'Contact'
+            link:           'emmahelp@virginia.edu'
+
+          version:
+            label:          'Version'
+            content:        BUILD_VERSION
+
+        # =====================================================================
+        # Page elements
+        # =====================================================================
+
+        panel:
+
+          control:          &PANEL_TOGGLE
+            label:          'More ▼'
+            tooltip:        'See more'
+            open:           &PANEL_OPEN_TOGGLE
+              label:        'Less ▲'
+              tooltip:      'See less'
+
+        tree:
+
+          control:
+            label:          '▶'
+            tooltip:        'Open'
+            open:
+              label:        '▼'
+              tooltip:      'Close'
+
+        form:               &FORM
+
+          submit:           &FORM_SUBMIT
+            label:          'Submit'
+            if_enabled:
+              tooltip:      'Proceed with this action'
+            if_disabled:
+              #tooltip:      'Required information is still needed'
+              tooltip:      'Conditions have not yet been met to proceed'
+
+          cancel:           &FORM_CANCEL
+            label:          'CANCEL'
+            if_enabled:
+              tooltip:      'Do nothing and return to the previous screen'
+            if_disabled:
+              tooltip:      'Not able to cancel at this point'
+
+        # =====================================================================
+        # Layout
+        # =====================================================================
+
+        logo:
+
+          link:
+            label:          'Return to the main page'
+
+          text:
+            label:          'EMMA'
+
+          image:
+            alt:            'EMMA logo'
+            asset:          'EMMA-logo-UVAbg.png'
+
+        nav_bar:
+
+          controllers:
+
+            # The subset of controllers which may be represented in the navbar,
+            # in the order in which they would be displayed.
+
+            - 'search'
+            - 'upload'
+            - 'manifest'
+            - 'tool'
+            - 'help'
+            - 'sys'
+            - 'enrollment'
+            - 'org'
+            - 'home'
+            - 'data'
+
+          primary:
+
+            # The subset of 'nav_bar.controllers' which are always displayed.
+            # Non-primary entries will only be displayed if the current URL
+            # includes that controller.
+            #
+            # Role-based logic in #nav_bar_links determines which entries are
+            # actually displayed for the current user.
+
+            - 'search'
+            - 'upload'
+            - 'manifest'
+            - 'tool'
+            - 'help'
+            - 'sys'
+            - 'enrollment'
+            - 'org'
+            - 'home'
+
+          unreleased:
+
+            # The subset of 'nav_bar.primary' which are not displayed in the
+            # production deployment.  (This may safely be nil or empty.)
+
+        page_controls:
+          label:
+            one:            'Manage this %{item}:'
+            many:           '%{Item} Actions:'
+
+        dev_controls:
+          label:            'Dev Actions'
+
+        search_type:        &SEARCH_TYPE
+
+          q:                &SEARCH_TYPE_KEYWORD
+            url_param:      q
+            name:           'Keyword'
+            label:          'Search terms:'
+            tooltip:
+              >-
+              Search for one or more keywords matching anywhere in the
+              description of entries
+            placeholder:    'Enter search terms...'
+
+        search_bar:         &SEARCH_BAR
+          label:            '%{Item} Search'
+          min_rows:         1
+          max_rows:         1
+          enabled:          false
+
+          button:
+            label:          'Search'
+
+          advanced:
+            <<:             *PANEL_TOGGLE
+            tooltip:        'Show additional search filters'
+            open:
+              <<:           *PANEL_OPEN_TOGGLE
+              tooltip:      'Hide additional search filters'
+
+        search_filters:     &SEARCH_FILTERS
+          expanded:         true        # False/missing => collapsed initially.
+          enabled:          false
+
+          _default:         &SEARCH_FILTERS_DEFAULT
+            service:        ~           # The applicable API service.
+            url_param:      ~           # URL parameter for the control value.
+            label:          ~           # Displayed before the control.
+            label_visible:  true        # If *false* label is 'sr-only'.
+            tooltip:        ~           # Displayed hovering over control or label.
+            placeholder:    '(any)'     # Displayed if the control value is unset.
+            values:         ~           # Hard-wired menu values.
+            default:        ~           # Hard-wired default menu value selection.
+            multiple:       false       # Allow multiple selections.
+            menu:           ~           # Hard-wired label/value pairs.
+            menu_format:    'titleize'  # Transform for values into menu labels.
+            enabled:        true        # @see SearchModesHelper#permitted_by?
+            #enabled:        false        # @see SearchModesHelper#permitted_by?
+
+          _reset:           &SEARCH_FILTERS_RESET
+            label:          'Reset'
+            tooltip:        'Set all search filters to their default values'
+
+          size:             &SEARCH_FILTERS_SIZE
+            #<<:             *SEARCH_FILTERS_DEFAULT # NOTE: avoid this
+            url_param:      limit
+            label:          'Page Size'
+            tooltip:        'Specify the number of results per page'
+            placeholder:    ~
+            values:         [10, 25, 50, 100, 500]
+            default:        25
+            multiple:       false
+            menu_format:    'none'
+
+          sort:             &SEARCH_FILTERS_SORT
+            #<<:             *SEARCH_FILTERS_DEFAULT # NOTE: avoid this
+            url_param:      sort
+            label:          'Sort By'
+            tooltip:        'Specify the order in which results are presented'
+            placeholder:    ~
+            values:         [] # NOTE: Override per-controller
+            default:        ~  # NOTE: Override per-controller
+            multiple:       false
+            reverse:        &SEARCH_FILTERS_SORT_REVERSE
+              label:        '%{sort} (rev)'
+              suffix:       'rev'
+              except:       [relevance]
+              enabled:      false
+
+          repository:       &SEARCH_FILTERS_REPOSITORY
+            #<<:             *SEARCH_FILTERS_DEFAULT # NOTE: avoid this
+            url_param:      repository
+            label:          'Repository'
+            tooltip:        'Limit by record originator'
+            values:         !ruby/symbol EmmaRepository
+
+        # =====================================================================
+        # Controls
+        # =====================================================================
+
+        pagination:         &PAGINATION
+          page:             'page'
+          page_size:        25
+          separator:        '|'
+          count:
+            one:            '%{item} found'
+            many:           '%{items} found'
+
+          start_over:
+            label:          'START'
+            tooltip:        'Clear all search terms'
+
+          first_page:
+            label:          'FIRST'
+            tooltip:        'Go to the first page of results'
+            no_link:
+              tooltip:      'Already on the first page of results'
+
+          last_page:
+            label:          'LAST'
+            tooltip:        'Go to the last page of results'
+            no_link:
+              tooltip:      'Already on the last page of results'
+
+          prev_page:
+            label:          'PREV'
+            tooltip:        'Go to the previous page of results'
+            no_link:
+              tooltip:      'Currently on the first page of results'
+
+          next_page:
+            label:          'NEXT'
+            tooltip:        'Go to the next page of results'
+            no_link:
+              tooltip:      'Currently on the last page of results'
+
+        image:
+          placeholder:      &PLACEHOLDER
+            format:         'this'
+            image:          &PLACEHOLDER_IMAGE
+              alt:          'Retrieving...'
+              asset:        'loading-balls.gif'
+
+        thumbnail:
+          image:
+            alt:            '' # NOTE: not 'Thumbnail image for %{item}'
+
+        cover:
+          image:
+            alt:            '' # NOTE: not 'Cover image for %{item}'
+          placeholder:
+            <<:             *PLACEHOLDER
+
+        download:
+          label:          'Download'
+          title:          'Download'
+          tooltip:        'Get a copy of the item in this format'
+
+          # NOTE: Some of these definitions require parameters to be supplied:
+          #
+          # %{fmt}        Name of a content file export format.
+          # %{button}     Label of a button.
+
+          complete:
+            tooltip:      'Click on the button to retrieve the file'
+
+          error:
+            server:       'This item could not be downloaded'
+            javascript:   'You must have JavaScript enabled'
+
+          link:
+            tooltip:      'Download this item in %{fmt} format'
+            sign_in:
+              tooltip:    'You must sign in to EMMA for this item'
+            disallowed:
+              tooltip:
+                >-
+                %{repo} does not allow your account to download this item
+            complete:
+              tooltip:    'Click on the "%{button}" button to retrieve the file'
+
+          progress:
+            tooltip:      'Click here to cancel the download'
+            image:
+              <<:         *PLACEHOLDER_IMAGE
+              alt:        'Downloading...'
+
+          failure:
+            sign_in:      'You must sign in to EMMA for this item'
+            unknown:      'unknown error'
+
+        #action_links:            # TODO: ??? restore after comparison
+        #  back:                  # TODO: ??? restore after comparison
+        #    label:        'Back' # TODO: ??? restore after comparison
+
+        control_icons:
+
+          show:
+            icon:         "\U0001F50D" # 🔍 LEFT-POINTING MAGNIFYING GLASS
+            spoken:       'magnifying glass icon'
+            tooltip:      'View this %{item}'
+
+          edit:
+            icon:         "\U0001F58A" # 🖊 LOWER LEFT BALLPOINT PEN
+            spoken:       'pen icon'
+            tooltip:      'Modify this %{item}'
+
+          delete:
+            icon:         "\u2716" # ✖ HEAVY MULTIPLICATION X
+            spoken:       'X icon'
+            tooltip:      'Remove this %{item}'
+
+        # =====================================================================
+        # Form controls
+        # =====================================================================
+
+        field_group:
+
+          available:
+            label:        'All fields'
+            label_narrow: 'All'
+            tooltip:      'Reveal all data fields'
+
+          invalid:
+            label:        'Incomplete fields'
+            label_narrow: 'Incomplete'
+            tooltip:      'Show fields that require attention'
+
+          filled:
+            label:        'Completed fields'
+            label_narrow: 'Completed'
+            tooltip:      'Show fields that have data'
+
+          all:
+            label:        'All plus internal-use fields'
+            label_narrow: 'All++'
+            tooltip:      'Show all record fields including read-only fields'
+            role:         administrator
+
+        status_marker:
+
+          required:
+            label:        "\u26A0" # ⚠ WARNING SIGN
+            spoken:       'warning icon'
+            tooltip:      '%{This} is a required field'
+
+          invalid:
+            label:        "\u26A0" # ⚠ WARNING SIGN
+            spoken:       'warning icon'
+            tooltip:      'The provided value is invalid'
+
+          valid:
+            label:        "\u2714" # ✔ HEAVY CHECK MARK
+            spoken:       'checkmark icon'
+            tooltip:      'The provided value is valid'
+
+          disabled:
+            label:        "\u2716" # ✖ HEAVY MULTIPLICATION X
+            spoken:       'X icon'
+
+          blank:
+            label:        "\u2002" #   EN SPACE
+
+      # =======================================================================
+      # GENERAL: action templates
+      # =======================================================================
+
+      _template:  &TEMPLATE
+
+        # =====================================================================
+        # Action pages
+        # =====================================================================
+
+        action:
+
+          _generic:         &GENERIC_ACTION
+            label:          ~
+            title:          ~
+            #tooltip:        ~ # A brief description of this operation.
+            ##description:    ~ # A more detailed description of this operation.
+            ##directions:     ~ # Brief guidance for using the operation form.
+            ##notes:          ~ # A more detailed description of this operation.
+
+          # ===================================================================
+
+          index:            &INDEX_ACTION
+            <<:             *GENERIC_ACTION
+            label:          'List'
+            title:          '%{Items}'
+            tooltip:        'Find more %{items} with %{terms}'
+
+          # ===================================================================
+
+          list_all:         &LIST_ALL_ACTION
+            <<:             *GENERIC_ACTION
+            label:          'List All'
+            title:          'All %{Items}'
+            tooltip:        'List all %{items}'
+
+          # ===================================================================
+
+          list_org:         &LIST_ORG_ACTION
+            <<:             *GENERIC_ACTION
+            label:          'Org List'
+            title:          'Organization %{Items}'
+            tooltip:        'List the %{items} associated with your organization'
+
+          # ===================================================================
+
+          show:             &SHOW_ACTION
+            <<:             *GENERIC_ACTION
+            label:          'Show'
+            title:          '%{Item}'
+            tooltip:        'See details about this %{item}'
+
+          # ===================================================================
+
+          show_select:      &SHOW_SELECT_ACTION
+            <<:             *GENERIC_ACTION
+            <<:             *FORM
+            label:          'Show %{Item}'
+            title:          'Show %{an} %{item}'
+            tooltip:        'See details about this item'
+
+          # ===================================================================
+
+          new:              &NEW_ACTION
+            <<:             *GENERIC_ACTION
+            <<:             *FORM
+            label:          'Add'
+            title:          'Add %{Item}'
+            tooltip:        'Create a new %{item}'
+
+          # ===================================================================
+
+          create:           &CREATE_ACTION
+            <<:             *NEW_ACTION
+
+          # ===================================================================
+
+          edit:             &EDIT_ACTION
+            <<:             *GENERIC_ACTION
+            <<:             *FORM
+            label:          'Modify'
+            title:          'Modify %{Item}'
+            tooltip:        'Make changes to this %{item}'
+
+          # ===================================================================
+
+          edit_select:      &EDIT_SELECT_ACTION
+            <<:             *EDIT_ACTION
+            title:          'Modify %{an} %{Item}'
+
+          # ===================================================================
+
+          update:           &UPDATE_ACTION
+            <<:             *EDIT_ACTION
+
+          # ===================================================================
+
+          delete:           &DELETE_ACTION
+            <<:             *GENERIC_ACTION
+            <<:             *FORM
+            label:          'Remove'
+            title:          'Remove %{Item}'
+            tooltip:        'Remove this %{item}'
+
+          # ===================================================================
+
+          delete_select:    &DELETE_SELECT_ACTION
+            <<:             *DELETE_ACTION
+            title:          'Remove %{an} %{Item}'
+
+          # ===================================================================
+
+          destroy:          &DESTROY_ACTION
+            <<:             *DELETE_ACTION
+
+          # ===================================================================
+
+          history:          &HISTORY_ACTION
+            <<:             *GENERIC_ACTION
+            label:          'History'
+            title:          '%{Item} History'
+            tooltip:        'View modifications for this %{item}'
+
+      # =======================================================================
+      # GENERAL: page definitions specific to EMMA Unified Index search
+      # =======================================================================
+
+      _index_search:        &INDEX_SEARCH
+
+        # =====================================================================
+        # Layout
+        # =====================================================================
+
+        search_type:        &INDEX_SEARCH_TYPE
+
+          identifier:
+            url_param:      identifier
+            name:           'ISBN / DOI / etc.'
+            label:          'Standard identifier:'
+            tooltip:
+              >-
+              Search for creative works or specific editions/issues by a
+              standard identifier (ISBN, DOI, OCLC, UPC, etc.)
+            placeholder:    'Enter an identifier...'
+
+          title:
+            url_param:      title
+            name:           'Title'
+            label:          'Title terms:'
+            tooltip:
+              >-
+              Search for one or more terms matching the title of a work
+            placeholder:    'Enter title terms...'
+
+          creator:
+            url_param:      creator
+            name:           'Creator'
+            label:          'Creator terms:'
+            tooltip:
+              >-
+              Search for one or more terms matching the author or creator of a
+              work
+            placeholder:    'Enter author/creator terms...'
+
+          publisher:
+            url_param:      publisher
+            name:           'Publisher'
+            label:          'Publisher terms:'
+            tooltip:
+              >-
+              Search for one or more terms matching the publisher of a work
+           #tooltip:
+           #  >-
+           #  Search for one or more terms matching the publisher of a work
+           #  (or the title of a journal in which the work would be found)
+            placeholder:    'Enter publisher terms...'
+
+          <<:               *SEARCH_TYPE
+
+        search_bar:         &INDEX_SEARCH_BAR
+          <<:               *SEARCH_BAR
+          enabled:          true
+
+        search_filters:     &INDEX_SEARCH_FILTERS
+          <<:               *SEARCH_FILTERS
+          enabled:          true
+
+          _default:         &INDEX_SEARCH_FILTERS_DEFAULT
+            <<:             *SEARCH_FILTERS_DEFAULT
+            service:        search
+            enabled:        true
+
+          _reset:           &INDEX_SEARCH_FILTERS_RESET
+            <<:             *SEARCH_FILTERS_RESET
+
+          a11y_feature:     &INDEX_SEARCH_FILTERS_A11Y_FEATURE
+            <<:             *INDEX_SEARCH_FILTERS_DEFAULT
+            url_param:      accessibilityFeature
+            label:          'Accessibility'
+            tooltip:        'Limit by accessibility feature'
+            values:         !ruby/symbol A11yFeature
+            multiple:       true
+
+          format:           &INDEX_SEARCH_FILTERS_FORMAT
+            <<:             *INDEX_SEARCH_FILTERS_DEFAULT
+            url_param:      'fmt' # NOTE: not 'format' due to Rails constraints.
+            label:          'Format'
+            tooltip:        'Limit to one or more remediated content types'
+            values:         !ruby/symbol DublinCoreFormat
+            multiple:       true
+
+          format_feature:   &INDEX_SEARCH_FILTERS_FORMAT_FEATURE
+            <<:             *INDEX_SEARCH_FILTERS_DEFAULT
+            url_param:      formatFeature
+            label:          'Feature'
+            tooltip:        'Limit by format feature'
+            values:         !ruby/symbol FormatFeature
+            multiple:       true
+
+          repository:       &INDEX_SEARCH_FILTERS_REPOSITORY
+            <<:             *INDEX_SEARCH_FILTERS_DEFAULT
+            <<:             *SEARCH_FILTERS_REPOSITORY
+
+          size:             &INDEX_SEARCH_FILTERS_SIZE
+            <<:             *INDEX_SEARCH_FILTERS_DEFAULT
+            <<:             *SEARCH_FILTERS_SIZE
+            tooltip:        'Specify the number of search results per page'
+            values:         [10, 25, 50, 100]
+            default:        100
+            enabled:        file_only
+
+          sort:             &INDEX_SEARCH_FILTERS_SORT
+            <<:             *INDEX_SEARCH_FILTERS_DEFAULT
+            <<:             *SEARCH_FILTERS_SORT
+            values:         !ruby/symbol SearchSort
+            reverse:        &INDEX_SEARCH_FILTERS_SORT_REVERSE
+              <<:           *SEARCH_FILTERS_SORT_REVERSE
+              enabled:      true
+
+          layout:
+            - [sort,   size,           repository  ]
+            - [format, format_feature, a11y_feature]
+
+      # =======================================================================
+      # GENERAL: page definitions specific to database search
+      # =======================================================================
+
+      _database_search:     &DB_SEARCH
+
+        # =====================================================================
+        # Layout
+        # =====================================================================
+
+        search_type:        &DB_SEARCH_TYPE
+
+          like:             &DB_SEARCH_TYPE_LIKE
+            name:           'Filter'
+            label:          'Filter by term:'
+            placeholder:    'Partial field value...'
+
+          q:                &DB_SEARCH_TYPE_KEYWORD
+            <<:             *DB_SEARCH_TYPE_LIKE
+
+        search_bar:         &DB_SEARCH_BAR
+          <<:               *SEARCH_BAR
+          label:            'Record Filter'
+          enabled:          [index]
+
+        search_filters:     &DB_SEARCH_FILTERS
+          <<:               *SEARCH_FILTERS
+          enabled:          [index]
+
+          _default:         &DB_SEARCH_FILTERS_DEFAULT
+            <<:             *SEARCH_FILTERS_DEFAULT
+            service:        database
+
+          _reset:
+            <<:             *SEARCH_FILTERS_RESET
+
+          size:             &DB_SEARCH_FILTERS_SIZE
+            <<:             *DB_SEARCH_FILTERS_DEFAULT
+            <<:             *SEARCH_FILTERS_SIZE
+
+          sort:             &DB_SEARCH_FILTERS_SORT
+            <<:             *DB_SEARCH_FILTERS_DEFAULT
+            <<:             *SEARCH_FILTERS_SORT
+            reverse:        &DB_SEARCH_FILTERS_SORT_REVERSE
+              <<:           *SEARCH_FILTERS_SORT_REVERSE
+              enabled:      true
+
+          repository:       &DB_SEARCH_FILTERS_REPOSITORY
+            <<:             *DB_SEARCH_FILTERS_DEFAULT
+            <<:             *SEARCH_FILTERS_REPOSITORY
+
+          layout:
+            - [sort, size,  ~]
+
+      # =======================================================================
+      # CONTROLLER: Account page definitions
+      # =======================================================================
+
+      account:
+
+        <<:                 *GENERIC
+        <<:                 *DB_SEARCH
+
+        unit:
+          brief:            'account'
+          long:             'EMMA user account'
+        label:              'Users'
+        title:              'EMMA User Accounts'
+        tooltip:            'Show the EMMA user account database table'
+
+        # =====================================================================
+        # Layout
+        # =====================================================================
+
+        page_controls:
+          label:            'Account Actions:'
+          actions:
+            - { controller: 'home', action: 'dashboard', label: 'Details' }
+            - edit_current
+            - list_org
+            - list_all
+           #- new
+           #- edit_select
+           #- delete_select
+
+        search_type:
+          <<:               *DB_SEARCH_TYPE
+
+          like:             &ACCOUNT_SEARCH_TYPE_LIKE
+            <<:             *DB_SEARCH_TYPE_LIKE
+            label:          'Filter by account:'
+            placeholder:    'Partial email or name...'
+
+          q:
+            <<:             *ACCOUNT_SEARCH_TYPE_LIKE
+
+        search_bar:
+          <<:               *DB_SEARCH_BAR
+          label:            'Account Filter'
+
+        search_filters:
+          <<:               *DB_SEARCH_FILTERS
+
+        action_links:
+
+          new:
+            label:          'Create %{an} new EMMA user account'
+
+          edit:
+            label:          'Modify %{an} existing EMMA user account'
+
+          delete:
+            label:          'Remove %{an} existing EMMA user account'
+
+          list_all:
+            label:          'List all EMMA user accounts'
+
+          list_org:
+            label:          'List EMMA user accounts'
+
+        # =====================================================================
+        # Fields
+        # =====================================================================
+
+        display_fields:
+          - id
+          - email
+          - first_name
+          - last_name
+          - upload_count:   { label: 'Submissions' }
+          - manifest_count: { label: 'Manifests' }
+          - sign_in_count
+          - role
+         #- org
+          - org_id
+          - preferred_email
+          - phone
+          - address
+          - status
+          - status_date
+          - current_sign_in_at
+          - last_sign_in_at
+          - current_sign_in_ip
+          - last_sign_in_ip
+          - updated_at
+          - created_at
+          - encrypted_password
+          - remember_created_at
+          - reset_password_sent_at
+          - reset_password_token
+          - provider:       { ignored: true }
+          - effective_id:   { ignored: true }
+          - access_token:   { ignored: true }
+          - refresh_token:  { ignored: true }
+
+        # =====================================================================
+        # Action pages
+        # =====================================================================
+
+        action:
+
+          _generic:         &ACCOUNT_GENERIC_ACTION
+            <<:             *GENERIC_ACTION
+            label:          'Accounts' # TODO: ??? remove after comparison
+            title:          'Accounts' # TODO: ??? remove after comparison
+
+          # ===================================================================
+
+          index:
+            <<:             *ACCOUNT_GENERIC_ACTION
+            <<:             *INDEX_ACTION
+            title:          'EMMA User Accounts'
+            tooltip:        'List records from the EMMA user database table'
+
+          # ===================================================================
+
+          list_all:
+            <<:             *ACCOUNT_GENERIC_ACTION
+            <<:             *LIST_ALL_ACTION
+            title:          'EMMA User Accounts'
+            tooltip:        'List all EMMA user accounts'
+
+          # ===================================================================
+
+          list_org:
+            <<:             *ACCOUNT_GENERIC_ACTION
+            <<:             *LIST_ORG_ACTION
+            label:          'Org List'
+            title:          '%{name} EMMA User Accounts'
+            tooltip:        'List the EMMA users associated with your organization'
+
+          # ===================================================================
+
+          show:             &ACCOUNT_SHOW_ACTION
+            <<:             *ACCOUNT_GENERIC_ACTION
+            <<:             *SHOW_ACTION
+            label:          'Account'
+            title:          'EMMA User Account %{name}'
+            tooltip:
+              >-
+              Account details from the EMMA user account database table
+
+          # ===================================================================
+
+          show_select:
+            <<:             *SHOW_SELECT_ACTION
+            <<:             *ACCOUNT_SHOW_ACTION
+            label:          'Show User'
+            title:          'Show an EMMA User Account'
+
+          # ===================================================================
+
+          show_current:
+            <<:             *ACCOUNT_SHOW_ACTION
+            label:          'Details'
+            title:          'Your EMMA User Account Information'
+            tooltip:        'See details about your EMMA user account'
+
+          # ===================================================================
+
+          new:              &ACCOUNT_NEW_ACTION
+            <<:             *ACCOUNT_GENERIC_ACTION
+            <<:             *NEW_ACTION
+            label:          'Add User'
+            title:          'Create an EMMA User Account'
+            tooltip:        'Create a new EMMA account in the user database'
+            description:
+              >-
+              If the EMMA account is associated with an account authenticated
+              via a remote authentication provider, sign-on is mediated by that
+              provider.
+
+              Otherwise a (local) EMMA account is authenticated through an
+              encrypted password stored in the EMMA account database record.
+
+
+            submit:
+              <<:           *FORM_SUBMIT
+              label:        'Create'
+              if_enabled:
+                tooltip:    'Create the new EMMA user account'
+              if_disabled:
+                tooltip:    'Required information is still needed'
+
+            cancel:
+              <<:           *FORM_CANCEL
+              label:        'CANCEL'
+              if_enabled:
+                tooltip:    'Do not create this entry (or start over)'
+
+            success:        'Created EMMA user account %{name}'
+            failure:        'Could not create EMMA user account: %{error}'
+            role:           manager
+
+          # ===================================================================
+
+          create:
+            <<:             *ACCOUNT_NEW_ACTION
+
+          # ===================================================================
+
+          edit:             &ACCOUNT_EDIT_ACTION
+            <<:             *ACCOUNT_GENERIC_ACTION
+            <<:             *EDIT_ACTION
+            label:          'Edit User'
+            title:          'Modify EMMA User Account %{name}'
+            tooltip:        'Modify an existing EMMA account in the user database'
+            description:
+              >-
+              You may change the local details of the EMMA account
+              (whether it is a local EMMA account or one authenticated via a
+              remote authentication provider).
+
+              However, in either case, these changes are only to the EMMA
+              account database record -- nothing will be (or can be) changed
+              about account information maintained by the remote provider.
+
+
+            submit:
+              <<:           *FORM_SUBMIT
+              label:        'Update'
+              if_enabled:
+                tooltip:    'Modify this EMMA user account'
+              if_disabled:
+                tooltip:    'No valid changes have been made yet'
+
+            cancel:
+              <<:           *FORM_CANCEL
+              if_enabled:
+                tooltip:    'Discard these changes'
+
+            success:        'Updated EMMA user account %{name}'
+            failure:        'Could not update EMMA user account: %{error}'
+
+          # ===================================================================
+
+          edit_select:
+            <<:             *EDIT_SELECT_ACTION
+            <<:             *ACCOUNT_EDIT_ACTION
+            title:          'Modify an EMMA User Account'
+            role:           manager
+
+          # ===================================================================
+
+          edit_current:
+            <<:             *ACCOUNT_EDIT_ACTION
+            label:          'Modify'
+            title:          'Modify Your EMMA User Account'
+            tooltip:        'See or change details about your EMMA user account'
+
+          # ===================================================================
+
+          update:
+            <<:             *ACCOUNT_EDIT_ACTION
+
+          # ===================================================================
+
+          delete:           &ACCOUNT_DELETE_ACTION
+            <<:             *ACCOUNT_GENERIC_ACTION
+            <<:             *DELETE_ACTION
+            label:          'Remove User'
+            title:          'Remove EMMA User Account %{name}'
+            tooltip:        'Remove an account from the set of active EMMA users'
+            description_html:
+              >-
+              <p>
+                Remove the selected account from the set of active EMMA users.
+              </p>
+              <p>
+                (Information about the user in conjunction with EMMA
+                submissions will be retained.)
+              </p>
+
+
+            submit:
+              <<:           *FORM_SUBMIT
+              label:        'Delete'
+              if_enabled:
+                tooltip:    'Remove this EMMA user account'
+
+            cancel:
+              <<:           *FORM_CANCEL
+              if_enabled:
+                tooltip:    'Keep this EMMA user account'
+
+            success:        'Removed EMMA user account %{name}'
+            failure:        'Could not remove EMMA user account: %{error}'
+            role:           manager
+
+          # ===================================================================
+
+          delete_select:
+            <<:             *DELETE_SELECT_ACTION
+            <<:             *ACCOUNT_DELETE_ACTION
+            title:          'Remove an EMMA User Account'
+
+          # ===================================================================
+
+          destroy:
+            <<:             *ACCOUNT_DELETE_ACTION
+
+          # ===================================================================
+
+      # =======================================================================
+      # CONTROLLER: Data page definitions
+      # =======================================================================
+
+      data:
+
+        <<:                 *GENERIC
+        unit:
+          brief:            'db'
+          long:             'database'
+        label:              'Data'
+        title:              'EMMA Database'
+        tooltip:            'View contents of database tables'
+
+        # =====================================================================
+        # Layout
+        # =====================================================================
+
+        search_bar:
+          <<:               *DB_SEARCH_BAR
+          enabled:          false
+
+        # =====================================================================
+        # Action pages
+        # =====================================================================
+
+        action:
+
+          _generic:         &DATA_GENERIC_ACTION
+            <<:             *GENERIC_ACTION
+
+          # ===================================================================
+
+          index:
+            <<:             *DATA_GENERIC_ACTION
+            <<:             *INDEX_ACTION
+            label:          'Database'
+            title:          'EMMA Database'
+            tooltip:        'View all database records for this deployment'
+
+            submissions:
+              title:        'EMMA Submissions'
+
+            tables:
+              title:        'EMMA Database Tables'
+
+          # ===================================================================
+
+          show:             &DATA_SHOW_ACTION
+            <<:             *DATA_GENERIC_ACTION
+            <<:             *SHOW_ACTION
+            label:          'Record'
+            title:          '%{table} table'
+            tooltip:        'View records for this database table'
+
+          # ===================================================================
+
+          submissions:
+            <<:             *DATA_GENERIC_ACTION
+            label:          'Submissions'
+            title:          'EMMA Submission Records'
+            tooltip:        'View information for all EMMA submissions'
+            text_html:
+              >-
+              <p>
+                This page is constructed from selected parts of the EMMA
+                submissions table for entries which are complete or (in the
+                case of submissions back to partner repositories) are in the
+                process of being finalized.
+              </p>
+              <p>
+                This information can also be rendered in either
+                <a href="/data/submissions.json">JSON</a> or
+                <a href="/data/submissions.xml">XML</a>.
+              </p>
+
+          # ===================================================================
+
+          counts:
+            <<:             *DATA_GENERIC_ACTION
+            label:          'Field Counts'
+            title:          'EMMA Submission Field Value Counts'
+            tooltip:        'View field values for all EMMA submissions'
+            text_html:
+              >-
+              <p>
+                This page is constructed from selected parts of the EMMA
+                submissions table for entries which are complete or (in the
+                case of submissions back to partner repositories) are in the
+                process of being finalized.
+              </p>
+              <p>
+                This information can also be rendered in either
+                <a href="/data/counts.json">JSON</a> or
+                <a href="/data/counts.xml">XML</a>.
+              </p>
+            notes_html:
+              >-
+              <p>
+                This page only reports on data fields which are actually used
+                in submissions.
+                To discover invalid (ignored) data fields that may have crept
+                into the submission data, use the URL parameter "all=true".
+              </p>
+              <p>
+                To create a link which goes directly to the values of a
+                particular field, use the field name as a URL fragment, e.g.:
+                <a href="/data/counts#dc_title">/data/counts#dc_title</a>.
+              </p>
+
+          # ===================================================================
+
+      # =======================================================================
+      # CONTROLLER: Enrollment page definitions
+      # =======================================================================
+
+      enrollment:
+
+        <<:                 *GENERIC
+        <<:                 *DB_SEARCH
+
+        unit:
+          brief:            'request'
+          long:             'enrollment request'
+        label:              'Enroll'
+        title:              'EMMA Enrollment'
+        tooltip:            'Show EMMA enrollment requests'
+
+        # =====================================================================
+        # Layout
+        # =====================================================================
+
+        page_controls:
+          label:            'Enrollment Actions:'
+          actions:
+            - index
+            - show_select
+            - new
+            - edit_select
+            - delete_select
+
+        search_type:
+          <<:               *DB_SEARCH_TYPE
+
+        search_bar:
+          <<:               *DB_SEARCH_BAR
+          enabled:          false
+
+        search_filters:
+          <<:               *DB_SEARCH_FILTERS
+          enabled:          false
+
+        action_links:
+
+          index:
+            label:        'List all EMMA enrollment requests'
+
+          new:
+            label:        'Create %{an} EMMA enrollment request'
+
+          edit_select:
+            label:        'Modify %{an} existing EMMA enrollment request'
+
+          delete_select:
+            label:        'Remove %{an} existing EMMA enrollment request'
+
+        # =====================================================================
+        # Fields
+        # =====================================================================
+
+        display_fields: # Overrides order of "en.emma.record.enrollment"
+          - id
+          - long_name
+          - short_name
+          - ip_domain
+          - org_users
+          - request_notes
+          - admin_notes
+          - updated_at
+          - created_at
+
+        # =====================================================================
+        # Action pages
+        # =====================================================================
+
+        action:
+
+          _generic:         &ENROLLMENT_GENERIC_ACTION
+            <<:             *GENERIC_ACTION
+            label:          'EMMA Enrollment Request'
+            title:          'EMMA Enrollment Request'
+
+            success:        'EMMA enrollment request was successfully %{actioned}.'
+            failure:        'Failed to %{action} EMMA enrollment request: %{error}'
+
+          # ===================================================================
+
+          index:
+            <<:             *ENROLLMENT_GENERIC_ACTION
+            <<:             *INDEX_ACTION
+            label:          'Pending'
+            title:          'Pending Enrollment Requests'
+            tooltip:        'List all EMMA enrollment requests'
+            role:           administrator
+
+          # ===================================================================
+
+          show:             &ENROLLMENT_SHOW_ACTION
+            <<:             *ENROLLMENT_GENERIC_ACTION
+            <<:             *SHOW_ACTION
+            title:          'Enrollment Request for %{name}'
+            tooltip:        'Details of an EMMA enrollment request entry'
+            notes:
+              >-
+              When the enrollment is finalized, request information is used to
+              create a new Organization, a new User will be created with the
+              Manager role for that Organization, and this enrollment request
+              record will be deleted.
+
+            display_fields: # @see "en.emma.record.enrollment"
+              - long_name
+              - short_name
+              - ip_domain
+              - org_users
+              - request_notes
+              - id
+              - created_at
+              - updated_at
+              - admin_notes
+
+            role:           administrator
+
+          # ===================================================================
+
+          show_select:
+            <<:             *SHOW_SELECT_ACTION
+            <<:             *ENROLLMENT_SHOW_ACTION
+            label:          'Select'
+            title:          'Review an Enrollment Request'
+            tooltip:        'Review an enrollment request'
+            notes:          ~
+
+          # ===================================================================
+
+          new:              &ENROLLMENT_NEW_ACTION
+            <<:             *ENROLLMENT_GENERIC_ACTION
+            <<:             *NEW_ACTION
+            label:          'Create'
+            title:          'EMMA Enrollment Request'
+            tooltip:        'Create a new EMMA enrollment request'
+            description_html:
+              >-
+              <p>
+                On this form please provide the name of your organization, any
+                commonly used abbreviation for its name, and your first name,
+                last name, and email address.
+                <strong>Please do not use a group email address</strong>,
+                because access to EMMA needs to be limited to individuals
+                currently serving student needs.
+              </p>
+              <p>
+                After you submit this form a human being will review it and
+                EMMA will process it, whereupon a manager account will be
+                created in EMMA for the submitter, and you will receive a
+                welcome message with information about logging in as well as a
+                copy of EMMA’s appropriate use guidelines.
+                You will also be subscribed to the %{mailing_list_email} email
+                list, if you are not already.
+              </p>
+            enroll_production_html:
+              >-
+              <p>
+                PLEASE NOTE:
+                <br/>
+                This is a test version of EMMA;
+                any actions taken here are not monitored by staff.
+                <br/>
+                %{production_enroll_link}.
+              </p>
+
+
+            submit:
+              <<:           *FORM_SUBMIT
+              label:        'Send'
+              if_enabled:
+                tooltip:    'Send the EMMA enrollment request'
+              if_disabled:
+                tooltip:    'Required information is still needed'
+
+            cancel:
+              <<:           *FORM_CANCEL
+              label:        'CANCEL'
+              if_enabled:
+                tooltip:    'Do not send this entry'
+
+            success:
+              |-
+              Your EMMA enrollment request for %{name} has been sent.
+              We will follow up with you as soon as possible.
+            failure:
+              |-
+              Failed to create this EMMA enrollment request: %{error}
+
+
+          # ===================================================================
+
+          create:
+            <<:             *ENROLLMENT_NEW_ACTION
+
+          # ===================================================================
+
+          edit:             &ENROLLMENT_EDIT_ACTION
+            <<:             *ENROLLMENT_GENERIC_ACTION
+            <<:             *EDIT_ACTION
+            label:          'Change'
+            title:          'Modify Enrollment Request for %{name}'
+            tooltip:        'Modify an existing EMMA enrollment request entry'
+
+            submit:
+              <<:           *FORM_SUBMIT
+              label:        'Update'
+              if_enabled:
+                tooltip:    'Modify this enrollment request'
+              if_disabled:
+                tooltip:    'No valid changes have been made yet'
+
+            cancel:
+              <<:           *FORM_CANCEL
+              label:        'CANCEL'
+              if_enabled:
+                tooltip:    'Discard these changes'
+
+            success:        'EMMA enrollment request for %{name} updated.'
+            failure:        'Could not update EMMA enrollment request: %{error}'
+            role:           administrator
+
+          # ===================================================================
+
+          edit_select:
+            <<:             *EDIT_SELECT_ACTION
+            <<:             *ENROLLMENT_EDIT_ACTION
+            title:          'Modify Enrollment Requests'
+
+          # ===================================================================
+
+          update:
+            <<:             *ENROLLMENT_EDIT_ACTION
+
+          # ===================================================================
+
+          delete:           &ENROLLMENT_DELETE_ACTION
+            <<:             *ENROLLMENT_GENERIC_ACTION
+            <<:             *DELETE_ACTION
+            label:          'Remove'
+            title:          'Remove Enrollment Request for %{name}'
+            tooltip:        'Delete an existing EMMA enrollment request entry'
+
+            submit:
+              <<:           *FORM_SUBMIT
+              label:        'Delete'
+              if_enabled:
+                tooltip:    'Remove this enrollment request'
+
+            cancel:
+              <<:           *FORM_CANCEL
+              if_enabled:
+                tooltip:    'Keep this enrollment request'
+
+            success:        'EMMA enrollment request for %{name} deleted.'
+            failure:        'Could not delete EMMA enrollment request: %{error}'
+            role:           administrator
+
+          # ===================================================================
+
+          delete_select:
+            <<:             *DELETE_SELECT_ACTION
+            <<:             *ENROLLMENT_DELETE_ACTION
+            title:          'Remove Enrollment Requests'
+
+          # ===================================================================
+
+          destroy:
+            <<:             *ENROLLMENT_DELETE_ACTION
+
+          # ===================================================================
+
+          finalize:
+            <<:             *ENROLLMENT_GENERIC_ACTION
+            label:          'Create New Organization'
+            title:          'Finalize Enrollment Request for %{name}'
+            tooltip:        'Finalize this enrollment request'
+
+            success:        'EMMA enrollment request complete; organization created.'
+            failure:        'Failed to complete EMMA enrollment request: %{error}'
+            role:           administrator
+
+          # ===================================================================
+
+      # =======================================================================
+      # CONTROLLER: Health page definitions
+      # =======================================================================
+
+      health:
+
+        <<:                 *GENERIC
+
+        # =======================================================================
+        # Layout
+        # =======================================================================
+
+        #search_bar:
+        #  <<:               *SEARCH_BAR
+        #  enabled:          false
+
+        # =====================================================================
+        # Action pages
+        # =====================================================================
+
+        action:
+
+          _generic:         &HEALTH_GENERIC_ACTION
+            <<:             *GENERIC_ACTION
+
+          # ===================================================================
+
+          run_state:
+            <<:             *HEALTH_GENERIC_ACTION
+            title:          'System Run State'
+            restore:        'Restore system availability'
+
+            state:
+              available:
+                title:      'System Available'
+                property:
+                  code:     200
+                  text:     'EMMA is available'
+              unavailable:
+                title:      'SYSTEM UNAVAILABLE'
+                property:
+                  code:     503
+                  text:     'EMMA is temporarily unavailable for maintenance'
+
+            exempt:
+              - health
+              - help
+              - metrics
+              - home:
+                  - main
+                  - welcome
+              - user/sessions:
+                  - sign_in_as
+                  - destroy
+              - user/passwords:
+                  - new
+
+          # ===================================================================
+
+      # =======================================================================
+      # CONTROLLER: Help page definitions
+      # =======================================================================
+
+      help:
+
+        <<:                 *GENERIC
+
+        label:              'Help'
+        title:              'EMMA Help'
+        tooltip:            'EMMA system documentation'
+
+        # =====================================================================
+        # Layout
+        # =====================================================================
+
+        #search_bar:
+        #  <<:               *SEARCH_BAR
+        #  enabled:          false
+
+        #search_filters:
+        #  <<:               *SEARCH_FILTERS
+        #  enabled:          false
+
+        # =====================================================================
+        # Action pages
+        # =====================================================================
+
+        action:
+
+          _generic:         &HELP_GENERIC_ACTION
+            <<:             *GENERIC_ACTION
+
+          # ===================================================================
+
+          index:
+            <<:             *HELP_GENERIC_ACTION
+            <<:             *INDEX_ACTION
+            label:          'Help'
+            title:          'EMMA Help Topics'
+            tooltip:        'Get help on using the EMMA system'
+            intro_html:
+              >-
+              <p>
+                Documentation is also available as downloadable PDFs covering
+                these topics:
+              </p>
+              %{help_offline}
+              <p>
+                The PDF documentation has been updated for the beta release of
+                EMMA as of April 22, 2024.
+              </p>
+            intro_html_bak:
+              >-
+              <p>
+                Documentation is also available as downloadable PDFs covering
+                these topics:
+              </p>
+              %{help_offline}
+              <p>
+                <strong>NOTE:</strong>
+                Online help evolves along with system development, so the
+                information found here may be more up-to-date than the PDF
+                documentation.
+              </p>
+
+          # ===================================================================
+
+          show:
+            # Most of the values on the show page are driven by the topic
+            # values taken from "en.emma.help.topic.*".
+            <<:             *HELP_GENERIC_ACTION
+            <<:             *SHOW_ACTION
+            label:          '%{Topic} Help'
+            tooltip:        'See details about %{topic}'
+            title:          'EMMA %{Topic} Help'
+            intro:          'Information on how to %{topic} in EMMA.'
+
+          # ===================================================================
+
+      # =======================================================================
+      # CONTROLLER: Home page definitions
+      # =======================================================================
+
+      home:
+
+        <<:                 *GENERIC
+
+        # NOTE: Some of these definitions require parameters to be supplied:
+        #
+        # %{sign_in}        HTML <a> link to the sign-in path.
+
+        label:              'Account'
+        title:              'EMMA Test Application'
+
+        # =====================================================================
+        # Layout
+        # =====================================================================
+
+        #search_bar:
+        #  <<:               *SEARCH_BAR
+        #  enabled:          false
+
+        #search_filters:
+        #  <<:               *SEARCH_FILTERS
+        #  enabled:          false
+
+        # =====================================================================
+        # Action pages
+        # =====================================================================
+
+        action:
+
+          _generic:         &HOME_GENERIC_ACTION
+            <<:             *GENERIC_ACTION
+
+          # ===================================================================
+
+          welcome:
+            <<:             *HOME_GENERIC_ACTION
+            label:          'Welcome'
+            title:          'Welcome to EMMA'
+            tooltip:        'Return to the home page'
+            notice_html:    'You must %{sign_in} to upload or download files.'
+            text_html:
+              >-
+              <p>
+                The purpose of this project and the infrastructure we are
+                creating is to reduce the duplication of effort in disability
+                service offices at colleges and universities across the United
+                States, and thereby to enable faster, better service for those
+                needing accessible learning materials.
+              </p>
+              <p>
+                Support for this work comes from the Andrew W. Mellon
+                Foundation.
+                The university partners on this project are
+                %{academic_partners}.
+                The repository partners are %{commercial_partners}.
+                If you would like to be notified when EMMA is ready for broader
+                participation, please email %{project_email}.
+              </p>
+            enroll_html:
+              >-
+              <p>
+                Interested in the opportunity to share your remediation work
+                with the academic community and get access to remediations
+                created by your peers at institutions across the United States
+                and Canada?
+              </p>
+              <p>
+                %{enroll_link} to become a part of the EMMA community.
+              </p>
+            enroll_production_html:
+              >-
+              <p>
+                PLEASE NOTE:
+                <br/>
+                This is a test version of EMMA;
+                any actions taken here are not monitored by staff.
+                <br/>
+                %{production_enroll_link}
+              </p>
+
+
+          # ===================================================================
+
+          dashboard:
+            <<:             *HOME_GENERIC_ACTION
+            label:          'Account'
+            title:          'EMMA Account Dashboard'
+            tooltip:        'Your EMMA account dashboard'
+
+            page_controls:
+              label:        'Account Actions:'
+              actions:
+                - { action: 'dashboard', label: 'Details' }
+                - [account, edit_current]
+                - [account, list_org]
+                - [account, list_all]
+               #- [account, new]
+               #- [account, edit_select]
+               #- [account, delete_select]
+
+            display_fields: # @see "en.emma.record.account"
+             #- !ruby/symbol all
+              - [account, id]
+              - [account, email]
+              - [account, role]
+              - [account, org_id]
+              - [account, first_name]
+              - [account, last_name]
+              - [account, preferred_email]
+              - [account, phone]
+              - [account, address]
+              - [account, status]
+              - [account, status_date]
+              - [account, sign_in_count]
+              - [account, current_sign_in_at]
+              - [account, last_sign_in_at]
+              - [account, current_sign_in_ip]
+              - [account, last_sign_in_ip]
+              - [account, encrypted_password]
+              - [account, remember_created_at]
+              - [account, reset_password_token]
+              - [account, reset_password_sent_at]
+              - [account, updated_at]
+              - [account, created_at]
+
+          # ===================================================================
+
+      # =======================================================================
+      # CONTROLLER: Manifest page definitions
+      # =======================================================================
+
+      manifest:
+
+        <<:                 *GENERIC
+        <<:                 *DB_SEARCH
+
+        unit:
+          brief:            'manifest'
+          long:             'bulk operation manifest'
+        label:              'Bulk Uploads'
+        title:              'Bulk Upload Manifests'
+        tooltip:            'Manage bulk operations'
+
+        # =====================================================================
+        # Page elements
+        # =====================================================================
+
+        form:
+          <<:               *FORM
+
+          submit:           &MANIFEST_FORM_SUBMIT
+            label:          'Save'
+            if_enabled:
+              tooltip:      'Keep all changes'
+            if_disabled:
+              tooltip:      'No valid changes have been made yet'
+
+          cancel:           &MANIFEST_FORM_CANCEL
+            label:          'Cancel'
+            if_enabled:
+              tooltip:      'Discard all changes'
+            if_disabled:
+              tooltip:      'Not able to cancel right now'
+
+          import:           &MANIFEST_FORM_IMPORT
+            label:          'Import'
+            if_enabled:
+              tooltip:      'Add rows from an external CSV file'
+            if_disabled:
+              tooltip:      'Not able to import at this point'
+
+          export:           &MANIFEST_FORM_EXPORT
+            label:          'Export'
+            if_enabled:
+              tooltip:      'Save a copy of this manifest in CSV format'
+            if_disabled:
+              tooltip:      'Not able to export at this point'
+
+          submission:       &MANIFEST_FORM_SUBMISSION
+            label:          'Submit'
+            if_enabled:
+              tooltip:      'Submit these items to EMMA'
+            if_disabled:
+              tooltip:      'Not able to submit these items at this point'
+
+          start:            &MANIFEST_FORM_START
+            label:          'Start'
+            if_enabled:
+              tooltip:      'Submit manifest items to become EMMA entries'
+            if_disabled:
+              tooltip:      'Already submitting'
+
+          stop:             &MANIFEST_FORM_STOP
+            label:          'Cancel'
+            if_enabled:
+              tooltip:      'Cancel the submission'
+            if_disabled:
+              tooltip:      'No submission is active'
+
+          pause:            &MANIFEST_FORM_PAUSE
+            label:          'Pause'
+            if_enabled:
+              tooltip:      'Pause the submission'
+            if_disabled:
+              tooltip:      'Submission is already paused'
+
+          resume:           &MANIFEST_FORM_RESUME
+            label:          'Resume'
+            if_enabled:
+              tooltip:      'Resume the paused submission'
+            if_disabled:
+              tooltip:      'Submission is not paused'
+
+          file:             &MANIFEST_FORM_FILE
+            label:          'Files'
+            tooltip:        'Identify local files'
+
+        # =====================================================================
+        # Layout
+        # =====================================================================
+
+        search_bar:
+          <<:               *DB_SEARCH_BAR
+          enabled:          false
+
+        search_filters:
+          <<:               *DB_SEARCH_FILTERS
+
+        page_controls:
+          label:            'Manifest Actions'
+          actions:
+            - list_own
+            - list_org
+            - list_all
+            - new
+            - edit_select
+            - delete_select
+            - remit_select
+           #- admin
+
+        # =====================================================================
+        # Controls
+        # =====================================================================
+
+        pagination:
+          <<:               *PAGINATION
+          count:
+            one:            'manifest'
+            many:           'manifests'
+
+        action_links:
+
+          new:
+            label:          'Create %{an} new manifest'
+
+          edit:
+            label:          'Change details of %{an} existing manifest'
+
+          delete:
+            label:          'Remove %{an} existing manifest'
+
+          remit:
+            label:          'Submit %{an} manifest'
+
+          list_all:
+            label:          'List all manifests'
+
+          list_org:
+            label:          'List all manifests'
+
+          list_own:
+            label:          'List my manifests'
+
+        # =====================================================================
+        # Fields
+        # =====================================================================
+
+        display_fields:
+          - name
+          - user_id
+          - id:                     { role: developer }
+          - item_count
+          - saved_item_count
+          - pending_item_count
+          - completed_item_count:   { ignored: true }
+          - unsaved_item_count:     { ignored: true }
+          - never_saved_item_count: { ignored: true }
+          - incomplete_item_count:  { ignored: true }
+          - to_delete_item_count:   { ignored: true }
+          - updated_at
+          - created_at
+
+        # =====================================================================
+        # Action pages
+        # =====================================================================
+
+        action:
+
+          _generic:         &MANIFEST_GENERIC_ACTION
+            <<:             *GENERIC_ACTION
+            label:          'Manifest'
+            title:          'Manifest'
+
+          # ===================================================================
+
+          index:
+            <<:             *MANIFEST_GENERIC_ACTION
+            <<:             *INDEX_ACTION
+            label:          'Manifests'
+            title:          'Bulk Upload Manifests'
+            tooltip:        ~ # 'Your current bulk operation manifests'
+
+          # ===================================================================
+
+          list_all:
+            <<:             *MANIFEST_GENERIC_ACTION
+            <<:             *LIST_ALL_ACTION
+            label:          'List All'
+            title:          'All Bulk Upload Manifests'
+            tooltip:        'All bulk operation manifests'
+
+          # ===================================================================
+
+          list_org:
+            <<:             *MANIFEST_GENERIC_ACTION
+            <<:             *LIST_ORG_ACTION
+            label:          'Org List'
+            title:          '%{name} Bulk Upload Manifests'
+            tooltip:        'All bulk operation manifests associated with your organization'
+
+          # ===================================================================
+
+          list_own:
+            <<:             *MANIFEST_GENERIC_ACTION
+            label:          'My List'
+            title:          'Bulk Upload Manifests'
+            tooltip:        'Your current and saved bulk operation manifests'
+
+          # ===================================================================
+
+          show:             &MANIFEST_SHOW_ACTION
+            <<:             *MANIFEST_GENERIC_ACTION
+            <<:             *SHOW_ACTION
+            label:          'Manifest'
+            title:          'Manifest: %{name}'
+            tooltip:        'Details of this manifest'
+
+          # ===================================================================
+
+          show_select: # NOTE: not in "en.emma.manifest"
+            <<:             *MANIFEST_GENERIC_ACTION
+            <<:             *SHOW_SELECT_ACTION
+
+          # ===================================================================
+
+          new:              &MANIFEST_NEW_ACTION
+            <<:             *MANIFEST_GENERIC_ACTION
+            <<:             *NEW_ACTION
+            label:          'Create'
+            title:          'New Manifest: %{name}'
+            tooltip:        'Start a new bulk operation manifest'
+            description:    ~
+            directions:     ~
+            notes:          ~
+
+            submit:
+              <<:           *MANIFEST_FORM_SUBMIT
+              if_enabled:
+                tooltip:    'Save the new manifest'
+              if_disabled:
+                tooltip:    'No valid items have been created yet'
+
+            cancel:
+              <<:           *MANIFEST_FORM_CANCEL
+              if_enabled:
+                tooltip:    'Discard this manifest and associated items'
+
+            import:
+              <<:           *MANIFEST_FORM_IMPORT
+
+            export:
+              <<:           *MANIFEST_FORM_EXPORT
+
+            submission:
+              <<:           *MANIFEST_FORM_SUBMISSION
+
+            success:        'Created manifest %{name}'
+            failure:        'Could not save manifest: %{error}'
+            role:           staff
+
+          # ===================================================================
+
+          create:
+            <<:             *MANIFEST_NEW_ACTION
+
+          # ===================================================================
+
+          edit:             &MANIFEST_EDIT_ACTION
+            <<:             *MANIFEST_GENERIC_ACTION
+            <<:             *EDIT_ACTION
+            label:          'Change'
+            title:          'Modify Manifest %{name}'
+            tooltip:        'Modify a bulk operation manifest'
+            description:    ~
+            directions:     ~
+            notes:          ~
+
+            submit:
+              <<:           *MANIFEST_FORM_SUBMIT
+              if_enabled:
+                tooltip:    'Keep all changes made since the last save'
+
+            cancel:
+              <<:           *MANIFEST_FORM_CANCEL
+              if_enabled:
+                tooltip:    'Discard all changes made since the last save'
+
+            import:
+              <<:           *MANIFEST_FORM_IMPORT
+
+            export:
+              <<:           *MANIFEST_FORM_EXPORT
+
+            submission:
+              <<:           *MANIFEST_FORM_SUBMISSION
+
+            success:        'Updated manifest %{name}'
+            failure:        'Could not save changes: %{error}'
+            role:           staff
+
+          # ===================================================================
+
+          edit_select:
+            <<:             *MANIFEST_EDIT_ACTION
+            #<<:             *EDIT_SELECT_ACTION
+            label:          'Change' # TODO: shouldn't be necessary...
+            title:          'Modify a Bulk Upload Manifest'
+
+          # ===================================================================
+
+          update:
+            <<:             *MANIFEST_EDIT_ACTION
+
+          # ===================================================================
+
+          delete:           &MANIFEST_DELETE_ACTION
+            <<:             *MANIFEST_GENERIC_ACTION
+            <<:             *DELETE_ACTION
+            label:          'Remove'
+            title:          'Remove Manifest %{name}'
+            tooltip:        'Remove a bulk operation manifest'
+
+            submit:
+              <<:           *MANIFEST_FORM_SUBMIT
+              label:        'Delete'
+              if_enabled:
+                tooltip:    'Remove this manifest and all of its associated items'
+              if_disabled:
+                tooltip:    'Not able to delete right now'
+
+            cancel:
+              <<:           *MANIFEST_FORM_CANCEL
+              if_enabled:
+                tooltip:    'Keep this manifest'
+
+            success:        'Removed manifest %{name}'
+            failure:        'Could not remove manifest: %{error}'
+            role:           staff
+
+          # ===================================================================
+
+          delete_select:
+            <<:             *MANIFEST_DELETE_ACTION
+            #<<:             *DELETE_SELECT_ACTION
+            title:          'Remove a Bulk Upload Manifest'
+
+          # ===================================================================
+
+          destroy:
+            <<:             *MANIFEST_DELETE_ACTION
+
+          # ===================================================================
+
+          remit:            &MANIFEST_REMIT_ACTION
+            <<:             *MANIFEST_GENERIC_ACTION
+            label:          'Submit'
+            title:          'Submit Manifest Items'
+            tooltip:        'Submit multiple items from a manifest in bulk'
+
+            start:
+              <<:           *MANIFEST_FORM_START
+
+            stop:
+              <<:           *MANIFEST_FORM_STOP
+
+            pause:
+              <<:           *MANIFEST_FORM_PAUSE
+
+            resume:
+              <<:           *MANIFEST_FORM_RESUME
+
+            monitor:
+              label:        'Results'
+              if_enabled:
+                tooltip:    'See details of submission results'
+              if_disabled:
+                tooltip:    'Not able to view details right now'
+
+            file:
+              <<:           *MANIFEST_FORM_FILE
+
+            success:        'Manifest submission started'
+            failure:        'Could not submit manifest: %{error}'
+            role:           staff
+
+          # ===================================================================
+
+          remit_select:
+            <<:             *MANIFEST_REMIT_ACTION
+            title:          'Submit a Bulk Upload Manifest'
+
+          # ===================================================================
+
+      # =======================================================================
+      # CONTROLLER: ManifestItem page definitions
+      # =======================================================================
+
+      manifest_item:
+
+        <<:                 *GENERIC
+        <<:                 *DB_SEARCH
+
+        unit:
+          brief:            'item'
+          long:             'manifest item'
+        label:              'Items'
+        title:              'Manifest Items'
+        tooltip:            'Work on a bulk operations manifest'
+
+        # =====================================================================
+        # Page elements
+        # =====================================================================
+
+        form:
+          <<:               *FORM
+
+          submit:           &MANIFEST_ITEM_FORM_SUBMIT
+            label:          'Save'
+            if_enabled:
+              tooltip:      'Keep all changes'
+            if_disabled:
+              tooltip:      'No valid changes have been made yet'
+
+          cancel:           &MANIFEST_ITEM_FORM_CANCEL
+            label:          'Cancel'
+            if_enabled:
+              tooltip:      'Discard all changes'
+            if_disabled:
+              tooltip:      'Not able to cancel right now'
+
+          select:           &MANIFEST_ITEM_FORM_SELECT
+            label:          'Upload'
+            if_enabled:
+              tooltip:      'Include data from an external file'
+            if_disabled:
+              tooltip:      'Not able to choose a file right now'
+
+          bulk_submit:      &MANIFEST_ITEM_BULK_FORM_SUBMIT
+            label:          'Begin'
+            if_enabled:
+              tooltip:      'Submit the data file to begin uploading'
+            if_disabled:
+              tooltip:      'First provide a data file'
+
+          bulk_cancel:      &MANIFEST_ITEM_BULK_FORM_CANCEL
+            <<:             *MANIFEST_ITEM_FORM_CANCEL
+
+          bulk_select:      &MANIFEST_ITEM_BULK_FORM_SELECT
+            <<:             *MANIFEST_ITEM_FORM_SELECT
+
+        # =====================================================================
+        # Layout
+        # =====================================================================
+
+        search_bar:
+          <<:               *DB_SEARCH_BAR
+          enabled:          false
+
+        search_filters:
+          <<:               *DB_SEARCH_FILTERS
+          layout:
+            - [size, ~, ~, ~]
+
+        page_controls:
+          label:            'Actions'
+          actions:
+            - index
+            - new
+            - edit_select
+            - delete_select
+           #- admin
+
+        # =====================================================================
+        # Controls
+        # =====================================================================
+
+        pagination:
+          <<:               *PAGINATION
+          count:
+            one:            'item'
+            many:           'items'
+
+        action_links:
+
+          new:
+            label:          'Create %{an} new item'
+
+          edit:
+            label:          'Modify %{an} item'
+
+          delete:
+            label:          'Remove %{an} item'
+
+          index:
+            label:          'List all items'
+
+        # =====================================================================
+        # Fields
+        # =====================================================================
+
+        display_fields:
+
+          id:
+            cond:
+              only:         [new, edit]
+
+        # =====================================================================
+        # Action pages
+        # =====================================================================
+
+        action:             &MANIFEST_ITEM_ACTION
+
+          _generic:         &MANIFEST_ITEM_GENERIC_ACTION
+            <<:             *GENERIC_ACTION
+            label:          'Manifest Item'
+            title:          'Manifest Item'
+
+            success:        'Operation successful %{name}'
+            failure:        'Could not proceed: %{error}'
+
+          # ===================================================================
+
+          index:
+            <<:             *MANIFEST_ITEM_GENERIC_ACTION
+            <<:             *INDEX_ACTION
+            label:          'List All'
+            title:          'Manifest: %{name}'
+            tooltip:        ~ # 'All manifest items'
+
+          # ===================================================================
+
+          show:
+            <<:             *MANIFEST_ITEM_GENERIC_ACTION
+            <<:             *SHOW_ACTION
+            label:          'Manifest'
+            title:          'Bulk Upload Manifest'
+            tooltip:        'Details of this manifest'
+
+          # ===================================================================
+
+          new:              &MANIFEST_ITEM_NEW_ACTION
+            <<:             *MANIFEST_ITEM_GENERIC_ACTION
+            <<:             *NEW_ACTION
+            label:          'New Item'
+            title:          'New Manifest item'
+            tooltip:        'Add a new item to the manifest'
+
+            select:
+              <<:           *MANIFEST_ITEM_FORM_SELECT
+
+            success:        'Item created'
+            failure:        'Could not create item: %{error}'
+            role:           staff
+
+          # ===================================================================
+
+          create:
+            <<:             *MANIFEST_ITEM_NEW_ACTION
+
+          # ===================================================================
+
+          edit:             &MANIFEST_ITEM_EDIT_ACTION
+            <<:             *MANIFEST_ITEM_GENERIC_ACTION
+            <<:             *EDIT_ACTION
+            label:          'Edit Item'
+            title:          'Modify a Manifest Item'
+            tooltip:        'Modify an existing manifest item'
+
+            select:
+              <<:           *MANIFEST_ITEM_FORM_SELECT
+
+            success:        'Changes saved'
+            failure:        'Could not save changes: %{error}'
+            role:           staff
+
+          # ===================================================================
+
+          update:
+            <<:             *MANIFEST_ITEM_EDIT_ACTION
+
+          # ===================================================================
+
+          delete:           &MANIFEST_ITEM_DELETE_ACTION
+            <<:             *MANIFEST_ITEM_GENERIC_ACTION
+            <<:             *DELETE_ACTION
+            label:          'Remove Item'
+            title:          'Remove a Manifest Item'
+            tooltip:        'Remove a manifest item'
+
+            success:        'Item removed'
+            failure:        'Could not remove item: %{error}'
+            role:           staff
+
+          # ===================================================================
+
+          destroy:
+            <<:             *MANIFEST_ITEM_DELETE_ACTION
+
+          # ===================================================================
+
+          bulk_new:         &MANIFEST_ITEM_BULK_NEW_ACTION
+            <<:             *MANIFEST_ITEM_GENERIC_ACTION
+            label:          'Bulk Import'
+            title:          'Import New Manifest Items'
+            tooltip:        'Add new manifest items via a CSV or JSON control file'
+            description:
+              >-
+              Provide a *.csv or *.json data file to specify files and metadata
+              to be used to create new EMMA entries.
+
+              NOTE: Existing manifest entries will not be overwritten.
+
+            directions:     ~
+            notes:          'Some notes on bulk upload...'
+
+            submit:
+              <<:           *MANIFEST_ITEM_BULK_FORM_SUBMIT
+
+            cancel:
+              <<:           *MANIFEST_ITEM_BULK_FORM_CANCEL
+
+            select:
+              <<:           *MANIFEST_ITEM_BULK_FORM_SELECT
+
+            success:        'Added manifest items from: %{names}'
+            failure:        'Could not create items: %{error}'
+            role:           staff
+
+          # ===================================================================
+
+          bulk_create:
+            <<:             *MANIFEST_ITEM_BULK_NEW_ACTION
+
+          # ===================================================================
+
+          bulk_edit:        &MANIFEST_ITEM_BULK_EDIT_ACTION
+            <<:             *MANIFEST_ITEM_GENERIC_ACTION
+            label:          'Bulk Update'
+            title:          'Import Manifest Modifications'
+            tooltip:
+              >-
+              Modify existing manifest items via a CSV or JSON control file
+            description:
+              >-
+              Provide a *.csv or *.json data file to specify files and/or
+              metadata to be used to update existing EMMA entries.
+
+              NOTE: Only existing manifest entries will be changed;
+              new entries will not be created.
+
+            directions:     ~
+            notes:          'Some notes on bulk edit...'
+
+            submit:
+              <<:           *MANIFEST_ITEM_BULK_FORM_SUBMIT
+
+            cancel:
+              <<:           *MANIFEST_ITEM_BULK_FORM_CANCEL
+
+            select:
+              <<:           *MANIFEST_ITEM_BULK_FORM_SELECT
+
+            success:        'Modified manifest items from: %{names}'
+            failure:        'Could not modify items: %{error}'
+            role:           staff
+
+          # ===================================================================
+
+          bulk_update:
+            <<:             *MANIFEST_ITEM_BULK_EDIT_ACTION
+
+          # ===================================================================
+
+          bulk_delete:      &MANIFEST_ITEM_BULK_DELETE_ACTION
+            <<:             *MANIFEST_ITEM_GENERIC_ACTION
+            label:          'Bulk Delete'
+            title:          'Remove Multiple Manifest Items'
+            tooltip:        'Delete multiple manifest items by identifier'
+            description:
+              >-
+              Provide a comma-separated list of item numbers to specify which
+              items to delete.
+            directions:     ~
+            notes:          'Some notes on bulk delete...'
+
+            submit:
+              <<:           *MANIFEST_ITEM_BULK_FORM_SUBMIT
+              label:        'Continue'
+              if_enabled:
+                tooltip:    'Validate entries to be removed'
+              if_disabled:
+                tooltip:    'Required information is still needed'
+
+            cancel:
+              <<:           *MANIFEST_ITEM_BULK_FORM_CANCEL
+
+            role:           staff
+
+          # ===================================================================
+
+          bulk_destroy:
+            <<:             *MANIFEST_ITEM_BULK_DELETE_ACTION
+
+          # ===================================================================
+
+          upload:
+            role:           submitter
+
+          # ===================================================================
+
+      # =======================================================================
+      # CONTROLLER: Organization page definitions
+      # =======================================================================
+
+      org:
+
+        <<:                 *GENERIC
+        <<:                 *DB_SEARCH
+
+        unit:
+          brief:            'org'
+          long:             'organization'
+        label:              'Organization'
+        title:              'EMMA Member Organization'
+        tooltip:            'Show the EMMA member organization table'
+
+        # =====================================================================
+        # Layout
+        # =====================================================================
+
+        search_type:
+          <<:               *DB_SEARCH_TYPE
+
+          like:             &ORG_SEARCH_TYPE_LIKE
+            <<:             *DB_SEARCH_TYPE_LIKE
+            label:          'Filter by account:'
+            placeholder:    'Partial email or name...'
+
+          q:
+            <<:             *DB_SEARCH_TYPE_KEYWORD
+            <<:             *ORG_SEARCH_TYPE_LIKE
+
+        search_bar:
+          <<:               *DB_SEARCH_BAR
+          label:            'Organization Filter'
+
+        search_filters:
+          <<:               *DB_SEARCH_FILTERS
+
+          layout:
+            - [sort, size, ~, ~]
+
+        page_controls:
+          label:            'Org Actions:'
+          actions:
+            - show_current
+            - edit_current
+            - list_all
+            - show_select
+            - new
+            - edit_select
+            - delete_select
+            - { ctrlr: 'account', action: 'new',           label: 'Add User' }
+            - { ctrlr: 'account', action: 'edit_select',   label: 'Edit User' }
+            - { ctrlr: 'account', action: 'delete_select', label: 'Remove User' }
+
+        # =====================================================================
+        # Controls
+        # =====================================================================
+
+        action_links:
+
+          new:
+            label:          'Create %{an} new EMMA member organization'
+
+          edit_select:
+            label:          'Modify %{an} existing EMMA member organization'
+
+          delete_select:
+            label:          'Remove %{an} existing EMMA member organization'
+
+          list_all:
+            label:          'List all EMMA member organizations'
+
+        # =====================================================================
+        # Fields
+        # =====================================================================
+
+        display_fields: # Overrides order of "en.emma.record.org"
+          - id
+          - short_name
+          - long_name
+          - ip_domain
+          - contact
+          - upload_count:   { label: 'Submissions' }
+          - manifest_count: { label: 'Manifests' }
+          - status
+          - status_date
+          - start_date
+          - updated_at
+          - created_at
+          - provider:       { ignored: true }
+          - info:           { ignored: true }
+          - history:        { ignored: true }
+
+        # =====================================================================
+        # Action pages
+        # =====================================================================
+
+        action:             &ORG_ACTION
+
+          _generic:         &ORG_GENERIC_ACTION
+            <<:             *GENERIC_ACTION
+            label:          'Organization'
+            title:          'Organization'
+
+          # ===================================================================
+
+          index:
+            <<:             *ORG_GENERIC_ACTION
+            <<:             *INDEX_ACTION
+            label:          'List'
+            title:          'EMMA Member Organizations'
+            tooltip:        'List all EMMA member organizations'
+
+          # ===================================================================
+
+          list_all:
+            <<:             *ORG_GENERIC_ACTION
+            <<:             *LIST_ALL_ACTION
+            title:          'EMMA Member Organizations'
+            tooltip:        'List all EMMA member organizations'
+
+          # ===================================================================
+
+          show:             &ORG_SHOW_ACTION
+            <<:             *ORG_GENERIC_ACTION
+            <<:             *SHOW_ACTION
+            title:          'EMMA Member Organization: %{name}'
+            tooltip:        'Details of an EMMA member organization entry'
+
+          # ===================================================================
+
+          show_select:
+            <<:             *SHOW_SELECT_ACTION
+            <<:             *ORG_SHOW_ACTION
+            label:          'Show Org' # TODO: ???
+            title:          'Show an EMMA Member Organization'
+            role:           administrator
+
+          # ===================================================================
+
+          show_current:
+            <<:             *ORG_SHOW_ACTION
+            label:          'Details'
+            tooltip:        'See details about your EMMA Member Organization'
+
+          # ===================================================================
+
+          new:              &ORG_NEW_ACTION
+            <<:             *ORG_GENERIC_ACTION
+            <<:             *NEW_ACTION
+            label:          'Create'
+            title:          'Create an EMMA Member Organization'
+            tooltip:        'Create a new EMMA member organization entry'
+
+            submit:
+              <<:           *FORM_SUBMIT
+              label:        'Create'
+              if_enabled:
+                tooltip:    'Create the new EMMA Member Organization'
+              if_disabled:
+                tooltip:    'Required information is still needed'
+
+            cancel:
+              <<:           *FORM_CANCEL
+              if_enabled:
+                tooltip:    'Do not create this entry (or start over)'
+
+            role:           administrator
+
+          # ===================================================================
+
+          create:
+            <<:             *ORG_NEW_ACTION
+
+          # ===================================================================
+
+          edit:             &ORG_EDIT_ACTION
+            <<:             *ORG_GENERIC_ACTION
+            <<:             *EDIT_ACTION
+            label:          'Change'
+            title:          'Modify EMMA Member Organization %{name}'
+            tooltip:        'Modify an existing EMMA member organization entry'
+
+            submit:
+              <<:           *FORM_SUBMIT
+              label:        'Update'
+              if_enabled:
+                tooltip:    'Modify this EMMA Member Organization'
+              if_disabled:
+                tooltip:    'No valid changes have been made yet'
+
+            cancel:
+              <<:           *FORM_CANCEL
+              if_enabled:
+                tooltip:    'Discard these changes'
+
+            role:           administrator
+
+          # ===================================================================
+
+          edit_select:
+            <<:             *EDIT_SELECT_ACTION
+            <<:             *ORG_EDIT_ACTION
+
+          # ===================================================================
+
+          edit_current:
+            <<:             *ORG_EDIT_ACTION
+            label:          'Modify'
+            tooltip:        'Change details about your EMMA Member Organization'
+            role:           manager
+
+          # ===================================================================
+
+          update:
+            <<:             *ORG_EDIT_ACTION
+
+          # ===================================================================
+
+          delete:           &ORG_DELETE_ACTION
+            <<:             *ORG_GENERIC_ACTION
+            <<:             *DELETE_ACTION
+            label:          'Remove'
+            title:          'Remove EMMA Member Organization %{name}'
+            tooltip:        'Delete an existing EMMA member organization entry'
+
+            submit:
+              <<:           *FORM_SUBMIT
+              label:        'Delete'
+              if_enabled:
+                tooltip:    'Remove this EMMA Member Organization'
+
+            cancel:
+              <<:           *FORM_CANCEL
+              if_enabled:
+                tooltip:    'Keep this EMMA Member Organization'
+
+            role:           administrator
+
+          # ===================================================================
+
+          delete_select:
+            <<:             *DELETE_SELECT_ACTION
+            <<:             *ORG_DELETE_ACTION
+
+          # ===================================================================
+
+          destroy:
+            <<:             *ORG_DELETE_ACTION
+
+          # ===================================================================
+
+      # =======================================================================
+      # CONTROLLER: Search page definitions
+      # =======================================================================
+
+      search:
+
+        <<:                 *GENERIC
+        <<:                 *INDEX_SEARCH
+
+        unit:
+          brief:            'record'
+          long:             'metadata record'
+        label:              'Search'
+        title:              'Unified Search'
+        tooltip:            'Unified search for metadata records'
+
+        # =====================================================================
+        # Layout
+        # =====================================================================
+
+        search_bar:
+          <<:               *INDEX_SEARCH_BAR
+          min_rows:         3
+          max_rows:         ~
+
+        search_filters:
+          <<:               *INDEX_SEARCH_FILTERS
+
+        page_controls:
+          label:
+            one:            'Manage this record:'
+            many:           'Record Actions:'
+
+        # =====================================================================
+        # Controls
+        # =====================================================================
+
+        results:
+
+          _template:        &SEARCH_RESULTS_TYPE
+            label:          'Search Results Mode'
+            class:          ~
+            tooltip:        ~
+            enabled:        true # @see SearchModesHelper#permitted_by?
+            default:        ~
+
+          title:
+            <<:             *SEARCH_RESULTS_TYPE
+            label:          'Results By Title'
+            class:          'title_results'
+            default:        true
+
+          file:
+            <<:             *SEARCH_RESULTS_TYPE
+            label:          'Results By File'
+            class:          'file_results'
+
+        styles:
+
+          _colorize:        &SEARCH_STYLE
+            label:          'Mark'
+            class:          'colorize-button'
+            ident:          'metadata field'
+            field:          '' # Indicates topic has no matching metadata field.
+            tooltip:        'Mark entries with the same %{ident} in the same color'
+            enabled:        debug_only
+
+          # NOTE: The order here is the reverse of the order of display.
+
+          restore:
+            <<:             *SEARCH_STYLE
+            label:          'Debug'
+            class:          'restore-button'
+            tooltip:
+              >-
+              Click to turn off debugging controls and return to normal display
+              of search results
+            field:        ~ # Indicates that this is not a topic button.
+
+          by_repo_id:
+            <<:             *SEARCH_STYLE
+            label:          'Repo ID'
+            ident:          '"repository record ID"'
+            field:          'field-RepositoryRecordId'
+            enabled:        [dev_only, debug_only]
+
+          by_identifier:
+            <<:             *SEARCH_STYLE
+            label:          'ISBN'
+            ident:          'standard identifier'
+            field:          'field-Identifier'
+            enabled:        [dev_only, debug_only]
+
+          by_title_text:
+            <<:             *SEARCH_STYLE
+            label:          'Title'
+            ident:          'title text'
+            enabled:        [dev_only, debug_only]
+
+          by_title_id:
+            <<:             *SEARCH_STYLE
+            label:          'Title ID'
+            ident:          '"title ID"'
+            field:          'field-TitleId'
+
+          field_groups:
+            <<:             *SEARCH_STYLE
+            label:          'Fields'
+            class:          'field_groups-button'
+            field:          ~
+            tooltip:        'Highlight field groups'
+
+          format_counts:
+            <<:             *SEARCH_STYLE
+            label:          'Formats'
+            class:          'format_counts-button'
+            field:          ~
+            tooltip:        'Show/hide format counts'
+            enabled:        [title_only, debug_only]
+
+          collapsed:
+            <<:             *SEARCH_STYLE
+            label:          'Collapse'
+            class:          'collapsed-button'
+            field:          ~
+            tooltip:        'Collapse/expand all search result items'
+            enabled:        [file_only, debug_only]
+
+        pagination:
+          <<:               *PAGINATION
+         #page_size:        100
+          count:
+            one:            '%{item}'
+            many:           '%{items}'
+
+        # =====================================================================
+        # Fields
+        #
+        # NOTES
+        # [1] If emma_webPageLink is present it is used as the URL for the link
+        #     displayed for emma_repositoryRecordId; @see #record_title_url.
+        # =====================================================================
+
+        display_fields:
+
+          dc_title:
+            cond:
+              only:         [index]
+
+          emma_retrievalLink:
+            help:           [download, emma]
+
+          emma_webPageLink:
+            # NOTE: If emma_webPageLink is present it is used as the URL for
+            # the link displayed for emma_repositoryRecordId.
+            # (@see #record_title_url)
+            cond:
+              only:         []
+
+        field_hierarchy:
+
+          title:
+            bibliographic:
+              - dc_title
+              - bib_seriesType
+              - emma_version
+              - bib_version
+              - bib_series
+              - dc_creator
+              - dc_publisher
+              - dcterms_dateCopyright
+              - emma_publicationDate
+              - dc_type
+              - dc_language
+              - dc_description
+              - dc_subject
+              - dc_identifier
+              - dc_relation
+              - dc_rights
+            repository:
+              - emma_repository
+             #- emma_collection     # NOTE: only shown if the same for all files
+            index:
+              - emma_titleId        # NOTE: only shown if the same for all files
+
+          parts:
+            bibliographic:
+              - bib_seriesPosition
+
+            formats:
+              bibliographic:
+                - dc_format
+
+              files:
+                remediation:
+                  - rem_status
+                 #- rem_complete    # NOTE: folded into rem_coverage
+                  - rem_coverage
+                  - rem_comments
+                  - rem_remediationComments
+                  - emma_lastRemediationNote
+                  - rem_remediatedAspects
+                  - rem_remediation
+                  - rem_textQuality
+                  - rem_quality
+                accessibility:
+                  - s_accessibilitySummary
+                  - s_accessibilityFeature
+                  - s_accessibilityControl
+                  - s_accessibilityHazard
+                  - s_accessMode
+                  - s_accessModeSufficient
+                bibliographic:
+                  - emma_formatFeature
+                repository:
+                 #- emma_collection # NOTE: shown when not the same for all files
+                  - emma_retrievalLink
+                  - rem_source
+                  - rem_metadataSource
+                  - rem_remediatedBy
+                  - rem_remediationDate
+                  - emma_lastRemediationDate
+                  - dcterms_dateAccepted
+                  - emma_repositoryUpdateDate
+                  - emma_repositoryMetadataUpdateDate
+                  - emma_repositoryRecordId
+                 #- emma_webPageLink used as the href for emma_repositoryRecordId
+                index:
+                  - emma_formatVersion
+                  - emma_recordId
+                  - emma_titleId    # NOTE: shown when not the same for all files
+
+        # =====================================================================
+        # Action pages
+        # =====================================================================
+
+        action:             &SEARCH_ACTION
+
+          _generic:         &SEARCH_GENERIC_ACTION
+            <<:             *GENERIC_ACTION
+
+          # ===================================================================
+
+          index:            &SEARCH_INDEX_ACTION
+            <<:             *SEARCH_GENERIC_ACTION
+            <<:             *INDEX_ACTION
+            label:          'Search'
+            title:          'EMMA Unified Search'
+            tooltip:        'Find more metadata records with %{terms}'
+
+          # ===================================================================
+
+          direct:
+            <<:             *SEARCH_INDEX_ACTION
+
+          # ===================================================================
+
+          show:
+            <<:             *SEARCH_GENERIC_ACTION
+            <<:             *SHOW_ACTION
+            label:          'Record'
+            title:          'EMMA Index Record'
+            tooltip:        'See details about this metadata record'
+
+          # ===================================================================
+
+          advanced:
+            <<:             *SEARCH_GENERIC_ACTION
+            label:          'Advanced'
+            title:          'EMMA Unified Search'
+            tooltip:        'Combine multiple search terms and search limiters'
+            text_html:
+              >-
+              <p>
+                A search term is required to begin.
+                The search will vary depending on your choice of Keyword,
+                Creator, Title, or ISBN/DOI/etc. as the search criterion.
+                There are also several filters, whose behavior is documented in
+                Help (the "question mark" button next to the title).
+              </p>
+
+          # ===================================================================
+
+      # =======================================================================
+      # CONTROLLER: SearchCall page definitions
+      # =======================================================================
+
+      search_call:
+
+        <<:                 *GENERIC
+        <<:                 *DB_SEARCH
+
+        unit:
+          brief:            'call'
+          long:             'search call record'
+        label:              'Searches'
+        title:              'Search Calls'
+        tooltip:            'List search call records'
+
+        # =====================================================================
+        # Layout
+        # =====================================================================
+
+        search_type:
+          <<:               *DB_SEARCH_TYPE
+
+          like:             &SEARCH_CALL_SEARCH_TYPE_LIKE
+            <<:             *DB_SEARCH_TYPE_LIKE
+            label:          'Filter by query or filter:'
+            placeholder:    'Enter query or filter...'
+
+          q:
+            <<:             *DB_SEARCH_TYPE_KEYWORD
+            <<:             *SEARCH_CALL_SEARCH_TYPE_LIKE
+
+        search_bar:
+          <<:               *DB_SEARCH_BAR
+          label:            'Search Call Filter'
+          enabled:          false
+
+        search_filters:
+          <<:               *DB_SEARCH_FILTERS
+
+          layout:
+            - [sort, size, ~, ~]
+
+        page_controls:
+          label:
+            one:            'Manage this record:'
+            many:           'Record Actions:'
+
+        # =====================================================================
+        # Action pages
+        # =====================================================================
+
+        action:             &SEARCH_CALL_ACTION
+
+          _generic:         &SEARCH_CALL_GENERIC_ACTION
+            <<:             *GENERIC_ACTION
+
+          # ===================================================================
+
+          index:
+            <<:             *SEARCH_CALL_GENERIC_ACTION
+            <<:             *INDEX_ACTION
+            label:          'Search Calls'
+            title:          'Search Call Records'
+            tooltip:        'List search call records'
+
+          # ===================================================================
+
+          show:
+            <<:             *SEARCH_CALL_GENERIC_ACTION
+            <<:             *SHOW_ACTION
+            label:          'Search Call'
+            title:          'Search Call Record'
+            tooltip:        'See details about this search call record'
+
+          # ===================================================================
+
+      # =======================================================================
+      # CONTROLLER: System page definitions
+      # =======================================================================
+
+      sys:
+
+        <<:                 *GENERIC
+        <<:                 *DB_SEARCH
+
+        label:              'System'
+        title:              'EMMA System Information'
+        tooltip:            'EMMA system information'
+
+        # =====================================================================
+        # Layout
+        # =====================================================================
+
+        search_bar:
+          <<:               *DB_SEARCH_BAR
+          enabled:          false
+
+        search_filters:
+          <<:               *DB_SEARCH_FILTERS
+          enabled:          false
+
+        page_controls:
+          label:            'Page'
+          actions:
+            - index
+            - settings
+            - loggers
+            - internals
+            - headers
+            - environment
+            - processes
+            - disk_space
+            - var
+            - files
+            - database
+            - mailers
+            - jobs
+            - analytics
+
+        # =====================================================================
+        # Tables
+        # =====================================================================
+
+        application_loggers:
+          headers:
+            progname:       'Progname'
+            class:          'Class'
+            level:          'Level'
+            inspect:        'Inspection'
+
+        application_ies:
+          headers:
+            key:            'Key'
+            obj_id:         'object_id'
+            entry:          'Entry'
+
+        application_middleware:
+          headers:
+            name:           'Name'
+            obj_id:         'object_id'
+            args:           'args'
+            block:          'block'
+
+        application_railties:
+          headers:
+            name:           'Name'
+            obj_id:         'object_id'
+
+        application_config:
+          headers:
+            name:           'Item'
+            value:          'Value'
+
+        # =====================================================================
+        # Action pages
+        # =====================================================================
+
+        action:             &SYS_ACTION
+
+          _generic:         &SYS_GENERIC_ACTION
+            <<:             *GENERIC_ACTION
+
+          # ===================================================================
+
+          index:
+            <<:             *SYS_GENERIC_ACTION
+            <<:             *INDEX_ACTION
+            label:          'Main'
+            title:          'EMMA System Information'
+            tooltip:        'EMMA system information'
+
+          # ===================================================================
+
+          analytics:
+            <<:             *SYS_GENERIC_ACTION
+            label:          'Analytics'
+            title:          'Matomo Analytics'
+            tooltip:        'View selected analytics information'
+            description_html:
+              >-
+              <p>
+                Reports from %{analytics_link} for this EMMA deployment for the
+                last %{analytics_day_range}.
+              </p>
+              <p>
+                Reports which are available both as summaries (totals) and
+                "evolutions" (time-based graphs) have two entries.
+                Other reports are only provided in one mode or the other.
+              </p>
+
+          # ===================================================================
+
+          database:
+            <<:             *SYS_GENERIC_ACTION
+            label:          'Database'
+            title:          'Database Tables'
+            tooltip:        'Contents of database tables'
+            redirect:       '/data'
+            role:           developer
+
+          # ===================================================================
+
+          disk_space:
+            <<:             *SYS_GENERIC_ACTION
+            label:          'Disk Space'
+            title:          'Host Machine Disk Space'
+            tooltip:        'View the system disk space on the host machine'
+            role:           developer
+
+          # ===================================================================
+
+          environment:
+            <<:             *SYS_GENERIC_ACTION
+            label:          'Env Vars'
+            title:          'Environment Variables (ENV)'
+            tooltip:        'Values from the system environment'
+            role:           developer
+
+          # ===================================================================
+
+          files:
+            <<:             *SYS_GENERIC_ACTION
+            label:          'Files'
+            title:          'EMMA files'
+            tooltip:        'View contents of the EMMA directory'
+            role:           developer
+
+          # ===================================================================
+
+          headers:
+            <<:             *SYS_GENERIC_ACTION
+            label:          'Headers'
+            title:          'Request Headers'
+            tooltip:        'View request headers'
+            role:           developer
+
+          # ===================================================================
+
+          internals:
+            <<:             *SYS_GENERIC_ACTION
+            label:          'Internals'
+            title:          'System Internals'
+            tooltip:        'View internal system information'
+            role:           developer
+
+          # ===================================================================
+
+          jobs:
+            <<:             *SYS_GENERIC_ACTION
+            label:          'Jobs'
+            title:          'Job Queues'
+            tooltip:        'View asynchronous job queue information'
+            redirect:       '/good_job'
+            link_opt:       { target: '_blank' }
+
+          # ===================================================================
+
+          loggers:
+            <<:             *SYS_GENERIC_ACTION
+            label:          'Loggers'
+            title:          'Logger Instances'
+            tooltip:        'View live logger instances'
+            role:           developer
+
+          # ===================================================================
+
+          mailers:
+            <<:             *SYS_GENERIC_ACTION
+            label:          'Mailers'
+            title:          'Action Mailer Previews'
+            tooltip:        'View previews of generated emails'
+            redirect:       '/rails/mailers'
+            link_opt:       { target: '_blank' }
+
+          # ===================================================================
+
+          processes:
+            <<:             *SYS_GENERIC_ACTION
+            label:          'Processes'
+            title:          'Host Machine Processes'
+            tooltip:        'View the system processes on the host machine'
+            role:           developer
+
+          # ===================================================================
+
+          settings:
+            <<:             *SYS_GENERIC_ACTION
+            label:          'Settings'
+            title:          'Application Settings'
+            tooltip:        'Dynamic feature toggles and application settings'
+            role:           developer
+
+          # ===================================================================
+
+          var:
+            label:          'System /var'
+            title:          'System /var Directory'
+            tooltip:        'View contents of the system /var directory'
+            role:           developer
+
+          # ===================================================================
+
+          view:
+            label:          'View'
+            title:          'System File Content'
+            tooltip:        'View contents of a system file'
+            role:           developer
+
+          # ===================================================================
+
+      # =======================================================================
+      # CONTROLLER: Tool page definitions
+      # =======================================================================
+
+      tool:
+
+        <<:                 *GENERIC
+
+        label:              'Tools'
+        title:              'Standalone Utilities'
+        tooltip:            'Standalone utilities supporting remediation'
+
+        # =====================================================================
+        # Layout
+        # =====================================================================
+
+        #search_bar:
+        #  <<:               *SEARCH_BAR
+        #  enabled:          false
+
+        #search_filters:
+        #  <<:               *SEARCH_FILTERS
+        #  enabled:          false
+
+        # =====================================================================
+        # Action pages
+        # =====================================================================
+
+        action:             &TOOL_ACTION
+
+          _generic:         &TOOL_GENERIC_ACTION
+            <<:             *GENERIC_ACTION
+
+          # ===================================================================
+
+          index:
+            <<:             *TOOL_GENERIC_ACTION
+            <<:             *INDEX_ACTION
+            label:          'Tools'
+            title:          'Standalone Utilities'
+            tooltip:        'Standalone Utilities'
+
+            authorization:  false
+
+          # ===================================================================
+
+          md:
+            <<:             *TOOL_GENERIC_ACTION
+            label:          'Math Detective'
+            title:          'Math Detective API trial'
+            path:           md_trial_path
+            description_html:
+              >-
+              This page allows you to process an image file (JPEG, PNG,
+              <em>etc.</em>) through Benetech's Math Detective, a backend
+              service for the automated conversion of equations in images to an
+              accessible form.
+            notes:
+              >-
+              This is a standalone service and not currently integrated into
+              the EMMA submission process.
+
+              Technical questions about the nature of Math Detective can be
+              posed on the FRAME/EMMA Slack or forwarded to Benetech directly.
+
+            authorization:  true
+
+          # ===================================================================
+
+          lookup:
+            <<:             *TOOL_GENERIC_ACTION
+            label:          'Bibliographic Lookup'
+            title:          'Bibliographic Lookup'
+            path:           bib_lookup_path
+            notes:
+              >-
+              This page accesses on-going work which will be integrated into
+              the individual EMMA submission form and the bulk manifest.
+
+              What you see here is not the intended final form of the feature.
+
+            authorization:  true
+
+          # ===================================================================
+
+      # =======================================================================
+      # CONTROLLER: Upload page definitions
+      # =======================================================================
+
+      upload:
+
+        <<:                 *GENERIC
+        <<:                 *DB_SEARCH
+
+        unit:
+          brief:            'EMMA entry'
+          long:             'uploaded file entry'
+        label:              'Uploads'
+        title:              'EMMA Submissions'
+        tooltip:            'Submit new items or review past uploads'
+
+        # =====================================================================
+        # Search endpoint
+        # =====================================================================
+
+        search:
+          action:           admin
+
+        # =====================================================================
+        # Page elements
+        # =====================================================================
+
+        form:
+          <<:               *FORM
+
+          select:           &UPLOAD_FORM_SELECT
+            label:          'Select file'
+            if_enabled:
+              tooltip:      'Choose a file from your workstation'
+            if_disabled:
+              tooltip:      'Cancel this upload before selecting a different file'
+
+          bulk_submit:      &UPLOAD_BULK_FORM_SUBMIT
+            label:          'Begin'
+            if_enabled:
+              tooltip:      'Submit the data file to begin uploading'
+            if_disabled:
+              tooltip:      'First provide a data file'
+
+        # =====================================================================
+        # Layout
+        # =====================================================================
+
+        search_type:
+
+          prefix:
+            name:           'Prefix'
+            label:          'Limit by object key prefix:'
+            placeholder:    'Object key prefix...'
+
+        search_bar:
+          <<:               *DB_SEARCH_BAR
+          enabled:          [admin]
+          label:            'Prefix Filter'
+
+        search_filters:
+          <<:               *DB_SEARCH_FILTERS
+          enabled:          [admin]
+
+          _default:         &UPLOAD_SEARCH_FILTERS_DEFAULT
+            <<:             *DB_SEARCH_FILTERS_DEFAULT
+
+          after:
+            <<:             *UPLOAD_SEARCH_FILTERS_DEFAULT
+            label:          'After'
+            tooltip:        'Include only objects modified this date or later'
+            values:         !ruby/symbol Date
+
+          before:
+            <<:             *UPLOAD_SEARCH_FILTERS_DEFAULT
+            label:          'Before'
+            tooltip:        'Include only objects modified before this date'
+            values:         !ruby/symbol Date
+
+          deployment:
+            <<:             *UPLOAD_SEARCH_FILTERS_DEFAULT
+            label:          'Deployment'
+            tooltip:        'Limit by EMMA deployment'
+            placeholder:    '(all)'
+            values:         !ruby/symbol Deployment
+
+          prefix_limit:
+            <<:             *UPLOAD_SEARCH_FILTERS_DEFAULT
+            label:          'Limit'
+            tooltip:        'Specify initial number of entries per object key'
+            placeholder:    ~
+            default:        10
+            menu:
+              (none):       -1
+              10:           10
+              50:           50
+              100:          100
+
+          repository:
+            <<:             *UPLOAD_SEARCH_FILTERS_DEFAULT
+            <<:             *DB_SEARCH_FILTERS_REPOSITORY
+            tooltip:        'Limit by partner repository queue'
+            placeholder:    '(all)'
+
+          sort:
+            <<:             *UPLOAD_SEARCH_FILTERS_DEFAULT
+            <<:             *DB_SEARCH_FILTERS_SORT
+            tooltip:        'Specify the ordering of each S3 bucket table'
+            values:         [key, size, last_modified]
+            default:        last_modified_rev
+            reverse:
+              <<:           *DB_SEARCH_FILTERS_SORT_REVERSE
+              enabled:      true
+
+          layout:
+            - [repository, deployment, sort,         ~]
+            - [after,      before,     prefix_limit, ~]
+
+        page_controls:
+          label:            'Upload Actions'
+          actions:
+            - list_own
+            - list_org
+            - list_all
+            - new
+            - edit_select
+            - delete_select
+           #- bulk_new      # TODO: remove related logic for Upload
+           #- bulk_edit     # TODO: remove related logic for Upload
+           #- bulk_delete   # TODO: remove related logic for Upload
+            - admin
+
+        # =====================================================================
+        # Controls
+        # =====================================================================
+
+        pagination:
+          <<:               *PAGINATION
+          #page:             'page'
+          count:
+            one:            'submission'
+            many:           'submissions'
+
+        action_links:
+
+          new:
+            label:          'Upload %{an} file to create a new EMMA entry'
+
+          edit:
+            label:          'Modify %{an} existing EMMA entry'
+
+          delete:
+            label:          'Remove %{an} existing EMMA entry'
+
+          list_all:
+            label:          'List all EMMA entries'
+
+          list_org:
+            label:          'List all EMMA entries'
+
+          list_own:
+            label:          'List my EMMA entries'
+
+          admin:
+            label:          'Review AWS bucket contents'
+
+        # =====================================================================
+        # Fields
+        # =====================================================================
+
+        display_fields:
+          - id
+          - submission_id
+          - user_id:        { label: 'Submitter' }
+          - state
+          - fmt
+          - ext
+          - repository
+          - updated_at
+          - created_at
+
+          # === Order of these fields is overridden by the display method ===
+
+          - file_data
+          - emma_data:
+              cond:
+                only:       [index, show]
+
+              # === emma_data JSON keys - Repository information ===
+
+              emma_repository:
+                help:       [upload, repository]
+
+          # === Database record fields supporting submission workflow ===
+          # (Upload table fields not yet displayed via 'index' or 'show'.)
+
+          - phase:          { role: developer }
+          - edit_state:     { role: developer }
+          - edit_user:      { role: developer }
+          - edit_emma_data: { role: developer }
+          - edit_file_data: { role: developer }
+          - edited_at:      { role: developer }
+          - review_user:    { ignored: true }
+          - review_success: { ignored: true }
+          - review_comment: { ignored: true }
+          - reviewed_at:    { ignored: true }
+
+        # =====================================================================
+        # States
+        # =====================================================================
+
+        state_group:
+
+          # The radio button for a group is only shown if there are records on
+          # the page matching that group.  The groups are listed in priority
+          # order, so, for example, if there are any records in the :create
+          # state on the page then that will be the filter selected by default.
+          #
+          # Note that the state groups are very similar to entries under
+          # "en.emma.workflow" but here the state are organized to support
+          # filtering for display and presentation purposes.
+
+          cancel:
+            label:          'Canceled'
+            tooltip:        'Submission records that can be removed'
+            show:           'nonzero'
+            enabled:        true
+            states:
+              - suspended
+              - failed
+              - canceled
+
+          create:
+            label:          'Creating'
+            tooltip:        'New EMMA entries in the process of being created'
+           #show:           'nonzero'
+            enabled:        true
+            states:
+              - creating
+              - validating
+
+          edit:
+            label:          'Modifying'
+            tooltip:        'Existing EMMA entries in the process of being modifying'
+           #show:           'nonzero'
+            enabled:        true
+            states:
+              - editing
+              - replacing
+              - modifying
+              - modified
+
+          remove:
+            label:          'Removing'
+            tooltip:        'Existing EMMA entries in the process of being deleted'
+            show:           'nonzero'
+            enabled:        true
+            states:
+              - removing
+              - removed
+
+          review:
+            label:          'Review'
+            tooltip:        'Submissions in the review process'
+            show:           'nonzero'
+            enabled:        false # TODO: reviews
+            states:
+              - scheduling
+              - assigning
+              - holding
+              - assigned
+              - reviewing
+              - rejected
+              - approved
+
+          submission:
+            label:          'Submitting'
+            tooltip:        'Submissions being submitted to a partner repository'
+            show:           'nonzero'
+            enabled:        true
+            states:
+              - submitting
+              - submitted
+              - staging
+              - unretrieved
+              - retrieved
+
+          finalization:
+            label:          'Indexing'
+            tooltip:        'Submissions in the process of being added to the index'
+            show:           'nonzero'
+            enabled:        true
+            states:
+              - indexing
+              - indexed
+
+          done:
+            label:          'Complete'
+            tooltip:        'Existing EMMA entries'
+           #show:           'nonzero'
+            enabled:        true
+            states:
+              - completed
+
+          pseudo:
+            label:          'PSEUDO'
+            tooltip:        'Show "starting", "resuming" and "purged" pseudo-states'
+            show:           'debug'
+            enabled:        true
+            states:
+              - starting
+              - resuming
+              - purged
+
+          all:
+            label:          'ALL'
+            tooltip:        'All submissions in all states'
+            show:           'debug'
+            enabled:        true
+            states:         []
+
+        # =====================================================================
+        # Action pages
+        # =====================================================================
+
+        action:             &UPLOAD_ACTION
+
+          _generic:         &UPLOAD_GENERIC_ACTION
+            <<:             *GENERIC_ACTION
+            label:          'Upload'
+            title:          'Upload'
+
+            _warning:
+              experimental: &EXPERIMENTAL
+                directions_html:
+                  >-
+                  <span style="color:red">
+                    WARNING: This is an experimental feature and not intended
+                    for general use
+                  </span>
+
+          # ===================================================================
+
+          index:
+            <<:             *UPLOAD_GENERIC_ACTION
+            <<:             *INDEX_ACTION
+            label:          'Submissions'
+            title:          'EMMA Submissions'
+            tooltip:        'EMMA Submissions'
+
+          # ===================================================================
+
+          list_all:
+            <<:             *UPLOAD_GENERIC_ACTION
+            <<:             *LIST_ALL_ACTION
+            label:          'List All'
+            title:          'All EMMA Submissions'
+            tooltip:        'All uploads of remediated content to EMMA'
+
+          # ===================================================================
+
+          list_org:
+            <<:             *UPLOAD_GENERIC_ACTION
+            <<:             *LIST_ORG_ACTION
+            label:          'Org List'
+            title:          '%{name} EMMA Submissions'
+            tooltip:        'All uploads of remediated content to EMMA associated with your organization'
+            description_html:
+              >-
+              <p>
+                This is a listing of all EMMA entries submitted by users from
+                your organization.
+              <p/>
+
+          # ===================================================================
+
+          list_own:
+            <<:             *UPLOAD_GENERIC_ACTION
+            label:          'My List'
+            title:          'EMMA Submissions'
+            tooltip:        'Review uploads of remediated content to EMMA'
+            description_html:
+              >-
+              <p>
+                This is a listing of all of your EMMA submissions.
+                With the buttons above, you may upload remediated content,
+                remove an item that you previously uploaded, or modify metadata
+                or content for an item that was previously uploaded.
+              <p/>
+              <p>
+                If you have submissions in different states of progress, use
+                the controls below to select which kind to view.
+              </p>
+
+          # ===================================================================
+
+          show:             &UPLOAD_SHOW_ACTION
+            <<:             *UPLOAD_GENERIC_ACTION
+            <<:             *SHOW_ACTION
+            label:          'Upload'
+            title:          'Uploaded file %{name}'
+            tooltip:        'See details about this upload'
+
+           #display_fields: # @see "en.emma.record.upload"
+           #  - !ruby/symbol all
+           #  - fmt:        'Fmt'
+           #  - ext:        'Ext'
+
+          # ===================================================================
+
+          show_select:
+            <<:             *UPLOAD_GENERIC_ACTION
+            <<:             *SHOW_SELECT_ACTION
+            label:          'Show Menu' # TODO: ???
+            title:          'Show an EMMA Entry'
+            tooltip:        'See details about a selected upload'
+
+          # ===================================================================
+
+          new:              &UPLOAD_NEW_ACTION
+            <<:             *UPLOAD_GENERIC_ACTION
+            <<:             *NEW_ACTION
+            label:          'Create'
+            title:          'Upload Remediated Content'
+            tooltip:        'Upload a file to create a new EMMA entry'
+
+            description:
+              >-
+              You may share a remediated work with the EMMA community by
+              uploading here.
+
+              Fields marked with a red triangle are required, but please
+              include other identifying information where available.
+
+              Hover your mouse over buttons or field names for additional
+              information.
+
+            directions:
+              >-
+              Choose a file to upload and provide any information about the
+              entry that could not be determined from the contents of the file:
+
+            submit:
+              <<:           *FORM_SUBMIT
+              label:        'Upload'
+              if_enabled:
+                tooltip:    'Create the new EMMA entry'
+              if_disabled:
+                tooltip:    'Required information is still needed'
+
+            cancel:
+              <<:           *FORM_CANCEL
+              if_enabled:
+                tooltip:    'Do not create this entry (or start over)'
+
+            select:
+              <<:           *UPLOAD_FORM_SELECT
+              if_enabled:
+                tooltip:
+                  >-
+                  As many fields as possible will be filled-in by information
+                  extracted from your file
+
+            success:        'Created EMMA entry %{name}'
+            failure:        'Could not create EMMA entry: %{error}'
+            role:           staff
+
+          # ===================================================================
+
+          create:
+            <<:             *UPLOAD_NEW_ACTION
+
+          # ===================================================================
+
+          edit:             &UPLOAD_EDIT_ACTION
+            <<:             *UPLOAD_GENERIC_ACTION
+            <<:             *EDIT_ACTION
+            label:          'Change'
+            title:          'Modify EMMA Submission %{name}'
+            tooltip:        'Upload a replacement file for an existing EMMA entry'
+
+            description:
+              >-
+              An EMMA repository entry can be modified by the user who created
+              the entry or by an administrative user.
+
+              Modification may include either changes to metadata
+              (bibliographic information, etc.) and/or replacement of the
+              remediated file associated with the entry.
+
+            directions:
+              >-
+              Provide an update version of your file, or modify fields that
+              need to be corrected:
+
+
+            submit:
+              <<:           *FORM_SUBMIT
+              label:        'Update'
+              if_enabled:
+                tooltip:    'Modify this EMMA entry'
+              if_disabled:
+                tooltip:    'No valid changes have been made yet'
+
+            cancel:
+              <<:           *FORM_CANCEL
+              if_enabled:
+                tooltip:    'Discard these changes'
+
+            select:
+              <<:           *UPLOAD_FORM_SELECT
+              label:        'Replacement file'
+              if_enabled:
+                tooltip:    'Provide an updated version of this file'
+
+            success:        'Updated EMMA entry %{name}'
+            failure:        'Could not update EMMA entry: %{error}'
+            role:           staff
+
+          # ===================================================================
+
+          edit_select:
+            <<:             *EDIT_SELECT_ACTION
+            <<:             *UPLOAD_EDIT_ACTION
+           #label:          'Edit Menu' # TODO: ???
+            title:          'Modify an EMMA Entry'
+            directions:     ~
+
+          # ===================================================================
+
+          update:
+            <<:             *UPLOAD_EDIT_ACTION
+
+          # ===================================================================
+
+          delete:           &UPLOAD_DELETE_ACTION
+            <<:             *UPLOAD_GENERIC_ACTION
+            <<:             *DELETE_ACTION
+            label:          'Remove'
+            title:          'Remove EMMA Submission %{name}'
+            tooltip:        'Delete an EMMA entry by removing a remediated file'
+
+            description:
+              >-
+              An EMMA repository entry can be removed by the user who created
+              the entry or by an administrative user.
+
+              Removal of an entry causes the deletion of the associated
+              remediated file from EMMA storage as well as removal of the entry
+              from the EMMA Unified Index.
+
+            directions:
+              >-
+              Click to remove the selected entry from the EMMA repository:
+
+            notes_html:
+              >-
+              Content which resides outside of EMMA is under the purview of the
+              originating partner repository and cannot be deleted here.
+
+              If there is a compelling reason to omit an item from the EMMA
+              Unified Index, please contact an %{emma_administrator}.
+
+            submit:
+              <<:           *FORM_SUBMIT
+              label:        'Delete'
+              if_enabled:
+                tooltip:    'Remove this entry from EMMA'
+
+            cancel:
+              <<:           *FORM_CANCEL
+              if_enabled:
+                tooltip:    'Keep this EMMA entry'
+
+            success:        'Removed EMMA entry %{name}'
+            failure:        'Could not remove EMMA entry: %{error}'
+            role:           staff
+
+          # ===================================================================
+
+          delete_select:
+            <<:             *DELETE_SELECT_ACTION
+            <<:             *UPLOAD_DELETE_ACTION
+           #label:          'Delete Menu' # TODO: ???
+            title:          'Remove an EMMA Entry'
+            directions:     ~
+
+          # ===================================================================
+
+          destroy:
+            <<:             *UPLOAD_DELETE_ACTION
+
+          # ===================================================================
+
+          bulk_index:
+            <<:             *UPLOAD_GENERIC_ACTION
+            label:          'Bulk Operations'
+            title:          'Bulk Operation Information'
+            tooltip:        'Bulk operation status information'
+            description:    'TODO: ???'
+
+          # ===================================================================
+
+          bulk_new:
+            <<:             *UPLOAD_GENERIC_ACTION
+            label:          'Bulk Upload'
+            title:          'Bulk creation of EMMA entries'
+            tooltip:        'Create new EMMA entries via CSV or JSON control file'
+            description:
+              >-
+              Provide a *.csv or *.json data file to specify files and metadata
+              to be used to create new EMMA entries.
+            directions:     ~
+            notes:          'Some notes on bulk upload...'
+
+            submit:
+              <<:           *UPLOAD_BULK_FORM_SUBMIT
+
+            cancel:
+              <<:           *FORM_CANCEL
+
+            select:
+              <<:           *UPLOAD_FORM_SELECT
+
+            success:        'Created EMMA entries: %{names}'
+            failure:        'Could not create entries: %{error}'
+
+            <<: *EXPERIMENTAL
+
+            role:           staff
+
+          # ===================================================================
+
+          bulk_edit:
+            <<:             *UPLOAD_GENERIC_ACTION
+            label:          'Bulk Edit'
+            title:          'Bulk modification of EMMA entries'
+            tooltip:
+              >-
+              Modify existing EMMA entries via a CSV or JSON control file.
+            description:
+              >-
+              Provide a *.csv or *.json data file to specify files and/or
+              metadata to be used to update existing EMMA entries.
+            directions:     ~
+            notes:          'Some notes on bulk edit...'
+
+            submit:
+              <<:           *UPLOAD_BULK_FORM_SUBMIT
+
+            cancel:
+              <<:           *FORM_CANCEL
+
+            select:
+              <<:           *UPLOAD_FORM_SELECT
+
+            success:        'Modified EMMA entries: %{names}'
+            failure:        'Could not modify entries: %{error}'
+
+            <<: *EXPERIMENTAL
+
+            role:           staff
+
+          # ===================================================================
+
+          bulk_delete:
+            <<:             *UPLOAD_GENERIC_ACTION
+            label:          'Bulk Delete'
+            title:          'Remove EMMA submission by database or submission ID'
+            tooltip:        'Delete multiple EMMA entries by identifier'
+            description:
+              >-
+              Provide a comma-separated list of submission IDs to specify which
+              EMMA entries to delete.
+
+              Identifiers which are all decimal digits are treated as EMMA
+              database record identifiers, which will be used to lookup the
+              record containing the submission ID.
+            directions:     ~
+            notes:
+              >-
+              An EMMA entry consists of three parts:
+                (1) a record in the EMMA database,
+                (2) an associated file in cloud storage, and
+                (3) a matching entry in the EMMA Unified Index.
+
+              If an item identifier can be found in the EMMA database then all
+              three parts can be removed.
+
+              However, if the checkbox above is checked, then submission IDs
+              which are not found in EMMA can still be removed from the index.
+
+            submit:
+              <<:           *FORM_SUBMIT
+              label:        'Continue'
+              if_enabled:
+                tooltip:    'Validate entries to be removed'
+              if_disabled:
+                tooltip:    'Required information is still needed'
+
+            cancel:
+              <<:           *FORM_CANCEL
+
+            success:        'Removed EMMA entries: %{names}'
+            failure:        'Could not remove entries: %{error}'
+
+            <<: *EXPERIMENTAL
+
+            role:           staff
+
+          # ===================================================================
+
+          bulk_reindex:
+            <<:             *UPLOAD_GENERIC_ACTION
+            label:          'Re-index'
+            title:          'Bulk Re-indexing'
+            tooltip:
+              >-
+              Update submissions' entries in the EMMA Unified Index.
+            description:    'TODO: ???'
+            role:           staff
+
+          # ===================================================================
+
+          cancel:
+            <<:             *UPLOAD_GENERIC_ACTION
+            label:          'Cancel'
+            title:          'Cancel Submission'
+
+          # ===================================================================
+
+          renew:
+            <<:             *UPLOAD_GENERIC_ACTION
+            label:          'Renew'
+            title:          'Renew Record'
+            description:
+              >-
+              If you are seeing this page, this indicates a failure of the
+              system to refresh the form for creating a new Upload record.
+
+              Please inform an EMMA administrator that you encountered this
+              page.
+
+            failure:        'Could not renew Upload record %{id}'
+
+          # ===================================================================
+
+          reedit:
+            <<:             *UPLOAD_GENERIC_ACTION
+            label:          'Re-edit'
+            title:          'Re-edit Record'
+            description:
+              >-
+              If you are seeing this page, this indicates a failure of the
+              system to refresh the form for updating a new Upload record.
+
+              Please inform an EMMA administrator that you encountered this
+              page.
+
+            failure:        'Could not reedit Upload record %{id}'
+
+          # ===================================================================
+
+          check:
+            <<:             *UPLOAD_GENERIC_ACTION
+            label:          'Check Status'
+            title:          'Checking for an update to submission status...'
+
+          # ===================================================================
+
+          admin:
+            <<:             *UPLOAD_GENERIC_ACTION
+            label:          'Admin'
+            title:          'Upload Submission Administration'
+            tooltip:        'Review AWS bucket contents'
+            role:           administrator
+
+          # ===================================================================
+
+      # =======================================================================
+      # CONTROLLER: User page definitions
+      # =======================================================================
+
+      _user:                &USER
+
+        <<:                 *GENERIC
+        <<:                 *DB_SEARCH
+
+        unit:
+          brief:            'user'
+          long:             'EMMA users'
+        label:              'Users'
+        title:              'EMMA User Accounts'
+        tooltip:            'Signed in as "%{user}"'
+
+        # =====================================================================
+        # Layout
+        # =====================================================================
+
+        search_bar:
+          <<:               *DB_SEARCH_BAR
+          label:            'User Search'
+
+        page_controls:
+          label:            'Account Actions:'
+          actions:
+            - { controller: 'home', action: 'dashboard', label: 'Details' }
+            - [account, edit_current]
+            - [account, list_org]
+            - [account, list_all]
+            - [account, new]
+            - [account, edit_select]
+            - [account, delete_select]
+
+      user:
+
+        <<:                 *USER
+
+        action:             &USER_ACTION
+
+          _generic:         &USER_GENERIC_ACTION
+            <<:             *GENERIC_ACTION
+            label:          'Accounts [user]'
+            title:          'Accounts [user]'
+
+          # ===================================================================
+
+          new:              &USER_NEW_ACTION
+            <<:             *USER_GENERIC_ACTION
+            <<:             *NEW_ACTION
+            label:          'New'
+            tooltip:        'Request a new EMMA user account'
+            title:          'Create an EMMA User Account'
+
+            submit:
+              <<:           *FORM_SUBMIT
+              label:        'Request'
+              if_enabled:
+                tooltip:    'Request a new EMMA user account'
+              if_disabled:
+                tooltip:    'Required information is still needed'
+
+            cancel:
+              <<:           *FORM_CANCEL
+              if_enabled:
+                tooltip:    'Cancel this request'
+
+          # ===================================================================
+
+          create:           &USER_CREATE_ACTION
+            <<:             *USER_NEW_ACTION
+            title:          'EMMA user account created'
+            success:        'EMMA user account %{user} created.'
+
+          # ===================================================================
+
+          edit:             &USER_EDIT_ACTION
+            <<:             *USER_GENERIC_ACTION
+            <<:             *EDIT_ACTION
+            label:          'Modify'
+            tooltip:        'Make changes to your EMMA user account'
+            title:          'Modify your EMMA user account'
+            awaiting:       'Currently awaiting confirmation for: %{email}'
+            password:       'Leave blank to keep current password'
+            current:        'We need your current password to confirm your changes'
+
+            submit:
+              <<:           *FORM_SUBMIT
+              label:        'Update'
+              if_enabled:
+                tooltip:    'Modify this EMMA user account'
+              if_disabled:
+                tooltip:    'No valid changes have been made yet'
+
+            cancel:
+              <<:           *FORM_CANCEL
+              if_enabled:
+                tooltip:    'Discard these changes'
+
+          # ===================================================================
+
+          update:           &USER_UPDATE_ACTION
+            <<:             *USER_EDIT_ACTION
+            title:          'EMMA user account updated'
+            success:        'EMMA user account %{user} updated.'
+
+          # ===================================================================
+
+      # =====================================================================
+      # Devise controllers
+      # =====================================================================
+
+      user_sessions:
+
+        <<:                 *USER
+
+        action:
+
+          new:
+            label:          'Sign in'
+            tooltip:        'Authentication is required for full access'
+            title:          'Sign in with your authentication provider'
+            submit:         'Sign in'
+            cancel:         'Cancel'
+
+          create:
+            success:        'Signed in as %{user}.'
+            failure:        'An unexpected error occurred.'
+
+          update:
+            title:          'EMMA user account updated'
+            success:        'Updated'
+            failure:        'An unexpected error occurred.'
+
+          destroy:
+            label:          'Sign out'
+            tooltip:        'End your session'
+            success:        'User %{user} signed out.'
+            failure:        'An unexpected error occurred.'
+
+          sign_in:
+            label:          'Local EMMA sign-in'
+            title:          'Sign in with an EMMA user account local password'
+            submit:         'Sign in'
+            cancel:         'Cancel'
+            username:       'Account'
+            password:       'Password'
+
+          sign_in_as:
+            label:          'Sign in as %{user}'
+            update:
+              label:        'Sign in with copied auth token'
+              submit:       'Sign in'
+              cancel:       'Cancel'
+
+      # =====================================================================
+
+      user_passwords:
+
+        <<:                 *USER
+
+        action:
+
+          new:
+            label:          'Local password reset'
+            tooltip:        'Click to reset your password'
+            title:          'Reset your password'
+            description:
+              >-
+              When you click "Send", instructions will be sent to the email
+              address you have provided.
+            username:       'Your email'
+            submit:         'Send'
+            cancel:         'Cancel'
+
+          edit:
+            label:          'Change your password'
+            title:          'Change your password'
+            description:
+              >-
+              You may reset your password by providing a new one here.
+            password:       'New password'
+            confirm:        'Confirm new password'
+            submit:         'Change my password'
+            cancel:         'Cancel'
+
+      # =====================================================================
+
+      user_registrations:
+
+        <<:                 *USER
+
+        action:
+
+          new:
+            <<:             *USER_NEW_ACTION
+
+          create:
+            <<:             *USER_CREATE_ACTION
+
+          edit:
+            <<:             *USER_EDIT_ACTION
+
+          update:
+            <<:             *USER_UPDATE_ACTION
+
+          delete:
+            label:          'Cancel my account'
+            link:           'Unhappy? %{button}'
+
+          destroy:
+            label:          'Cancel my account'
+            link:           'Unhappy? %{button}'
+            success:        'EMMA user account %{user} deleted.'
+
+      # =====================================================================
+
+      user_confirmations:
+
+        <<:                 *USER
+
+        action:
+
+          new:
+            title:          'Resend confirmation instructions'
+            label:          "Didn't receive confirmation instructions?"
+            username:       'Your email address'
+            submit:         'Resend confirmation instructions'
+            cancel:         'Cancel'
+
+      # =====================================================================
+
+      user_unlocks:
+
+        <<:                 *USER
+
+        action:
+
+          new:
+            label:          "Didn't receive unlock instructions?"
+            title:          'Resend unlock instructions'
+            username:       'Your email address'
+            submit:         'Resend unlock instructions'
+            cancel:         'Cancel'
+
+      # =====================================================================
+
+      user_omniauth_callbacks:
+
+        <<:                 *USER
+
+        action:
+
+          new:
+            label:          'Sign in with %{provider}'
+
+          destroy:
+            label:          'Sign out of EMMA (%{provider})'

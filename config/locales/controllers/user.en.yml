@@ -8,121 +8,170 @@ en:
 
     user:
 
-      # NOTE: Some of these definitions require parameters to be supplied:
-      #
-      # %{user}         Name of a user.
-      # %{provider}     Name of an authentication provider.
+#     # NOTE: Some of these definitions require parameters to be supplied:
+#     #
+#     # %{user}         Name of a user.
+#     # %{provider}     Name of an authentication provider.
 
-      label:            'Users'
-      title:            'EMMA User Accounts'
-      tooltip:          'Signed in as "%{user}"'
-      password:
-        length:         '%{min} character minimum'
+#     unit: # NOTE: to "en.emma.page._user"
+#       brief:          '/x/ user'
+#       long:           '/x/ EMMA users'
+#     label:            '/x/ Users' # NOTE: to "en.emma.page._user"
+#     title:            '/x/ EMMA User Accounts' # NOTE: to "en.emma.page._user"
+#     tooltip:          '/x/ Signed in as "%{user}"' # NOTE: to "en.emma.page._user"
+#     xpassword: # NOTE: moved to "en.emma.term._common.password"
+#       length:         '/x/ %{min} character minimum'
+
+      # =======================================================================
+      # Subsystems
+      # =======================================================================
+
+#     subsystem:
+#       database:       true
+#       redis:          false # NOTE: added to facilitate comparison
+#       storage:        false # NOTE: added to facilitate comparison
+#       search:         false # NOTE: added to facilitate comparison
+#       ingest:         false # NOTE: added to facilitate comparison
+
+      # =======================================================================
+      # Search endpoint
+      # =======================================================================
+
+#     search: # NOTE: added to facilitate comparison
+#       action: index
 
       # =======================================================================
       # Layout
       # =======================================================================
 
-      subsystem:
-        database:       true
+#     search_type: # NOTE: added to facilitate comparison
 
-      page_controls:
-        label:          'Account Actions:'
-        actions:
-          - { controller: 'home', action: 'dashboard', label: 'Details' }
-          - [account, edit_current]
-          - [account, list_org]
-          - [account, list_all]
-          - [account, new]
-          - [account, edit_select]
-          - [account, delete_select]
+#       q: # NOTE: added to facilitate comparison
+#         url_param:      q
+#         name:           '/x/ Keyword'
+#         label:          '/x/ Search terms:'
+#         tooltip:
+#                         >-
+#                         /x/ Search for one or more keywords matching anywhere in the
+#                         description of entries
+#         placeholder:    '/x/ Enter search terms...'
+
+#     search_bar: # NOTE: added to facilitate comparison
+#       label:            '/x/ User Search' # NOTE: added to facilitate comparison
+#       enabled:          true # NOTE: added to facilitate comparison
+
+#       min_rows:         1 # NOTE: added to facilitate comparison
+#       max_rows:         1 # NOTE: added to facilitate comparison
+
+#       button: # NOTE: added to facilitate comparison
+#         label:          '/x/ Search'
+
+#       advanced: # NOTE: added to facilitate comparison
+#         label:          '/x/ More ▼'
+#         tooltip:        '/x/ Show additional search filters'
+#         open:
+#           label:        '/x/ Less ▲'
+#           tooltip:      '/x/ Hide additional search filters'
+
+#     page_controls: # NOTE: to "en.emma.page._user.page_controls"
+#       label:          '/x/ Account Actions:'
+#       actions:
+#         - { controller: 'home', action: 'dashboard', label: '/x/ Details' }
+#         - [account, edit_current]
+#         - [account, list_org]
+#         - [account, list_all]
+#         - [account, new]
+#         - [account, edit_select]
+#         - [account, delete_select]
 
       # =======================================================================
       # Pages
       # =======================================================================
 
-      generic:
-        label:          'Accounts [user]'
-        tooltip:        '(A brief description of this operation)'
-        title:          'Accounts [user]'
-        description:    '(A more detailed description of this operation)'
-        directions:     '(Brief guidance for using the operation form)'
-        notes:          '(A more detailed description of this operation)'
+#     generic: # NOTE: to "en.emma.page.user.action._generic"
+#       label:          '/x/ Accounts [user]'
+#       tooltip:        '/x/ (A brief description of this operation)'
+#       title:          '/x/ Accounts [user]'
+#       description:    '/x/ (A more detailed description of this operation)'
+#       directions:     '/x/ (Brief guidance for using the operation form)'
+#       notes:          '/x/ (A more detailed description of this operation)'
 
-        submit:         &GENERIC_SUBMIT
-          label:        'Submit'
-          if_enabled:
-            tooltip:    'Proceed with this action'
-          if_disabled:
-            tooltip:    'Conditions have not yet been met to proceed'
+#       submit:         &GENERIC_SUBMIT # NOTE: to "en.emma.page._generic.form.submit"
+#         label:        '/x/ Submit'
+#         if_enabled:
+#           tooltip:    '/x/ Proceed with this action'
+#         if_disabled:
+#           tooltip:    '/x/ Required information is still needed'
 
-        cancel:         &GENERIC_CANCEL
-          label:        'CANCEL'
-          if_enabled:
-            tooltip:    'Do nothing and return to the previous screen'
-          if_disabled:
-            tooltip:    'Not able to cancel at this point'
-
-      # =======================================================================
-
-      new:              &USER_NEW
-        label:          'New'
-        tooltip:        'Request a new EMMA user account'
-        title:          'Create an EMMA User Account'
-
-        submit:
-          <<:           *GENERIC_SUBMIT
-          label:        'Request'
-          if_enabled:
-            tooltip:    'Request a new EMMA user account'
-          if_disabled:
-            tooltip:    'Required information is still needed'
-
-        cancel:
-          <<:           *GENERIC_CANCEL
-          if_enabled:
-            tooltip:    'Cancel this request'
-
-        _endpoint:      true
+#       cancel:         &GENERIC_CANCEL # NOTE: to "en.emma.page._generic.form.cancel"
+#         label:        '/x/ CANCEL'
+#         if_enabled:
+#           tooltip:    '/x/ Do nothing and return to the previous screen'
+#         if_disabled:
+#           tooltip:    '/x/ Not able to cancel at this point'
 
       # =======================================================================
 
-      create:           &USER_CREATE
-        title:          'EMMA user account created'
-        success:        'EMMA user account %{user} created.'
-        _endpoint:      true
+#     new:              &USER_NEW # NOTE: to "en.emma.page.user.action.new"
+#       label:          '/x/ New'
+#       tooltip:        '/x/ Request a new EMMA user account'
+#       title:          '/x/ Create an EMMA User Account'
+
+#       submit:
+#         <<:           *GENERIC_SUBMIT
+#         label:        '/x/ Request'
+#         if_enabled:
+#           tooltip:    '/x/ Request a new EMMA user account'
+#         if_disabled:
+#           tooltip:    '/x/ Required information is still needed'
+
+#       cancel:
+#         <<:           *GENERIC_CANCEL
+#         if_enabled:
+#           tooltip:    '/x/ Cancel this request'
+
+#       _endpoint:      true
 
       # =======================================================================
 
-      edit:             &USER_EDIT
-        label:          'Modify'
-        tooltip:        'Make changes to your EMMA user account'
-        title:          'Modify your EMMA user account'
-        awaiting:       'Currently awaiting confirmation for: %{email}'
-        password:       'Leave blank to keep current password'
-        current:        'We need your current password to confirm your changes'
-
-        submit:
-          <<:           *GENERIC_SUBMIT
-          label:        'Update'
-          if_enabled:
-            tooltip:    'Modify this EMMA user account'
-          if_disabled:
-            tooltip:    'No valid changes have been made yet'
-
-        cancel:
-          <<:           *GENERIC_CANCEL
-          if_enabled:
-            tooltip:    'Discard these changes'
-
-        _endpoint:      true
+#     create:           &USER_CREATE # NOTE: to "en.emma.page.user.action.create"
+#       <<: *USER_NEW # NOTE: added to facilitate comparison
+#       title:          '/x/ EMMA user account created'
+#       success:        '/x/ EMMA user account %{user} created.'
+#       _endpoint:      true
 
       # =======================================================================
 
-      update:           &USER_UPDATE
-        title:          'EMMA user account updated'
-        success:        'EMMA user account %{user} updated.'
-        _endpoint:      true
+#     edit:             &USER_EDIT # NOTE: to "en.emma.page.user.action.edit"
+#       label:          '/x/ Modify'
+#       tooltip:        '/x/ Make changes to your EMMA user account'
+#       title:          '/x/ Modify your EMMA user account'
+#       awaiting:       '/x/ Currently awaiting confirmation for: %{email}'
+#       password:       '/x/ Leave blank to keep current password'
+#       current:        '/x/ We need your current password to confirm your changes'
+
+#       submit:
+#         <<:           *GENERIC_SUBMIT
+#         label:        '/x/ Update'
+#         if_enabled:
+#           tooltip:    '/x/ Modify this EMMA user account'
+#         if_disabled:
+#           tooltip:    '/x/ No valid changes have been made yet'
+
+#       cancel:
+#         <<:           *GENERIC_CANCEL
+#         if_enabled:
+#           tooltip:    '/x/ Discard these changes'
+
+#       _endpoint:      true
+
+      # =======================================================================
+
+#     update:           &USER_UPDATE # NOTE: to "en.emma.page.user.action.update"
+#       <<: *USER_EDIT # NOTE: added to facilitate comparison
+#       title:          '/x/ EMMA user account updated'
+#       success:        '/x/ EMMA user account %{user} updated.'
+#       _endpoint:      true
 
       # =======================================================================
       # Devise controllers
@@ -130,137 +179,227 @@ en:
 
       sessions:
 
-        new:
-          label:        'Sign in'
-          tooltip:      'Authentication is required for full access'
-          title:        'Sign in with your authentication provider'
-          submit:       'Sign in'
-          cancel:       'Cancel'
-          _endpoint:    true
+#       new: # NOTE: to "en.emma.page.user_sessions.action.new"
+#         label:        '/x/ Sign in'
+#         tooltip:      '/x/ Authentication is required for full access'
+#         title:        '/x/ Sign in with your authentication provider'
+#         submit:       '/x/ Sign in'
+#         cancel:       '/x/ Cancel'
+#         _endpoint:    true
 
-        create:
-          success:      'Signed in as %{user}.'
-          failure:      'An unexpected error occurred.'
-          _endpoint:    true
+#       create: # NOTE: to "en.emma.page.user_sessions.action.create"
+#         success:      '/x/ Signed in as %{user}.'
+#         failure:      '/x/ An unexpected error occurred.'
+#         _endpoint:    true
 
-        update:
-          title:        'EMMA user account updated'
-          success:      'Updated'
-          failure:      'An unexpected error occurred.'
-          _endpoint:    true
+#       update: # NOTE: to "en.emma.page.user_sessions.action.update"
+#         title:        '/x/ EMMA user account updated'
+#         success:      '/x/ Updated'
+#         failure:      '/x/ An unexpected error occurred.'
+#         _endpoint:    true
 
-        destroy:
-          label:        'Sign out'
-          tooltip:      'End your session'
-          success:      'User %{user} signed out.'
-          failure:      'An unexpected error occurred.'
-          _endpoint:    true
+#       destroy: # NOTE: to "en.emma.page.user_sessions.action.destroy"
+#         label:        '/x/ Sign out'
+#         tooltip:      '/x/ End your session'
+#         success:      '/x/ User %{user} signed out.'
+#         failure:      '/x/ An unexpected error occurred.'
+#         _endpoint:    true
 
-        sign_in:
-          label:        'Local EMMA sign-in'
-          title:        'Sign in with an EMMA user account local password'
-          submit:       'Sign in'
-          cancel:       'Cancel'
-          username:     'Account'
-          password:     'Password'
-          _endpoint:    true
+#       sign_in: # NOTE: to "en.emma.page.user_sessions.action.sign_in"
+#         label:        '/x/ Local EMMA sign-in'
+#         title:        '/x/ Sign in with an EMMA user account local password'
+#         submit:       '/x/ Sign in'
+#         cancel:       '/x/ Cancel'
+#         username:     '/x/ Account'
+#         password:     '/x/ Password'
+#         _endpoint:    true
 
-        sign_in_as:
-          label:        'Sign in as %{user}'
-          update:
-            label:      'Sign in with copied auth token'
-            submit:     'Sign in'
-            cancel:     'Cancel'
-          _endpoint:    true
+#       sign_in_as: # NOTE: to "en.emma.page.user_sessions.action.sign_in_as"
+#         label:        '/x/ Sign in as %{user}'
+#         update:
+#           label:      '/x/ Sign in with copied auth token'
+#           submit:     '/x/ Sign in'
+#           cancel:     '/x/ Cancel'
+#         _endpoint:    true
+
+#       search: # NOTE: added to facilitate comparison
+#         action: index
+
+#       search_type: # NOTE: added to facilitate comparison
+
+#         q: # NOTE: added to facilitate comparison
+#           url_param:      q
+#           name:           '/x/ Keyword'
+#           label:          '/x/ Search terms:'
+#           tooltip:
+#                           >-
+#                           /x/ Search for one or more keywords matching anywhere in the
+#                           description of entries
+#           placeholder:    '/x/ Enter search terms...'
 
       # =======================================================================
 
       passwords:
 
-        new:
-          label:        'Local password reset'
-          tooltip:      'Click to reset your password'
-          title:        'Reset your password'
-          description:
-            >-
-            When you click "Send", instructions will be sent to the email
-            address you have provided.
-          username:     'Your email'
-          submit:       'Send'
-          cancel:       'Cancel'
-          _endpoint:    true
+#       new: # NOTE: to "en.emma.page.user_passwords.action.new"
+#         label:        '/x/ Local password reset'
+#         tooltip:      '/x/ Click to reset your password'
+#         title:        '/x/ Reset your password'
+#         description:
+#           >-
+#           /x/ When you click "Send", instructions will be sent to the email
+#           address you have provided.
+#         username:     '/x/ Your email'
+#         submit:       '/x/ Send'
+#         cancel:       '/x/ Cancel'
+#         _endpoint:    true
 
-        edit:
-          label:        'Change your password'
-          title:        'Change your password'
-          description:
-            >-
-            You may reset your password by providing a new one here.
-          password:     'New password'
-          confirm:      'Confirm new password'
-          submit:       'Change my password'
-          cancel:       'Cancel'
-          _endpoint:    true
+#       edit: # NOTE: to "en.emma.page.user_passwords.action.edit"
+#         label:        '/x/ Change your password'
+#         title:        '/x/ Change your password'
+#         description:
+#           >-
+#           /x/ You may reset your password by providing a new one here.
+#         password:     '/x/ New password'
+#         confirm:      '/x/ Confirm new password'
+#         submit:       '/x/ Change my password'
+#         cancel:       '/x/ Cancel'
+#         _endpoint:    true
+
+#       search: # NOTE: added to facilitate comparison
+#         action: index
+
+#       search_type: # NOTE: added to facilitate comparison
+
+#         q: # NOTE: added to facilitate comparison
+#           url_param:      q
+#           name:           '/x/ Keyword'
+#           label:          '/x/ Search terms:'
+#           tooltip:
+#                           >-
+#                           /x/ Search for one or more keywords matching anywhere in the
+#                           description of entries
+#           placeholder:    '/x/ Enter search terms...'
 
       # =======================================================================
 
       registrations:
 
-        new:
-          <<:           *USER_NEW
+#       new: # NOTE: to "en.emma.page.user_registrations.action.new"
+#         <<:           *USER_NEW
 
-        create:
-          <<:           *USER_CREATE
+#       create: # NOTE: to "en.emma.page.user_registrations.action.create"
+#         <<:           *USER_CREATE
 
-        edit:
-          <<:           *USER_EDIT
+#       edit: # NOTE: to "en.emma.page.user_registrations.action.edit"
+#         <<:           *USER_EDIT
 
-        update:
-          <<:           *USER_UPDATE
+#       update: # NOTE: to "en.emma.page.user_registrations.action.update"
+#         <<:           *USER_UPDATE
 
-        delete:
-          label:        'Cancel my account'
-          link:         'Unhappy? %{button}'
-          _endpoint:    true
+#       delete: # NOTE: to "en.emma.page.user_registrations.action.delete"
+#         label:        '/x/ Cancel my account'
+#         link:         '/x/ Unhappy? %{button}'
+#         _endpoint:    true
 
-        destroy:
-          label:        'Cancel my account'
-          link:         'Unhappy? %{button}'
-          success:      'EMMA user account %{user} deleted.'
-          _endpoint:    true
+#       destroy: # NOTE: to "en.emma.page.user_registrations.action.destroy"
+#         label:        '/x/ Cancel my account'
+#         link:         '/x/ Unhappy? %{button}'
+#         success:      '/x/ EMMA user account %{user} deleted.'
+#         _endpoint:    true
+
+#       search: # NOTE: added to facilitate comparison
+#         action: index
+
+#       search_type: # NOTE: added to facilitate comparison
+
+#         q: # NOTE: added to facilitate comparison
+#           url_param:      q
+#           name:           '/x/ Keyword'
+#           label:          '/x/ Search terms:'
+#           tooltip:
+#                           >-
+#                           /x/ Search for one or more keywords matching anywhere in the
+#                           description of entries
+#           placeholder:    '/x/ Enter search terms...'
 
       # =======================================================================
 
       confirmations:
 
-        new:
-          title:        'Resend confirmation instructions'
-          label:        "Didn't receive confirmation instructions?"
-          username:     'Your email address'
-          submit:       'Resend confirmation instructions'
-          cancel:       'Cancel'
-          _endpoint:    true
+#       new: # NOTE: to "en.emma.page.user_confirmations.action.new"
+#         title:        '/x/ Resend confirmation instructions'
+#         label:        "/x/ Didn't receive confirmation instructions?"
+#         username:     '/x/ Your email address'
+#         submit:       '/x/ Resend confirmation instructions'
+#         cancel:       '/x/ Cancel'
+#         _endpoint:    true
+
+#       search: # NOTE: added to facilitate comparison
+#         action: index
+
+#       search_type: # NOTE: added to facilitate comparison
+
+#         q: # NOTE: added to facilitate comparison
+#           url_param:      q
+#           name:           '/x/ Keyword'
+#           label:          '/x/ Search terms:'
+#           tooltip:
+#                           >-
+#                           /x/ Search for one or more keywords matching anywhere in the
+#                           description of entries
+#           placeholder:    '/x/ Enter search terms...'
 
       # =======================================================================
 
       unlocks:
 
-        new:
-          label:        "Didn't receive unlock instructions?"
-          title:        'Resend unlock instructions'
-          username:     'Your email address'
-          submit:       'Resend unlock instructions'
-          cancel:       'Cancel'
-          _endpoint:    true
+#       new: # NOTE: to "en.emma.page.user_unlocks.action.new"
+#         label:        "/x/ Didn't receive unlock instructions?"
+#         title:        '/x/ Resend unlock instructions'
+#         username:     '/x/ Your email address'
+#         submit:       '/x/ Resend unlock instructions'
+#         cancel:       '/x/ Cancel'
+#         _endpoint:    true
+
+#       search: # NOTE: added to facilitate comparison
+#         action: index
+
+#       search_type: # NOTE: added to facilitate comparison
+
+#         q: # NOTE: added to facilitate comparison
+#           url_param:      q
+#           name:           '/x/ Keyword'
+#           label:          '/x/ Search terms:'
+#           tooltip:
+#                           >-
+#                           /x/ Search for one or more keywords matching anywhere in the
+#                           description of entries
+#           placeholder:    '/x/ Enter search terms...'
 
       # =======================================================================
 
       omniauth_callbacks:
 
-        new:
-          label:        'Sign in with %{provider}'
-          _endpoint:    true
+#       new: # NOTE: to "en.emma.page.user_omniauth_callbacks.action.new"
+#         label:        '/x/ Sign in with %{provider}'
+#         _endpoint:    true
 
-        destroy:
-          label:        'Sign out of EMMA (%{provider})'
-          _endpoint:    true
+#       destroy: # NOTE: to "en.emma.page.user_omniauth_callbacks.action.destroy"
+#         label:        '/x/ Sign out of EMMA (%{provider})'
+#         _endpoint:    true
+
+#       search: # NOTE: added to facilitate comparison
+#         action: index
+
+#       search_type: # NOTE: added to facilitate comparison
+
+#         q: # NOTE: added to facilitate comparison
+#           url_param:      q
+#           name:           '/x/ Keyword'
+#           label:          '/x/ Search terms:'
+#           tooltip:
+#                           >-
+#                           /x/ Search for one or more keywords matching anywhere in the
+#                           description of entries
+#           placeholder:    '/x/ Enter search terms...'

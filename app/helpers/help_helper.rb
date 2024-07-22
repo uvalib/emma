@@ -628,7 +628,7 @@ module HelpHelper
   def help_main_intro(**opt)
     meth = :help_offline
     docs = send(meth)
-    cfg  = HELP_CONFIG.dig(:index)
+    cfg  = config_page_section(:help, :index)
     if (text = cfg[:intro_html]&.dup)
       docs = nil if text.sub!(%r{<p>%{#{meth}}</p>|%{#{meth}}}, docs)
       text = text.html_safe

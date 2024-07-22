@@ -21,7 +21,7 @@ module PanelHelper
   #
   # @type [Hash]
   #
-  PANEL_CTRL_CFG = config_section('emma.panel.control').deep_freeze
+  PANEL_CTRL_CFG = config_page_section(:panel, :control).deep_freeze
 
   # Label for button to open a collapsible panel.
   #

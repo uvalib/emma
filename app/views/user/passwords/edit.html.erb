@@ -11,33 +11,34 @@
 
   user  ||= resource
 
+  cfg   ||= current_config_page_section
   help  ||= nil
-  title ||= t('emma.user.passwords.edit.title')
+  title ||= cfg[:title]
 
   unless modal?
     set_page_meta_title(title)
     set_page_description(title)
   end
 
-  label_opt     = { class: 'label' }
-  value_opt     = { class: 'value' }
+  label_opt      = { class: 'label' }
+  value_opt      = { class: 'value' }
 
-  pwd_label     = t('emma.user.passwords.edit.password')
-  pwd_label_opt = label_opt
-  pwd_value_opt = value_opt.merge(autocomplete: 'new-password')
+  pwd_label      = cfg[:password]
+  pwd_label_opt  = label_opt
+  pwd_value_opt  = value_opt.merge(autocomplete: 'new-password')
 
-  min_length    = @minimum_password_length
-  min_length  &&= t('emma.user.password.length', min: min_length)
-  min_length  &&= '<br/>'.html_safe << html_italic("(#{min_length})")
+  min_length     = @minimum_password_length
+  min_length   &&= config_page(:user, :password, :length, min: min_length)
+  min_length   &&= '<br/>'.html_safe << html_italic("(#{min_length})")
 
-  conf_label     = t('emma.user.passwords.edit.confirm')
+  conf_label     = cfg[:confirm]
   conf_label_opt = label_opt
   conf_value_opt = value_opt.merge(autocomplete: 'off')
 
-  submit_label   = t('emma.user.passwords.edit.submit')
+  submit_label   = cfg[:submit]
   submit_opt     = { class: 'submit-button best-choice' }
 
-  cancel_label   = t('emma.user.passwords.edit.cancel')
+  cancel_label   = cfg[:cancel]
   cancel_opt     = { class: 'cancel-button' }
 
   form_opt = {

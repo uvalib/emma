@@ -47,7 +47,7 @@ module LinkHelper
     label  ||= config_lookup("#{action}.label", ctrlr: ctrlr) || path
     html_opt = prepend_css(link_opt, css)
     html_opt[:method] ||= :delete if action.to_s == 'destroy'
-    html_opt[:title]  ||= config_lookup("#{action}.tooltip", ctrlr: ctrlr)
+    html_opt[:title]  ||= config_lookup(:tooltip, ctrlr: ctrlr, action: action)
     # noinspection RubyMismatchedArgumentType
     if path.match?(/^https?:/)
       external_link(path, label, **html_opt)

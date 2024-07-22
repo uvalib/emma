@@ -104,7 +104,7 @@ class SearchDecorator < BaseDecorator
 
     # @private
     # @type [Hash]
-    SEARCH_CONFIGURATION = config_section('emma.search').deep_freeze
+    SEARCH_CONFIGURATION = config_page_section(:search).deep_freeze
 
     # CSS class for the colorization button tray.
     #
@@ -515,10 +515,9 @@ class SearchDecorator
       else
         fmt = object.label
         rep = repo || EmmaRepository.default
-        key = h.signed_in? ? 'disallowed' : 'sign_in'
-        key = "emma.download.link.#{key}.tooltip"
-        dft = %i[emma.download.tooltip]
-        config_item(key, fmt: fmt, repo: rep, default: dft)
+        key = h.signed_in? ? :disallowed : :sign_in
+        cpo = { fmt: fmt, repo: rep, default: %i[download tooltip] }
+        config_page(:download, :link, key, :tooltip, **cpo)
       end
 
     case repo&.to_sym

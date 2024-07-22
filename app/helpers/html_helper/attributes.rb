@@ -106,7 +106,7 @@ module HtmlHelper::Attributes
   #
   # @type [String]
   #
-  SIGN_IN = I18n.t('emma.download.failure.sign_in').freeze
+  SIGN_IN = config_page(:download, :failure, :sign_in).freeze
 
   # Augment with attributes that should be set/unset according to the context
   # (e.g. CSS classes present).

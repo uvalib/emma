@@ -5,10 +5,11 @@
   view_abort(__FILE__, 'NOT EXPECTED TO BE USED')
   view_debug(__FILE__)
 
+  cfg   ||= current_config_page_section
   help  ||= nil # %i[manifest_item download]
-  title ||= t('emma.download.label')
+  title ||= cfg[:label]
 
-  error ||= t('emma.download.error.server')
+  error ||= cfg.dig(:error, :server)
 
   unless modal?
     set_page_meta_title(title)

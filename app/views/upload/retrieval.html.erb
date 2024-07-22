@@ -4,8 +4,9 @@
 
   view_debug(__FILE__)
 
-  title ||= t('emma.download.title', default: :'emma.download.label')
-  error ||= t('emma.download.error.server')
+  cfg   ||= config_page_section(:download)
+  title ||= cfg[:title] || cfg[:label]
+  error ||= cfg.dig(:error, :server)
 
 -%>
 <%= render 'upload/fallback', title: title, error: error %>

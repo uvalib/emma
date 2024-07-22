@@ -5,8 +5,9 @@
   view_abort(__FILE__, 'NOT EXPECTED TO BE USED')
   view_debug(__FILE__)
 
-  title ||= t('emma.download.title', default: :'emma.download.label')
-  error ||= t('emma.download.error.server')
+  cfg   ||= current_config_page_section
+  title ||= cfg[:title] || cfg[:label]
+  error ||= cfg.dig(:error, :server)
 
 -%>
 <%= render 'manifest_item/fallback', title: title, error: error %>

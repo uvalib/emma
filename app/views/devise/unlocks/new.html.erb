@@ -6,8 +6,9 @@
 
   user  ||= @resource
 
+  cfg   ||= current_config_page_section
   help  ||= nil
-  title ||= t('emma.user.unlocks.new.title')
+  title ||= cfg[:title]
 
   unless modal?
     set_page_meta_title(title)
@@ -18,15 +19,15 @@
   label_opt     = { class: 'label' }
   value_opt     = { class: 'value' }
 
-  usr_label     = t('emma.user.unlocks.new.username')
+  usr_label     = cfg[:username]
   usr_label    += ':' unless usr_label.end_with?(':')
   usr_label_opt = label_opt
   usr_value_opt = value_opt.merge(autocomplete: 'email')
 
-  submit_label  = t('emma.user.unlocks.new.submit')
+  submit_label  = cfg[:submit]
   submit_opt    = { class: 'submit-button best-choice' }
 
-  cancel_label  = t('emma.user.unlocks.new.cancel')
+  cancel_label  = cfg[:cancel]
   cancel_opt    = { class: 'cancel-button' }
 
   form_opt = {

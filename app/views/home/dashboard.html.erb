@@ -7,8 +7,9 @@
 
   view_debug(__FILE__)
 
+  cfg   ||= current_config_page_section
   help  ||= %i[account show_current]
-  title ||= t('emma.home.dashboard.title', default: :'emma.home.title')
+  title ||= cfg[:title] || config_page(:home, :title)
 
   unless modal?
     set_page_meta_title(title)

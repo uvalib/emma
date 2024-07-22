@@ -6,98 +6,141 @@ en:
 
     data:
 
-      subsystem:
-        database:       true
+#     unit: # NOTE: added to facilitate comparison
+#       brief:          '/x/ db'
+#       long:           '/x/ database'
+#     label:            '/x/ Data'                              # NOTE: added to facilitate comparison
+#     title:            '/x/ EMMA Database'                     # NOTE: added to facilitate comparison
+#     tooltip:          '/x/ View contents of database tables'  # NOTE: added to facilitate comparison
 
       # =======================================================================
-      # Messages (overriding "en.emma.messages")
+      # Subsystems
       # =======================================================================
+
+#     subsystem:
+#       database:       true
+#       redis:          false # NOTE: added to facilitate comparison
+#       storage:        false # NOTE: added to facilitate comparison
+#       search:         false # NOTE: added to facilitate comparison
+#       ingest:         false # NOTE: added to facilitate comparison
+
+      # =======================================================================
+      # Search endpoint
+      # =======================================================================
+
+#     search: # NOTE: added to facilitate comparison
+#       action: index
 
       # =======================================================================
       # Layout
       # =======================================================================
 
-      search_bar:
-        enabled:        false
+#     search_bar: # NOTE: to "en.emma.page.data.search_bar"
+#       enabled:        false
+#       label:          '/x/ Record Filter' # NOTE: added to facilitate comparison
+
+#       min_rows:         1 # NOTE: added to facilitate comparison
+#       max_rows:         1 # NOTE: added to facilitate comparison
+
+#       button: # NOTE: added to facilitate comparison
+#         label:          '/x/ Search'
+
+#       advanced: # NOTE: added to facilitate comparison
+#         label:          '/x/ More ▼'
+#         tooltip:        '/x/ Show additional search filters'
+#         open:
+#           label:        '/x/ Less ▲'
+#           tooltip:      '/x/ Hide additional search filters'
+
+#     search_type: # NOTE: added to facilitate comparison
+#       q:
+#         url_param:      q
+#         name:           '/x/ Keyword'
+#         label:          '/x/ Search terms:'
+#         tooltip:
+#                         >-
+#                         /x/ Search for one or more keywords matching anywhere in the
+#                         description of entries
+#         placeholder:    '/x/ Enter search terms...'
 
       # =======================================================================
       # Pages
       # =======================================================================
 
-      index:
-        label:          'Database'
-        title:          'EMMA Database'
-        tooltip:        'View all database records for this deployment'
+#     index: # NOTE: to "en.emma.page.data.action.index"
+#       label:          '/x/ Database'
+#       title:          '/x/ EMMA Database'
+#       tooltip:        '/x/ View all database records for this deployment'
 
-        submissions:
-          title:        'EMMA Submissions'
+#       submissions:
+#         title:        '/x/ EMMA Submissions'
 
-        tables:
-          title:        'EMMA Database Tables'
+#       tables:
+#         title:        '/x/ EMMA Database Tables'
 
-        _endpoint:      true
-
-      # =======================================================================
-
-      show:
-        label:          'Record'
-        title:          '%{table} table'
-        tooltip:        'View records for this database table'
-        _endpoint:      true
+#       _endpoint:      true
 
       # =======================================================================
 
-      submissions:
-        label:          'Submissions'
-        title:          'EMMA Submission Records'
-        tooltip:        'View information for all EMMA submissions'
-        text_html:
-          >-
-          <p>
-            This page is constructed from selected parts of the EMMA
-            submissions table for entries which are complete or (in the case of
-            submissions back to partner repositories) are in the process of
-            being finalized.
-          </p>
-          <p>
-            This information can also be rendered in either
-            <a href="/data/submissions.json">JSON</a> or
-            <a href="/data/submissions.xml">XML</a>.
-          </p>
-        _endpoint:      true
+#     show: # NOTE: to "en.emma.page.data.action.show"
+#       label:          '/x/ Record'
+#       title:          '/x/ %{table} table'
+#       tooltip:        '/x/ View records for this database table'
+#       _endpoint:      true
 
       # =======================================================================
 
-      counts:
-        label:          'Field Counts'
-        title:          'EMMA Submission Field Value Counts'
-        tooltip:        'View field values for all EMMA submissions'
-        text_html:
-          >-
-          <p>
-            This page is constructed from selected parts of the EMMA
-            submissions table for entries which are complete or (in the case of
-            submissions back to partner repositories) are in the process of
-            being finalized.
-          </p>
-          <p>
-            This information can also be rendered in either
-            <a href="/data/counts.json">JSON</a> or
-            <a href="/data/counts.xml">XML</a>.
-          </p>
-        notes_html:
-          >-
-          <p>
-            This page only reports on data fields which are actually used in
-            submissions.
-            To discover invalid (ignored) data fields that may have crept into
-            the submission data, use the URL parameter "all=true".
-          </p>
-          <p>
-            To create a link which goes directly to the values of a particular
-            field, use the field name as a URL fragment, e.g.:
-            <a href="/data/counts#dc_title">/data/counts#dc_title</a>.
-          </p>
-        _endpoint:      true
+#     submissions: # NOTE: to "en.emma.page.data.action.submissions"
+#       label:          '/x/ Submissions'
+#       title:          '/x/ EMMA Submission Records'
+#       tooltip:        '/x/ View information for all EMMA submissions'
+#       text_html:
+#         >-
+#         <p>
+#           /x/ This page is constructed from selected parts of the EMMA
+#           submissions table for entries which are complete or (in the case of
+#           submissions back to partner repositories) are in the process of
+#           being finalized.
+#         </p>
+#         <p>
+#           /x/ This information can also be rendered in either
+#           <a href="/data/submissions.json">JSON</a> or
+#           <a href="/data/submissions.xml">XML</a>.
+#         </p>
+#       _endpoint:      true
+
+      # =======================================================================
+
+#     counts: # NOTE: to "en.emma.page.data.action.counts"
+#       label:          '/x/ Field Counts'
+#       title:          '/x/ EMMA Submission Field Value Counts'
+#       tooltip:        '/x/ View field values for all EMMA submissions'
+#       text_html:
+#         >-
+#         <p>
+#           /x/ This page is constructed from selected parts of the EMMA
+#           submissions table for entries which are complete or (in the case of
+#           submissions back to partner repositories) are in the process of
+#           being finalized.
+#         </p>
+#         <p>
+#           /x/ This information can also be rendered in either
+#           <a href="/data/counts.json">JSON</a> or
+#           <a href="/data/counts.xml">XML</a>.
+#         </p>
+#       notes_html:
+#         >-
+#         <p>
+#           /x/ This page only reports on data fields which are actually used in
+#           submissions.
+#           To discover invalid (ignored) data fields that may have crept into
+#           the submission data, use the URL parameter "all=true".
+#         </p>
+#         <p>
+#           /x/ To create a link which goes directly to the values of a particular
+#           field, use the field name as a URL fragment, e.g.:
+#           <a href="/data/counts#dc_title">/data/counts#dc_title</a>.
+#         </p>
+#       _endpoint:      true
 
       # =======================================================================

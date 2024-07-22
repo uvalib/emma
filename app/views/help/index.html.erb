@@ -6,10 +6,11 @@
 
   list  ||= help_topics
 
-  title ||= t('emma.help.index.title')
+  cfg   ||= current_config_page_section
+  title ||= cfg[:title]
 
   unless modal?
-    label = t('emma.help.index.label', default: title)
+    label = cfg[:label] || title
     set_page_meta_title(label)
     set_page_description(title)
     help_links(list).each { |name, path| skip_nav_append(name => path) }

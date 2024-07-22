@@ -3,6 +3,8 @@
 module Model
   extend ActiveSupport::Concern
 
+  include Emma::Common
+
   include Emma::Constants
 
   # A unique identifier for this model instance.

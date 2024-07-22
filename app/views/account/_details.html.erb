@@ -25,8 +25,8 @@
   uploads   ||= true
   manifests ||= true
 
-  uploads   &&= user.can?(:create, Upload)   && t('emma.upload.title')
-  manifests &&= user.can?(:create, Manifest) && t('emma.manifest.title')
+  uploads   &&= user.can?(:create, Upload)   && config_page(:upload,   :title)
+  manifests &&= user.can?(:create, Manifest) && config_page(:manifest, :title)
 
   opt         = { level: (level + 1), except: :user_id }
   uploads   &&= opt.merge(list: user.uploads,   title: uploads)

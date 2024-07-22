@@ -9,80 +9,83 @@ en:
     health:
 
       # =======================================================================
+      # Search endpoint
+      # =======================================================================
+
+#     search: # NOTE: added to facilitate comparison
+#       action: index
+
+      # =======================================================================
+      # Layout
+      # =======================================================================
+
+#     search_type: # NOTE: added to facilitate comparison
+
+#       q: # NOTE: added to facilitate comparison
+#         url_param:      q
+#         name:           '/x/ Keyword'
+#         label:          '/x/ Search terms:'
+#         tooltip:
+#                         >-
+#                         /x/ Search for one or more keywords matching anywhere in the
+#                         description of entries
+#         placeholder:    '/x/ Enter search terms...'
+
+#     search_bar: # NOTE: added to facilitate comparison
+#       enabled:        false # NOTE: added to facilitate comparison
+#       label:          '/x/ %{Item} Search' # NOTE: added to facilitate comparison
+
+#       min_rows:         1 # NOTE: added to facilitate comparison
+#       max_rows:         1 # NOTE: added to facilitate comparison
+
+#       button: # NOTE: added to facilitate comparison
+#         label:          '/x/ Search'
+
+#       advanced: # NOTE: added to facilitate comparison
+#         label:          '/x/ More ▼'
+#         tooltip:        '/x/ Show additional search filters'
+#         open:
+#           label:        '/x/ Less ▲'
+#           tooltip:      '/x/ Hide additional search filters'
+
+      # =======================================================================
       # Subsystems
       # =======================================================================
 
-      subsystem:
-
-        default:        &DEFAULT
-          restart:      false
-          failed:       'Unknown error'
-
-        invalid:
-          <<:           *DEFAULT
-          method:       false
-          failed:       'NOT A VALID SUBSYSTEM'
-
-        database:
-          <<:           *DEFAULT
-          restart:      true
-          failed:       'Database connection error'
-
-        redis:
-          <<:           *DEFAULT
-          restart:      true
-          healthy:      'NOT IMPLEMENTED' # TODO: future
-          failed:       'Redis unresponsive'
-
-        storage:
-          <<:           *DEFAULT
-          healthy:      'NOT IMPLEMENTED' # TODO: future
-          degraded:     'AWS storage degraded'
-          failed:       'AWS storage failing'
-
-        search:
-          <<:           *DEFAULT
-          degraded:     'Unified Search service degraded'
-          failed:       'Unified Search service unresponsive'
-
-        ingest:
-          <<:           *DEFAULT
-          degraded:     'Unified Ingest service degraded'
-          failed:       'Unified Ingest service failing'
 
       # =======================================================================
       # Pages
       # =======================================================================
 
-      run_state:
-        title:          'System Run State'
-        restore:        'Restore system availability'
+#     run_state: # NOTE: to "en.emma.page.health.action.run_state"
+#       title:          '/x/ System Run State'
+#       restore:        '/x/ Restore system availability'
 
-        state:
-          available:
-            title:      'System Available'
-            property:
-              code:     200
-              text:     'EMMA is available'
-          unavailable:
-            title:      'SYSTEM UNAVAILABLE'
-            property:
-              code:     503
-              text:     'EMMA is temporarily unavailable for maintenance'
+#       state:
+#         available:
+#           title:      '/x/ System Available'
+#           property:
+#             code:     200
+#             text:     '/x/ EMMA is available'
+#         unavailable:
+#           title:      '/x/ SYSTEM UNAVAILABLE'
+#           property:
+#             code:     503
+#             text:     '/x/ EMMA is temporarily unavailable for maintenance'
 
-        exempt:
-          - health
-          - help
-          - metrics
-          - home:
-              - main
-              - welcome
-          - user/sessions:
-              - sign_in_as
-              - destroy
-          - user/passwords:
-              - new
+#       exempt:
+#         - health
+#         - help
+#         - metrics
+#         - home:
+#             - main
+#             - welcome
+#         - user/sessions:
+#             - sign_in_as
+#             - destroy
+#         - user/passwords:
+#             - new
 
-        _endpoint:      true
+#       _endpoint:      true
 
       # =======================================================================

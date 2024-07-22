@@ -8,338 +8,373 @@ en:
 
     account:
 
-      unit:
-        brief:          'account'
-        long:           'user account'
-      label:            'Users'
-      title:            'EMMA User Accounts'
-      tooltip:          'Show the EMMA user account database table'
+#     unit: # NOTE: to "en.emma.page.account"
+#       brief:          '/x/ account'
+#       long:           '/x/ user account'
+#     label:            '/x/ Users' # NOTE: to "en.emma.page.account"
+#     title:            '/x/ EMMA User Accounts' # NOTE: to "en.emma.page.account"
+#     tooltip:          '/x/ Show the EMMA user account database table' # NOTE: to "en.emma.page.account"
 
-      subsystem:
-        database:       true
+      # =======================================================================
+      # Subsystems
+      # =======================================================================
+
+#     subsystem:
+#       database:       true
+#       redis:          false # NOTE: added to facilitate comparison
+#       storage:        false # NOTE: added to facilitate comparison
+#       search:         false # NOTE: added to facilitate comparison
+#       ingest:         false # NOTE: added to facilitate comparison
 
       # =======================================================================
       # Search endpoint
       # =======================================================================
 
-      search:           # TODO: ?
-        action:         index
+#     search:           # TODO: ? # NOTE: to "en.emma.page._generic.search"
+#       action:         index
 
       # =======================================================================
       # Layout
       # =======================================================================
 
-      search_type:
+#     search_type: # NOTE: to "en.emma.page.account.search_type"
 
-        like:
-          name:         'Filter'
-          label:        'Filter by account:'
-          placeholder:  'Partial email or name...'
+#       like:
+#         name:         '/x/ Filter'
+#         label:        '/x/ Filter by account:'
+#         placeholder:  '/x/ Partial email or name...'
 
-      search_bar:
-        enabled:        [index]
-        label:          'Account Filter'
-
-      search_filters:
+#     search_bar: # NOTE: to "en.emma.page.account.search_bar"
 #       enabled:        [index]
-        enabled:        false
+#       label:          '/x/ Account Filter'
 
-        layout:
-          - [sort, size, ~, ~]
+#       min_rows:         1 # NOTE: added to facilitate comparison
+#       max_rows:         1 # NOTE: added to facilitate comparison
 
-      page_controls:
-        label:          'Account Actions:'
-        actions:
-          - { controller: 'home', action: 'dashboard', label: 'Details' }
-          - edit_current
-          - list_org
-          - list_all
-#         - new
-#         - edit_select
-#         - delete_select
+#       button: # NOTE: added to facilitate comparison
+#         label:          '/x/ Search'
+
+#       advanced: # NOTE: added to facilitate comparison
+#         label:          '/x/ More ▼'
+#         tooltip:        '/x/ Show additional search filters'
+#         open:
+#           label:        '/x/ Less ▲'
+#           tooltip:      '/x/ Hide additional search filters'
+
+#     search_filters: # NOTE: to "en.emma.page.account.search_filters"
+##      enabled:        [index]
+#       enabled:        false
+
+#       layout:
+#         - [sort, size, ~, ~]
+
+#     page_controls: # NOTE: to "en.emma.page.account.page_controls"
+#       label:          '/x/ Account Actions:'
+#       actions:
+#         - { controller: 'home', action: 'dashboard', label: '/x/ Details' }
+#         - edit_current
+#         - list_org
+#         - list_all
+##        - new
+##        - edit_select
+##        - delete_select
 
       # =======================================================================
       # Controls
       # =======================================================================
 
-      action_links:
+#     action_links: # NOTE: to "en.emma.page.account.action_links"
 
-        new:
-          label:        'Create %{an} new EMMA user account'
+#       new:
+#         label:        '/x/ Create %{an} new EMMA user account'
 
-        edit:
-          label:        'Modify %{an} existing EMMA user account'
+#       edit:
+#         label:        '/x/ Modify %{an} existing EMMA user account'
 
-        delete:
-          label:        'Remove %{an} existing EMMA user account'
+#       delete:
+#         label:        '/x/ Remove %{an} existing EMMA user account'
 
-        list_all:
-          label:        'List all EMMA user accounts'
+#       list_all:
+#         label:        '/x/ List all EMMA user accounts'
 
-        list_org:
-          label:        'List EMMA user accounts'
+#       list_org:
+#         label:        '/x/ List EMMA user accounts'
 
       # =======================================================================
       # Fields
       # =======================================================================
 
-      display_fields: # Overrides order of 'en.emma.account.record'
-        - id
-        - email
-        - first_name
-        - last_name
-        - upload_count:   { label: 'Submissions' }
-        - manifest_count: { label: 'Manifests' }
-        - sign_in_count
-        - role
-#       - org
-        - org_id
-        - preferred_email
-        - phone
-        - address
-        - status
-        - status_date
-        - current_sign_in_at
-        - last_sign_in_at
-        - current_sign_in_ip
-        - last_sign_in_ip
-        - updated_at
-        - created_at
-        - encrypted_password
-        - remember_created_at
-        - reset_password_sent_at
-        - reset_password_token
-        - provider:       { ignored: true }
-        - effective_id:   { ignored: true }
-        - access_token:   { ignored: true }
-        - refresh_token:  { ignored: true }
+#     display_fields: # Overrides order of "en.emma.record.account" # NOTE: to "en.emma.page.account.display_fields"
+#       - id
+#       - email
+#       - first_name
+#       - last_name
+#       - upload_count:   { label: '/x/ Submissions' }
+#       - manifest_count: { label: '/x/ Manifests' }
+#       - sign_in_count
+#       - role
+##      - org
+#       - org_id
+#       - preferred_email
+#       - phone
+#       - address
+#       - status
+#       - status_date
+#       - current_sign_in_at
+#       - last_sign_in_at
+#       - current_sign_in_ip
+#       - last_sign_in_ip
+#       - updated_at
+#       - created_at
+#       - encrypted_password
+#       - remember_created_at
+#       - reset_password_sent_at
+#       - reset_password_token
+#       - provider:       { ignored: true }
+#       - effective_id:   { ignored: true }
+#       - access_token:   { ignored: true }
+#       - refresh_token:  { ignored: true }
 
       # =======================================================================
       # Pages
       # =======================================================================
 
-      generic:
-        label:          'Accounts'
-        title:          'Accounts'
-        tooltip:        '(A brief description of this operation)'
-        description:    '(A more detailed description of this operation)'
-        directions:     '(Brief guidance for using the operation form)'
-        notes:          '(A more detailed description of this operation)'
+#     generic: # NOTE: to "en.emma.page.account.action._generic"
+#       label:          '/x/ Accounts'
+#       title:          '/x/ Accounts'
+#       tooltip:        '/x/ (A brief description of this operation)'
+#       description:    '/x/ (A more detailed description of this operation)'
+#       directions:     '/x/ (Brief guidance for using the operation form)'
+#       notes:          '/x/ (A more detailed description of this operation)'
 
-        submit:         &GENERIC_SUBMIT
-          label:        'Submit'
-          if_enabled:
-            tooltip:    'Proceed with this action'
-          if_disabled:
-            tooltip:    'Conditions have not yet been met to proceed'
+#       submit:         &GENERIC_SUBMIT # NOTE: to "en.emma.page._generic.form.submit"
+#         label:        '/x/ Submit'
+#         if_enabled:
+#           tooltip:    '/x/ Proceed with this action'
+#         if_disabled:
+#           tooltip:    '/x/ Conditions have not yet been met to proceed'
 
-        cancel:         &GENERIC_CANCEL
-          label:        'CANCEL'
-          if_enabled:
-            tooltip:    'Do nothing and return to the previous screen'
-          if_disabled:
-            tooltip:    'Not able to cancel at this point'
+#       cancel:         &GENERIC_CANCEL # NOTE: to "en.emma.page._generic.form.cancel"
+#         label:        '/x/ CANCEL'
+#         if_enabled:
+#           tooltip:    '/x/ Do nothing and return to the previous screen'
+#         if_disabled:
+#           tooltip:    '/x/ Not able to cancel at this point'
 
 #       success:        'EMMA user account was successfully %{actioned}.'
 #       failure:        'Failed to %{action} EMMA user account: %{error}'
 
       # =======================================================================
 
-      index:            &INDEX_ACTION
-        label:          'List'
-        title:          'EMMA User Accounts'
-        tooltip:        'List records from the EMMA user database table'
+#     index:            &INDEX_ACTION # NOTE: to "en.emma.page.account.action.index"
+#       label:          '/x/ List'
+#       title:          '/x/ EMMA User Accounts'
+#       tooltip:        '/x/ List records from the EMMA user database table'
 
-        _endpoint:      true
-
-      # =======================================================================
-
-      list_all:
-        <<:             *INDEX_ACTION
-        label:          'List All'
-        tooltip:        'List all EMMA user accounts'
+#       _endpoint:      true
 
       # =======================================================================
 
-      list_org:
-        <<:             *INDEX_ACTION
-        label:          'Org List'
-        title:          '%{name} EMMA User Accounts'
-        tooltip:        'List the EMMA users associated with your organization'
+#     list_all: # NOTE: to "en.emma.page.account.action.list_all"
+#       <<:             *INDEX_ACTION
+#       label:          '/x/ List All'
+#       tooltip:        '/x/ List all EMMA user accounts'
 
       # =======================================================================
 
-      show:             &SHOW_ACTION
-        label:          'Account'
-        title:          'EMMA User Account %{name}'
-        tooltip:
-          >-
-          Account details from the EMMA user account database table
-
-        _endpoint:      true
+#     list_org: # NOTE: to "en.emma.page.account.action.list_org"
+#       <<:             *INDEX_ACTION
+#       label:          '/x/ Org List'
+#       title:          '/x/ %{name} EMMA User Accounts'
+#       tooltip:        '/x/ List the EMMA users associated with your organization'
 
       # =======================================================================
 
-      show_select:
-        <<:             *SHOW_ACTION
-        label:          'Show User'
-        title:          'Show an EMMA User Account'
+#     show:             &SHOW_ACTION # NOTE: to "en.emma.page.account.action.show"
+#       label:          '/x/ Account'
+#       title:          '/x/ EMMA User Account %{name}'
+#       tooltip:
+#         >-
+#         /x/ Account details from the EMMA user account database table
+
+#       _endpoint:      true
 
       # =======================================================================
 
-      show_current:
-        <<:             *SHOW_ACTION
-        label:          'Details'
-        title:          'Your EMMA User Account Information'
-        tooltip:        'See details about your EMMA user account'
+#     show_select: # NOTE: to "en.emma.page.account.action.show_select"
+#       <<:             *SHOW_ACTION
+#       label:          '/x/ Show User'
+#       title:          '/x/ Show an EMMA User Account'
+
+#       submit: # NOTE: added to facilitate comparison
+#         label:          '/x/ Submit'
+#         if_enabled:
+#           tooltip:      '/x/ Proceed with this action'
+#         if_disabled:
+#           tooltip:      '/x/ Conditions have not yet been met to proceed'
+
+#       cancel: # NOTE: added to facilitate comparison
+#         label:          '/x/ CANCEL'
+#         if_enabled:
+#           tooltip:      '/x/ Do nothing and return to the previous screen'
+#         if_disabled:
+#           tooltip:      '/x/ Not able to cancel at this point'
 
       # =======================================================================
 
-      new:              &NEW_ACTION
-        label:          'Add User'
-        title:          'Create an EMMA User Account'
-        tooltip:        'Create a new EMMA account in the user database'
-        description:
-          >-
-          If the EMMA account is associated with an account authenticated via
-          a remote authentication provider, sign-on is mediated by that
-          provider.
-
-          Otherwise a (local) EMMA account is authenticated through an
-          encrypted password stored in the EMMA account database record.
-
-        term:
-          action:       'create'
-          actioned:     'created'
-
-        submit:
-          <<:           *GENERIC_SUBMIT
-          label:        'Create'
-          if_enabled:
-            tooltip:    'Create the new EMMA user account'
-          if_disabled:
-            tooltip:    'Required information is still needed'
-
-        cancel:
-          <<:           *GENERIC_CANCEL
-          if_enabled:
-            tooltip:    'Do not create this entry (or start over)'
-
-        success:        'Created EMMA user account %{name}'
-        failure:        'Could not create EMMA user account: %{error}'
-
-        role:           manager
-        _endpoint:      true
+#     show_current: # NOTE: to "en.emma.page.account.action.show_current"
+#       <<:             *SHOW_ACTION
+#       label:          '/x/ Details'
+#       title:          '/x/ Your EMMA User Account Information'
+#       tooltip:        '/x/ See details about your EMMA user account'
 
       # =======================================================================
 
-      create:
-        <<:             *NEW_ACTION
+#     new:              &NEW_ACTION # NOTE: to "en.emma.page.account.action.new"
+#       label:          '/x/ Add User'
+#       title:          '/x/ Create an EMMA User Account'
+#       tooltip:        '/x/ Create a new EMMA account in the user database'
+#       description:
+#         >-
+#         /x/ If the EMMA account is associated with an account authenticated via
+#         a remote authentication provider, sign-on is mediated by that
+#         provider.
+
+#         /x/ Otherwise a (local) EMMA account is authenticated through an
+#         encrypted password stored in the EMMA account database record.
+
+#       term: # NOTE: to "en.emma.term._generic.action.new"
+#         action:       '/x/ create'
+#         actioned:     '/x/ created'
+
+#       submit: # NOTE: to "en.emma.page.account.action.new.submit"
+#         <<:           *GENERIC_SUBMIT
+#         label:        '/x/ Create'
+#         if_enabled:
+#           tooltip:    '/x/ Create the new EMMA user account'
+#         if_disabled:
+#           tooltip:    '/x/ Required information is still needed'
+
+#       cancel: # NOTE: to "en.emma.page.account.action.new.cancel"
+#         <<:           *GENERIC_CANCEL
+#         if_enabled:
+#           tooltip:    '/x/ Do not create this entry (or start over)'
+
+#       success:        '/x/ Created EMMA user account %{name}'
+#       failure:        '/x/ Could not create EMMA user account: %{error}'
+
+#       role:           manager
+#       _endpoint:      true
 
       # =======================================================================
 
-      edit:             &EDIT_ACTION
-        label:          'Edit User'
-        title:          'Modify EMMA User Account %{name}'
-        tooltip:        'Modify an existing EMMA account in the user database'
-        description:
-          >-
-          You may change the local details of the EMMA account
-          (whether it is a local EMMA account or one authenticated via a
-          remote authentication provider).
-
-          However, in either case, these changes are only to the EMMA account
-          database record -- nothing will be (or can be) changed about account
-          information maintained by the remote provider.
-
-        term:
-          action:       'update'
-          actioned:     'updated'
-
-        submit:
-          <<:           *GENERIC_SUBMIT
-          label:        'Update'
-          if_enabled:
-            tooltip:    'Modify this EMMA user account'
-          if_disabled:
-            tooltip:    'No valid changes have been made yet'
-
-        cancel:
-          <<:           *GENERIC_CANCEL
-          if_enabled:
-            tooltip:    'Discard these changes'
-
-        success:        'Updated EMMA user account %{name}'
-        failure:        'Could not update EMMA user account: %{error}'
-
-        _endpoint:      true
+#     create: # NOTE: to "en.emma.page.account.action.create"
+#       <<:             *NEW_ACTION
 
       # =======================================================================
 
-      edit_select:
-        <<:             *EDIT_ACTION
-        title:          'Modify an EMMA User Account'
-        role:           manager
+#     edit:             &EDIT_ACTION # NOTE: to "en.emma.page.account.action.edit"
+#       label:          '/x/ Edit User'
+#       title:          '/x/ Modify EMMA User Account %{name}'
+#       tooltip:        '/x/ Modify an existing EMMA account in the user database'
+#       description:
+#         >-
+#         /x/ You may change the local details of the EMMA account
+#         (whether it is a local EMMA account or one authenticated via a
+#         remote authentication provider).
+
+#         /x/ However, in either case, these changes are only to the EMMA account
+#         database record -- nothing will be (or can be) changed about account
+#         information maintained by the remote provider.
+
+#       term: # NOTE: to "en.emma.term._generic.action.edit"
+#         action:       '/x/ update'
+#         actioned:     '/x/ updated'
+
+#       submit: # NOTE: to "en.emma.page.account.action.edit.submit"
+#         <<:           *GENERIC_SUBMIT
+#         label:        '/x/ Update'
+#         if_enabled:
+#           tooltip:    '/x/ Modify this EMMA user account'
+#         if_disabled:
+#           tooltip:    '/x/ No valid changes have been made yet'
+
+#       cancel: # NOTE: to "en.emma.page.account.action.edit.cancel"
+#         <<:           *GENERIC_CANCEL
+#         if_enabled:
+#           tooltip:    '/x/ Discard these changes'
+
+#       success:        '/x/ Updated EMMA user account %{name}'
+#       failure:        '/x/ Could not update EMMA user account: %{error}'
+
+#       _endpoint:      true
 
       # =======================================================================
 
-      edit_current:
-        <<:             *EDIT_ACTION
-        label:          'Modify'
-        title:          'Modify Your EMMA User Account'
-        tooltip:        'See or change details about your EMMA user account'
+#     edit_select: # NOTE: to "en.emma.page.account.action.edit_select"
+#       <<:             *EDIT_ACTION
+#       title:          '/x/ Modify an EMMA User Account'
+#       role:           manager
 
       # =======================================================================
 
-      update:
-        <<:             *EDIT_ACTION
+#     edit_current: # NOTE: to "en.emma.page.account.action.edit_current"
+#       <<:             *EDIT_ACTION
+#       label:          '/x/ Modify'
+#       title:          '/x/ Modify Your EMMA User Account'
+#       tooltip:        '/x/ See or change details about your EMMA user account'
 
       # =======================================================================
 
-      delete:           &DELETE_ACTION
-        label:          'Remove User'
-        title:          'Remove EMMA User Account %{name}'
-        tooltip:        'Remove an account from the set of active EMMA users'
-        description_html:
-          >-
-          <p>
-            Remove the selected account from the set of active EMMA users.
-          </p>
-          <p>
-            (Information about the user in conjunction with EMMA submissions
-            will be retained.)
-          </p>
-
-        term:
-          action:       'remove'
-          actioned:     'removed'
-
-        submit:
-          <<:           *GENERIC_SUBMIT
-          label:        'Delete'
-          if_enabled:
-            tooltip:    'Remove this EMMA user account'
-
-        cancel:
-          <<:           *GENERIC_CANCEL
-          if_enabled:
-            tooltip:    'Keep this EMMA user account'
-
-        success:        'Removed EMMA user account %{name}'
-        failure:        'Could not remove EMMA user account: %{error}'
-
-        role:           manager
-        _endpoint:      true
+#     update: # NOTE: to "en.emma.page.account.action.update"
+#       <<:             *EDIT_ACTION
 
       # =======================================================================
 
-      delete_select:
-        <<:             *DELETE_ACTION
-        title:          'Remove an EMMA User Account'
+#     delete:           &DELETE_ACTION # NOTE: to "en.emma.page.account.action.delete"
+#       label:          '/x/ Remove User'
+#       title:          '/x/ Remove EMMA User Account %{name}'
+#       tooltip:        '/x/ Remove an account from the set of active EMMA users'
+#       description_html:
+#         >-
+#         <p>
+#           /x/ Remove the selected account from the set of active EMMA users.
+#         </p>
+#         <p>
+#           /x/ (Information about the user in conjunction with EMMA submissions
+#           will be retained.)
+#         </p>
+
+#       term: # NOTE: to "en.emma.term._generic.action.delete"
+#         action:       '/x/ remove'
+#         actioned:     '/x/ removed'
+
+#       submit: # NOTE: to "en.emma.page.account.action.delete.submit"
+#         <<:           *GENERIC_SUBMIT
+#         label:        '/x/ Delete'
+#         if_enabled:
+#           tooltip:    '/x/ Remove this EMMA user account'
+
+#       cancel: # NOTE: to "en.emma.page.account.action.delete.cancel"
+#         <<:           *GENERIC_CANCEL
+#         if_enabled:
+#           tooltip:    '/x/ Keep this EMMA user account'
+
+#       success:        '/x/ Removed EMMA user account %{name}'
+#       failure:        '/x/ Could not remove EMMA user account: %{error}'
+
+#       role:           manager
+#       _endpoint:      true
 
       # =======================================================================
 
-      destroy:
-        <<:             *DELETE_ACTION
+#     delete_select: # NOTE: to "en.emma.page.account.action.delete_select"
+#       <<:             *DELETE_ACTION
+#       title:          '/x/ Remove an EMMA User Account'
+
+      # =======================================================================
+
+#     destroy: # NOTE: to "en.emma.page.account.action.destroy"
+#       <<:             *DELETE_ACTION
 
       # =======================================================================

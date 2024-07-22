@@ -8,7 +8,7 @@
   main_sign_in      = help_span(sign_in_label, class: 'sign-in-button')
   sign_in_submit    = help_span(sign_in_label, class: 'sign-in-link')
 
-  reset_label       = t('emma.user.passwords.new.label')
+  reset_label       = config_page(:user_passwords, :new, :label) || 'RESET'
   reset_button      = help_span(reset_label, class: 'sign-in-link')
 
   local_auth        = :local

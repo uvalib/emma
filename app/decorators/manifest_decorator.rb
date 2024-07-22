@@ -362,7 +362,8 @@ class ManifestDecorator
   # @return [nil]                   No non-empty value was found.
   #
   def get_page_count_label(**opt)
-    config_lookup('pagination.count', **opt, ctrlr: row_model_type)
+    opt[:ctrlr] = row_model_type
+    super
   end
 
   # The collection of rows associated with the manifest.

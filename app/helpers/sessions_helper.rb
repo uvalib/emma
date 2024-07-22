@@ -17,23 +17,17 @@ module SessionsHelper
 
   public
 
-  # Configuration for login session properties.
-  #
-  # @type [Hash]
-  #
-  SESSIONS_CONFIG = config_section('emma.user.sessions').deep_freeze
-
   # Default sign-in tooltip.
   #
   # @type [String]
   #
-  SIGN_IN_TOOLTIP = SESSIONS_CONFIG.dig(:new, :tooltip)
+  SIGN_IN_TOOLTIP = config_page(:user_sessions, :new, :tooltip).freeze
 
   # Default sign-out tooltip.
   #
   # @type [String]
   #
-  SIGN_OUT_TOOLTIP = SESSIONS_CONFIG.dig(:destroy, :tooltip)
+  SIGN_OUT_TOOLTIP = config_page(:user_sessions, :destroy, :tooltip).freeze
 
   # ===========================================================================
   # :section:
@@ -104,16 +98,15 @@ module SessionsHelper
   # @return [String]
   #
   def get_sessions_label(action, provider = nil, **opt)
-    provider = provider.presence&.to_sym
-    default  = [*opt.delete(:default), :"emma.user.sessions.#{action}.label"]
-    case provider
+    cfg_path = ->(ctrlr) { :"emma.page.#{ctrlr}.action.#{action}.label" }
+    default  = [*opt.delete(:default), cfg_path.(:user_sessions)]
+    case provider&.to_sym
       when nil    then key = default.shift.to_sym
-      when :local then key = :"emma.user.sessions.#{action}.label"
-      else             key = :"emma.user.omniauth_callbacks.#{action}.label"
+      when :local then key = cfg_path.(:user_sessions)
+      else             key = cfg_path.(:user_omniauth_callbacks)
     end
     opt[:provider] = OmniAuth::Utils.camelize(provider) if provider
-    opt[:default]  = default
-    t(key, **opt)
+    config_entry(key, default: default, **opt) || action.to_s
   end
 
   # ===========================================================================

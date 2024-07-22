@@ -12,8 +12,9 @@
 
   user  ||= resource
 
+  cfg   ||= current_config_page_section
   help  ||= nil
-  title ||= t('emma.user.passwords.new.title')
+  title ||= cfg[:title]
 
   unless modal?
     set_page_meta_title(title)

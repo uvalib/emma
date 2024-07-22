@@ -33,7 +33,7 @@ module SysHelper::Config
   #
   # @return [any, nil]
   #
-  def config_entry: (untyped val, **untyped opt) -> untyped
+  def app_config_entry: (untyped val, **untyped opt) -> untyped
 
   # A rendering of a `Rails.configuration` entry value.
   #

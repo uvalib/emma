@@ -21,7 +21,7 @@ module LayoutHelper::Logo
   #
   # @type [Hash]
   #
-  LOGO_CONFIG = config_section('emma.logo').deep_freeze
+  LOGO_CONFIG = config_page_section(:logo).deep_freeze
 
   # Text logo.
   #

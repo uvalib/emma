@@ -4,15 +4,16 @@
 
   view_debug(__FILE__)
 
+  cfg   ||= config_page_section(:home, :welcome)
   help  ||= nil # %i[home welcome]
-  title ||= t('emma.home.welcome.title', default: :'emma.home.title')
+  title ||= cfg[:title] || config_page(:home, :title)
 
   unless modal?
     set_page_meta_title(title)
     set_page_description(title)
   end
 
-  sign_in = t('emma.user.sessions.new.label')
+  sign_in = config_page(:user_sessions, :new, :label)
   sign_in = link_to(sign_in, new_user_session_path)
 
 -%>
@@ -22,7 +23,7 @@
 
 <%= page_directions_section %>
 <div class="sign-in">
-  <%= t('emma.home.welcome.notice_html', sign_in: sign_in) %>
+  <%= cfg[:notice_html] % { sign_in: sign_in } %>
 </div>
 
 <%= page_text_section(:enroll) %>

@@ -4,10 +4,11 @@
 
   view_debug(__FILE__)
 
+  cfg   ||= current_config_page_section
   help  ||= nil # %i[upload download]
-  title ||= t('emma.download.label')
+  title ||= cfg[:title]
 
-  error ||= t('emma.download.error.server')
+  error ||= cfg.dig(:error, :server)
 
   unless modal?
     set_page_meta_title(title)

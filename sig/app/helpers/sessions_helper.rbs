@@ -3,12 +3,6 @@
 module SessionsHelper
   include IdentityHelper
 
-  # Configuration for login session properties.
-  #
-  # @type [Hash]
-  #
-  SESSIONS_CONFIG: symHash
-
   # Default sign-in tooltip.
   #
   # @type [String]

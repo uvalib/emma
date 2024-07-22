@@ -96,6 +96,7 @@ module LayoutHelper::SearchBar
   # @param [Symbol, Array<Symbol>] except
   # @param [Integer, nil]          maximum    Maximum input rows in group.
   # @param [Integer, nil]          minimum    Minimum input rows in group.
+  # @param [String, nil]           unique
   # @param [String]                css        Characteristic CSS class/selector
   # @param [Hash]                  form_opt   Passed to #html_form.
   #
@@ -113,6 +114,7 @@ module LayoutHelper::SearchBar
     except:   nil,
     maximum:  nil,
     minimum:  nil,
+    unique:   nil,
     css:      '.search-bar-container',
     **form_opt
   )
@@ -143,7 +145,8 @@ module LayoutHelper::SearchBar
 
     # This is a major section of the page so it should be present in the
     # skip menu.
-    row_opt = { target: target, unique: hex_rand }
+    unique ||= hex_rand
+    row_opt  = { target: target, unique: unique }
     form_opt[:id] ||= unique_id('search', **row_opt)
     skip_nav_append(search_bar_label(target) => form_opt[:id])
 
@@ -269,6 +272,7 @@ module LayoutHelper::SearchBar
   #
   # @param [Symbol, String, nil] field
   # @param [String, nil]         value
+  # @param [String]              css        Characteristic CSS class/selector.
   # @param [Hash]                opt        Passed to #html_div except for:
   #
   # @option opt [String, Symbol]  :target
@@ -280,8 +284,7 @@ module LayoutHelper::SearchBar
   #
   # @see #search_input
   #
-  def search_bar(field, value = nil, **opt)
-    css    = '.search-bar'
+  def search_bar(field, value = nil, css: '.search-bar', **opt)
     id_opt = opt.extract!(:target, :unique, :index)
     target = id_opt[:target] ||= search_input_target
     return unless target && show_search_bar?(target)

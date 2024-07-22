@@ -784,7 +784,7 @@ class UploadDecorator
   #
   # @type [String]
   #
-  FILE_LABEL = config_item("emma.#{model_type}.new.select.label").freeze
+  FILE_LABEL = config_page(model_type, :new, :select, :label).freeze
 
   # Single-select menu - dropdown.
   #

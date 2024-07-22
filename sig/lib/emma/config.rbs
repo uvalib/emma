@@ -73,6 +73,20 @@ module Emma::Config
   #
   def config_keys: ((Array[Symbol|String|nil]|Symbol|String|nil) base, *(Symbol|String|nil) path) -> symArray
 
+  # Configuration sections under "en.emma.page" that may hold values for
+  # *item*.
+  #
+  # The first returned element should be used as the key for I18n#translate and
+  # the remaining elements should be used passed as the :default option.
+  #
+  # @param [Array<Symbol,String>] base
+  # @param [Symbol, String, nil]  item
+  # @param [Symbol, String]       root
+  #
+  # @return [Array<Symbol>]
+  #
+  def config_page_keys: (*(Symbol|String) base, (Symbol|String|nil) item, ?root: Symbol|String) -> symArray
+
   # Configuration sections that may hold message values for *item*.
   #
   # The first returned element should be used as the key for I18n#translate and
@@ -207,14 +221,30 @@ module Emma::Config
   #
   def config_term_section: (*(Symbol|String) base, (Symbol|String) item, **untyped opt) -> symHash
 
-  # Attempt to apply interpolations to *item*.
+  # Value from the most specific match found for *item* within the
+  # configuration location(s) specified by *base* under #config_page_keys.
   #
-  # @param [any, nil] item            String
-  # @param [Hash]     opt             Passed to #interpolate
+  # @param [Array<Symbol,String>] base
+  # @param [Symbol, String]       item
+  # @param [Hash]                 opt   To #config_entry.
   #
-  # @return [String, any, nil]
+  # @return [any, nil]
   #
-  def config_interpolate: [T] (T item, **untyped opt) -> T
+  def config_page: (*(Symbol|String) base, (Symbol|String) item, **untyped opt) -> (untyped | nil)
+
+  # Configuration text section built up from all of the matches found within
+  # the configuration locations under #config_page_keys.
+  #
+  # If *opt* interpolation values are given they will be attempted on all
+  # strings copied from the section.
+  #
+  # @param [Array<Symbol,String>] base
+  # @param [Symbol, String]       item
+  # @param [Hash]                 opt   To #config_section
+  #
+  # @return [Hash]
+  #
+  def config_page_section: (*(Symbol|String) base, (Symbol|String) item, **untyped opt) -> symHash
 
   # Attempt to apply interpolations to all strings in *item*.
   #

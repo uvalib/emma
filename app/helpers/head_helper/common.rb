@@ -21,7 +21,7 @@ module HeadHelper::Common
   #
   # @type [Hash]
   #
-  HEAD_CONFIG = config_section('emma.head').deep_freeze
+  HEAD_CONFIG = config_page_section(:head).deep_freeze
 
 end
 

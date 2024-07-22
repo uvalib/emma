@@ -130,7 +130,7 @@ class SysController < ApplicationController
   # @return [String]
   #
   def sys_path_for(meth)
-    CONTROLLER_CONFIGURATION.dig(:sys, meth, :redirect)
+    CONTROLLER_CONFIGURATION.dig(:sys, :action, meth, :redirect)
   end
 
 end

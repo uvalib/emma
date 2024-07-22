@@ -8,321 +8,417 @@ en:
 
     manifest_item:
 
-      unit:
-        brief:          'item'
-        long:           'manifest item'
-      label:            'Items'
-      title:            'Manifest Items'
-      tooltip:          'Work on a bulk operations manifest'
+#     unit: # NOTE: to "en.emma.page.manifest_item"
+#       brief:          '/x/ item'
+#       long:           '/x/ manifest item'
+#     label:            '/x/ Items' # NOTE: to "en.emma.page.manifest_item"
+#     title:            '/x/ Manifest Items' # NOTE: to "en.emma.page.manifest_item"
+#     tooltip:          '/x/ Work on a bulk operations manifest' # NOTE: to "en.emma.page.manifest_item"
 
-      subsystem:
-        database:       true
-        ingest:         true
-        storage:        true
+      # =======================================================================
+      # Subsystems
+      # =======================================================================
+
+#     subsystem:
+#       database:       true
+#       ingest:         true
+#       storage:        true
+#       redis:          false # NOTE: added to facilitate comparison
+#       search:         false # NOTE: added to facilitate comparison
+
+      # =======================================================================
+      # Search endpoint
+      # =======================================================================
+
+#     search: # NOTE: added to facilitate comparison
+#       action: index
 
       # =======================================================================
       # Layout
       # =======================================================================
 
-      search_bar:
-        enabled:        false
+#     search_type: # NOTE: added to facilitate comparison
 
-      search_filters:
+#       like: # NOTE: added to facilitate comparison
+#         name:        '/x/ Filter'
+#         label:       '/x/ Filter by term:'
+#         placeholder: '/x/ Partial field value...'
 
-        layout:
-          - [size, ~, ~, ~]
+#       q: # NOTE: added to facilitate comparison
+#         url_param:      q
+#         name:           '/x/ Keyword'
+#         label:          '/x/ Search terms:'
+#         tooltip:
+#                         >-
+#                         /x/ Search for one or more keywords matching anywhere in the
+#                         description of entries
+#         placeholder:    '/x/ Enter search terms...'
 
-      page_controls:
-        label:          'Actions'
-        actions:
-          - index
-          - new
-          - edit_select
-          - delete_select
-#         - admin
+#     search_bar: # NOTE: to "en.emma.page.manifest_item.search_bar"
+#       enabled:        false
+
+#       label:            '/x/ Record Filter' # NOTE: added to facilitate comparison
+#       min_rows:         1 # NOTE: added to facilitate comparison
+#       max_rows:         1 # NOTE: added to facilitate comparison
+
+#       button: # NOTE: added to facilitate comparison
+#         label:          '/x/ Search'
+
+#       advanced: # NOTE: added to facilitate comparison
+#         label:          '/x/ More ▼'
+#         tooltip:        '/x/ Show additional search filters'
+#         open:
+#           label:        '/x/ Less ▲'
+#           tooltip:      '/x/ Hide additional search filters'
+
+#     search_filters: # NOTE: to "en.emma.page.manifest_item.search_filters"
+#       enabled:        true # NOTE: added to facilitate comparison
+
+#       layout:
+#         - [size, ~, ~, ~]
+
+#     page_controls: # NOTE: to "en.emma.page.manifest_item.page_controls"
+#       label:          '/x/ Actions'
+#       actions:
+#         - index
+#         - new
+#         - edit_select
+#         - delete_select
+##        - admin
 
       # =======================================================================
       # Controls
       # =======================================================================
 
-      pagination:
-        page_size:      25
-        count:
-          one:          'item'
-          many:         'items'
+#     pagination: # NOTE: to "en.emma.page.manifest_item.pagination"
+#       page_size:      25
+#       count:
+#         one:          '/x/ item'
+#         many:         '/x/ items'
 
-      action_links:
+#     action_links: # NOTE: to "en.emma.page.manifest_item.action_links"
 
-        new:
-          label:        'Create %{an} new item'
+#       new:
+#         label:        '/x/ Create %{an} new item'
 
-        edit:
-          label:        'Modify %{an} item'
+#       edit:
+#         label:        '/x/ Modify %{an} item'
 
-        delete:
-          label:        'Remove %{an} item'
+#       delete:
+#         label:        '/x/ Remove %{an} item'
 
-        index:
-          label:        'List all items'
+#       index:
+#         label:        '/x/ List all items'
 
       # =======================================================================
       # Fields
       # =======================================================================
 
-      display_fields:
+#     display_fields: # NOTE: to "en.emma.page.manifest_item.display_fields"
 
-        id:
-          cond:
-            only:       [new, edit]
+#       id:
+#         cond:
+#           only:       [new, edit]
 
       # =======================================================================
       # Pages
       # =======================================================================
 
-      generic:
-        label:          'Manifest Item'
-        title:          'Manifest Item'
-        tooltip:        '(A brief description of this operation)'
-        description:    '(A more detailed description of this operation)'
-        directions:     '(Brief guidance for using the operation form)'
-        notes:          '(A more detailed description of this operation)'
+#     generic: # NOTE: to "en.emma.page.manifest_item.action._generic"
+#       label:          '/x/ Manifest Item'
+#       title:          '/x/ Manifest Item'
+#       tooltip:        '/x/ (A brief description of this operation)'
+#       description:    '/x/ (A more detailed description of this operation)'
+#       directions:     '/x/ (Brief guidance for using the operation form)'
+#       notes:          '/x/ (A more detailed description of this operation)'
 
-        submit:         &GENERIC_SUBMIT
-          label:        'Save'
-          if_enabled:
-            tooltip:    'Keep all changes'
-          if_disabled:
-            tooltip:    'No valid changes have been made yet'
+#       submit:         &GENERIC_SUBMIT # NOTE: to "en.emma.page.manifest_item.form.submit"
+#         label:        '/x/ Save'
+#         if_enabled:
+#           tooltip:    '/x/ Keep all changes'
+#         if_disabled:
+#           tooltip:    '/x/ No valid changes have been made yet'
 
-        cancel:         &GENERIC_CANCEL
-          label:        'Cancel'
-          if_enabled:
-            tooltip:    'Discard all changes'
-          if_disabled:
-            tooltip:    'Not able to cancel right now'
+#       cancel:         &GENERIC_CANCEL # NOTE: to "en.emma.page.manifest_item.form.cancel"
+#         label:        '/x/ Cancel'
+#         if_enabled:
+#           tooltip:    '/x/ Discard all changes'
+#         if_disabled:
+#           tooltip:    '/x/ Not able to cancel right now'
 
-        select:         &GENERIC_SELECT
-          label:        'Upload'
-          if_enabled:
-            tooltip:    'Include data from an external file'
-          if_disabled:
-            tooltip:    'Not able to choose a file right now'
+#       select:         &GENERIC_SELECT # NOTE: to "en.emma.page.manifest_item.form.select"
+#         label:        '/x/ Upload'
+#         if_enabled:
+#           tooltip:    '/x/ Include data from an external file'
+#         if_disabled:
+#           tooltip:    '/x/ Not able to choose a file right now'
 
-        warning:
-          experimental: &EXPERIMENTAL
-            directions_html:
-              >-
-              <span style="color:red">
-                WARNING: This is an experimental feature and not intended for
-                general use
-              </span>
-        success:        'Operation successful %{name}'
-        failure:        'Could not proceed: %{error}'
-
-      # =======================================================================
-
-      index:
-        label:          'List All'
-        title:          'Manifest: %{name}'
-        tooltip:        ~ # 'All manifest items'
-
-        # TODO: want to see 'id' and '-user_id' if administrator/developer.
-        display_fields: # @see 'en.emma.manifest_item.record'
-          - !ruby/symbol all
-
-        _endpoint:      true
+#       _warning:
+#         experimental: &EXPERIMENTAL
+#           directions_html:
+#             >-
+#             <span style="color:red">
+#               /x/ WARNING: This is an experimental feature and not intended for
+#               general use
+#             </span>
+#       success:        '/x/ Operation successful %{name}'
+#       failure:        '/x/ Could not proceed: %{error}'
 
       # =======================================================================
 
-      show:
-        label:          'Manifest'
-        title:          'Bulk Upload Manifest'
-        tooltip:        'Details of this manifest'
+#     index: # NOTE: to "en.emma.page.manifest_item.action.index"
+#       label:          '/x/ List All'
+#       title:          '/x/ Manifest: %{name}'
+#       tooltip:        ~ # 'All manifest items'
 
-        display_fields: # @see 'en.emma.manifest_item.record'
-          - !ruby/symbol all
+#       # TODO: want to see 'id' and '-user_id' if administrator/developer.
+#       display_fields: # @see "en.emma.record.manifest_item" # NOTE: to "en.emma.page.manifest_item.action.index.display_fields"
+#         - !ruby/symbol all
 
-        _endpoint:      true
+#       _endpoint:      true
 
-      # =======================================================================
-
-      new:              &NEW_ACTION
-        label:          'New Item'
-        title:          'New Manifest item'
-        tooltip:        'Add a new item to the manifest'
-
-        select:         &NEW_SELECT
-          <<:           *GENERIC_SELECT
-
-        success:        'Item created'
-        failure:        'Could not create item: %{error}'
-
-        role:           staff
-        _endpoint:      true
+#       success:        '/x/ Operation successful %{name}'  # NOTE: added to facilitate comparison
+#       failure:        '/x/ Could not proceed: %{error}'   # NOTE: added to facilitate comparison
 
       # =======================================================================
 
-      create:
-        <<:             *NEW_ACTION
+#     show: # NOTE: to "en.emma.page.manifest_item.action.show"
+#       label:          '/x/ Manifest'
+#       title:          '/x/ Bulk Upload Manifest'
+#       tooltip:        '/x/ Details of this manifest'
+
+#       display_fields: # @see "en.emma.record.manifest_item" # NOTE: to "en.emma.page.manifest_item.action.show.display_fields"
+#         - !ruby/symbol all
+
+#       _endpoint:      true
+
+#       success:        '/x/ Operation successful %{name}'  # NOTE: added to facilitate comparison
+#       failure:        '/x/ Could not proceed: %{error}'   # NOTE: added to facilitate comparison
 
       # =======================================================================
 
-      edit:             &EDIT_ACTION
-        label:          'Edit Item'
-        title:          'Modify a Manifest Item'
-        tooltip:        'Modify an existing manifest item'
+#     new:              &NEW_ACTION # NOTE: to "en.emma.page.manifest_item.action.new"
+#       label:          '/x/ New Item'
+#       title:          '/x/ New Manifest item'
+#       tooltip:        '/x/ Add a new item to the manifest'
 
-        select:         &NEW_SELECT
-          <<:           *GENERIC_SELECT
+#       select:         &NEW_SELECT
+#         <<:           *GENERIC_SELECT
 
-        success:        'Changes saved'
-        failure:        'Could not save changes: %{error}'
+#       success:        '/x/ Item created'
+#       failure:        '/x/ Could not create item: %{error}'
 
-        role:           staff
-        _endpoint:      true
+#       role:           staff
+#       _endpoint:      true
 
-      # =======================================================================
+#       submit: # NOTE: added to facilitate comparison
+#         label:          '/x/ Submit'
+#         if_enabled:
+#           tooltip:      '/x/ Proceed with this action'
+#         if_disabled:
+#           tooltip:      '/x/ Conditions have not yet been met to proceed'
 
-      update:
-        <<:             *EDIT_ACTION
-
-      # =======================================================================
-
-      delete:           &DELETE_ACTION
-        label:          'Remove Item'
-        title:          'Remove a Manifest Item'
-        tooltip:        'Remove a manifest item'
-
-        success:        'Item removed'
-        failure:        'Could not remove item: %{error}'
-
-        role:           staff
-        _endpoint:      true
+#       cancel: # NOTE: added to facilitate comparison
+#         label:          '/x/ CANCEL'
+#         if_enabled:
+#           tooltip:      '/x/ Do nothing and return to the previous screen'
+#         if_disabled:
+#           tooltip:      '/x/ Not able to cancel at this point'
 
       # =======================================================================
 
-      destroy:
-        <<:             *DELETE_ACTION
+#     create: # NOTE: to "en.emma.page.manifest_item.action.create"
+#       <<:             *NEW_ACTION
 
       # =======================================================================
 
-      bulk_new:         &BULK_NEW_ACTION
-        label:          'Bulk Import'
-        title:          'Import New Manifest Items'
-        tooltip:        'Add new manifest items via a CSV or JSON control file'
-        description:
-          >-
-          Provide a *.csv or *.json data file to specify files and metadata to
-          be used to create new EMMA entries.
+#     edit:             &EDIT_ACTION # NOTE: to "en.emma.page.manifest_item.action.edit"
+#       label:          '/x/ Edit Item'
+#       title:          '/x/ Modify a Manifest Item'
+#       tooltip:        '/x/ Modify an existing manifest item'
 
-          NOTE: Existing manifest entries will not be overwritten.
+#       select:         &NEW_SELECT
+#         <<:           *GENERIC_SELECT
 
-        directions:     ~
-        notes:          'Some notes on bulk upload...'
+#       success:        '/x/ Changes saved'
+#       failure:        '/x/ Could not save changes: %{error}'
 
-        submit:         &BULK_SUBMIT
-          <<:           *GENERIC_SUBMIT
-          label:        'Begin'
-          if_enabled:
-            tooltip:    'Submit the data file to begin uploading'
-          if_disabled:
-            tooltip:    'First provide a data file'
+#       role:           staff
+#       _endpoint:      true
 
-        cancel:         &BULK_CANCEL
-          <<:           *GENERIC_CANCEL
+#       submit: # NOTE: added to facilitate comparison
+#         label:          '/x/ Submit'
+#         if_enabled:
+#           tooltip:      '/x/ Proceed with this action'
+#         if_disabled:
+#           tooltip:      '/x/ Conditions have not yet been met to proceed'
 
-        select:         &BULK_SELECT
-          <<:           *GENERIC_SELECT
-
-        success:        'Added manifest items from: %{names}'
-        failure:        'Could not create items: %{error}'
-
-        role:           staff
-        _endpoint:      true
+#       cancel: # NOTE: added to facilitate comparison
+#         label:          '/x/ CANCEL'
+#         if_enabled:
+#           tooltip:      '/x/ Do nothing and return to the previous screen'
+#         if_disabled:
+#           tooltip:      '/x/ Not able to cancel at this point'
 
       # =======================================================================
 
-      bulk_create:
-        <<:             *BULK_NEW_ACTION
+#     update: # NOTE: to "en.emma.page.manifest_item.action.update"
+#       <<:             *EDIT_ACTION
 
       # =======================================================================
 
-      bulk_edit:        &BULK_EDIT_ACTION
-        label:          'Bulk Update'
-        title:          'Import Manifest Modifications'
-        tooltip:
-          >-
-          Modify existing manifest items via a CSV or JSON control file
-        description:
-          >-
-          Provide a *.csv or *.json data file to specify files and/or metadata
-          to be used to update existing EMMA entries.
+#     delete:           &DELETE_ACTION # NOTE: to "en.emma.page.manifest_item.action.delete"
+#       label:          '/x/ Remove Item'
+#       title:          '/x/ Remove a Manifest Item'
+#       tooltip:        '/x/ Remove a manifest item'
 
-          NOTE: Only existing manifest entries will be changed;
-          new entries will not be created.
+#       success:        '/x/ Item removed'
+#       failure:        '/x/ Could not remove item: %{error}'
 
-        directions:     ~
-        notes:          'Some notes on bulk edit...'
+#       role:           staff
+#       _endpoint:      true
 
-        submit:
-          <<: *BULK_SUBMIT
+#       submit: # NOTE: added to facilitate comparison
+#         label:          '/x/ Submit'
+#         if_enabled:
+#           tooltip:      '/x/ Proceed with this action'
+#         if_disabled:
+#           tooltip:      '/x/ Conditions have not yet been met to proceed'
 
-        cancel:
-          <<: *BULK_CANCEL
-
-        select:
-          <<: *BULK_SELECT
-
-        success:        'Modified manifest items from: %{names}'
-        failure:        'Could not modify items: %{error}'
-
-        role:           staff
-        _endpoint:      true
+#       cancel: # NOTE: added to facilitate comparison
+#         label:          '/x/ CANCEL'
+#         if_enabled:
+#           tooltip:      '/x/ Do nothing and return to the previous screen'
+#         if_disabled:
+#           tooltip:      '/x/ Not able to cancel at this point'
 
       # =======================================================================
 
-      bulk_update:
-        <<:             *BULK_EDIT_ACTION
+#     destroy: # NOTE: to "en.emma.page.manifest_item.action.destroy"
+#       <<:             *DELETE_ACTION
 
       # =======================================================================
 
-      bulk_delete:      &BULK_DELETE_ACTION
-        label:          'Bulk Delete'
-        title:          'Remove Multiple Manifest Items'
-        tooltip:        'Delete multiple manifest items by identifier'
-        description:
-          >-
-          Provide a comma-separated list of item numbers to specify which items
-          to delete.
-        directions:     ~
-        notes:          'Some notes on bulk delete...'
+#     bulk_new:         &BULK_NEW_ACTION # NOTE: to "en.emma.page.manifest_item.action.bulk_new"
+#       label:          '/x/ Bulk Import'
+#       title:          '/x/ Import New Manifest Items'
+#       tooltip:        '/x/ Add new manifest items via a CSV or JSON control file'
+#       description:
+#         >-
+#         Provide a *.csv or *.json data file to specify files and metadata to
+#         be used to create new EMMA entries.
 
-        submit:
-          <<:           *BULK_SUBMIT
-          label:        'Continue'
-          if_enabled:
-            tooltip:    'Validate entries to be removed'
-          if_disabled:
-            tooltip:    'Required information is still needed'
+#         NOTE: Existing manifest entries will not be overwritten.
 
-        cancel:
-          <<:           *BULK_CANCEL
+#       directions:     ~
+#       notes:          '/x/ Some notes on bulk upload...'
 
-        role:           staff
-        _endpoint:      true
+#       submit:         &BULK_SUBMIT # NOTE: to "en.emma.page.manifest_item.form.bulk_submit"
+#         <<:           *GENERIC_SUBMIT
+#         label:        '/x/ Begin'
+#         if_enabled:
+#           tooltip:    '/x/ Submit the data file to begin uploading'
+#         if_disabled:
+#           tooltip:    '/x/ First provide a data file'
+
+#       cancel:         &BULK_CANCEL
+#         <<:           *GENERIC_CANCEL
+
+#       select:         &BULK_SELECT
+#         <<:           *GENERIC_SELECT
+
+#       success:        '/x/ Added manifest items from: %{names}'
+#       failure:        '/x/ Could not create items: %{error}'
+
+#       role:           staff
+#       _endpoint:      true
 
       # =======================================================================
 
-      bulk_destroy:
-        <<:             *BULK_DELETE_ACTION
+#     bulk_create: # NOTE: to "en.emma.page.manifest_item.action.bulk_create"
+#       <<:             *BULK_NEW_ACTION
 
       # =======================================================================
 
-      upload:
+#     bulk_edit:        &BULK_EDIT_ACTION # NOTE: to "en.emma.page.manifest_item.action.bulk_edit"
+#       label:          '/x/ Bulk Update'
+#       title:          '/x/ Import Manifest Modifications'
+#       tooltip:
+#         >-
+#         /x/ Modify existing manifest items via a CSV or JSON control file
+#       description:
+#         >-
+#         /x/ Provide a *.csv or *.json data file to specify files and/or metadata
+#         to be used to update existing EMMA entries.
+
+#         /x/ NOTE: Only existing manifest entries will be changed;
+#         new entries will not be created.
+
+#       directions:     ~
+#       notes:          '/x/ Some notes on bulk edit...'
+
+#       submit:
+#         <<: *BULK_SUBMIT
+
+#       cancel:
+#         <<: *BULK_CANCEL
 
 #       select:
-#         <<: *GENERIC_SELECT
-#         label:        'Select file'
+#         <<: *BULK_SELECT
 
-        role:           submitter
-        _endpoint:      true
+#       success:        '/x/ Modified manifest items from: %{names}'
+#       failure:        '/x/ Could not modify items: %{error}'
+
+#       role:           staff
+#       _endpoint:      true
+
+      # =======================================================================
+
+#     bulk_update: # NOTE: to "en.emma.page.manifest_item.action.bulk_update"
+#       <<:             *BULK_EDIT_ACTION
+
+      # =======================================================================
+
+#     bulk_delete:      &BULK_DELETE_ACTION # NOTE: to "en.emma.page.manifest_item.action.bulk_delete"
+#       label:          '/x/ Bulk Delete'
+#       title:          '/x/ Remove Multiple Manifest Items'
+#       tooltip:        '/x/ Delete multiple manifest items by identifier'
+#       description:
+#         >-
+#         Provide a comma-separated list of item numbers to specify which items
+#         to delete.
+#       directions:     ~
+#       notes:          '/x/ Some notes on bulk delete...'
+
+#       submit:
+#         <<:           *BULK_SUBMIT
+#         label:        '/x/ Continue'
+#         if_enabled:
+#           tooltip:    '/x/ Validate entries to be removed'
+#         if_disabled:
+#           tooltip:    '/x/ Required information is still needed'
+
+#       cancel:
+#         <<:           *BULK_CANCEL
+
+#       role:           staff
+#       _endpoint:      true
+
+#       success:        '/x/ Operation successful %{name}'  # NOTE: added to facilitate comparison
+#       failure:        '/x/ Could not proceed: %{error}'   # NOTE: added to facilitate comparison
+
+      # =======================================================================
+
+#     bulk_destroy: # NOTE: to "en.emma.page.manifest_item.action.bulk_destroy"
+#       <<:             *BULK_DELETE_ACTION
+
+      # =======================================================================
+
+#     upload: # NOTE: to "en.emma.page.manifest_item.action.upload"
+
+##      select:
+##        <<: *GENERIC_SELECT
+##        label:        '/x/ Select file'
+
+#       role:           submitter
+#       _endpoint:      true

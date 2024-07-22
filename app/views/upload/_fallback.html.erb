@@ -8,9 +8,11 @@
   item     = item.id if item.respond_to?(:id)
 
   action ||= params[:action]
-  title  ||= t("emma.upload.#{action}.title", default: nil)
-  title  ||= t("emma.upload.#{action}.label", default: :'emma.upload.label')
-  error  ||= t("emma.upload.#{action}.failure", id: item, default: nil)
+  cfg    ||= action && config_page_section(:upload, action)
+  title  ||= cfg&.dig(:title) || cfg&.dig(:label)
+  title  ||= config_page(:upload, :label)
+  error  ||= cfg&.dig(:failure)
+  error  &&= error % { id: item }
   error  ||= "ERROR record #{item}"
 
   unless modal?

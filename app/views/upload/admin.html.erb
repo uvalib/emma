@@ -4,8 +4,9 @@
 
   view_debug(__FILE__)
 
+  cfg   ||= current_config_page_section
   help  ||= %i[upload admin]
-  title ||= t('emma.upload.admin.title')
+  title ||= cfg[:title]
 
   unless modal?
     set_page_meta_title(title)

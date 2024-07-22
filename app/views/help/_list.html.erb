@@ -13,7 +13,7 @@
   skip    = [*skip]
   heading =
     unless skip.include?(:title)
-      title ||= t('emma.help.index.title')
+      title ||= config_page(:help, :index, :title)
       classes = 'list-heading'
       classes = css_classes(classes, 'empty') if list.blank?
       html_tag(level, title, class: classes)

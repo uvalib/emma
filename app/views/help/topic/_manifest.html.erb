@@ -4,7 +4,7 @@
 
   view_debug(__FILE__)
 
-  topic             = t('emma.help.topic.manifest')
+  topic             = config_section('help.topic.manifest')
   administrator     = current_user&.administrator?
   manager           = current_user&.manager? && !administrator
 
@@ -33,13 +33,14 @@
   delete_title      = (delete[:title]   if delete)
   remit_title       = (remit[:title]    if remit)
 
-  list_all_label    = (t('emma.manifest.list_all.label') if list_all)
-  list_org_label    = (t('emma.manifest.list_org.label') if list_org)
-  list_own_label    = (t('emma.manifest.list_own.label') if list_own)
-  new_label         = (t('emma.manifest.new.label')      if new)
-  edit_label        = (t('emma.manifest.edit.label')     if edit)
-  delete_label      = (t('emma.manifest.delete.label')   if delete)
-  remit_label       = (t('emma.manifest.remit.label')    if remit)
+  cfg               = config_page_section(:manifest, :action)
+  list_all_label    = (cfg.dig(:index,    :label) if list_all)
+  list_org_label    = (cfg.dig(:list_org, :label) if list_org)
+  list_own_label    = (cfg.dig(:list_own, :label) if list_own)
+  new_label         = (cfg.dig(:new,      :label) if new)
+  edit_label        = (cfg.dig(:edit,     :label) if edit)
+  delete_label      = (cfg.dig(:delete,   :label) if delete)
+  remit_label       = (cfg.dig(:remit,    :label) if remit)
 
   list_all_btn      = (help_button(list_all_label)  if list_all)
   list_org_btn      = (help_button(list_org_label)  if list_org)
@@ -51,7 +52,7 @@
 
   # Nav action menu
 
-  nav_menu_item     = t('emma.manifest.label')
+  nav_menu_item     = config_page(:manifest, :label)
   action_menu_label = 'Manifest Actions'
   action_menu       = list_all ? :manifest_actions_admin : :manifest_actions
   action_menu       = help_image(action_menu)

@@ -4,11 +4,12 @@
 
   view_debug(__FILE__)
 
+  cfg   ||= config_page_section(:search, :advanced)
   help  ||= :search
-  title ||= t('emma.search.advanced.title')
+  title ||= cfg[:title]
 
   unless modal?
-    label = t('emma.search.advanced.label', default: title)
+    label = cfg[:label] || title
     set_page_meta_title(label)
     set_page_description(title)
   end

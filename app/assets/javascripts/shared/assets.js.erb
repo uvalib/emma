@@ -660,13 +660,13 @@ export const Emma = (function() {
         progress: {
             class:          'progress',
             image: {
-                alt:        '<%= js config_item("emma.download.progress.image.alt") %>',
+                alt:        '<%= js config_page(:download, :progress, :image, :alt) %>',
             }
         },
         failure: {
             class:          'failure',
-            sign_in:        '<%= js config_item("emma.download.failure.sign_in") %>',
-            unknown:        '<%= js config_item("emma.download.failure.unknown") %>',
+            sign_in:        '<%= js config_page(:download, :failure, :sign_in) %>',
+            unknown:        '<%= js config_page(:download, :failure, :unknown) %>',
         },
     };
 
@@ -811,7 +811,7 @@ export const Emma = (function() {
         },
         search_bar: {
             button: {
-                label:                  '<%= js config_item("emma.search_bar.button.label") %>',
+                label:                  '<%= js config_page(:search_bar, :button, :label) %>',
             },
         },
         search_filters: {

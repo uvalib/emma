@@ -8,8 +8,9 @@
   # @type [Array<String>]
   list  ||= @list
 
+  cfg   ||= current_config_page_section
   help  ||= nil # %i[manifest_item check]
-  title ||= t('emma.manifest_item.check.title')
+  title ||= cfg[:title]
 
   error ||= config_term(:manifest_item, :invalid_id)
 

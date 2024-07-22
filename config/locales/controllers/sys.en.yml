@@ -6,219 +6,272 @@ en:
 
     sys:
 
-      label:            'System'
-      title:            'EMMA System Information'
-      tooltip:          'EMMA system information'
+#     unit: # NOTE: added to facilitate comparison
+#       brief:          '/x/ item'
+#       long:           '/x/ item'
 
-      subsystem:
-        database:       true
+#     label:            '/x/ System' # NOTE: to "en.emma.page.sys"
+#     title:            '/x/ EMMA System Information' # NOTE: to "en.emma.page.sys"
+#     tooltip:          '/x/ EMMA system information' # NOTE: to "en.emma.page.sys"
+
+      # =======================================================================
+      # Subsystems
+      # =======================================================================
+
+#     subsystem:
+#       database:       true
+#       redis:          false # NOTE: added to facilitate comparison
+#       storage:        false # NOTE: added to facilitate comparison
+#       search:         false # NOTE: added to facilitate comparison
+#       ingest:         false # NOTE: added to facilitate comparison
+
+      # =======================================================================
+      # Search endpoint
+      # =======================================================================
+
+#     search: # NOTE: added to facilitate comparison
+#       action: index
 
       # =======================================================================
       # Layout
       # =======================================================================
 
-      search_bar:
-        enabled:        false
+#     search_type: # NOTE: added to facilitate comparison
 
-      page_controls:
-        label:          'Page'
-        actions:
-          - index
-          - settings
-          - loggers
-          - internals
-          - headers
-          - environment
-          - processes
-          - disk_space
-          - var
-          - files
-          - database
-          - mailers
-          - jobs
-          - analytics
+#       like: # NOTE: added to facilitate comparison
+#         name:        '/x/ Filter'
+#         label:       '/x/ Filter by term:'
+#         placeholder: '/x/ Partial field value...'
+
+#       q: # NOTE: added to facilitate comparison
+#         url_param:      q
+#         name:           '/x/ Keyword'
+#         label:          '/x/ Search terms:'
+#         tooltip:
+#                         >-
+#                         /x/ Search for one or more keywords matching anywhere in the
+#                         description of entries
+#         placeholder:    '/x/ Enter search terms...'
+
+#     search_bar: # NOTE: to "en.emma.page.sys.search_bar"
+#       enabled:        false
+
+#       label:            '/x/ Record Filter' # NOTE: added to facilitate comparison
+#       min_rows:         1 # NOTE: added to facilitate comparison
+#       max_rows:         1 # NOTE: added to facilitate comparison
+
+#       button: # NOTE: added to facilitate comparison
+#         label:          '/x/ Search'
+
+#       advanced: # NOTE: added to facilitate comparison
+#         label:          '/x/ More ▼'
+#         tooltip:        '/x/ Show additional search filters'
+#         open:
+#           label:        '/x/ Less ▲'
+#           tooltip:      '/x/ Hide additional search filters'
+
+#     search_filters: # NOTE: added to facilitate comparison
+#       enabled:        false
+
+#     page_controls: # NOTE: to "en.emma.page.sys.page_controls"
+#       label:          '/x/ Page'
+#       actions:
+#         - index
+#         - settings
+#         - loggers
+#         - internals
+#         - headers
+#         - environment
+#         - processes
+#         - disk_space
+#         - var
+#         - files
+#         - database
+#         - mailers
+#         - jobs
+#         - analytics
 
       # =======================================================================
       # Tables
       # =======================================================================
 
-      application_loggers:
-        headers:
-          progname:     'Progname'
-          class:        'Class'
-          level:        'Level'
-          inspect:      'Inspection'
+#     application_loggers: # NOTE: to "en.emma.page.sys.application_loggers"
+#       headers:
+#         progname:     'Progname'
+#         class:        'Class'
+#         level:        'Level'
+#         inspect:      'Inspection'
 
-      application_ies:
-        headers:
-          key:          'Key'
-          obj_id:       'object_id'
-          entry:        'Entry'
+#     application_ies: # NOTE: to "en.emma.page.sys.application_ies"
+#       headers:
+#         key:          'Key'
+#         obj_id:       'object_id'
+#         entry:        'Entry'
 
-      application_middleware:
-        headers:
-          name:         'Name'
-          obj_id:       'object_id'
-          args:         'args'
-          block:        'block'
+#     application_middleware: # NOTE: to "en.emma.page.sys.application_middleware"
+#       headers:
+#         name:         'Name'
+#         obj_id:       'object_id'
+#         args:         'args'
+#         block:        'block'
 
-      application_railties:
-        headers:
-          name:         'Name'
-          obj_id:       'object_id'
+#     application_railties: # NOTE: to "en.emma.page.sys.application_railties"
+#       headers:
+#         name:         'Name'
+#         obj_id:       'object_id'
 
-      application_config:
-        headers:
-          name:         'Item'
-          value:        'Value'
+#     application_config: # NOTE: to "en.emma.page.sys.application_config"
+#       headers:
+#         name:         'Item'
+#         value:        'Value'
 
       # =======================================================================
       # Pages
       # =======================================================================
 
-      index:
-        label:          'Main'
-        title:          'EMMA System Information'
-        tooltip:        'EMMA system information'
-        _endpoint:      true
+#     index: # NOTE: to "en.emma.page.sys.action.index"
+#       label:          '/x/ Main'
+#       title:          '/x/ EMMA System Information'
+#       tooltip:        '/x/ EMMA system information'
+#       _endpoint:      true
 
       # =======================================================================
 
-      analytics:
-        label:          'Analytics'
-        title:          'Matomo Analytics'
-        tooltip:        'View selected analytics information'
-        description_html:
-          >-
-          <p>
-            Reports from %{analytics_link} for this EMMA deployment for the
-            last %{analytics_day_range}.
-          </p>
-          <p>
-            Reports which are available both as summaries (totals) and
-            "evolutions" (time-based graphs) have two entries.
-            Other reports are only provided in one mode or the other.
-          </p>
-        _endpoint:      true
+#     analytics: # NOTE: to "en.emma.page.sys.action.analytics"
+#       label:          '/x/ Analytics'
+#       title:          '/x/ Matomo Analytics'
+#       tooltip:        '/x/ View selected analytics information'
+#       description_html:
+#         >-
+#         <p>
+#           /x/ Reports from %{analytics_link} for this EMMA deployment for the
+#           last %{analytics_day_range}.
+#         </p>
+#         <p>
+#           /x/ Reports which are available both as summaries (totals) and
+#           "evolutions" (time-based graphs) have two entries.
+#           Other reports are only provided in one mode or the other.
+#         </p>
+#       _endpoint:      true
 
       # =======================================================================
 
-      database:
-        label:          'Database'
-        title:          'Database Tables'
-        tooltip:        'Contents of database tables'
-        redirect:       '/data'
-        role:           developer
-        _endpoint:      true
+#     database: # NOTE: to "en.emma.page.sys.action.database"
+#       label:          '/x/ Database'
+#       title:          '/x/ Database Tables'
+#       tooltip:        '/x/ Contents of database tables'
+#       redirect:       '/data'
+#       role:           developer
+#       _endpoint:      true
 
       # =======================================================================
 
-      disk_space:
-        label:          'Disk Space'
-        title:          'Host Machine Disk Space'
-        tooltip:        'View the system disk space on the host machine'
-        role:           developer
-        _endpoint:      true
+#     disk_space: # NOTE: to "en.emma.page.sys.action.disk_space"
+#       label:          '/x/ Disk Space'
+#       title:          '/x/ Host Machine Disk Space'
+#       tooltip:        '/x/ View the system disk space on the host machine'
+#       role:           developer
+#       _endpoint:      true
 
       # =======================================================================
 
-      environment:
-        label:          'Env Vars'
-        title:          'Environment Variables (ENV)'
-        tooltip:        'Values from the system environment'
-        role:           developer
-        _endpoint:      true
+#     environment: # NOTE: to "en.emma.page.sys.action.environment"
+#       label:          '/x/ Env Vars'
+#       title:          '/x/ Environment Variables (ENV)'
+#       tooltip:        '/x/ Values from the system environment'
+#       role:           developer
+#       _endpoint:      true
 
       # =======================================================================
 
-      files:
-        label:          'Files'
-        title:          'EMMA files'
-        tooltip:        'View contents of the EMMA directory'
-        role:           developer
-        _endpoint:      true
+#     files: # NOTE: to "en.emma.page.sys.action.files"
+#       label:          '/x/ Files'
+#       title:          '/x/ EMMA files'
+#       tooltip:        '/x/ View contents of the EMMA directory'
+#       role:           developer
+#       _endpoint:      true
 
       # =======================================================================
 
-      headers:
-        label:          'Headers'
-        title:          'Request Headers'
-        tooltip:        'View request headers'
-        role:           developer
-        _endpoint:      true
+#     headers: # NOTE: to "en.emma.page.sys.action.headers"
+#       label:          '/x/ Headers'
+#       title:          '/x/ Request Headers'
+#       tooltip:        '/x/ View request headers'
+#       role:           developer
+#       _endpoint:      true
 
       # =======================================================================
 
-      internals:
-        label:          'Internals'
-        title:          'System Internals'
-        tooltip:        'View internal system information'
-        role:           developer
-        _endpoint:      true
+#     internals: # NOTE: to "en.emma.page.sys.action.internals"
+#       label:          '/x/ Internals'
+#       title:          '/x/ System Internals'
+#       tooltip:        '/x/ View internal system information'
+#       role:           developer
+#       _endpoint:      true
 
       # =======================================================================
 
-      jobs:
-        label:          'Jobs'
-        title:          'Job Queues'
-        tooltip:        'View asynchronous job queue information'
-        redirect:       '/good_job'
-        link_opt:       { target: '_blank' }
-        _endpoint:      true
+#     jobs: # NOTE: to "en.emma.page.sys.action.jobs"
+#       label:          '/x/ Jobs'
+#       title:          '/x/ Job Queues'
+#       tooltip:        '/x/ View asynchronous job queue information'
+#       redirect:       '/good_job'
+#       link_opt:       { target: '_blank' }
+#       _endpoint:      true
 
       # =======================================================================
 
-      loggers:
-        label:          'Loggers'
-        title:          'Logger Instances'
-        tooltip:        'View live logger instances'
-        role:           developer
-        _endpoint:      true
+#     loggers: # NOTE: to "en.emma.page.sys.action.loggers"
+#       label:          '/x/ Loggers'
+#       title:          '/x/ Logger Instances'
+#       tooltip:        '/x/ View live logger instances'
+#       role:           developer
+#       _endpoint:      true
 
       # =======================================================================
 
-      mailers:
-        label:          'Mailers'
-        title:          'Action Mailer Previews'
-        tooltip:        'View previews of generated emails'
-        redirect:       '/rails/mailers'
-        link_opt:       { target: '_blank' }
-        _endpoint:      true
+#     mailers: # NOTE: to "en.emma.page.sys.action.mailers"
+#       label:          '/x/ Mailers'
+#       title:          '/x/ Action Mailer Previews'
+#       tooltip:        '/x/ View previews of generated emails'
+#       redirect:       '/rails/mailers'
+#       link_opt:       { target: '_blank' }
+#       _endpoint:      true
 
       # =======================================================================
 
-      processes:
-        label:          'Processes'
-        title:          'Host Machine Processes'
-        tooltip:        'View the system processes on the host machine'
-        role:           developer
-        _endpoint:      true
+#     processes: # NOTE: to "en.emma.page.sys.action.processes"
+#       label:          '/x/ Processes'
+#       title:          '/x/ Host Machine Processes'
+#       tooltip:        '/x/ View the system processes on the host machine'
+#       role:           developer
+#       _endpoint:      true
 
       # =======================================================================
 
-      settings:
-        label:          'Settings'
-        title:          'Application Settings'
-        tooltip:        'Dynamic feature toggles and application settings'
-        role:           developer
-        _endpoint:      true
+#     settings: # NOTE: to "en.emma.page.sys.action.settings"
+#       label:          '/x/ Settings'
+#       title:          '/x/ Application Settings'
+#       tooltip:        '/x/ Dynamic feature toggles and application settings'
+#       role:           developer
+#       _endpoint:      true
 
       # =======================================================================
 
-      var:
-        label:          'System /var'
-        title:          'System /var Directory'
-        tooltip:        'View contents of the system /var directory'
-        role:           developer
-        _endpoint:      true
+#     var: # NOTE: to "en.emma.page.sys.action.var"
+#       label:          '/x/ System /var'
+#       title:          '/x/ System /var Directory'
+#       tooltip:        '/x/ View contents of the system /var directory'
+#       role:           developer
+#       _endpoint:      true
 
       # =======================================================================
 
-      view:
-        label:          'View'
-        title:          'System File Content'
-        tooltip:        'View contents of a system file'
-        role:           developer
-        _endpoint:      true
+#     view: # NOTE: to "en.emma.page.sys.action.var"
+#       label:          '/x/ View'
+#       title:          '/x/ System File Content'
+#       tooltip:        '/x/ View contents of a system file'
+#       role:           developer
+#       _endpoint:      true
 
       # =======================================================================

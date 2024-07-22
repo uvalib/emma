@@ -188,7 +188,7 @@ module SearchTermsHelper
     pairs.slice!(*only)    if only
     pairs.except!(*except) if except
     qcfg = SEARCH_TYPE[target] || {}
-    fcfg = LayoutHelper::SearchFilters::SEARCH_PARAMETER_MENU_MAP[target] || {}
+    fcfg = LayoutHelper::SearchFilters.search_parameter_menu_map[target] || {}
     term_list =
       pairs.map { |prm, values|
         st_opt = { config: qcfg[prm] || fcfg[prm] }

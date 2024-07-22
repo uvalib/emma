@@ -8,292 +8,313 @@ en:
 
     org:
 
-      unit:
-        brief:          'org'
-        long:           'organization'
-      label:            'Organization'
-      title:            'EMMA Member Organization'
-      tooltip:          'Show the EMMA member organization table'
+#     unit: # NOTE: to "en.emma.page.org"
+#       brief:          '/x/ org'
+#       long:           '/x/ organization'
+#     label:            '/x/ Organization' # NOTE: to "en.emma.page.org"
+#     title:            '/x/ EMMA Member Organization' # NOTE: to "en.emma.page.org"
+#     tooltip:          '/x/ Show the EMMA member organization table' # NOTE: to "en.emma.page.org"
 
-      subsystem:
-        database:       true
+      # =======================================================================
+      # Subsystems
+      # =======================================================================
+
+#     subsystem:
+#       database:       true
+#       redis:          false # NOTE: added to facilitate comparison
+#       storage:        false # NOTE: added to facilitate comparison
+#       search:         false # NOTE: added to facilitate comparison
+#       ingest:         false # NOTE: added to facilitate comparison
 
       # =======================================================================
       # Search endpoint
       # =======================================================================
 
-      search:           # TODO: ?
-        action:         index
+#     search:           # TODO: ? # NOTE: to "en.emma.page._generic.search"
+#       action:         index
 
       # =======================================================================
       # Layout
       # =======================================================================
 
-      search_type:
+#     search_type: # NOTE: to "en.emma.page.org.search_type"
 
-        like:
-          name:         'Filter'
-          label:        'Filter by account:'
-          placeholder:  'Partial email or name...'
+#       like:
+#         name:         '/x/ Filter'
+#         label:        '/x/ Filter by account:'
+#         placeholder:  '/x/ Partial email or name...'
 
-      search_bar:
-        enabled:        [index]
-        label:          'Organization Filter'
-
-      search_filters:
+#     search_bar: # NOTE: to "en.emma.page.org.search_bar"
 #       enabled:        [index]
-        enabled:        false
+#       label:          '/x/ Organization Filter'
 
-        layout:
-          - [sort, size, ~, ~]
+#       min_rows:         1 # NOTE: added to facilitate comparison
+#       max_rows:         1 # NOTE: added to facilitate comparison
 
-      page_controls:
-        label:          'Org Actions:'
-        actions:
-          - show_current
-          - edit_current
-          - list_all
-          - show_select
-          - new
-          - edit_select
-          - delete_select
-          - { ctrlr: 'account', action: 'new',           label: 'Add User' }
-          - { ctrlr: 'account', action: 'edit_select',   label: 'Edit User' }
-          - { ctrlr: 'account', action: 'delete_select', label: 'Remove User' }
+#       button: # NOTE: added to facilitate comparison
+#         label:          '/x/ Search'
+
+#       advanced: # NOTE: added to facilitate comparison
+#         label:          '/x/ More ▼'
+#         tooltip:        '/x/ Show additional search filters'
+#         open:
+#           label:        '/x/ Less ▲'
+#           tooltip:      '/x/ Hide additional search filters'
+
+#     search_filters: # NOTE: to "en.emma.page.org.search_filters"
+#       enabled:        [index]
+#       enabled:        false
+
+#       layout:
+#         - [sort, size, ~, ~]
+
+#     page_controls: # NOTE: to "en.emma.page.org.page_controls"
+#       label:          '/x/ Org Actions:'
+#       actions:
+#         - show_current
+#         - edit_current
+#         - list_all
+#         - show_select
+#         - new
+#         - edit_select
+#         - delete_select
+#         - { ctrlr: 'account', action: 'new',           label: '/x/ Add User' }
+#         - { ctrlr: 'account', action: 'edit_select',   label: '/x/ Edit User' }
+#         - { ctrlr: 'account', action: 'delete_select', label: '/x/ Remove User' }
 
       # =======================================================================
       # Controls
       # =======================================================================
 
-      action_links:
+#     action_links: # NOTE: to "en.emma.page.org.action_links"
 
-        new:
-          label:        'Create %{an} new EMMA member organization'
+#       new:
+#         label:        '/x/ Create %{an} new EMMA member organization'
 
-        edit_select:
-          label:        'Modify %{an} existing EMMA member organization'
+#       edit_select:
+#         label:        '/x/ Modify %{an} existing EMMA member organization'
 
-        delete_select:
-          label:        'Remove %{an} existing EMMA member organization'
+#       delete_select:
+#         label:        '/x/ Remove %{an} existing EMMA member organization'
 
-        list_all:
-          label:        'List all EMMA member organizations'
+#       list_all:
+#         label:        '/x/ List all EMMA member organizations'
 
       # =======================================================================
       # Fields
       # =======================================================================
 
-      display_fields: # Overrides order of 'en.emma.org.record'
-        - id
-        - short_name
-        - long_name
-        - ip_domain
-        - contact
-        - upload_count:   { label: 'Submissions' }
-        - manifest_count: { label: 'Manifests' }
-        - status
-        - status_date
-        - start_date
-        - updated_at
-        - created_at
-        - provider:   { ignored: true }
-        - info:       { ignored: true }
-        - history:    { ignored: true }
+#     display_fields: # Overrides order of "en.emma.record.org" # NOTE: to "en.emma.page.org.display_fields"
+#       - id
+#       - short_name
+#       - long_name
+#       - ip_domain
+#       - contact
+#       - upload_count:   { label: '/x/ Submissions' }
+#       - manifest_count: { label: '/x/ Manifests' }
+#       - status
+#       - status_date
+#       - start_date
+#       - updated_at
+#       - created_at
+#       - provider:   { ignored: true }
+#       - info:       { ignored: true }
+#       - history:    { ignored: true }
 
       # =======================================================================
       # Pages
       # =======================================================================
 
-      generic:
-        label:          'Organization'
-        title:          'Organization'
-        tooltip:        '(A brief description of this operation)'
-        description:    '(A more detailed description of this operation)'
-        directions:     '(Brief guidance for using the operation form)'
-        notes:          '(A more detailed description of this operation)'
+#     generic: # NOTE: to "en.emma.page.org.action._generic"
+#       label:          '/x/ Organization'
+#       title:          '/x/ Organization'
+#       tooltip:        '/x/ (A brief description of this operation)'
+#       description:    '/x/ (A more detailed description of this operation)'
+#       directions:     '/x/ (Brief guidance for using the operation form)'
+#       notes:          '/x/ (A more detailed description of this operation)'
 
-        submit:         &GENERIC_SUBMIT
-          label:        'Submit'
-          if_enabled:
-            tooltip:    'Proceed with this action'
-          if_disabled:
-            tooltip:    'Conditions have not yet been met to proceed'
+#       submit:         &GENERIC_SUBMIT # NOTE: to "en.emma.page._generic.form.submit"
+#         label:        '/x/ Submit'
+#         if_enabled:
+#           tooltip:    '/x/ Proceed with this action'
+#         if_disabled:
+#           tooltip:    '/x/ Conditions have not yet been met to proceed'
 
-        cancel:         &GENERIC_CANCEL
-          label:        'CANCEL'
-          if_enabled:
-            tooltip:    'Do nothing and return to the previous screen'
-          if_disabled:
-            tooltip:    'Not able to cancel at this point'
+#       cancel:         &GENERIC_CANCEL # NOTE: to "en.emma.page._generic.form.cancel"
+#         label:        '/x/ CANCEL'
+#         if_enabled:
+#           tooltip:    '/x/ Do nothing and return to the previous screen'
+#         if_disabled:
+#           tooltip:    '/x/ Not able to cancel at this point'
 
-#       success:        'EMMA member organization was successfully %{actioned}.'
-#       failure:        'Failed to %{action} EMMA member organization: %{error}'
-
-      # =======================================================================
-
-      index:            &INDEX_ACTION
-        label:          'List'
-        title:          'EMMA Member Organizations'
-        tooltip:        'List all EMMA member organizations'
-
-        display_fields: # @see 'en.emma.org.record'
-          - !ruby/symbol all
-
-        _endpoint:      true
+##      success:        'EMMA member organization was successfully %{actioned}.'
+##      failure:        'Failed to %{action} EMMA member organization: %{error}'
 
       # =======================================================================
 
-      list_all:
-        <<:             *INDEX_ACTION
-        label:          'List All'
-        tooltip:        'List all EMMA member organizations'
+#     index:            &INDEX_ACTION # NOTE: to "en.emma.page.org.action.index"
+#       label:          '/x/ List'
+#       title:          '/x/ EMMA Member Organizations'
+#       tooltip:        '/x/ List all EMMA member organizations'
+
+#       display_fields: # @see "en.emma.record.org" # NOTE: to "en.emma.page.org.action.index.display_fields"
+#         - !ruby/symbol all
+
+#       _endpoint:      true
 
       # =======================================================================
 
-      show:             &SHOW_ACTION
-        label:          'Show'
-        title:          'EMMA Member Organization: %{name}'
-        tooltip:        'Details of an EMMA member organization entry'
-
-        display_fields: # @see 'en.emma.org.record'
-          - !ruby/symbol all
-
-        _endpoint:      true
+#     list_all: # NOTE: to "en.emma.page.org.action.list_all"
+#       <<:             *INDEX_ACTION
+#       label:          '/x/ List All'
+#       tooltip:        '/x/ List all EMMA member organizations'
 
       # =======================================================================
 
-      show_select:
-        <<:             *SHOW_ACTION
-        label:          'Show Org' # TODO: ???
-        title:          'Show an EMMA Member Organization'
-        role:           administrator
+#     show:             &SHOW_ACTION # NOTE: to "en.emma.page.org.action.show"
+#       label:          '/x/ Show'
+#       title:          '/x/ EMMA Member Organization: %{name}'
+#       tooltip:        '/x/ Details of an EMMA member organization entry'
+
+#       display_fields: # @see "en.emma.record.org" # NOTE: to "en.emma.page.org.action.show.display_fields"
+#         - !ruby/symbol all
+
+#       _endpoint:      true
 
       # =======================================================================
 
-      show_current:
-        <<:             *SHOW_ACTION
-        label:          'Details'
-        tooltip:        'See details about your EMMA Member Organization'
+#     show_select: # NOTE: to "en.emma.page.org.action.show_select"
+#       <<:             *SHOW_ACTION
+#       label:          '/x/ Show Org' # TODO: ???
+#       title:          '/x/ Show an EMMA Member Organization'
+#       role:           administrator
 
       # =======================================================================
 
-      new:              &NEW_ACTION
-        label:          'Create'
-        title:          'Create an EMMA Member Organization'
-        tooltip:        'Create a new EMMA member organization entry'
-
-        term:
-          action:       'create'
-          actioned:     'created'
-
-        submit:
-          <<:           *GENERIC_SUBMIT
-          label:        'Create'
-          if_enabled:
-            tooltip:    'Create the new EMMA Member Organization'
-          if_disabled:
-            tooltip:    'Required information is still needed'
-
-        cancel:
-          <<:           *GENERIC_CANCEL
-          if_enabled:
-            tooltip:    'Do not create this entry (or start over)'
-
-#       success:        'EMMA Member Organization %{name} created.'
-#       failure:        'Could not create EMMA Member Organization: %{error}'
-
-        role:           administrator
-        _endpoint:      true
+#     show_current: # NOTE: to "en.emma.page.org.action.show_current"
+#       <<:             *SHOW_ACTION
+#       label:          '/x/ Details'
+#       tooltip:        '/x/ See details about your EMMA Member Organization'
 
       # =======================================================================
 
-      create:
-        <<:             *NEW_ACTION
+#     new:              &NEW_ACTION # NOTE: to "en.emma.page.org.action.new"
+#       label:          '/x/ Create'
+#       title:          '/x/ Create an EMMA Member Organization'
+#       tooltip:        '/x/ Create a new EMMA member organization entry'
+
+#       term: # NOTE: to "en.emma.term._generic.action.new"
+#         action:       '/x/ create'
+#         actioned:     '/x/ created'
+
+#       submit: # NOTE: to "en.emma.page.org.action.new.submit"
+#         <<:           *GENERIC_SUBMIT
+#         label:        '/x/ Create'
+#         if_enabled:
+#           tooltip:    '/x/ Create the new EMMA Member Organization'
+#         if_disabled:
+#           tooltip:    '/x/ Required information is still needed'
+
+#       cancel: # NOTE: to "en.emma.page.org.action.new.cancel"
+#         <<:           *GENERIC_CANCEL
+#         if_enabled:
+#           tooltip:    '/x/ Do not create this entry (or start over)'
+
+##      success:        'EMMA Member Organization %{name} created.'
+##      failure:        'Could not create EMMA Member Organization: %{error}'
+
+#       role:           administrator
+#       _endpoint:      true
 
       # =======================================================================
 
-      edit:             &EDIT_ACTION
-        label:          'Change'
-        title:          'Modify EMMA Member Organization %{name}'
-        tooltip:        'Modify an existing EMMA member organization entry'
-
-        term:
-          action:       'update'
-          actioned:     'updated'
-
-        submit:
-          <<:           *GENERIC_SUBMIT
-          label:        'Update'
-          if_enabled:
-            tooltip:    'Modify this EMMA Member Organization'
-          if_disabled:
-            tooltip:    'No valid changes have been made yet'
-
-        cancel:
-          <<:           *GENERIC_CANCEL
-          if_enabled:
-            tooltip:    'Discard these changes'
-
-#       success:        'EMMA Member Organization %{name} updated.'
-#       failure:        'Could not update EMMA Member Organization: %{error}'
-
-        role:           administrator
-        _endpoint:      true
+#     create: # NOTE: to "en.emma.page.org.action.create"
+#       <<:             *NEW_ACTION
 
       # =======================================================================
 
-      edit_select:
-        <<:             *EDIT_ACTION
+#     edit:             &EDIT_ACTION # NOTE: to "en.emma.page.org.action.edit"
+#       label:          '/x/ Change'
+#       title:          '/x/ Modify EMMA Member Organization %{name}'
+#       tooltip:        '/x/ Modify an existing EMMA member organization entry'
+
+#       term: # NOTE: to "en.emma.term._generic.action.edit"
+#         action:       '/x/ update'
+#         actioned:     '/x/ updated'
+
+#       submit: # NOTE: to "en.emma.page.org.action.edit.submit"
+#         <<:           *GENERIC_SUBMIT
+#         label:        '/x/ Update'
+#         if_enabled:
+#           tooltip:    '/x/ Modify this EMMA Member Organization'
+#         if_disabled:
+#           tooltip:    '/x/ No valid changes have been made yet'
+
+#       cancel: # NOTE: to "en.emma.page.org.action.edit.cancel"
+#         <<:           *GENERIC_CANCEL
+#         if_enabled:
+#           tooltip:    '/x/ Discard these changes'
+
+##      success:        'EMMA Member Organization %{name} updated.'
+##      failure:        'Could not update EMMA Member Organization: %{error}'
+
+#       role:           administrator
+#       _endpoint:      true
 
       # =======================================================================
 
-      edit_current:
-        <<:             *EDIT_ACTION
-        label:          'Modify'
-        tooltip:        'Change details about your EMMA Member Organization'
-        role:           manager
+#     edit_select: # NOTE: to "en.emma.page.org.action.edit_select"
+#       <<:             *EDIT_ACTION
 
       # =======================================================================
 
-      update:
-        <<:             *EDIT_ACTION
+#     edit_current: # NOTE: to "en.emma.page.org.action.edit_current"
+#       <<:             *EDIT_ACTION
+#       label:          '/x/ Modify'
+#       tooltip:        '/x/ Change details about your EMMA Member Organization'
+#       role:           manager
 
       # =======================================================================
 
-      delete:           &DELETE_ACTION
-        label:          'Remove'
-        title:          'Remove EMMA Member Organization %{name}'
-        tooltip:        'Delete an existing EMMA member organization entry'
-
-        term:
-          action:       'remove'
-          actioned:     'removed'
-
-        submit:
-          <<:           *GENERIC_SUBMIT
-          label:        'Delete'
-          if_enabled:
-            tooltip:    'Remove this EMMA Member Organization'
-
-        cancel:
-          <<:           *GENERIC_CANCEL
-          if_enabled:
-            tooltip:    'Keep this EMMA Member Organization'
-
-#       success:        'EMMA Member Organization %{name} deleted.'
-#       failure:        'Could not delete EMMA Member Organization: %{error}'
-
-        role:           administrator
-        _endpoint:      true
+#     update: # NOTE: to "en.emma.page.org.action.update"
+#       <<:             *EDIT_ACTION
 
       # =======================================================================
 
-      delete_select:
-        <<:             *DELETE_ACTION
+#     delete:           &DELETE_ACTION # NOTE: to "en.emma.page.org.action.delete"
+#       label:          '/x/ Remove'
+#       title:          '/x/ Remove EMMA Member Organization %{name}'
+#       tooltip:        '/x/ Delete an existing EMMA member organization entry'
+
+#       term: # NOTE: to "en.emma.term._generic.action.delete"
+#         action:       '/x/ remove'
+#         actioned:     '/x/ removed'
+
+#       submit: # NOTE: to "en.emma.page.org.action.delete.submit"
+#         <<:           *GENERIC_SUBMIT
+#         label:        '/x/ Delete'
+#         if_enabled:
+#           tooltip:    '/x/ Remove this EMMA Member Organization'
+
+#       cancel: # NOTE: to "en.emma.page.org.action.delete.cancel"
+#         <<:           *GENERIC_CANCEL
+#         if_enabled:
+#           tooltip:    '/x/ Keep this EMMA Member Organization'
+
+##      success:        'EMMA Member Organization %{name} deleted.'
+##      failure:        'Could not delete EMMA Member Organization: %{error}'
+
+#       role:           administrator
+#       _endpoint:      true
 
       # =======================================================================
 
-      destroy:
-        <<:             *DELETE_ACTION
+#     delete_select: # NOTE: to "en.emma.page.org.action.delete_select"
+#       <<:             *DELETE_ACTION
+
+      # =======================================================================
+
+#     destroy: # NOTE: to "en.emma.page.org.action.destroy"
+#       <<:             *DELETE_ACTION
 
       # =======================================================================

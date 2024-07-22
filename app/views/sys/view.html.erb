@@ -5,11 +5,13 @@
   view_debug(__FILE__)
 
   file  ||= params[:file]
+
+  cfg   ||= current_config_page_section
   help  ||= nil # %i[sys view]
-  title ||= t('emma.sys.view.title')
+  title ||= cfg[:title]
 
   unless modal?
-    label = file || t('emma.sys.var.label', default: title)
+    label = cfg[:label] || title
     set_page_meta_title("System - #{label}")
     set_page_description(title)
   end

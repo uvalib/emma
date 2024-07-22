@@ -11,7 +11,7 @@
   link_opt = { class: 'sign-in-link', role: 'button' }
 
   unless c == 'sessions'
-    label  = t('emma.user.sessions.sign_in.label')
+    label  = config_page(:user_sessions, :sign_in, :label)
     path   = sign_in_local_path
     links << make_link(path, label, **link_opt)
   end
@@ -29,7 +29,7 @@
   devise_modules << 'unlock'       if lockable
   devise_modules.map! { |devise_module|
     ctrlr = devise_module.pluralize
-    label = t("emma.user.#{ctrlr}.new.label")
+    label = config_page(:"user_#{ctrlr}", :new, :label)
     path  = send("new_user_#{devise_module}_path")
     make_link(path, label, **link_opt)
   }

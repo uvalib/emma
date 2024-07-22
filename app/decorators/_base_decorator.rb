@@ -201,8 +201,8 @@ class BaseDecorator < Draper::Decorator
     # @return [Hash{Symbol=>Hash{Symbol=>String,Hash}}]
     #
     def config_button_values(action)
-      action_config = controller_config[action] || {}
-      action_config.select { |_, v| v.is_a?(Hash) }
+      config = action_config(action) || {}
+      config.select { |k, v| v.is_a?(Hash) unless k.start_with?('_') }
     end
 
     # link_to_action
@@ -585,7 +585,7 @@ class BaseDecorator < Draper::Decorator
     #
     def page_value(value, default: true, **opt)
       action = opt.delete(:action) || context[:action]
-      value  = controller_config.dig(action, value) if value.is_a?(Symbol)
+      value  = action_config(action)&.dig(value) if value.is_a?(Symbol)
       if value
         interpolate(value, object, **opt)
       elsif default.is_a?(TrueClass)

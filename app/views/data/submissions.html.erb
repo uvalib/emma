@@ -8,11 +8,12 @@
   name  ||= submission_table
   cols  ||= submission_result_columns
 
+  cfg   ||= current_config_page_section
   help  ||= nil # %i[data submissions]
-  title ||= t('emma.data.submissions.title')
+  title ||= cfg[:title]
 
   unless modal?
-    label = t('emma.data.submissions.label', default: title)
+    label = cfg[:label] || title
     set_page_meta_title(label)
     set_page_description(title)
   end

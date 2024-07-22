@@ -69,29 +69,25 @@ module TestHelper::Common
   # @type [Hash{Symbol=>Hash}]
   #
   PROPERTY =
-    SYSTEM_CONTROLLERS.map { |model|
-      path = (model == :user_sessions) ? 'user.sessions' : model
-      unit = %I[
-        emma.#{path}.pagination.count.one
-        emma.#{path}.pagination.count
-        emma.#{path}.unit.brief
-        emma.#{path}.unit
-        emma.generic.unit.brief
-      ]
-      unit = config_item(unit, fallback: model.to_s)
-      endpoints =
-        config_section(path).map { |endpoint, config|
-          next unless config.is_a?(Hash) && config[:_endpoint]
-          config = config.except(:_endpoint).deep_dup
-          entry  = (endpoint == :index) ? 'list-item' : 'details'
+    ApplicationHelper::CONTROLLER_CONFIGURATION.map { |ctrlr, entry|
+      next unless SYSTEM_CONTROLLERS.include?(ctrlr)
+      next unless (actions = entry[:action]).present?
+      unit  ||= entry.dig(:pagination, :count)
+      unit  &&= unit.is_a?(Hash) ? unit[:one] : unit
+      unit  ||= entry[:unit]
+      unit  &&= unit.is_a?(Hash) ? unit[:brief] : unit
+      unit  ||= ctrlr.to_s
+      actions =
+        actions.deep_dup.map { |action, config|
+          entry  = (action == :index) ? 'list-item' : 'details'
           config[:heading]   ||= config[:title]
           config[:title]       = config[:label] || config[:heading]
           config[:count]     ||= unit.pluralize
-          config[:body_css]  ||= ".#{model}-#{endpoint}"
-          config[:entry_css] ||= ".#{model}-#{entry}"
-          [endpoint, config]
-        }.compact.to_h
-      [model, endpoints] unless endpoints.blank?
+          config[:body_css]  ||= ".#{ctrlr}-#{action}"
+          config[:entry_css] ||= ".#{ctrlr}-#{entry}"
+          [action, config]
+        }.to_h
+      [ctrlr, actions]
     }.compact.to_h.deep_freeze
 
   # ===========================================================================

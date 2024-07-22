@@ -36,7 +36,7 @@ module AwsHelper
   AWS_RENDER_OPT   = %i[heading html object].freeze
 
   # noinspection RubyMismatchedConstantType
-  S3_BUCKET_DEFAULT_SORT = I18n.t('emma.upload.search_filters.sort.default')
+  S3_BUCKET_DEFAULT_SORT = config_page(:upload,:search_filters,:sort,:default)
   S3_BUCKET_PRIMARY_SORT = :prefix
 
   # ===========================================================================

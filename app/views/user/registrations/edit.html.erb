@@ -22,9 +22,9 @@
   end
 
   # noinspection RailsParamDefResolve
-  awaiting   = (user.try(:unconfirmed_email) if devise_mapping.confirmable?)
-  awaiting &&= t('emma.user.registrations.edit.awaiting', email: awaiting)
-  awaiting &&= html_div(awaiting)
+  waiting   = (user.try(:unconfirmed_email) if devise_mapping.confirmable?)
+  waiting &&= config_page(:user_registrations,:edit,:awaiting, email: waiting)
+  waiting &&= html_div(waiting)
 
 -%>
 
@@ -32,7 +32,7 @@
 
 <%= page_description_section %>
 <%= render 'devise/shared/error_messages', resource: user %>
-<%= awaiting -%>
+<%= waiting -%>
 
 <%= page_directions_section %>
 <%= dec.model_form %>

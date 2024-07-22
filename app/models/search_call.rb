@@ -115,7 +115,7 @@ class SearchCall < ApplicationRecord
       # Extract keys from "en.emma.search_filters".
       f_keys   = json_columns[:filter][:keys]
       f_params = json_columns[:filter][:params]
-      LayoutHelper::SearchFilters::SEARCH_MENU_BASE.each_pair do |key, config|
+      LayoutHelper::SearchFilters.search_menu_base.each_pair do |key, config|
         next if reserved.include?((key = f_params[key] || key))
         f_keys[key] = { type: (config[:multiple] ? :array : :string) }
         config[:url_param]&.then { |param| f_params[param.to_sym] = key }

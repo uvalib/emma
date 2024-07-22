@@ -50,7 +50,7 @@ module BaseDecorator::Controls
   #
   # @see BaseDecorator::Controls#ICON_PROPERTIES
   #
-  ICONS = config_section('emma.control_icons').deep_freeze
+  ICONS = config_page_section(:control_icons).deep_freeze
 
   # The name of the attribute indicating the action of a control button.
   #

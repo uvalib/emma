@@ -98,7 +98,7 @@ module Record::Steppable
   # @note From Upload::WorkflowMethods#STATE_GROUP
   #
   STATE_GROUP =
-    config_section('emma.upload.state_group').transform_values { |entry|
+    config_page_section(:upload, :state_group).transform_values { |entry|
       states = Array.wrap(entry[:states]).map(&:to_sym)
       entry.merge(states: states)
     }.deep_freeze

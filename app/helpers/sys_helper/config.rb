@@ -67,7 +67,7 @@ module SysHelper::Config
   #
   # @return [any, nil]
   #
-  def config_entry(val, **opt)
+  def app_config_entry(val, **opt)
     if opt[:escape]
       case val
         when nil     then return ESCAPE_TEMPLATE % EMPTY_VALUE
@@ -82,8 +82,8 @@ module SysHelper::Config
     case val
       when nil     then EMPTY_VALUE
       when *DIRECT then opt[:inspect] ? val.inspect : val
-      when Hash    then val.transform_values { |v| config_entry(v, **opt) }
-      when Array   then val.map { |v| config_entry(v, **opt) }
+      when Hash    then val.transform_values { |v| app_config_entry(v, **opt) }
+      when Array   then val.map { |v| app_config_entry(v, **opt) }
       else              val.class
     end
   end
@@ -95,7 +95,7 @@ module SysHelper::Config
   # @return [String]
   #
   def rails_config_entry(val)
-    val = config_entry(val, escape: true)
+    val = app_config_entry(val, escape: true)
     val = pretty_json(val, log: false)
     val.gsub(ESCAPE_REGEXP, '\1')
   end

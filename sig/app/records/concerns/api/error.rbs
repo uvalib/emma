@@ -111,6 +111,7 @@ class Api::Error < ExecError
     # @param [Symbol, String, nil] source     Source repository
     # @param [Symbol, String, nil] type       Error type.
     # @param [String, Boolean]     fallback
+    # @param [Hash]                opt        Passed to #config_entry.
     #
     # @return [String]                The appropriate error message.
     # @return [nil]                   If *allow_nil* is set to *true* and no
@@ -118,7 +119,7 @@ class Api::Error < ExecError
     #
     # @see "en.emma.error.api"
     #
-    def default_message: (?source: Symbol|String|nil, ?type: Symbol|String|nil, ?fallback: String|bool) -> (String | nil)
+    def default_message: (?source: Symbol|String|nil, ?type: Symbol|String|nil, ?fallback: String|bool, **untyped opt) -> (String | nil)
 
     private
 

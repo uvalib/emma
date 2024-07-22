@@ -7,8 +7,9 @@
   # @type [Array<String>]
   list  ||= @list
 
+  cfg   ||= current_config_page_section
   help  ||= nil # %i[upload check]
-  title ||= t('emma.upload.check.title')
+  title ||= cfg[:title]
 
   error ||= config_term(:upload, :invalid_id)
 

@@ -46,12 +46,14 @@ module LayoutHelper::SearchBar
   # @param [Symbol, Array<Symbol>] except
   # @param [Integer, nil]          maximum    Maximum input rows in group.
   # @param [Integer, nil]          minimum    Minimum input rows in group.
+  # @param [String, nil]           unique
+  # @param [String]                css        Characteristic CSS class/selector
   # @param [Hash]                  form_opt   Passed to #html_form.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                             Search unavailable for *target*.
   #
-  def search_bar_container: (?target: Symbol|String|nil, ?fields: symArray|symHash|nil, ?values: symHash|nil, ?only: Symbol|symArray|nil, ?except: Symbol|symArray|nil, ?maximum: Integer|nil, ?minimum: Integer|nil, **untyped form_opt) -> (ActiveSupport::SafeBuffer | nil)
+  def search_bar_container: (?target: Symbol|String|nil, ?fields: symArray|symHash|nil, ?values: symHash|nil, ?only: Symbol|symArray|nil, ?except: Symbol|symArray|nil, ?maximum: Integer|nil, ?minimum: Integer|nil, ?unique: String|nil, ?css: String, **untyped form_opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Generate a row within a search-bar-group.
   #
@@ -104,6 +106,7 @@ module LayoutHelper::SearchBar
   #
   # @param [Symbol, String, nil] field
   # @param [String, nil]         value
+  # @param [String]              css        Characteristic CSS class/selector.
   # @param [Hash]                opt        Passed to #html_div except for:
   #
   # @option opt [String, Symbol]  :target
@@ -115,7 +118,7 @@ module LayoutHelper::SearchBar
   #
   # @see #search_input
   #
-  def search_bar: ((Symbol|String|nil) field, ?(String|nil) value, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def search_bar: ((Symbol|String|nil) field, ?(String|nil) value, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # search_bar_label
   #

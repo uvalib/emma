@@ -4,11 +4,12 @@
 
   view_debug(__FILE__)
 
+  cfg   ||= current_config_page_section
   help  ||= nil # %i[sys]
-  title ||= t('emma.sys.index.title')
+  title ||= cfg[:title]
 
   unless modal?
-    label = t('emma.sys.index.label', default: title)
+    label = cfg[:label] || title
     set_page_meta_title("System - #{label}")
     set_page_description(title)
   end

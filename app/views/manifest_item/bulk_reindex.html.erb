@@ -7,7 +7,8 @@
 
   list  ||= @list || []
 
-  title ||= t('emma.manifest_item.bulk_reindex.title')
+  cfg   ||= current_config_page_section
+  title ||= cfg[:title]
 
 -%>
 

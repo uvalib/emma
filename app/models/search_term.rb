@@ -156,6 +156,27 @@ class SearchTerm
     count > 1
   end
 
+  # ===========================================================================
+  # :section: Object overrides
+  # ===========================================================================
+
+  public
+
+  # Indicate whether the instance is equivalent to another value.
+  #
+  # @param [SearchTerm, any, nil] other
+  #
+  # @return [Boolean]
+  #
+  def ==(other)
+    other.is_a?(self.class) &&
+      (parameter == other.parameter) &&
+      (label == other.label) &&
+      (query == other.query) &&
+      (count == other.count) &&
+      pairs.all? { |k, v| v == other.pairs[k] if other.pairs.key?(k) }
+  end
+
 end
 
 __loading_end(__FILE__)

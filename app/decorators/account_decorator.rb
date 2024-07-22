@@ -178,7 +178,7 @@ class AccountDecorator < BaseDecorator
     # @type [String, nil]
     #
     PASSWORD_PLACEHOLDER =
-      config_item('emma.user.registrations.edit.password').freeze
+      config_page(:user_registrations, :edit, :password).freeze
 
     # If set, the minimum number of characters accepted for passwords.
     #
@@ -412,7 +412,7 @@ class AccountDecorator
   # @return [ActiveSupport::SafeBuffer, nil]
   #
   def current_password_note(note = nil, **opt)
-    note ||= config_item('emma.user.registrations.edit.current')
+    note ||= config_page(:user_registrations, :edit, :current)
     form_input_note(note, **opt) if note
   end
 

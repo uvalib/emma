@@ -21,542 +21,551 @@ en:
     # HTML page header and footer
     # =========================================================================
 
-    head:
+#   head: # NOTE: to "en.emma.page._generic.head"
 
-      title:
-        prefix:         ''
-        suffix:         'EMMA'
+#     title:
+#       prefix:         ''
+#       suffix:         '/x/ EMMA'
 
-      description:
-        prefix:         'Print-disability accessible content'
+#     description:
+#       prefix:         '/x/ Print-disability accessible content'
 
-      favicon:
-        asset:          'favicon.ico'
+#     favicon:
+#       asset:          'favicon.ico'
 
-      stylesheets:
-        # NOTE: Handled via HeadHelper::Stylesheets#page_stylesheets
-        - 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css'
-        - 'https://releases.transloadit.com/uppy/v3.1.1/uppy.min.css'
+#     stylesheets:
+#       # NOTE: Handled via HeadHelper::Stylesheets#page_stylesheets
+#       - 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-rc.0/css/select2.min.css'
+#       - 'https://releases.transloadit.com/uppy/v3.1.1/uppy.min.css'
 
-      javascripts:
-        # NOTE: Now handling by Yarn through /package.json.
-        - ~
+#     javascripts:
+#       # NOTE: Now handling by Yarn through /package.json.
+#       - ~
 
-    foot:
+#   foot: # NOTE: to "en.emma.page._generic.foot"
 
-      website:
-        label:          'Website'
-        link:           'https://emma.uvacreate.virginia.edu'
+#     website:
+#       label:          '/x/ Website'
+#       link:           'https://emma.uvacreate.virginia.edu'
 
-      contact:
-        label:          'Contact'
-        link:           'emmahelp@virginia.edu'
+#     contact:
+#       label:          '/x/ Contact'
+#       link:           'emmahelp@virginia.edu'
 
-      version:
-        label:          'Version'
-        content:        BUILD_VERSION
+#     version:
+#       label:          '/x/ Version'
+#       content:        BUILD_VERSION
 
     # =========================================================================
     # Layout
     # =========================================================================
 
-    logo:
-      link:
-        label:          'Return to the main page'
-      text:
-        label:          'EMMA'
-      image:
-        alt:            'EMMA logo'
-        asset:          'EMMA-logo-UVAbg.png'
+#   logo: # NOTE: to "en.emma.page._generic.logo"
+#     link:
+#       label:          '/x/ Return to the main page'
+#     text:
+#       label:          '/x/ EMMA'
+#     image:
+#       alt:            '/x/ EMMA logo'
+#       asset:          'EMMA-logo-UVAbg.png'
 
-    nav_bar:
+#   nav_bar: # NOTE: to "en.emma.page._generic.nav_bar"
 
-      controllers:
+#     controllers:
 
-        # The subset of 'en.emma.controllers' which may be represented in the
-        # navbar, in the order in which they would be displayed.
+#       # The subset of controllers which may be represented in the navbar, in
+#       # the order in which they would be displayed.
 
-        - 'search'
-        - 'upload'
-        - 'manifest'
-        - 'tool'
-        - 'help'
-        - 'sys'
-        - 'enrollment'
-        - 'org'
-        - 'home'
-        - 'data'
+#       - 'search'
+#       - 'upload'
+#       - 'manifest'
+#       - 'tool'
+#       - 'help'
+#       - 'sys'
+#       - 'enrollment'
+#       - 'org'
+#       - 'home'
+#       - 'data'
 
-      primary:
+#     primary:
 
-        # The subset of 'nav_bar.controllers' which are always displayed.
-        # Non-primary entries will only be displayed if the current URL
-        # includes that controller.
-        #
-        # Role-based logic in #nav_bar_links determines which entries are
-        # actually displayed for the current user.
+#       # The subset of 'nav_bar.controllers' which are always displayed.
+#       # Non-primary entries will only be displayed if the current URL
+#       # includes that controller.
+#       #
+#       # Role-based logic in #nav_bar_links determines which entries are
+#       # actually displayed for the current user.
 
-        - 'search'
-        - 'upload'
-        - 'manifest'
-        - 'tool'
-        - 'help'
-        - 'sys'
-        - 'enrollment'
-        - 'org'
-        - 'home'
+#       - 'search'
+#       - 'upload'
+#       - 'manifest'
+#       - 'tool'
+#       - 'help'
+#       - 'sys'
+#       - 'enrollment'
+#       - 'org'
+#       - 'home'
 
-      unreleased:
+#     unreleased:
 
-        # The subset of 'nav_bar.primary' which are not displayed in the
-        # production deployment.  (This may safely be nil or empty.)
+#       # The subset of 'nav_bar.primary' which are not displayed in the
+#       # production deployment.  (This may safely be nil or empty.)
 
-    panel:
-      control:          &PANEL_TOGGLE
-        label:          'More ▼'
-        tooltip:        'See more'
-        open:           &PANEL_OPEN_TOGGLE
-          label:        'Less ▲'
-          tooltip:      'See less'
+#   panel: # NOTE: to "en.emma.page._generic.panel"
+#     control:          &PANEL_TOGGLE
+#       label:          '/x/ More ▼'
+#       tooltip:        '/x/ See more'
+#       open:           &PANEL_OPEN_TOGGLE
+#         label:        '/x/ Less ▲'
+#         tooltip:      '/x/ See less'
 
-    tree:
-      control:
-        label:          '▶'
-        tooltip:        'Open'
-        open:
-          label:        '▼'
-          tooltip:      'Close'
+#   tree: # NOTE: to "en.emma.page._generic.tree"
+#     control:
+#       label:          '/x/ ▶'
+#       tooltip:        '/x/ Open'
+#       open:
+#         label:        '/x/ ▼'
+#         tooltip:      '/x/ Close'
 
-    search_type:        &SEARCH_TYPE
+#   search_type:        &SEARCH_TYPE # NOTE: to "en.emma.page._generic.search_type"
 
-      identifier:
-        url_param:      identifier
-        name:           'ISBN / DOI / etc.'
-        label:          'Standard identifier:'
-        tooltip:
-          >-
-          Search for creative works or specific editions/issues by a standard
-          identifier (ISBN, DOI, OCLC, UPC, etc.)
-        placeholder:    'Enter an identifier...'
+#     identifier: # NOTE: to "en.emma.page._index_search.search_type.identifier"
+#       url_param:      identifier
+#       name:           '/x/ ISBN / DOI / etc.'
+#       label:          '/x/ Standard identifier:'
+#       tooltip:
+#         >-
+#         /x/ Search for creative works or specific editions/issues by a standard
+#         identifier (ISBN, DOI, OCLC, UPC, etc.)
+#       placeholder:    '/x/ Enter an identifier...'
 
-      title:
-        url_param:      title
-        name:           'Title'
-        label:          'Title terms:'
-        tooltip:
-          >-
-          Search for one or more terms matching the title of a work
-        placeholder:    'Enter title terms...'
+#     title: # NOTE: to "en.emma.page._index_search.search_type.title"
+#       url_param:      title
+#       name:           '/x/ Title'
+#       label:          '/x/ Title terms:'
+#       tooltip:
+#         >-
+#         /x/ Search for one or more terms matching the title of a work
+#       placeholder:    '/x/ Enter title terms...'
 
-      creator:
-        url_param:      creator
-        name:           'Creator'
-        label:          'Creator terms:'
-        tooltip:
-          >-
-          Search for one or more terms matching the author or creator of a work
-        placeholder:    'Enter author/creator terms...'
+#     creator: # NOTE: to "en.emma.page._index_search.search_type.creator"
+#       url_param:      creator
+#       name:           '/x/ Creator'
+#       label:          '/x/ Creator terms:'
+#       tooltip:
+#         >-
+#         /x/ Search for one or more terms matching the author or creator of a work
+#       placeholder:    '/x/ Enter author/creator terms...'
 
-      publisher:
-        url_param:      publisher
-        name:           'Publisher'
-        label:          'Publisher terms:'
-        tooltip:
-          >-
-          Search for one or more terms matching the publisher of a work
-        placeholder:    'Enter publisher terms...'
+#     publisher: # NOTE: to "en.emma.page._index_search.search_type.publisher"
+#       url_param:      publisher
+#       name:           '/x/ Publisher'
+#       label:          '/x/ Publisher terms:'
+#       tooltip:
+#         >-
+#         /x/ Search for one or more terms matching the publisher of a work
+#       placeholder:    '/x/ Enter publisher terms...'
 
-      q:
-        url_param:      q
-        name:           'Keyword'
-        label:          'Search terms:'
-        tooltip:
-          >-
-          Search for one or more keywords matching anywhere in the description
-          of entries
-        placeholder:    'Enter search terms...'
+#     q:
+#       url_param:      q
+#       name:           '/x/ Keyword'
+#       label:          '/x/ Search terms:'
+#       tooltip:
+#         >-
+#         /x/ Search for one or more keywords matching anywhere in the description
+#         of entries
+#       placeholder:    '/x/ Enter search terms...'
 
-    search_bar:         &SEARCH_BAR
-      label:            'Search'
-      enabled:          true
-      min_rows:         1
-      max_rows:         1
+#   search_bar:         &SEARCH_BAR # NOTE: to "en.emma.page._generic.search_bar"
+#     label:            '/x/ Search'
+#     enabled:          true
+#     min_rows:         1
+#     max_rows:         1
 
-      button:
-        label:          'Search'
+#     button:
+#       label:          '/x/ Search'
 
-      advanced:
-        <<:             *PANEL_TOGGLE
-        tooltip:        'Show additional search filters'
-        open:
-          <<:           *PANEL_OPEN_TOGGLE
-          tooltip:      'Hide additional search filters'
+#     advanced:
+#       <<:             *PANEL_TOGGLE
+#       tooltip:        '/x/ Show additional search filters'
+#       open:
+#         <<:           *PANEL_OPEN_TOGGLE
+#         tooltip:      '/x/ Hide additional search filters'
 
-    search_filters:     &SEARCH_FILTERS
-      enabled:          true
-      expanded:         true        # False/missing => collapsed initially.
+#   search_filters:     &SEARCH_FILTERS # NOTE: to "en.emma.page._generic.search_filters"
+#     enabled:          true
+#     #enabled:          false # NOTE: added to facilitate comparison
+#     expanded:         true        # False/missing => collapsed initially.
 
-      _default:
-        service:        search      # The applicable API service.
-        url_param:      ~           # URL parameter for the control value.
-        label:          ~           # Displayed before the control.
-        label_visible:  true        # If *false* label is 'sr-only'.
-        tooltip:        ~           # Displayed hovering over control or label.
-        placeholder:    '(any)'     # Displayed if the control value is unset.
-        values:         ~           # Hard-wired menu values.
-        default:        ~           # Hard-wired default menu value selection.
-        multiple:       false       # Allow multiple selections.
-        menu:           ~           # Hard-wired label/value pairs.
-        menu_format:    'titleize'  # Transform for values into menu labels.
-        enabled:        true        # @see SearchModesHelper#permitted_by?
+#     _default: &SEARCH_FILTERS_DEFAULT
+#       service:        search      # The applicable API service.
+#       url_param:      ~           # URL parameter for the control value.
+#       label:          ~           # Displayed before the control.
+#       label_visible:  true        # If *false* label is 'sr-only'.
+#       tooltip:        ~           # Displayed hovering over control or label.
+#       placeholder:    '/x/ (any)'     # Displayed if the control value is unset.
+#       values:         ~           # Hard-wired menu values.
+#       default:        ~           # Hard-wired default menu value selection.
+#       multiple:       false       # Allow multiple selections.
+#       menu:           ~           # Hard-wired label/value pairs.
+#       menu_format:    'titleize'  # Transform for values into menu labels.
+#       enabled:        true        # @see SearchModesHelper#permitted_by?
 
-      _reset:
-        label:          'Reset'
-        tooltip:        'Set all search filters to their default values'
+#     _reset:
+#       label:          '/x/ Reset'
+#       tooltip:        '/x/ Set all search filters to their default values'
 
-      a11y_feature:
-        service:        search
-        url_param:      accessibilityFeature
-        label:          'Accessibility'
-        tooltip:        'Limit by accessibility feature'
-        values:         !ruby/symbol A11yFeature
-        multiple:       true
+#     a11y_feature: # NOTE: to "en.emma.page._index_search.search_filters.a11y_feature"
+#       <<: *SEARCH_FILTERS_DEFAULT # NOTE: added to facilitate comparison
+#       service:        search
+#       url_param:      accessibilityFeature
+#       label:          '/x/ Accessibility'
+#       tooltip:        '/x/ Limit by accessibility feature'
+#       values:         !ruby/symbol A11yFeature
+#       multiple:       true
 
-      format:
-        service:        search
-        url_param:      'fmt' # NOTE: not 'format' due to Rails constraints.
-        label:          'Format'
-        tooltip:        'Limit to one or more remediated content types'
-        values:         !ruby/symbol DublinCoreFormat
-        multiple:       true
+#     format: # NOTE: to "en.emma.page._index_search.search_filters.format"
+#       <<: *SEARCH_FILTERS_DEFAULT # NOTE: added to facilitate comparison
+#       service:        search
+#       url_param:      'fmt' # NOTE: not 'format' due to Rails constraints.
+#       label:          '/x/ Format'
+#       tooltip:        '/x/ Limit to one or more remediated content types'
+#       values:         !ruby/symbol DublinCoreFormat
+#       multiple:       true
 
-      format_feature:
-        service:        search
-        url_param:      formatFeature
-        label:          'Feature'
-        tooltip:        'Limit by format feature'
-        values:         !ruby/symbol FormatFeature
-        multiple:       true
+#     format_feature: # NOTE: to "en.emma.page._index_search.search_filters.format_feature"
+#       <<: *SEARCH_FILTERS_DEFAULT # NOTE: added to facilitate comparison
+#       service:        search
+#       url_param:      formatFeature
+#       label:          '/x/ Feature'
+#       tooltip:        '/x/ Limit by format feature'
+#       values:         !ruby/symbol FormatFeature
+#       multiple:       true
 
-      repository:
-        service:        search
-        url_param:      repository
-        label:          'Repository'
-        tooltip:        'Limit by record originator'
-        values:         !ruby/symbol EmmaRepository
+#     repository: # NOTE: to "en.emma.page._index_search.search_filters.repository"
+#       <<: *SEARCH_FILTERS_DEFAULT # NOTE: added to facilitate comparison
+#       service:        search
+#       url_param:      repository
+#       label:          '/x/ Repository'
+#       tooltip:        '/x/ Limit by record originator'
+#       values:         !ruby/symbol EmmaRepository
 
-      size:
-        url_param:      limit
-        label:          'Page Size'
-        tooltip:        'Specify the number of search results per page'
-        placeholder:    ~
-        values:         [10, 25, 50, 100]
-        default:        100
-        multiple:       false
-        menu_format:    'none'
-        enabled:        file_only
+#     size: # NOTE: to "en.emma.page._index_search.search_filters.size"
+#       <<: *SEARCH_FILTERS_DEFAULT # NOTE: added to facilitate comparison
+#       url_param:      limit
+#       label:          '/x/ Page Size'
+#       tooltip:        '/x/ Specify the number of search results per page'
+#       placeholder:    ~
+#       values:         [10, 25, 50, 100]
+#       default:        100
+#       multiple:       false
+#       menu_format:    'none'
+#       enabled:        file_only
 
-      sort:
-        url_param:      sort
-        label:          'Sort By'
-        tooltip:        'Specify the order in which results are presented'
-        placeholder:    ~
-        values:         !ruby/symbol SearchSort # NOTE: Override per-controller
-        default:        relevance
-        multiple:       false
-        reverse:
-          enabled:      false
-          label:        '%{sort} (rev)'
-          suffix:       'rev'
-          except:       [relevance]
+#     sort: # NOTE: to "en.emma.page._index_search.search_filters.sort"
+#       <<: *SEARCH_FILTERS_DEFAULT # NOTE: added to facilitate comparison
+#       url_param:      sort
+#       label:          '/x/ Sort By'
+#       tooltip:        '/x/ Specify the order in which results are presented'
+#       placeholder:    ~
+#       values:         !ruby/symbol SearchSort # NOTE: Override per-controller
+#       default:        relevance
+#       multiple:       false
+#       reverse:
+#         enabled:      false
+#         label:        '/x/ %{sort} (rev)'
+#         suffix:       '/x/ rev'
+#         except:       [relevance]
 
-    page_controls:      &PAGE_CONTROLS
-      label:            'Actions'
+#   page_controls:      &PAGE_CONTROLS # NOTE: to "en.emma.page._generic.page_controls"
+#     label:            '/x/ Actions'
 
-    dev_controls:       &DEV_CONTROLS
-      label:            'Dev Actions'
+#   dev_controls:       &DEV_CONTROLS # NOTE: to "en.emma.page._generic.dev_controls"
+#     label:            '/x/ Dev Actions'
 
     # =========================================================================
     # Controls
     # =========================================================================
 
-    pagination:         &PAGINATION
+#   pagination:         &PAGINATION # NOTE: to "en.emma.page._generic.pagination"
 
-      page:             'page'
-      page_size:        25
-      separator:        '|'
-      count:
-        one:            'item found'
-        many:           'items found'
+#     page:             '/x/ page'
+#     page_size:        25
+#     separator:        '/x/ |'
+#     count:
+#       one:            '/x/ item found'
+#       many:           '/x/ items found'
 
-      start_over:
-        label:          'START'
-        tooltip:        'Clear all search terms'
+#     start_over:
+#       label:          '/x/ START'
+#       tooltip:        '/x/ Clear all search terms'
 
-      first_page:
-        label:          'FIRST'
-        tooltip:        'Go to the first page of results'
-        no_link:
-          tooltip:      'Already on the first page of results'
+#     first_page:
+#       label:          '/x/ FIRST'
+#       tooltip:        '/x/ Go to the first page of results'
+#       no_link:
+#         tooltip:      '/x/ Already on the first page of results'
 
-      last_page:
-        label:          'LAST'
-        tooltip:        'Go to the last page of results'
-        no_link:
-          tooltip:      'Already on the last page of results'
+#     last_page:
+#       label:          '/x/ LAST'
+#       tooltip:        '/x/ Go to the last page of results'
+#       no_link:
+#         tooltip:      '/x/ Already on the last page of results'
 
-      prev_page:
-        label:          'PREV'
-        tooltip:        'Go to the previous page of results'
-        no_link:
-          tooltip:      'Currently on the first page of results'
+#     prev_page:
+#       label:          '/x/ PREV'
+#       tooltip:        '/x/ Go to the previous page of results'
+#       no_link:
+#         tooltip:      '/x/ Currently on the first page of results'
 
-      next_page:
-        label:          'NEXT'
-        tooltip:        'Go to the next page of results'
-        no_link:
-          tooltip:      'Currently on the last page of results'
+#     next_page:
+#       label:          '/x/ NEXT'
+#       tooltip:        '/x/ Go to the next page of results'
+#       no_link:
+#         tooltip:      '/x/ Currently on the last page of results'
 
-    placeholder:        &PLACEHOLDER
-      format:           'this'
-      image:            &PLACEHOLDER_IMAGE
-        alt:            'Retrieving...'
-        asset:          'loading-balls.gif'
+#   image:              &IMAGE # NOTE: to "en.emma.page._generic.image"
+#     placeholder:      &PLACEHOLDER
+#       format:         'this'
+#       image:          &PLACEHOLDER_IMAGE
+#         alt:          '/x/ Retrieving...'
+#         asset:        'loading-balls.gif'
 
-    thumbnail:          &THUMBNAIL
-      image:
-        alt:            '' # NOTE: not 'Thumbnail image for %{item}'
+#   thumbnail:          &THUMBNAIL # NOTE: to "en.emma.page._generic.thumbnail"
+#     image:
+#       alt:            '' # NOTE: not 'Thumbnail image for %{item}'
 
-    cover:              &COVER
-      image:
-        alt:            '' # NOTE: not 'Cover image for %{item}'
-      placeholder:
-        image:
-          <<:           *PLACEHOLDER_IMAGE
+#   cover:              &COVER # NOTE: to "en.emma.page._generic.cover"
+#     image:
+#       alt:            '' # NOTE: not 'Cover image for %{item}'
+#     placeholder:
+#       <<:             *PLACEHOLDER
 
-    download:           &DOWNLOAD
+#   download:           &DOWNLOAD # NOTE: to "en.emma.page._generic.download"
 
-      # NOTE: Some of these definitions require parameters to be supplied:
-      #
-      # %{fmt}        Name of a content file export format.
-      # %{button}     Label of a button.
+#     # NOTE: Some of these definitions require parameters to be supplied:
+#     #
+#     # %{fmt}        Name of a content file export format.
+#     # %{button}     Label of a button.
 
-      label:          'Download'
-      title:          'Download'
-      tooltip:        'Get a copy of the item in this format'
+#     label:          '/x/ Download'
+#     title:          '/x/ Download'
+#     tooltip:        '/x/ Get a copy of the item in this format'
 
-      complete:
-        tooltip:      'Click on the button to retrieve the file'
+#     complete:
+#       tooltip:      '/x/ Click on the button to retrieve the file'
 
-      error:
-        server:       'This item could not be downloaded'
-        javascript:   'You must have JavaScript enabled'
+#     error:
+#       server:       '/x/ This item could not be downloaded'
+#       javascript:   '/x/ You must have JavaScript enabled'
 
-      link:
-        tooltip:      'Download this item in %{fmt} format'
-        sign_in:
-          tooltip:    'You must sign in to EMMA for this item'
-        disallowed:
-          tooltip:
-            >-
-            %{repo} does not allow your account to download this item
-        complete:
-          tooltip:    'Click on the "%{button}" button to retrieve the file'
+#     link:
+#       tooltip:      '/x/ Download this item in %{fmt} format'
+#       sign_in:
+#         tooltip:    '/x/ You must sign in to EMMA for this item'
+#       disallowed:
+#         tooltip:
+#           >-
+#           %{repo} does not allow your account to download this item
+#       complete:
+#         tooltip:    '/x/ Click on the "%{button}" button to retrieve the file'
 
-      progress:
-        tooltip:      'Click here to cancel the download'
-        image:
-          <<:         *PLACEHOLDER_IMAGE
-          alt:        'Downloading...'
+#     progress:
+#       tooltip:      '/x/ Click here to cancel the download'
+#       image:
+#         <<:         *PLACEHOLDER_IMAGE
+#         alt:        '/x/ Downloading...'
 
-      failure:
-        sign_in:      'You must sign in to EMMA for this item'
-        unknown:      'unknown error'
+#     failure:
+#       sign_in:      '/x/ You must sign in to EMMA for this item'
+#       unknown:      '/x/ unknown error'
 
-    action_links:     &ACTION_LINKS
-      back:
-        label:        'Back'
+#   action_links:     &ACTION_LINKS # NOTE: to "en.emma.page._generic.action_links"
+#     #back:                  # NOTE: removed to facilitate comparison
+#     #  label:        '/x/ Back' # NOTE: removed to facilitate comparison
 
-    control_icons:    &CONTROL_ICONS
+#   control_icons:    &CONTROL_ICONS # NOTE: to "en.emma.page._generic.control_icons"
 
-      show:
-        icon:         "\U0001F50D" # 🔍 LEFT-POINTING MAGNIFYING GLASS
-        spoken:       'magnifying glass icon'
-        tooltip:      'View this %{item}'
+#     show:
+#       icon:         "/x/\U0001F50D" # 🔍 LEFT-POINTING MAGNIFYING GLASS
+#       spoken:       '/x/ magnifying glass icon'
+#       tooltip:      '/x/ View this %{item}'
 
-      edit:
-        icon:         "\U0001F58A" # 🖊 LOWER LEFT BALLPOINT PEN
-        spoken:       'pen icon'
-        tooltip:      'Modify this %{item}'
+#     edit:
+#       icon:         "/x/\U0001F58A" # 🖊 LOWER LEFT BALLPOINT PEN
+#       spoken:       '/x/ pen icon'
+#       tooltip:      '/x/ Modify this %{item}'
 
-      delete:
-        icon:         "\u2716" # ✖ HEAVY MULTIPLICATION X
-        spoken:       'X icon'
-        tooltip:      'Remove this %{item}'
+#     delete:
+#       icon:         "/x/\u2716" # ✖ HEAVY MULTIPLICATION X
+#       spoken:       '/x/ X icon'
+#       tooltip:      '/x/ Remove this %{item}'
 
-    field_group:      &FIELD_GROUP
+#   field_group:      &FIELD_GROUP # NOTE: to "en.emma.page._generic.field_group"
 
-      available:
-        label:        'All fields'
-        label_narrow: 'All'
-        tooltip:      'Reveal all data fields'
+#     available:
+#       label:        '/x/ All fields'
+#       label_narrow: '/x/ All'
+#       tooltip:      '/x/ Reveal all data fields'
 
-      invalid:
-        label:        'Incomplete fields'
-        label_narrow: 'Incomplete'
-        tooltip:      'Show fields that require attention'
+#     invalid:
+#       label:        '/x/ Incomplete fields'
+#       label_narrow: '/x/ Incomplete'
+#       tooltip:      '/x/ Show fields that require attention'
 
-      filled:
-        label:        'Completed fields'
-        label_narrow: 'Completed'
-        tooltip:      'Show fields that have data'
+#     filled:
+#       label:        '/x/ Completed fields'
+#       label_narrow: '/x/ Completed'
+#       tooltip:      '/x/ Show fields that have data'
 
-      all:
-        label:        'All plus internal-use fields'
-        label_narrow: 'All++'
-        tooltip:      'Show all record fields including read-only fields'
-        role:         administrator
+#     all:
+#       label:        '/x/ All plus internal-use fields'
+#       label_narrow: '/x/ All++'
+#       tooltip:      '/x/ Show all record fields including read-only fields'
+#       role:         administrator
 
-    status_marker:    &STATUS_MARKER
+#   status_marker:    &STATUS_MARKER # NOTE: to "en.emma.page._generic.status_marker"
 
-      required:
-        label:        "\u26A0" # ⚠ WARNING SIGN
-        spoken:       'warning icon'
-        tooltip:      '%{This} is a required field'
+#     required:
+#       label:        "/x/\u26A0" # ⚠ WARNING SIGN
+#       spoken:       '/x/ warning icon'
+#       tooltip:      '/x/ %{This} is a required field'
 
-      invalid:
-        label:        "\u26A0" # ⚠ WARNING SIGN
-        spoken:       'warning icon'
-        tooltip:      'The provided value is invalid'
+#     invalid:
+#       label:        "/x/\u26A0" # ⚠ WARNING SIGN
+#       spoken:       '/x/ warning icon'
+#       tooltip:      '/x/ The provided value is invalid'
 
-      valid:
-        label:        "\u2714" # ✔ HEAVY CHECK MARK
-        spoken:       'checkmark icon'
-        tooltip:      'The provided value is valid'
+#     valid:
+#       label:        "/x/\u2714" # ✔ HEAVY CHECK MARK
+#       spoken:       '/x/ checkmark icon'
+#       tooltip:      '/x/ The provided value is valid'
 
-      disabled:
-        label:        "\u2716" # ✖ HEAVY MULTIPLICATION X
-        spoken:       'X icon'
+#     disabled:
+#       label:        "/x/\u2716" # ✖ HEAVY MULTIPLICATION X
+#       spoken:       '/x/ X icon'
 
-      blank:
-        label:        "\u2002" #   EN SPACE
+#     blank:
+#       label:        "/x/\u2002" #   EN SPACE
 
     # =========================================================================
     # Generic (parameterized) page definitions
     # =========================================================================
 
-    generic:
+#   generic: # NOTE: to "en.emma.page._generic"
 
-      # NOTE: Some of these definitions require parameters to be supplied:
-      #
-      # %{item}         Singular form of the entity.
-      # %{items}        Plural form of the entity.
-      # %{Item}         Capitalized singular form of the entity.
-      # %{Items}        Capitalized plural form of the entity.
+#     # NOTE: Some of these definitions require parameters to be supplied:
+#     #
+#     # %{item}         Singular form of the entity.
+#     # %{items}        Plural form of the entity.
+#     # %{Item}         Capitalized singular form of the entity.
+#     # %{Items}        Capitalized plural form of the entity.
 
-      unit:
-        brief:          'item'
-        long:           'item'
-      label:            '%{Items}'
-      title:            '%{Items}'
-      tooltip:          'Search for %{items}'
+#     unit: # NOTE: to "en.emma.page._generic"
+#       brief:          '/x/ item'
+#       long:           '/x/ item'
+#     label:            '/x/ %{Items}' # NOTE: to "en.emma.page._generic"
+#     title:            '/x/ %{Items}' # NOTE: to "en.emma.page._generic"
+#     tooltip:          '/x/ Search for %{items}' # NOTE: to "en.emma.page._generic"
 
       # =======================================================================
       # Layout
       # =======================================================================
 
-      search_type:
-        <<:             *SEARCH_TYPE
+#     search_type:
+#       <<:             *SEARCH_TYPE
 
-      search_bar:
-        <<:             *SEARCH_BAR
-        label:          '%{Item} Search'
+#     search_bar:
+#       <<:             *SEARCH_BAR
+#       label:          '/x/ %{Item} Search'
 
-      search_filters:
-        <<:             *SEARCH_FILTERS
-        layout:
-          - [sort,   size,           repository  ]
-          - [format, format_feature, a11y_feature]
+#     search_filters: # NOTE: to "en.emma.page._index_search.search_filters"
+#       <<:             *SEARCH_FILTERS
+#       layout:
+#         - [sort,   size,           repository  ]
+#         - [format, format_feature, a11y_feature]
 
-      page_controls:
-        <<:             *PAGE_CONTROLS
-        label:
-          one:          'Manage this %{item}:'
-          many:         '%{Item} Actions:'
+#     page_controls:
+#       <<:             *PAGE_CONTROLS
+#       label:
+#         one:          '/x/ Manage this %{item}:'
+#         many:         '/x/ %{Item} Actions:'
 
-      dev_controls:
-        <<:             *DEV_CONTROLS
+#     dev_controls:
+#       <<:             *DEV_CONTROLS
 
       # =======================================================================
       # Controls
       # =======================================================================
 
-      pagination:
-        <<:             *PAGINATION
-        count:
-          one:          '%{item} found'
-          many:         '%{items} found'
+#     pagination:
+#       <<:             *PAGINATION
+#       count:
+#         one:          '/x/ %{item} found'
+#         many:         '/x/ %{items} found'
 
-      placeholder:
-        <<:             *PLACEHOLDER
+#     image:
+#       <<:             *IMAGE
 
-      thumbnail:
-        <<:             *THUMBNAIL
+#     thumbnail:
+#       <<:             *THUMBNAIL
 
-      cover:
-        <<:             *COVER
+#     cover:
+#       <<:             *COVER
 
-      download:
-        <<:             *DOWNLOAD
+#     download:
+#       <<:             *DOWNLOAD
 
-      action_links:
-        <<:             *ACTION_LINKS
+#     action_links:
+#       <<:             *ACTION_LINKS
 
-      control_icons:
-        <<:             *CONTROL_ICONS
+#     control_icons:
+#       <<:             *CONTROL_ICONS
 
-      field_group:
-        <<:             *FIELD_GROUP
+#     field_group:
+#       <<:             *FIELD_GROUP
 
-      status_marker:
-        <<:             *STATUS_MARKER
+#     status_marker:
+#       <<:             *STATUS_MARKER
 
       # =======================================================================
       # Pages
       # =======================================================================
 
-      index:
-        label:          '%{Items}'
-        title:          '%{Item} Index'
-        tooltip:        'Find more %{items} with %{terms}'
-        _endpoint:      true
+#     index:
+#       #label:          '/x/ %{Items}'
+#       label:          '/x/ List'
+#       title:          '/x/ %{Item} Index'
+#       tooltip:        '/x/ Find more %{items} with %{terms}'
+#       _endpoint:      true
 
-      show:
-        label:          '%{Item}'
-        title:          '%{Item}'
-        tooltip:        'See details about this %{item}'
-        _endpoint:      true
+#     show:
+#       #label:          '/x/ %{Item}'
+#       label:          '/x/ Show'
+#       title:          '/x/ %{Item}'
+#       tooltip:        '/x/ See details about this %{item}'
+#       _endpoint:      true
 
-      new:
-        label:          'Add'
-        title:          'Add %{Item}'
-        tooltip:        'Create a new %{item}'
-        _endpoint:      true
+#     new:
+#       label:          '/x/ Add'
+#       title:          '/x/ Add %{Item}'
+#       tooltip:        '/x/ Create a new %{item}'
+#       _endpoint:      true
 
-      edit:
-        label:          'Modify'
-        title:          'Modify %{Item}'
-        tooltip:        'Make changes to this %{item}'
-        _endpoint:      true
+#     edit:
+#       label:          '/x/ Modify'
+#       title:          '/x/ Modify %{Item}'
+#       tooltip:        '/x/ Make changes to this %{item}'
+#       _endpoint:      true
 
-      delete:
-        label:          'Remove'
-        title:          'Remove %{Item}'
-        tooltip:        'Remove this %{item}'
-        _endpoint:      true
+#     delete:
+#       label:          '/x/ Remove'
+#       title:          '/x/ Remove %{Item}'
+#       tooltip:        '/x/ Remove this %{item}'
+#       _endpoint:      true
 
-      history:
-        label:          'History'
-        title:          '%{Item} History'
-        tooltip:        'View modifications for this %{item}'
-        _endpoint:      true
+#     history: # TODO: this was speculative; no such endpoint exists
+#       label:          '/x/ History'
+#       title:          '/x/ %{Item} History'
+#       tooltip:        '/x/ View modifications for this %{item}'
+#       _endpoint:      true

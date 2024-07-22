@@ -6,11 +6,12 @@
 
   list  ||= @list
 
+  cfg   ||= current_config_page_section
   help  ||= nil # %i[data counts]
-  title ||= t('emma.data.counts.title')
+  title ||= cfg[:title]
 
   unless modal?
-    label = t('emma.data.counts.label', default: title)
+    label = cfg[:label] || title
     set_page_meta_title(label)
     set_page_description(title)
   end

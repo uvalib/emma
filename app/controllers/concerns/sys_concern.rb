@@ -24,9 +24,9 @@ module SysConcern
   # @type [Array<Symbol>]
   #
   SYS_PAGES =
-    CONTROLLER_CONFIGURATION[:sys].except(:index, :view).map { |k, v|
-      k if v.is_a?(Hash) && v[:_endpoint]
-    }.compact.freeze
+    CONTROLLER_CONFIGURATION.dig(:sys, :action).keys.excluding(
+      :index, :view
+    ).freeze
 
   # ===========================================================================
   # :section:

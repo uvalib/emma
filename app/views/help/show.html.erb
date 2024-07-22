@@ -5,13 +5,14 @@
   view_debug(__FILE__)
 
   item  ||= @topic
-
   entry   = help_topic_entry(item)
-  title ||= entry[:label] || t('emma.help.show.title', **entry)
-  intro ||= entry[:intro] || t('emma.help.show.intro', default: '', **entry)
+
+  cfg   ||= current_config_page_section(**entry)
+  title ||= entry[:label] || cfg[:title]
+  intro ||= entry[:intro] || cfg[:intro]
 
   unless modal?
-    label = t('emma.help.show.label', default: title, **entry)
+    label = cfg[:label] || title
     set_page_meta_title(label)
     set_page_description(title)
   end

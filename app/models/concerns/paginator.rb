@@ -337,16 +337,15 @@ class Paginator
     def get_page_size(controller: nil, action: nil, key: PAGE_SIZE_KEY, **)
       c, a = controller, action
       keys = []
-      keys << :"emma.#{c}.#{a}.pagination" if c && a
-      keys << :"emma.#{c}.#{a}"            if c && a
-      keys << :"emma.#{c}.pagination"      if c
-      keys << :"emma.#{c}"                 if c
-      keys << :'emma.generic.pagination'
-      keys << :'emma.generic'
-      keys << :'emma.pagination'
-      keys << :'emma'
-      keys.map! { |base| :"#{base}.#{key}" }
-      config_item(keys).to_i
+      keys << :"emma.page.#{c}.action.#{a}.pagination.#{key}"     if c && a
+      keys << :"emma.page.#{c}.action.#{a}.#{key}"                if c && a
+      keys << :"emma.page.#{c}.pagination.#{key}"                 if c
+      keys << :"emma.page.#{c}.#{key}"                            if c
+      keys << :"emma.page._generic.action.#{a}.pagination.#{key}" if a
+      keys << :"emma.page._generic.action.#{a}.#{key}"            if a
+      keys << :"emma.page._generic.pagination.#{key}"
+      keys << :"emma.page._generic.#{key}"
+      config_entry(keys).to_i
     end
 
     # Number of results per page for any arbitrary controller.

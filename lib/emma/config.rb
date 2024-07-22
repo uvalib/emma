@@ -136,6 +136,51 @@ module Emma::Config
     end
   end
 
+  # Configuration sections under "en.emma.page" that may hold values for
+  # *item*.
+  #
+  # The first returned element should be used as the key for I18n#translate and
+  # the remaining elements should be used passed as the :default option.
+  #
+  # @param [Array<Symbol,String>] base
+  # @param [Symbol, String, nil]  item
+  # @param [Symbol, String]       root
+  #
+  # @return [Array<Symbol>]
+  #
+  def config_page_keys(*base, item, root: CONFIG_ROOT)
+    base.flatten!
+    base.compact!
+    return []            if base.blank? && item.blank?
+    return [item.to_sym] if base.blank? && item.start_with?(root)
+    keys = []
+    while base.present?
+      type, subtype = base[0], base[1..-1]
+      if subtype.blank?
+        keys << [root, :page, type, :action]
+        keys << [root, :page, type]
+        keys << [root, :page, :_generic, type, :action]
+        keys << [root, :page, :_generic, type]
+      elsif subtype.first.to_sym == :action
+        keys << [root, :page, type, *subtype]
+        keys << [root, :page, :_generic, type, *subtype]
+      else
+        keys << [root, :page, type, :action, *subtype]
+        keys << [root, :page, type, *subtype]
+        keys << [root, :page, *subtype]
+        keys << [root, :page, :_generic, type, :action, *subtype]
+        keys << [root, :page, :_generic, type, *subtype]
+        keys << [root, :page, :_generic, *subtype]
+      end
+      base.pop
+    end
+    if item.present?
+      keys << [root, :page, :_generic]
+      keys << [root, :page]
+    end
+    config_keys(keys, *item)
+  end
+
   # Configuration sections that may hold message values for *item*.
   #
   # The first returned element should be used as the key for I18n#translate and
@@ -395,6 +440,44 @@ module Emma::Config
   def config_term_section(*base, item, **opt)
     base, item = [[item], nil] if base.empty?
     keys = config_term_keys(*base, item).reverse
+    vals = keys.map { |k| config_section(k, **opt) }.compact_blank!
+    vals.select { |v| v.is_a?(Hash) }.prepend({}).reduce(&:rmerge!)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Value from the most specific match found for *item* within the
+  # configuration location(s) specified by *base* under #config_page_keys.
+  #
+  # @param [Array<Symbol,String>] base
+  # @param [Symbol, String]       item
+  # @param [Hash]                 opt   To #config_entry.
+  #
+  # @return [any, nil]
+  #
+  def config_page(*base, item, **opt)
+    keys = config_page_keys(*base, item)
+    config_entry(keys, **opt)
+  end
+
+  # Configuration text section built up from all of the matches found within
+  # the configuration locations under #config_page_keys.
+  #
+  # If *opt* interpolation values are given they will be attempted on all
+  # strings copied from the section.
+  #
+  # @param [Array<Symbol,String>] base
+  # @param [Symbol, String]       item
+  # @param [Hash]                 opt   To #config_section
+  #
+  # @return [Hash]
+  #
+  def config_page_section(*base, item, **opt)
+    keys = config_page_keys(*base, item).reverse
     vals = keys.map { |k| config_section(k, **opt) }.compact_blank!
     vals.select { |v| v.is_a?(Hash) }.prepend({}).reduce(&:rmerge!)
   end

@@ -86,11 +86,11 @@ module LayoutHelper::SearchFilters
     #
     # @return [Hash]
     #
-    # @see #SEARCH_MENU_MAP
+    # @see #search_menu_map
     #
     def current_menu_config(menu_name, target: nil, **)
       target = target&.to_sym
-      config = target && SEARCH_MENU_MAP[target] || SEARCH_MENU_BASE
+      config = target && search_menu_map[target] || search_menu_base
       config[menu_name.to_sym] || {}
     end
 
@@ -200,6 +200,67 @@ module LayoutHelper::SearchFilters
     # :section:
     # =========================================================================
 
+    public
+
+    # The names and base properties of all of the search control menus.
+    #
+    # @return [Hash]
+    #
+    def search_menu_base
+      @search_menu_base ||=
+        SEARCH_FILTERS_ROOT.map { |menu_name, menu_config|
+          next if menu_name.start_with?('_')
+          next unless menu_config.is_a?(Hash)
+          [menu_name, search_menu_config(menu_name, menu_config)]
+        }.compact.to_h.deep_freeze
+    end
+
+    # Search control menu configurations for each controller configured to
+    # display them.
+    #
+    # @return [Hash{Symbol=>Hash}]
+    #
+    def search_menu_map
+      @search_menu_map ||=
+        SEARCH_FILTERS_CONFIG.transform_values { |control_configs|
+          control_configs.map { |menu_name, menu_config|
+            next if menu_name.start_with?('_')
+            next if %i[enabled expanded].include?(menu_name)
+            if menu_config.is_a?(Hash)
+              menu_config = search_menu_config(menu_name, menu_config)
+              if menu_config[:menu] || menu_config[:values]
+                menu_config[:menu] = make_menu(menu_name, menu_config).presence
+              end
+              menu_config.compact!
+            end
+            [menu_name, menu_config]
+          }.compact.to_h
+        }.deep_freeze
+    end
+
+    # Per-controller tables of the menu configurations associated with each
+    # :url_param value.
+    #
+    # @return [Hash{Symbol=>Hash}]
+    #
+    def search_parameter_menu_map
+      @search_parameter_menu_map ||=
+        search_menu_map.map { |controller, menu_configs|
+          search_param_menu_configs =
+            menu_configs.map { |menu_name, menu_config|
+              next if menu_name.start_with?('_')
+              next if menu_name == :layout
+              next if (url_param = menu_config[:url_param]).blank?
+              [url_param.to_sym, menu_config]
+            }.compact.to_h
+          [controller, search_param_menu_configs]
+        }.to_h.deep_freeze
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
     protected
 
     # Create reverse sort entries.
@@ -294,7 +355,8 @@ module LayoutHelper::SearchFilters
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  SEARCH_FILTERS_ROOT = config_section('emma.search_filters').deep_freeze
+  SEARCH_FILTERS_ROOT =
+    config_page_section(:search, :search_filters).deep_freeze
 
   # The value 'en.emma.search_filters._default' contains each of the properties
   # that can be expressed for a menu.  If a property there has a non-nil value,
@@ -313,74 +375,19 @@ module LayoutHelper::SearchFilters
   SEARCH_RESET_CONTROL =
     SEARCH_MENU_DEFAULT.merge(SEARCH_FILTERS_ROOT[:_reset]).deep_freeze
 
-  # The names and base properties of all of the search control menus.
-  #
-  # @type [Hash]
-  #
-  SEARCH_MENU_BASE =
-    SEARCH_FILTERS_ROOT.map { |menu_name, menu_config|
-      next if menu_name.start_with?('_') || !menu_config.is_a?(Hash)
-      [menu_name, search_menu_config(menu_name, menu_config)]
-    }.compact.to_h.deep_freeze
-
-  # URL parameters for all search control menus.
-  #
-  # @type [Array<Symbol>]
-  #
-  # @note Currently unused.
-  #
-  SEARCH_PARAMETERS =
-    SEARCH_MENU_BASE.values.map { |config| config[:url_param] }.uniq.freeze
-
   # Search filter configurations for each controller where they are enabled.
   #
   # @type [Hash{Symbol=>Hash}]
   #
   SEARCH_FILTERS_CONFIG =
-    ApplicationHelper::APP_CONTROLLERS.map { |controller|
-      filter_configs = SEARCH_FILTERS_ROOT.deep_dup
-      %W[generic #{controller} #{controller}.generic].each do |ctrlr|
-        ctrlr_cfg = config_section("emma.#{ctrlr}.search_filters")
-        filter_configs.deep_merge!(ctrlr_cfg) if ctrlr_cfg.present?
+    ApplicationHelper::CONTROLLER_CONFIGURATION.transform_values { |config|
+      if (filters = config[:search_filters])&.key?(:enabled)
+        enabled = filters[:enabled]
+        enabled = enabled.is_a?(Array) ? enabled.map(&:to_s) : true?(enabled)
+        filters = filters.merge(enabled: enabled)
       end
-      enabled = filter_configs[:enabled]
-      enabled = enabled.is_a?(Array) ? enabled.map(&:to_s) : true?(enabled)
-      [controller, filter_configs] if (filter_configs[:enabled] = enabled)
-    }.compact.to_h.deep_freeze
-
-  # Search control menu configurations for each controller configured to
-  # display them.
-  #
-  # @type [Hash{Symbol=>Hash}]
-  #
-  SEARCH_MENU_MAP =
-    SEARCH_FILTERS_CONFIG.transform_values { |control_configs|
-      control_configs.map { |menu_name, menu_config|
-        next if %i[enabled expanded].include?(menu_name)
-        next if menu_name.start_with?('_')
-        if menu_config.is_a?(Hash)
-          menu_config = search_menu_config(menu_name, menu_config)
-          menu_config[:menu] = make_menu(menu_name, menu_config).presence
-        end
-        [menu_name, menu_config]
-      }.compact.to_h
-    }.deep_freeze
-
-  # Per-controller tables of the menu configurations associated with each
-  # :url_param value.
-  #
-  # @type [Hash{Symbol=>Hash}]
-  #
-  SEARCH_PARAMETER_MENU_MAP =
-    SEARCH_MENU_MAP.map { |controller, menu_configs|
-      search_param_menu_configs =
-        menu_configs.map { |menu_name, menu_config|
-          next if menu_name == :layout
-          url_param = menu_config[:url_param]&.to_sym
-          [url_param, menu_config] if url_param.present?
-        }.compact.to_h
-      [controller, search_param_menu_configs]
-    }.to_h.deep_freeze
+      filters
+    }.compact.deep_freeze
 
   # Indicate whether the search control panel starts in the open state.
   #
@@ -398,7 +405,7 @@ module LayoutHelper::SearchFilters
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  ADV_SEARCH_CONFIG = config_section('emma.search_bar.advanced').deep_freeze
+  ADV_SEARCH_CONFIG = config_page_section(:search_bar, :advanced).deep_freeze
 
   # Labels/tooltips for expanding and contracting search filters.
   #
@@ -455,7 +462,7 @@ module LayoutHelper::SearchFilters
   #
   def search_filter_container(target: nil, **opt)
     target    = search_target(target) or return
-    config    = SEARCH_MENU_MAP[target]   || {}
+    config    = search_menu_map[target]   || {}
     grid_rows = config[:layout]&.deep_dup || [[]]
     grid_opt  = { target: target, row: 0 }
     grid_opt[:row_max] = grid_rows.size
@@ -977,8 +984,8 @@ module LayoutHelper::SearchFilters
   def reset_parameters(opt = nil)
     opt ||= request_parameters
     tgt   = search_target(**opt)
-    keys  = SEARCH_PARAMETER_MENU_MAP[tgt]&.keys || []
-    keys -= QUERY_PARAMETERS[tgt]
+    keys  = search_parameter_menu_map[tgt]&.keys
+    keys  = keys&.excluding(*QUERY_PARAMETERS[tgt]) || []
     opt.except(*keys, *Paginator::NON_SEARCH_KEYS)
   end
 

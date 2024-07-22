@@ -6,9 +6,10 @@
 
   ctrlr  ||= params[:controller]&.to_s&.split('/')&.last
   action ||= params[:action]
-  title  ||= t("emma.user.#{ctrlr}.#{action}.title",   default: nil)
-  title  ||= t("emma.user.#{ctrlr}.#{action}.label",   default: 'Problem')
-  error  ||= t("emma.user.#{ctrlr}.#{action}.failure", default: 'UNKNOWN')
+
+  cfg    ||= current_config_page_section
+  title  ||= cfg[:title] || cfg[:label] || 'Problem'
+  error  ||= cfg[:failure] || 'UNKNOWN'
 
   unless modal?
     set_page_meta_title(title)

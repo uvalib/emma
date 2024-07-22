@@ -57,7 +57,7 @@ class RunState < Hash
   # :unavailable so that they maintain their first/last positions.
   #
   STATE =
-    config_section('emma.health.run_state.state').map { |state, entry|
+    config_page_section(:health, :run_state, :state).map { |state, entry|
       values = { state: state.to_s }.merge!(entry[:property] || {})
       [state, values]
     }.to_h.deep_freeze

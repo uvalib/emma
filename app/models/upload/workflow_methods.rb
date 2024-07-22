@@ -117,7 +117,7 @@ module Upload::WorkflowMethods
   # @see file:config/locales/controllers/upload.en.yml
   #
   STATE_GROUP =
-    config_section('emma.upload.state_group').transform_values { |entry|
+    config_page_section(:upload, :state_group).transform_values { |entry|
       states = Array.wrap(entry[:states]).map(&:to_sym)
       entry.merge(states: states)
     }.deep_freeze
@@ -141,8 +141,8 @@ module Upload::WorkflowMethods
           states_groups[state] << group
         end
       end
-      states  = I18n.t('emma.workflow.upload.state', default: {}).keys
-      states += I18n.t('emma.upload.state_group.pseudo.states', default: [])
+      states  = config_item(:workflow, :upload, :state)&.keys || []
+      states += config_page(:upload, :state_group, :pseudo, :states) || []
       states.compact_blank!.map!(&:to_sym).uniq!
       errors  =
         states_groups.map { |state, group|

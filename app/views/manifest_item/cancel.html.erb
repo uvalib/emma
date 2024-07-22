@@ -5,8 +5,9 @@
   view_abort(__FILE__, 'NOT EXPECTED TO BE USED')
   view_debug(__FILE__)
 
+  cfg   ||= current_config_page_section
   help  ||= nil # %i[manifest_item cancel]
-  title ||= t('emma.manifest_item.cancel.title')
+  title ||= cfg[:title]
 
   error ||= config_term(:manifest_item, :invalid_id)
 

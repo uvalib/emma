@@ -32,7 +32,7 @@ module LayoutHelper::SearchFilters
     #
     # @return [Hash]
     #
-    # @see #SEARCH_MENU_MAP
+    # @see #search_menu_map
     #
     def current_menu_config: ((Symbol|String) menu_name, ?target: Symbol|String|nil, **untyped _ignored) -> symHash
 
@@ -96,6 +96,32 @@ module LayoutHelper::SearchFilters
     # configuration information that maps values to labels.
     #
     def make_menu_label: ((Symbol|String) menu_name, String label, **untyped opt) -> String
+
+    # The names and base properties of all of the search control menus.
+    #
+    # @return [Hash]
+    #
+    def search_menu_base: () -> symHash
+
+    @search_menu_base: symHash
+
+    # Search control menu configurations for each controller configured to
+    # display them.
+    #
+    # @return [Hash{Symbol=>Hash}]
+    #
+    def search_menu_map: () -> Hash[Symbol,symHash]
+
+    @search_menu_map: Hash[Symbol,symHash]
+
+    # Per-controller tables of the menu configurations associated with each
+    # :url_param value.
+    #
+    # @return [Hash{Symbol=>Hash}]
+    #
+    def search_parameter_menu_map: () -> Hash[Symbol,symHash]
+
+    @search_parameter_menu_map: Hash[Symbol,symHash]
 
     # Create reverse sort entries.
     #
@@ -165,39 +191,11 @@ module LayoutHelper::SearchFilters
   #
   SEARCH_RESET_CONTROL: symHash
 
-  # The names and base properties of all of the search control menus.
-  #
-  # @type [Hash]
-  #
-  SEARCH_MENU_BASE: symHash
-
-  # URL parameters for all search control menus.
-  #
-  # @type [Array<Symbol>]
-  #
-  # @note Currently unused.
-  #
-  SEARCH_PARAMETERS: symArray
-
   # Search filter configurations for each controller where they are enabled.
   #
   # @type [Hash{Symbol=>Hash}]
   #
   SEARCH_FILTERS_CONFIG: Hash[Symbol,symHash]
-
-  # Search control menu configurations for each controller configured to
-  # display them.
-  #
-  # @type [Hash{Symbol=>Hash}]
-  #
-  SEARCH_MENU_MAP: Hash[Symbol,symHash]
-
-  # Per-controller tables of the menu configurations associated with each
-  # :url_param value.
-  #
-  # @type [Hash{Symbol=>Hash}]
-  #
-  SEARCH_PARAMETER_MENU_MAP: Hash[Symbol,symHash]
 
   # Indicate whether the search control panel starts in the open state.
   #

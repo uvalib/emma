@@ -6,7 +6,8 @@
 
   list  ||= @list || []
 
-  title ||= t('emma.upload.bulk_reindex.title')
+  cfg   ||= current_config_page_section
+  title ||= cfg[:title]
 
 -%>
 

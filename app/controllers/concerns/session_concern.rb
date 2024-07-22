@@ -127,7 +127,7 @@ module SessionConcern
     user     = user.account              if user.respond_to?(:account)
     user     = user.to_s.presence || config_term(:session, :unknown_user)
     # noinspection RubyMismatchedReturnType
-    config_item("emma.user.sessions.#{action}.#{status}", user: user)
+    config_page(:user_sessions, action, status, user: user)
   end
 
   # ===========================================================================

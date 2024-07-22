@@ -14,6 +14,7 @@ module Model
 
   extend ActiveSupport::Concern
 
+  include Emma::Common
   include Emma::Constants
 
   # ===========================================================================
@@ -196,21 +197,20 @@ module Model
   # @return [ModelConfig]
   #
   def self.configured_fields_for(type)
-    model_config = config_section("emma.#{type}").deep_dup
+    model_config = config_page_section(type) || {}
 
     # Start with definitions from "en.emma.record.*", separating control
     # control directives from field name entries.
-    directives = {}
-    all_fields =
-      (model_config[:record] || {}).map { |field, prop|
-        name = field.to_s.sub!(/^_/, '')&.to_sym
-        if name && DIRECTIVES.include?(name)
-          directives[name] = prop
-        elsif name
-          Log.warn { "#{__method__}(#{type}): #{name}: unexpected directive" }
-        end
-        [field, Field.normalize(prop, field)] unless name
-      }.compact.to_h
+    rec_config = config_section(:record, type)&.deep_dup || {}
+    directives = rec_config.select { |field, _| field.start_with?('_') }
+    all_fields = rec_config.except(*directives.keys)
+    all_fields = all_fields.map { |k, v| [k, Field.normalize(v, k)] }.to_h
+    directives.transform_keys! { |name| name.to_s.delete_prefix('_').to_sym }
+    directives, invalid = partition_hash(directives, *DIRECTIVES)
+    Log.warn do
+      invalid = invalid.keys.join(', ')
+      "#{__method__}(#{type}): unexpected directive: #{invalid}"
+    end if invalid.present?
 
     # Special handling so that "en.emma.record.search" entries are initialized
     # with the equivalent values from the submission record configuration.
@@ -235,18 +235,17 @@ module Model
     all_fields.transform_values! { |prop| Field.finalize!(prop) }
 
     # Add entries for each page with its own :display_fields section.
-    controller_configs =
-      model_config.map { |action, section|
-        next unless section.is_a?(Hash)
-        next unless (display_fields = section[:display_fields])
-        action_fields = display_config!(all_fields.deep_dup, display_fields)
-        action_fields.transform_values! { |prop| Field.finalize!(prop) }
-        [action, action_fields]
-      }.compact.to_h
+    action_configs = model_config[:action] || {}
+    action_configs = action_configs.reject { |k, _| k.start_with?('_') }
+    action_configs.transform_values! { |entry|
+      display_fields = entry[:display_fields]
+      action_fields  = display_config!(all_fields.deep_dup, display_fields)
+      action_fields.transform_values! { |prop| Field.finalize!(prop) }
+    }.compact!
 
     # Return with the generic field configurations followed by entries for
     # each action-specific field configuration.
-    ModelConfig.new(all: all_fields, **controller_configs)
+    ModelConfig.new(all: all_fields, **action_configs)
   end
 
   # For pages that specify their own :display_fields section, *fields* may
