@@ -20,8 +20,10 @@ $control-height:         2.25rem;
 //=============================================================================
 
 @mixin grid-cell {
-    display: block;
-    margin:  auto 0;
+    & {
+        display: block;
+        margin:  auto 0;
+    }
 }
 
 // When the advanced search grid is closed, each affected grid cell is
@@ -62,8 +64,10 @@ $control-height:         2.25rem;
 
     @include header.enclosure;
 
-    justify-content: flex-start;
-    align-items:     flex-start;
+    & {
+        justify-content: flex-start;
+        align-items:     flex-start;
+    }
 
     > * {
         background: inherit;
@@ -206,7 +210,9 @@ $control-height:         2.25rem;
 
             @include button.link(lightgray, gray, 1px);
 
-            box-shadow: 0 0 0.75rem 0.5rem $button-accent;
+            & {
+                box-shadow: 0 0 0.75rem 0.5rem $button-accent;
+            }
 
             &:focus {
                 @include button.link(gray, gray, 1px);
@@ -220,11 +226,13 @@ $control-height:         2.25rem;
         @include button.basic;
         @include text-contrast;
 
-        width:            $advanced-toggle-width;
-        margin:           0;
-        color:            inherit;
-        background-color: $panel-accent;
-        border:           2px outset;
+        & {
+            width:            $advanced-toggle-width;
+            margin:           0;
+            color:            inherit;
+            background-color: $panel-accent;
+            border:           2px outset;
+        }
 
         &:hover {
             background-color: $panel-accent;
@@ -252,21 +260,23 @@ $control-height:         2.25rem;
 
         @include header.enclosure;
 
-        border:        2px solid whitesmoke;
-        border-radius: 1rem;
+        & {
+            border:        2px solid whitesmoke;
+            border-radius: 1rem;
 
-        $offset: 6px;
-        $x:      $offset;
-        $y:      $offset;
-        $blur:   18px;
-        $spread: 8px;
-        $color:  rgba($uva-accent-teal, 0.35);
+            $offset: 6px;
+            $x:      $offset;
+            $y:      $offset;
+            $blur:   18px;
+            $spread: 8px;
+            $color:  rgba($uva-accent-teal, 0.35);
 
-        box-shadow:
-             #{$x}  #{$y} $blur $spread $color,
-            -#{$x}  #{$y} $blur $spread $color,
-             #{$x} -#{$y} $blur $spread $color,
-            -#{$x} -#{$y} $blur $spread $color;
+            box-shadow:
+                 #{$x}  #{$y} $blur $spread $color,
+                -#{$x}  #{$y} $blur $spread $color,
+                 #{$x} -#{$y} $blur $spread $color,
+                -#{$x} -#{$y} $blur $spread $color;
+        }
 
         &.top,
         &.middle {
@@ -362,12 +372,14 @@ $control-height:         2.25rem;
 
         @include button.clear-input;
 
-        position:          relative;
-        margin:            auto 0;
-        padding:           0 0.25rem;
-        color:             $uva-text-gray;
-        background-color:  white;
-        border-color:      transparent;
+        & {
+            position:          relative;
+            margin:            auto 0;
+            padding:           0 0.25rem;
+            color:             $uva-text-gray;
+            background-color:  white;
+            border-color:      transparent;
+        }
 
         &:focus {
             outline-offset: -4px;
@@ -497,7 +509,9 @@ $control-height:         2.25rem;
 
             @include header.section;
 
-            flex-direction:         column;
+            & {
+                flex-direction:     column;
+            }
 
             @media #{$wide-screen} {
                 flex-wrap:          nowrap;
@@ -616,12 +630,22 @@ $control-height:         2.25rem;
         // Grid layout
         //=====================================================================
 
-        display:    grid;
-        max-width:  unset;
-        overflow-y: hidden;
-        box-sizing: border-box;
-        row-gap:    calc(2 * $gap-y);
-        column-gap: $gap-x;
+        & {
+            display:    grid;
+            max-width:  unset;
+            overflow-y: hidden;
+            box-sizing: border-box;
+            row-gap:    calc(2 * $gap-y);
+            column-gap: $gap-x;
+        }
+
+        @media #{$medium-width} {
+            column-gap: calc(2 * $gap-x);
+        }
+
+        @media #{$narrow-screen} {
+            column-gap: calc(6 * $gap-x);
+        }
 
         // Maximum number of physical columns per width breakpoint.
 
@@ -641,17 +665,11 @@ $control-height:         2.25rem;
             @include grid.column-classes($max-columns, $column, $template-map);
         }
 
-        @media #{$medium-width} {
-            column-gap: calc(2 * $gap-x);
-        }
-
         @media #{$narrow-screen} {
 
             $column: minmax(25vw, 1fr);
 
             @include grid.column-classes($max-columns, $column, $template-map);
-
-            column-gap: calc(6 * $gap-x);
         }
 
         //=====================================================================
@@ -676,16 +694,19 @@ $control-height:         2.25rem;
 
             @include grid-cell;
 
+            $padding-x: 20px;
+
+            & {
+                margin-left:  2 * $padding-x; // Keeps grid from growing.
+                padding:      2px $padding-x;
+                line-height:  1;
+                justify-self: flex-end;
+            }
+        }
+        .menu-button {
             @media #{$not-wide-screen} {
                 display: none;
             }
-
-            $padding-x:    20px;
-
-            margin-left:   2 * $padding-x; // Needed to keep grid from growing.
-            padding:       2px $padding-x;
-            line-height:   1;
-            justify-self:  flex-end;
         }
 
         // The label to the left of a .menu-control.
@@ -694,7 +715,9 @@ $control-height:         2.25rem;
 
             @include grid-cell;
 
-            user-select:        none;
+            & {
+                user-select:    none;
+            }
 
             @media #{$not-narrow-screen} {
                 margin-right:   $gap-x;
@@ -817,12 +840,12 @@ $control-height:         2.25rem;
     &.shadow {
 
         .search-filter-container {
+            border:        none;
+            box-shadow:    inset 0 0 8px 1px $uva-accent-teal;
             @media #{$wide-screen}   { padding: 1.25rem; }
             @media #{$medium-width}  { padding: 0.75rem; }
             @media #{$narrow-screen} { padding: 1rem;    }
-            padding-right: 0.25rem;
-            border:        none;
-            box-shadow:    inset 0 0 8px 1px $uva-accent-teal;
+            &                        { padding-right: 0.25rem; }
         }
 
         .search-controls {

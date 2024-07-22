@@ -33,13 +33,15 @@ $max-height: var(--popup-max-height);
 /// @param {Numeric} $height          Must be in 'vh' units.
 ///
 @mixin center-float($width: $max-width, $height: $max-height) {
-    position: sticky;
-    top:      if(($height == 0), (100vh * 0.5), calc((100vh - $height) * 0.5));
-    left:     if(($width  == 0), (100vw * 0.5), calc((100vw - $width)  * 0.5));
-    display:  block;
-    height:   $height;
-    width:    $width;
-    margin:   0;
+    & {
+        position: sticky;
+        top:      if(($height == 0), (100vh * 0.5), calc((100vh - $height) * 0.5));
+        left:     if(($width  == 0), (100vw * 0.5), calc((100vw - $width)  * 0.5));
+        display:  block;
+        height:   $height;
+        width:    $width;
+        margin:   0;
+    }
 }
 
 /// Used to make a floating container element in the center of the screen.
@@ -51,10 +53,12 @@ $max-height: var(--popup-max-height);
 
     @include center-float($width, $height);
 
-    display:   flex;
-    flex-wrap: nowrap;
-    gap:       1vh 1vw;
-    overflow:  visible;
+    & {
+        display:   flex;
+        flex-wrap: nowrap;
+        gap:       1vh 1vw;
+        overflow:  visible;
+    }
 }
 
 /// Used to make a floating container element that expands vertically around
@@ -66,8 +70,10 @@ $max-height: var(--popup-max-height);
 
     @include center-float-container($width, 0);
 
-    flex-direction:  column;
-    justify-content: center;
+    & {
+        flex-direction:  column;
+        justify-content: center;
+    }
 
     @media #{$not-wide-screen} {
         min-width: $width;
@@ -84,6 +90,8 @@ $max-height: var(--popup-max-height);
 
     @include center-float-container(0, $height);
 
-    flex-direction: row;
-    align-content:  center;
+    & {
+        flex-direction: row;
+        align-content:  center;
+    }
 }

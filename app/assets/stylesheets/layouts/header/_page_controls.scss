@@ -37,9 +37,11 @@
 
         @include button.basic;
 
-        font-size: larger;
-        color:     inherit;
-        border:    1.5px solid;
+        & {
+            font-size: larger;
+            color:     inherit;
+            border:    1.5px solid;
+        }
     }
 }
 
@@ -53,23 +55,25 @@
         @include header.control-panel;
         @include user-select(none);
 
-        flex-wrap:          wrap;
-        justify-content:    flex-start;
-        align-items:        baseline;
-        gap:                calc($gap-y / 2) $gap-x;
-        width:              max-content;
-        max-width:          100%;
-        margin-bottom:      2vh;
+        & {
+            flex-wrap:          wrap;
+            justify-content:    flex-start;
+            align-items:        baseline;
+            gap:                calc($gap-y / 2) $gap-x;
+            width:              max-content;
+            max-width:          100%;
+            margin-bottom:      2vh;
+        }
 
         @media #{$medium-width} {
-            gap:            calc(2 * $gap-y) calc(4 * $gap-x);
-            max-width:      98%;
-            margin-bottom:  1vh;
+            gap:                calc(2 * $gap-y) calc(4 * $gap-x);
+            max-width:          98%;
+            margin-bottom:      1vh;
         }
 
         @media #{$narrow-screen} {
-            gap:            calc(4 * $gap-y) calc(8 * $gap-x);
-            max-width:      95%;
+            gap:                calc(4 * $gap-y) calc(8 * $gap-x);
+            max-width:          95%;
         }
 
         &.count-0,
@@ -96,13 +100,15 @@
 
                     @include text-contrast;
 
-                    background-color:      $panel-accent;
-                    border-color:          white;
+                    & {
+                        background-color:   $panel-accent;
+                        border-color:       white;
+                    }
                 }
 
                 &.disabled {
-                    text-decoration-color: transparent;
-                    pointer-events:        none;
+                    text-decoration-color:  transparent;
+                    pointer-events:         none;
                 }
             }
         }

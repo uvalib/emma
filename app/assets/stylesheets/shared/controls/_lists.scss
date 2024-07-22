@@ -25,9 +25,11 @@
 
     @include grid.columns($template, $columns);
 
-    display:   grid;
-    gap:       $y-gap $x-gap;
-    max-width: inherit;
+    & {
+        display:   grid;
+        gap:       $y-gap $x-gap;
+        max-width: inherit;
+    }
 
     //=========================================================================
     // Components
@@ -38,7 +40,9 @@
 
         @include grid.column-span;
 
-        margin: v.$page-padding-y 0;
+        & {
+            margin: v.$page-padding-y 0;
+        }
 
         &:first-child {
 
@@ -58,7 +62,9 @@
 
     @include tabular(2);
 
-    grid-template-columns: [label] auto [value] 1fr;
+    & {
+        grid-template-columns: [label] auto [value] 1fr;
+    }
 }
 
 /// A three-column list where each row is a number, a label, and a value.
@@ -67,6 +73,8 @@
 
     @include tabular(3);
 
-    grid-template-columns:
-        [number] minmax(1%, max-content) [label] auto [value] 1fr;
+    & {
+        grid-template-columns:
+            [number] minmax(1%, max-content) [label] auto [value] 1fr;
+    }
 }

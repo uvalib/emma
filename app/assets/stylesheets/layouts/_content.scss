@@ -73,12 +73,16 @@
     display:            grid;
     gap:                $flex-gap-y $flex-gap-x;
 
+    grid-template-columns: [text] 1fr [logo] auto;
+
+    @media #{$narrow-screen} {
+        grid-template-columns: 1fr;
+    }
+
     @media #{$wide-screen} {
         margin-top:     0;
         margin-bottom:  0;
     }
-
-    grid-template-columns: [text] 1fr [logo] auto;
 
     > * {
         margin: auto 0;
@@ -89,8 +93,6 @@
     }
 
     @media #{$narrow-screen} {
-
-        grid-template-columns: 1fr;
 
         > .heading {
 

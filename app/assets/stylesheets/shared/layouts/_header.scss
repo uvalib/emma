@@ -18,15 +18,19 @@ $enclosure-pad-narrow:  0.75rem;
 //=============================================================================
 
 @mixin section {
-    display:        flex;
-    flex-direction: row;
+    & {
+        display:        flex;
+        flex-direction: row;
+    }
 }
 
 @mixin search-section {
 
     @include section;
 
-    background-color: inherit;
+    & {
+        background-color: inherit;
+    }
 
     @media #{v.$narrow-screen} {
         width:     100%;
@@ -37,12 +41,14 @@ $enclosure-pad-narrow:  0.75rem;
 
 @mixin control-panel($pad-y: v.$gap-y, $pad-x: v.$gap-x) {
 
-    padding:        $pad-y $pad-x;
-    border:         0.125rem dotted v.$rev-fg-color;
-    border-radius:  0.75rem;
+    & {
+        padding:        $pad-y $pad-x;
+        border:         0.125rem dotted v.$rev-fg-color;
+        border-radius:  0.75rem;
+    }
 
     @media #{v.$not-wide-screen} {
-        padding:    calc(2 * $pad-y) calc(4 * $pad-x);
+        padding:        calc(2 * $pad-y) calc(4 * $pad-x);
     }
 }
 
@@ -60,11 +66,13 @@ $enclosure-pad-narrow:  0.75rem;
     @include button.link;
     @include button.basic;
 
-    padding-left:     8px;
-    padding-right:    8px;
-    text-align:       center;
-    color:            v.$uva-accent-blue;
-    background-color: v.$panel-bg;
+    & {
+        padding-left:     8px;
+        padding-right:    8px;
+        text-align:       center;
+        color:            v.$uva-accent-blue;
+        background-color: v.$panel-bg;
+    }
 
     // Needs to be heavier against a dark background.
     &:hover {
@@ -78,7 +86,9 @@ $enclosure-pad-narrow:  0.75rem;
 ///
 @mixin enclosure {
 
-    margin:      0 auto;
+    & {
+        margin:  0 auto;
+    }
 
     @media #{v.$wide-screen} {
         padding: $enclosure-pad-wide;

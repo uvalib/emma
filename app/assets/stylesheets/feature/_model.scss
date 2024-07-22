@@ -14,9 +14,11 @@
 //=============================================================================
 
 @mixin value-box($color: black) {
-    padding:       0 0.25rem;
-    border:        1px solid $color;
-    border-radius: 0.125rem;
+    & {
+        padding:       0 0.25rem;
+        border:        1px solid $color;
+        border-radius: 0.125rem;
+    }
 }
 
 //=============================================================================
@@ -52,8 +54,10 @@
 
     @include list.columns-2;
 
-    margin:        model.$list-item-gap-y 0;
-    align-content: flex-start;
+    & {
+        margin:        model.$list-item-gap-y 0;
+        align-content: flex-start;
+    }
 
     @media #{$not-wide-screen} {
         grid-template-columns: [label] min-content [value] 1fr;
@@ -74,13 +78,15 @@
 
             @include clear-default-styling;
 
-            display:        flex;
-            flex-direction: column;
-            align-items:    center;
-            position:       sticky;
-            top:            2%;
-            margin:         0;
-            padding:        0;
+            & {
+                display:        flex;
+                flex-direction: column;
+                align-items:    center;
+                position:       sticky;
+                top:            2%;
+                margin:         0;
+                padding:        0;
+            }
 
             //=================================================================
             // Components
@@ -131,28 +137,26 @@
                 @include hover-highlight;
                 @include user-select(none);
 
-                padding:                0 $icon-pad;
-                margin-left:            -$icon-pad;
-                margin-right:           -$icon-pad;
-                text-decoration:        none;
-                font-size:              large;
-                color:                  $uva-accent-blue;
-                border-radius:          50%;
+                & {
+                    padding:            0 $icon-pad;
+                    margin-left:        -$icon-pad;
+                    margin-right:       -$icon-pad;
+                    text-decoration:    none;
+                    font-size:          large;
+                    color:              $uva-accent-blue;
+                    border-radius:      50%;
+                }
 
                 &.edit {
 
-                    @include icon.edit;
-
-                    padding: calc(0.25 * $icon-pad) $icon-pad;
+                    @include icon.edit($pad: calc(0.25 * $icon-pad) $icon-pad);
 
                     .symbol { font-size: large; }
                 }
 
                 &.delete {
 
-                    @include icon.delete;
-
-                    padding: 0 calc(1.25 * $icon-pad);
+                    @include icon.delete($pad: 0 calc(1.25 * $icon-pad));
 
                     .symbol { font-size: large; }
                 }
@@ -272,6 +276,7 @@ $item-padding:      0.5rem;
 
     $value-separation:  2px;
     $max-columns:       20;
+    $template:          minmax(max-content, 1fr);
 
     @extend .model-list-item;
 
@@ -293,15 +298,7 @@ $item-padding:      0.5rem;
 
     // List data items in horizontal columns when there is enough room.
     @media #{$wide-screen} {
-
-        $template: minmax(max-content, 1fr);
-
-        @include grid.column-classes($max-columns, $template);
-
         grid-template-columns: repeat($max-columns, $template);
-
-        > .label { grid-row-start: 1; }
-        > .value { grid-row-start: 2; }
     }
 
     // Revert to one data item label/value per line with less room.
@@ -311,22 +308,14 @@ $item-padding:      0.5rem;
 
     // Each label and value on a separate line on narrow screens.
     @media #{$narrow-screen} {
-
-        padding-bottom: 0;
-
         grid-template-columns: 1fr;
+        padding-bottom: 0;
     }
 
     @media print {
-
         padding-bottom: $item-padding;
         overflow-y:     clip;
         break-inside:   avoid;
-
-        .label,
-        .value {
-            margin-bottom: 0.25rem;
-        }
     }
 
     //=========================================================================
@@ -335,6 +324,11 @@ $item-padding:      0.5rem;
 
     // Horizontal column labels.
     @media #{$wide-screen} {
+
+        @include grid.column-classes($max-columns, $template);
+
+        > .label { grid-row-start: 1; }
+        > .value { grid-row-start: 2; }
 
         > .label:not(.hierarchy),
         > .label.hierarchy .text {
@@ -345,10 +339,19 @@ $item-padding:      0.5rem;
             align-self:    end;
         }
     }
+
     @media #{$not-wide-screen} {
 
         > .value:not(.hierarchy) {
             align-self: center;
+        }
+    }
+
+    @media print {
+
+        .label,
+        .value {
+            margin-bottom: 0.25rem;
         }
     }
 
@@ -418,10 +421,12 @@ $item-padding:      0.5rem;
 
                 @include value-box(blue);
 
-                margin-bottom:      0.5rem;
-                padding-top:        0.0625rem;
-                padding-bottom:     0.09375rem;
-                line-height:        1;
+                & {
+                    margin-bottom:  0.5rem;
+                    padding-top:    0.0625rem;
+                    padding-bottom: 0.09375rem;
+                    line-height:    1;
+                }
 
                 @media #{$not-narrow-screen} {
                     margin-right:   0.5rem;
@@ -505,10 +510,12 @@ $item-padding:      0.5rem;
         $shadow-offset: table.$gap - $shadow-width;
         $shadow-color:  ghostwhite;
 
-        background-color: $shadow-color;
-        box-shadow:
-            -#{$shadow-offset} 0 0 $shadow-width $shadow-color,
-             #{$shadow-offset} 0 0 $shadow-width $shadow-color;
+        & {
+            background-color: $shadow-color;
+            box-shadow:
+                -#{$shadow-offset} 0 0 $shadow-width $shadow-color,
+                 #{$shadow-offset} 0 0 $shadow-width $shadow-color;
+        }
 
         &:focus {
             z-index: 1; // Raise outline above the following cell's box-shadow.

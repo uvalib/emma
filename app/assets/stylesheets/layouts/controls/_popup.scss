@@ -14,46 +14,48 @@
 
     @include popup-shadow;
 
-    display:            flex;
-    flex-direction:     column;
-    flex-wrap:          wrap;
-    padding:            0.5rem;
-    font:               message-box;
-    background:         $bg-color;
-    border:             0.25rem solid $uva-accent-orange;
-    border-top-width:   1.5rem;
-    border-radius:      0.75rem;
+    & {
+        display:            flex;
+        flex-direction:     column;
+        flex-wrap:          wrap;
+        padding:            0.5rem;
+        font:               message-box;
+        background:         $bg-color;
+        border:             0.25rem solid $uva-accent-orange;
+        border-top-width:   1.5rem;
+        border-radius:      0.75rem;
+    }
 
     @media #{$wide-screen} {
-        position:       absolute;
-        top:            1.5rem;
-        left:           1.75rem;
-        min-width:      min(50em, 50vw); // About 80 characters per line.
-        min-height:     min(50em, 50vh); // About 25 lines.
+        position:   absolute;
+        top:        1.5rem;
+        left:       1.75rem;
+        min-width:  min(50em, 50vw); // About 80 characters per line.
+        min-height: min(50em, 50vh); // About 25 lines.
     }
 
     @media #{$medium-width} {
-        position:       fixed;
-        top:            5vh;
-        bottom:         5vh;
-        left:           5vw;
-        right:          5vw;
+        position:   fixed;
+        top:        5vh;
+        bottom:     5vh;
+        left:       5vw;
+        right:      5vw;
     }
 
     @media #{$narrow-screen} {
-        position:       fixed;
-        top:            3vh;
-        bottom:         3vh;
-        left:           3vw;
-        right:          3vw;
+        position:   fixed;
+        top:        3vh;
+        bottom:     3vh;
+        left:       3vw;
+        right:      3vw;
     }
 
     &.hidden {
-        z-index: $z-hidden;
+        z-index:    $z-hidden;
     }
 
     &:not(.hidden) {
-        z-index: $z-popup;
+        z-index:    $z-popup;
     }
 
     //=========================================================================
@@ -76,7 +78,9 @@
 
             @include focus;
 
-            outline-offset: 1px;
+            & {
+                outline-offset: 1px;
+            }
         }
     }
 
@@ -117,8 +121,10 @@
 
             @include button.basic;
 
-            margin-left:        0;
-            margin-right:       0;
+            & {
+                margin-left:    0;
+                margin-right:   0;
+            }
 
             @media #{$not-narrow-screen} {
                 margin-top:     1rem;
@@ -191,24 +197,26 @@
 
         @include hover-highlight;
 
-        margin:         0 0.5rem;
-        padding:        0.1875rem 0.375rem;
-        aspect-ratio:   1;
-        line-height:    1;
-        vertical-align: text-top;
-        font-size:      x-large;
-        color:          $uva-accent-orange;
-        background:     whitesmoke;
-        border:         1px solid $uva-accent-orange;
-        border-radius:  50%;
-        cursor:         pointer;
+        & {
+            margin:         0 0.5rem;
+            padding:        0.1875rem 0.375rem;
+            aspect-ratio:   1;
+            line-height:    1;
+            vertical-align: text-top;
+            font-size:      x-large;
+            color:          $uva-accent-orange;
+            background:     whitesmoke;
+            border:         1px solid $uva-accent-orange;
+            border-radius:  50%;
+            cursor:         pointer;
+        }
 
         @media #{$not-narrow-screen} {
-            display:    block;
+            display:        block;
         }
 
         @media #{$narrow-screen} {
-            display:    inline-block;
+            display:        inline-block;
         }
 
         &:focus {

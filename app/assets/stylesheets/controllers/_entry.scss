@@ -74,7 +74,9 @@ $checkbox-x-gap: 0.675rem;
 
         @include grid.column-span;
 
-        margin: (3 * $entry-padding) 0;
+        & {
+            margin: (3 * $entry-padding) 0;
+        }
 
         // Prevent the top border from meeting the outside border.
         @media #{$narrow-screen} {
@@ -334,8 +336,10 @@ form.select-entry {
 
         @include button.menu;
 
-        width:   max-content;
-        padding: 2px;
+        & {
+            width:   max-content;
+            padding: 2px;
+        }
     }
 
     // A Select2 single-select control instance.
@@ -400,16 +404,20 @@ form.select-entry {
 /// Settings used for a vertically-scrollable field value.
 ///
 @mixin scrollable-field {
-    overflow-y:          auto;
-    resize:              vertical;
-    overscroll-behavior: contain;
+    & {
+        overflow-y:          auto;
+        resize:              vertical;
+        overscroll-behavior: contain;
+    }
 }
 
 /// Settings used to limit the growth of a vertically-scrollable field value.
 ///
 @mixin scrollable-limits {
-    min-height: 1.5rem;
-    max-height: 66.7vh;
+    & {
+        min-height: 1.5rem;
+        max-height: 66.7vh;
+    }
 }
 
 // @see BaseDecorator::Form#field_container
@@ -459,7 +467,9 @@ form.select-entry {
         @include scrollable-field;
         @include scrollable-limits;
 
-        height: 10vh;
+        & {
+            height: 10vh;
+        }
     }
 
     // Scrollable container for multiple single-line text input entries.
@@ -468,13 +478,15 @@ form.select-entry {
         @include scrollable-field;
         @include scrollable-limits;
 
-        padding:        0.5rem;
-        height:         8.5rem;
-        line-height:    1.5;
-        border-radius:  0.375rem;
+        & {
+            padding:        0.5rem;
+            height:         8.5rem;
+            line-height:    1.5;
+            border-radius:  0.375rem;
+        }
 
         &.disabled {
-            height:     0;
+            height:         0;
         }
     }
 
@@ -505,9 +517,11 @@ form.select-entry {
 
         @include width-fit-content;
 
-        padding-left:  0.25rem;
-        height:        2.375rem;
-        border-radius: 0.25rem;
+        & {
+            padding-left:  0.25rem;
+            height:        2.375rem;
+            border-radius: 0.25rem;
+        }
 
         option {
             background: $bg-color;
@@ -525,8 +539,10 @@ form.select-entry {
 
         @include scrollable-limits;
 
-        padding:            0.25rem;
-        border-radius:      0.5rem;
+        & {
+            padding:        0.25rem;
+            border-radius:  0.5rem;
+        }
 
         @media #{$not-narrow-screen} {
             line-height:    1.5;
@@ -540,16 +556,18 @@ form.select-entry {
 
             @include scrollable-field;
 
-            display:      grid;
-            align-items:  center;
-            column-gap:   $checkbox-x-gap;
+            & {
+                display:        grid;
+                align-items:    center;
+                column-gap:     $checkbox-x-gap;
 
-            height:       auto;
-            max-height:   20vh;
-            margin:       0;
-            padding-left: 0.125rem;
+                height:         auto;
+                max-height:     20vh;
+                margin:         0;
+                padding-left:   0.125rem;
 
-            grid-template-columns: [checkbox] auto [label] 1fr;
+                grid-template-columns:  [checkbox] auto [label] 1fr;
+            }
 
             &:focus {
                 outline-offset: 0.5rem;
@@ -665,13 +683,15 @@ form.select-entry {
 
             @include user-select(none);
 
-            width:              0.5rem;
-            margin-top:         0;
-            margin-bottom:      auto;
-            margin-left:        1rem;
-            line-height:        1.5;
-            cursor:             default;
-            visibility:         hidden;
+            & {
+                width:          0.5rem;
+                margin-top:     0;
+                margin-bottom:  auto;
+                margin-left:    1rem;
+                line-height:    1.5;
+                cursor:         default;
+                visibility:     hidden;
+            }
 
             @media #{$not-narrow-screen} {
                 margin-right:   0;
@@ -795,11 +815,13 @@ form.select-entry {
 
         @include grid.column-span;
 
-        font-style:  italic;
-        font-weight: bold;
+        & {
+            font-style:  italic;
+            font-weight: bold;
+        }
 
         &.inactive {
-            display: none;
+            display:     none;
         }
     }
 }
@@ -966,7 +988,9 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
 
         .outer, .inner {
             @include shape.triangle-icon(right);
-            margin-top: 0.5rem;
+            & {
+                margin-top: 0.5rem;
+            }
         }
 
         .outer {
@@ -1056,12 +1080,12 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
         font-size:      medium;
         flex:           1 1 0;
 
+        overscroll-behavior: contain;
+
         @media #{$not-wide-screen} {
             max-width:  inherit;
             overflow-x: auto;
         }
-
-        overscroll-behavior: contain;
 
         //=====================================================================
         // Elements
@@ -1081,7 +1105,9 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
 
             @include hover-bold;
 
-            background-color: lightcyan;
+            & {
+                background-color: lightcyan;
+            }
         }
 
         .commit {
@@ -1101,9 +1127,11 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
                 $fill:   false
             );
 
-            position: absolute;
-            top:      calc(50% - #{$img-height * 0.5});
-            left:     calc(50% - #{$img-width  * 0.5});
+            & {
+                position: absolute;
+                top:      calc(50% - #{$img-height * 0.5});
+                left:     calc(50% - #{$img-width  * 0.5});
+            }
         }
 
         // @see BaseDecorator::Lookup#lookup_query
@@ -1215,6 +1243,16 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
                 padding-bottom: 0.5rem;
                 border-bottom:  2px solid gray;
 
+                @media #{$not-wide-screen} {
+                    max-width: unset;
+                    width:     max-content;
+                }
+
+                // NOTE: Support for future "wide" option:
+                &.wide {
+                    width: 200%;
+                }
+
                 //=============================================================
                 // Columns
                 //=============================================================
@@ -1241,16 +1279,6 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
                                 repeat($later-columns, 45vw);
                         }
                     }
-                }
-
-                @media #{$not-wide-screen} {
-                    max-width: unset;
-                    width:     max-content;
-                }
-
-                // NOTE: Support for future "wide" option:
-                &.wide {
-                    width: 200%;
                 }
 
                 //=============================================================

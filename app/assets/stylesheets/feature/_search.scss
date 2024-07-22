@@ -15,8 +15,10 @@ $list-item-gap-y: model.$list-item-gap-y;
 
     @include grid.column-span;
 
-    max-width: inherit;
-    margin:    0;
+    & {
+        max-width: inherit;
+        margin:    0;
+    }
 }
 
 // @see BaseCollectionDecorator::List#index_controls

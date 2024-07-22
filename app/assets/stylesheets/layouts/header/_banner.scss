@@ -50,11 +50,13 @@
 
     @include banner;
 
-    align-content: center;
-    font-size:     x-large;
+    & {
+        align-content:  center;
+        font-size:      x-large;
+    }
 
     @media #{$narrow-screen} {
-        flex-wrap: wrap;
+        flex-wrap:      wrap;
     }
 
     //=========================================================================
@@ -204,11 +206,13 @@
 
         @include user-select(none);
 
-        margin-top:     0;
-        min-height:     3rem;
-        max-height:     4rem;
-        font-size:      xx-large;
-        flex:           0 0 auto;
+        & {
+            margin-top: 0;
+            min-height: 3rem;
+            max-height: 4rem;
+            font-size:  xx-large;
+            flex:       0 0 auto;
+        }
 
         &:hover {
             box-shadow: 0 0 1rem 0.25rem $uva-accent-orange;
@@ -280,17 +284,19 @@
 
         @include hover-highlight;
 
-        min-width:      max-content;
-        max-width:      max-content;
-        padding:        0.25rem 0.375rem;
-        font-size:      smaller;
-        background:     $rev-bg-color;
-        border:         1.5px solid;
-        border-radius:  0.5rem;
-        flex:           0 0 auto;
+        & {
+            min-width:      max-content;
+            max-width:      max-content;
+            padding:        0.25rem 0.375rem;
+            font-size:      smaller;
+            background:     $rev-bg-color;
+            border:         1.5px solid;
+            border-radius:  0.5rem;
+            flex:           0 0 auto;
+        }
 
         @media #{$narrow-screen} {
-            margin:     auto 0;
+            margin:         auto 0;
         }
 
         //=====================================================================

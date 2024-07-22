@@ -23,16 +23,15 @@ $border-fg:  v.$rev-fg-color;
 ///
 @mixin grid-table($max-columns: 50) {
 
-    display:     grid;
-    position:    relative;
-    line-height: 1.25;
+    & {
+        display:     grid;
+        position:    relative;
+        line-height: 1.25;
+    }
 
     //=========================================================================
     // Grid layout
     //=========================================================================
-
-    @include grid.column-classes($max-columns, minmax(max-content,1fr));
-    @include grid.cell-col-classes($max-columns);
 
     @media #{v.$not-narrow-screen} {
         gap:            $gap;
@@ -43,6 +42,9 @@ $border-fg:  v.$rev-fg-color;
         gap:            $narrow-gap;
         padding-bottom: $narrow-gap;
     }
+
+    @include grid.column-classes($max-columns, minmax(max-content,1fr));
+    @include grid.cell-col-classes($max-columns);
 
     //=========================================================================
     // Elements
@@ -150,10 +152,12 @@ $border-fg:  v.$rev-fg-color;
 
                 @include grid.row(1);
 
-                position:    sticky;
-                top:         0;
-                padding-top: 0.5rem;
-                background:  $bg-color;
+                & {
+                    position:    sticky;
+                    top:         0;
+                    padding-top: 0.5rem;
+                    background:  $bg-color;
+                }
             }
         }
 
@@ -179,8 +183,10 @@ $border-fg:  v.$rev-fg-color;
                 @include grid.row(1);
                 @include grid.column-span;
 
-                position: sticky;
-                top:      0;
+                & {
+                    position: sticky;
+                    top:      0;
+                }
             }
 
             th {

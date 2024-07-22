@@ -16,8 +16,10 @@
 /// @param {Numeric} $row
 ///
 @mixin row($row) {
-    grid-row-start: $row;
-    grid-row-end:   $row;
+    & {
+        grid-row-start: $row;
+        grid-row-end:   $row;
+    }
 }
 
 /// Place in the specified column of the grid.
@@ -25,8 +27,10 @@
 /// @param {Numeric} $column
 ///
 @mixin column($column) {
-    grid-column-start: $column;
-    grid-column-end:   $column;
+    & {
+        grid-column-start: $column;
+        grid-column-end:   $column;
+    }
 }
 
 /// Span all grid columns.
@@ -35,8 +39,10 @@
 /// @param {Numeric} $start           Starting column.
 ///
 @mixin column-span($end: -1, $start: 1) {
-    grid-column-start: $start;
-    grid-column-end:   $end;
+    & {
+        grid-column-start: $start;
+        grid-column-end:   $end;
+    }
 }
 
 /// Define grid columns.
@@ -46,10 +52,12 @@
 ///
 @mixin columns($template, $columns: 1) {
     @if $template {
-        @if $columns <= 1 {
-            grid-template-columns: $template;
-        } @else {
-            grid-template-columns: repeat($columns, $template);
+        & {
+            @if $columns <= 1 {
+                grid-template-columns: $template;
+            } @else {
+                grid-template-columns: repeat($columns, $template);
+            }
         }
     }
 }

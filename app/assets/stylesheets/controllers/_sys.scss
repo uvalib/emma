@@ -28,9 +28,11 @@
 }
 
 @mixin table-border {
-    padding:       0.75rem;
-    border:        0.25rem solid lightgray;
-    border-radius: 0.5rem;
+    & {
+        padding:       0.75rem;
+        border:        0.25rem solid lightgray;
+        border-radius: 0.5rem;
+    }
 }
 
 @mixin button-row {
@@ -38,15 +40,19 @@
     @include button.basic;
     @include grid.column-span;
 
-    margin-top:    1rem;
-    margin-bottom: 1rem;
-    width:         min-content;
+    & {
+        margin-top:    1rem;
+        margin-bottom: 1rem;
+        width:         min-content;
+    }
 }
 
 // @see SysHelper::Common#dd_value
 @mixin value-inspection {
-    word-break:  break-all;
-    white-space: pre-wrap;
+    & {
+        word-break:  break-all;
+        white-space: pre-wrap;
+    }
 }
 
 //=============================================================================
@@ -82,11 +88,13 @@ body.sys {
 
         @include fill-screen;
 
-        width:       max-content;
-        line-height: 1.25;
-        font-family: monospace;
-        white-space: pre;
-        font-size:   larger;
+        & {
+            width:       max-content;
+            line-height: 1.25;
+            font-family: monospace;
+            white-space: pre;
+            font-size:   larger;
+        }
     }
 
     //=========================================================================
@@ -98,15 +106,17 @@ body.sys {
 
         @include fill-screen;
 
-        display:               grid;
-        grid-template-columns: [link] auto [note] 1fr;
-        align-content:         start;
-        align-items:           baseline;
-        gap:                   1rem;
-        margin-top:            1rem;
-        margin-bottom:         2rem;
-        line-height:           1.5;
-        font-size:             large;
+        & {
+            display:               grid;
+            grid-template-columns: [link] auto [note] 1fr;
+            align-content:         start;
+            align-items:           baseline;
+            gap:                   1rem;
+            margin-top:            1rem;
+            margin-bottom:         2rem;
+            line-height:           1.5;
+            font-size:             large;
+        }
 
         .page-action {
 
@@ -127,9 +137,11 @@ body.sys {
 
         @include clamp-width;
 
-        margin-top: 3rem;
-        padding:    0.5rem 0 0;
-        border-top: 2px solid gray;
+        & {
+            margin-top: 3rem;
+            padding:    0.5rem 0 0;
+            border-top: 2px solid gray;
+        }
 
         .page-action {
 
@@ -148,9 +160,12 @@ body.sys {
 
         @include table-border;
 
-        display:       grid;
-        justify-items: start;
-        gap:           0.5rem 1rem;
+        & {
+            display:       grid;
+            justify-items: start;
+            gap:           0.5rem 1rem;
+            grid-template-columns: max-content 1fr;
+        }
 
         $max-cols:     10;
         $basic-column: max-content;
@@ -166,8 +181,6 @@ body.sys {
                     $final-column;
             }
         }
-
-        grid-template-columns: max-content 1fr;
 
         //=====================================================================
         // Components
@@ -267,9 +280,11 @@ body.sys {
 
                 @include value-inspection;
 
-                max-height: 5.5rem;
-                max-width:  max-content;
-                overflow:   auto;
+                & {
+                    max-height: 5.5rem;
+                    max-width:  max-content;
+                    overflow:   auto;
+                }
             }
 
             &:has(img) {
@@ -295,8 +310,10 @@ body.sys {
 
             @include button.basic;
 
-            display: inline-block;
-            padding: 1px 3px;
+            & {
+                display: inline-block;
+                padding: 1px 3px;
+            }
         }
 
         .action-name {
@@ -341,17 +358,18 @@ body.sys.settings {
 
     .field-container {
 
-        @include clamp-width;
         @include table-border;
+        @include clamp-width;
 
-        display:       grid;
-        align-items:   baseline;
-        gap:           0.375rem 0.75rem;
-
-        grid-template-columns:
-            [label]  0.5fr
-            [check1] min-content [label1] 0.1875fr
-            [check2] min-content [label2] 0.1875fr;
+        & {
+            display:     grid;
+            align-items: baseline;
+            gap:         0.375rem 0.75rem;
+            grid-template-columns:
+                [label]  0.5fr
+                [check1] min-content [label1] 0.1875fr
+                [check2] min-content [label2] 0.1875fr;
+        }
 
         button {
             @include button-row;
@@ -365,8 +383,10 @@ body.sys.settings {
 
                 @include constrain-column;
 
-                font-size:   large;
-                font-weight: bolder;
+                & {
+                    font-size:   large;
+                    font-weight: bolder;
+                }
 
                 &.from-env {
                     // TODO: ?
@@ -389,7 +409,9 @@ body.sys.settings {
 
                 @include grid.column-span;
 
-                height: 1rem;
+                & {
+                    height: 1rem;
+                }
             }
 
             @if not $show-nil {
@@ -433,9 +455,11 @@ body.sys.settings {
 
             @include button-row;
 
-            margin-top:    1.25rem;
-            margin-bottom: 0.25rem;
-            justify-self:  end;
+            & {
+                margin-top:    1.25rem;
+                margin-bottom: 0.25rem;
+                justify-self:  end;
+            }
         }
     }
 

@@ -16,10 +16,12 @@
 ///
 // noinspection CssInvalidPropertyValue
 @mixin width-available($fall-back: 50%) {
-    width: $fall-back;
-    width: -webkit-fill-available;      // NOTE: valid but flagged by RubyMine
-    width: -moz-available;              // NOTE: valid but flagged by RubyMine
-    width: available;                   // NOTE: valid but flagged by RubyMine
+    & {
+        width: $fall-back;
+        width: -webkit-fill-available;  // NOTE: valid but flagged by RubyMine
+        width: -moz-available;          // NOTE: valid but flagged by RubyMine
+        width: available;               // NOTE: valid but flagged by RubyMine
+    }
 }
 
 /// Set max width to the available width.
@@ -30,10 +32,12 @@
 ///
 // noinspection CssInvalidPropertyValue
 @mixin max-width-available($fall-back: 100%) {
-    max-width: $fall-back;
-    max-width: -webkit-fill-available;  // NOTE: valid but flagged by RubyMine
-    max-width: -moz-available;          // NOTE: valid but flagged by RubyMine
-    max-width: available;               // NOTE: valid but flagged by RubyMine
+    & {
+        max-width: $fall-back;
+        max-width: -webkit-fill-available;  // NOTE: valid but flagged by RubyMine
+        max-width: -moz-available;          // NOTE: valid but flagged by RubyMine
+        max-width: available;               // NOTE: valid but flagged by RubyMine
+    }
 }
 
 /// Set width to fit the content.
@@ -44,10 +48,12 @@
 ///
 // noinspection CssInvalidPropertyValue
 @mixin width-fit-content($fall-back: auto) {
-    width: $fall-back;
-    width: -webkit-fit-content;         // NOTE: valid but flagged by RubyMine
-    width: -moz-fit-content;            // NOTE: valid but flagged by RubyMine
-    width: fit-content;
+    & {
+        width: $fall-back;
+        width: -webkit-fit-content;     // NOTE: valid but flagged by RubyMine
+        width: -moz-fit-content;        // NOTE: valid but flagged by RubyMine
+        width: fit-content;
+    }
 }
 
 // ============================================================================
@@ -62,10 +68,12 @@
 ///
 // noinspection CssInvalidPropertyValue
 @mixin height-available($fall-back: 50%) {
-    height: $fall-back;
-    height: -webkit-fill-available;     // NOTE: valid but flagged by RubyMine
-    height: -moz-available;             // NOTE: valid but flagged by RubyMine
-    height: available;                  // NOTE: valid but flagged by RubyMine
+    & {
+        height: $fall-back;
+        height: -webkit-fill-available; // NOTE: valid but flagged by RubyMine
+        height: -moz-available;         // NOTE: valid but flagged by RubyMine
+        height: available;              // NOTE: valid but flagged by RubyMine
+    }
 }
 
 /// Set height to fit the content.
@@ -76,10 +84,12 @@
 ///
 // noinspection CssInvalidPropertyValue
 @mixin height-fit-content($fall-back: auto) {
-    height: $fall-back;
-    height: -webkit-fit-content;        // NOTE: valid but flagged by RubyMine
-    height: -moz-fit-content;           // NOTE: valid but flagged by RubyMine
-    height: fit-content;
+    & {
+        height: $fall-back;
+        height: -webkit-fit-content;    // NOTE: valid but flagged by RubyMine
+        height: -moz-fit-content;       // NOTE: valid but flagged by RubyMine
+        height: fit-content;
+    }
 }
 
 // ============================================================================
@@ -91,9 +101,11 @@
 /// @param {String} $value            Use "none" to turn off selection.
 ///
 @mixin user-select($value) {
-    -webkit-user-select: $value;
-    -moz-user-select:    $value;
-    user-select:         $value;
+    & {
+        -webkit-user-select: $value;
+        -moz-user-select:    $value;
+        user-select:         $value;
+    }
 }
 
 // ============================================================================
@@ -103,20 +115,22 @@
 /// Remove the element from display.
 ///
 @mixin hidden {
-    display: none !important;
+    & {
+        display: none !important;
+    }
 }
 
 /// Apply settings to both the element itself and its direct descendents.
 ///
 @mixin self-and-children {
-    @content;
+    &   { @content }
     > * { @content }
 }
 
 /// Apply settings to both the element itself and all of its descendents.
 ///
 @mixin self-and-descendents {
-    @content;
+    & { @content }
     * { @content }
 }
 
@@ -181,8 +195,10 @@
 
     $important: if($force, '!important', '');
 
-    text-decoration: none    #{$important};
-    cursor:          $cursor #{$important};
+    & {
+        text-decoration: none    #{$important};
+        cursor:          $cursor #{$important};
+    }
 
     &:active { pointer-events:  none #{$important}; }
     &:hover  { text-decoration: none #{$important}; }
@@ -201,15 +217,19 @@
 /// Make focus outline more easily seen.
 ///
 @mixin focus {
-    outline:        2px solid v.$focus-color;
-    outline-offset: 2px;
+    & {
+        outline:        2px solid v.$focus-color;
+        outline-offset: 2px;
+    }
 }
 
 /// Embolden characters by adding a text shadow in order to avoid changing the
 /// width of the text.
 ///
 @mixin hover-bold {
-    text-shadow: 0 0 1px v.$fg-color;
+    & {
+        text-shadow: 0 0 1px v.$fg-color;
+    }
 }
 
 /// Add to outline text so that it passes color contrast checks.
@@ -219,31 +239,39 @@
 /// @param {String} $blur
 ///
 @mixin text-contrast($color: v.$fg-color, $width: 1px, $blur: 1px) {
-    text-shadow:
-          0         0       $blur $color,
-        ( $width) ( $width) $blur $color,
-        ( $width) (-$width) $blur $color,
-        (-$width) ( $width) $blur $color,
-        (-$width) (-$width) $blur $color;
+    & {
+        text-shadow:
+              0         0       $blur $color,
+            ( $width) ( $width) $blur $color,
+            ( $width) (-$width) $blur $color,
+            (-$width) ( $width) $blur $color,
+            (-$width) (-$width) $blur $color;
+    }
 }
 
 /// A pop-out effect for panels.
 ///
 @mixin popup-shadow {
-    box-shadow: v.$popup-shadow;
+    & {
+        box-shadow: v.$popup-shadow;
+    }
 }
 
 /// A subtle pop-out effect for text blocks.
 ///
 @mixin block-shadow {
-    box-shadow: v.$block-shadow;
+    & {
+        box-shadow: v.$block-shadow;
+    }
 }
 
 /// A very subtle pop-out effect for controls.
 ///
 @mixin control-shadow {
 
-    box-shadow: v.$control-shadow;
+    & {
+        box-shadow: v.$control-shadow;
+    }
 
     &:focus {
         box-shadow: none;
@@ -254,14 +282,18 @@
 ///
 @mixin hover-highlight {
 
-    cursor:      pointer;
-    user-select: none;
+    & {
+        cursor:      pointer;
+        user-select: none;
+    }
 
     &:focus {
 
         @include focus;
 
-        text-decoration: underline;
+        & {
+            text-decoration: underline;
+        }
     }
 
     &:hover {
@@ -287,23 +319,25 @@
     $pad-y: v.$page-padding-y;
     $pad-x: v.$page-padding-x;
 
-    display:            flex;
-    flex-direction:     row;
-    justify-content:    space-between;
-    margin:             0;
-    color:              v.$rev-fg-color;
-    background:         v.$rev-bg-color;
+    & {
+        display:            flex;
+        flex-direction:     row;
+        justify-content:    space-between;
+        margin:             0;
+        color:              v.$rev-fg-color;
+        background:         v.$rev-bg-color;
 
-    --focus-color:      var(--rev-focus-color);
+        --focus-color:      var(--rev-focus-color);
+    }
 
     @media #{v.$wide-screen} {
-        padding:        $pad-y $pad-x;
+        padding:            $pad-y $pad-x;
     }
 
     // noinspection CssReplaceWithShorthandSafely
     @media #{v.$not-wide-screen} {
-        padding:        calc(2 * $pad-y) $pad-x;
-        padding-right:  calc($pad-x + #{v.$scroll-easement-x});
+        padding:            calc(2 * $pad-y) $pad-x;
+        padding-right:      calc($pad-x + #{v.$scroll-easement-x});
     }
 
     @media print {
@@ -339,13 +373,15 @@
 ///
 @mixin panel {
 
-    display:          block;
-    padding:          0.5rem;
-    background-color: v.$panel-bg;
-    border:           2px solid v.$panel-border;
-    border-radius:    0.625rem;
+    & {
+        display:          block;
+        padding:          0.5rem;
+        background-color: v.$panel-bg;
+        border:           2px solid v.$panel-border;
+        border-radius:    0.625rem;
 
-    --focus-color:    #{v.$panel-focus};
+        --focus-color:    #{v.$panel-focus};
+    }
 
     @media print {
         break-inside: avoid;
@@ -388,9 +424,11 @@
     @include panel;
     @include user-select(none);
 
-    display:     inline-flex;
-    padding:     0.25rem 0.5rem;
-    align-items: baseline;
+    & {
+        display:     inline-flex;
+        padding:     0.25rem 0.5rem;
+        align-items: baseline;
+    }
 
     > * {
         display:     inline-flex;
@@ -408,8 +446,10 @@
 /// NOTE: Safari still requires the -webkit prefix.
 ///
 @mixin hyphenation($mode: auto) {
-    -webkit-hyphens: $mode;
-    hyphens:         $mode;
+    & {
+        -webkit-hyphens: $mode;
+        hyphens:         $mode;
+    }
 }
 
 /// Make an element only visible to screen readers.
@@ -419,19 +459,21 @@
 ///
 @mixin sr-only {
 
-    // Make the element visually undetectable.
-    position: absolute;
-    width:    1px;
-    height:   1px;
-    padding:  0;
-    margin:   -1px;
-    border:   0;
-    overflow: hidden;
-    clip:     rect(0 0 0 0);
+    & {
+        // Make the element visually undetectable.
+        position:   absolute;
+        width:      1px;
+        height:     1px;
+        padding:    0;
+        margin:     -1px;
+        border:     0;
+        overflow:   hidden;
+        clip:       rect(0 0 0 0);
 
-    // Satisfy accessibility checks for contrast.
-    color:      black !important;
-    background: white !important;
+        // Satisfy accessibility checks for contrast.
+        color:      black !important;
+        background: white !important;
+    }
 
     * {
         color:      inherit !important;
@@ -442,13 +484,15 @@
 /// Counteract the effects of sr-only (except for position and border).
 ///
 @mixin not-sr-only {
-    width:       unset;
-    height:      unset;
-    padding:     unset;
-    margin:      unset;
-    white-space: unset;
-    overflow:    unset;
-    clip:        unset;
+    & {
+        width:       unset;
+        height:      unset;
+        padding:     unset;
+        margin:      unset;
+        white-space: unset;
+        overflow:    unset;
+        clip:        unset;
+    }
 }
 
 /// For an element which should not inherit the default styling imposed by the
@@ -456,14 +500,16 @@
 /// structure but intended to be styled by supplied CSS class(es).
 ///
 @mixin clear-default-styling {
-    margin:         0;
-    margin-block:   0;
-    margin-inline:  0;
-    padding:        0;
-    padding-block:  0;
-    padding-inline: 0;
-    font-size:      inherit;
-    font-weight:    inherit;
+    & {
+        margin:         0;
+        margin-block:   0;
+        margin-inline:  0;
+        padding:        0;
+        padding-block:  0;
+        padding-inline: 0;
+        font-size:      inherit;
+        font-weight:    inherit;
+    }
 }
 
 /// Surround the contents of the element with quotation marks.

@@ -59,6 +59,8 @@ body.tool.md {
         margin:         3rem 0;
         align-content:  start;
 
+        grid-template-columns: 1fr;
+
         @media #{$wide-screen} {
             row-gap:    $row-gap-wide;
         }
@@ -70,17 +72,16 @@ body.tool.md {
         @media #{$narrow-screen} {
             row-gap:    $row-gap-narrow;
         }
-
-        grid-template-columns: 1fr;
-
     }
 
     @mixin input-prompt {
-        display:         flex;
-        flex-direction:  row;
-        justify-content: flex-start;
-        align-items:     baseline;
-        column-gap:      $label-h-gap;
+        & {
+            display:         flex;
+            flex-direction:  row;
+            justify-content: flex-start;
+            align-items:     baseline;
+            column-gap:      $label-h-gap;
+        }
     }
 
     // Wrapper containing the file input element.
@@ -425,9 +426,11 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
 
                 @include button.basic;
 
-                align-self:  end;
-                max-width:   max-content;
-                background:  white;
+                & {
+                    align-self:  end;
+                    max-width:   max-content;
+                    background:  white;
+                }
             }
         }
 

@@ -34,7 +34,9 @@ $footer-margin-top: 1rem;
 
     @include banner;
 
-    flex-direction: column;
+    & {
+        flex-direction: column;
+    }
 
     .footer-table {
 

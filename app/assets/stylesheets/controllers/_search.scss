@@ -352,29 +352,31 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
 
                 @include control-shadow;
 
-                display:             block;
-                height:              100%;
-                padding:             $element-y-padding $element-x-padding;
-                background:          ghostwhite;
-                border:              $element-border solid gray;
-                border-right-color:  black;
-                border-bottom-color: black;
-                border-radius:       $element-x-padding * 0.5;
-                cursor:              text;
+                & {
+                    display:             block;
+                    height:              100%;
+                    padding:             $element-y-padding $element-x-padding;
+                    background:          ghostwhite;
+                    border:              $element-border solid gray;
+                    border-right-color:  black;
+                    border-bottom-color: black;
+                    border-radius:       $element-x-padding * 0.5;
+                    cursor:              text;
+                }
 
                 // noinspection CssReplaceWithShorthandSafely
                 @media #{$not-narrow-screen} {
-                    margin:          $element-y-margin $element-x-margin;
-                    margin-right:    1rem;
+                    margin:              $element-y-margin $element-x-margin;
+                    margin-right:        1rem;
                 }
 
                 @media #{$wide-screen} {
-                    word-break:      keep-all;
-                    word-wrap:       break-word;
+                    word-break:          keep-all;
+                    word-wrap:           break-word;
                 }
 
                 @media #{$narrow-screen} {
-                    margin:          $element-y-margin 0;
+                    margin:              $element-y-margin 0;
                 }
             }
         }
@@ -393,7 +395,9 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
 
                 @include grid.column-span;
 
-                flex-wrap: wrap-reverse;
+                & {
+                    flex-wrap: wrap-reverse;
+                }
             }
 
             //=================================================================
@@ -451,12 +455,12 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
 
         &.logo {
 
-            @media #{$wide-screen} {
-                @include invisible;
-            }
-
             @media #{$not-wide-screen} {
                 display: none;
+            }
+
+            @media #{$wide-screen} {
+                @include invisible;
             }
         }
 
@@ -576,7 +580,9 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
 
                 @include sr-only;
 
-                position:       unset !important;
+                & {
+                    position:   unset !important;
+                }
 
             } @else {
 
@@ -737,10 +743,6 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
             background:	   $bg-color;
             border-bottom: 1px solid darkgray;
 
-            @if $title-spans-entry {
-                @include grid.column-span;
-            }
-
             @media #{$wide-screen} {
                 top:            $sticky-top-wide;
                 box-shadow:
@@ -760,17 +762,23 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
 
                 @include hyphenation;
 
-                top:            $sticky-top-narrow;
-                padding-bottom: 0.5rem;
-                border-color:   $fg-color;
-                box-shadow:
-                     0       -0.50rem  0        0.25rem  $bg-color,
-                     0        0.25rem  0.25rem  0        $bg-color;
+                & {
+                    top:            $sticky-top-narrow;
+                    padding-bottom: 0.5rem;
+                    border-color:   $fg-color;
+                    box-shadow:
+                         0       -0.50rem  0        0.25rem  $bg-color,
+                         0        0.25rem  0.25rem  0        $bg-color;
+                }
             }
 
             @media print {
                 height:          1.875rem;
                 justify-content: start;
+            }
+
+            @if $title-spans-entry {
+                @include grid.column-span;
             }
 
             // @see SearchDecorator#title_and_source
@@ -879,10 +887,12 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
 
                     @include hover-highlight;
 
-                    min-width:     unset;
-                    margin:        0;
-                    color:         $fg-color;
-                    border-radius: 50%;
+                    & {
+                        min-width:     unset;
+                        margin:        0;
+                        color:         $fg-color;
+                        border-radius: 50%;
+                    }
 
                     &:focus {
                         text-decoration: none;
@@ -1063,14 +1073,16 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
 
             @include grid.column-span;
 
-            position:       sticky;
-            top:            0;
-            margin-top:     0;
-            margin-bottom:  0;
-            padding:        0;
-            text-align:     center;
-            background:     $bg-color;
-            box-shadow:     0 0 0 0.75rem $bg-color;
+            & {
+                position:       sticky;
+                top:            0;
+                margin-top:     0;
+                margin-bottom:  0;
+                padding:        0;
+                text-align:     center;
+                background:     $bg-color;
+                box-shadow:     0 0 0 0.75rem $bg-color;
+            }
         }
 
         @media print {
@@ -1185,10 +1197,9 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
         }
 
         @media #{$medium-width} {
+            margin-top:     calc(2 * $list-item-gap-y);
 
             @include search-item-columns(0.25fr);
-
-            margin-top:     calc(2 * $list-item-gap-y);
         }
 
         @media #{$narrow-screen} {
@@ -2444,12 +2455,14 @@ body.search.title_results {
 
     @mixin fill($r-offset: 2px, $l-offset: 2px, $bg: $title-bg) {
 
-        background: $bg;
-        box-shadow:
-             $r-offset  1px  0  2px  $bg,
-             $r-offset -1px  0  2px  $bg,
-            -$l-offset  1px  0  2px  $bg,
-            -$l-offset -1px  0  2px  $bg;
+        & {
+            background: $bg;
+            box-shadow:
+                 $r-offset  1px  0  2px  $bg,
+                 $r-offset -1px  0  2px  $bg,
+                -$l-offset  1px  0  2px  $bg,
+                -$l-offset -1px  0  2px  $bg;
+        }
 
         @media print {
             background: unset;
@@ -2513,12 +2526,14 @@ body.search.title_results {
 
                 @include fill(2rem); // Extend to touch the .value element.
 
-                display:     flex;
-                column-gap:  0.5rem;
-                font-weight: bolder;
+                & {
+                    display:     flex;
+                    column-gap:  0.5rem;
+                    font-weight: bolder;
 
-                border-top-left-radius:    0.75rem;
-                border-bottom-left-radius: 0.75rem;
+                    border-top-left-radius:    0.75rem;
+                    border-bottom-left-radius: 0.75rem;
+                }
 
                 @media #{$narrow-screen} {
                     box-shadow:
@@ -2557,7 +2572,9 @@ body.search.title_results {
 
                 @include fill(2px);
 
-                height:      unset;
+                & {
+                    height:  unset;
+                }
 
                 @media #{$narrow-screen} {
                     display: none;

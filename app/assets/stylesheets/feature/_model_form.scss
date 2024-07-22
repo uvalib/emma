@@ -17,26 +17,28 @@
 ///
 @mixin entry-radio-group {
 
-    display:               grid;
-    gap:                   0.25rem;
-    justify-content:       space-between;
-    grid-template-columns: repeat(auto-fit, minmax(10vw,max-content));
+    & {
+        display:                grid;
+        gap:                    0.25rem;
+        justify-content:        space-between;
+        grid-template-columns:  repeat(auto-fit, minmax(10vw,max-content));
 
-    border:             1px solid gray;
-    border-radius:      0.25rem;
+        border:                 1px solid gray;
+        border-radius:          0.25rem;
+    }
 
     @media #{$not-narrow-screen} {
-        padding-right:  0.5rem;
-        line-height:    1;
+        padding-right:          0.5rem;
+        line-height:            1;
     }
 
     @media #{$medium-width} {
-        grid-template-columns: repeat(auto-fit, minmax(20vw,max-content));
+        grid-template-columns:  repeat(auto-fit, minmax(20vw,max-content));
     }
 
     @media #{$narrow-screen} {
-        grid-template-columns: repeat(auto-fit, minmax(33vw,max-content));
-        line-height:    1.5;
+        grid-template-columns:  repeat(auto-fit, minmax(33vw,max-content));
+        line-height:            1.5;
     }
 
     //=========================================================================
@@ -236,11 +238,13 @@
 
             @include user-select(none);
 
-            display:            flex;
-            flex-direction:     column;
-            line-height:        1.375;
-            text-align:         center;
-            font-weight:        bold;
+            & {
+                display:        flex;
+                flex-direction: column;
+                line-height:    1.375;
+                text-align:     center;
+                font-weight:    bold;
+            }
 
             @media #{$not-narrow-screen} {
                 padding:        0.375rem 0.875rem;
@@ -318,14 +322,16 @@
 
         @include entry-radio-group;
 
-        max-width:  inherit;
+        & {
+            max-width:  inherit;
+        }
 
         @media #{$not-narrow-screen} {
-            width:  max-content;
+            width:      max-content;
         }
 
         @media #{$narrow-screen} {
-            width:  100%;
+            width:      100%;
         }
 
         //=====================================================================
@@ -350,8 +356,10 @@
 
     @include entry-radio-group;
 
-    padding:            0.25rem;
-    background:         $debug-bg;
+    & {
+        padding:        0.25rem;
+        background:     $debug-bg;
+    }
 
     @media #{$wide-screen} {
         margin:         $page-padding-y 0;
@@ -417,7 +425,9 @@
 
         @include button.control;
 
-        flex: 0 0 auto;
+        & {
+            flex: 0 0 auto;
+        }
 
         &:focus {
             @include focus;
@@ -432,13 +442,13 @@
     display:          grid;
     gap:              $gap-y $gap-x;
 
+    grid-template-columns:
+        [submit] auto [cancel] auto [file] auto [selected] 1fr;
+
     @media #{$narrow-screen} {
         margin-right: 0.25rem;
         gap:          calc($gap-y / 3) calc($gap-x / 3);
     }
-
-    grid-template-columns:
-        [submit] auto [cancel] auto [file] auto [selected] 1fr;
 
     // Form for a new model record.
     &.new {}
@@ -490,8 +500,10 @@
 
         @include grid.row(1);
 
-        height:     max-content;
-        max-height: 2.25rem;
+        & {
+            height:     max-content;
+            max-height: 2.25rem;
+        }
     }
 
     // ERB-provided submit to '/upload/create' or '/upload/update'.
@@ -520,7 +532,9 @@
 
         @include grid.row(1);
 
-        line-height: 1.5;
+        & {
+            line-height: 1.5;
+        }
 
         @media #{$narrow-screen} {
             @include grid.row(2);
@@ -542,13 +556,15 @@
         @include grid.row(1);
         @include grid.column-span;
 
-        display:         flex;
-        flex-direction:  row;
-        flex-wrap:       nowrap;
-        align-items:     baseline;
-        justify-content: start;
-        gap:             $gap-y $gap-x;
-        max-width:       inherit;
+        & {
+            display:         flex;
+            flex-direction:  row;
+            flex-wrap:       nowrap;
+            align-items:     baseline;
+            justify-content: start;
+            gap:             $gap-y $gap-x;
+            max-width:       inherit;
+        }
 
         @media #{$medium-width} {
             gap:         calc(4 * $gap-y) calc(4 * $gap-x);
@@ -564,10 +580,12 @@
         //=====================================================================
 
         @mixin tray-control {
-            max-height: max-content;
-            max-width:  max-content;
-            margin:     0;
-            flex:       0 1 auto;
+            & {
+                max-height: max-content;
+                max-width:  max-content;
+                margin:     0;
+                flex:       0 1 auto;
+            }
         }
 
         .submit-button {
@@ -591,9 +609,11 @@
 
             @include tray-control;
 
-            margin:        0 0.25rem;
-            line-height:   2.15;
-            flex-grow:     1;
+            & {
+                margin:      0 0.25rem;
+                line-height: 2.15;
+                flex-grow:   1;
+            }
 
             @media #{$wide-screen} {
                 max-width: 75vw;
@@ -630,15 +650,17 @@
         @include grid.column-span;
         @include control-shadow;
 
-        position:          sticky;
-        top:               1rem;
-        background:        $bg-color;
+        & {
+            position:       sticky;
+            top:            1rem;
+            background:     $bg-color;
+        }
 
         // noinspection CssReplaceWithShorthandSafely
         @media #{$narrow-screen} {
-            padding:       0.25rem;
-            padding-right: 0.5rem;
-            line-height:   1.25;
+            padding:        0.25rem;
+            padding-right:  0.5rem;
+            line-height:    1.25;
         }
     }
 
@@ -658,18 +680,20 @@
         @include grid.row(1);
         @include grid.column-span;
 
-        display:       grid;
-        position:      sticky;
-        z-index:       $z-controls;
-        top:           calc(2 * $gap-y);
-        margin-bottom: calc(2 * $gap-y);
-        background:    $bg-color;
-        box-shadow:    0 -0.5rem 0      1.0rem $bg-color,
-                       0  0.5rem 0.5rem 0.5rem $bg-color;
+        & {
+            display:       grid;
+            position:      sticky;
+            z-index:       $z-controls;
+            top:           calc(2 * $gap-y);
+            margin-bottom: calc(2 * $gap-y);
+            background:    $bg-color;
+            box-shadow:    0 -0.5rem 0      1.0rem $bg-color,
+                           0  0.5rem 0.5rem 0.5rem $bg-color;
 
-        grid-template-columns: 1fr;
-        row-gap:               calc(2 * $gap-y);
-        column-gap:            $gap-x;
+            grid-template-columns: 1fr;
+            row-gap:               calc(2 * $gap-y);
+            column-gap:            $gap-x;
+        }
 
         &.top {
             .button-tray {
@@ -689,8 +713,10 @@
 
         @include grid.column-span;
 
-        margin-top: calc(4 * $gap-y);
-        z-index:    $z-visible; // NOTE: Needed for Firefox.
+        & {
+            margin-top: calc(4 * $gap-y);
+            z-index:    $z-visible; // NOTE: Needed for Firefox.
+        }
     }
 
     //=========================================================================
@@ -764,7 +790,9 @@
 
         @include grid.column-span;
 
-        column-gap: 0.5rem;
+        & {
+            column-gap: 0.5rem;
+        }
     }
 
     .line {
@@ -806,7 +834,9 @@
 
             @include button.control;
 
-            height: max-content;
+            & {
+                height: max-content;
+            }
         }
 
         // Remove the input from view (can't do "display: none" or that
@@ -838,11 +868,11 @@
         margin-top: $page-padding-y;
     }
 
+    grid-template-columns: 1fr;
+
     @media #{$wide-screen} {
         width:      50vw;
     }
-
-    grid-template-columns: 1fr;
 
     //=========================================================================
     // Elements
@@ -864,11 +894,15 @@
         @include grid.row(1);
         @include grid.column-span;
 
-        z-index: $z-uppy-progress;
+        & {
+            z-index: $z-uppy-progress;
+        }
 
         @if $status-bar-is-white-space {
 
-            min-height: 3rem;
+            & {
+                min-height: 3rem;
+            }
 
             &::before {
                 background-color: transparent;
@@ -894,11 +928,13 @@
         @include grid.row(1);
         @include grid.column-span;
 
-        display:         inline-flex;
-        justify-content: center;
-        align-items:     center;
-        position:        unset;
-        z-index:         $z-uppy-informer;
+        & {
+            display:         inline-flex;
+            justify-content: center;
+            align-items:     center;
+            position:        unset;
+            z-index:         $z-uppy-informer;
+        }
 
         &[aria-hidden="true"] {
             z-index: $z-hidden;
@@ -921,9 +957,11 @@
     @include panel;
     @include block-shadow;
 
-    padding:          1rem;
-    background-color: ghostwhite;
-    border-color:     darkgray;
+    & {
+        padding:          1rem;
+        background-color: ghostwhite;
+        border-color:     darkgray;
+    }
 
     //=========================================================================
     // Elements
@@ -961,7 +999,9 @@
 
                 @include sr-only;
 
-                position: unset !important;
+                & {
+                    position: unset !important;
+                }
             }
         }
 

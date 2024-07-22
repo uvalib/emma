@@ -12,21 +12,22 @@
 /// @param {String} $height           Scaled to surrounding font by default.
 ///
 @mixin triangle-icon($direction: left, $height: 1em) {
+    & {
+        width:         0;
+        height:        0;
+        margin:        auto 0;
+        padding:       0;
+        border-top:    ($height * 0.5) solid transparent;
+        border-bottom: ($height * 0.5) solid transparent;
 
-    width:         0;
-    height:        0;
-    margin:        auto 0;
-    padding:       0;
-    border-top:    ($height * 0.5) solid transparent;
-    border-bottom: ($height * 0.5) solid transparent;
-
-    @if $direction == left {
-        border-left:  none;
-        border-right: $height solid;
-    }
-    @if $direction == right {
-        border-left:  $height solid;
-        border-right: none;
+        @if $direction == left {
+            border-left:  none;
+            border-right: $height solid;
+        }
+        @if $direction == right {
+            border-left:  $height solid;
+            border-right: none;
+        }
     }
 }
 
@@ -35,9 +36,11 @@
 /// @param {String} $height           Scaled to surrounding font by default.
 ///
 @mixin square-icon($height: 0.3275em) {
-    width:   $height;
-    height:  $height;
-    margin:  auto 0;
-    padding: 0;
-    border:  $height solid;
+    & {
+        width:   $height;
+        height:  $height;
+        margin:  auto 0;
+        padding: 0;
+        border:  $height solid;
+    }
 }

@@ -18,20 +18,22 @@
     @include width-fit-content;
     @include block-shadow;
 
-    min-width:      50%;
-    padding:        1rem;
-    line-height:    1.375;
+    & {
+        min-width:      50%;
+        padding:        1rem;
+        line-height:    1.375;
+    }
 
     @media #{$wide-screen} {
-        max-width:  50%;
+        max-width:      50%;
     }
 
     @media #{$medium-width} {
-        max-width:  100%;
+        max-width:      100%;
     }
 
     @media #{$narrow-screen} {
-        max-width:  90%;
+        max-width:      90%;
     }
 }
 
@@ -40,7 +42,9 @@
 
     @include button.basic;
 
-    background-color: $panel-bg;
+    & {
+        background-color: $panel-bg;
+    }
 }
 
 // Controlled by a .toggle button.

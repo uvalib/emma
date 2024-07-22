@@ -33,7 +33,9 @@ $data-list-border-color: none;
 /// or grid layout.
 ///
 @mixin logical-grouping {
-    display: contents;
+    & {
+        display: contents;
+    }
 }
 
 /// A collection of one or more label/value pairs.
@@ -42,9 +44,11 @@ $data-list-border-color: none;
 
     @include list.columns-2;
 
-    margin-bottom: $list-item-gap-y;
-    break-inside:  avoid-column;
-    align-content: flex-start;
+    & {
+        margin-bottom: $list-item-gap-y;
+        break-inside:  avoid-column;
+        align-content: flex-start;
+    }
 
     @media #{v.$narrow-screen} {
         grid-template-columns: 100%;

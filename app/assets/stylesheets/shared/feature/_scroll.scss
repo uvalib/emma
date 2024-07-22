@@ -19,9 +19,11 @@ $scroll-snap: true;
 ///
 @mixin snap {
     @if $scroll-snap {
-        scroll-snap-type: both proximity;
-        scroll-behavior:  smooth;
-        @content;
+        & {
+            scroll-snap-type: both proximity;
+            scroll-behavior:  smooth;
+            @content;
+        }
     }
 }
 
@@ -29,6 +31,8 @@ $scroll-snap: true;
 ///
 @mixin snap-enabled {
     @if $scroll-snap {
-        @content;
+        & {
+            @content;
+        }
     }
 }

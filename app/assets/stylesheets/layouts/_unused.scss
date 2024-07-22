@@ -11,27 +11,29 @@
 
 /// Element information marker.
 @mixin marker {
-    position:        relative;
-    padding:         2px;
-    line-height:     normal;
-    text-align:      start;
-    text-decoration: none;
-    text-emphasis:   unset;
-    text-indent:     unset;
-    text-shadow:     unset;
-    text-transform:  none;
-    letter-spacing:  normal;
-    white-space:     normal;
-    font-family:     sans-serif;
-    font-weight:     normal;
-    font-size:       medium;
-    color:           red;
-    background:      ghostwhite;
-    border:          1px solid gray;
-    border-radius:   0.25rem;
-    box-shadow:      none;
-    z-index:         $z-overlay;
-    content:         counter(cnt);
+    & {
+        position:        relative;
+        padding:         2px;
+        line-height:     normal;
+        text-align:      start;
+        text-decoration: none;
+        text-emphasis:   unset;
+        text-indent:     unset;
+        text-shadow:     unset;
+        text-transform:  none;
+        letter-spacing:  normal;
+        white-space:     normal;
+        font-family:     sans-serif;
+        font-weight:     normal;
+        font-size:       medium;
+        color:           red;
+        background:      ghostwhite;
+        border:          1px solid gray;
+        border-radius:   0.25rem;
+        box-shadow:      none;
+        z-index:         $z-overlay;
+        content:         counter(cnt);
+    }
 }
 
 /// Display element number in the left gutter.
@@ -39,8 +41,10 @@
 
     @include marker;
 
-    position: absolute;
-    left:     -1.75rem;
+    & {
+        position: absolute;
+        left:     -1.75rem;
+    }
 }
 
 /// Display element number after element.
@@ -48,11 +52,13 @@
 
     @include marker;
 
-    position: relative;
-    left:     -100%;
-    width:    min-content;
-    height:   min-content;
-    margin:   auto 0;
+    & {
+        position: relative;
+        left:     -100%;
+        width:    min-content;
+        height:   min-content;
+        margin:   auto 0;
+    }
 }
 
 /// Display element information at the bottom of the screen.
@@ -64,22 +70,24 @@
     $marker-y:  1rem;
     $separator: "\00A0\00A0|\00A0\00A0";
 
-    position:      fixed;
-    top:           calc(100vh - $page-padding-y - $marker-y);
-    left:          $marker-x;
-    width:         calc(100vw - $page-padding-x - #{$marker-x * 2});
-    color:         white;
-    background:    hotpink;
-    border:        0.5rem solid lightgray;
-    border-radius: 0;
-    content:
-        counter(cnt)              $separator
-        'id="'    attr(id)    '"' $separator
-        'name="'  attr(name)  '"' $separator
-        'for="'   attr(for)   '"' $separator
-        'href="'  attr(href)  '"' $separator
-        'class="' attr(class) '"' $separator
-        'title="' attr(title) '"' ;
+    & {
+        position:      fixed;
+        top:           calc(100vh - $page-padding-y - $marker-y);
+        left:          $marker-x;
+        width:         calc(100vw - $page-padding-x - #{$marker-x * 2});
+        color:         white;
+        background:    hotpink;
+        border:        0.5rem solid lightgray;
+        border-radius: 0;
+        content:
+            counter(cnt)              $separator
+            'id="'    attr(id)    '"' $separator
+            'name="'  attr(name)  '"' $separator
+            'for="'   attr(for)   '"' $separator
+            'href="'  attr(href)  '"' $separator
+            'class="' attr(class) '"' $separator
+            'title="' attr(title) '"' ;
+    }
 }
 
 body.debug {

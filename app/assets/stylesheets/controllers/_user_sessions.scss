@@ -70,10 +70,12 @@ body.user_sessions {
 
         @include button.control;
 
-        padding:           0.75rem;
-        font-size:         large;
-        white-space:       unset;
-        grid-column-start: 1;
+        & {
+            padding:           0.75rem;
+            font-size:         large;
+            white-space:       unset;
+            grid-column-start: 1;
+        }
     }
 
     // @see file:app/views/user/sessions/_local.html.erb
@@ -165,8 +167,10 @@ body.user_sessions {
 
                 @include button.basic;
 
-                line-height: 1;
-                background:  white;
+                & {
+                    line-height: 1;
+                    background:  white;
+                }
 
                 @media #{$narrow-screen} {
                     padding: 4px 12px;

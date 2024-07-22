@@ -65,11 +65,13 @@ $EMOJI_TEXT_VARIANT: "\FE0E";
     @if $contrast {
         $filter: $filter contrast($contrast);
     }
-    @if $filter {
-        filter: $filter;
-    }
-    @if $char {
-        content: $char;
+    & {
+        @if $filter {
+            filter: $filter;
+        }
+        @if $char {
+            content: $char;
+        }
     }
 }
 
@@ -186,8 +188,10 @@ $EMOJI_TEXT_VARIANT: "\FE0E";
 /// @param {Color}  $base           The dominant color of the emoji to change.
 ///
 @mixin gray($char: null, $base: yellow) {
-    filter: saturate(0);
-    @if $char {
-        content: $char;
+    & {
+        filter: saturate(0);
+        @if $char {
+            content: $char;
+        }
     }
 }

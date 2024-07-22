@@ -20,11 +20,11 @@ body.home-dashboard {
 
     .page-text-section.enroll,
     .page-text-section.enroll_production {
+        font-size:  large;
+        line-height: 1.25;
         @media #{$wide-screen} {
             margin-top: $section-gap;
         }
-        font-size:  large;
-        line-height: 1.25;
     }
 
     .sign-in {

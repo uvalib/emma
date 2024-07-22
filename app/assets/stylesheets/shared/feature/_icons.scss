@@ -15,11 +15,14 @@ $PEN:       "\1F58A";   // 🖊 LOWER LEFT BALLPOINT PEN
 // Mixins
 //=============================================================================
 
-@mixin element {
+@mixin element($pad: false) {
 
-    display:         inline-block;
-    vertical-align:  middle;
-    text-decoration: none;
+    & {
+        display:         inline-block;
+        vertical-align:  middle;
+        text-decoration: none;
+        @if $pad { padding: $pad; }
+    }
 
     .symbol {
         display:     inline-block; // Needed for transform
@@ -33,22 +36,18 @@ $PEN:       "\1F58A";   // 🖊 LOWER LEFT BALLPOINT PEN
     .symbol.X_icon::before                { content: $HEAVY_X; }
 }
 
-@mixin show {
+@mixin show($pad: 0.125rem 0.0625rem) {
 
-    @include element;
-
-    padding: 0.125rem 0.0625rem;
+    @include element($pad: $pad);
 
     .symbol { // $MAGNIFIER
         transform: scaleX(-1); // reverse left-to-right
     }
 }
 
-@mixin edit {
+@mixin edit($pad: 0.0375rem 0.125rem) {
 
-    @include element;
-
-    padding: 0.0375rem 0.125rem;
+    @include element($pad: $pad);
 
     .symbol { // $PEN
         font-size: larger;
@@ -56,11 +55,9 @@ $PEN:       "\1F58A";   // 🖊 LOWER LEFT BALLPOINT PEN
     }
 }
 
-@mixin delete {
+@mixin delete($pad: 0 0.25rem) {
 
-    @include element;
-
-    padding: 0 0.25rem;
+    @include element($pad: $pad);
 
     .symbol { // $HEAVY_X
         font-size: larger;

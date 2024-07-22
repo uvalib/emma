@@ -12,16 +12,18 @@
 
     @include control-group;
 
-    width:         min-content;
-    height:        min-content;
-    padding-left:  0.625rem;
-    padding-right: 0.625rem;
-    line-height:   1.5;
-    border-radius: 0.75rem;
+    & {
+        width:          min-content;
+        height:         min-content;
+        padding-left:   0.625rem;
+        padding-right:  0.625rem;
+        line-height:    1.5;
+        border-radius:  0.75rem;
+    }
 
     @media #{$narrow-screen} {
-        margin:    0 auto;
-        font-size: medium;
+        margin:         0 auto;
+        font-size:      medium;
     }
 
     //=========================================================================

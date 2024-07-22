@@ -11,17 +11,19 @@
 // @see file:app/assets/javascripts/feature/download.js
 @mixin transient-control {
 
-    display:         inline-block;
-    margin-left:     $gap-x;
-    line-height:     1.25;
-    vertical-align:  baseline;
-    font-weight:     bold;
-    font-size:       smaller;
-    text-decoration: none;
-    cursor:          pointer;
+    & {
+        display:         inline-block;
+        margin-left:     $gap-x;
+        line-height:     1.25;
+        vertical-align:  baseline;
+        font-weight:     bold;
+        font-size:       smaller;
+        text-decoration: none;
+        cursor:          pointer;
+    }
 
     @media #{$narrow-screen} {
-        margin:      0.5rem 0 0;
+        margin:          0.5rem 0 0;
     }
 }
 
@@ -37,10 +39,12 @@
 
         @include transient-control;
 
-        padding:          3px 6px;
-        color:            black;
-        background-color: $alert-bg;
-        border-radius:    3px;
-        cursor:           default;
+        & {
+            padding:          3px 6px;
+            color:            black;
+            background-color: $alert-bg;
+            border-radius:    3px;
+            cursor:           default;
+        }
     }
 }

@@ -35,9 +35,11 @@
 
         @include header.section;
 
-        flex-wrap:   wrap;
-        font-size:   x-large;
-        user-select: none;
+        & {
+            flex-wrap:   wrap;
+            font-size:   x-large;
+            user-select: none;
+        }
 
         > * {
 
@@ -78,24 +80,26 @@
         @include header.control-panel;
         @include user-select(none);
 
-        flex-wrap:          nowrap;
-        justify-content:    flex-start;
-        align-items:        baseline;
-        gap:                calc($gap-y / 2) $gap-x;
-        border-color:       $debug-fg;
-        border-style:       dashed;
-        flex:               0 1 max-content;
+        & {
+            flex-wrap:          nowrap;
+            justify-content:    flex-start;
+            align-items:        baseline;
+            gap:                calc($gap-y / 2) $gap-x;
+            border-color:       $debug-fg;
+            border-style:       dashed;
+            flex:               0 1 max-content;
+        }
 
         @media #{$wide-screen} {
-            position:       relative;
-            z-index:        1;
-            top:            -0.5rem;
-            margin-bottom:  -1.5rem;
-            max-width:      100%;
+            position:           relative;
+            z-index:            1;
+            top:                -0.5rem;
+            margin-bottom:      -1.5rem;
+            max-width:          100%;
         }
 
         @media #{$not-wide-screen} {
-            margin-top:     calc(2 * $gap-y);
+            margin-top:         calc(2 * $gap-y);
         }
 
         //=====================================================================
@@ -132,11 +136,13 @@
 
                 @include button.basic;
 
-                margin:         0;
-                font-size:      larger;
-                color:          inherit;
-                border-color:   $debug-fg;
-                border-width:   2px;
+                & {
+                    margin:         0;
+                    font-size:      larger;
+                    color:          inherit;
+                    border-color:   $debug-fg;
+                    border-width:   2px;
+                }
             }
         }
     }

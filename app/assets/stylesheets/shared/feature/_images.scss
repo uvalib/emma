@@ -17,7 +17,9 @@ $border-color: gray;
 
 @mixin thumbnail-dimensions {
 
-    max-width:      var(--thumbnail-max-x);
+    & {
+        max-width:  var(--thumbnail-max-x);
+    }
 
     @media #{v.$not-narrow-screen} {
         max-height: var(--thumbnail-max-y);

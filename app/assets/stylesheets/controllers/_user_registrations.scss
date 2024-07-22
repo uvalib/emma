@@ -17,11 +17,11 @@
     gap:        2rem 1rem;
     margin-top: calc(2 * $page-padding-y);
 
+    grid-template-columns: max-content max-content auto;
+
     @media #{$wide-screen} {
         width: 75%;
     }
-
-    grid-template-columns: max-content max-content auto;
 
     //=========================================================================
     // Elements

@@ -89,9 +89,11 @@ ul.page-actions {
 
     @include user-select(none);
 
-    margin-top: 3rem;
-    padding:    0.5rem 0 0;
-    border-top: 2px solid gray;
+    & {
+        margin-top: 3rem;
+        padding:    0.5rem 0 0;
+        border-top: 2px solid gray;
+    }
 
     li.page-action {
 

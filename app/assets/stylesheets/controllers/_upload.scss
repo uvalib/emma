@@ -241,8 +241,8 @@ body.api_migrate {
 
                     @extend .model-list-item-panel; // For .data-list
 
-                    @include panel.toggle-panel;
                     @include grid.column-span;
+                    @include panel.toggle-panel;
 
                     .data-list {
                         width:  100%;

@@ -10,6 +10,10 @@
 # Constants
 #==============================================================================
 
+BIN_DIR=`dirname "$0"`
+PROJ_DIR=`dirname "$BIN_DIR"`
+NODE_DIR="$PROJ_DIR/node_modules/.bin"
+
 ASSET_PATH='app/assets'
 JS_PATH="$ASSET_PATH/javascripts"
 CSS_PATH="$ASSET_PATH/stylesheets"
@@ -41,8 +45,11 @@ COMPRESSED='true'
 #==============================================================================
 
 case "$1" in
-    esbuild|javascript) SASS_BUILD='' ;;
-    sass|scss|css)      ES_BUILD='' ;;
+    esbuild|javascript) shift; SASS_BUILD='' ;;
+    sass|scss|css)      shift; ES_BUILD='' ;;
+    -*)                 ;; # First option (conveyed to esbuild and sass).
+    '')                 ;; # Run both esbuild and sass.
+    *)                  echo "$0: invalid: $1" 1>&2; exit 1 ;;
 esac
 
 #==============================================================================
@@ -50,6 +57,9 @@ esac
 #==============================================================================
 
 if [ "$ES_BUILD" ] ; then
+
+    PROG='esbuild'
+    which "$PROG" > /dev/null || PATH="$NODE_DIR:$PATH"
 
     # Process JavaScript sources.
     INPUT="$JS_PATH/application.js"
@@ -60,10 +70,11 @@ if [ "$ES_BUILD" ] ; then
     [ "$LOCAL" ] || MAP_OPT="$MAP_OPT --source-root=$ASSET_ROOT/javascripts/"
     TARGET_OPT='--target=chrome125,edge125,firefox126,opera110,safari16'
     COMPRESS_OPT='--minify'
+    [ -t 0 ]          && OPT="$OPT --color=true"
     [ "$SOURCE_MAP" ] || MAP_OPT=''
     [ "$COMPRESSED" ] || COMPRESS_OPT=''
     (set -x;
-    esbuild $INPUT $OUTPUT $INCLUDE $OPT $MAP_OPT $TARGET_OPT $COMPRESS_OPT)
+    $PROG $INPUT $OUTPUT $INCLUDE $OPT $MAP_OPT $TARGET_OPT $COMPRESS_OPT $*)
 
     # Ensure that relative references are accessible via the web server.
     if [ "$DEV" ]; then
@@ -79,6 +90,9 @@ fi
 
 if [ "$SASS_BUILD" ] ; then
 
+    PROG='sass'
+    which "$PROG" > /dev/null || PATH="$NODE_DIR:$PATH"
+
     # Process SCSS sources.
     INPUT="$CSS_PATH/application.sass.scss"
     OUTPUT="$BUILD_PATH/application.css"
@@ -87,10 +101,11 @@ if [ "$SASS_BUILD" ] ; then
     MAP_OPT=''
     TARGET_OPT=''
     COMPRESS_OPT='--style=compressed'
+    [ -t 0 ]          && OPT="$OPT --color"
     [ "$SOURCE_MAP" ] || MAP_OPT='--no-source-map'
     [ "$COMPRESSED" ] || COMPRESS_OPT=''
     (set -x;
-    sass $INPUT $OUTPUT $INCLUDE $OPT $MAP_OPT $TARGET_OPT $COMPRESS_OPT)
+    $PROG $INPUT $OUTPUT $INCLUDE $OPT $MAP_OPT $TARGET_OPT $COMPRESS_OPT $*)
 
     # Ensure that relative references are accessible via the web server.
     if [ "$DEV" ]; then

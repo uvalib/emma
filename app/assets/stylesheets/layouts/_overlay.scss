@@ -38,13 +38,15 @@
 
         @include overlay.image('loading-balls.gif', $width: max(5vw,2cm));
 
+        // When the search is done, hide the overlay immediately rather than
+        // easing back to transparency.
+        &:not(.visible) {
+            transition: unset;
+        }
+
         .content {
             filter: saturate(1.5) drop-shadow(2px 2px 2px #444);
         }
-
-        // When the search is done, hide the overlay immediately rather than
-        // easing back to transparency.
-        &:not(.visible) { transition: unset; }
 
     }
 

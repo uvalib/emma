@@ -21,25 +21,27 @@
     @include x.hover-highlight;
 
     // From .uppy-FileInput-btn in node_modules/uppy/dist/uppy.css
-    font-family:        sans-serif;
-    color:              v.$control-text;
-    background:         none;
-    border:             1px solid v.$control-accent;
-    border-radius:      8px;
-    -webkit-appearance: none;
+    & {
+        font-family:        sans-serif;
+        color:              v.$control-text;
+        background:         none;
+        border:             1px solid v.$control-accent;
+        border-radius:      8px;
+        -webkit-appearance: none;
 
-    display:            block;
-    margin:             auto 0;
-    padding:            2px 6px;
-    line-height:        1.125;
-    white-space:        pre;
-    text-decoration:    none;
-    font-size:          large;
+        display:            block;
+        margin:             auto 0;
+        padding:            2px 6px;
+        line-height:        1.125;
+        white-space:        pre;
+        text-decoration:    none;
+        font-size:          large;
+    }
 
     &.disabled,
     &.forbidden {
-        background-color: v.$input-disabled-bg;
-        border-color:     v.$input-disabled-fg;
+        background-color:   v.$input-disabled-bg;
+        border-color:       v.$input-disabled-fg;
     }
 }
 
@@ -50,12 +52,15 @@
 @mixin control {
 
     @include basic;
+    @include x.hover-highlight;
 
     // Restore some items that 'basic' has overridden:
-    margin:      0;
-    padding:     10px 15px;
-    line-height: 1;
-    font-size:   0.85em;
+    & {
+        margin:      0;
+        padding:     10px 15px;
+        line-height: 1;
+        font-size:   0.85em;
+    }
 
     &:not(.disabled):not(.forbidden):hover {
         background-color: v.$uva-accent-orange;
@@ -66,8 +71,6 @@
     &.disabled:hover, &.forbidden:hover {
         color: unset;
     }
-
-    @include x.hover-highlight;
 }
 
 /// Style like a dropdown menu control button.
@@ -76,10 +79,12 @@
 
     @include x.control-shadow;
 
-    font-size:     large;
-    background:    f.lighter(v.$button-accent, 90%);
-    border:        1px solid v.$uppy-file-input;
-    border-radius: 0.25rem;
+    & {
+        font-size:     large;
+        background:    f.lighter(v.$button-accent, 90%);
+        border:        1px solid v.$uppy-file-input;
+        border-radius: 0.25rem;
+    }
 }
 
 /// Make a link look and act like a browser button.
@@ -92,8 +97,10 @@
 
     @include x.hover-highlight;
 
-    display: block;
-    border:  $width solid transparent;
+    & {
+        display: block;
+        border:  $width solid transparent;
+    }
 
     & {
         border-top-color:    $light;
@@ -116,14 +123,16 @@
 
     @include x.hover-highlight;
 
-    margin:          auto -0.125rem auto 0.5rem;
-    padding:         0 0.125rem;
-    text-decoration: none;
-    color:           v.$uva-accent-blue;
-    background:      whitesmoke;
-    border:          2px solid gray;
-    border-radius:   50%;
-    flex:            0 0 auto;
+    & {
+        margin:          auto -0.125rem auto 0.5rem;
+        padding:         0 0.125rem;
+        text-decoration: none;
+        color:           v.$uva-accent-blue;
+        background:      whitesmoke;
+        border:          2px solid gray;
+        border-radius:   50%;
+        flex:            0 0 auto;
+    }
 
     &:focus {
         text-decoration: none;

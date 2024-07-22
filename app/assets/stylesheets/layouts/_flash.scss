@@ -39,11 +39,13 @@ $flash-optimal-width: 20em;
 
         @include block-shadow;
 
-        margin:        1rem 0;
-        padding:       1rem;
-        overflow-wrap: break-word;
-        border:        0.125rem solid gray;
-        border-radius: 0.5rem;
+        & {
+            margin:        1rem 0;
+            padding:       1rem;
+            overflow-wrap: break-word;
+            border:        0.125rem solid gray;
+            border-radius: 0.5rem;
+        }
 
         &:first-child { margin-top:    $page-padding-y; }
         &:last-child  { margin-bottom: 0; }
@@ -119,10 +121,12 @@ $flash-optimal-width: 20em;
 
     @include popup.center-float-vertical(flash-width());
 
-    z-index:    $z-flash;
-    border:     none;
-    background: overlay.$default-bg;
-    box-shadow: 0 0 0 50vh overlay.$default-bg;
+    & {
+        z-index:    $z-flash;
+        border:     none;
+        background: overlay.$default-bg;
+        box-shadow: 0 0 0 50vh overlay.$default-bg;
+    }
 
     //=========================================================================
     // Components
@@ -156,15 +160,17 @@ $flash-optimal-width: 20em;
 
             @include button.basic;
 
-            margin-top:     0;
-            font-weight:    bold;
-            background:     white;
-            border:         0.125rem solid black;
-            border-radius:  0.25rem;
-            flex:           0 0 auto;
+            & {
+                margin-top:     0;
+                font-weight:    bold;
+                background:     white;
+                border:         0.125rem solid black;
+                border-radius:  0.25rem;
+                flex:           0 0 auto;
+            }
 
             &:focus {
-                outline-color: $uva-text-gray;
+                outline-color:  $uva-text-gray;
             }
         }
     }
@@ -184,7 +190,7 @@ $flash-optimal-width: 20em;
     // The container starts out hidden until 'visible' is added.  (Not using
     // "display: none" avoids an expensive re-render when it becomes visible.)
     &:not(.visible) {
-        @include invisible;
         z-index: $z-hidden;
+        @include invisible;
     }
 }

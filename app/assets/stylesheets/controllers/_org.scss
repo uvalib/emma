@@ -15,6 +15,14 @@
 
     @extend .model-list-item-panel;
 
+    @media #{$medium-width} {
+        padding:        1rem 1rem 0.5rem;
+    }
+
+    @media #{$narrow-screen} {
+        padding-bottom: 0;
+    }
+
     // Maximum number of physical columns per width breakpoint.
 
     $max-columns:  30;
@@ -26,14 +34,6 @@
     );
 
     @include grid.column-classes($max-columns, $template, $template-map);
-
-    @media #{$medium-width} {
-        padding:        1rem 1rem 0.5rem;
-    }
-
-    @media #{$narrow-screen} {
-        padding-bottom: 0;
-    }
 }
 
 // Zero or more .org-list-item elements.
