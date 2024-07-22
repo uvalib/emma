@@ -303,7 +303,7 @@ class AccountDecorator
   end
 
   # Render pre-populated form fields, manually adding password field(s) (which
-  # are not in "emma.account.record").
+  # are not in "en.emma.record.account").
   #
   # @param [Hash] opt
   #

@@ -19,8 +19,8 @@ __loading_begin(__FILE__)
 # @attr [SeriesType]                    bib_seriesType
 # @attr [String]                        bib_seriesPosition
 #
-# @see file:config/locales/records/upload.en.yml          *en.emma.upload.record.emma_data*
-# @see file:config/locales/records/search.en.yml          *en.emma.search.record*
+# @see "en.emma.record.upload.emma_data"
+# @see "en.emma.record.search"
 # @see file:app/assets/javascripts/feature/file-upload.js *EmmaData*
 #
 # @see AwsS3::Record::SubmissionRequest   (duplicate schema)

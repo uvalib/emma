@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Metadata record schema for an EMMA Unified Search result.
 #
-# @see file:config/locales/records/upload.en.yml *en.emma.upload.record.emma_data*
+# @see "en.emma.record.upload.emma_data"
 #
 # @see Search::Record::MetadataRecord       (duplicate schema)
 # @see Search::Record::MetadataCommonRecord (schema subset)

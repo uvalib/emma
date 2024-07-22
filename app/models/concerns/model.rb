@@ -159,22 +159,22 @@ module Model
 
   protected
 
-  # Keys under "emma.*.record" beginning with an underscore, which represent
+  # Keys under "en.emma.record.*" beginning with an underscore, which represent
   # the control directive for specifying the base configuration.
   #
   # @type [Array<Symbol>]
   #
   BASE_DIRECTIVE = %i[base base_config base_configuration].freeze
 
-  # Keys under "emma.*.record" beginning with an underscore, which define
+  # Keys under "en.emma.record.*" beginning with an underscore, which define
   # display fields which are filled dynamically.
   #
   # @type [Array<Symbol>]
   #
   SYNTHETIC_FIELDS = %i[synthetic].freeze
 
-  # Keys under "emma.*.record" beginning with an underscore, which do not map
-  # on to actual database columns.
+  # Keys under "en.emma.record.*" beginning with an underscore, which do not
+  # map on to actual database columns.
   #
   # @type [Array<Symbol>]
   #
@@ -198,7 +198,7 @@ module Model
   def self.configured_fields_for(type)
     model_config = config_section("emma.#{type}").deep_dup
 
-    # Start with definitions from config/locales/records/*.yml, separating
+    # Start with definitions from "en.emma.record.*", separating control
     # control directives from field name entries.
     directives = {}
     all_fields =
@@ -212,7 +212,7 @@ module Model
         [field, Field.normalize(prop, field)] unless name
       }.compact.to_h
 
-    # Special handling so that "emma.search.record" entries are initialized
+    # Special handling so that "en.emma.record.search" entries are initialized
     # with the equivalent values from the submission record configuration.
     if (base = directives.values_at(*BASE_DIRECTIVE).first).present?
       base = base.values_at(:record, :field) if base.is_a?(Hash)

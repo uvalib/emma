@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 # @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.5#/components/schemas/IngestionRecord   JSON schema specification
 #
-# @see file:config/locales/records/upload.en.yml *en.emma.upload.record.emma_data*
+# @see "en.emma.record.upload.emma_data"
 #
 # @see Search::Record::MetadataCommonRecord (duplicate schema)
 #

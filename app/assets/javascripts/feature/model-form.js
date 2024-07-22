@@ -165,7 +165,7 @@ appSetup(MODULE, function() {
      * @property {string}           storage
      * @property {FileDataMetadata} metadata
      *
-     * @see "en.emma.upload.record.file_data"
+     * @see "en.emma.record.upload.file_data"
      * @see "Shrine::InstanceMethods#upload"
      */
 
@@ -237,7 +237,7 @@ appSetup(MODULE, function() {
      * @property {singleString} bib_seriesType
      * @property {singleString} bib_seriesPosition
      *
-     * @see "en.emma.upload.record.emma_data"
+     * @see "en.emma.record.upload.emma_data"
      * @see "AwsS3::Record::SubmissionRequest"
      */
 
@@ -278,7 +278,7 @@ appSetup(MODULE, function() {
      * @property {string}   review_comment
      * @property {string}   reviewed_at
      *
-     * @see "en.emma.upload.record"
+     * @see "en.emma.record.upload"
      */
 
     /**
@@ -365,7 +365,7 @@ appSetup(MODULE, function() {
      * @property {string}   [rem_comments]
      * @property {string}   [rem_remediationComments]
      *
-     * @see file:config/locales/records/search.en.yml "en.emma.search.record"
+     * @see "en.emma.record.search"
      */
 
     /**

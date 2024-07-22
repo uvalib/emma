@@ -3,8 +3,8 @@ module ManifestItem::FieldMethods
 
   # Fields which are not directly related to :emma_data values.
   #
-  # (These are the "en.manifest_item.record" fields with 'origin' == :system
-  # plus the :file_data field.)
+  # (These are the "en.emma.record.manifest_item" fields with
+  # 'origin' == :system plus the :file_data field.)
   #
   # @type [Array<Symbol>]
   #

@@ -13,13 +13,13 @@ module Field::Property
 
   public
 
-  # Record field configuration property keys found under "emma.*.record.*".
+  # Record field configuration property keys found under "en.emma.record.*".
   #
   # @type [Array<Symbol>]
   #
   CONFIGURATION_KEYS = [
-    :cond,        # Conditional display criteria. (not in "emma.*.record.*")
-    :help,        # Help topic locator. (not in "emma.*.record.*")
+    :cond,        # Conditional display criteria. (not in "en.emma.record.*.*")
+    :help,        # Help topic locator. (not in "en.emma.record.*.*")
     :label,       # Field label.
     :max,         # Maximum allowed;  0 or nil implies no limit.
     :min,         # Minimum required; 0 or nil implies optional field.

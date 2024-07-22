@@ -79,22 +79,22 @@ module Model
     : (untyped `type`,  fatal: false) -> (ModelConfig | nil)
     | (untyped `type`, ?fatal: true)  -> ModelConfig
 
-  # Keys under "emma.*.record" beginning with an underscore, which represent
+  # Keys under "en.emma.record.*" beginning with an underscore, which represent
   # the control directive for specifying the base configuration.
   #
   # @type [Array<Symbol>]
   #
   BASE_DIRECTIVE: symArray
 
-  # Keys under "emma.*.record" beginning with an underscore, which define
+  # Keys under "en.emma.record.*" beginning with an underscore, which define
   # display fields which are filled dynamically.
   #
   # @type [Array<Symbol>]
   #
   SYNTHETIC_FIELDS: symArray
 
-  # Keys under "emma.*.record" beginning with an underscore, which do not map
-  # on to actual database columns.
+  # Keys under "en.emma.record.*" beginning with an underscore, which do not
+  # map on to actual database columns.
   #
   # @type [Array<Symbol>]
   #

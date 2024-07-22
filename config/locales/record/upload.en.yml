@@ -2,8 +2,8 @@
 #
 # Upload record fields ("uploads" in db/schema.rb).
 #
-# The fields under 'en.emma.upload.record.emma_data' correspond to the fields
-# fields in 'en.emma.search.record', however there is no direct functional
+# The fields under "en.emma.record.upload.emma_data" correspond to the fields
+# fields in "en.emma.record.search", however there is no direct functional
 # relationship, so the two sets of fields are distinct.
 #
 # NOTE: The order here defines the order for "display_fields: !ruby/symbol all"
@@ -90,7 +90,7 @@ en:
           # SR:   equivalent to emma_repository
           # IR:   equivalent to emma_repository
           # NOTE: Should have the same value as:
-          # NOTE:   'en.emma.upload.record.emma_data.emma_repository'
+          # NOTE:   "en.emma.record.upload.emma_data.emma_repository"
           min:          1
           max:          1
           label:        'Repository'
@@ -331,7 +331,7 @@ en:
             # NOTE: User-supplied for a derivation of a partner repository item
             # NOTE: User-supplied as "emma" for new submissions.
             # NOTE: Should have the same value as:
-            # NOTE:   en.emma.upload.record.repository
+            # NOTE:   en.emma.record.upload.repository
             min:          1
             max:          1
             label:        'Source Repository'
