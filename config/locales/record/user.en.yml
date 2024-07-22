@@ -1,4 +1,4 @@
-# config/locales/records/user.en.yml
+# config/locales/record/user.en.yml
 #
 # User account fields.
 #
@@ -12,8 +12,8 @@ en:
 
   emma:
 
-    user:
+    record:
 
-      record:
+      user:
 
-        # @see file:config/locales/records/account.en.yml
+        # @see file:config/locales/record/account.en.yml

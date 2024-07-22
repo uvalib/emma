@@ -25,7 +25,7 @@ module DataHelper
   # @type [Array<Symbol>]
   #
   EMMA_DATA_FIELDS =
-    config_section('emma.upload.record.emma_data')
+    config_section(:record, :upload, :emma_data)
       .select { |_field, entry| entry.is_a?(Hash) }.keys.freeze
 
   # ===========================================================================

@@ -1,4 +1,4 @@
-# config/locales/records/upload.en.yml
+# config/locales/record/upload.en.yml
 #
 # Upload record fields ("uploads" in db/schema.rb).
 #
@@ -35,9 +35,9 @@ en:
 
   emma:
 
-    upload:
+    record:
 
-      record:
+      upload:
 
         # =====================================================================
         # Database record fields

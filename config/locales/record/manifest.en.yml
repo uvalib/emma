@@ -1,4 +1,4 @@
-# config/locales/records/manifest.en.yml
+# config/locales/record/manifest.en.yml
 #
 # Manifest fields.
 #
@@ -9,9 +9,9 @@ en:
 
   emma:
 
-    manifest:
+    record:
 
-      record:
+      manifest:
 
         # =====================================================================
         # Database record fields

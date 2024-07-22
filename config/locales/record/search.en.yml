@@ -1,4 +1,4 @@
-# config/locales/records/search.en.yml
+# config/locales/record/search.en.yml
 #
 # Search model fields.
 #
@@ -33,9 +33,9 @@ en:
 
   emma:
 
-    search:
+    record:
 
-      record:
+      search:
 
         _base:
           record: upload

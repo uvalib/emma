@@ -1,4 +1,4 @@
-# config/locales/records/org.en.yml
+# config/locales/record/org.en.yml
 #
 # User account fields.
 #
@@ -19,9 +19,9 @@ en:
 
   emma:
 
-    org:
+    record:
 
-      record:
+      org:
 
         id:
           min:          1

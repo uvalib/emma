@@ -1,4 +1,4 @@
-# config/locales/records/manifest_item.en.yml
+# config/locales/record/manifest_item.en.yml
 #
 # Manifest fields.
 #
@@ -9,7 +9,7 @@ en:
 
   emma:
 
-    manifest_item:
+    record:
 
       _template:
         _internal:      &INTERNAL_FIELD
@@ -22,7 +22,7 @@ en:
             </p>
           origin:       system
 
-      record:
+      manifest_item:
 
         id:
           <<:           *INTERNAL_FIELD

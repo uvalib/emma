@@ -1,4 +1,4 @@
-# config/locales/records/enrollment.en.yml
+# config/locales/record/enrollment.en.yml
 #
 # User account fields.
 #
@@ -19,9 +19,9 @@ en:
 
   emma:
 
-    enrollment:
+    record:
 
-      record:
+      enrollment:
 
         # =====================================================================
         # Database record fields
