@@ -29,7 +29,7 @@ module FileFormat::Rtf
   #
   # @type [Hash{Symbol=>String,Array,Hash}]
   #
-  RTF_FORMAT = FileFormat.configuration(FILE_TYPE).deep_freeze
+  RTF_FORMAT = FileFormat.configuration(FILE_TYPE)
 
   # MIME type(s) associated with instances of this file format.
   #

@@ -32,8 +32,7 @@ module FileFormat::GrayscalePdf
   #
   # @type [Hash{Symbol=>String,Array,Hash}]
   #
-  GRAYSCALE_PDF_FORMAT =
-    FileFormat.configuration(PDF_FORMAT, FILE_TYPE).deep_freeze
+  GRAYSCALE_PDF_FORMAT = FileFormat.configuration(*PDF_FORMAT, FILE_TYPE)
 
   # MIME type(s) associated with instances of this file format.
   #

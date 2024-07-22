@@ -1,0 +1,35 @@
+# config/locales/format/daisy.en.yml
+#
+# DAISY format
+
+en:
+
+  emma:
+
+    format:
+
+      daisy:
+
+        type: 'daisy'
+
+        mimes:
+          - 'application/x-daisy' # NOTE: fake MIME type
+
+        exts:
+          - 'daisy'
+
+        upload:
+          parse:          true
+
+        # =====================================================================
+        # FORMAT_FIELDS
+        # =====================================================================
+
+        # NOTE: @see ocf.en.yml
+
+        # =====================================================================
+        # A mapping of format field to the equivalent
+        # Search::Record::MetadataRecord field.
+        # =====================================================================
+
+        # NOTE: @see ocf.en.yml

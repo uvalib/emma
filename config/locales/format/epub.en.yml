@@ -1,0 +1,37 @@
+# config/locales/format/epub.en.yml
+#
+# EPUB3 format
+
+en:
+
+  emma:
+
+    format:
+
+      epub:
+
+        type: 'epub'
+
+        mimes:
+          - 'application/epub+zip'
+          - 'application/epub-file'
+
+        exts:
+          - 'epub'
+          - 'epub3'
+
+        upload:
+          parse:          true
+
+        # =====================================================================
+        # FORMAT_FIELDS
+        # =====================================================================
+
+        # NOTE: @see ocf.en.yml
+
+        # =====================================================================
+        # A mapping of format field to the equivalent
+        # Search::Record::MetadataRecord field.
+        # =====================================================================
+
+        # NOTE: @see ocf.en.yml

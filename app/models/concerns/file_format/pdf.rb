@@ -29,7 +29,7 @@ module FileFormat::Pdf
   #
   # @type [Hash{Symbol=>String,Array,Hash}]
   #
-  PDF_FORMAT = FileFormat.configuration(FILE_TYPE).deep_freeze
+  PDF_FORMAT = FileFormat.configuration(FILE_TYPE)
 
   # MIME type(s) associated with instances of this file format.
   #

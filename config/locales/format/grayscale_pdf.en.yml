@@ -1,0 +1,39 @@
+# config/locales/format/grayscale_pdf.en.yml
+#
+# Grayscale PDF - NOTE: deprecated with API 0.0.5
+#
+# PDF metadata is usually about the creator of the PDF and rarely contains
+# bibliographic information about the source document.
+
+en:
+
+  emma:
+
+    format:
+
+      grayscalePdf:
+
+        type: 'grayscalePdf'
+
+        mimes:
+          - 'application/x-grayscale-pdf+zip'   # NOTE: fake MIME type
+          - 'application/x-grayscale-pdf-file'  # NOTE: fake MIME type
+
+        exts:
+          - 'grayscalePdf'                      # TODO: ???
+
+        upload:
+          parse:          false
+
+        # =====================================================================
+        # FORMAT_FIELDS
+        # =====================================================================
+
+        # NOTE: @see pdf.en.yml
+
+        # =====================================================================
+        # A mapping of format field to the equivalent
+        # Search::Record::MetadataRecord field.
+        # =====================================================================
+
+        # NOTE: @see pdf.en.yml

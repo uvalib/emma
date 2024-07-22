@@ -29,7 +29,7 @@ module FileFormat::Kurzweil
   #
   # @type [Hash{Symbol=>String,Array,Hash}]
   #
-  KURZWEIL_FORMAT = FileFormat.configuration(FILE_TYPE).deep_freeze
+  KURZWEIL_FORMAT = FileFormat.configuration(FILE_TYPE)
 
   # MIME type(s) associated with instances of this file format.
   #

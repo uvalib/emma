@@ -250,11 +250,12 @@ module FileFormat
   # Get configured properties for a file format.  If multiple sections are
   # given each successive section is recursively merged into the previous.
   #
-  # @param [Array<String, Symbol, Hash>] sections
+  # @param [Array<String, Symbol, Hash>] base_sections
+  # @param [String, Symbol]              section
   #
-  # @return [Hash{Symbol=>String,Array,Hash}]
+  # @return [Hash{Symbol=>String,Array,Hash}]   Frozen result.
   #
-  def self.configuration: (*(symHash|String|Symbol) sections) -> symHash
+  def self.configuration: (*(symHash|String|Symbol) base_sections, String|Symbol section) -> symHash
 
   # Get properties from a configuration section.
   #
@@ -267,7 +268,7 @@ module FileFormat
 
   # Configured properties for each file format.
   #
-  # @return [Hash{Symbol=>Hash}]
+  # @return [Hash{Symbol=>Hash}]    Frozen hash values.
   #
   def self.configuration_table: () -> Hash[Symbol,symHash]
   def      configuration_table: () -> Hash[Symbol,symHash]

@@ -30,7 +30,7 @@ module FileFormat
   #
   # @see file:config/locales/types.en.yml
   #
-  TYPES = config_section('emma.format').keys.map(&:to_sym).freeze
+  TYPES = config_section(:type, :search, :DublinCoreFormat).keys.freeze
 
   # Placeholder for an unknown format.
   #
@@ -428,22 +428,20 @@ module FileFormat
     # Get configured properties for a file format.  If multiple sections are
     # given each successive section is recursively merged into the previous.
     #
-    # @param [Array<String, Symbol, Hash>] sections
+    # @param [Array<String, Symbol, Hash>] base_sections
+    # @param [String, Symbol]              section
     #
-    # @return [Hash{Symbol=>String,Array,Hash}]
+    # @return [Hash{Symbol=>String,Array,Hash}]   Frozen result.
     #
-    def configuration(*sections)
-      type = sections.last
-      return {} unless type.is_a?(String) || type.is_a?(Symbol)
-      type = type.to_s.delete_prefix('emma.')
-      configuration_table[type.to_sym] ||=
-        {}.tap do |hash|
-          sections.each do |section|
-            # noinspection RubyMismatchedArgumentType
-            section = configuration_section(section) unless section.is_a?(Hash)
-            hash.deep_merge!(section) if section.present?
-          end
-        end
+    def configuration(*base_sections, section)
+      type   = (section.to_s if section.is_a?(Symbol) || section.is_a?(String))
+      type &&= type.delete_prefix('emma.').delete_prefix('format.').to_sym
+      raise "#{__method__}: invalid section #{section.inspect}" if type.blank?
+      configuration_table[type] ||=
+        [*base_sections, section].reduce({}) { |new_entry, sec|
+          sec = configuration_section(sec) unless sec.is_a?(Hash)
+          new_entry.deep_merge!(sec) if sec.present?
+        }.deep_freeze
     end
 
     # Get properties from a configuration section.
@@ -453,27 +451,26 @@ module FileFormat
     # @return [Hash{Symbol=>String,Array,Hash}]
     #
     def configuration_section(section)
-      config_section(section).deep_dup.tap do |hash|
+      section = section.to_s.delete_prefix('emma.').delete_prefix('format.')
+      config_section(:format, section).deep_dup.tap do |hash|
         %i[mimes exts].each do |key|
           hash[key] ||= []
           hash[key].map! { |s| s.to_s.strip.downcase }.compact_blank!
         end
         %i[fields map].each do |key|
           hash[key] ||= {}
-          hash[key].transform_values! do |value|
+          hash[key].transform_values! { |value|
             array = value.is_a?(Array)
-            value = Array.wrap(value)
-            value.map! { |s| s.to_s.strip.to_sym }.compact_blank!
-            array ? value.presence : value.first
-          end
-          hash[key].compact!
+            value = Array.wrap(value).map! { |s| s.to_s.strip.to_sym }
+            array ? value.compact_blank!.presence : value.first
+          }.compact!
         end
       end
     end
 
     # Configured properties for each file format.
     #
-    # @return [Hash{Symbol=>Hash}]
+    # @return [Hash{Symbol=>Hash}]    Frozen hash values.
     #
     def configuration_table
       @configuration_table ||= {}

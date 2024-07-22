@@ -1,0 +1,40 @@
+# config/locales/format/kurzweil.en.yml
+#
+# Kurzweil 3000 Document format - TODO: ?
+
+en:
+
+  emma:
+
+    format:
+
+      kurzweil:
+
+        type: 'kurzweil'
+
+        mimes:
+          - 'application/x-kurzweil' # NOTE: fake MIME type
+
+        exts:
+          - 'kes'
+          - 'kurzweil'
+
+        upload:
+          parse:          true
+
+        # =====================================================================
+        # FORMAT_FIELDS
+        # =====================================================================
+
+        fields:
+
+          # NONE SO FAR
+
+        # =====================================================================
+        # A mapping of format field to the equivalent
+        # Search::Record::MetadataRecord field.
+        # =====================================================================
+
+        map:
+
+          # NONE SO FAR
