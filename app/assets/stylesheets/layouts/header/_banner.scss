@@ -273,8 +273,8 @@
     // This always appears in the upper-right corner of the display due to the
     // .content-area settings.
     //
-    // Note that .session-link doesn't underline on hover because .session is
-    // set up to do that.  The font size adjustments keep the underline from
+    // Note that ".session-link" doesn't underline on hover because ".session"
+    // is set up to do that.  The font size adjustments keep the underline from
     // being overly thick.
     //
     // @see SessionsHelper#sign_in_link

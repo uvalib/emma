@@ -2434,7 +2434,8 @@ export class SingletonGroup extends ControlGroup {
     // ========================================================================
 
     /**
-     * The previous control as always the single control in the group.
+     * Because there is only a single control in the group, the "previous"
+     * control is always that same control.
      *
      * @param {Selector} [_from]      Ignored.
      * @param {boolean}  [_wrap]      Ignored.
@@ -2447,7 +2448,8 @@ export class SingletonGroup extends ControlGroup {
     }
 
     /**
-     * The next control as always the single control in the group.
+     * Because there is only a single control in the group, the "next" control
+     * is always that same control.
      *
      * @param {Selector} [_from]      Ignored.
      * @param {boolean}  [_wrap]      Ignored.

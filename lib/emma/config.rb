@@ -276,8 +276,8 @@ module Emma::Config
 
   # The configuration item path specified by *path*.
   #
-  # @param [Array<String,Symbol>] path
-  # @param [Hash]                 opt   To #config_entry.
+  # @param [Array<String,Symbol,nil>] path
+  # @param [Hash]                     opt   To #config_entry.
   #
   # @return [any, nil]
   #
@@ -288,8 +288,8 @@ module Emma::Config
 
   # The configuration section path specified by *path*.
   #
-  # @param [Array<String,Symbol>] path
-  # @param [Hash]                 opt   To #config_entry.
+  # @param [Array<String,Symbol,nil>] path
+  # @param [Hash]                     opt   To #config_entry.
   #
   # @return [Hash]
   #

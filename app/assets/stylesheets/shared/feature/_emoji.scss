@@ -54,7 +54,7 @@ $EMOJI_TEXT_VARIANT: "\FE0E";
     @if $hue {
         $filter: $filter hue-rotate($hue);
     } @else {
-        @warn "Haven't determined a hue rotation for #{$base}-based emoji"
+        @warn "Have not determined a hue rotation for #{$base}-based emoji"
     }
     @if $saturate {
         $filter: $filter saturate($saturate);

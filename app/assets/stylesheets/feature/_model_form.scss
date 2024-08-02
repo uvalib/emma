@@ -827,9 +827,8 @@
 
     .uppy-FileInput-container {
 
-        // In modern browsers, clicking on the <label> associated with
-        // an <input type="file"> behaves the same as clicking the
-        // input itself.
+        // In modern browsers, clicking on the `<label>` associated with an
+        // `<input type="file">` behaves the same as clicking the input itself.
         label {
 
             @include button.control;
@@ -839,8 +838,8 @@
             }
         }
 
-        // Remove the input from view (can't do "display: none" or that
-        // would remove the item from the form).
+        // Remove the input from view (can't do `display: none` or that would
+        // remove the item from the form).
         input[type="file"].control-button,
         input[type="file"].uppy-FileInput-btn {
             @include sr-only;

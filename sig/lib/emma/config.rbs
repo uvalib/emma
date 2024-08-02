@@ -128,21 +128,21 @@ module Emma::Config
 
   # The configuration item path specified by *path*.
   #
-  # @param [Array<String,Symbol>] path
-  # @param [Hash]                 opt   To #config_entry.
+  # @param [Array<String,Symbol,nil>] path
+  # @param [Hash]                     opt   To #config_entry.
   #
   # @return [any, nil]
   #
-  def config_item: ((String|Symbol|Array[String|Symbol]) path, **untyped opt) -> (untyped | nil)
+  def config_item: (*(String|Symbol|nil) path, **untyped opt) -> (untyped | nil)
 
   # The configuration section path specified by *path*.
   #
-  # @param [Array<String,Symbol>] path
-  # @param [Hash]                 opt   To #config_entry.
+  # @param [Array<String,Symbol,nil>] path
+  # @param [Hash]                     opt   To #config_entry.
   #
   # @return [Hash]
   #
-  def config_section: ((String|Symbol|Array[String|Symbol]) path, **untyped opt) -> symHash
+  def config_section: (*(String|Symbol|nil) path, **untyped opt) -> symHash
 
   #
   # @type [Array<String>]

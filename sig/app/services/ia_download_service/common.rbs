@@ -5,7 +5,7 @@ module IaDownloadService::Common
 
   include IaDownloadService::Properties
 
-  # api_headers
+  # Include IA authorization headers.
   #
   # @param [Hash]         params      Default: @params.
   # @param [Hash]         headers     Default: {}.

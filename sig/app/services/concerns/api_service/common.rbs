@@ -121,7 +121,7 @@ module ApiService::Common
   # @param [Array] args   Additional values for the *type* initializer.
   # @param [Hash]  opt    Additional values for the *type* initializer.
   #
-  def api_return: (Class `type`, *untyped args, **untyped opt) -> untyped
+  def api_return: (Class `type`, *untyped args, **untyped opt) -> untyped # Api::Record
 
   # HTTP ports which do not need to be explicitly included when generating an
   # absolute path.

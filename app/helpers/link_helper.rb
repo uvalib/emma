@@ -159,11 +159,9 @@ module LinkHelper
   #
   # @param [String]      path
   # @param [String, nil] label        Default: *path*.
-  # @param [Hash]        opt
+  # @param [Hash]        opt          Passed to #make_link.
   #
   # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #make_link
   #
   def external_link(path, label = nil, **opt, &blk)
     opt[:target] = '_blank' unless opt.key?(:target)

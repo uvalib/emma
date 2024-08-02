@@ -3873,7 +3873,7 @@ appSetup(MODULE, function() {
      * Use received data to update cell(s) associated with data values.
      *
      * @param {Selector} cell         A cell or element inside a cell.
-     * @param {*}        data         Converted to {@link Value}
+     * @param {*}        data         Converted to {@link Field.Value}
      * @param {boolean}  [changed]    Def.: check {@link getCellOriginalValue}
      * @param {boolean}  [valid]
      *
@@ -4358,8 +4358,8 @@ appSetup(MODULE, function() {
      *
      * (No changes are made to element attributes or data.)
      *
-     * @param {Selector} cell         A cell or element inside a cell.
-     * @param {Value}    [current]    Default: {@link getCellCurrentValue}.
+     * @param {Selector}    cell        A cell or element inside a cell.
+     * @param {Field.Value} [current]   Default: {@link getCellCurrentValue}.
      *
      * @returns {boolean}
      */
@@ -4399,7 +4399,7 @@ appSetup(MODULE, function() {
      *
      * @param {Selector} cell         A cell or element inside a cell.
      *
-     * @returns {Value|undefined}
+     * @returns {Field.Value|undefined}
      */
     function getCellOriginalValue(cell) {
         return dataCell(cell).data(ORIGINAL_VALUE_DATA);
@@ -4408,10 +4408,10 @@ appSetup(MODULE, function() {
     /**
      * Assign the original value for the associated cell.
      *
-     * @param {Selector} cell         A cell or element inside a cell.
-     * @param {Value|*}  new_value
+     * @param {Selector}      cell          A cell or element inside a cell.
+     * @param {Field.Value|*} new_value
      *
-     * @returns {Value}
+     * @returns {Field.Value}
      */
     function setCellOriginalValue(cell, new_value) {
         //OUT.debug('setCellOriginalValue: new_value =', new_value, cell);
@@ -4447,7 +4447,7 @@ appSetup(MODULE, function() {
      *
      * @param {Selector} cell         A cell or element inside a cell.
      *
-     * @returns {Value|undefined}
+     * @returns {Field.Value|undefined}
      */
     function getCellCurrentValue(cell) {
         return dataCell(cell).data(CURRENT_VALUE_DATA);
@@ -4456,10 +4456,10 @@ appSetup(MODULE, function() {
     /**
      * Assign the current value for the associated cell.
      *
-     * @param {Selector} cell         A cell or element inside a cell.
-     * @param {Value|*}  new_value
+     * @param {Selector}      cell          A cell or element inside a cell.
+     * @param {Field.Value|*} new_value
      *
-     * @returns {Value}
+     * @returns {Field.Value}
      */
     function setCellCurrentValue(cell, new_value) {
         //OUT.debug('setCellCurrentValue: new_value =', new_value, cell);
@@ -4521,7 +4521,7 @@ appSetup(MODULE, function() {
      *
      * @param {Selector} cell         A cell or element inside a cell.
      *
-     * @returns {Value}
+     * @returns {Field.Value}
      */
     function getCellDisplayValue(cell) {
         const $cell = dataCell(cell);
@@ -4536,8 +4536,8 @@ appSetup(MODULE, function() {
     /**
      * Set the displayed value for a data cell.
      *
-     * @param {Selector} cell         A cell or element inside a cell.
-     * @param {Value}    new_value
+     * @param {Selector}    cell        A cell or element inside a cell.
+     * @param {Field.Value} new_value
      */
     function setCellDisplayValue(cell, new_value) {
         //OUT.debug('setCellDisplayValue: new_value =', new_value, cell);
@@ -4559,8 +4559,8 @@ appSetup(MODULE, function() {
     /**
      * Refresh the cell display according to the data type.
      *
-     * @param {Selector} cell           A cell or element inside a cell.
-     * @param {Value}    [new_value]    Default: from {@link cellDisplay}.
+     * @param {Selector}    cell            A cell or element inside a cell.
+     * @param {Field.Value} [new_value]     Default: from {@link cellDisplay}.
      */
     function updateCellDisplayValue(cell, new_value) {
         //OUT.debug('updateCellDisplayValue: new_value =', new_value, cell);
@@ -4645,7 +4645,7 @@ appSetup(MODULE, function() {
      *
      * @param {Selector} cell         A cell or element inside a cell.
      *
-     * @returns {Value}
+     * @returns {Field.Value}
      */
     function getCellEditValue(cell) {
         const $edit = cellEdit(cell);
@@ -4656,8 +4656,8 @@ appSetup(MODULE, function() {
     /**
      * Set the input value for a data cell.
      *
-     * @param {Selector} cell         A cell or element inside a cell.
-     * @param {Value}    [new_value]  Default from displayed value.
+     * @param {Selector}    cell            A cell or element inside a cell.
+     * @param {Field.Value} [new_value]     Default from displayed value.
      */
     function setCellEditValue(cell, new_value) {
         //OUT.debug('setCellEditValue: new_value =', new_value, cell);
@@ -4785,8 +4785,8 @@ appSetup(MODULE, function() {
     /**
      * Transition a data cell into edit mode.
      *
-     * @param {Selector} cell         A cell or element inside a cell.
-     * @param {Value}    [new_value]  Default from displayed value.
+     * @param {Selector}    cell            A cell or element inside a cell.
+     * @param {Field.Value} [new_value]     Default from displayed value.
      */
     function cellEditBegin(cell, new_value) {
         OUT.debug('cellEditBegin: new_value =', new_value, cell);
@@ -4800,7 +4800,7 @@ appSetup(MODULE, function() {
      *
      * @param {Selector} cell         A cell or element inside a cell.
      *
-     * @returns {Value|undefined}
+     * @returns {Field.Value}
      */
     function cellEditEnd(cell) {
         OUT.debug('cellEditEnd:', cell);
@@ -4826,8 +4826,8 @@ appSetup(MODULE, function() {
      * If a value is supplied, the associated record field is updated (or used
      * to create a new record).
      *
-     * @param {Selector} cell         A cell or element inside a cell.
-     * @param {Value}    [new_value]
+     * @param {Selector}    cell            A cell or element inside a cell.
+     * @param {Field.Value} [new_value]
      *
      * @see "ManifestItemController#start_edit"
      */

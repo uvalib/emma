@@ -652,7 +652,7 @@ class BaseUploader extends BaseClass {
     }
 
     /**
-     * _selfOrDescendent
+     * The target or the first matching descendent.
      *
      * @param {Selector} target
      * @param {string}   match
@@ -666,7 +666,7 @@ class BaseUploader extends BaseClass {
     }
 
     /**
-     * _selfOrDescendentElement
+     * The target or the first matching descendent.
      *
      * @param {Selector} target
      * @param {string}   match

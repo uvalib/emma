@@ -19,7 +19,7 @@ module IaDownloadService::Common
 
   protected
 
-  # api_headers
+  # Include IA authorization headers.
   #
   # @param [Hash]         params      Default: @params.
   # @param [Hash]         headers     Default: {}.

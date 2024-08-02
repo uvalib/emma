@@ -41,59 +41,59 @@ Rails.application.routes.draw do
   # NOTE: Avoid "resources :upload" because :action can get turned into :id.
   # ===========================================================================
 
-  get    '/upload',               to: 'upload#index',         as: 'upload_index'
-  get    '/upload/index',         to: 'upload#index'
-  get    '/upload/list_all',      to: 'upload#list_all',      as: 'list_all_upload'
-  get    '/upload/list_org',      to: 'upload#list_org',      as: 'list_org_upload'
-  get    '/upload/list_own',      to: 'upload#list_own',      as: 'list_own_upload'
+  get    '/upload',                 to: 'upload#index',           as: 'upload_index'
+  get    '/upload/index',           to: 'upload#index'
+  get    '/upload/list_all',        to: 'upload#list_all',        as: 'list_all_upload'
+  get    '/upload/list_org',        to: 'upload#list_org',        as: 'list_org_upload'
+  get    '/upload/list_own',        to: 'upload#list_own',        as: 'list_own_upload'
 
-  get    '/upload/show_select',   to: 'upload#show_select',   as: 'show_select_upload'
-  get    '/upload/show/(:id)',    to: 'upload#show',          as: 'show_upload'
+  get    '/upload/show_select',     to: 'upload#show_select',     as: 'show_select_upload'
+  get    '/upload/show/(:id)',      to: 'upload#show',            as: 'show_upload'
 
   # === UploadWorkflow::Single
 
-  get    '/upload/new',           to: 'upload#new',           as: 'new_upload'
-  match  '/upload/create',        to: 'upload#create',        as: 'create_upload',        **VIA_CREATE
+  get    '/upload/new',             to: 'upload#new',             as: 'new_upload'
+  match  '/upload/create',          to: 'upload#create',          as: 'create_upload',        **VIA_CREATE
 
-  get    '/upload/edit_select',   to: 'upload#edit_select',   as: 'edit_select_upload'
-  get    '/upload/edit/(:id)',    to: 'upload#edit',          as: 'edit_upload'
-  match  '/upload/update/:id',    to: 'upload#update',        as: 'update_upload',        **VIA_UPDATE
+  get    '/upload/edit_select',     to: 'upload#edit_select',     as: 'edit_select_upload'
+  get    '/upload/edit/(:id)',      to: 'upload#edit',            as: 'edit_upload'
+  match  '/upload/update/:id',      to: 'upload#update',          as: 'update_upload',        **VIA_UPDATE
 
-  get    '/upload/delete_select', to: 'upload#delete_select', as: 'delete_select_upload'
-  get    '/upload/delete/(:id)',  to: 'upload#delete',        as: 'delete_upload'
-  delete '/upload/destroy/:id',   to: 'upload#destroy',       as: 'destroy_upload'
+  get    '/upload/delete_select',   to: 'upload#delete_select',   as: 'delete_select_upload'
+  get    '/upload/delete/(:id)',    to: 'upload#delete',          as: 'delete_upload'
+  delete '/upload/destroy/:id',     to: 'upload#destroy',         as: 'destroy_upload'
 
   # === UploadWorkflow::Bulk
 
-  get    '/upload/bulk_reindex',  to: 'upload#bulk_reindex',  as: 'bulk_reindex_upload'
+  get    '/upload/bulk_reindex',    to: 'upload#bulk_reindex',    as: 'bulk_reindex_upload'
 
-  get    '/upload/bulk_new',      to: 'upload#bulk_new',      as: 'bulk_new_upload'
-  post   '/upload/bulk',          to: 'upload#bulk_create',   as: 'bulk_create_upload'
+  get    '/upload/bulk_new',        to: 'upload#bulk_new',        as: 'bulk_new_upload'
+  post   '/upload/bulk',            to: 'upload#bulk_create',     as: 'bulk_create_upload'
 
-  get    '/upload/bulk_edit',     to: 'upload#bulk_edit',     as: 'bulk_edit_upload'
-  match  '/upload/bulk',          to: 'upload#bulk_update',   as: 'bulk_update_upload',   **VIA_UPDATE
+  get    '/upload/bulk_edit',       to: 'upload#bulk_edit',       as: 'bulk_edit_upload'
+  match  '/upload/bulk',            to: 'upload#bulk_update',     as: 'bulk_update_upload',   **VIA_UPDATE
 
-  get    '/upload/bulk_delete',   to: 'upload#bulk_delete',   as: 'bulk_delete_upload'
-  delete '/upload/bulk',          to: 'upload#bulk_destroy',  as: 'bulk_destroy_upload'
+  get    '/upload/bulk_delete',     to: 'upload#bulk_delete',     as: 'bulk_delete_upload'
+  delete '/upload/bulk',            to: 'upload#bulk_destroy',    as: 'bulk_destroy_upload'
 
-  get    '/upload/bulk',          to: 'upload#bulk_index',    as: 'bulk_upload_index'
+  get    '/upload/bulk',            to: 'upload#bulk_index',      as: 'bulk_upload_index'
 
   # === UploadWorkflow
 
-  post   '/upload/renew',         to: 'upload#renew',         as: 'renew_upload'
-  post   '/upload/reedit',        to: 'upload#reedit',        as: 'reedit_upload'
-  match  '/upload/cancel',        to: 'upload#cancel',        as: 'cancel_upload',        **VIA_ANY
-  get    '/upload/check/:id',     to: 'upload#check',         as: 'check_upload',         defaults: { modal: true }
-  post   '/upload/upload',        to: 'upload#upload',        as: 'upload_upload'         # Invoked from file-upload.js
+  post   '/upload/renew',           to: 'upload#renew',           as: 'renew_upload'
+  post   '/upload/reedit',          to: 'upload#reedit',          as: 'reedit_upload'
+  match  '/upload/cancel',          to: 'upload#cancel',          as: 'cancel_upload',        **VIA_ANY
+  get    '/upload/check/:id',       to: 'upload#check',           as: 'check_upload',         defaults: { modal: true }
+  post   '/upload/upload',          to: 'upload#upload',          as: 'upload_upload'         # Invoked from file-upload.js
 
   # === Administration
 
-  get    '/upload/admin',         to: 'upload#admin',         as: 'admin_upload'
-  get    '/upload/records',       to: 'upload#records'
+  get    '/upload/admin',           to: 'upload#admin',           as: 'admin_upload'
+  get    '/upload/records',         to: 'upload#records'
 
   # === Other
 
-  get    '/upload/api_migrate',   to: 'upload#api_migrate',   as: 'api_migrate'
+  get    '/upload/api_migrate',     to: 'upload#api_migrate',     as: 'api_migrate'
 
   # ===========================================================================
   # File download operations
@@ -243,25 +243,25 @@ Rails.application.routes.draw do
 
   resources :account, only: %i[index]
 
-  get    '/account/index',          to: 'account#index'
-  get    '/account/list_all',       to: 'account#list_all',       as: 'list_all_account'
-  get    '/account/list_org',       to: 'account#list_org',       as: 'list_org_account'
+  get    '/account/index',            to: 'account#index'
+  get    '/account/list_all',         to: 'account#list_all',         as: 'list_all_account'
+  get    '/account/list_org',         to: 'account#list_org',         as: 'list_org_account'
 
-  get    '/account/show_current',   to: 'account#show_current',   as: 'show_current_account'
-  get    '/account/show_select',    to: 'account#show_select',    as: 'show_select_account'
-  get    '/account/show/(:id)',     to: 'account#show',           as: 'show_account'
+  get    '/account/show_current',     to: 'account#show_current',     as: 'show_current_account'
+  get    '/account/show_select',      to: 'account#show_select',      as: 'show_select_account'
+  get    '/account/show/(:id)',       to: 'account#show',             as: 'show_account'
 
-  get    '/account/new',            to: 'account#new',            as: 'new_account'
-  match  '/account/create',         to: 'account#create',         as: 'create_account',       **VIA_CREATE
+  get    '/account/new',              to: 'account#new',              as: 'new_account'
+  match  '/account/create',           to: 'account#create',           as: 'create_account',       **VIA_CREATE
 
-  get    '/account/edit_current',   to: 'account#edit_current',   as: 'edit_current_account'
-  get    '/account/edit_select',    to: 'account#edit_select',    as: 'edit_select_account'
-  get    '/account/edit/(:id)',     to: 'account#edit',           as: 'edit_account'
-  match  '/account/update/:id',     to: 'account#update',         as: 'update_account',       **VIA_UPDATE
+  get    '/account/edit_current',     to: 'account#edit_current',     as: 'edit_current_account'
+  get    '/account/edit_select',      to: 'account#edit_select',      as: 'edit_select_account'
+  get    '/account/edit/(:id)',       to: 'account#edit',             as: 'edit_account'
+  match  '/account/update/:id',       to: 'account#update',           as: 'update_account',       **VIA_UPDATE
 
-  get    '/account/delete_select',  to: 'account#delete_select',  as: 'delete_select_account'
-  get    '/account/delete/(:id)',   to: 'account#delete',         as: 'delete_account'
-  delete '/account/destroy/:id',    to: 'account#destroy',        as: 'destroy_account'
+  get    '/account/delete_select',    to: 'account#delete_select',    as: 'delete_select_account'
+  get    '/account/delete/(:id)',     to: 'account#delete',           as: 'delete_account'
+  delete '/account/destroy/:id',      to: 'account#destroy',          as: 'destroy_account'
 
   # ===========================================================================
   # Organizations
@@ -269,26 +269,26 @@ Rails.application.routes.draw do
 
   resources :org, only: %i[index]
 
-  get    '/org/index',              to: 'org#index'
-  get    '/org/list_all',           to: 'org#list_all',           as: 'list_all_org'
+  get    '/org/index',                to: 'org#index'
+  get    '/org/list_all',             to: 'org#list_all',             as: 'list_all_org'
 
-  get    '/org/show_current',       to: 'org#show_current',       as: 'show_current_org'
-  get    '/org/show_select',        to: 'org#show_select',        as: 'show_select_org'
-  get    '/org/show/(:id)',         to: 'org#show',               as: 'show_org'
+  get    '/org/show_current',         to: 'org#show_current',         as: 'show_current_org'
+  get    '/org/show_select',          to: 'org#show_select',          as: 'show_select_org'
+  get    '/org/show/(:id)',           to: 'org#show',                 as: 'show_org'
 
-  get    '/org/new',                to: 'org#new',                as: 'new_org'
-  match  '/org/create',             to: 'org#create',             as: 'create_org',           **VIA_CREATE
+  get    '/org/new',                  to: 'org#new',                  as: 'new_org'
+  match  '/org/create',               to: 'org#create',               as: 'create_org',           **VIA_CREATE
 
-  get    '/org/edit_current',       to: 'org#edit_current',       as: 'edit_current_org'
-  get    '/org/edit_select',        to: 'org#edit_select',        as: 'edit_select_org'
-  get    '/org/edit/(:id)',         to: 'org#edit',               as: 'edit_org'
-  match  '/org/update/:id',         to: 'org#update',             as: 'update_org',           **VIA_UPDATE
+  get    '/org/edit_current',         to: 'org#edit_current',         as: 'edit_current_org'
+  get    '/org/edit_select',          to: 'org#edit_select',          as: 'edit_select_org'
+  get    '/org/edit/(:id)',           to: 'org#edit',                 as: 'edit_org'
+  match  '/org/update/:id',           to: 'org#update',               as: 'update_org',           **VIA_UPDATE
 
-  get    '/org/delete_select',      to: 'org#delete_select',      as: 'delete_select_org'
-  get    '/org/delete/(:id)',       to: 'org#delete',             as: 'delete_org'
-  delete '/org/destroy/:id',        to: 'org#destroy',            as: 'destroy_org'
+  get    '/org/delete_select',        to: 'org#delete_select',        as: 'delete_select_org'
+  get    '/org/delete/(:id)',         to: 'org#delete',               as: 'delete_org'
+  delete '/org/destroy/:id',          to: 'org#destroy',              as: 'destroy_org'
 
-  get    '/org/:id',                to: 'org#edit', defaults: { id: CURRENT }
+  get    '/org/:id',                  to: 'org#edit', defaults: { id: CURRENT }
 
   # ===========================================================================
   # EMMA membership enrollment
@@ -325,23 +325,23 @@ Rails.application.routes.draw do
   # System information
   # ===========================================================================
 
-  get   '/sys',       to: 'sys#index',  as: 'sys_index'
-  match '/sys',       to: 'sys#update', as: 'update_sys', **VIA_CREATE
-  get   '/sys/view',  to: 'sys#view'
+  get   '/sys',             to: 'sys#index',    as: 'sys_index'
+  match '/sys',             to: 'sys#update',   as: 'update_sys', **VIA_CREATE
+  get   '/sys/view',        to: 'sys#view'
 
   SysController::PAGES.each do |page|
-    get "/sys/#{page}", to: "sys##{page}", as: "#{page}_sys"
+    get "/sys/#{page}",     to: "sys##{page}",  as: "#{page}_sys"
   end
 
   # ===========================================================================
   # Database viewer
   # ===========================================================================
 
-  get '/data/submissions', to: 'data#submissions'
-  get '/data/counts',      to: 'data#counts'
-  get '/data/show',        to: 'data#show',         as: 'data'
-  get '/data/:id',         to: 'data#show'
-  get '/data',             to: 'data#index',        as: 'data_index'
+  get '/data/submissions',  to: 'data#submissions'
+  get '/data/counts',       to: 'data#counts'
+  get '/data/show',         to: 'data#show',    as: 'data'
+  get '/data/:id',          to: 'data#show'
+  get '/data',              to: 'data#index',   as: 'data_index'
 
   # ===========================================================================
   # Job scheduler
@@ -362,22 +362,22 @@ Rails.application.routes.draw do
 
   resources :tool, only: %i[index]
 
-  get   '/tool/md',       to: 'tool#md',        as: 'md_trial'
-  match '/tool/md_proxy', to: 'tool#md_proxy',  as: 'md_proxy',       **VIA_ANY
-  get   '/tool/lookup',   to: 'tool#lookup',    as: 'bib_lookup'
+  get   '/tool/md',         to: 'tool#md',        as: 'md_trial'
+  match '/tool/md_proxy',   to: 'tool#md_proxy',  as: 'md_proxy', **VIA_ANY
+  get   '/tool/lookup',     to: 'tool#lookup',    as: 'bib_lookup'
 
-  get   '/tool/get_job_result/:job_id',         to: 'tool#get_job_result'
-  get   '/tool/get_job_result/:job_id/*path',   to: 'tool#get_job_result'
+  get   '/tool/get_job_result/:job_id',       to: 'tool#get_job_result'
+  get   '/tool/get_job_result/:job_id/*path', to: 'tool#get_job_result'
 
   # ===========================================================================
   # Old routes that still get hit by robots
   # ===========================================================================
 
-  get '/artifact(/*any)',    to: 'application#return_to_sender'
-  get '/bs_api(/*any)',      to: 'application#return_to_sender'
-  get '/periodical(/*any)',  to: 'application#return_to_sender'
-  get '/title(/*any)',       to: 'application#return_to_sender'
-  get '/v2(/*any)',          to: 'application#return_to_sender'
+  get '/artifact(/*any)',   to: 'application#return_to_sender'
+  get '/bs_api(/*any)',     to: 'application#return_to_sender'
+  get '/periodical(/*any)', to: 'application#return_to_sender'
+  get '/title(/*any)',      to: 'application#return_to_sender'
+  get '/v2(/*any)',         to: 'application#return_to_sender'
 
 end
 
