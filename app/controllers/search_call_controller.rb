@@ -88,7 +88,7 @@ class SearchCallController < ApplicationController
     limit     = positive(prm[:limit])
     offset    = positive(prm[:offset])
     search    = prm.delete(:like) # TODO: :like param
-    search    = search ? build_query_options(search) : {}
+    search    = search ? extract_url_query(search) : {}
     if @extended
       search  = [search]
       search << "LIMIT #{limit}"    if limit  # TODO: temporary

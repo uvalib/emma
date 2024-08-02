@@ -30,7 +30,7 @@ module SearchService::Common
   #
   def api_headers(params = nil, headers = nil, body = nil)
     super.tap do |prms, _hdrs, _body|
-      prms.replace(build_query_options(prms)) unless update_request?
+      prms.replace(extract_url_query(prms)) unless update_request?
     end
   end
 

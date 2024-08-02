@@ -65,7 +65,7 @@ module Emma::Common::UrlMethods
   # Combine URL query parameters into a URL query string.
   #
   # @param [Array<URI,String,Array,Hash>] args
-  # @param [Hash] opt                 Passed to #build_query_options.
+  # @param [Hash]                         opt   Passed to #extract_url_query.
   #
   # @option opt [Boolean] :decorate   If *false*, do not modify keys for multi-
   #                                     element array values (default: *true*).
@@ -75,12 +75,10 @@ module Emma::Common::UrlMethods
   #
   # @return [String]
   #
-  # @see #build_query_options
-  #
   def url_query(*args, **opt)
     opt.reverse_merge!(args.extract_options!) if args.last.is_a?(Hash)
     opt.reverse_merge!(decorate: true, unescape: false)
-    build_query_options(*args, **opt).flat_map { |k, value|
+    extract_url_query(*args, **opt).flat_map { |k, value|
       Array.wrap(value).map { |v| "#{k}=#{v}" }
     }.join('&')
   end
@@ -100,7 +98,7 @@ module Emma::Common::UrlMethods
   #
   # @return [Hash{String=>String}]
   #
-  def build_query_options(
+  def extract_url_query(
     *args,
     minimize: true,
     decorate: false,
@@ -114,9 +112,9 @@ module Emma::Common::UrlMethods
     rmerge = !replace
     result = {}
     args.each do |arg|
-      arg = arg.query      if arg.is_a?(URI)
-      arg = arg.split('&') if arg.is_a?(String)
-      arg = arg.to_a       if arg.is_a?(Hash)
+      arg = arg.query                        if arg.is_a?(URI)
+      arg = arg.sub(/^.*?\?/, '').split('&') if arg.is_a?(String)
+      arg = arg.to_a                         if arg.is_a?(Hash)
       next unless arg.present? && arg.is_a?(Array)
       res = {}
       arg.each do |pair|

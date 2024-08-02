@@ -121,7 +121,7 @@ module LayoutHelper::SkipNav
 
     unless label.is_a?(String)
       if label.is_a?(Array) || label.start_with?('emma.')
-        label = config_item(label)
+        label = config_item(*label)
       else
         label = page_controls_label(controller: label.to_s, many: true)
       end

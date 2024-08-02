@@ -27,7 +27,7 @@ module Emma::Common::UrlMethods
   # Combine URL query parameters into a URL query string.
   #
   # @param [Array<URI,String,Array,Hash>] args
-  # @param [Hash] opt                 Passed to #build_query_options.
+  # @param [Hash]                         opt   Passed to #extract_url_query.
   #
   # @option opt [Boolean] :decorate   If *false*, do not modify keys for multi-
   #                                     element array values (default: *true*).
@@ -36,8 +36,6 @@ module Emma::Common::UrlMethods
   #                                     (default: *false*).
   #
   # @return [String]
-  #
-  # @see #build_query_options
   #
   def url_query: (*untyped args, **untyped opt) -> String
 
@@ -56,5 +54,5 @@ module Emma::Common::UrlMethods
   #
   # @return [Hash{String=>String}]
   #
-  def build_query_options: (*untyped args, ?minimize: bool, ?decorate: bool, ?replace: bool, ?unescape: bool, **untyped opt) -> Hash[String,String]
+  def extract_url_query: (*untyped args, ?minimize: bool, ?decorate: bool, ?replace: bool, ?unescape: bool, **untyped opt) -> Hash[String,String]
 end
