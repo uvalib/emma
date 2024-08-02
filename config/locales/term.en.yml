@@ -38,6 +38,7 @@ en:
         invalid:              'invalid'
         item:                 'item'
         match:                'match'
+        not:                  'not'
         one:                  'one'
         or:                   'or'
         original:             'original'

@@ -333,15 +333,15 @@ const UPLOAD_ERROR_MESSAGE = Emma.Messages.uploader.error;
  */
 const FORCE_CHARSET = false;
 
-const UPLOADER_CLASS        = 'file-uploader';
-const UPPY_ROOT_CLASS       = 'uppy-Root';
-const FILE_SELECT_CLASS     = 'uppy-FileInput-container';
-const FILE_INPUT_CLASS      = 'uppy-FileInput-input';
-const FILE_BUTTON_CLASS     = 'uppy-FileInput-btn';
-const INFORMER_CLASS        = 'uppy-Informer';
-const PROGRESS_BAR_CLASS    = 'uppy-ProgressBar';
-const FILE_NAME_CLASS       = 'uploaded-filename';
-const UPLOADED_NAME_CLASS   = 'uploaded-filename';
+const UPLOADER_CLASS        = "file-data-container";
+const UPPY_ROOT_CLASS       = "uppy-Root";
+const FILE_SELECT_CLASS     = "uppy-FileInput-container";
+const FILE_INPUT_CLASS      = "uppy-FileInput-input";
+const FILE_BUTTON_CLASS     = "uppy-FileInput-btn";
+const INFORMER_CLASS        = "uppy-Informer";
+const PROGRESS_BAR_CLASS    = "uppy-ProgressBar";
+const FILE_NAME_CLASS       = "uploaded-filename";
+const UPLOADED_NAME_CLASS   = "uploaded-filename";
 
 export const UPLOADER       = selector(UPLOADER_CLASS);
 export const UPPY_ROOT      = selector(UPPY_ROOT_CLASS);
@@ -549,7 +549,7 @@ class BaseUploader extends BaseClass {
      */
     constructor(root, model, features, callbacks) {
         super();
-        this._root      = this._locateUploader(root) || $(root);
+        this._root      = this._locateFileDataContainer(root) || $(root);
         this.model      = model;
         this.controller = model;
         this.action     = pageAction();
@@ -570,7 +570,7 @@ class BaseUploader extends BaseClass {
      * @returns {jQuery}
      */
     get $root() {
-        return this._root ||= this._locateUploader(this._display);
+        return this._root ||= this._locateFileDataContainer(this._display);
     }
 
     /**
@@ -637,17 +637,17 @@ class BaseUploader extends BaseClass {
     }
 
     /**
-     * _locateUploader
+     * The container for elements related to the content file.
      *
      * @param {Selector} [target]     Default: `this._root`.
      *
      * @returns {jQuery|undefined}
      * @protected
      */
-    _locateUploader(target) {
+    _locateFileDataContainer(target) {
         const tgt     = target || this._root;
         const $result = this._selfOrDescendent(tgt, UPLOADER);
-        this._debug('_locateUploader ->', $result);
+        this._debug("_locateFileDataContainer ->", $result);
         return $result;
     }
 
@@ -1737,7 +1737,7 @@ class BaseUploader extends BaseClass {
      * @returns {HTMLElement|undefined}
      */
     get fileInputTarget() {
-        const $target = this._locateUploader();
+        const $target = this._locateFileDataContainer();
         return $target && $target[0];
     }
 

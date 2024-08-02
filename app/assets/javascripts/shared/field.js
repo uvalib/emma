@@ -491,8 +491,8 @@ export class Value extends BaseClass {
     _asArray(value, type, separator = /\s*[;|]\s*\n|\s*[;|]\s*|\s*\n/) {
         if (!value) { return this._significant(value) ? [value] : [] }
         switch (type || this._typeFor(value)) {
-            case 'array':   return value;
-            case 'string':  return compact(value.split(separator));
+            case "array":   return [...value];
+            case "string":  return compact(value.split(separator));
             default:        return arrayWrap(value);
         }
     }
@@ -556,10 +556,21 @@ export class Value extends BaseClass {
     _asObject(value, type) {
         if (!value) { return {} }
         switch (type || this._typeFor(value)) {
-            case 'object': return value;
-            case 'string': return fromJSON(value);
-            default:       return Object.fromEntries(value);
+            case "string":  return this._fromString(value);
+            default:        return { ...value };
         }
+    }
+
+    /**
+     * Generate an object value from a string.
+     *
+     * @param {string} value
+     *
+     * @returns {object}
+     * @protected
+     */
+    _fromString(value) {
+        return value && fromJSON(value) || {};
     }
 
     // ========================================================================

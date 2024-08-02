@@ -682,7 +682,7 @@ appSetup(MODULE, function() {
      *
      * @see "BaseDecorator::Form#model_form"
      */
-    function isFileUploader(form) {
+    function hasFileUploader(form) {
         return formElement(form).is(UPLOADER);
     }
 
@@ -696,7 +696,7 @@ appSetup(MODULE, function() {
     function initializeFileUploader(form) {
         if (notDefined(uploader)) {
             const $form = $(form);
-            uploader = isFileUploader($form) ? newUploader($form) : null;
+            uploader = hasFileUploader($form) ? newUploader($form) : null;
         }
         return uploader;
     }

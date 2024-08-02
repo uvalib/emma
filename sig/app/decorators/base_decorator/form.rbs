@@ -338,7 +338,7 @@ module BaseDecorator::Form
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/model-form.js *isFileUploader()*
+  # @see file:app/assets/javascripts/feature/model-form.js *hasFileUploader()*
   #
   def model_form: (?label: String|nil, ?action: String|Symbol|nil, ?cancel: String|nil, ?uploader: bool|nil, ?recaptcha: bool|nil, ?outer: symHash|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 

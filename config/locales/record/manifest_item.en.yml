@@ -222,7 +222,7 @@ en:
         file_data:
           min:          0
           max:          1
-          label:        'File Data'
+          label:        'File Name'
           tooltip:      'Uploaded file metadata for the associated submission'
           notes_html:
             >-
@@ -235,11 +235,16 @@ en:
           type_html:
             |-
             <p>
-              On import, if this is provided, it should be the name of a file
-              locally available on your workstation.
-              It only needs to be the name of the file;
+              This should be the name of a file (not the full directory path)
+              locally available on your workstation;
               when the bulk upload is submitted you will be prompted for the
               actual file location.
+            </p>
+            <p>
+              To simplify the bulk upload process, it's best to ensure that all
+              files referenced in this manifest can be found in the same
+              directory so that can be all can be selected for access with a
+              single checkmark in the multi-select file chooser.
             </p>
 
         # =====================================================================

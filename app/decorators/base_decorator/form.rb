@@ -231,7 +231,8 @@ module BaseDecorator::Form
     placeholder ||= prop[:placeholder]
     render_method = opt.delete(:render) if opt.key?(:render)
     group         = (render_method == :render_form_menu_multi)
-    file_data     = (field == :file_data)
+    file_data     = !opt.key?(:embed_uploader) || opt.delete(:embed_uploader)
+    file_data   &&= (field == :file_data)
     input         = !group && !file_data
 
     # Update properties.
@@ -701,7 +702,7 @@ module BaseDecorator::Form
   #
   # @see file:javascripts/shared/uploader.js *BaseUploader.UPLOADER_CLASS*
   #
-  UPLOADER_CLASS = 'file-uploader'
+  UPLOADER_CLASS = 'file-data-container'
 
   # The CSS class for the element displaying the name of an uploaded file.
   #
@@ -734,7 +735,7 @@ module BaseDecorator::Form
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/model-form.js *isFileUploader()*
+  # @see file:app/assets/javascripts/feature/model-form.js *hasFileUploader()*
   #
   def model_form(
     label:      nil,

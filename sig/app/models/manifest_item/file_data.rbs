@@ -2,15 +2,6 @@ module ManifestItem::FileData
   # :nocov:
   #include Record::FileData
 
-  # Top-level :file_data Hash keys for each data variant that can appear in the
-  # :file_data record column.
-  #
-  # @type [Hash{Symbol=>Hash}]
-  #
-  FILE_DATA_TYPES: Hash[Symbol,symHash]
-
-  FILE_DATA_REFERENCE: symArray
-
   # Name of the file referenced by :file_data if it does not contain Shrine
   # uploader metadata.
   #

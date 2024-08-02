@@ -77,6 +77,7 @@ import {
 import {
     compact,
     deepDup,
+    fromJSON,
     hasKey,
     isObject,
     toObject,
@@ -292,6 +293,83 @@ appSetup(MODULE, function() {
      */
 
     // ========================================================================
+    // Classes
+    // ========================================================================
+
+    /**
+     * A value for a file_data cell.
+     */
+    class FileDataValue extends Field.Value {
+
+        static CLASS_NAME = "FileDataValue";
+        static DEBUGGING  = true;
+
+        // ====================================================================
+        // Properties
+        // ====================================================================
+
+        get file()     { return this.filename || this.name || this.url }
+        get filename() { return this.metadata.filename }
+        get metadata() { return this._value?.metadata || {} }
+        get name()     { return this._value?.name }
+        get url()      { return this._value?.url }
+
+        // ====================================================================
+        // Methods - internal -- overrides
+        // ====================================================================
+
+        /**
+         * Generate an object value from a string.
+         *
+         * @param {string} value
+         *
+         * @returns {object}
+         * @protected
+         */
+        _fromString(value) {
+            switch (true) {
+                case isEmpty(value):            return {};
+                case typeof value === "object": return value;
+                case typeof value !== "string": return {};
+                case value.includes("{"):       return fromJSON(value) || {};
+                case value.startsWith('http'):  return { url: value };
+                default:                        return { name: value };
+            }
+        }
+
+        // ====================================================================
+        // Methods - overrides
+        // ====================================================================
+
+        /**
+         * Indicate whether the instance has a different value.
+         *
+         * @param {*}       value         A Value or convertible to a Value.
+         * @param {boolean} [ordered]     If **true**, array order matters.
+         *
+         * @returns {boolean}             They represent different values.
+         */
+        differsFrom(value, ordered) {
+            if (value instanceof this.constructor) {
+                return (this.file !== value.file);
+            } else {
+                return super.differsFrom(value, ordered);
+            }
+        }
+
+        /**
+         * Return a representation of the value for initializing an input.
+         *
+         * @param {string} [separator]  Only for {@link type} === "array".
+         *
+         * @returns {string}
+         */
+        forInput(separator = "\n") {
+            return this.file || "";
+        }
+    }
+
+    // ========================================================================
     // Constants
     // ========================================================================
 
@@ -304,6 +382,23 @@ appSetup(MODULE, function() {
      * @see file:stylesheets/controllers/_manifest_item.scss $controls-rotate
      */
     const CONTROLS_ROTATE = true;
+
+    /**
+     * Indicates whether cells in the **file_data** column include the ability
+     * to upload a file associated with the manifest item.
+     *
+     * If this is *true*, that cell will have a button for uploading a file and
+     * a button for providing a file name.
+     *
+     * If this is *false*, that cell is a simple input for proving a file name
+     * (to be included in the list of files expected to be resolved prior to
+     * bulk submission).
+     *
+     * @type {boolean}
+     *
+     * @see "ManifestItemDecorator::EMBED_UPLOADER"
+     */
+    const EMBED_UPLOADER = false;
 
     /**
      * Name of the attribute indicating the ManifestItem database table column
@@ -396,7 +491,7 @@ appSetup(MODULE, function() {
     const HEADER_ROLE   = '[role="columnheader"]';
     const CONTROLS_HEAD = `${CONTROLS_CELL}${HEADER_ROLE}`;
     const DATA_HEAD     = `${DATA_CELL}${HEADER_ROLE}`;
-    const UPLOADER_CELL = `${DATA_CELL}${UPLOADER}`;
+    const FILE_DATA     = `${DATA_CELL}${UPLOADER}`;
 
     /**
      * CSS classes for the data cell which indicate the status of the data.
@@ -922,7 +1017,7 @@ appSetup(MODULE, function() {
         initializeCellDisplays($cells);
         initializeCellInputs($cells);
         initializeTextareaColumns($cells);
-        initializeUploaderCells($cells);
+        initializeFileDataCells($cells);
     }
 
     /**
@@ -1007,15 +1102,15 @@ appSetup(MODULE, function() {
      *
      * @param {Selector} [cells]      Default: {@link allDataCells}
      */
-    function initializeUploaderCells(cells) {
-        //OUT.debug('initializeUploaderCells: cells =', cells);
-        const attr      = 'data-value';
-        const name      = attr.replace(/^data-/, '');
+    function initializeFileDataCells(cells) {
+        //OUT.debug("initializeFileDataCells: cells =", cells);
+        const attr      = "data-value";
+        const name      = attr.replace(/^data-/, "");
         const with_attr = `[${attr}]`;
-        dataCells(cells).filter(UPLOADER_CELL).each((_, cell) => {
+        dataCells(cells).filter(FILE_DATA).each((_, cell) => {
             const $cell  = $(cell);
             const $value = selfOrDescendents($cell, with_attr).first();
-            const data   = $value.data(name) || {}; // Let jQuery do the work.
+            const data   = { ...$value.data(name) }; // Let jQuery do the work.
             $cell.removeData(name).removeAttr(attr);
             $cell.find(with_attr).removeData(name).removeAttr(attr);
             delete data.emma_data;
@@ -2648,6 +2743,8 @@ appSetup(MODULE, function() {
      * @param {Selector} row
      *
      * @returns {MultiUploader|undefined}
+     *
+     * @see EMBED_UPLOADER
      */
     function getUploader(row) {
         return dataRow(row).data(UPLOADER_DATA);
@@ -2658,6 +2755,8 @@ appSetup(MODULE, function() {
      *
      * @param {Selector}                row
      * @param {MultiUploader|undefined} uploader
+     *
+     * @see EMBED_UPLOADER
      */
     function setUploader(row, uploader) {
         //OUT.debug("setUploader: row =", row);
@@ -2675,6 +2774,8 @@ appSetup(MODULE, function() {
      * @param {Selector} row
      *
      * @returns {MultiUploader}
+     *
+     * @see EMBED_UPLOADER
      */
     function newUploader(row) {
         //OUT.debug("newUploader: row =", row);
@@ -2831,7 +2932,7 @@ appSetup(MODULE, function() {
             OUT.debug(`${func}: initializeAddedControls:`, container);
 
             /** @type {jQuery} */
-            const $cell = $row.find(UPLOADER_CELL),
+            const $cell = $row.find(FILE_DATA),
                   $name = $cell.find(UPLOADED_NAME),
                   $from = $name.children();
             const HOVER = "data-hover";
@@ -2889,7 +2990,7 @@ appSetup(MODULE, function() {
                     OUT.debug("onSubmit: event =", event);
                     const value = $input.val()?.trim();
                     if (value) {
-                        setUploaderDisplayValue($cell, value, type);
+                        setFileDataDisplayValue($cell, value, type);
                         const file_data = { [type]: value };
                         atomicEdit($cell, file_data);
                     }
@@ -3027,6 +3128,8 @@ appSetup(MODULE, function() {
      * Create a new uploader instance if not already present for the row.
      *
      * @param {Selector} row
+     *
+     * @see EMBED_UPLOADER
      */
     function initializeUploader(row) {
         //OUT.debug("initializeUploader: row =", row);
@@ -3037,12 +3140,13 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Initialize uploading for each grid row.
+     * Initialize uploading for each grid row if {@link EMBED_UPLOADER}.
      *
      * @param {Selector} [target]
      */
     function setupUploader(target) {
-        OUT.debug('setupUploader: target =', target);
+        if (!EMBED_UPLOADER) { return }
+        OUT.debug("setupUploader: target =", target);
         dataRows(target, true).each((_, row) => initializeUploader(row));
     }
 
@@ -3941,7 +4045,7 @@ appSetup(MODULE, function() {
     function resetDataCell(cell, reset_uploader) {
         //OUT.debug("resetDataCell: cell =", cell);
         const $cell = dataCell(cell);
-        if (reset_uploader || !$cell.is(UPLOADER_CELL)) {
+        if (reset_uploader || !$cell.is(FILE_DATA)) {
             clearCellOriginalValue($cell);
             clearCellCurrentValue($cell);
             clearCellChanged($cell);
@@ -4025,9 +4129,9 @@ appSetup(MODULE, function() {
             OUT.debug(`${func}: CONTROLS_CELL - $cell =`, $cell);
             group.addCallback("activate", onNavGroupRowControls);
 
-        } else if ($cell.is(UPLOADER_CELL)) {
-            OUT.debug(`${func}: UPLOADER_CELL - $cell =`, $cell);
-            group.addCallback('activate', onNavGroupUploadControls);
+        } else if (EMBED_UPLOADER && $cell.is(FILE_DATA)) {
+            OUT.debug(`${func}: FILE_DATA_CELL - $cell =`, $cell);
+            group.addCallback("activate", onNavGroupUploadControls);
 
         } else if ($cell.is(DATA_CELL)) {
             OUT.debug(`${func}: DATA_CELL - $cell =`, $cell);
@@ -4100,6 +4204,8 @@ appSetup(MODULE, function() {
      * @param {NavGroupCallbackOptions} arg
      *
      * @returns {boolean}
+     *
+     * @see EMBED_UPLOADER
      */
     function onNavGroupUploadControls(arg) {
         const func  = "onNavGroupUploadControls";
@@ -4500,15 +4606,15 @@ appSetup(MODULE, function() {
      * Remove content from a data cell display element.
      *
      * @param {Selector} cell               A cell or element inside a cell.
-     * @param {boolean}  [skip_uploader]    If **true**, remove error status.
+     * @param {boolean}  [skip_file_data]   If **true**, leave displayed name.
      */
-    function cellDisplayClear(cell, skip_uploader) {
-        //OUT.debug('cellDisplayClear: cell =', cell);
+    function cellDisplayClear(cell, skip_file_data) {
+        //OUT.debug("cellDisplayClear: cell =", cell);
         const $cell = dataCell(cell);
-        if (!$cell.is(UPLOADER_CELL)) {
+        if (!$cell.is(FILE_DATA)) {
             cellDisplay($cell).empty();
-        } else if (!skip_uploader) {
-            setUploaderDisplayValue($cell);
+        } else if (!skip_file_data) {
+            setFileDataDisplayValue($cell);
         }
     }
 
@@ -4542,8 +4648,8 @@ appSetup(MODULE, function() {
     function setCellDisplayValue(cell, new_value) {
         //OUT.debug("setCellDisplayValue: new_value =", new_value, cell);
         const $cell = dataCell(cell);
-        if ($cell.is(UPLOADER_CELL)) {
-            setUploaderDisplayValue(cell, new_value);
+        if ($cell.is(FILE_DATA)) {
+            setFileDataDisplayValue(cell, new_value);
         } else {
             const $value = cellDisplay($cell);
             if (notDefined(new_value)) {
@@ -4579,35 +4685,38 @@ appSetup(MODULE, function() {
     // Functions - cell - display - file_data
     // ========================================================================
 
-    function setUploaderDisplayValue(cell, new_value, data_type) {
-        const $cell = dataCell(cell);
-        const $name = $cell.find(UPLOADED_NAME);
-        const $from = $name.children();
-
-        let file, type;
-        if (typeof new_value === 'string') {
-            file = new_value;
-            type = data_type;
+    /**
+     * Set the displayed value for the file.
+     *
+     * @param {Selector}           cell
+     * @param {Field.Value|string} [new_value]
+     * @param {string}             [data_type]
+     */
+    function setFileDataDisplayValue(cell, new_value, data_type) {
+        /** @type {jQuery} */        const $cell = dataCell(cell);
+        /** @type {FileDataValue} */ const value = $cell.makeValue(new_value);
+        /** @type {string} */        const file  = value.file || "";
+        if (EMBED_UPLOADER) {
+            let type = data_type;
+            type ||= (value.filename && "uploader");
+            type ||= (value.name     && "name");
+            type ||= (value.url      && "url");
+            const from_type = `.from-${type}`;
+            const $name     = $cell.find(UPLOADED_NAME);
+            let show_name   = false;
+            $name.children().each((_, line) => {
+                /** @type {jQuery} */
+                const $line  = $(line);
+                const active = $line.is(from_type);
+                $line.text(active && file || "");
+                $line.attr("aria-hidden", !active);
+                $line.toggleClass("active", active);
+                show_name ||= active;
+            });
+            $name.toggleClass("complete", show_name);
         } else {
-            const value = new_value ? $cell.makeValue(new_value).value : {};
-            type =
-                ((file = value.metadata?.filename) && 'uploader') ||
-                ((file = value.name)               && 'name') ||
-                ((file = value.url)                && 'url');
+            cellDisplay($cell).text(file);
         }
-
-        const from_type = `.from-${type}`;
-        let show_name   = false;
-        $from.each((_, line) => {
-            /** @type {jQuery} */
-            const $line  = $(line);
-            const active = $line.is(from_type);
-            $line.text(active && file || '');
-            $line.attr('aria-hidden', !active);
-            $line.toggleClass('active', active);
-            show_name ||= active;
-        });
-        $name.toggleClass('complete', show_name);
     }
 
     // ========================================================================
@@ -4968,56 +5077,6 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
-     * @typedef {object} EditElementOperations
-     *
-     * @property {function(jQuery)        : void}                      [clr]
-     * @property {function(jQuery)        : string[]|string|undefined} [get]
-     * @property {function(jQuery, Value) : void}                      [set]
-     */
-
-    /**
-     * Element operations that are different the default ones.
-     *
-     * @type {Object.<string, EditElementOperations>}
-     */
-    const EDIT = {
-        multi_select: {
-            clr: ($e)    => checkboxes($e).prop('checked', false),
-            get: ($e)    => checkboxes($e, true).toArray().map(cb => cb.value),
-            set: ($e, v) => {
-                const cbs = checkboxes($e).toArray();
-                const set = new Set(v.toArray());
-                cbs.forEach(cb => $(cb).prop('checked', set.has(cb.value)));
-            },
-        },
-        checkbox: {
-            clr: ($e)    => $e.prop('checked', false),
-            get: ($e)    => $e.prop('checked'),
-            set: ($e, v) => $e.prop('checked', (v.value === $e.prop('value'))),
-        },
-        default: {
-            clr: ($e)    => $e.val(''),
-            get: ($e)    => $e.val(),
-            set: ($e, v) => $e.val(v.forInput()),
-        },
-    }
-
-    /**
-     * Types of edit elements and their characteristic CSS selectors.
-     *
-     * @type {StringTable}
-     */
-    const EDIT_TYPE = {
-        multi_select: '.menu.multi',
-        menu:         '.menu.single',
-        list:         'textarea',
-        checkbox:     'input[type="checkbox"]',
-        date:         'input[type="date"]',
-        text:         'input[type="text"]',
-        string:       'input',
-    };
-
-    /**
      * Return the type of the edit element.
      *
      * @param {jQuery} $edit
@@ -5025,23 +5084,16 @@ appSetup(MODULE, function() {
      * @returns {string}
      */
     function editType($edit) {
-        let res;
-        $.each(EDIT_TYPE, (type, match) => !($edit.is(match) && (res = type)));
-        return res || 'string';
-    }
-
-    /**
-     * Execute the given edit operation.
-     *
-     * @param {jQuery} $edit
-     * @param {string} op             An EditElementOperations key.
-     * @param {string} [edit_type]    Default: {@link editType}
-     * @param {Value}  [value]        Only for "set".
-     */
-    function editValueOperation($edit, op, edit_type, value) {
-        const type = edit_type || editType($edit);
-        const func = EDIT[type] && EDIT[type][op] || EDIT.default[op];
-        return (op === 'set') ? func($edit, value) : func($edit);
+        switch (true) {
+            case $edit.is('.menu.multi'):               return "multi_select";
+            case $edit.is('.menu.single'):              return "menu";
+            case $edit.is('.field-FileData'):           return "file_data";
+            case $edit.is('textarea'):                  return "list";
+            case $edit.is('input[type="checkbox"]'):    return "checkbox";
+            case $edit.is('input[type="date"]'):        return "date";
+            case $edit.is('input[type="text"]'):        return "text";
+            default:                                    return "string";
+        }
     }
 
     /**
@@ -5053,18 +5105,35 @@ appSetup(MODULE, function() {
      * @returns {string|string[]}
      */
     function editValueGet($edit, edit_type) {
-        return editValueOperation($edit, 'get', edit_type);
+        switch (edit_type || editType($edit)) {
+            case "multi_select":
+                return checkboxes($edit, true).toArray().map(cb => cb.value);
+            case "checkbox":
+                return $edit.prop("checked");
+            default:
+                return $edit.val() || "";
+        }
     }
 
     /**
      * Set the value of the edit element.
      *
-     * @param {jQuery} $edit
-     * @param {Value}  value
-     * @param {string} [edit_type]    Default: {@link editType}
+     * @param {jQuery}                    $edit
+     * @param {Field.Value|FileDataValue} value
+     * @param {string}                    [edit_type]   Def.: {@link editType}
      */
     function editValueSet($edit, value, edit_type) {
-        editValueOperation($edit, 'set', edit_type, value);
+        switch (edit_type || editType($edit)) {
+            case "multi_select":
+                const cb  = checkboxes($edit).toArray();
+                const set = new Set(value.toArray());
+                return cb.forEach(c => $(c).prop("checked", set.has(c.value)));
+            case "checkbox":
+                const chk = (value.value === $edit.prop("value"));
+                return $edit.prop("checked", chk);
+            default:
+                return $edit.val(value.forInput());
+        }
     }
 
     /**
@@ -5074,7 +5143,14 @@ appSetup(MODULE, function() {
      * @param {string} [edit_type]    Default: {@link editType}
      */
     function editValueClear($edit, edit_type) {
-        editValueOperation($edit, 'clr', edit_type);
+        switch (edit_type || editType($edit)) {
+            case "multi_select":
+                return checkboxes($edit).prop("checked", false);
+            case "checkbox":
+                return $edit.prop("checked", false);
+            default:
+                return $edit.val("");
+        }
     }
 
     // ========================================================================
@@ -6095,12 +6171,18 @@ appSetup(MODULE, function() {
      * @param {*}                                 value
      * @param {Object.<string,(string|string[])>} [errs]
      *
-     * @returns {Value}
+     * @returns {Field.Value|FileDataValue}
      */
-    jQuery.fn.makeValue = function(value, errs) {
+    function makeFieldValue(value, errs) {
         const prop = cellProperties(this);
-        return new Field.Value(value, prop, errs);
-    };
+        if (prop.field === 'file_data') {
+            return new FileDataValue(value, prop, errs);
+        } else {
+            return new Field.Value(value, prop, errs);
+        }
+    }
+
+    jQuery.fn.makeValue = makeFieldValue;
 
     // ========================================================================
     // Functions - diagnostics

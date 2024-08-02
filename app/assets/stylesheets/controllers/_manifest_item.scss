@@ -1172,8 +1172,8 @@ table.manifest_item-grid {
                 }
             }
 
-            // Data cell for item file data.
-            > .cell.file-uploader {
+            // Data cell for item file data when EMBED_UPLOADER is true.
+            > .cell:has(.uppy-FileInput-input) {
 
                 padding:        ($value-pad * 5) ($value-pad * 4);
                 column-gap:     $value-pad * 4;
@@ -1450,7 +1450,7 @@ table.manifest_item-grid {
             }
 
             // Data cell for item metadata.
-            > .cell:not(.file-uploader) {
+            > .cell:not(:has(.uppy-FileInput-input)) {
 
                 @include scroll.snap-enabled {
                     scroll-margin-left: 1px;

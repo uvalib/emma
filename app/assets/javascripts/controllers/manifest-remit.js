@@ -2392,9 +2392,9 @@ appSetup(MODULE, function() {
      * @returns {string}
      */
     function allResolvedLabel() {
-        const resolved = Emma.Messages.submission.all_resolved;
-        const total    = allItems().length;
-        const ready    = itemsReady().length;
+        const total  = allItems().length;
+        const ready  = itemsReady().length;
+        let resolved = Emma.Messages.submission.all_resolved;
         let submittable, count;
         if (ready) {
             if (ready === total) {
@@ -2415,9 +2415,10 @@ appSetup(MODULE, function() {
         } else {
             const items = pluralize(Emma.Messages.item, total);
             const still = Emma.Messages.still;
-            const need  = pluralize(Emma.Messages.require, total);
+            const need  = pluralize(Emma.Messages.require, (total === 1));
             const attn  = Emma.Messages.attention;
-            submittable = `${items} ${still} ${need} ${attn}`;
+            submittable = `${total} ${items} ${still} ${need} ${attn}`;
+            resolved    = `${Emma.Messages.not} ${resolved}`;
         }
         return `${resolved} - ${submittable}`.toUpperCase();
     }

@@ -13,6 +13,15 @@ __loading_begin(__FILE__)
 #
 class ManifestItemDecorator < BaseDecorator
 
+  # Indicates whether cells in the 'file_data' column include the ability to
+  # upload a file associated with the manifest item.
+  #
+  # @type [Boolean]
+  #
+  # @see file:assets/javascripts/controllers/manifest-edit.js *saveUpdates()*
+  #
+  EMBED_UPLOADER = false
+
   # ===========================================================================
   # :section: Draper
   # ===========================================================================
@@ -148,14 +157,6 @@ class ManifestItemDecorator < BaseDecorator
     # @type [Hash{Symbol=>Hash}]
     #
     BULK_GRID_CFG = config_section(:bulk, :grid).deep_freeze
-
-    # @private
-    # @type [Hash{Symbol=>Hash}]
-    FILE_TYPE_CFG = BULK_GRID_CFG[:file]
-
-    # @private
-    # @type [Array<Symbol>]
-    FILE_TYPES = FILE_TYPE_CFG.keys.freeze
 
     # =========================================================================
     # :section: BaseDecorator::Configuration overrides
@@ -315,6 +316,20 @@ class ManifestItemDecorator < BaseDecorator
     #
     def generate_form_actions(*)
       super(%i[new edit upload])
+    end
+
+    # Render a single label/value pair, modifying the treatment of :file_data
+    # depending on the value of #EMBED_UPLOADER.
+    #
+    # @param [String, Symbol] label
+    # @param [any, nil]       value
+    # @param [Hash]           opt     Passed to super
+    #
+    # @return [ActiveSupport::SafeBuffer, nil]
+    #
+    def render_form_pair(label, value, **opt)
+      opt[:embed_uploader] = EMBED_UPLOADER
+      super
     end
 
     # This is a variation for ensuring that the `<div>` enclosing the checkbox
@@ -1342,19 +1357,23 @@ class ManifestItemDecorator
     if field == :file_data
       value = json_parse(value)
       opt[:'data-value'] = value.to_json if value
-      file_name, file_type = value && ManifestItem.file_name_type(value)
-      file_type_entries =
-        FILE_TYPES.map do |t|
-          if t == file_type
-            html_div(file_name, class: "from-#{t} active")
-          else
-            html_div(class: "from-#{t}", 'aria-hidden': true)
+      if EMBED_UPLOADER
+        name, type = value && ManifestItem.file_name_type(value)
+        entries =
+          FILE_TYPES.map do |t|
+            if t == type
+              html_div(name, class: "from-#{t} active")
+            else
+              html_div(class: "from-#{t}", 'aria-hidden': true)
+            end
           end
-        end
-      value = safe_join(file_type_entries)
-      opt[:value_css] ||= FILE_NAME_CLASS
-      opt[:value_css]   = css_classes(opt[:value_css], 'complete') if file_name
-      opt[:wrap]        = css_classes(UPLOADER_CLASS, opt[:wrap])
+        value = safe_join(entries)
+        opt[:value_css] ||= FILE_NAME_CLASS
+        opt[:value_css]   = css_classes(opt[:value_css], 'complete') if name
+      else
+        value &&= opt[:'data-value']
+      end
+      opt[:wrap] = css_classes(UPLOADER_CLASS, opt[:wrap])
     end
     super
   end
@@ -1370,7 +1389,8 @@ class ManifestItemDecorator
   #
   def grid_data_cell_edit(field, value, prop, **opt)
     if field == :file_data
-      opt[:render] ||= :render_grid_file_input
+      opt[:render] ||=
+        EMBED_UPLOADER ? :render_grid_file_input : :render_grid_input
     end
     super
   end
@@ -1381,10 +1401,22 @@ class ManifestItemDecorator
 
   protected
 
+  # @see EMBED_UPLOADER
+  # @type [Hash{Symbol=>Hash}]
+  FILE_TYPE_CFG = BULK_GRID_CFG[:file]
+
+  # @see EMBED_UPLOADER
+  # @type [Array<Symbol>]
+  FILE_TYPES = FILE_TYPE_CFG.keys.freeze
+
+  # @see EMBED_UPLOADER
   FILE_INPUT_TYPES =
     FILE_TYPE_CFG.select { |_, v| v[:panel] && v[:enabled] }.keys.freeze
 
+  # @see EMBED_UPLOADER
   PREPEND_CONTROLS_CLASS = 'uppy-FileInput-container-prepend'
+
+  # @see EMBED_UPLOADER
   APPEND_CONTROLS_CLASS  = 'uppy-FileInput-container-append'
 
   # For the :file_data column, display the path to the file if present or an
@@ -1400,6 +1432,7 @@ class ManifestItemDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @see EMBED_UPLOADER
   # @see file:controllers/manifest-edit.js  *initializeAddedControls*
   #
   def render_grid_file_input(_name, _value, css: UPLOADER_DISPLAY_CLASS, **opt)
@@ -1408,7 +1441,7 @@ class ManifestItemDecorator
     controls = FILE_INPUT_TYPES.map { |type| file_input_popup(src: type) }
     controls = html_div(*controls, class: "#{APPEND_CONTROLS_CLASS} hidden")
     controls << display
-  end
+  end if EMBED_UPLOADER
 
   # Generate an alternate file input control as a button with a hidden popup.
   #
@@ -1417,6 +1450,8 @@ class ManifestItemDecorator
   # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see EMBED_UPLOADER
   #
   def file_input_popup(src:, css: '.inline-popup', **opt)
     prop     = FILE_TYPE_CFG[src] || {}
@@ -1432,7 +1467,7 @@ class ManifestItemDecorator
     html_div(**opt) do
       button << panel
     end
-  end
+  end if EMBED_UPLOADER
 
   # Generate a visible button of an alternate file input control.
   #
@@ -1442,12 +1477,14 @@ class ManifestItemDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @see EMBED_UPLOADER
+  #
   def file_input_ctrl(src:, css: PopupHelper::POPUP_TOGGLE_CLASS, **opt)
     prop  = FILE_TYPE_CFG[src] || {}
     label = prop[:label]
     prepend_css!(opt, css)
     html_button(label, **opt)
-  end
+  end if EMBED_UPLOADER
 
   # Generate a hidden panel to prompt for a file name.
   #
@@ -1457,6 +1494,8 @@ class ManifestItemDecorator
   # @param [Hash]   opt
   #
   # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see EMBED_UPLOADER
   #
   def file_input_panel(id:, src:, css: PopupHelper::POPUP_PANEL_CLASS, **opt)
     prop        = FILE_TYPE_CFG[src] || {}
@@ -1489,7 +1528,7 @@ class ManifestItemDecorator
     html_div(**opt) do
       description << input_label << input_field << input_submit << input_cancel
     end
-  end
+  end if EMBED_UPLOADER
 
   # ===========================================================================
   # :section: BaseDecorator::List overrides
