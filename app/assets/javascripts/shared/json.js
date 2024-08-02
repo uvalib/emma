@@ -1,14 +1,14 @@
 // app/assets/javascripts/shared/json.js
 
 
-import { AppDebug }                     from '../application/debug';
-import { maxSize }                      from './arrays';
-import { isEmpty }                      from './definitions';
-import { asObject, isObject, toObject } from './objects';
-import { asDateTime }                   from './time';
+import { AppDebug }                     from "../application/debug";
+import { maxSize }                      from "./arrays";
+import { isEmpty }                      from "./definitions";
+import { asObject, isObject, toObject } from "./objects";
+import { asDateTime }                   from "./time";
 
 
-AppDebug.file('shared/json');
+AppDebug.file("shared/json");
 
 // ============================================================================
 // Constants
@@ -75,11 +75,11 @@ function alignKeys(item) {
 function stringifyReplacer(_this, item) {
     const type = typeof(item);
     switch (true) {
-        case (type === 'undefined'):    return '(undefined)';
-        case (item === null):           return '(null)';
+        case (type === "undefined"):    return "(undefined)";
+        case (item === null):           return "(null)";
         case (item instanceof Date):    return asDateTime(item);
         case isEmpty(item):             return item;
-        case (type === 'object'):       return possiblyInlined(item);
+        case (type === "object"):       return possiblyInlined(item);
         default:                        return item;
     }
 }
@@ -94,12 +94,12 @@ function stringifyReplacer(_this, item) {
  * @returns {string|*}
  */
 function possiblyInlined(obj, threshold = DEF_INLINE_MAX) {
-    let json = postProcess(JSON.stringify(obj, null, ' '));
-    json = json.replaceAll(/\[\s+/g, '[');
-    json = json.replaceAll(/\s+]/g,  ']');
-    json = json.replaceAll(/{\s*/g,  '{ ');
-    json = json.replaceAll(/\s*}/g,  ' }');
-    json = json.replaceAll(/\s+/g,   ' ');
+    let json = postProcess(JSON.stringify(obj, null, " "));
+    json = json.replaceAll(/\[\s+/g, "[");
+    json = json.replaceAll(/\s+]/g,  "]");
+    json = json.replaceAll(/{\s*/g,  "{ ");
+    json = json.replaceAll(/\s*}/g,  " }");
+    json = json.replaceAll(/\s+/g,   " ");
     return (json.length <= threshold) ? json : obj;
 }
 
@@ -113,10 +113,10 @@ function possiblyInlined(obj, threshold = DEF_INLINE_MAX) {
 function postProcess(item) {
     // noinspection RegExpRedundantEscape
     return item
-        .replaceAll(/\\"/g, '"')
-        .replaceAll(/"(\(\w+\))"/g, '$1')
-        .replaceAll(/"(\{.+\})"/gm, '$1')
-        .replaceAll(/"(\[.+\])"/gm, '$1')
-        .replaceAll(/^( *)"(\w+)(\s*)":/gm,  '$1$2:$3')
+        .replaceAll(/\\"/g,                  '"')
+        .replaceAll(/"(\(\w+\))"/g,          "$1")
+        .replaceAll(/"(\{.+\})"/gm,          "$1")
+        .replaceAll(/"(\[.+\])"/gm,          "$1")
+        .replaceAll(/^( *)"(\w+)(\s*)":/gm,  "$1$2:$3")
         .replaceAll(/^( *)"(\S+?)(\s+)":/gm, '$1"$2":');
 }

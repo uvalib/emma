@@ -7,18 +7,18 @@
 // NOTE: Untested in the current version of the application.
 
 
-import { AppDebug }                       from '../application/debug';
-import { appSetup }                       from '../application/setup';
-import { Emma }                           from '../shared/assets';
-import { HIDDEN, selector, toggleHidden } from '../shared/css';
-import { isMissing }                      from '../shared/definitions';
-import { secondsSince }                   from '../shared/time';
+import { AppDebug }                       from "../application/debug";
+import { appSetup }                       from "../application/setup";
+import { Emma }                           from "../shared/assets";
+import { HIDDEN, selector, toggleHidden } from "../shared/css";
+import { isMissing }                      from "../shared/definitions";
+import { secondsSince }                   from "../shared/time";
 
 
-const MODULE = 'Images';
+const MODULE = "Images";
 const DEBUG  = true;
 
-AppDebug.file('feature/images', MODULE, DEBUG);
+AppDebug.file("feature/images", MODULE, DEBUG);
 
 appSetup(MODULE, function() {
 
@@ -55,19 +55,19 @@ appSetup(MODULE, function() {
      * @param {string}   [source]
      */
     function loadImage(image, source) {
-        const func  = 'loadImage';
+        const func  = "loadImage";
         const $img  = $(image);
-        const src   = source || $img.attr('data-path') || $img.attr('src');
+        const src   = source || $img.attr("data-path") || $img.attr("src");
         const url   = urlProxyPath(src);
         const start = Date.now();
 
         /** @type {string} content */
         let content = undefined;
-        let error   = '';
+        let error   = "";
 
         $.ajax({
             url:      url,
-            type:     'GET',
+            type:     "GET",
             success:  onSuccess,
             error:    onError,
             complete: onComplete
@@ -81,11 +81,11 @@ appSetup(MODULE, function() {
          * @param {XMLHttpRequest} _xhr
          */
         function onSuccess(data, _status, _xhr) {
-            OUT.debug(`${func}: received`, (data?.length || 0), 'bytes.');
+            OUT.debug(`${func}: received`, (data?.length || 0), "bytes.");
             if (isMissing(data)) {
-                error   = 'no data';
+                error   = "no data";
             } else {
-                content = 'data:image/jpg;base64,' + data;
+                content = "data:image/jpg;base64," + data;
             }
         }
 
@@ -107,7 +107,7 @@ appSetup(MODULE, function() {
          * @param {string}         _status
          */
         function onComplete(_xhr, _status) {
-            OUT.debug(`${func}: completed in`, secondsSince(start), 'sec.');
+            OUT.debug(`${func}: completed in`, secondsSince(start), "sec.");
             if (error) {
                 OUT.warn(`${func}: ${url}:`, error);
             } else {
@@ -129,19 +129,19 @@ appSetup(MODULE, function() {
             const $container = $img.parent();
             if ($img.is(PLACEHOLDER)) {
                 toggleHidden($img, true);
-                $img.attr('alt', Emma.Download.progress.image.alt);
+                $img.attr("alt", Emma.Download.progress.image.alt);
             } else {
                 $container.empty();
             }
 
             // Insert the new image element.
-            const id  = $img.data('id')  || $container.data('id');
-            const alt = $img.data('alt') || $container.data('alt');
+            const id  = $img.data("id")  || $container.data("id");
+            const alt = $img.data("alt") || $container.data("alt");
             makeImage(image_content, alt)
-                .attr('id', (id  || imageId(src)))
-                .attr('data-turbolinks-permanent', true)
+                .attr("id", (id  || imageId(src)))
+                .attr("data-turbolinks-permanent", true)
                 .appendTo($container);
-            $container.addClass('complete');
+            $container.addClass("complete");
         }
     }
 
@@ -165,7 +165,7 @@ appSetup(MODULE, function() {
      * @returns {string}
      */
     function imageId(url) {
-        const file_name    = url.replace(/^.*\//, '');
+        const file_name    = url.replace(/^.*\//, "");
         const encoded_name = encodeURIComponent(file_name);
         return `img-${encoded_name}`;
     }
@@ -190,7 +190,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function makeImage(src, alt) {
-        const alt_text = alt || '';
+        const alt_text = alt || "";
         return $(`<img src="${src}" alt="${alt_text}">`);
     }
 
@@ -202,16 +202,16 @@ appSetup(MODULE, function() {
     $placeholders.each((_, element) => {
         const $image = $(element);
         let src;
-        if ((src = $image.attr('data-path'))) {
-            OUT.debug('FETCHING IMAGE data-path ==', src);
+        if ((src = $image.attr("data-path"))) {
+            OUT.debug("FETCHING IMAGE data-path ==", src);
             loadImage($image, src);
-        } else if ((src = $image.attr('src')) && src.match(/^http/)) {
-            OUT.debug('REPLACING IMAGE src ==', src);
+        } else if ((src = $image.attr("src")) && src.match(/^http/)) {
+            OUT.debug("REPLACING IMAGE src ==", src);
             // noinspection JSCheckFunctionSignatures
             $image.parent().append(imagePlaceholder());
             loadImage($image, src);
         } else {
-            OUT.debug('USING IMAGE src ==', src);
+            OUT.debug("USING IMAGE src ==", src);
         }
     });
 

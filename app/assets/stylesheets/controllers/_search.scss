@@ -1,16 +1,16 @@
 // app/assets/stylesheets/controllers/_search.scss
 
-@use 'sass:map';
-@use 'sass:math';
+@use "sass:map";
+@use "sass:math";
 
-@use 'shared/variables'        as *;
-@use 'shared/functions'        as *;
-@use 'shared/mixins'           as *;
-@use 'shared/controls/buttons' as button;
-@use 'shared/controls/grids'   as grid;
-@use 'shared/feature/model'    as model;
+@use "shared/variables"        as *;
+@use "shared/functions"        as *;
+@use "shared/mixins"           as *;
+@use "shared/controls/buttons" as button;
+@use "shared/controls/grids"   as grid;
+@use "shared/feature/model"    as model;
 
-@use 'feature/model'           as model-classes;
+@use "feature/model"           as model-classes;
 
 //=============================================================================
 // EMMA Unified Search pages
@@ -1004,9 +1004,9 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
     @include prioritize(RemediatedAspects,    Remediation);
     @include prioritize(TextQuality,          Quality);
 
-    // NOTE [1] Prioritize 'emma_version' over 'bib_version'.
-    // NOTE [2] If both are present then 'emma_PublicationDate' will just be
-    //  derived from 'dcterms_dateCopyright', so the former is redundant.
+    // NOTE [1] Prioritize "emma_version" over "bib_version".
+    // NOTE [2] If both are present then "emma_PublicationDate" will just be
+    //  derived from "dcterms_dateCopyright", so the former is redundant.
 }
 
 // Zero or more .search-list-item elements.
@@ -1985,7 +1985,7 @@ body.search.dev-style {
 
     @mixin type-marker($term, $color: red, $inner-color: black) {
         &::before {
-            content:        '[#{$term}]';
+            content:        "[#{$term}]";
             position:       absolute;
             left:           -2rem;
             padding:        0 0.25rem;
@@ -2058,31 +2058,31 @@ body.search.dev-style {
         > .pair > .value {
 
             &.text {
-                @include type-marker('text', gray);
+                @include type-marker("text", gray);
             }
 
             &.textbox {
-                @include type-marker('textbox', dodgerblue);
+                @include type-marker("textbox", dodgerblue);
             }
 
             &.date {
-                @include type-marker('date', green);
+                @include type-marker("date", green);
             }
 
             &.url {
-                @include type-marker('url', blue);
+                @include type-marker("url", blue);
             }
 
             &.enum {
-                @include type-marker('enum', lime);
+                @include type-marker("enum", lime);
             }
 
             &.list {
-                @include type-marker('list', red);
+                @include type-marker("list", red);
             }
 
             &.array {
-                @include type-marker('array', violet);
+                @include type-marker("array", violet);
             }
         }
     }

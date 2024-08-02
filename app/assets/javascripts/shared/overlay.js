@@ -1,16 +1,16 @@
 // app/assets/javascripts/shared/overlay.js
 
 
-import { AppDebug }  from '../application/debug';
-import { BaseClass } from './base-class';
-import { selector }  from './css';
-import { isMissing } from './definitions';
+import { AppDebug }  from "../application/debug";
+import { BaseClass } from "./base-class";
+import { selector }  from "./css";
+import { isMissing } from "./definitions";
 
 
-const MODULE = 'Overlay';
+const MODULE = "Overlay";
 const DEBUG  = false;
 
-AppDebug.file('shared/overlay', MODULE, DEBUG);
+AppDebug.file("shared/overlay", MODULE, DEBUG);
 
 // ============================================================================
 // Class Overlay
@@ -23,7 +23,7 @@ AppDebug.file('shared/overlay', MODULE, DEBUG);
  */
 export class Overlay extends BaseClass {
 
-    static CLASS_NAME = 'Overlay';
+    static CLASS_NAME = "Overlay";
     static DEBUGGING  = DEBUG;
 
     // ========================================================================
@@ -31,8 +31,8 @@ export class Overlay extends BaseClass {
     // ========================================================================
 
     static OVERLAY_CLASS; // To be defined by the subclass.
-    static CONTAINER_CLASS = 'overlays';
-    static VISIBLE_MARKER  = 'visible';
+    static CONTAINER_CLASS = "overlays";
+    static VISIBLE_MARKER  = "visible";
 
     // ========================================================================
     // Class fields
@@ -153,7 +153,7 @@ export class Overlay extends BaseClass {
      * @returns {jQuery}
      */
     static findOverlay(overlay) {
-        const css    = (typeof overlay === 'string');
+        const css    = (typeof overlay === "string");
         const target = css ? overlay : this.OVERLAY_CLASS;
         let $result;
         if (css || !overlay) {

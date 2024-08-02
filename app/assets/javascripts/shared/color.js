@@ -1,11 +1,11 @@
 // app/assets/javascripts/shared/color.js
 
 
-import { AppDebug }                            from '../application/debug';
-import { DEF_HEX_DIGITS, HEX_BASE, hexString } from './random';
+import { AppDebug }                            from "../application/debug";
+import { DEF_HEX_DIGITS, HEX_BASE, hexString } from "./random";
 
 
-AppDebug.file('shared/color');
+AppDebug.file("shared/color");
 
 // ============================================================================
 // Functions
@@ -20,7 +20,7 @@ AppDebug.file('shared/color');
  */
 export function rgbColor(value) {
     const digits = hexString(value, DEF_HEX_DIGITS);
-    return '#' + digits;
+    return "#" + digits;
 }
 
 /**
@@ -32,7 +32,7 @@ export function rgbColor(value) {
  */
 export function rgbColorInverse(value) {
     const digits = hexString(value, DEF_HEX_DIGITS);
-    return '#' + rotateHexDigits(digits);
+    return "#" + rotateHexDigits(digits);
 }
 
 /**
@@ -47,5 +47,5 @@ export function rotateHexDigits(value, shift = HEX_BASE/2) {
     const digits = hexString(value);
     return Array.from(digits)
         .map(digit => hexString((Number(`0x${digit}`) + shift) % HEX_BASE))
-        .join('');
+        .join("");
 }

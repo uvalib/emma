@@ -1,17 +1,17 @@
 // app/assets/javascripts/shared/database.js
 
 
-import { AppDebug }                               from '../application/debug';
-import { arrayWrap }                              from './arrays';
-import { isDefined, isEmpty, notEmpty, presence } from './definitions';
-import { fromJSON, hasKey }                       from './objects';
-import { asString }                               from './strings';
+import { AppDebug }                               from "../application/debug";
+import { arrayWrap }                              from "./arrays";
+import { isDefined, isEmpty, notEmpty, presence } from "./definitions";
+import { fromJSON, hasKey }                       from "./objects";
+import { asString }                               from "./strings";
 
 
-const MODULE = 'DB';
+const MODULE = "DB";
 const DEBUG  = false;
 
-AppDebug.file('shared/database', MODULE, DEBUG);
+AppDebug.file("shared/database", MODULE, DEBUG);
 
 // ============================================================================
 // Type definitions
@@ -159,7 +159,7 @@ export const DB = (function() {
      * @readonly
      * @type {string}
      */
-    const DEFAULT_DB_NAME = 'emma';
+    const DEFAULT_DB_NAME = "emma";
 
     /**
      * Current version of the client database schemas.
@@ -175,7 +175,7 @@ export const DB = (function() {
      * @readonly
      * @type {string[]}
      */
-    const TRANSACTION_MODE = ['readonly', 'readwrite', 'versionchange'];
+    const TRANSACTION_MODE = ["readonly", "readwrite", "versionchange"];
 
     /**
      * Normal transaction mode.
@@ -183,7 +183,7 @@ export const DB = (function() {
      * @readonly
      * @type {string}
      */
-    const DEFAULT_TRANSACTION_MODE = 'readwrite';
+    const DEFAULT_TRANSACTION_MODE = "readwrite";
 
     // ========================================================================
     // Variables - analysis
@@ -278,9 +278,9 @@ export const DB = (function() {
     function _logArgs(...args) {
         const i_max  = args.length - 1;
         const result = args.map(
-            (v, i) => ((typeof v === 'string') && (i < i_max)) ? `${v}:` : v
+            (v, i) => ((typeof v === "string") && (i < i_max)) ? `${v}:` : v
         );
-        return presence(result) || '';
+        return presence(result) || "";
     }
 
     // ========================================================================
@@ -347,9 +347,9 @@ export const DB = (function() {
      */
     function savedDbName(new_name) {
         if (new_name) {
-            localStorage.setItem('idb-current', new_name);
+            localStorage.setItem("idb-current", new_name);
         }
-        return new_name || localStorage.getItem('idb-current');
+        return new_name || localStorage.getItem("idb-current");
     }
 
     /**
@@ -360,12 +360,12 @@ export const DB = (function() {
      * @returns {number}
      */
     function savedDbVersion(new_version) {
-        const value = localStorage.getItem('idb-version');
-        const table = fromJSON(value, 'savedDbVersion') || {};
+        const value = localStorage.getItem("idb-version");
+        const table = fromJSON(value, "savedDbVersion") || {};
         const name  = dbName();
         if (new_version) {
             table[name] = new_version;
-            localStorage.setItem('idb-version', asString(table));
+            localStorage.setItem("idb-version", asString(table));
         }
         return table[name];
     }
@@ -414,7 +414,7 @@ export const DB = (function() {
      */
     function dbDatabase(new_db) {
         if (new_db && (db_handle !== new_db)) {
-            const func = 'dbDatabase';
+            const func = "dbDatabase";
 
             if (db_handle) {
                 dbCloseDatabase(func);
@@ -431,17 +431,17 @@ export const DB = (function() {
             // ================================================================
 
             function onClose(event) {
-                _log(func, 'DATABASE CLOSING');
+                _log(func, "DATABASE CLOSING");
                 _debug(event);
             }
 
             function onGenericAbort(event) {
-                _warn(func, 'OPERATION ABORTED');
+                _warn(func, "OPERATION ABORTED");
                 _debug(event);
             }
 
             function onGenericError(event) {
-                _error(func, 'OPERATION ERROR', event);
+                _error(func, "OPERATION ERROR", event);
                 _debug(event);
             }
         }
@@ -456,14 +456,14 @@ export const DB = (function() {
      * @param {string}     [caller]
      */
     function dbWithDatabase(callback, database, caller) {
-        const func = 'dbWithDatabase';
+        const func = "dbWithDatabase";
         const db   = dbDatabase();
         if (!db || (database && (database !== dbName()))) {
             openDatabase(database, null, callback, caller);
         } else if (db) {
             callback(db);
         } else {
-            _error(func, 'no database name given');
+            _error(func, "no database name given");
         }
     }
 
@@ -474,7 +474,7 @@ export const DB = (function() {
      * @param {string} [store_name]   Default: {@link defaultStore}.
      */
     function dbCreateObjectStore(store_name) {
-        const func     = 'dbCreateObjectStore';
+        const func     = "dbCreateObjectStore";
         const name     = store_name || defaultStore();
         const template = getStoreTemplate(name);
         try {
@@ -483,7 +483,7 @@ export const DB = (function() {
             const store = db.createObjectStore(name, template.options);
             for (const [key, properties] of Object.entries(template.record)) {
                 let index_options;
-                if (typeof properties.index === 'object') {
+                if (typeof properties.index === "object") {
                     index_options = properties.index;
                 } else if (properties.index !== false) {
                     index_options = { unique: false };
@@ -510,7 +510,7 @@ export const DB = (function() {
         const name   = `"${db.name}"`;
         const stores = Object.keys(store_template);
         try {
-            _log('dbSetupDatabase', `db = ${name}; object stores = ${stores}`);
+            _log("dbSetupDatabase", `db = ${name}; object stores = ${stores}`);
             dbDatabase(db);
             stores.forEach(store => dbCreateObjectStore(store));
         } catch (error) {
@@ -528,8 +528,8 @@ export const DB = (function() {
         const tgt_db = db || db_handle;
         if (tgt_db) {
             const clear = (tgt_db === db_handle);
-            const func  = caller || 'dbCloseDatabase';
-            _log(func, 'closing database', tgt_db.name);
+            const func  = caller || "dbCloseDatabase";
+            _log(func, "closing database", tgt_db.name);
             tgt_db.close();
             if (clear) { db_handle = undefined }
         }
@@ -553,17 +553,17 @@ export const DB = (function() {
             if      (arg instanceof IDBDatabase)     { db         = arg }
             else if (arg instanceof IDBTransaction)  { tr         = arg }
             else if (TRANSACTION_MODE.includes(arg)) { tr_mode    = arg }
-            else if (typeof arg === 'string')        { store_name = arg }
-            else { _warn(func, 'dbTransaction', 'unexpected', arg) }
+            else if (typeof arg === "string")        { store_name = arg }
+            else { _warn(func, "dbTransaction", "unexpected", arg) }
         });
         if (!tr) {
             db         ||= dbDatabase();
             store_name ||= defaultStore();
             tr_mode    ||= DEFAULT_TRANSACTION_MODE;
             tr = db.transaction(store_name, tr_mode);
-            tr.onabort    = () => _error(func, 'transaction aborted');
-            tr.onerror    = () => _error(func, 'transaction failed', tr.error);
-            tr.oncomplete = () => _debug(func, 'transaction complete');
+            tr.onabort    = () => _error(func, "transaction aborted");
+            tr.onerror    = () => _error(func, "transaction failed", tr.error);
+            tr.oncomplete = () => _debug(func, "transaction complete");
         }
         return tr;
     }
@@ -581,7 +581,7 @@ export const DB = (function() {
         args.forEach(arg => {
             if      (arg instanceof IDBObjectStore) { store       = arg }
             else if (arg instanceof IDBTransaction) { transaction = arg }
-            else if (typeof arg === 'string')       { store_name  = arg }
+            else if (typeof arg === "string")       { store_name  = arg }
             // Anything else would be passed to dbTransaction.
         });
         if (!store) {
@@ -590,11 +590,11 @@ export const DB = (function() {
             store = transaction.objectStore(store_name);
             if (debug_store && _debugging()) {
                 _log(func, `object store "${store_name}" properties:`)
-                console.log('    .name          =', store.name);
-                console.log('    .keyPath       =', store.keyPath);
-                console.log('    .indexNames    =', store.indexNames);
-                console.log('    .autoIncrement =', store.autoIncrement);
-                console.log('    .transaction   =', store.transaction);
+                console.log("    .name          =", store.name);
+                console.log("    .keyPath       =", store.keyPath);
+                console.log("    .indexNames    =", store.indexNames);
+                console.log("    .autoIncrement =", store.autoIncrement);
+                console.log("    .transaction   =", store.transaction);
                 debug_store = false;
             }
         }
@@ -612,11 +612,11 @@ export const DB = (function() {
      * @returns {*}
      */
     function dbRequest(func, request, on_success, on_error) {
-        const log_err = () => _error(func, 'request failed', request.error);
+        const log_err = () => _error(func, "request failed", request.error);
         request.onerror =
             on_error ? (ev => log_err() || on_error(ev)) : (() => log_err());
         request.onsuccess =
-            on_success || (() => _debug(func, 'request successful'));
+            on_success || (() => _debug(func, "request successful"));
         return request;
     }
 
@@ -658,7 +658,7 @@ export const DB = (function() {
      */
     function defaultStore(new_name) {
         if (new_name && !hasKey(store_template, new_name)) {
-            _error('defaultStore', `invalid store name "${new_name}"`);
+            _error("defaultStore", `invalid store name "${new_name}"`);
         } else if (new_name) {
             default_store = new_name;
         } else if (!default_store) {
@@ -688,9 +688,9 @@ export const DB = (function() {
      * @returns {StoreTemplates}
      */
     function addStoreTemplates(store_name, template) {
-        const func = 'addStoreTemplates';
+        const func = "addStoreTemplates";
         let templates;
-        if (typeof store_name === 'object') {
+        if (typeof store_name === "object") {
             templates = store_name;
         } else {
             templates = Object.fromEntries([[store_name, template]]);
@@ -718,7 +718,7 @@ export const DB = (function() {
      * @param {string}     [caller]
      */
     function openDatabase(new_name, new_version, callback, caller) {
-        const func     = caller      || 'DB.openDatabase';
+        const func     = caller      || "DB.openDatabase";
         const name     = new_name    || dbName();
         const version  = new_version || dbVersion();
         const database = `${name} (v${version})`;
@@ -735,12 +735,12 @@ export const DB = (function() {
         // ====================================================================
 
         function onOpenBlocked(_event) {
-            _warn(func, database, 'in use; cannot upgrade');
+            _warn(func, database, "in use; cannot upgrade");
             // TODO: sleep and retry???
         }
 
         function onOpenError(event) {
-            _error(func, database, 'load error', event);
+            _error(func, database, "load error", event);
         }
 
         function onOpenSuccess(event) {
@@ -756,7 +756,7 @@ export const DB = (function() {
      * @param {DbCallback} [callback]
      */
     function openObjectStore(store_name, callback) {
-        const func     = 'DB.openObjectStore';
+        const func     = "DB.openObjectStore";
         const name     = dbName();
         const version  = dbVersion();
         const database = `${name} (v${version})`;
@@ -774,7 +774,7 @@ export const DB = (function() {
      * @param {DbCallback} [callback]
      */
     function clearObjectStore(store_name, callback) {
-        const func  = 'DB.clearObjectStore';
+        const func  = "DB.clearObjectStore";
         const name  = store_name || defaultStore();
         const store = dbObjectStore(func, name)
         const req   = store.clear();
@@ -790,7 +790,7 @@ export const DB = (function() {
      * @param {DbCallback} [callback]
      */
     function clearAllObjectStores(database, callback) {
-        const func = 'DB.clearAllObjectStores';
+        const func = "DB.clearAllObjectStores";
         dbWithDatabase(function(db) {
             const stores = Array.from(db.objectStoreNames);
             const cb     = () => callback?.(db);
@@ -806,7 +806,7 @@ export const DB = (function() {
      * @param {...trArg}        [args]
      */
     function storeItems(item, callback, ...args) {
-        const func  = 'DB.storeItems';
+        const func  = "DB.storeItems";
         const items = arrayWrap(item);
         let count   = items.length;
         if (!count) {
@@ -827,7 +827,7 @@ export const DB = (function() {
      * @param {...trArg}       [args]
      */
     function fetchItems(item_cb, ...args) {
-        const func    = 'DB.fetchItems';
+        const func    = "DB.fetchItems";
         const store   = dbObjectStore(func, ...args);
         const request = store.openCursor();
         let number    = 0;
@@ -840,7 +840,7 @@ export const DB = (function() {
                 _debug(func, `item ${++number}`, cursor.value);
                 cursor.continue();
             } else {
-                _debug(func, 'all DB items processed');
+                _debug(func, "all DB items processed");
             }
         }
         dbRequest(func, request, if_ok, if_err);
@@ -855,7 +855,7 @@ export const DB = (function() {
      * @param {...trArg}        [args]
      */
     function lookupItems(index_key, index_value, callback, ...args) {
-        const func    = 'DB.lookupItems';
+        const func    = "DB.lookupItems";
         const query   = dbMakeIndexQueryArgs(index_key, index_value);
         const key     = query.name;
         const value   = query.value;
@@ -879,7 +879,7 @@ export const DB = (function() {
      * @param {...trArg}         [args]
      */
     function countItems(index_key, index_value, callback, ...args) {
-        const func    = 'DB.countItems';
+        const func    = "DB.countItems";
         const query   = dbMakeIndexQueryArgs(index_key, index_value);
         const key     = query.name;
         const value   = query.value;
@@ -904,7 +904,7 @@ export const DB = (function() {
      * @param {...trArg}     [args]
      */
     function lookupStoreKeys(index_key, index_value, callback, ...args) {
-        const func    = 'DB.lookupStoreKeys';
+        const func    = "DB.lookupStoreKeys";
         const query   = dbMakeIndexQueryArgs(index_key, index_value);
         const key     = query.name;
         const value   = query.value;
@@ -928,7 +928,7 @@ export const DB = (function() {
      * @param {...trArg}        [args]
      */
     function deleteItems(index_key, index_value, callback, ...args) {
-        const func  = 'DB.deleteItems';
+        const func  = "DB.deleteItems";
         const store = dbObjectStore(func, ...args);
         lookupStoreKeys(index_key, index_value, deleteByStoreKeys, store);
 
@@ -969,7 +969,7 @@ export const DB = (function() {
      * @returns {IDBDatabase|undefined}
      */
     function closeDatabase() {
-        const func = 'closeDatabase';
+        const func = "closeDatabase";
         if (db_handle) {
             dbCloseDatabase(func);
         } else {

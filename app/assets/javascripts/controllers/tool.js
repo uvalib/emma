@@ -1,14 +1,14 @@
 // app/assets/javascripts/controllers/tool.js
 
 
-import { AppDebug }       from '../application/debug';
-import { appSetup }       from '../application/setup';
-import { isMissing }      from '../shared/definitions';
-import * as Lookup        from '../tool/bibliographic-lookup';
-import * as MathDetective from '../tool/math-detective';
+import { AppDebug }       from "../application/debug";
+import { appSetup }       from "../application/setup";
+import { isMissing }      from "../shared/definitions";
+import * as Lookup        from "../tool/bibliographic-lookup";
+import * as MathDetective from "../tool/math-detective";
 
 
-const PATH = 'controllers/tool';
+const PATH = "controllers/tool";
 
 AppDebug.file(PATH);
 
@@ -29,7 +29,7 @@ appSetup(PATH, function() {
     // Math Detective API tool
     // ========================================================================
 
-    if ($body.hasClass('md')) {
+    if ($body.hasClass("md")) {
         MathDetective.setupFor($body);
     }
 
@@ -37,7 +37,7 @@ appSetup(PATH, function() {
     // Bibliographic lookup
     // ========================================================================
 
-    if ($body.hasClass('lookup')) {
+    if ($body.hasClass("lookup")) {
         // noinspection JSIgnoredPromiseFromCall
         Lookup.setupFor($body);
     }

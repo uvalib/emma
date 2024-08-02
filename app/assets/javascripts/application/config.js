@@ -3,11 +3,11 @@
 // Application-wide configuration values.
 
 
-import { AppDebug } from './debug';
-import { regexp }   from '../shared/regexp';
+import { AppDebug } from "./debug";
+import { regexp }   from "../shared/regexp";
 
 
-AppDebug.file('application/config');
+AppDebug.file("application/config");
 
 // ============================================================================
 // Functions - interpolation
@@ -30,9 +30,9 @@ const FORMAT_NAMED_REFERENCE = regexp(
 );
 
 const INTERPOLATION_PATTERNS = {
-    '${': JS_INTERPOLATION,
-    '%{': SIMPLE_NAMED_REFERENCE,
-    '%<': FORMAT_NAMED_REFERENCE,
+    "${": JS_INTERPOLATION,
+    "%{": SIMPLE_NAMED_REFERENCE,
+    "%<": FORMAT_NAMED_REFERENCE,
 };
 
 /**
@@ -44,7 +44,7 @@ const INTERPOLATION_PATTERNS = {
  * @returns {string|*}
  */
 export function interpolate(item, values) {
-    if (typeof item !== 'string') { return item }
+    if (typeof item !== "string") { return item }
     let res = item;
     for (const [key, pattern] of Object.entries(INTERPOLATION_PATTERNS)) {
         if (item.includes(key)) {

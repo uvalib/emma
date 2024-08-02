@@ -6,14 +6,14 @@
 // noinspection JSUnresolvedReference
 
 
-import { AppDebug }                         from '../application/debug';
-import { Emma }                             from './assets';
-import { selector }                         from './css';
-import { isMissing, isPresent, notDefined } from './definitions';
-import { handleEvent }                      from './events';
+import { AppDebug }                         from "../application/debug";
+import { Emma }                             from "./assets";
+import { selector }                         from "./css";
+import { isMissing, isPresent, notDefined } from "./definitions";
+import { handleEvent }                      from "./events";
 
 
-AppDebug.file('shared/analytics');
+AppDebug.file("shared/analytics");
 
 /**
  * @external Matomo
@@ -70,7 +70,7 @@ export const Analytics = (function() {
      * @constant
      * @type {string}
      */
-    const LINK_CLASS = 'matomo_link';
+    const LINK_CLASS = "matomo_link";
 
     /**
      * Elements with these CSS classes aren't tracked.
@@ -79,7 +79,7 @@ export const Analytics = (function() {
      * @type {string[]}
      */
     const IGNORE_CLASSES = [
-        'submit-form'       // Don't track star/unstar links.
+        "submit-form"       // Don't track star/unstar links.
     ];
 
     /**
@@ -89,7 +89,7 @@ export const Analytics = (function() {
      * @type {string[]}
      */
     const DOWNLOAD_CLASSES = [
-        'download'
+        "download"
     ];
 
     // ========================================================================
@@ -117,8 +117,8 @@ export const Analytics = (function() {
      * - Handling of links which are in invisible elements (needed for virtual
      *    shelf browse).
      *
-     * - Allowing '[data-path]' elements to be treated as links.  (Matomo's own
-     *    code ignores elements unless they have '[href]' element, but many
+     * - Allowing "[data-path]" elements to be treated as links.  (Matomo's own
+     *    code ignores elements unless they have "[href]" element, but many
      *    virtual shelf browse "links" are actually non-anchor elements with
      *    a "data-path" attribute instead of an "href" attribute.)
      *
@@ -132,7 +132,7 @@ export const Analytics = (function() {
         const ignored = selector(IGNORE_CLASSES);
         $links.not(ignored).each((_, link) => {
             const $link = $(link);
-            const href  = $link.attr('href') || $link.attr('data-path');
+            const href  = $link.attr("href") || $link.attr("data-path");
             if (href && !href.match(/^javascript:/)) {
                 if (MARK_LINKS) { $link.addClass(LINK_CLASS) }
                 // noinspection JSUnresolvedReference
@@ -159,10 +159,10 @@ export const Analytics = (function() {
      * Track events within a generic page.
      *
      * @param {jQuery} $root
-     * @param {string} [topic]        Event category; default: 'OtherPage'
+     * @param {string} [topic]        Event category; default: "OtherPage"
      */
     function trackPage($root, topic) {
-        const t = topic || 'OtherPage';
+        const t = topic || "OtherPage";
         if (skipTracking($root, t)) { return }
         trackPageControls($root, t);
     }
@@ -184,15 +184,15 @@ export const Analytics = (function() {
      * @param {jQuery} $root
      * @param {string} [topic]        Event category.
      */
-    function trackHeader($root, topic = 'Header') {
+    function trackHeader($root, topic = "Header") {
         const $elem = $root.find('.layout-banner');
         if (isMissing($elem)) { return }
         const track = (name, sel) => trackClick($elem, sel, topic, name);
 
         // noinspection SpellCheckingInspection
-        track('Home',    'a[href="/"]');
-        track('SignIn',  'a[href$="/sign_in"]');
-        track('SignOut', 'a[href$="/sign_out"]');
+        track("Home",    'a[href="/"]');
+        track("SignIn",  'a[href$="/sign_in"]');
+        track("SignOut", 'a[href$="/sign_out"]');
     }
 
     /**
@@ -201,14 +201,14 @@ export const Analytics = (function() {
      * @param {jQuery} $root
      * @param {string} [topic]        Event category.
      */
-    function trackFooter($root, topic = 'Footer') {
+    function trackFooter($root, topic = "Footer") {
         const $elem = $root.find('.layout-footer');
         if (isMissing($elem)) { return }
         const track = (name, sel) => trackClick($elem, sel, topic, name);
 
         // noinspection SpellCheckingInspection
-        track('Website', 'a[href*="uvacreate"]');
-        track('Contact', 'a[href^="mailto:"]');
+        track("Website", 'a[href*="uvacreate"]');
+        track("Contact", 'a[href^="mailto:"]');
     }
 
     /**
@@ -223,7 +223,7 @@ export const Analytics = (function() {
      * @return {number}               The number of items found.
      */
     function trackClick($root, selector, cat, act, condition) {
-        return trackEvent('click', $root, selector, cat, act, condition);
+        return trackEvent("click", $root, selector, cat, act, condition);
     }
 
     /**
@@ -238,7 +238,7 @@ export const Analytics = (function() {
      * @return {number}               The number of items found.
      */
     function trackHover($root, selector, cat, act, condition) {
-        return trackEvent('mouseover', $root, selector, cat, act, condition);
+        return trackEvent("mouseover", $root, selector, cat, act, condition);
     }
 
     /**
@@ -256,7 +256,7 @@ export const Analytics = (function() {
     function trackEvent(event_type, $root, selector, cat, act, condition) {
         const $elements = $root.find(selector);
         if (isPresent($elements)) {
-            const track = function() { _paq.push(['trackEvent', cat, act]) };
+            const track = function() { _paq.push(["trackEvent", cat, act]) };
             let handler = track;
             if (condition) {
                 handler = function(event) { condition(event) && track() };
@@ -330,7 +330,7 @@ export const Analytics = (function() {
      * @param {Selector} [selector]   Default: {@link defaultSelector}()
      */
     function updatePage(root, selector) {
-        const func = 'Analytics.updatePage';
+        const func = "Analytics.updatePage";
         if (!enabled()) {
             //console.log(`${func} skipped - not enabled`);
         } else if (tracker) {

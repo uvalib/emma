@@ -5,38 +5,38 @@
 // noinspection LocalVariableNamingConventionJS, JSUnusedGlobalSymbols
 
 
-import { AppDebug }                       from '../application/debug';
-import { appTeardown }                    from '../application/setup';
-import { SubmitChannel }                  from '../channels/submit-channel';
-import { Emma }                           from './assets';
-import { selector }                       from './css';
-import { isEmpty, isPresent }             from './definitions';
-import { htmlDecode }                     from './html';
-import { renderJson }                     from './json';
-import { ModalDialog }                    from './modal-dialog';
-import { ModalHideHooks, ModalShowHooks } from './modal-hooks';
-import { isObject }                       from './objects';
-import { asString, isString }             from './strings';
-import { SubmitStepResponse }             from './submit-response';
+import { AppDebug }                       from "../application/debug";
+import { appTeardown }                    from "../application/setup";
+import { SubmitChannel }                  from "../channels/submit-channel";
+import { Emma }                           from "./assets";
+import { selector }                       from "./css";
+import { isEmpty, isPresent }             from "./definitions";
+import { htmlDecode }                     from "./html";
+import { renderJson }                     from "./json";
+import { ModalDialog }                    from "./modal-dialog";
+import { ModalHideHooks, ModalShowHooks } from "./modal-hooks";
+import { isObject }                       from "./objects";
+import { asString, isString }             from "./strings";
+import { SubmitStepResponse }             from "./submit-response";
 import {
     SubmitControlRequest,
     SubmitRequest,
-} from './submit-request';
+} from "./submit-request";
 
 
-const MODULE = 'SubmitModal';
+const MODULE = "SubmitModal";
 const DEBUG  = true;
 
-AppDebug.file('shared/submit-modal', MODULE, DEBUG);
+AppDebug.file("shared/submit-modal", MODULE, DEBUG);
 
 // ============================================================================
 // Constants
 // ============================================================================
 
-const CONTAINER_CLASS      = 'monitor-container';
-const HEADING_CLASS        = 'monitor-heading';
-const LOG_TOGGLE_CLASS     = 'log-toggle';
-const LOG_MARKER_CLASS     = 'with-log';
+const CONTAINER_CLASS      = "monitor-container";
+const HEADING_CLASS        = "monitor-heading";
+const LOG_TOGGLE_CLASS     = "log-toggle";
+const LOG_MARKER_CLASS     = "with-log";
 
 const CONTAINER            = selector(CONTAINER_CLASS);
 const HEADING              = selector(HEADING_CLASS);
@@ -44,18 +44,18 @@ const LOG_TOGGLE           = selector(LOG_TOGGLE_CLASS);
 
 // Submission status elements
 
-const STATUS_DISPLAY_CLASS  = 'monitor-status';
-const NOTICE_CLASS         = 'notice';
+const STATUS_DISPLAY_CLASS = "monitor-status";
+const NOTICE_CLASS         = "notice";
 
 const STATUS_DISPLAY       = selector(STATUS_DISPLAY_CLASS);
 const NOTICE               = selector(NOTICE_CLASS);
 
 // Submission output elements
 
-const OUTPUT_CLASS         = 'monitor-output';
-const DISPLAY_CLASS        = 'display';
-const SUCCESS_CLASS        = 'success';
-const FAILURE_CLASS        = 'failure';
+const OUTPUT_CLASS         = "monitor-output";
+const DISPLAY_CLASS        = "display";
+const SUCCESS_CLASS        = "success";
+const FAILURE_CLASS        = "failure";
 
 const OUTPUT               = selector(OUTPUT_CLASS);
 const DISPLAY              = selector(DISPLAY_CLASS);
@@ -64,10 +64,10 @@ const FAILURE              = selector(FAILURE_CLASS);
 
 // Log display elements
 
-const LOG_DISPLAY_CLASS    = 'monitor-log';
-const RESULTS_CLASS        = 'item-results';
-const ERRORS_CLASS         = 'item-errors';
-const DIAGNOSTICS_CLASS    = 'item-diagnostics';
+const LOG_DISPLAY_CLASS    = "monitor-log";
+const RESULTS_CLASS        = "item-results";
+const ERRORS_CLASS         = "item-errors";
+const DIAGNOSTICS_CLASS    = "item-diagnostics";
 
 const LOG_DISPLAY          = selector(LOG_DISPLAY_CLASS);
 const RESULTS              = selector(RESULTS_CLASS);
@@ -89,7 +89,7 @@ const STATUS               = Emma.Messages.submission.status;
  */
 export class SubmitModal extends ModalDialog {
 
-    static CLASS_NAME = 'SubmitModal';
+    static CLASS_NAME = "SubmitModal";
     static DEBUGGING  = DEBUG;
 
     // ========================================================================
@@ -102,7 +102,7 @@ export class SubmitModal extends ModalDialog {
      * @readonly
      * @type {string}
      */
-    static REQUEST_DATA = 'submitRequest';
+    static REQUEST_DATA = "submitRequest";
 
     /**
      * The .data() key for storing received status.
@@ -110,13 +110,13 @@ export class SubmitModal extends ModalDialog {
      * @readonly
      * @type {string}
      */
-    static STATUS_DATA = 'submitStatus';
+    static STATUS_DATA = "submitStatus";
 
     // ========================================================================
     // Constants
     // ========================================================================
 
-    static MODAL_CLASS = 'monitor-popup';
+    static MODAL_CLASS = "monitor-popup";
     static MODAL       = selector(this.MODAL_CLASS);
 
     // ========================================================================
@@ -210,9 +210,9 @@ export class SubmitModal extends ModalDialog {
     static set channel(channel) {
         if (channel) {
             channel.disconnectOnPageExit(this._debugging);
-            this._info('set channel', channel);
+            this._info("set channel", channel);
         } else {
-            this._info('clear channel');
+            this._info("clear channel");
         }
         this._channel = channel;
     }
@@ -240,7 +240,7 @@ export class SubmitModal extends ModalDialog {
      * @returns {SubmitChannel|undefined}
      */
     static reserveChannel(owner) {
-        const func    = 'reserveChannel';
+        const func    = "reserveChannel";
         const control = (owner instanceof this) ? owner.modalControl : owner;
         if (!control) {
             this._warn(`${func}: null owner invalid`);
@@ -288,7 +288,7 @@ export class SubmitModal extends ModalDialog {
      * @returns {SubmitChannel|undefined}
      */
     static async setupFor(toggle, callbacks) {
-        const func = 'setupFor';
+        const func = "setupFor";
         this._debug(`${func}: toggle =`, toggle);
         this._debug(`${func}: existing toggle.data(modalInstance) =`, this.instanceFor(toggle));
         this._debug(`${func}: existing SubmitModal._channel =`, this._channel);
@@ -299,9 +299,9 @@ export class SubmitModal extends ModalDialog {
         if (isObject(callbacks)) {
             for (const [name, cb] of Object.entries(callbacks)) {
                 switch (name) {
-                    case 'onOpen':     show_hooks.push(cb);    break;
-                    case 'onClose':    hide_hooks.push(cb);    break;
-                    case 'onResponse': response_callback = cb; break;
+                    case "onOpen":     show_hooks.push(cb);    break;
+                    case "onClose":    hide_hooks.push(cb);    break;
+                    case "onResponse": response_callback = cb; break;
                     default:           channel_cbs[name] = cb; break;
                 }
             }
@@ -335,7 +335,7 @@ export class SubmitModal extends ModalDialog {
      * @returns {SubmitChannel|undefined}
      */
     static async setupChannel(callbacks) {
-        console.warn('*** SubmitModal CHANNEL SETUP ***');
+        console.warn("*** SubmitModal CHANNEL SETUP ***");
         const channel = await SubmitChannel.newInstance(callbacks);
         if (channel) {
             appTeardown(this.CLASS_NAME, this.teardownChannel.bind(this));
@@ -347,7 +347,7 @@ export class SubmitModal extends ModalDialog {
      * Teardown the channel for this subclass if connected.
      */
     static teardownChannel() {
-        console.warn('*** SubmitModal CHANNEL TEARDOWN ***', this.channel);
+        console.warn("*** SubmitModal CHANNEL TEARDOWN ***", this.channel);
         this.channel?.disconnect();
         this.channel = undefined;
     }
@@ -410,7 +410,7 @@ export class SubmitModal extends ModalDialog {
      * @protected
      */
     _setHooksFor($toggle, show_hooks, hide_hooks) {
-        this._debug('_setHooksFor:', $toggle, show_hooks, hide_hooks);
+        this._debug("_setHooksFor:", $toggle, show_hooks, hide_hooks);
         const show_modal = this.onShowModal.bind(this);
         const hide_modal = this.onHideModal.bind(this);
         ModalShowHooks.set($toggle, show_hooks, show_modal);
@@ -458,9 +458,9 @@ export class SubmitModal extends ModalDialog {
      * @see onShowModalHook
      */
     onShowModal(_$target, check_only, halted) {
-        this._debug('onShowModal:', _$target, check_only, halted);
+        this._debug("onShowModal:", _$target, check_only, halted);
         if (check_only || halted) { return undefined }
-        this._debug('onShowModal actions?');
+        this._debug("onShowModal actions?");
     }
 
     /**
@@ -475,9 +475,9 @@ export class SubmitModal extends ModalDialog {
      * @see onHideModalHook
      */
     onHideModal(_$target, check_only, halted) {
-        this._debug('onHideModal:', _$target, check_only, halted);
+        this._debug("onHideModal:", _$target, check_only, halted);
         if (check_only || halted) { return undefined }
-        this._debug('onHideModal actions?');
+        this._debug("onHideModal actions?");
     }
 
     /**
@@ -504,7 +504,7 @@ export class SubmitModal extends ModalDialog {
     command(action, data) {
         this._debug(`command: ${action}: data =`, data);
         let request;
-        if (action === 'start') {
+        if (action === "start") {
             request = data ? SubmitRequest.wrap(data) : this.getRequestData();
         } else {
             request = new SubmitControlRequest(action);
@@ -520,7 +520,7 @@ export class SubmitModal extends ModalDialog {
      * @returns {boolean}
      */
     performRequest(request) {
-        this._debug('performRequest', request);
+        this._debug("performRequest", request);
         this.initializeStatusDisplay();
         this.clearOutputDisplay();
         this.clearLogDisplay();
@@ -528,7 +528,7 @@ export class SubmitModal extends ModalDialog {
         if (channel) {
             return channel.request(request);
         } else {
-            this._error('Could not acquire submission channel');
+            this._error("Could not acquire submission channel");
             return false;
         }
     }
@@ -556,7 +556,7 @@ export class SubmitModal extends ModalDialog {
      * @returns {SubmitRequest}       The current request object.
      */
     setRequestData(data) {
-        const func = 'setRequestData';
+        const func = "setRequestData";
         const name = this.constructor.REQUEST_DATA;
         this._debug(`${func}: ${name}:`, data);
         const request = SubmitRequest.wrap(data);
@@ -568,7 +568,7 @@ export class SubmitModal extends ModalDialog {
      * Clear the current submission request.
      */
     clearRequestData() {
-        const func = 'clearRequestData';
+        const func = "clearRequestData";
         const name = this.constructor.REQUEST_DATA;
         this._debug(`${func}: ${name}`);
         this.dataElement.removeData(name);
@@ -613,7 +613,7 @@ export class SubmitModal extends ModalDialog {
      * @return {BaseSubmitResponsePayload}
      */
     setSubmitStatus(value) {
-        const func = 'setSubmitStatus';
+        const func = "setSubmitStatus";
         const name = this.constructor.STATUS_DATA;
         this._debug(`${func}: ${name}:`, value);
         this.dataElement.data(name, value);
@@ -626,7 +626,7 @@ export class SubmitModal extends ModalDialog {
      * @param {SubmitResponseSubclass} message
      */
     updateStatusValue(message) {
-        this._debug('updateStatusValue:', message);
+        this._debug("updateStatusValue:", message);
         const payload = message.toObject();
         this.setSubmitStatus(payload);
     }
@@ -675,9 +675,9 @@ export class SubmitModal extends ModalDialog {
     setStatusNotice(value, tooltip) {
         const $notice = this.statusNotice.text(value);
         if (tooltip) {
-            $notice.addClass('tooltip').attr('title', tooltip);
+            $notice.addClass("tooltip").attr("title", tooltip);
         } else {
-            $notice.removeClass('tooltip').removeAttr('title');
+            $notice.removeClass("tooltip").removeAttr("title");
         }
     }
 
@@ -687,7 +687,7 @@ export class SubmitModal extends ModalDialog {
      * @param {SubmitResponseSubclass} message
      */
     updateStatusDisplay(message) {
-        const func  = 'updateStatusDisplay'; this._debug(`${func}:`, message);
+        const func  = "updateStatusDisplay"; this._debug(`${func}:`, message);
         const state = message.status?.toUpperCase();
 
         let notice;
@@ -695,22 +695,22 @@ export class SubmitModal extends ModalDialog {
 
             // Waiter states
 
-            case 'STARTING':
+            case "STARTING":
                 notice = STATUS.starting;
                 break;
-            case 'COMPLETE':
+            case "COMPLETE":
                 notice = STATUS.complete;
                 break;
 
             // Worker states
 
-            case 'WORKING':
+            case "WORKING":
                 notice = `${this.statusNotice.text()}.`;
                 break;
-            case 'STEP':
+            case "STEP":
                 notice = `${STATUS.step} "${message.step}"`;
                 break;
-            case 'DONE':
+            case "DONE":
                 notice = STATUS.done;
                 break;
 
@@ -728,7 +728,7 @@ export class SubmitModal extends ModalDialog {
      * status elements removed.
      */
     initializeStatusDisplay() {
-        this._debug('initializeStatusDisplay');
+        this._debug("initializeStatusDisplay");
         // TODO: initializeStatusDisplay ?
     }
 
@@ -773,8 +773,8 @@ export class SubmitModal extends ModalDialog {
      * Remove output display contents.
      */
     clearOutputDisplay() {
-        this.successDisplay.text('');
-        this.failureDisplay.text('');
+        this.successDisplay.text("");
+        this.failureDisplay.text("");
     }
 
     /**
@@ -785,7 +785,7 @@ export class SubmitModal extends ModalDialog {
     updateOutputDisplay(message) {
         let success, failure;
         if (message instanceof SubmitStepResponse) {
-            if (message.status === 'DONE') {
+            if (message.status === "DONE") {
                 success = message.success;
             } else {
                 failure = message.failure;
@@ -818,9 +818,9 @@ export class SubmitModal extends ModalDialog {
                 }
             }
             line ||= isString(v) ? v : asString(v);
-            return htmlDecode(line) || line || '';
+            return htmlDecode(line) || line || "";
         };
-        const val = (v) => Array.isArray(v) ? v.map(fmt).join('; ') : fmt(v);
+        const val = (v) => Array.isArray(v) ? v.map(fmt).join("; ") : fmt(v);
         const sub = Emma.Messages.submission.submitted;
         let added;
         if (Array.isArray(data)) {
@@ -840,8 +840,8 @@ export class SubmitModal extends ModalDialog {
         const parts = [this.successDisplay, this.failureDisplay];
         parts.forEach(part => {
             const $part = $(part);
-            if (!$part.attr('readonly')) { $part.attr('readonly', 'true') }
-            $part.text('');
+            if (!$part.attr("readonly")) { $part.attr("readonly", "true") }
+            $part.text("");
         });
     }
 
@@ -902,8 +902,8 @@ export class SubmitModal extends ModalDialog {
      * Remove result log display contents.
      */
     clearLogDisplay() {
-        this.resultDisplay.text('');
-        this.errorDisplay.text('');
+        this.resultDisplay.text("");
+        this.errorDisplay.text("");
     }
 
     /**
@@ -931,7 +931,7 @@ export class SubmitModal extends ModalDialog {
      * @param {object} data
      */
     updateDiagnosticDisplay(data) {
-        this.updateLogDisplayPart(this.diagnosticDisplay, data, '');
+        this.updateLogDisplayPart(this.diagnosticDisplay, data, "");
     }
 
     /**
@@ -960,8 +960,8 @@ export class SubmitModal extends ModalDialog {
             [this.resultDisplay, this.errorDisplay, this.diagnosticDisplay];
         parts.forEach(part => {
             const $part = $(part);
-            if (!$part.attr('readonly')) { $part.attr('readonly', 'true') }
-            $part.text('');
+            if (!$part.attr("readonly")) { $part.attr("readonly", "true") }
+            $part.text("");
         });
     }
 
@@ -990,7 +990,7 @@ export class SubmitModal extends ModalDialog {
      * @returns {SubmitModal|undefined}
      */
     static associate(toggles) {
-        const func     = 'associate';
+        const func     = "associate";
         const name     = this.INSTANCE_DATA;
         const instance = this.$modal.data(name);
         if (instance) {

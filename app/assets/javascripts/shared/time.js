@@ -1,11 +1,11 @@
 // app/assets/javascripts/shared/time.js
 
 
-import { AppDebug } from '../application/debug';
-import { compact }  from './objects';
+import { AppDebug } from "../application/debug";
+import { compact }  from "./objects";
 
 
-AppDebug.file('shared/time');
+AppDebug.file("shared/time");
 
 // ============================================================================
 // Constants
@@ -61,10 +61,10 @@ export function timestamp(value) {
         // No date value given.
     } else if (value instanceof Date) {
         date = value;
-    } else if (typeof value === 'number') {
+    } else if (typeof value === "number") {
         date = new Date(value);
-    } else if (typeof value === 'string') {
-        date = new Date(value.trim().replace(/\s*UTC\s*/, ''));
+    } else if (typeof value === "string") {
+        date = new Date(value.trim().replace(/\s*UTC\s*/, ""));
     }
     return date?.getTime() || 0;
 }
@@ -101,7 +101,7 @@ export function secondsSince(start_time, time_now) {
  * @param {string|number|Date} value
  * @param {object}             [opt]
  *
- * @param {string}  [opt.separator]  Default: ' '.
+ * @param {string}  [opt.separator]  Default: " ".
  * @param {boolean} [opt.dateOnly]   If **true** do not show time.
  * @param {boolean} [opt.timeOnly]   If **true** do not show date.
  *
@@ -110,13 +110,13 @@ export function secondsSince(start_time, time_now) {
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat
  */
 export function asDateTime(value, opt = {}) {
-    const separator  = opt.separator || ' ';
+    const separator  = opt.separator || " ";
     const date_value = (value instanceof Date) ? value : new Date(value);
     let date, time;
     if (date_value.getFullYear()) {
         if (opt.dateOnly || !opt.timeOnly) {
-            const parts = date_value.toLocaleDateString('en-GB').split('/');
-            date = [parts.pop(), ...parts].join('-');
+            const parts = date_value.toLocaleDateString("en-GB").split("/");
+            date = [parts.pop(), ...parts].join("-");
         }
         if (opt.timeOnly || !opt.dateOnly) {
             time = date_value.toLocaleTimeString([], { hour12: false });

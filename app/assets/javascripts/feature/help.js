@@ -1,15 +1,15 @@
 // app/assets/javascripts/feature/help.js
 
 
-import { AppDebug }   from '../application/debug';
-import { appSetup }   from '../application/setup';
-import { isMissing }  from '../shared/definitions';
-import { deepFreeze } from '../shared/objects';
+import { AppDebug }   from "../application/debug";
+import { appSetup }   from "../application/setup";
+import { isMissing }  from "../shared/definitions";
+import { deepFreeze } from "../shared/objects";
 
 
-const MODULE = 'Help';
+const MODULE = "Help";
 
-AppDebug.file('feature/help', MODULE);
+AppDebug.file("feature/help", MODULE);
 
 appSetup(MODULE, function() {
 
@@ -42,7 +42,7 @@ appSetup(MODULE, function() {
      *
      * @type {jQuery}
      */
-    const $illustrations = $help_content.find(ILLUSTRATION_ONLY.join(','));
+    const $illustrations = $help_content.find(ILLUSTRATION_ONLY.join(","));
 
     // ========================================================================
     // Actions
@@ -52,11 +52,11 @@ appSetup(MODULE, function() {
     // act like live controls.
     $illustrations.each((_, element) => {
         const $e = $(element);
-        $e.attr('tabindex',       -1);
-        $e.attr('role',           'none');
-        $e.css( 'pointer-events', 'none');
-        $e.css( 'cursor',         'auto');
-        $e.parent().css('cursor', 'text');
+        $e.attr("tabindex",       -1);
+        $e.attr("role",           "none");
+        $e.css( "pointer-events", "none");
+        $e.css( "cursor",         "auto");
+        $e.parent().css("cursor", "text");
     });
 
 });

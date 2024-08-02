@@ -1,34 +1,34 @@
 // app/assets/javascripts/feature/search-analysis.js
 
 
-import { AppDebug }                     from '../application/debug';
-import { appSetup }                     from '../application/setup'
-import { handleClickAndKeypress }       from '../shared/accessibility';
-import { arrayWrap }                    from '../shared/arrays';
-import { Emma }                         from '../shared/assets';
-import { BaseClass }                    from '../shared/base-class';
-import { rgbColor, rgbColorInverse }    from '../shared/color';
-import { selector, toggleHidden }       from '../shared/css';
-import { DB }                           from '../shared/database';
-import { unreverseFlexChildren }        from '../shared/html';
-import { compact, hasKey }              from '../shared/objects';
-import { CallbackQueue }                from '../shared/queue';
-import { DEF_HEX_DIGITS, HEX_BASE }     from '../shared/random';
-import { SessionState, removeByPrefix } from '../shared/session-state';
-import { NNBS }                         from '../shared/unicode';
-import { makeUrl, urlParameters }       from '../shared/url';
+import { AppDebug }                     from "../application/debug";
+import { appSetup }                     from "../application/setup"
+import { handleClickAndKeypress }       from "../shared/accessibility";
+import { arrayWrap }                    from "../shared/arrays";
+import { Emma }                         from "../shared/assets";
+import { BaseClass }                    from "../shared/base-class";
+import { rgbColor, rgbColorInverse }    from "../shared/color";
+import { selector, toggleHidden }       from "../shared/css";
+import { DB }                           from "../shared/database";
+import { unreverseFlexChildren }        from "../shared/html";
+import { compact, hasKey }              from "../shared/objects";
+import { CallbackQueue }                from "../shared/queue";
+import { DEF_HEX_DIGITS, HEX_BASE }     from "../shared/random";
+import { SessionState, removeByPrefix } from "../shared/session-state";
+import { NNBS }                         from "../shared/unicode";
+import { makeUrl, urlParameters }       from "../shared/url";
 import {
     isDefined,
     isMissing,
     isPresent,
     notDefined,
-} from '../shared/definitions';
+} from "../shared/definitions";
 
 
-const MODULE = 'SearchAnalysis';
+const MODULE = "SearchAnalysis";
 const DEBUG  = false;
 
-AppDebug.file('feature/search-analysis', MODULE, DEBUG);
+AppDebug.file("feature/search-analysis", MODULE, DEBUG);
 
 // ============================================================================
 // Exported functions
@@ -48,23 +48,23 @@ export function cloneTitle(item, title) {
     const $item  = $(item);
     const $title = title ? $(title) : $item.find('.value.field-Title .title');
 
-    const item_id  = $item.attr('id');
+    const item_id  = $item.attr("id");
     const title_id = `title_${item_id}_txt`;
 
     // By default the title element is just text for file results.
     const $text_title = $title.clone();
-    $text_title.attr('id',        title_id);
-    $text_title.attr('data-mode', 'txt');
-    $text_title.removeAttr('role tabindex aria-controls');
+    $text_title.attr("id",        title_id);
+    $text_title.attr("data-mode", "txt");
+    $text_title.removeAttr("role tabindex aria-controls");
     $text_title.insertBefore($title);
 
     // Set up the title button as a hidden element to which search.js
     // will add event handlers.
-    $title.attr('id',        `title_${item_id}_btn`);
-    $title.attr('data-mode', 'btn');
-    $title.attr('role',      'button');
-    $title.attr('tabindex',  0);
-    toggleHidden($title, true).toggleClass('disabled', true);
+    $title.attr("id",        `title_${item_id}_btn`);
+    $title.attr("data-mode", "btn");
+    $title.attr("role",      "button");
+    $title.attr("tabindex",  0);
+    toggleHidden($title, true).toggleClass("disabled", true);
 
     return title_id;
 }
@@ -92,7 +92,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const DB_NAME = 'emma_search';
+    const DB_NAME = "emma_search";
 
     /**
      * The current version of the database.
@@ -111,7 +111,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const KEY_PREFIX = 'search-analysis';
+    const KEY_PREFIX = "search-analysis";
 
     /**
      * Reset search analysis data on normal search pages then leave.
@@ -120,8 +120,8 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      *  otherwise, on a pristine browser, the database would have to be created
      *  just for the sake of clearing it.
      */
-    if (!$body.hasClass('dev-style')) {
-        sessionStorage.removeItem('search-colorize'); // TODO: temporary
+    if (!$body.hasClass("dev-style")) {
+        sessionStorage.removeItem("search-colorize"); // TODO: temporary
         removeByPrefix(KEY_PREFIX) && DB.clearAllStores(DB_NAME);
         return;
     }
@@ -136,19 +136,19 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      * @type {Object.<string,boolean>}
      */
     const SEARCH_STYLE = {
-        aggregate: $body.hasClass('aggregate-style'),
-        compact:   $body.hasClass('compact-style'),
-        grid:      $body.hasClass('grid-style'),
+        aggregate: $body.hasClass("aggregate-style"),
+        compact:   $body.hasClass("compact-style"),
+        grid:      $body.hasClass("grid-style"),
     };
 
-    const DEFAULT_STYLE    = 'normal';
+    const DEFAULT_STYLE    = "normal";
 
     const TIMESTAMP        = new Date();
 
     const FIRST_PAGE       = 1;
     const DEFAULT_LIMIT    = 100; // Items per page.
 
-    const ITEM_CLASS       = 'search-list-item';
+    const ITEM_CLASS       = "search-list-item";
     const ITEM_SELECTOR    = selector(ITEM_CLASS);
 
     /**
@@ -165,7 +165,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      * @readonly
      * @type {number}
      */
-    const PAGE_NUMBER = Number(params['page']) || FIRST_PAGE;
+    const PAGE_NUMBER = Number(params["page"]) || FIRST_PAGE;
 
     /**
      * Current search page size.
@@ -173,7 +173,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      * @readonly
      * @type {number}
      */
-    const PAGE_SIZE = Number(params['limit']) || DEFAULT_LIMIT;
+    const PAGE_SIZE = Number(params["limit"]) || DEFAULT_LIMIT;
 
     /**
      * Item number offset for the first search result item on the current page.
@@ -265,10 +265,10 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
     // Constants - feature activation
     // ========================================================================
 
-    const FILE_RESULTS  = (current_mode === 'file');
+    const FILE_RESULTS  = (current_mode === "file");
     const TITLE_RESULTS = !FILE_RESULTS;
 
-    const RELEVANCY_SCORES = SEARCH_STYLE['aggregate'];
+    const RELEVANCY_SCORES = SEARCH_STYLE["aggregate"];
     const FIELD_GROUPS     = true;
     const FORMAT_COUNTS    = TITLE_RESULTS;
     const COLLAPSE_ITEMS   = FILE_RESULTS;
@@ -283,7 +283,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
 
     // Make the button (labeled "Debug") appear "active" so that clicking on
     // it appears to deactivate it.
-    $exit_button.addClass('active');
+    $exit_button.addClass("active");
     handleClickAndKeypress($exit_button, removeDebugControls);
 
     // Initialize identification tooltips for each item.
@@ -296,7 +296,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
         }
         const number = index + PAGE_OFFSET;
         const title  = $title.text();
-        $item.attr('title', `Item ${number} - "${title}"`);
+        $item.attr("title", `Item ${number} - "${title}"`);
     });
 
     // ========================================================================
@@ -308,14 +308,14 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      * debugging controls).
      */
     function removeDebugControls() {
-        window.location.href = makeUrl(params, 'app.search.debug=false');
+        window.location.href = makeUrl(params, "app.search.debug=false");
     }
 
     /**
      * Current search list display style.
      *
-     * @note Can't rely on *params* because *params['style']* will have already
-     *  been removed via the server redirect.
+     * @note Can't rely on *params* because **params["style"]** will have
+     *  already been removed via the server redirect.
      *
      * @returns {string}
      */
@@ -366,8 +366,8 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
         $titles.filter('[data-mode="txt"]').each((_, text) => {
             const $text   = $(text);
             const $button = $text.siblings('.title'); //.not($text);
-            toggleHidden($text,   true ).toggleClass('disabled', true);
-            toggleHidden($button, false).toggleClass('disabled', false);
+            toggleHidden($text,   true ).toggleClass("disabled", true);
+            toggleHidden($button, false).toggleClass("disabled", false);
         });
     }
 
@@ -379,8 +379,8 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
         $titles.filter('[data-mode="btn"]').each((_, button) => {
             const $button = $(button);
             const $text   = $button.siblings('.title'); //.not($button);
-            toggleHidden($button, true ).toggleClass('disabled', true);
-            toggleHidden($text,   false).toggleClass('disabled', false);
+            toggleHidden($button, true ).toggleClass("disabled", true);
+            toggleHidden($text,   false).toggleClass("disabled", false);
         });
     }
 
@@ -398,7 +398,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
     function titleId(item) {
         /** @type {jQuery} */
         const $item = $(item);
-        const value = $item.attr('data-title_id');
+        const value = $item.attr("data-title_id");
         return value || $item.find('.field-TitleId.value').text();
     }
 
@@ -412,12 +412,12 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
     function normalizedTitle(item) {
         /** @type {jQuery} */
         const $item = $(item);
-        let value = $item.attr('data-normalized_title');
+        let value = $item.attr("data-normalized_title");
         if (!value) {
             value = $item.find('.field-Title.value .title').text();
-            value = value.replace(/^(\p{punct}|\p{space})+/u, '');
-            value = value.replace(/(\p{punct}|\p{space})+$/u, '');
-            value = value.replace(/(\p{punct}|\p{space})+/ug, ' ');
+            value = value.replace(/^(\p{punct}|\p{space})+/u, "");
+            value = value.replace(/(\p{punct}|\p{space})+$/u, "");
+            value = value.replace(/(\p{punct}|\p{space})+/ug, " ");
             value = value.toLowerCase();
         }
         return value;
@@ -433,7 +433,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
     function recordId(item) {
         /** @type {jQuery} */
         const $item = $(item);
-        const value = $item.attr('data-record_id');
+        const value = $item.attr("data-record_id");
         return value || $item.find('.field-RecordId.value').text();
     }
 
@@ -447,7 +447,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
     function repositoryRecordId(item) {
         /** @type {jQuery} */
         const $item = $(item);
-        const value = $item.attr('data-repo_id');
+        const value = $item.attr("data-repo_id");
         return value || $item.find('.field-RepositoryRecordId.value').text();
     }
 
@@ -480,10 +480,10 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
         options: { autoIncrement: true },
         record: {
             page:         { default: 0,  func: pageNumber },
-            title_text:   { default: '', func: normalizedTitle },
-            title_id:     { default: '', func: titleId },
-            record_id:    { default: '', func: recordId },
-            repo_id:      { default: '', func: repositoryRecordId },
+            title_text:   { default: "", func: normalizedTitle },
+            title_id:     { default: "", func: titleId },
+            record_id:    { default: "", func: recordId },
+            repo_id:      { default: "", func: repositoryRecordId },
             identifier:   { default: [], func: standardIdentifiers },
             db_timestamp: { default: TIMESTAMP, index: false, },
         }
@@ -699,14 +699,14 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      * @param {string} [store]
      */
     function updateDatabase(store = DB_STORE_NAME) {
-        const func = 'updateDatabase';
+        const func = "updateDatabase";
         openDatabase(store, function() {
             console.warn(`======== OPENING OBJECT STORE "${store}" ========`);
             try {
                 if (newSearch()) {
                     DB.clearObjectStore(store, storeItems);
                 } else {
-                    DB.deleteItems('page', pageNumber(), storeItems);
+                    DB.deleteItems("page", pageNumber(), storeItems);
                 }
             } catch (error) {
                 console.warn(`${func}: ${error}`);
@@ -723,7 +723,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      * @param {function} [callback]
      */
     function openDatabase(store, callback) {
-        const func = 'openDatabase';
+        const func = "openDatabase";
         const name = DB_NAME;
         const db   = DB.getProperties();
 
@@ -758,17 +758,17 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const SORT_ORDER = params['sort'] || 'relevancy';
+    const SORT_ORDER = params["sort"] || "relevancy";
 
     /**
      * @readonly
      * @type {StringTable}
      */
     const SORTED = {
-        title:               'dc_title for sort=title',
-        sortDate:            'sort_date for sort=sortDate',
-        publicationDate:     'pub_date for sort=publicationDate',
-        lastRemediationDate: 'rem_date for sort=lastRemediationDate',
+        title:               "dc_title for sort=title",
+        sortDate:            "sort_date for sort=sortDate",
+        publicationDate:     "pub_date for sort=publicationDate",
+        lastRemediationDate: "rem_date for sort=lastRemediationDate",
     };
 
     /**
@@ -789,7 +789,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const ERROR_MARKER = 'error';
+    const ERROR_MARKER = "error";
 
     /**
      * CSS marker class indicating the metadata field associated with the
@@ -798,7 +798,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const IDENTITY_MARKER = 'identity-highlight';
+    const IDENTITY_MARKER = "identity-highlight";
 
     /**
      * CSS marker class indicating an erroneous item.
@@ -806,7 +806,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const EXILE_MARKER = 'exile';
+    const EXILE_MARKER = "exile";
 
     /**
      * Tooltip text for an erroneous item.
@@ -851,7 +851,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      */
     class RelevancyScores extends BaseClass {
 
-        static CLASS_NAME = 'RelevancyScores';
+        static CLASS_NAME = "RelevancyScores";
 
         // ====================================================================
         // Methods
@@ -880,7 +880,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
                 let error_score, next_score = 0;
                 $items.toArray().reverse().forEach(item => {
                     const $item = $(item);
-                    const score = Number($item.attr('data-item_score')) || 0;
+                    const score = Number($item.attr("data-item_score")) || 0;
                     if (score < next_score) {
                         error_score = score;
                     } else if (score > next_score) {
@@ -909,7 +909,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
             const order  = SORTED[SORT_ORDER];
             const desc   = order || Emma.Messages.search_analysis.fields;
             const tip    = `${Emma.Messages.search_analysis.tooltip} ${desc}`;
-            return $score.addClass('disabled').attr('title', tip).text(BLANK);
+            return $score.addClass("disabled").attr("title", tip).text(BLANK);
         }
 
         /**
@@ -924,12 +924,12 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
             /** @type {jQuery} */
             const $item  = $(item);
             const $score = $item.find('.item-score');
-            let tip = $score.attr('title');
+            let tip = $score.attr("title");
             tip += "\n\nNOTE:";
             tip += "The placement of this item seems to be anomalous, ";
             tip += "however that may just be due to a bad guess about how ";
             tip += "the actual relevancy is determined by the index."
-            return $score.addClass('error').attr('title', tip);
+            return $score.addClass("error").attr("title", tip);
         }
     }
 
@@ -941,7 +941,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      */
     class AdvancedFeature extends SessionState {
 
-        static CLASS_NAME = 'AdvancedFeature';
+        static CLASS_NAME = "AdvancedFeature";
         static DEBUGGING  = DEBUG;
 
         // ====================================================================
@@ -995,8 +995,8 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
                 base = base.source;
             }
             bc ||= base;
-            bc &&= bc.endsWith('-button') ? bc : `${bc}-button`;
-            base = base?.replace(/-button$/, '');
+            bc &&= bc.endsWith("-button") ? bc : `${bc}-button`;
+            base = base?.replace(/-button$/, "");
 
             super(base);
 
@@ -1026,7 +1026,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
          * @returns {boolean}
          */
         get active() {
-            return this.$buttons?.hasClass('active') || false;
+            return this.$buttons?.hasClass("active") || false;
         }
 
         /**
@@ -1035,7 +1035,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
          * @returns {boolean}
          */
         get disabled() {
-            return !this.$buttons || this.$buttons.hasClass('disabled');
+            return !this.$buttons || this.$buttons.hasClass("disabled");
         }
 
         // ====================================================================
@@ -1068,7 +1068,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
          * Disable the feature by hiding its control button(s).
          */
         disable() {
-            this.disabled || this.$buttons.addClass('disabled');
+            this.disabled || this.$buttons.addClass("disabled");
         }
 
         /**
@@ -1096,9 +1096,9 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
                 }
             }
             if ((this.valid = !!count)) {
-                $active?.trigger('click');
+                $active?.trigger("click");
             } else {
-                this._debug('feature not present');
+                this._debug("feature not present");
             }
             return $active;
         }
@@ -1136,7 +1136,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
          */
         _isControlButton(name) {
             const match = this.button_class;
-            if (typeof match === 'string') {
+            if (typeof match === "string") {
                 return (name === match) || name.includes(match);
             } else {
                 // noinspection JSUnresolvedFunction
@@ -1175,14 +1175,14 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
             if (isMissing(button.class)) {
                 return this._error(`${func}: invalid topic`);
             } else if (!this._isControlButton(button.class)) {
-                return this._debug(`${func}: skip button '${button.class}'`);
+                return this._debug(`${func}: skip button "${button.class}"`);
             } else if (!button.enabled) {
                 return this._debug(`${func}: inactive topic`);
             }
 
             const $topic_buttons = this._findButton(button.class);
             if (isMissing($topic_buttons)) {
-                if (button.enabled === 'dev_only') {
+                if (button.enabled === "dev_only") {
                     return this._debug(`${func}: inactive topic`);
                 } else {
                     return this._warn(`${func}: no control button`);
@@ -1194,17 +1194,17 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
             const deactivate    = (() => this.deactivate());
             handleClickAndKeypress($topic_buttons, function() {
                 const $this = $(this);
-                if ($this.hasClass('active')) {
-                    $this.removeClass('active');
+                if ($this.hasClass("active")) {
+                    $this.removeClass("active");
                     deactivate();
                 } else {
-                    $tray_buttons.removeClass('active');
-                    $this.addClass('active');
+                    $tray_buttons.removeClass("active");
+                    $this.addClass("active");
                     activate();
                 }
             });
 
-            return $topic_buttons.removeClass('active');
+            return $topic_buttons.removeClass("active");
         }
 
         // ====================================================================
@@ -1221,7 +1221,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      */
     class ToggleFeature extends AdvancedFeature {
 
-        static CLASS_NAME = 'ToggleFeature';
+        static CLASS_NAME = "ToggleFeature";
 
         // ====================================================================
         // Fields
@@ -1245,9 +1245,9 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
             let bc = button_class;
             let re = (key_base instanceof RegExp);
             let kb = re ? key_base.source : key_base;
-            if (kb?.endsWith('-button')) {
+            if (kb?.endsWith("-button")) {
                 bc ||= kb;
-                kb   = kb.replace(/-button$/, '');
+                kb   = kb.replace(/-button$/, "");
             } else if (re) {
                 bc ||= RegExp(`${kb}-button`);
             } else if (kb) {
@@ -1278,8 +1278,8 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
             for (const [item, value] of Object.entries(item_values)) {
                 if (!value) {
                     error.push(`missing ${item}`);
-                } else if (typeof value !== 'string') {
-                    error.push(`${item}: '${value}' is not a string`);
+                } else if (typeof value !== "string") {
+                    error.push(`${item}: "${value}" is not a string`);
                 }
             }
             error.forEach(msg => this._error(msg));
@@ -1383,13 +1383,13 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      */
     class ToggleFieldGroups extends ToggleFeature {
 
-        static CLASS_NAME = 'ToggleFieldGroups';
+        static CLASS_NAME = "ToggleFieldGroups";
 
         // ====================================================================
         // Constructor
         // ====================================================================
 
-        constructor(key_base = 'field_groups') { super(key_base) }
+        constructor(key_base = "field_groups") { super(key_base) }
 
         // ====================================================================
         // Methods - AdvancedFeature overrides
@@ -1402,10 +1402,10 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
          */
         activate(arg) {
             const scope_note       = ($pair) => this.scopeNote($pair);
-            const saved_title_attr = 'data-pre-field-group-title';
+            const saved_title_attr = "data-pre-field-group-title";
             this.$root.find('.pair').each((_, pair) => {
                 const $pair     = $(pair);
-                const cur_title = $pair.attr('title');
+                const cur_title = $pair.attr("title");
                 let note;
                 if (cur_title && (note = scope_note($pair))) {
                     let old_title = $pair.attr(saved_title_attr);
@@ -1413,7 +1413,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
                         old_title = cur_title;
                         $pair.attr(saved_title_attr, old_title);
                     }
-                    $pair.attr('title', `${old_title}\n\n${note}`);
+                    $pair.attr("title", `${old_title}\n\n${note}`);
                 }
             });
             super.activate(arg);
@@ -1424,12 +1424,12 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
          */
         deactivate() {
             super.deactivate();
-            const saved_title_attr = 'data-pre-field-group-title';
+            const saved_title_attr = "data-pre-field-group-title";
             this.$root.find('.pair').each((_, pair) => {
                 const $pair     = $(pair);
                 const old_title = $pair.attr(saved_title_attr);
                 if (old_title) {
-                    $pair.attr('title', old_title);
+                    $pair.attr("title", old_title);
                 }
             });
         }
@@ -1449,17 +1449,17 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
             const $item = $(item);
             const part  = [];
             arrayWrap($item[0]?.classList)
-                .filter(cls => cls.startsWith('scope-'))
+                .filter(cls => cls.startsWith("scope-"))
                 .forEach(cls => {
-                    const scope = cls.replace('scope-', '').toUpperCase();
+                    const scope = cls.replace("scope-", "").toUpperCase();
                     switch (scope) {
-                        case 'PARTS': case 'FORMATS':                break;
-                        case 'FILES': part[0] = 'FILE-level';        break;
-                        case 'TITLE': part[0] = 'TITLE-level';       break;
+                        case "PARTS": case "FORMATS":                break;
+                        case "FILES": part[0] = "FILE-level";        break;
+                        case "TITLE": part[0] = "TITLE-level";       break;
                         default:      part[1] = `${scope} metadata`; break;
                     }
                 });
-            return compact(part).join(' ');
+            return compact(part).join(" ");
         }
     }
 
@@ -1470,13 +1470,13 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      */
     class ToggleFormatCounts extends ToggleFeature {
 
-        static CLASS_NAME = 'ToggleFormatCounts';
+        static CLASS_NAME = "ToggleFormatCounts";
 
         // ====================================================================
         // Constructor
         // ====================================================================
 
-        constructor(key_base = 'format_counts') { super(key_base) }
+        constructor(key_base = "format_counts") { super(key_base) }
     }
 
     /**
@@ -1486,13 +1486,13 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      */
     class ToggleCollapsed extends ToggleFeature {
 
-        static CLASS_NAME = 'ToggleCollapsed';
+        static CLASS_NAME = "ToggleCollapsed";
 
         // ====================================================================
         // Constructor
         // ====================================================================
 
-        constructor(key_base = 'collapsed') { super(key_base) }
+        constructor(key_base = "collapsed") { super(key_base) }
 
         // ====================================================================
         // Methods - AdvancedFeature overrides
@@ -1506,7 +1506,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
         activate(arg) {
             buttonTitles();
             toggleHidden($result_items.children().not('.disabled'), false);
-            $result_items.removeClass('open');
+            $result_items.removeClass("open");
             super.activate(arg);
         }
 
@@ -1516,7 +1516,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
         deactivate() {
             textTitles();
             toggleHidden($result_items.children().not('.disabled'), false);
-            $result_items.removeClass('open');
+            $result_items.removeClass("open");
             super.deactivate();
         }
     }
@@ -1528,7 +1528,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      */
     class ColorizeFeature extends AdvancedFeature {
 
-        static CLASS_NAME = 'ColorizeFeature';
+        static CLASS_NAME = "ColorizeFeature";
 
         // ====================================================================
         // Type definitions
@@ -1561,9 +1561,9 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
          *
          * @param {string} [key_base]
          */
-        constructor(key_base = 'colorize') {
+        constructor(key_base = "colorize") {
             super(key_base);
-            this.topic = '';
+            this.topic = "";
             this.TOPICS = $.map(BUTTON_CONFIG,
                 (prop, topic) => isDefined(prop.field) ? topic : undefined
             );
@@ -1623,7 +1623,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
          * @param {ColorizeState} [new_value]
          */
         update(new_value) {
-            if (typeof new_value === 'object') {
+            if (typeof new_value === "object") {
                 this.topic = new_value.topic || this.topic;
                 this.value = new_value;
             } else {
@@ -1641,7 +1641,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
          * @returns {boolean}
          */
         get active() {
-            return this.$topicButton?.hasClass('active') || false;
+            return this.$topicButton?.hasClass("active") || false;
         }
 
         // ====================================================================
@@ -1710,7 +1710,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
          */
         _buildLists(by_topic) {
             const related_item_lists = {};
-            const index_key = by_topic.replace(/^by_/, '');
+            const index_key = by_topic.replace(/^by_/, "");
             pageItems().forEach(page_item => {
                 const $item = page_item.element;
                 arrayWrap(page_item.data[index_key]).forEach(value => {
@@ -1806,12 +1806,12 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
         _unColorize() {
             this._removeIdentityNumber($result_items);
             this._unmarkIdentityFields($result_items);
-            const item_classes = ['colorized', ...this.TOPICS];
+            const item_classes = ["colorized", ...this.TOPICS];
             $result_items.each((_, item) => {
                 /** @type {jQuery} */
                 const $item  = $(item);
                 const $title = $item.find('.field-Title.value');
-                $title.css({ color: '', background: '' });
+                $title.css({ color: "", background: "" });
                 $item.removeClass(item_classes);
             });
         }
@@ -1832,14 +1832,14 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
          */
         _itemStateTip(item, state_text, separator = "\n\n") {
             const $item = $(item);
-            const tip   = $item.attr('title') || '';
+            const tip   = $item.attr("title") || "";
             const parts = tip.split(separator, 2);
             let new_tip = parts[0].trimEnd();
-            const added = (state_text || '').trim();
+            const added = (state_text || "").trim();
             if (added) {
                 new_tip += separator + added;
             }
-            $item.attr('title', new_tip);
+            $item.attr("title", new_tip);
         }
 
         /**
@@ -1871,10 +1871,10 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
         _markItemAsExile(item) {
             /** @type {jQuery} */
             const $item      = $(item);
-            const store_keys = $item.attr('data-title_id') || '';
+            const store_keys = $item.attr("data-title_id") || "";
             const curr_page  = pageNumber();
             let found;
-            store_keys.split(',').forEach(key => {
+            store_keys.split(",").forEach(key => {
                 if (!found) {
                     $.each(store_items[key], (page, recs) => {
                         found = isPresent(recs) && (Number(page) - curr_page);
@@ -1916,14 +1916,14 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
             let $t_tag;
             if (error) {
                 $t_tag = $(`<a href="#${identity}">`).addClass(ERROR_MARKER);
-                $t_tag.attr('title', Emma.Messages.search_analysis.jump);
+                $t_tag.attr("title", Emma.Messages.search_analysis.jump);
                 if (exile) { $t_tag.addClass(EXILE_MARKER) }
             } else if (exile) {
                 $t_tag = $('<div>').addClass(EXILE_MARKER);
             } else if (position) {
-                $t_tag = $('<div>').attr('id', null);
+                $t_tag = $('<div>').attr("id", null);
             } else {
-                $t_tag = $('<div>').attr('id', identity);
+                $t_tag = $('<div>').attr("id", identity);
                 const tip = `First occurrence of identity "${identity}"`;
                 this._itemStateTip($item, tip);
             }
@@ -1945,7 +1945,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
             const topics = by_topic ? arrayWrap(by_topic) : this.TOPICS;
             let $tags    = $items.find('.identity-number');
             if (by_topic) {
-                $tags = $tags.filter(topics.map(t => `.${t}`).join(', '));
+                $tags = $tags.filter(topics.map(t => `.${t}`).join(", "));
             }
             topics.forEach(topic => $items.removeClass(topic));
             $tags.remove();
@@ -2011,8 +2011,8 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
          * @protected
          */
         _tagChar(by_topic) {
-            const special = { by_title_text: 'T' };
-            return special[by_topic] || by_topic.replace(/^by_/, '')[0];
+            const special = { by_title_text: "T" };
+            return special[by_topic] || by_topic.replace(/^by_/, "")[0];
         }
 
         /**
@@ -2024,8 +2024,8 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
          * @protected
          */
         _topicClass(topic) {
-            if (typeof topic === 'string') {
-                return 'by_' + topic.replace(/^\./, '').replace(/^by_/, '');
+            if (typeof topic === "string") {
+                return "by_" + topic.replace(/^\./, "").replace(/^by_/, "");
             }
         }
     }

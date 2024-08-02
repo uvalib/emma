@@ -2,14 +2,14 @@
 //
 // Load jQuery.
 //
-// NOTE: This must be included near the start of the 'application.js' load
-//  sequence so that 'jQuery' and '$' are available to all subsequent modules.
+// NOTE: This must be included near the start of the "application.js" load
+//  sequence so that "jQuery" and "$" are available to all subsequent modules.
 
 
-import { AppDebug } from '../application/debug';
-import jquery       from 'jquery';
+import { AppDebug } from "../application/debug";
+import jquery       from "jquery";
 
 
-AppDebug.file('vendor/jquery');
+AppDebug.file("vendor/jquery");
 
 window.jQuery = window.$ = jquery;

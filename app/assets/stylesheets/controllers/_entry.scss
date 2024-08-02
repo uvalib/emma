@@ -6,20 +6,20 @@
 //  point this should be restructured to move these definitions into ../shared
 //  and/or ../feature.
 
-@use 'shared/variables'        as *;
-@use 'shared/functions'        as *;
-@use 'shared/mixins'           as *;
-@use 'shared/controls/buttons' as button;
-@use 'shared/controls/grids'   as grid;
-@use 'shared/controls/panels'  as panel;
-@use 'shared/controls/shapes'  as shape;
-@use 'shared/feature/model'    as model;
-@use 'shared/layouts/overlay'  as overlay;
+@use "shared/variables"        as *;
+@use "shared/functions"        as *;
+@use "shared/mixins"           as *;
+@use "shared/controls/buttons" as button;
+@use "shared/controls/grids"   as grid;
+@use "shared/controls/panels"  as panel;
+@use "shared/controls/shapes"  as shape;
+@use "shared/feature/model"    as model;
+@use "shared/layouts/overlay"  as overlay;
 
-@use 'layouts/controls/panels' as panel-classes;
-@use 'layouts/controls/popup'  as popup-classes;
-@use 'feature/model_form'      as form-classes;
-@use 'feature/model'           as model-classes;
+@use "layouts/controls/panels" as panel-classes;
+@use "layouts/controls/popup"  as popup-classes;
+@use "feature/model_form"      as form-classes;
+@use "feature/model"           as model-classes;
 
 //=============================================================================
 // Internal constants
@@ -924,7 +924,7 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
         .slider {
             $x-pos:     $slider-offset;
             transform:  translate($x-pos);
-            &::before { content: var(--label, 'unlocked'); }
+            &::before { content: var(--label, "unlocked"); }
         }
     }
 
@@ -940,7 +940,7 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
         .slider {
             $x-pos:     $slider-offset + ($slider-pad-x * 2);
             transform:  translate(calc(100% - $x-pos));
-            &::after {  content: var(--label, 'locked'); }
+            &::after {  content: var(--label, "locked"); }
         }
     }
 
@@ -1121,7 +1121,7 @@ $lookup-accent-bg: lighter($uva-accent-orange, 50%);
             $img-height: 1rem;
 
             @include overlay.image(
-                $path:  'loading-balls.gif',
+                $path:  "loading-balls.gif",
                 $width:  $img-width,
                 $height: $img-height,
                 $fill:   false

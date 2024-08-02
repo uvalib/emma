@@ -5,45 +5,45 @@
 // noinspection JSUnusedLocalSymbols
 
 
-import { AppDebug }                       from '../application/debug';
-import { LookupChannel }                  from '../channels/lookup-channel';
-import { arrayWrap, intersects }          from '../shared/arrays';
-import { Emma }                           from '../shared/assets';
-import { selector, toggleHidden }         from '../shared/css';
-import { turnOffAutocomplete }            from '../shared/form';
-import { HTML_BREAK }                     from '../shared/html';
-import { renderJson }                     from '../shared/json';
-import { LOOKUP_BUTTON, LookupModal }     from '../shared/lookup-modal';
-import { LookupRequest }                  from '../shared/lookup-request';
-import { PANEL }                          from '../shared/modal-base';
-import { ModalDialog }                    from '../shared/modal-dialog';
-import { ModalHideHooks, ModalShowHooks } from '../shared/modal-hooks';
-import { dupObject, hasKey, toObject }    from '../shared/objects';
-import { randomizeName }                  from '../shared/random';
-import { camelCase, capitalize }          from '../shared/strings';
+import { AppDebug }                       from "../application/debug";
+import { LookupChannel }                  from "../channels/lookup-channel";
+import { arrayWrap, intersects }          from "../shared/arrays";
+import { Emma }                           from "../shared/assets";
+import { selector, toggleHidden }         from "../shared/css";
+import { turnOffAutocomplete }            from "../shared/form";
+import { HTML_BREAK }                     from "../shared/html";
+import { renderJson }                     from "../shared/json";
+import { LOOKUP_BUTTON, LookupModal }     from "../shared/lookup-modal";
+import { LookupRequest }                  from "../shared/lookup-request";
+import { PANEL }                          from "../shared/modal-base";
+import { ModalDialog }                    from "../shared/modal-dialog";
+import { ModalHideHooks, ModalShowHooks } from "../shared/modal-hooks";
+import { dupObject, hasKey, toObject }    from "../shared/objects";
+import { randomizeName }                  from "../shared/random";
+import { camelCase, capitalize }          from "../shared/strings";
 import {
     handleClickAndKeypress,
     toggleVisibility,
-} from '../shared/accessibility';
+} from "../shared/accessibility";
 import {
     isDefined,
     isEmpty,
     isMissing,
     isPresent,
     presence,
-} from '../shared/definitions';
+} from "../shared/definitions";
 import {
     debounce,
     handleEvent,
     handleHoverAndFocus,
     isEvent,
-} from '../shared/events';
+} from "../shared/events";
 
 
-const MODULE = 'BibliographicLookup';
+const MODULE = "BibliographicLookup";
 const DEBUG  = true;
 
-AppDebug.file('tool/bibliographic-lookup', MODULE, DEBUG);
+AppDebug.file("tool/bibliographic-lookup", MODULE, DEBUG);
 
 // ============================================================================
 // Functions
@@ -182,7 +182,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     // ========================================================================
 
     if (manual) {
-        handleEvent(inputText(), 'keyup', manualSubmission);
+        handleEvent(inputText(), "keyup", manualSubmission);
         handleClickAndKeypress(inputSubmit(), manualSubmission);
         turnOffAutocomplete(inputText());
         toggleHidden(queryPanel(), true);
@@ -249,10 +249,10 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {KeyboardEvt} event
      */
     function manualSubmission(event) {
-        if (isEvent(event, KeyboardEvent) && (event.key !== 'Enter')) {
+        if (isEvent(event, KeyboardEvent) && (event.key !== "Enter")) {
             return;
         }
-        OUT.debug('manualSubmission:', event);
+        OUT.debug("manualSubmission:", event);
         if (isModal()) {
             // Don't allow the manual submission to close the dialog.
             event.stopPropagation();
@@ -276,7 +276,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @see onShowModalHook
      */
     function onShowModal(_$target, check_only, halted) {
-        OUT.debug('onShowModal:', _$target, check_only, halted);
+        OUT.debug("onShowModal:", _$target, check_only, halted);
         if (check_only || halted) { return undefined }
         resetSearchResultsData();
         clearFieldResultsData();
@@ -299,7 +299,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @see onHideModalHook
      */
     function onHideModal($target, check_only, halted) {
-        OUT.debug('onHideModal:', $target, check_only, halted);
+        OUT.debug("onHideModal:", $target, check_only, halted);
         if (check_only || halted) { return undefined }
         if ($target.is(LookupModal.COMMIT)) {
             commitFieldValuesEntry();
@@ -312,7 +312,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * Perform the lookup request.
      */
     function performRequest() {
-        OUT.debug('performRequest');
+        OUT.debug("performRequest");
         initializeStatusDisplay();
         if (output) {
             clearResultDisplay();
@@ -343,7 +343,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {LookupRequest}       The current request object.
      */
     function setRequestData(data) {
-        OUT.debug('setRequestData:', data);
+        OUT.debug("setRequestData:", data);
         let request;
         if (data instanceof LookupRequest) {
             request = data;
@@ -359,7 +359,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * Clear the current lookup request.
      */
     function clearRequestData() {
-        OUT.debug('clearRequestData');
+        OUT.debug("clearRequestData");
         dataElement().removeData(LookupModal.REQUEST_DATA);
     }
 
@@ -391,7 +391,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {LookupResults}
      */
     function setSearchResultsData(value) {
-        OUT.debug('setSearchResultsData:', value);
+        OUT.debug("setSearchResultsData:", value);
         const new_value = value || blankSearchResultsData();
         dataElement().data(LookupModal.SEARCH_RESULT_DATA, new_value);
         return new_value;
@@ -403,7 +403,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {LookupResults}
      */
     function resetSearchResultsData() {
-        OUT.debug('resetSearchResultsData');
+        OUT.debug("resetSearchResultsData");
         return setSearchResultsData(blankSearchResultsData());
     }
 
@@ -413,8 +413,8 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {LookupResponse} message
      */
     function updateSearchResultsData(message) {
-        OUT.debug('updateSearchResultsData:', message);
-        const key = message.job_id || randomizeName('response');
+        OUT.debug("updateSearchResultsData:", message);
+        const key = message.job_id || randomizeName("response");
         const obj = getSearchResultsData() || resetSearchResultsData();
         obj[key]  = message.toObject();
     }
@@ -451,7 +451,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     function getOriginalFieldValues(caller) {
         const data = originalFieldValues();
         if (isMissing(data)) {
-            const func = caller || 'getOriginalFieldValues';
+            const func = caller || "getOriginalFieldValues";
             const name = LookupModal.ENTRY_ITEM_DATA;
             OUT.warn(`${func}: toggle missing .data(${name})`);
         }
@@ -477,7 +477,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {LookupResponseItem|undefined} value
      */
     function setFieldResultsData(value) {
-        OUT.debug('setFieldResultsData:', value);
+        OUT.debug("setFieldResultsData:", value);
         const new_value = value || {};
         dataElement().data(LookupModal.FIELD_RESULTS_DATA, new_value);
     }
@@ -486,7 +486,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * Clear the user-selected field values from lookup.
      */
     function clearFieldResultsData() {
-        OUT.debug('clearFieldResultsData');
+        OUT.debug("clearFieldResultsData");
         dataElement().removeData(LookupModal.FIELD_RESULTS_DATA);
     }
 
@@ -541,9 +541,9 @@ export async function setupFor(base, show_hooks, hide_hooks) {
         if (isDefined(value)) {
             $notice.text(value);
             if (tooltip) {
-                $notice.addClass('tooltip').attr('title', tooltip);
+                $notice.addClass("tooltip").attr("title", tooltip);
             } else {
-                $notice.removeClass('tooltip').removeAttr('title');
+                $notice.removeClass("tooltip").removeAttr("title");
             }
         }
         return $notice;
@@ -559,18 +559,18 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     function serviceStatuses(services) {
         $services ||= statusDisplay().find(LookupModal.SERVICES);
         if (isDefined(services)) {
-            OUT.debug('serviceStatuses:', services);
-            const lbl_css = 'label';
+            OUT.debug("serviceStatuses:", services);
+            const lbl_css = "label";
             if (isMissing($services.children(selector(lbl_css)))) {
-                const $lbl = $('<span>').addClass(lbl_css).text('Searching:');
+                const $lbl = $('<span>').addClass(lbl_css).text("Searching:");
                 $lbl.prependTo($services);
             }
             let names = arrayWrap(services);
-            let data  = $services.data('names');
+            let data  = $services.data("names");
             if (data) {
                 names = names.filter(srv => !data.includes(srv));
             } else {
-                $services.data('names', (data = []));
+                $services.data("names", (data = []));
             }
             if (isPresent(names)) {
                 const statuses = names.map(name => makeServiceStatus(name));
@@ -586,8 +586,8 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * Clear service status contents and data.
      */
     function clearServiceStatuses() {
-        OUT.debug('clearServiceStatuses');
-        serviceStatuses().removeData('names').find('.service').remove();
+        OUT.debug("clearServiceStatuses");
+        serviceStatuses().removeData("names").find('.service').remove();
     }
 
     /**
@@ -596,7 +596,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {LookupResponse} message
      */
     function updateStatusDisplay(message) {
-        const func  = 'updateStatusDisplay'; OUT.debug(`${func}:`, message);
+        const func  = "updateStatusDisplay"; OUT.debug(`${func}:`, message);
         const state = message.status?.toUpperCase();
         const srv   = message.service;
         const data  = message.data;
@@ -606,35 +606,35 @@ export async function setupFor(base, show_hooks, hide_hooks) {
 
             // Waiter states
 
-            case 'STARTING':
-                notice = 'Working';
+            case "STARTING":
+                notice = "Working";
                 serviceStatuses(srv);
                 break;
-            case 'TIMEOUT':
-                notice = 'Done';
-                n_tip  = 'Some searches took longer than expected';
+            case "TIMEOUT":
+                notice = "Done";
+                n_tip  = "Some searches took longer than expected";
                 finish = true;
                 break;
-            case 'PARTIAL':
-                notice = 'Done';
-                n_tip  = 'Partial results received';
+            case "PARTIAL":
+                notice = "Done";
+                n_tip  = "Partial results received";
                 finish = true;
                 break;
-            case 'COMPLETE':
-                notice = 'Done';
+            case "COMPLETE":
+                notice = "Done";
                 finish = true;
                 break;
 
             // Worker states
 
-            case 'WORKING':
+            case "WORKING":
                 notice =`${statusNotice().text()}.`;
                 break;
-            case 'LATE':
-                status = 'late';
+            case "LATE":
+                status = "late";
                 break;
-            case 'DONE':
-                status = isEmpty(data?.items) ? ['done', 'empty'] : 'done';
+            case "DONE":
+                status = isEmpty(data?.items) ? ["done", "empty"] : "done";
                 break;
 
             // Other
@@ -657,10 +657,10 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * status elements removed.
      */
     function initializeStatusDisplay() {
-        OUT.debug('initializeStatusDisplay');
+        OUT.debug("initializeStatusDisplay");
         toggleVisibility(serviceStatuses(), false);
         clearServiceStatuses();
-        statusNotice('Starting...');
+        statusNotice("Starting...");
     }
 
     /**
@@ -704,8 +704,8 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function makeServiceStatus(name) {
-        const css     = 'service';
-        const service = name || 'unknown';
+        const css     = "service";
+        const service = name || "unknown";
         const classes = `${css} ${service}`;
         const label   = camelCase(service);
         return $('<div>').addClass(classes).text(label);
@@ -734,11 +734,11 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {jQuery}              The commit button(s).
      */
     function enableCommit(enable) {
-        OUT.debug('enableCommit:', enable);
+        OUT.debug("enableCommit:", enable);
         const $button = commitButton();
         const marker  = LookupModal.DISABLED_MARKER;
         const set     = (enable === false);
-        return $button.toggleClass(marker, set).prop('disabled', set);
+        return $button.toggleClass(marker, set).prop("disabled", set);
     }
 
     /**
@@ -749,11 +749,11 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {jQuery}              The commit button(s).
      */
     function disableCommit(disable) {
-        OUT.debug('disableCommit:', disable);
+        OUT.debug("disableCommit:", disable);
         const $button = commitButton();
         const marker  = LookupModal.DISABLED_MARKER;
         const set     = (disable !== false);
-        return $button.toggleClass(marker, set).prop('disabled', set);
+        return $button.toggleClass(marker, set).prop("disabled", set);
     }
 
     // ========================================================================
@@ -770,7 +770,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     function getValue(element) {
         const $elem = $(element);
         if ($elem.is('textarea')) {
-            return $elem.val()?.trim() || '';
+            return $elem.val()?.trim() || "";
         } else {
             return getLatestFieldValue($elem) || $elem.text().trim();
         }
@@ -787,8 +787,8 @@ export async function setupFor(base, show_hooks, hide_hooks) {
         if (Array.isArray(item)) {
             return item.map(v => v?.trim ? v.trim() : v).filter(v => v);
 
-        } else if (typeof item !== 'string') {
-            return item?.toString() || '';
+        } else if (typeof item !== "string") {
+            return item?.toString() || "";
 
         } else if (item.includes("\n")) {
             // noinspection TailRecursionJS
@@ -807,7 +807,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {string}
      */
     function toInputValue(item) {
-        if (typeof item === 'string') {
+        if (typeof item === "string") {
             return item.trim();
 
         } else if (Array.isArray(item)) {
@@ -852,7 +852,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function refreshFieldValuesEntry(caller) {
-        const func   = caller || 'refreshFieldValuesEntry';
+        const func   = caller || "refreshFieldValuesEntry";
         const data   = getOriginalFieldValues(func);
         const $entry = getFieldValuesEntry();
         fillEntry($entry, data);
@@ -861,7 +861,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
             const $lock   = lockFor($column);
             const field   = fieldFor($column);
             const locked  = !!getValue($column);
-            $lock.prop('checked', locked);
+            $lock.prop("checked", locked);
             lockField(field, locked);
         });
         return $entry;
@@ -871,7 +871,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * Invoked when the user commits to the new field values.
      */
     function commitFieldValuesEntry() {
-        const func     = 'commitFieldValuesEntry'; OUT.debug(func);
+        const func     = "commitFieldValuesEntry"; OUT.debug(func);
         const original = getOriginalFieldValues(func);
         const current  = getColumnValues(getFieldValuesEntry());
         const result   = {};
@@ -897,9 +897,9 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function fieldValueCell(field) {
-        const func = 'fieldValueCell';
+        const func = "fieldValueCell";
         let $result;
-        if (typeof field === 'string') {
+        if (typeof field === "string") {
             $result = getFieldValuesEntry().find(`[data-field="${field}"]`);
         } else {
             $result = $(field);
@@ -919,7 +919,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {string|undefined}
      */
     function fieldFor(target) {
-        const df   = 'data-field';
+        const df   = "data-field";
         const $tgt = $(target);
         return $tgt.attr(df) || $tgt.parents(`[${df}]`).first().attr(df);
     }
@@ -931,18 +931,18 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {ElementEvt} event
      */
     function lockIfChanged(event) {
-        OUT.debug('lockIfChanged:', event);
+        OUT.debug("lockIfChanged:", event);
         const $textarea = $(event.target);
         const current   = getValue($textarea);
         const previous  = getLatestFieldValue($textarea);
         if (current !== previous) {
             setLatestFieldValue($textarea, current);
             if (!isLockedFieldValue($textarea)) {
-                lockFor($textarea).trigger('click');
+                lockFor($textarea).trigger("click");
             }
         }
-        const field    = $textarea.attr('data-field');
-        const original = originalFieldValues()[field] || '';
+        const field    = $textarea.attr("data-field");
+        const original = originalFieldValues()[field] || "";
         if (current !== original) {
             enableCommit();
         }
@@ -957,7 +957,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      */
     function getLatestFieldValue($textarea) {
         const value_name = LookupModal.FIELD_LATEST_DATA;
-        return $textarea.data(value_name)?.trim() || '';
+        return $textarea.data(value_name)?.trim() || "";
     }
 
     /**
@@ -1034,20 +1034,20 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {boolean}                   [locking] If **false** unlock instead
      */
     function lockFieldValue(field, locking) {
-        OUT.debug('lockFieldValue:', field, locking);
+        OUT.debug("lockFieldValue:", field, locking);
         const $cell   = fieldValueCell(field);
         const $lock   = lockFor($cell);
         const $input  = $lock;
         const $slider = $lock.parent().find('.slider');
         const $state  = $lock.parent().find('.state');
-        const name    = $state.attr('data-name');
+        const name    = $state.attr("data-name");
         const locked  = (locking !== false);
         const tip     = locked ? UNLOCK_TIP : LOCK_TIP;
         const label   = locked ? LOCK_LBL   : UNLOCK_LBL;
-        const status  = locked ? 'locked'   : 'unlocked';
+        const status  = locked ? "locked"   : "unlocked";
         $cell.data(LookupModal.FIELD_LOCKED_DATA, locked);
-        $input.attr('title', tip);
-        $slider.css('--label', `'${label}'`);
+        $input.attr("title", tip);
+        $slider.css("--label", `"${label}"`);
         $state.text(`${name} ${Emma.Messages.lookup.field_is} ${status}`);
     }
 
@@ -1058,7 +1058,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {boolean}                   [locking] If **false** unlock instead
      */
     function lockField(field, locking) {
-        OUT.debug('lockField:', field, locking);
+        OUT.debug("lockField:", field, locking);
         lockFieldValue(field, locking);
         columnLockout(field, locking);
     }
@@ -1069,7 +1069,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {ElementEvt} event
      */
     function toggleFieldLock(event) {
-        OUT.debug('toggleFieldLock:', event);
+        OUT.debug("toggleFieldLock:", event);
         const $target = $(event.target);
         const field   = fieldFor($target);
         const locked  = $target.is(':checked');
@@ -1087,7 +1087,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
         const HEAD    = LookupModal.HEADING_ROWS;
         const $rows   = entriesList().children('.row').not(HEAD);
         const $column = $rows.children(`[data-field="${field}"]`);
-        $column.toggleClass('locked-out', lock);
+        $column.toggleClass("locked-out", lock);
     }
 
     /**
@@ -1099,9 +1099,9 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     function fieldLockout(entry) {
         $(entry).children('[data-field]').each((_, column) => {
             const $field = $(column);
-            const field  = $field.attr('data-field');
+            const field  = $field.attr("data-field");
             const locked = isLockedFieldValue(field);
-            $field.toggleClass('locked-out', locked);
+            $field.toggleClass("locked-out", locked);
         });
     }
 
@@ -1139,7 +1139,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function refreshOriginalValuesEntry(caller) {
-        const func   = caller || 'refreshOriginalValuesEntry';
+        const func   = caller || "refreshOriginalValuesEntry";
         const data   = getOriginalFieldValues(func);
         const $entry = getOriginalValuesEntry();
         fillEntry($entry, data);
@@ -1176,9 +1176,9 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * Reset the selected entry to the "ORIGINAL" entry.
      */
     function resetSelectedEntry() {
-        OUT.debug('resetSelectedEntry');
+        OUT.debug("resetSelectedEntry");
         $selected_entry = null;
-        getOriginalValuesEntry().find('[type="radio"]').trigger('click');
+        getOriginalValuesEntry().find('[type="radio"]').trigger("click");
     }
 
     /**
@@ -1187,7 +1187,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {Selector} [entry]      Default: {@link getSelectedEntry}
      */
     function useSelectedEntry(entry) {
-        OUT.debug('useSelectedEntry:', entry);
+        OUT.debug("useSelectedEntry:", entry);
         let $entry   = entry ? setSelectedEntry($(entry)) : getSelectedEntry();
         let values   = entryValues($entry);
         let $fields  = getFieldValuesEntry();
@@ -1206,16 +1206,16 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {ElementEvt} event
      */
     function selectEntry(event) {
-        OUT.debug('selectEntry:', event);
+        OUT.debug("selectEntry:", event);
         hideLoadingOverlay();
         /** @type {jQuery} */
         const $target = $(event.currentTarget || event.target),
               $entry  = $target.parents('.row').first();
-        if ($target.attr('type') !== 'radio') {
-            $target.trigger('focus');
-            $entry.find('[type="radio"]').trigger('click');
+        if ($target.attr("type") !== "radio") {
+            $target.trigger("focus");
+            $entry.find('[type="radio"]').trigger("click");
         } else if ($target.is(':checked')) {
-            entrySelectButtons().not($target).prop('checked', false);
+            entrySelectButtons().not($target).prop("checked", false);
             useSelectedEntry($entry);
             if ($entry.is(LookupModal.RESULT)) {
                 enableCommit();
@@ -1225,7 +1225,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
                 $entry.children('[data-field]').each((_, column) => {
                     const $field = $(column);
                     if (isPresent($field.text())) {
-                        lockFor($field).trigger('click');
+                        lockFor($field).trigger("click");
                     }
                 });
             }
@@ -1242,7 +1242,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     function highlightEntry(event) {
         const $target = $(event.target);
         const $entry  = $target.parents('.row').first();
-        $entry.children().toggleClass('highlight', true);
+        $entry.children().toggleClass("highlight", true);
     }
 
     /**
@@ -1255,7 +1255,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     function unhighlightEntry(event) {
         const $target = $(event.target);
         const $entry  = $target.parents('.row').first();
-        $entry.children().toggleClass('highlight', false);
+        $entry.children().toggleClass("highlight", false);
     }
 
     // ========================================================================
@@ -1327,7 +1327,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
             // value parts visually with breaks.
             let $text = $column.children('.text');
             if (isMissing($text)) {
-                $text = $('<div>').addClass('text').appendTo($column);
+                $text = $('<div>').addClass("text").appendTo($column);
             }
             value = toDataValue(field_value);
             if (Array.isArray(value)) {
@@ -1382,11 +1382,11 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {LookupResponse} message
      */
     function updateEntries(message) {
-        const func = 'updateEntries';
+        const func = "updateEntries";
         const data = message.data;
         const init = modal && !modal.tabCycleStart;
 
-        if (message.status === 'STARTING') {
+        if (message.status === "STARTING") {
             OUT.debug(`${func}: ignoring STARTING message`);
 
         } else if (isMissing(data)) {
@@ -1426,7 +1426,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function addEntry(item, label, css_class) {
-        OUT.debug('addEntry:', item, label, css_class);
+        OUT.debug("addEntry:", item, label, css_class);
         const $list  = entriesList();
         const row    = $list.children('.row').length;
         const $entry = makeResultEntry(row, label, css_class);
@@ -1460,7 +1460,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * If $entries_list does not exist, this returns immediately.
      */
     function resetEntries() {
-        const func = 'resetEntries';
+        const func = "resetEntries";
         OUT.debug(func);
         if ($entries_list) {
             const RESERVED_ROWS = LookupModal.RESERVED_ROWS;
@@ -1497,7 +1497,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function makeEntriesList() {
-        const css        = 'list';
+        const css        = "list";
         const cols       = LookupModal.ALL_COLUMNS.length;
         const $list      = $('<div>').addClass(`${css} columns-${cols}`);
         let row          = 0;
@@ -1556,8 +1556,8 @@ export async function setupFor(base, show_hooks, hide_hooks) {
         const css     = LookupModal.FIELD_LOCKS_CLASS;
         const fields  = LookupModal.DATA_COLUMNS;
         const TABLE   = LookupModal.ENTRY_TABLE;
-        const $select = makeBlankColumn(TABLE['selection'].label);
-        const $label  = makeTagColumn(TABLE['tag'].label);
+        const $select = makeBlankColumn(TABLE["selection"].label);
+        const $label  = makeTagColumn(TABLE["tag"].label);
         const locks   = fields.map(field => makeFieldLockColumn(field));
         const cols    = [$select, $label, ...locks];
         return setFieldLocksEntry(makeEntry(row, cols, css));
@@ -1571,7 +1571,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function makeOriginalValuesEntry(row) {
-        const func = 'makeOriginalValuesEntry';
+        const func = "makeOriginalValuesEntry";
         const tag  = Emma.Messages.original.toUpperCase();
         const css  = LookupModal.ORIG_VALUES_CLASS;
         setOriginalValuesEntry(makeResultEntry(row, tag, css));
@@ -1627,7 +1627,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function makeFieldInputColumn(field, value, css_class) {
-        const $cell = $('<textarea>').attr('data-field', field);
+        const $cell = $('<textarea>').attr("data-field", field);
         if (css_class) { $cell.addClass(css_class) }
         $cell.val(toInputValue(value));
         monitorEditing($cell);
@@ -1644,7 +1644,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function makeFieldLockColumn(field, value, css_class) {
-        const $cell = $('<div>').attr('data-field', field);
+        const $cell = $('<div>').attr("data-field", field);
         const parts = makeLockControl(field);
         if (css_class) { $cell.addClass(css_class) }
         return $cell.append(parts);
@@ -1667,24 +1667,24 @@ export async function setupFor(base, show_hooks, hide_hooks) {
 
         /** @type {jQuery} */
         const $checkbox = $(`<input class="${LookupModal.LOCK_CLASS}">`);
-        $checkbox.attr('type',            'checkbox');
-        $checkbox.attr('role',            'switch');
-        $checkbox.attr('name',            name);
-        $checkbox.attr('aria-labelledby', lbl_id);
-        $checkbox.attr('aria-checked',    locked);
-        $checkbox.prop('checked',         locked);
+        $checkbox.attr("type",            "checkbox");
+        $checkbox.attr("role",            "switch");
+        $checkbox.attr("name",            name);
+        $checkbox.attr("aria-labelledby", lbl_id);
+        $checkbox.attr("aria-checked",    locked);
+        $checkbox.prop("checked",         locked);
 
         /** @type {jQuery} */
         const $slider = $('<div class="slider">');
         const $state  = $('<div class="state">');
-        $state.attr('id',        lbl_id);
-        $state.attr('data-name', label);
+        $state.attr("id",        lbl_id);
+        $state.attr("data-name", label);
 
         /** @type {jQuery} */
         const $indicator = $('<div class="lock-indicator">');
-        $indicator.attr('aria-hidden', true).append($slider).append($state);
+        $indicator.attr("aria-hidden", true).append($slider).append($state);
 
-        handleEvent($checkbox, 'change', toggleFieldLock);
+        handleEvent($checkbox, "change", toggleFieldLock);
         return [$checkbox, $indicator];
     }
 
@@ -1696,7 +1696,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function makeSelectColumn(active) {
-        const css   = 'selection';
+        const css   = "selection";
         const $cell = $('<div>').addClass(css);
         const parts = makeSelectControl(active);
         return $cell.append(parts);
@@ -1711,13 +1711,13 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {[jQuery,jQuery]}
      */
     function makeSelectControl(active, css_class) {
-        const $outer     = $('<div>').addClass('outer');
-        const $inner     = $('<div>').addClass('inner');
-        const $indicator = $('<div>').addClass('select-indicator');
-        const $radio     = $('<input>').attr('type', 'radio');
+        const $outer     = $('<div>').addClass("outer");
+        const $inner     = $('<div>').addClass("inner");
+        const $indicator = $('<div>').addClass("select-indicator");
+        const $radio     = $('<input>').attr("type", "radio");
         if (css_class) { $radio.addClass(css_class) }
-        $radio.prop('checked', (active === true));
-        handleEvent($radio, 'change', selectEntry);
+        $radio.prop("checked", (active === true));
+        handleEvent($radio, "change", selectEntry);
         $start_tabbable ||= $radio;
         return [$radio, $indicator.append($outer, $inner)];
     }
@@ -1743,7 +1743,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function makeTagColumn(label) {
-        const css = 'tag';
+        const css = "tag";
         return makeBlankColumn(label).addClass(css);
     }
 
@@ -1758,7 +1758,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function makeDataColumn(field, value, css_class) {
-        const $cell = makeBlankColumn(value).attr('data-field', field);
+        const $cell = makeBlankColumn(value).attr("data-field", field);
         if (css_class) { $cell.addClass(css_class) }
         handleClickAndKeypress($cell, selectEntry);
         return $cell;
@@ -1773,7 +1773,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function makeBlankColumn(label, css_class) {
-        const $content = $('<span class="text">').text(label || '');
+        const $content = $('<span class="text">').text(label || "");
         const $cell    = $('<div>');
         if (css_class) { $cell.addClass(css_class) }
         return $cell.append($content);
@@ -1790,7 +1790,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {Selector} item
      */
     function monitorEditing(item) {
-        handleEvent(item, 'input', debounce(lockIfChanged));
+        handleEvent(item, "input", debounce(lockIfChanged));
     }
 
     /**
@@ -1813,7 +1813,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      */
     function respondAsVisibleOnFocus(items) {
         //const scroll = (ev => $(ev.target)[0].scrollIntoView(false));
-        //arrayWrap(items).forEach(i => handleEvent($(i), 'focus', scroll));
+        //arrayWrap(items).forEach(i => handleEvent($(i), "focus", scroll));
     }
 
     // ========================================================================
@@ -1878,23 +1878,23 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {jQuery}
      */
     function setSearchTerms(terms, separator) {
-        OUT.debug('setSearchTerms:', terms, separator);
-        const chars  = (separator || getSeparators()).replaceAll('\\s', ' ');
+        OUT.debug("setSearchTerms:", terms, separator);
+        const chars  = (separator || getSeparators()).replaceAll("\\s", " ");
         const sep    = chars[0];
         const parts  = arrayWrap(terms);
         const $query = queryTerms();
         if (isPresent($query)) {
             const query_parts =
                 parts.map(part => {
-                    const words  = part.split(':');
+                    const words  = part.split(":");
                     const prefix = words.shift();
-                    let value    = words.join(':');
+                    let value    = words.join(":");
                     if (value.match(/\s/)) {
                         value = `"${value}"`;
                     }
                     return `${prefix}:${value}`;
                 });
-            $query.text(query_parts.join(' '));
+            $query.text(query_parts.join(" "));
         }
         return inputText().val(parts.join(sep));
     }
@@ -1906,7 +1906,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {ElementEvt} [event]
      */
     function updateSearchTerms(event) {
-        OUT.debug('updateSearchTerms:', event);
+        OUT.debug("updateSearchTerms:", event);
         const $data_src = event ? $(event.target) : dataElement();
         const data      = $data_src.data(LookupModal.SEARCH_TERMS_DATA);
         const request   = setRequestData(data);
@@ -1939,7 +1939,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
         if (getSeparators() !== new_characters) {
             $.each(LookupModal.SEPARATORS, (key, characters) => {
                 if (new_characters !== characters) { return true } // continue
-                $separator.filter(`[value="${key}"]`).trigger('click');
+                $separator.filter(`[value="${key}"]`).trigger("click");
                 return false; // break
             });
         }
@@ -2003,21 +2003,21 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * Remove result display contents.
      */
     function clearResultDisplay() {
-        resultDisplay().text('');
+        resultDisplay().text("");
     }
 
     /**
      * Remove error display contents.
      */
     function clearErrorDisplay() {
-        errorDisplay().text('');
+        errorDisplay().text("");
     }
 
     /**
      * Remove diagnostic display contents.
      */
     function clearDiagnosticDisplay() {
-        diagnosticDisplay().text('');
+        diagnosticDisplay().text("");
     }
 
     /**
@@ -2045,7 +2045,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {object} data
      */
     function updateDiagnosticDisplay(data) {
-        updateDisplay(diagnosticDisplay(), data, '');
+        updateDisplay(diagnosticDisplay(), data, "");
     }
 
     /**
@@ -2072,10 +2072,10 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @param {jQuery} $element
      */
     function initializeDisplay($element) {
-        if (!$element.attr('readonly')) {
-            $element.attr('readonly', 'true');
+        if (!$element.attr("readonly")) {
+            $element.attr("readonly", "true");
         }
-        $element.text('');
+        $element.text("");
     }
 
     // ========================================================================
@@ -2103,7 +2103,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     function makeLoadingOverlay(visible) {
         const css    = LookupModal.LOADING_CLASS;
         const hidden = (visible !== true);
-        const $image = $('<div>').addClass('content');
+        const $image = $('<div>').addClass("content");
         const $line  = $('<div>').addClass(css).append($image);
         return toggleHidden($line, hidden);
     }

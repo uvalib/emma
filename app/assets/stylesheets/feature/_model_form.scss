@@ -1,13 +1,13 @@
 // app/assets/stylesheets/feature/_model_form.scss
 
-@use 'sass:math';
+@use "sass:math";
 
-@use 'shared/variables'        as *;
-@use 'shared/mixins'           as *;
-@use 'shared/controls/buttons' as button;
-@use 'shared/controls/grids'   as grid;
+@use "shared/variables"        as *;
+@use "shared/mixins"           as *;
+@use "shared/controls/buttons" as button;
+@use "shared/controls/grids"   as grid;
 
-@use 'vendor/uppy';
+@use "vendor/uppy";
 
 //=============================================================================
 // Internal mixins
@@ -124,7 +124,7 @@
 // Display for the selected filename.
 //
 // This is hidden until a file has been uploaded and displayUploadedFilename()
-// adds the 'complete' class.
+// adds the "complete" class.
 //
 .uploaded-filename {
 
@@ -506,13 +506,13 @@
         }
     }
 
-    // ERB-provided submit to '/upload/create' or '/upload/update'.
+    // ERB-provided submit to "/upload/create" or "/upload/update".
     .submit-button { // input[type="submit"].uppy-FileInput-btn
         @include button.control;
         @include grid-control;
     }
 
-    // ERB-provided cancel (back to '/upload/new' or '/upload/edit').
+    // ERB-provided cancel (back to "/upload/new" or "/upload/edit").
     .cancel-button { // button[type="cancel"].uppy-FileInput-btn
         @include button.control;
         @include grid-control;

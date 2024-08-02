@@ -3,19 +3,19 @@
 // noinspection JSUnresolvedReference, TailRecursionJS
 
 
-import { AppDebug }           from '../application/debug';
-import { arrayWrap }          from './arrays';
-import { isEmpty, isMissing } from './definitions';
-import * as HTTP              from './http';
-import { fromJSON, hasKey }   from './objects';
-import { secondsSince }       from './time';
-import { makeUrl }            from './url';
+import { AppDebug }           from "../application/debug";
+import { arrayWrap }          from "./arrays";
+import { isEmpty, isMissing } from "./definitions";
+import * as HTTP              from "./http";
+import { fromJSON, hasKey }   from "./objects";
+import { secondsSince }       from "./time";
+import { makeUrl }            from "./url";
 
 
-const MODULE = 'XHR';
+const MODULE = "XHR";
 const DEBUG  = true;
 
-AppDebug.file('shared/xhr', MODULE, DEBUG);
+AppDebug.file("shared/xhr", MODULE, DEBUG);
 
 /**
  * Console output functions for this module.
@@ -26,7 +26,7 @@ const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
 // Type definitions
 // ============================================================================
 
-/** @typedef {'xml'|'html'|'script'|'json'|'jsonp'|'text'} AjaxDataType */
+/** @typedef {"xml"|"html"|"script"|"json"|"jsonp"|"text"} AjaxDataType */
 
 /** @typedef {function(any,string,XMLHttpRequest)}    AjaxSuccessCallback  */
 /** @typedef {function(XMLHttpRequest,string,string)} AjaxErrorCallback    */
@@ -106,11 +106,11 @@ const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
  * @param {XmitCallback}             [cb]
  */
 
-export function get(  path, prm, opt, cb) { xmit('GET',   path, prm, opt, cb) }
-export function head( path, prm, opt, cb) { xmit('HEAD',  path, prm, opt, cb) }
-export function put(  path, prm, opt, cb) { xmit('PUT',   path, prm, opt, cb) }
-export function post( path, prm, opt, cb) { xmit('POST',  path, prm, opt, cb) }
-export function patch(path, prm, opt, cb) { xmit('PATCH', path, prm, opt, cb) }
+export function get(  path, prm, opt, cb) { xmit("GET",   path, prm, opt, cb) }
+export function head( path, prm, opt, cb) { xmit("HEAD",  path, prm, opt, cb) }
+export function put(  path, prm, opt, cb) { xmit("PUT",   path, prm, opt, cb) }
+export function post( path, prm, opt, cb) { xmit("POST",  path, prm, opt, cb) }
+export function patch(path, prm, opt, cb) { xmit("PATCH", path, prm, opt, cb) }
 
 /**
  * Transmit to an external site.
@@ -124,29 +124,29 @@ export function patch(path, prm, opt, cb) { xmit('PATCH', path, prm, opt, cb) }
  * @see https://api.jquery.com/jquery.ajax/#jQuery-ajax-settings
  */
 export function xmit(method, path, prm, opt, cb) {
-    const func   = 'xmit';
-    const opt_cb = (typeof opt === 'function') && opt;
+    const func   = "xmit";
+    const opt_cb = (typeof opt === "function") && opt;
 
     /** @type {AjaxOptions|object} */
     let settings = opt_cb ? { complete: opt_cb } : { ...opt, complete: cb };
 
     /** @type {object|string} */
     let params = prm;
-    if (typeof prm === 'object') {
+    if (typeof prm === "object") {
         params = { ...prm };
-        if (hasKey(params, 'settings')) {
+        if (hasKey(params, "settings")) {
             settings = { ...settings, ...params.settings };
             delete params.settings;
         }
     }
 
     let ignore_body;
-    if (hasKey(settings, '_ignoreBody')) {
+    if (hasKey(settings, "_ignoreBody")) {
         ignore_body = settings._ignoreBody;
         delete settings._ignoreBody;
     }
 
-    if (hasKey(settings, 'method')) {
+    if (hasKey(settings, "method")) {
         settings.type ||= settings.method;
         delete settings.method;
     }
@@ -155,8 +155,8 @@ export function xmit(method, path, prm, opt, cb) {
         delete settings.type;
     }
     switch (settings.type ||= method) {
-        case 'GET':
-        case 'HEAD':
+        case "GET":
+        case "HEAD":
             settings.url  ||= makeUrl(path, params);
             break;
         default:
@@ -164,7 +164,7 @@ export function xmit(method, path, prm, opt, cb) {
             settings.data ||= params;
             break;
     }
-    settings.dataType ||= 'json';
+    settings.dataType ||= "json";
 
     /**
      * Callbacks defined within this function.
@@ -206,12 +206,12 @@ export function xmit(method, path, prm, opt, cb) {
      * @param {XMLHttpRequest} xhr
      */
     function onSuccess(data, status, xhr) {
-        OUT.debug(`${func}: received`, (data?.length || 0), 'bytes.');
+        OUT.debug(`${func}: received`, (data?.length || 0), "bytes.");
         if (ignore_body) {
             result = data || {};
         } else if (isMissing(data)) {
-            error  = 'no data';
-        } else if (typeof(data) !== 'object') {
+            error  = "no data";
+        } else if (typeof(data) !== "object") {
             error  = `unexpected data type ${typeof data}`;
         } else {
             result = data;
@@ -233,7 +233,7 @@ export function xmit(method, path, prm, opt, cb) {
      */
     function onError(xhr, status, message) {
         let cb = callback.error;
-        if ((status === 'parsererror') && (xhr.status < 400)) {
+        if ((status === "parsererror") && (xhr.status < 400)) {
             OUT.debug(`${func}: no response data`);
             cb = callback.success;
             result ||= {};
@@ -253,13 +253,13 @@ export function xmit(method, path, prm, opt, cb) {
      * @param {string}         _status
      */
     function onComplete(xhr, _status) {
-        OUT.debug(`${func}: completed in`, secondsSince(start), 'sec.');
+        OUT.debug(`${func}: completed in`, secondsSince(start), "sec.");
         if (result) {
             //OUT.debug(`${func}: data from server:`, record);
         } else if (warning) {
             OUT.warn(`${func}: ${settings.url}:`, warning);
         } else {
-            error ||= 'unknown failure';
+            error ||= "unknown failure";
             OUT.error(`${func}: ${settings.url}:`, error);
         }
         callback.complete?.(result, warning, error, xhr);
@@ -301,9 +301,9 @@ export function response(xhr) {
     const json = xhr?.responseJSON;
     const text = xhr?.responseText;
     switch (true) {
-        case (typeof json === 'function'):   return json()         || {};
-        case (typeof json === 'object'):     return json           || {};
-        case (xhr?.responseType === 'json'): return xhr.response   || {};
+        case (typeof json === "function"):   return json()         || {};
+        case (typeof json === "object"):     return json           || {};
+        case (xhr?.responseType === "json"): return xhr.response   || {};
         default:                             return fromJSON(text) || {};
     }
 }
@@ -332,10 +332,10 @@ function errorParts(a) {
     switch (true) {
         case isEmpty(a):              return [];
         case Array.isArray(a):        return a.map(v => errorParts(v)).flat();
-        case (typeof a !== 'object'): return [a];
-        case hasKey(a, 'exception'):  return [a.exception];
-        case hasKey(a, 'topic'):      return [a.topic,...arrayWrap(a.details)];
-        case hasKey(a, 'parts'):      return errorParts(a.parts);
+        case (typeof a !== "object"): return [a];
+        case hasKey(a, "exception"):  return [a.exception];
+        case hasKey(a, "topic"):      return [a.topic,...arrayWrap(a.details)];
+        case hasKey(a, "parts"):      return errorParts(a.parts);
         default:                      return [];
     }
 }

@@ -6,16 +6,16 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { AppDebug }  from './debug';
-import { BaseClass } from '../shared/base-class';
-import { isEmpty }   from '../shared/definitions';
-import { hasKey }    from '../shared/objects';
+import { AppDebug }  from "./debug";
+import { BaseClass } from "../shared/base-class";
+import { isEmpty }   from "../shared/definitions";
+import { hasKey }    from "../shared/objects";
 
 
-const MODULE = 'Setup';
+const MODULE = "Setup";
 const DEBUG  = true;
 
-AppDebug.file('application/setup', MODULE, DEBUG);
+AppDebug.file("application/setup", MODULE, DEBUG);
 
 /**
  * Console output functions for this module.
@@ -112,14 +112,14 @@ window.APP_PAGE ||= {
  *
  * @type {string}
  */
-export const DOC_KEY = '(DOCUMENT)';
+export const DOC_KEY = "(DOCUMENT)";
 
 /**
  * The {@link window.APP_PAGE.Event} key for {@link window} events.
  *
  * @type {string}
  */
-export const WIN_KEY = '(WINDOW)';
+export const WIN_KEY = "(WINDOW)";
 
 /**
  * If no options are given, this default is applied so that event handlers are
@@ -138,8 +138,8 @@ export const DEF_OPTIONS = false;
  * {@link window.APP_PAGE.Setup}.
  */
 export function pageSetup() {
-    console.warn('*** PAGE SETUP ***');
-    runActions(window.APP_PAGE.Setup, 'pageSetup');
+    console.warn("*** PAGE SETUP ***");
+    runActions(window.APP_PAGE.Setup, "pageSetup");
 }
 
 /**
@@ -147,8 +147,8 @@ export function pageSetup() {
  * from {@link window} and {@link document}.
  */
 export function pageTeardown() {
-    console.warn('*** PAGE TEARDOWN ***');
-    runActions(window.APP_PAGE.Teardown, 'pageTeardown');
+    console.warn("*** PAGE TEARDOWN ***");
+    runActions(window.APP_PAGE.Teardown, "pageTeardown");
     removeEvents();
 }
 
@@ -190,16 +190,16 @@ export function appTeardown(name, teardown_action) {
  * @returns {undefined}
  */
 function storeAction(setup, name, action) {
-    const func = 'storeAction';
+    const func = "storeAction";
     if (!name) {
         return OUT.error(`${func}: no name`);
     }
-    const entry = setup ? 'Setup' : 'Teardown';
+    const entry = setup ? "Setup" : "Teardown";
     if (window.APP_PAGE[entry].has(name)) {
         OUT.warn(`${func}:`, name, `already in window.APP_PAGE.${entry}`);
     }
     let fn, klass;
-    if (typeof action === 'function') {
+    if (typeof action === "function") {
         fn    = action;
     } else if (action instanceof BaseClass) {
         klass = action;
@@ -211,7 +211,7 @@ function storeAction(setup, name, action) {
     } else if (klass) {
         OUT.error(`${func}:`, name, `missing ${entry.toLowerCase()} function`);
     } else {
-        OUT.error(`${func}:`, name, 'action not a function');
+        OUT.error(`${func}:`, name, "action not a function");
     }
 }
 
@@ -224,7 +224,7 @@ function storeAction(setup, name, action) {
  * @returns {undefined}
  */
 function runActions(store, caller) {
-    const func = caller || 'runActions';
+    const func = caller || "runActions";
     if (isEmpty(store)) {
         return OUT.debug(`${func}: empty store`);
     }
@@ -254,21 +254,21 @@ function runActions(store, caller) {
  * @param {EventListenerOptionsExt|boolean}         [options]
  */
 export function appEventListener(target, type, callback, options) {
-    const func = 'appEventListener';
-    const obj  = (typeof options === 'object') && { ...options };
+    const func = "appEventListener";
+    const obj  = (typeof options === "object") && { ...options };
     let listen = true;
-    if (hasKey(obj, 'listen')) {
+    if (hasKey(obj, "listen")) {
         listen = obj.listen;
         delete obj.listen;
     }
     const ev_options     = appEventOptions(obj || options);
     const [ev_key, node] = appEventTarget(target, func);
     if (appEventTestOrSet(ev_key, type, callback, ev_options, func)) {
-        _debugEvent(func, 'remove', type, ev_key, callback, node);
+        _debugEvent(func, "remove", type, ev_key, callback, node);
         node.removeEventListener(type, callback, ev_options);
     }
     if (listen) {
-        _debugEvent(func, 'listen', type, ev_key, callback, node);
+        _debugEvent(func, "listen", type, ev_key, callback, node);
         node.addEventListener(type, callback, ev_options);
     }
 }
@@ -294,7 +294,7 @@ export function appEventTestOrSet(target, type, callback, options, caller) {
     let callback_entry = type_entry?.get(callback);
     if (callback_entry?.has(ev_options)) { return true }
 
-    _debugEvent(caller, 'remember', type, ev_key, callback);
+    _debugEvent(caller, "remember", type, ev_key, callback);
     (callback_entry ||= new Map()).set(ev_options, ev_options);
     (type_entry     ||= new Map()).set(callback, callback_entry);
     (target_entry   ||= new Map()).set(type, type_entry);
@@ -323,7 +323,7 @@ export function appEventOptions(options) {
  * @returns {[(string|EventTarget|undefined),(EventTarget|undefined)]}
  */
 export function appEventTarget(k, caller) {
-    const func = caller || 'appEventTarget'; //OUT.debug(func);
+    const func = caller || "appEventTarget"; //OUT.debug(func);
     switch (true) {
         case (k instanceof EventTarget):            return [k, k];
         case (k === DOC_KEY) || (k === document):   return [DOC_KEY, document];
@@ -339,17 +339,17 @@ export function appEventTarget(k, caller) {
  * @returns {undefined}
  */
 function removeEvents() {
-    const func   = 'removeEvents';
+    const func   = "removeEvents";
     const ev_map = window.APP_PAGE.Event;
     if (isEmpty(ev_map)) { return OUT.debug(`${func}: no events`) }
     OUT.debug(`${func}: BEGIN`);
     for (const [ev_key, ev_target] of ev_map) {
         const [_, node] = appEventTarget(ev_key, func);
-        OUT.debug(`${func}: target =`, ev_key, 'node =', node);
+        OUT.debug(`${func}: target =`, ev_key, "node =", node);
         for (const [type, ev_type] of ev_target) {
             for (const [callback, ev_callback] of ev_type) {
                 for (const [_options, ev_options] of ev_callback) {
-                    _debugEvent(func, 'remove', type, ev_key, callback);
+                    _debugEvent(func, "remove", type, ev_key, callback);
                     node.removeEventListener(type, callback, ev_options);
                 }
             }
@@ -377,5 +377,5 @@ function _debugEvent(caller, action, type, target, callback, node) {
     const args  = { target: target, callback: callback, node: node };
     const parts = [];
     Object.entries(args).forEach(([k, v]) => v && parts.push(`; ${k} =`, v));
-    OUT.debug(`${caller}: ${action} event '${type}'`, ...parts);
+    OUT.debug(`${caller}: ${action} event "${type}"`, ...parts);
 }

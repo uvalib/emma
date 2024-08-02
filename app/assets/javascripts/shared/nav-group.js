@@ -2,14 +2,14 @@
 // noinspection FunctionNamingConventionJS
 
 
-import { AppDebug }                            from '../application/debug';
-import { Emma }                                from './assets';
-import { BaseClass }                           from './base-class';
-import { attributeSelector, HIDDEN, selector } from './css';
-import { handleCapture, handleEvent, phase }   from './events';
-import { ValidationError }                     from './exceptions';
-import { keyCombo, keyFormat, modifiersOnly }  from './keyboard';
-import { underscore }                          from './strings';
+import { AppDebug }                            from "../application/debug";
+import { Emma }                                from "./assets";
+import { BaseClass }                           from "./base-class";
+import { attributeSelector, HIDDEN, selector } from "./css";
+import { handleCapture, handleEvent, phase }   from "./events";
+import { ValidationError }                     from "./exceptions";
+import { keyCombo, keyFormat, modifiersOnly }  from "./keyboard";
+import { underscore }                          from "./strings";
 import {
     FOCUSABLE_ELEMENT,
     getCurrentFocusables,
@@ -20,7 +20,7 @@ import {
     prevInTabOrder,
     restoreFocusables,
     setFocusable,
-} from './accessibility';
+} from "./accessibility";
 import {
     isDefined,
     isEmpty,
@@ -28,7 +28,7 @@ import {
     isPresent,
     notDefined,
     presence,
-} from './definitions';
+} from "./definitions";
 import {
     CHECKBOX,
     RADIO,
@@ -39,20 +39,20 @@ import {
     selfOrDescendents,
     selfOrParent,
     single,
-} from './html';
+} from "./html";
 
 
-const MODULE = 'NavGroup';
+const MODULE = "NavGroup";
 const DEBUG  = true;
 
-AppDebug.file('shared/nav-group', MODULE, DEBUG);
+AppDebug.file("shared/nav-group", MODULE, DEBUG);
 
 // ============================================================================
 // Constants
 // ============================================================================
 
-export const NAV_GROUP_DATA  = 'navGroupInstance';
-export const NAV_FOCUS_DATA  = 'navGroupFocus';
+export const NAV_GROUP_DATA  = "navGroupInstance";
+export const NAV_FOCUS_DATA  = "navGroupFocus";
 
 export const CB_ENTRY        = 'li[role="option"]';
 
@@ -66,7 +66,7 @@ export const SINGLETON_GROUP = CONTROL_GROUP;
 export const NAV_GROUP       = `${LIST_GROUP}, ${CONTROL_GROUP}`;
 
 export const TEXT_INPUT      = '[type="text"], [role="textbox"], textarea';
-export const LIST_INPUT      = [CHECKBOX, RADIO, TEXT_INPUT].join(', ');
+export const LIST_INPUT      = [CHECKBOX, RADIO, TEXT_INPUT].join(", ");
 export const CONTROL_INPUT   = `${FOCUSABLE_ELEMENT}, [tabindex]`;
 export const MENU_INPUT      = 'select';
 export const SINGLETON_INPUT = CONTROL_INPUT;
@@ -84,7 +84,7 @@ export const NAV_INPUT       = CONTROL_INPUT;
  */
 export class NavGroup extends BaseClass {
 
-    static CLASS_NAME = 'NavGroup';
+    static CLASS_NAME = "NavGroup";
     static DEBUGGING  = DEBUG;
     static DEBUG_CTOR = false;
 
@@ -97,7 +97,7 @@ export class NavGroup extends BaseClass {
     static START_ACTIVE = false;
     static WRAP_MOVE    = false;
     static SET_TABINDEX = true;
-    static CURRENT_ATTR = 'aria-current';
+    static CURRENT_ATTR = "aria-current";
     static PRUNE_AT     = [HIDDEN];
     static MODAL_ROOT   = selector(Emma.Popup.panel.class);
 
@@ -254,7 +254,7 @@ export class NavGroup extends BaseClass {
         if (!this.isGroup(this.group)) {
             msg = [`not a valid ${this.typeDesc}`, this.group];
         } else if (isMissing(this.group)) {
-            msg = ['empty group', this.group];
+            msg = ["empty group", this.group];
         }
         return !this._validationError(msg, no_throw);
     }
@@ -286,11 +286,11 @@ export class NavGroup extends BaseClass {
 
     _groupEventHandlers(group) {
         const $e = group ? $(group) : this.group;
-        //this._debug('_groupEventHandlers:', $e);
-        this._handleEvent(  $e, 'focus',   this._groupFocus);
-        this._handleEvent(  $e, 'blur',    this._groupBlur);
-        this._handleCapture($e, 'click',   this._groupClickCapture);
-        this._handleCapture($e, 'keydown', this._groupKeydownCapture);
+        //this._debug("_groupEventHandlers:", $e);
+        this._handleEvent(  $e, "focus",   this._groupFocus);
+        this._handleEvent(  $e, "blur",    this._groupBlur);
+        this._handleCapture($e, "click",   this._groupClickCapture);
+        this._handleCapture($e, "keydown", this._groupKeydownCapture);
     }
 
     /**
@@ -299,7 +299,7 @@ export class NavGroup extends BaseClass {
      * @param {FocusEvt} event
      */
     _groupFocus(event) {
-        const func   = '_groupFocus';
+        const func   = "_groupFocus";
         const enter  = event.currentTarget;
         const leave  = event.relatedTarget;
         const $other = leave && this.constructor.group(leave);
@@ -317,12 +317,12 @@ export class NavGroup extends BaseClass {
             /** @type {*[]} */
             const msg = [`${func}: old focus:`];
             switch (true) {
-                case !leave:        msg.push('outside of');         break;
-                case leaving_other: msg.push($other, 'outside of'); break;
-                case leaving_ctrl:  msg.push(leave,  'was inside');  break;
-                default:            msg.push(leave,  'was outside'); break;
+                case !leave:        msg.push("outside of");          break;
+                case leaving_other: msg.push($other, "outside of");  break;
+                case leaving_ctrl:  msg.push(leave,  "was inside");  break;
+                default:            msg.push(leave,  "was outside"); break;
             }
-            this._debug(...msg, 'group =', this.group, 'event =', event);
+            this._debug(...msg, "group =", this.group, "event =", event);
         }
 
         if (!this.active) {
@@ -336,7 +336,7 @@ export class NavGroup extends BaseClass {
      * @param {FocusEvt} event
      */
     _groupBlur(event) {
-        const func   = '_groupBlur';
+        const func   = "_groupBlur";
         const enter  = event.relatedTarget;
         const $other = enter && this.constructor.group(enter);
 
@@ -353,12 +353,12 @@ export class NavGroup extends BaseClass {
             /** @type {*[]} */
             const msg = [`${func}: new focus:`];
             switch (true) {
-                case !enter:        msg.push('outside of');         break;
-                case leaving_group: msg.push($other, 'outside of'); break;
-                case entering_ctrl: msg.push(enter,  'inside');     break;
-                default:            msg.push(enter,  'outside of'); break;
+                case !enter:        msg.push("outside of");         break;
+                case leaving_group: msg.push($other, "outside of"); break;
+                case entering_ctrl: msg.push(enter,  "inside");     break;
+                default:            msg.push(enter,  "outside of"); break;
             }
-            this._debug(...msg, 'group =', this.group, 'event =', event);
+            this._debug(...msg, "group =", this.group, "event =", event);
         }
 
         if (leaving_group && this.active) {
@@ -374,7 +374,7 @@ export class NavGroup extends BaseClass {
      * @returns {EventHandlerReturn}
      */
     _groupClickCapture(event) {
-        const func  = '_groupClickCapture';
+        const func  = "_groupClickCapture";
         const debug = this.debugging;
         const {
             $tgt,
@@ -390,22 +390,22 @@ export class NavGroup extends BaseClass {
         if (debug) {
             const msg = [];
             switch (true) {
-                case in_modal:  msg.push('to modal',        $tgt);      break;
-                case to_entry:  msg.push('to $entry',       $entry);    break;
-                case to_ctrl:   msg.push('to $control',     $control);  break;
-                case !!$focus:  msg.push('redirect to',     $focus);    break;
-                case !!$target: msg.push('unexpected',      $target);   break;
-                default:        msg.push('non-focusable',   $tgt);      break;
+                case in_modal:  msg.push("to modal",        $tgt);      break;
+                case to_entry:  msg.push("to $entry",       $entry);    break;
+                case to_ctrl:   msg.push("to $control",     $control);  break;
+                case !!$focus:  msg.push("redirect to",     $focus);    break;
+                case !!$target: msg.push("unexpected",      $target);   break;
+                default:        msg.push("non-focusable",   $tgt);      break;
             }
-            this._debug(`${func}:`, ...msg, 'event =', event);
+            this._debug(`${func}:`, ...msg, "event =", event);
         }
 
         let handled, $ctrl;
         if ($focus) {
-            $focus.trigger('click');
+            $focus.trigger("click");
             handled = true;
         } else if (to_entry && ($ctrl = this._getControls($entry))) {
-            $ctrl.trigger('click');
+            $ctrl.trigger("click");
             handled = true;
         }
 
@@ -425,7 +425,7 @@ export class NavGroup extends BaseClass {
      * @returns {EventHandlerReturn}
      */
     _groupKeydownCapture(event) {
-        const func  = '_groupKeydownCapture';
+        const func  = "_groupKeydownCapture";
         const debug = this.debugging;
         const key   = keyCombo(event);
         if (!key) { return this._warn(`${func}: not a KeyboardEvent`, event) }
@@ -454,43 +454,43 @@ export class NavGroup extends BaseClass {
             // If not in a grid cell, allow the default tab behavior to move
             // outside the group to a neighboring focusable element.
             switch (key) {
-                case 'Enter':     break; // Propagate to the control.
-                case 'Escape':    break; // Propagate to the control.
-                case 'Tab':       handled = tab_fwd = true; break;
-                case 'Shift+Tab': handled = tab_rev = true; break;
+                case "Enter":     break; // Propagate to the control.
+                case "Escape":    break; // Propagate to the control.
+                case "Tab":       handled = tab_fwd = true; break;
+                case "Shift+Tab": handled = tab_rev = true; break;
                 default:          handled = move    = this.handle(key, $ctrl);
             }
         } else if (active && category.text) {
             // Event for a text control within the nav group.
-            handled = leave = (key === 'Escape');
+            handled = leave = (key === "Escape");
         } else if (active) {
             // Event for a control within the nav group.
             switch (key) {
-                case 'Enter':  break; // Propagate to the control.
-                case 'Escape': handled = leave = true; break;
+                case "Enter":  break; // Propagate to the control.
+                case "Escape": handled = leave = true; break;
                 default:       handled = move  = this.handle(key, $ctrl);
             }
-        } else if (key !== 'Escape') {
-            enter   = (key === 'F2') || (key === 'Enter');
+        } else if (key !== "Escape") {
+            enter   = (key === "F2") || (key === "Enter");
             handled = this.handle(key, $ctrl);
         }
 
         if (debug) {
             const msg = keyFormat(`${func}: key`, key);
             switch (true) {
-                case !!tab_fwd: msg.push('LEAVE TO NEXT FOCUSABLE');     break;
-                case !!tab_rev: msg.push('LEAVE TO PREV FOCUSABLE');     break;
-                case !!enter:   msg.push('ENTER');                       break;
-                case !!leave:   msg.push('LEAVE');                       break;
-                case !!move:    msg.push('MOVED WITHIN');                break;
-                case !!handled: msg.push('WITHIN');                      break;
-                case to_entry:  msg.push('to $entry',    $entry,  'in'); break;
-                case to_ctrl:   msg.push('to $control',  $control,'in'); break;
-                case !!$target: msg.push('unexpected',   $target, 'in'); break;
-                default:        msg.push('non-focusable',$tgt,    'in'); break;
+                case !!tab_fwd: msg.push("LEAVE TO NEXT FOCUSABLE");     break;
+                case !!tab_rev: msg.push("LEAVE TO PREV FOCUSABLE");     break;
+                case !!enter:   msg.push("ENTER");                       break;
+                case !!leave:   msg.push("LEAVE");                       break;
+                case !!move:    msg.push("MOVED WITHIN");                break;
+                case !!handled: msg.push("WITHIN");                      break;
+                case to_entry:  msg.push("to $entry",    $entry,  "in"); break;
+                case to_ctrl:   msg.push("to $control",  $control,"in"); break;
+                case !!$target: msg.push("unexpected",   $target, "in"); break;
+                default:        msg.push("non-focusable",$tgt,    "in"); break;
             }
-            msg.push(active ? 'active' : 'inactive');
-            this._debug(...msg, '$group =', $group, 'event =', event);
+            msg.push(active ? "active" : "inactive");
+            this._debug(...msg, "$group =", $group, "event =", event);
         }
 
         if (leave && this.active) {
@@ -513,11 +513,11 @@ export class NavGroup extends BaseClass {
 
     _controlEventHandlers(controls) {
         const $e = controls ? $(controls) : this.controls;
-        //this._debug('_controlEventHandlers:', $e);
-        this._handleEvent(  $e, 'focus',   this._controlFocus);
-        this._handleEvent(  $e, 'blur',    this._controlBlur);
-        this._handleEvent(  $e, 'click',   this._controlClick);
-        this._handleCapture($e, 'keydown', this._controlKeydownCapture);
+        //this._debug("_controlEventHandlers:", $e);
+        this._handleEvent(  $e, "focus",   this._controlFocus);
+        this._handleEvent(  $e, "blur",    this._controlBlur);
+        this._handleEvent(  $e, "click",   this._controlClick);
+        this._handleCapture($e, "keydown", this._controlKeydownCapture);
     }
 
     /**
@@ -526,7 +526,7 @@ export class NavGroup extends BaseClass {
      * @param {FocusEvt} event
      */
     _controlFocus(event) {
-        const func     = '_controlFocus';
+        const func     = "_controlFocus";
         const enter    = event.currentTarget;
         const leave    = event.relatedTarget;
         const $group   = this.group;
@@ -541,9 +541,9 @@ export class NavGroup extends BaseClass {
         if (this._debugging) {
             const msg = [];
             if (entering_group) {
-                msg.push('ENTERING NAV GROUP FROM', leave);
+                msg.push("ENTERING NAV GROUP FROM", leave);
             }
-            this._debug(`${func}:`, ...msg, 'event =', event);
+            this._debug(`${func}:`, ...msg, "event =", event);
         }
 
         if (entering_group && !this.active) {
@@ -558,7 +558,7 @@ export class NavGroup extends BaseClass {
      * @param {FocusEvt} event
      */
     _controlBlur(event) {
-        const func     = '_controlBlur';
+        const func     = "_controlBlur";
         const enter    = event.relatedTarget;
         const $group   = this.group;
         const to_group = enter && sameElements($group, enter);
@@ -572,9 +572,9 @@ export class NavGroup extends BaseClass {
         if (this._debugging) {
             const msg = [];
             if (leaving_group) {
-                msg.push('LEAVING NAV GROUP TO', enter);
+                msg.push("LEAVING NAV GROUP TO", enter);
             }
-            this._debug(`${func}:`, ...msg, 'event =', event);
+            this._debug(`${func}:`, ...msg, "event =", event);
         }
 
         if (leaving_group && this.active) {
@@ -591,15 +591,15 @@ export class NavGroup extends BaseClass {
      * @returns {EventHandlerReturn}
      */
     _controlClick(event) {
-        const func     = '_controlClick'; this._debug(`${func}:`, event);
+        const func     = "_controlClick"; this._debug(`${func}:`, event);
         const $control = $(event.currentTarget || event.target);
         const category = this._controlCategory($control);
-        const type     = Object.keys(category).join(',') || 'EMPTY';
+        const type     = Object.keys(category).join(",") || "EMPTY";
 
         if (!this._updateItem($control)) {
             return this._warn(`${func}: empty control: event =`, event);
         }
-        this._debug(`${func}: ${type}:`, $control, 'event =', event);
+        this._debug(`${func}: ${type}:`, $control, "event =", event);
 
         let sp; // Stop propagation.
         let pd; // Prevent default.
@@ -624,7 +624,7 @@ export class NavGroup extends BaseClass {
      * @returns {EventHandlerReturn}
      */
     _controlKeydownCapture(event) {
-        const func  = '_controlKeydownCapture';
+        const func  = "_controlKeydownCapture";
         const debug = this.debugging;
         const key   = keyCombo(event);
         if (!key) { return this._warn(`${func}: not a KeyboardEvent`, event) }
@@ -637,23 +637,23 @@ export class NavGroup extends BaseClass {
 
         if (debug) { // TODO: remove; testing
             const msg = keyFormat(`${func}: key`, key);
-            this._debug(`*** ${''.padEnd(72,'v')} ***`);
-            this._debug(...msg, 'eventPhase       =', phase(event));
-            this._debug(...msg, 'cancelable       =', event.cancelable);
-            this._debug(...msg, 'defaultPrevented =', event.defaultPrevented);
-            this._debug(...msg, 'this     =', this);
-            this._debug(...msg, '$tgt     =', $tgt);
-            this._debug(...msg, '$control =', $control);
-            this._debug(...msg, 'category =', category);
+            this._debug(`*** ${"".padEnd(72,"v")} ***`);
+            this._debug(...msg, "eventPhase       =", phase(event));
+            this._debug(...msg, "cancelable       =", event.cancelable);
+            this._debug(...msg, "defaultPrevented =", event.defaultPrevented);
+            this._debug(...msg, "this     =", this);
+            this._debug(...msg, "$tgt     =", $tgt);
+            this._debug(...msg, "$control =", $control);
+            this._debug(...msg, "category =", category);
         }
 
         if (debug) {
             const msg = keyFormat(`${func}: key`, key);
             switch (true) {
-                case to_ctrl: msg.push('to $control =', $control);  break;
-                default:      msg.push('to unexpected', $tgt);      break;
+                case to_ctrl: msg.push("to $control =", $control);  break;
+                default:      msg.push("to unexpected", $tgt);      break;
             }
-            this._debug(`${func}:`, ...msg, 'event =', event);
+            this._debug(`${func}:`, ...msg, "event =", event);
         }
 
         let tab_fwd; // Leave standalone nav group.
@@ -663,21 +663,21 @@ export class NavGroup extends BaseClass {
         let stop;    // Stop propagation.
         let prevent; // Prevent default.
         switch (key) {
-            case 'Tab':
+            case "Tab":
                 tab_fwd = this.standalone;
                 break;
-            case 'Shift+Tab':
+            case "Shift+Tab":
                 tab_rev = this.standalone;
                 break;
-            case ' ':
+            case " ":
                 stop    = category.check || category.radio;
                 toggle  = category.details;
                 break;
-            case 'Enter':
+            case "Enter":
                 press   = category.button || category.select;
                 toggle  = category.details;
                 break;
-            case 'Escape':
+            case "Escape":
                 break;
             default:
                 stop    = !category.text;
@@ -825,23 +825,23 @@ export class NavGroup extends BaseClass {
             if (v && this.constructor._FLAGS.has(k)) { flags.push(k) }
         }
         if (flags.length < 1) {
-            err.push(['no condition flag was set']);
+            err.push(["no condition flag was set"]);
         } else if (flags.length > 1) {
-            err.push(['only one should be true:', flags]);
+            err.push(["only one should be true:", flags]);
         }
 
         // Verify that `in_modal` is appropriate.
         const { $tgt, in_modal } = result;
         const inside = containedBy($tgt, this.MODAL_ROOT);
         if (in_modal && !inside) {
-            err.push(['not in modal as expected:', $tgt]);
+            err.push(["not in modal as expected:", $tgt]);
         } else if (inside && !in_modal) {
-            err.push(['unexpectedly in modal:', $tgt]);
+            err.push(["unexpectedly in modal:", $tgt]);
         }
 
         // Report error(s) to the console.
         if (isPresent(err)) {
-            const func = caller || '_validateGroupEventAnalysis';
+            const func = caller || "_validateGroupEventAnalysis";
             err.forEach(line => this._error(`${func}:`, ...line));
             return false;
         }
@@ -857,7 +857,7 @@ export class NavGroup extends BaseClass {
      * @param {string}                  [caller]
      */
     _logGroupEventAnalysis(result, event, key, caller) {
-        const func = caller || '_logGroupEventAnalysis';
+        const func = caller || "_logGroupEventAnalysis";
         const msg  = key ? keyFormat(`${func}: key`, key) : [`${func}:`];
         const prop = {
             eventPhase:       phase(event),
@@ -870,7 +870,7 @@ export class NavGroup extends BaseClass {
                 this._debug(...msg, `${k.padEnd(width)} =`, v);
             }
         }
-        this._debug(`*** ${''.padEnd(72,'v')} ***`);
+        this._debug(`*** ${"".padEnd(72,"v")} ***`);
         log_values(prop);
         log_values(result);
     }
@@ -883,10 +883,10 @@ export class NavGroup extends BaseClass {
      * @param {string}     [caller]
      */
     _logGroupEventEnd(event, key, caller) {
-        const func = caller || '_logGroupEventEnd';
+        const func = caller || "_logGroupEventEnd";
         const msg  = key ? keyFormat(`${func}: key`, key) : [`${func}:`];
-        this._debug(...msg, 'defaultPrevented ->', event.defaultPrevented);
-        this._debug(`*** ${''.padEnd(72,'^')} ***`);
+        this._debug(...msg, "defaultPrevented ->", event.defaultPrevented);
+        this._debug(`*** ${"".padEnd(72,"^")} ***`);
     }
 
     /**
@@ -929,7 +929,7 @@ export class NavGroup extends BaseClass {
     }
 
     _setContainer(element) {
-        const func     = '_setContainer';
+        const func     = "_setContainer";
         const $current = this._container;
         const $element = element ? $(element) : this.group;
         if (isEmpty($element)) {
@@ -951,10 +951,10 @@ export class NavGroup extends BaseClass {
 
     _setInstance(value) {
         if (this._debugging) {
-            const func = '_setInstance';
+            const func = "_setInstance";
             const curr = this._getInstance();
             if (curr && (curr !== value)) {
-                this._error(`set data(${NAV_GROUP_DATA})`, curr, '!==', value);
+                this._error(`set data(${NAV_GROUP_DATA})`, curr, "!==", value);
             } else {
                 this._debug(`${func}:`, value);
             }
@@ -964,7 +964,7 @@ export class NavGroup extends BaseClass {
 
     _clearInstance() {
         if (this._container) {
-            this._debug('_clearInstance');
+            this._debug("_clearInstance");
             this._container.removeData(NAV_GROUP_DATA);
         }
     }
@@ -1026,7 +1026,7 @@ export class NavGroup extends BaseClass {
     }
 
     clickedInside() {
-        this._debug('clickedInside');
+        this._debug("clickedInside");
         return this.activate(null);
     }
 
@@ -1040,7 +1040,7 @@ export class NavGroup extends BaseClass {
      * @param {boolean} [announce]    Silent if **false**.
      */
     _enterNavigation(announce) {
-        const func = '_enterNavigation';
+        const func = "_enterNavigation";
         const log  = (announce !== false);
         if (log)               { this._debug(func) }
         if (this.SET_TABINDEX) { this._restoreControls() }
@@ -1054,7 +1054,7 @@ export class NavGroup extends BaseClass {
      * @param {boolean} [announce]    Silent if **false**.
      */
     _leaveNavigation(announce) {
-        const func = '_leaveNavigation';
+        const func = "_leaveNavigation";
         const log  = (announce !== false);
         if (log)               { this._debug(func) }
         if (this.SET_TABINDEX) { this._neutralizeControls() }
@@ -1071,11 +1071,11 @@ export class NavGroup extends BaseClass {
     }
 
     _nextNeighbor() {
-        return nextInTabOrder(this.group)?.trigger('focus');
+        return nextInTabOrder(this.group)?.trigger("focus");
     }
 
     _prevNeighbor() {
-        return prevInTabOrder(this.group)?.trigger('focus');
+        return prevInTabOrder(this.group)?.trigger("focus");
     }
 
     // ========================================================================
@@ -1105,7 +1105,7 @@ export class NavGroup extends BaseClass {
      */
     control(item, caller) {
         const log    = (caller !== false);
-        const func   = 'control'; //log && this._debug(`${func}:`, item);
+        const func   = "control"; //log && this._debug(`${func}:`, item);
         const $ctrls = this.controls;
         const $ctrl  = presence($ctrls.filter(item)) || $ctrls.has(item);
         return this._single($ctrl, (log && (caller || func)));
@@ -1119,7 +1119,7 @@ export class NavGroup extends BaseClass {
      * @returns {jQuery|undefined}
      */
     testControl(item) {
-        //this._debug('testControl: item =', item);
+        //this._debug("testControl: item =", item);
         return item ? presence(this.control(item, false)) : undefined;
     }
 
@@ -1132,7 +1132,7 @@ export class NavGroup extends BaseClass {
      * @returns {jQuery|undefined}
      */
     activeControl(item, caller) {
-        const func = caller || 'activeControl';
+        const func = caller || "activeControl";
         const log  = (caller !== false) || undefined;
         let $ctrl;
         if (!item) {
@@ -1212,34 +1212,34 @@ export class NavGroup extends BaseClass {
             case $c.is('details'):  return { details: true };
             case $c.is('textarea'): return { text:    true };
         }
-        switch ($c.prop('type')) {
-            case 'button':          return { button:  true };
-            case 'reset':           return { button:  true };
-            case 'submit':          return { button:  true };
-            case 'checkbox':        return { check:   true };
-            case 'radio':           return { radio:   true };
-            case 'select':          return { select:  true };
-            case 'select-one':      return { select:  true };
-            case 'select-multiple': return { select:  true };
-            case 'text':            return { text:    true };
+        switch ($c.prop("type")) {
+            case "button":          return { button:  true };
+            case "reset":           return { button:  true };
+            case "submit":          return { button:  true };
+            case "checkbox":        return { check:   true };
+            case "radio":           return { radio:   true };
+            case "select":          return { select:  true };
+            case "select-one":      return { select:  true };
+            case "select-multiple": return { select:  true };
+            case "text":            return { text:    true };
             default:                return { input:   true };
         }
     }
 
     _getFocusControl() {
-        //this._debug('_getFocusControl');
+        //this._debug("_getFocusControl");
         return this.container.data(NAV_FOCUS_DATA) || undefined;
     }
 
     _setFocusControl(control) {
         const $control = this.testControl(control);
-        this._debug('_setFocusControl:', $control);
+        this._debug("_setFocusControl:", $control);
         this.container.data(NAV_FOCUS_DATA, $control);
     }
 
     _clearFocusControl() {
-        this._debug('_clearFocusControl');
-        this._container?.data(NAV_FOCUS_DATA, '');
+        this._debug("_clearFocusControl");
+        this._container?.data(NAV_FOCUS_DATA, "");
     }
 
     // ========================================================================
@@ -1258,7 +1258,7 @@ export class NavGroup extends BaseClass {
      */
     entry(item, caller) {
         const log    = (caller !== false);
-        const func   = 'entry'; log && this._debug(`${func}: item =`, item);
+        const func   = "entry"; log && this._debug(`${func}: item =`, item);
         const $items = this.entries;
         const $item  = presence($items.filter(item)) || $items.has(item);
         return this._single($item, (log && (caller || func)));
@@ -1272,7 +1272,7 @@ export class NavGroup extends BaseClass {
      * @returns {jQuery|undefined}
      */
     testEntry(item) {
-        //this._debug('testEntry: item =', item);
+        //this._debug("testEntry: item =", item);
         return item ? presence(this.entry(item, false)) : undefined;
     }
 
@@ -1286,7 +1286,7 @@ export class NavGroup extends BaseClass {
      * @returns {jQuery|undefined}
      */
     activeEntry(item, caller) {
-        const func     = caller || 'activeEntry';
+        const func     = caller || "activeEntry";
         const $control = this.activeControl(item, func);
         return $control && this.entry($control);
     }
@@ -1352,19 +1352,19 @@ export class NavGroup extends BaseClass {
      * @returns {boolean|undefined}
      */
     handle(key, $target) {
-        if (!key)               { return this._warn('handle: empty key') }
+        if (!key)               { return this._warn("handle: empty key") }
         if (modifiersOnly(key)) { return }
         switch (key) {
-            case 'Enter':       return this.activate($target, key);
-            case 'Escape':      return this.deactivate($target, key);
-            case 'Home':        return this.moveToFirst($target, key);
-            case 'End':         return this.moveToLast($target, key);
-            case 'Tab':         return this.moveForward($target, key);
-            case 'ArrowDown':   return this.moveForward($target, key);
-            case 'ArrowRight':  return this.moveForward($target, key);
-            case 'Shift+Tab':   return this.moveBackward($target, key);
-            case 'ArrowUp':     return this.moveBackward($target, key);
-            case 'ArrowLeft':   return this.moveBackward($target, key);
+            case "Enter":       return this.activate($target, key);
+            case "Escape":      return this.deactivate($target, key);
+            case "Home":        return this.moveToFirst($target, key);
+            case "End":         return this.moveToLast($target, key);
+            case "Tab":         return this.moveForward($target, key);
+            case "ArrowDown":   return this.moveForward($target, key);
+            case "ArrowRight":  return this.moveForward($target, key);
+            case "Shift+Tab":   return this.moveBackward($target, key);
+            case "ArrowUp":     return this.moveBackward($target, key);
+            case "ArrowLeft":   return this.moveBackward($target, key);
             default:            return this.handleDefault($target, key);
         }
     }
@@ -1379,7 +1379,7 @@ export class NavGroup extends BaseClass {
      * @returns {boolean}               If **true** event is considered handled
      */
     activate($target, key, ...args) {
-        const func = 'activate';
+        const func = "activate";
         if (notDefined($target)) {
             return this._activateGroup(func, key);
         } else {
@@ -1396,11 +1396,11 @@ export class NavGroup extends BaseClass {
      * @returns {boolean}             If **true** event is considered handled.
      */
     _activateGroup(cb_type, key) {
-        const func       = '_activateGroup';
+        const func       = "_activateGroup";
         const activating = !this.active;
 
         if (this._debugging) {
-            const msg = key ? keyFormat('key', key, '=> ACTIVATE') : [];
+            const msg = key ? keyFormat("key", key, "=> ACTIVATE") : [];
             //this._debug(`${func}:`, ...msg, this.group);
             this._warn(`${func}:`, ...msg, this.group);
         }
@@ -1428,7 +1428,7 @@ export class NavGroup extends BaseClass {
      * @returns {boolean}             If **true** event is considered handled.
      */
     _activateControl(cb_type, $target, key, ...args) {
-        const func       = '_activateControl';
+        const func       = "_activateControl";
         const activating = !this.active;
 
         if (activating) {
@@ -1439,22 +1439,22 @@ export class NavGroup extends BaseClass {
         let tgt, $new_focus, $old_focus = this.focusControl;
         const $control = this.testControl($target);
         if ($control && $old_focus && sameElements($control, $old_focus)) {
-            tgt = 'current focus $target';
+            tgt = "current focus $target";
         } else if (($new_focus = $control)) {
-            tgt = 'new focus $target';
+            tgt = "new focus $target";
         } else if ($old_focus) {
-            tgt = 'focusControl';
+            tgt = "focusControl";
         } else if (($new_focus = this.activeControls.first())) {
-            tgt = 'first control';
+            tgt = "first control";
         }
         const $focus  = $new_focus || $old_focus;
         const focus   = isPresent($focus);
         const refocus = isPresent($new_focus);
 
         if (this._debugging) {
-            const msg = key ? keyFormat('key', key, '=> ACTIVATE') : [];
+            const msg = key ? keyFormat("key", key, "=> ACTIVATE") : [];
             if (focus) {
-                msg.push(`from ${tgt} =`, $focus, 'in');
+                msg.push(`from ${tgt} =`, $focus, "in");
             } else {
                 msg.push(`from EMPTY ${tgt} in`);
             }
@@ -1489,19 +1489,19 @@ export class NavGroup extends BaseClass {
      * @returns {boolean}             If **true** event is considered handled.
      */
     deactivate($target, key, ..._args) {
-        const func         = 'deactivate';
+        const func         = "deactivate";
         const deactivating = this.active;
         const for_group    = deactivating && !$target;
         const for_control  = deactivating && !!$target;
 
         if (this._debugging) {
-            const msg = key ? keyFormat('key', key) : [];
+            const msg = key ? keyFormat("key", key) : [];
             switch (true) {
-                case for_group:   msg.push('EXIT from');          break;
-                case for_control: msg.push('for', $target, 'in'); break;
-                default:          msg.push('ignored - inactive'); break;
+                case for_group:   msg.push("EXIT from");          break;
+                case for_control: msg.push("for", $target, "in"); break;
+                default:          msg.push("ignored - inactive"); break;
             }
-            this._debug(`${func}:`, ...msg, 'group = ', this.group);
+            this._debug(`${func}:`, ...msg, "group = ", this.group);
         }
 
         if (for_group || for_control) {
@@ -1523,11 +1523,11 @@ export class NavGroup extends BaseClass {
      * @returns {boolean}             If **true** event is considered handled.
      */
     moveToFirst($target, key, ...args) {
-        const func = 'moveToFirst';
-        this._logAction(func, key, $target, 'FIRST_CONTROL');
+        const func = "moveToFirst";
+        this._logAction(func, key, $target, "FIRST_CONTROL");
         const $new = this.activeControls.first();
         this._moveTo($new, ...args);
-        const handled = this._runCallbacks($new, func, 'move');
+        const handled = this._runCallbacks($new, func, "move");
         return (handled !== false);
     }
 
@@ -1541,11 +1541,11 @@ export class NavGroup extends BaseClass {
      * @returns {boolean}             If **true** event is considered handled.
      */
     moveToLast($target, key, ...args) {
-        const func = 'moveToLast';
-        this._logAction(func, key, $target, 'LAST_CONTROL');
+        const func = "moveToLast";
+        this._logAction(func, key, $target, "LAST_CONTROL");
         const $new = this.activeControls.last();
         this._moveTo($new, ...args);
-        const handled = this._runCallbacks($new, func, 'move');
+        const handled = this._runCallbacks($new, func, "move");
         return (handled !== false);
     }
 
@@ -1559,11 +1559,11 @@ export class NavGroup extends BaseClass {
      * @returns {boolean}             If **true** event is considered handled.
      */
     moveBackward($target, key, ...args) {
-        const func = 'moveBackward';
-        this._logAction(func, key, $target, 'PREV_CONTROL');
+        const func = "moveBackward";
+        this._logAction(func, key, $target, "PREV_CONTROL");
         const $new = this.prevControl($target);
         this._moveTo($new, ...args);
-        const handled = this._runCallbacks($new, func, 'move');
+        const handled = this._runCallbacks($new, func, "move");
         return (handled !== false);
     }
 
@@ -1577,11 +1577,11 @@ export class NavGroup extends BaseClass {
      * @returns {boolean}             If **true** event is considered handled.
      */
     moveForward($target, key, ...args) {
-        const func = 'moveForward';
-        this._logAction(func, key, $target, 'NEXT_CONTROL');
+        const func = "moveForward";
+        this._logAction(func, key, $target, "NEXT_CONTROL");
         const $new = this.nextControl($target);
         this._moveTo($new, ...args);
-        const handled = this._runCallbacks($new, func, 'move');
+        const handled = this._runCallbacks($new, func, "move");
         return (handled !== false);
     }
 
@@ -1595,19 +1595,19 @@ export class NavGroup extends BaseClass {
      * @returns {false}               Event should not be considered handled.
      */
     handleDefault($target, key, ..._args) {
-        const func = 'handleDefault';
+        const func = "handleDefault";
         if (key && this._debugging) {
             const msg = keyFormat(`${func}:`, key);
             let $focus;
             if (this.isControl($target)) {
-                msg.push('for $target =', $target);
+                msg.push("for $target =", $target);
             } else if (($focus = this.focusControl)) {
-                msg.push('for focusControl =', $focus);
+                msg.push("for focusControl =", $focus);
             } else {
-                msg.push('not handled for', $target);
+                msg.push("not handled for", $target);
             }
-            //this._debug(...msg, 'in', this.group);
-            this._warn(...msg, 'in', this.group);
+            //this._debug(...msg, "in", this.group);
+            this._warn(...msg, "in", this.group);
         }
         if (!this.active) {
             this._warn(`${func}: not active:`, this.group);
@@ -1627,12 +1627,12 @@ export class NavGroup extends BaseClass {
      * @param {...*}    args          Passed to {@link _updateControl}.
      */
     _moveTo($item, focus, ...args) {
-        const func = '_moveTo';
-        this._debug(`${func}: focus=${focus} args=`, args, '$item =', $item);
+        const func = "_moveTo";
+        this._debug(`${func}: focus=${focus} args=`, args, "$item =", $item);
         if (!this._updateItem($item, ...args)) {
             this._warn(`${func}: empty $item =`, $item);
         } else if (focus !== false) {
-            this.activeControl($item)?.trigger('focus');
+            this.activeControl($item)?.trigger("focus");
         }
     }
 
@@ -1645,7 +1645,7 @@ export class NavGroup extends BaseClass {
      * @returns {boolean}             **false** if *$item* is empty.
      */
     _updateItem($item, ...args) {
-        this._debug('_updateItem: args =', args, '$item =', $item);
+        this._debug("_updateItem: args =", args, "$item =", $item);
         if (isMissing($item)) { return false }
         this._updateEntry($item, true);
         this._updateControl($item, ...args);
@@ -1659,7 +1659,7 @@ export class NavGroup extends BaseClass {
      * @param {...*}   args           Ignored.
      */
     _updateControl($item, ...args) {
-        this._debug('_updateControl:', $item, 'args =', args);
+        this._debug("_updateControl:", $item, "args =", args);
         // No base class functionality.
     }
 
@@ -1670,8 +1670,8 @@ export class NavGroup extends BaseClass {
      * @param {boolean} [select]
      */
     _updateEntry($item, select) {
-        const func = '_updateEntry';
-        this._debug(`${func}:`, $item, 'select =', select);
+        const func = "_updateEntry";
+        this._debug(`${func}:`, $item, "select =", select);
         const selected = !!(isDefined(select) ? select : this.focusEntry);
         if (selected) { this.entries.attr(this.CURRENT_ATTR, false) }
         const $entry = this.activeEntry($item);
@@ -1697,7 +1697,7 @@ export class NavGroup extends BaseClass {
         [type, ...more].forEach(t => cbs.push(...(this._callbacks[t] || [])));
         if (isMissing(cbs)) { return true }
 
-        const func = '_runCallbacks'; this._debug(`${func}:`, cbs);
+        const func = "_runCallbacks"; this._debug(`${func}:`, cbs);
         const opt  = { container: this.container, group: this.group };
         if ($control) { opt.control = $control }
 
@@ -1711,18 +1711,18 @@ export class NavGroup extends BaseClass {
         const grp = this.group;
         if (!this.active)     { this._warn(`${func}: not active:`, grp) }
         if (!this._debugging) { return }
-        const msg = key ? keyFormat('key', key, `=> ${action}`) : [];
+        const msg = key ? keyFormat("key", key, `=> ${action}`) : [];
         if ($target) {
             let tgt;
             switch (true) {
-                case !!this.testEntry($target):   tgt = 'entry';   break;
-                case !!this.testControl($target): tgt = 'control'; break;
-                default:                          tgt = '$target'; break;
+                case !!this.testEntry($target):   tgt = "entry";   break;
+                case !!this.testControl($target): tgt = "control"; break;
+                default:                          tgt = "$target"; break;
             }
             msg.push(`from ${tgt} =`, $target);
         }
-        //this._debug(`${func}:`, ...msg, 'in', grp);
-        this._warn(`${func}:`, ...msg, 'in', grp);
+        //this._debug(`${func}:`, ...msg, "in", grp);
+        this._warn(`${func}:`, ...msg, "in", grp);
     }
 
     // ========================================================================
@@ -1736,7 +1736,7 @@ export class NavGroup extends BaseClass {
      */
     static get typeDesc() {
         return this._type_desc ||=
-            underscore(this.CLASS_NAME).replaceAll('_', ' ');
+            underscore(this.CLASS_NAME).replaceAll("_", " ");
     }
 
     // ========================================================================
@@ -1770,7 +1770,7 @@ export class NavGroup extends BaseClass {
      * @returns {jQuery}
      */
     static group(item) {
-        const func  = 'group';
+        const func  = "group";
         const match = this.GROUP;
         //this._debug(`${func}: match = "${match}"; item =`, item);
         return this._selfOrParent(item, match, func);
@@ -1806,7 +1806,7 @@ export class NavGroup extends BaseClass {
      * @returns {NavGroup|undefined}
      */
     static instanceFor(container) {
-        //this._debug('instanceFor: container =', container);
+        //this._debug("instanceFor: container =", container);
         return $(container).data(NAV_GROUP_DATA);
     }
 
@@ -1821,7 +1821,7 @@ export class NavGroup extends BaseClass {
      * @returns {NavGroup|undefined} Subclass instance if called on subclass.
      */
     static setupFor(root, quiet) {
-        const func      = 'setupFor'; //this._debug(`${func}: root =`, root);
+        const func      = "setupFor"; //this._debug(`${func}: root =`, root);
         const $root     = $(root);
         let instance    = this.instanceFor($root);
         const container = (instance instanceof this) && instance.container;
@@ -1861,8 +1861,8 @@ export class NavGroup extends BaseClass {
     // Class methods - internal
     // ========================================================================
 
-    static CELL_ROLE = ['gridcell', 'rowheader', 'columnheader'];
-    static GRID_CELL = attributeSelector(this.CELL_ROLE.map(r => ['role', r]));
+    static CELL_ROLE = ["gridcell", "rowheader", "columnheader"];
+    static GRID_CELL = attributeSelector(this.CELL_ROLE.map(r => ["role", r]));
 
     static _isGridCell(item) {
         return $(item).is(this.GRID_CELL);
@@ -1951,7 +1951,7 @@ export class NavGroup extends BaseClass {
      * @returns {jQuery}
      */
     static entries(item) {
-        //this._debug('entries: item =', item);
+        //this._debug("entries: item =", item);
         return this.controls(item);
     }
 }
@@ -1964,7 +1964,7 @@ export class NavGroup extends BaseClass {
  */
 export class ListGroup extends NavGroup {
 
-    static CLASS_NAME = 'ListGroup';
+    static CLASS_NAME = "ListGroup";
 
     // ========================================================================
     // Constants
@@ -1987,7 +1987,7 @@ export class ListGroup extends NavGroup {
     constructor(group, container) {
         super(group, container);
         if (this.SET_CHECKED) {
-            this._handleEvent(this.controls, 'change', this._onChecked);
+            this._handleEvent(this.controls, "change", this._onChecked);
         }
     }
 
@@ -2009,7 +2009,7 @@ export class ListGroup extends NavGroup {
      * @returns {EventHandlerReturn}
      */
     _onChecked(event) {
-        this._debug('_onChecked', event);
+        this._debug("_onChecked", event);
         const $control = this.control(event.currentTarget || event.target);
         this.activate($control);
     }
@@ -2040,13 +2040,13 @@ export class ListGroup extends NavGroup {
      * @param {boolean} [check]
      */
     _updateCheck($item, check) {
-        const func = '_updateCheck';
+        const func = "_updateCheck";
         this._debug(`${func}: check =`, check, $item);
         const $control = this.activeControl($item);
         if ($control) {
-            if (isDefined(check)) { $control.prop('checked', !!check) }
-            const checked = $control.prop('checked') || false;
-            this.entry($control).attr('aria-checked', checked);
+            if (isDefined(check)) { $control.prop("checked", !!check) }
+            const checked = $control.prop("checked") || false;
+            this.entry($control).attr("aria-checked", checked);
         } else {
             this._warn(`${func}: no control for`, $item);
         }
@@ -2065,7 +2065,7 @@ export class ListGroup extends NavGroup {
      * @returns {jQuery}
      */
     static entries(item) {
-        //this._debug('entries: item =', item);
+        //this._debug("entries: item =", item);
         return this.controls(item).parent().not(this.GROUP);
     }
 }
@@ -2077,7 +2077,7 @@ export class ListGroup extends NavGroup {
  */
 export class CheckboxGroup extends ListGroup {
 
-    static CLASS_NAME = 'CheckboxGroup';
+    static CLASS_NAME = "CheckboxGroup";
 
     // ========================================================================
     // Constants
@@ -2086,7 +2086,7 @@ export class CheckboxGroup extends ListGroup {
     static GROUP        = CB_GROUP;
     static CONTROL      = CHECKBOX;
     static WRAP_MOVE    = true;
-    static CURRENT_ATTR = 'aria-selected';
+    static CURRENT_ATTR = "aria-selected";
     static SET_CHECKED  = true;
 
     // ========================================================================
@@ -2104,7 +2104,7 @@ export class CheckboxGroup extends ListGroup {
     // ========================================================================
 
     entry(item, caller)  {
-        const func  = 'entry';
+        const func  = "entry";
         const match = CB_ENTRY;
         const log   = (caller !== false);
         log && this._debug(`${func}: match = "${match}"; item =`, item);
@@ -2116,7 +2116,7 @@ export class CheckboxGroup extends ListGroup {
     // ========================================================================
 
     static entries(item) {
-        const func  = 'entries';
+        const func  = "entries";
         const match = CB_ENTRY;
         this._debug(`${func}: match = "${match}"; item =`, item);
         return selfOrDescendents(item, match);
@@ -2132,7 +2132,7 @@ export class CheckboxGroup extends ListGroup {
  */
 export class RadioGroup extends ListGroup {
 
-    static CLASS_NAME = 'RadioGroup';
+    static CLASS_NAME = "RadioGroup";
 
     // ========================================================================
     // Constants
@@ -2149,11 +2149,11 @@ export class RadioGroup extends ListGroup {
 
     handle(key, $target) {
         switch (key) {
-            case ' ':          return this.activate($target, key);
-            case 'ArrowUp':    return this.selectionMoved($target, key);
-            case 'ArrowLeft':  return this.selectionMoved($target, key);
-            case 'ArrowDown':  return this.selectionMoved($target, key);
-            case 'ArrowRight': return this.selectionMoved($target, key);
+            case " ":          return this.activate($target, key);
+            case "ArrowUp":    return this.selectionMoved($target, key);
+            case "ArrowLeft":  return this.selectionMoved($target, key);
+            case "ArrowDown":  return this.selectionMoved($target, key);
+            case "ArrowRight": return this.selectionMoved($target, key);
             default:           return super.handle(key, $target);
         }
     }
@@ -2201,17 +2201,17 @@ export class RadioGroup extends ListGroup {
         let $focus, $control = this.activeControl($target);
         $control ||= ($focus = this.focusControl);
         if (this._debugging) {
-            const func = 'selectionMoved';
-            const msg  = key ? keyFormat('key', key, '=>') : [];
+            const func = "selectionMoved";
+            const msg  = key ? keyFormat("key", key, "=>") : [];
             if ($focus) {
-                msg.push('MOVE_TO focusControl =', $focus);
+                msg.push("MOVE_TO focusControl =", $focus);
             } else if ($control) {
-                msg.push('MOVE_TO $target =', $target);
+                msg.push("MOVE_TO $target =", $target);
             } else {
-                msg.push('IGNORED for', $target);
+                msg.push("IGNORED for", $target);
             }
-            //this._debug(`${func}:`, ...msg, 'in', this.group);
-            this._warn(`${func}:`, ...msg, 'in', this.group);
+            //this._debug(`${func}:`, ...msg, "in", this.group);
+            this._warn(`${func}:`, ...msg, "in", this.group);
         }
         return !!$control && this._updateItem($control);
     }
@@ -2226,7 +2226,7 @@ export class RadioGroup extends ListGroup {
  */
 export class TextInputGroup extends ListGroup {
 
-    static CLASS_NAME = 'TextInputGroup';
+    static CLASS_NAME = "TextInputGroup";
 
     // ========================================================================
     // Constants
@@ -2246,7 +2246,7 @@ export class TextInputGroup extends ListGroup {
  */
 export class ControlGroup extends NavGroup {
 
-    static CLASS_NAME = 'ControlGroup';
+    static CLASS_NAME = "ControlGroup";
 
     // ========================================================================
     // Constants
@@ -2291,7 +2291,7 @@ export class ControlGroup extends NavGroup {
         } else if (count > max_count) {
             msg = [`too many focusables (${count})`];
         }
-        msg?.push('for', this.typeDesc, '=', this.group);
+        msg?.push("for", this.typeDesc, "=", this.group);
         return !this._validationError(msg, no_throw);
     }
 
@@ -2324,7 +2324,7 @@ export class ControlGroup extends NavGroup {
  */
 export class CellControlGroup extends ControlGroup {
 
-    static CLASS_NAME = 'CellControlGroup';
+    static CLASS_NAME = "CellControlGroup";
 
     // ========================================================================
     // Methods - validation - NavGroup overrides
@@ -2344,7 +2344,7 @@ export class CellControlGroup extends ControlGroup {
     _validate(no_throw) {
         if (!super._validate(no_throw)) { return false }
         if (!this._insideGridCell(this.group)) {
-            this._warn('not inside grid cell');
+            this._warn("not inside grid cell");
         }
         return true;
     }
@@ -2360,7 +2360,7 @@ export class CellControlGroup extends ControlGroup {
      * @returns {boolean}
      */
     clickedInside() {
-        this._debug('clickedInside');
+        this._debug("clickedInside");
         return false;
     }
 
@@ -2377,7 +2377,7 @@ export class CellControlGroup extends ControlGroup {
  */
 export class MenuGroup extends ControlGroup {
 
-    static CLASS_NAME = 'MenuGroup';
+    static CLASS_NAME = "MenuGroup";
 
     // ========================================================================
     // Constants
@@ -2416,7 +2416,7 @@ export class MenuGroup extends ControlGroup {
  */
 export class SingletonGroup extends ControlGroup {
 
-    static CLASS_NAME = 'SingletonGroup';
+    static CLASS_NAME = "SingletonGroup";
 
     // ========================================================================
     // Constants

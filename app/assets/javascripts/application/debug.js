@@ -3,10 +3,10 @@
 // Application-wide debugging control.
 //
 // NOTE: It is assumed that this file is always imported in each JavaScript
-//  source file, particularly to expose the @typedefs in 'types.js'.
+//  source file, particularly to expose the @typedefs in "types.js".
 
 
-import './types'
+import "./types"
 
 
 /**
@@ -37,14 +37,14 @@ const FILE_DEBUG = true;
  */
 export class AppDebug {
 
-    static CLASS_NAME = 'AppDebug';
+    static CLASS_NAME = "AppDebug";
 
     // ========================================================================
     // Type definitions
     // ========================================================================
 
     /**
-     * @typedef {boolean|'true'|'false'} BooleanValue
+     * @typedef {boolean|"true"|"false"} BooleanValue
      */
 
     /**
@@ -63,7 +63,7 @@ export class AppDebug {
     // Constants
     // ========================================================================
 
-    static STORE_KEY        = 'DEBUG';
+    static STORE_KEY        = "DEBUG";
     static GLOBAL_STORE_KEY = this.STORE_KEY;
     static STORE_KEY_PREFIX = `${this.STORE_KEY}/`;
 
@@ -82,13 +82,13 @@ export class AppDebug {
      * @type {Object.<string,string>}
      */
     static CONSOLE_BOX_FMT = {
-        display:        'inline-block',
-        padding:        '0 0.25em',
-        margin:         '-0.375em 0',
-        'line-height':  '1.75',
-        'font-size':    'larger',
-        color:          'white',
-        background:     'red',
+        display:        "inline-block",
+        padding:        "0 0.25em",
+        margin:         "-0.375em 0",
+        "line-height":  "1.75",
+        "font-size":    "larger",
+        color:          "white",
+        background:     "red",
     };
 
     /**
@@ -111,13 +111,13 @@ export class AppDebug {
      */
     constructor(setting) {
         let active = setting;
-        if (typeof active === 'undefined') {
+        if (typeof active === "undefined") {
             // noinspection JSUnresolvedVariable
             const settings = window.ASSET_OVERRIDES?.OverrideScriptSettings;
             active = settings?.APP_DEBUG;
-            if (typeof active === 'undefined') {
+            if (typeof active === "undefined") {
                 const deployed = settings ? settings.DEPLOYED : true;
-                const in_test  = (settings?.RAILS_ENV === 'test');
+                const in_test  = (settings?.RAILS_ENV === "test");
                 active = !deployed && !in_test;
             }
         }
@@ -134,7 +134,7 @@ export class AppDebug {
      * @param {string}       key
      * @param {BooleanValue} value
      *
-     * @returns {'true'|'false'}
+     * @returns {"true"|"false"}
      * @protected
      */
     static _set(key, value) {
@@ -143,7 +143,7 @@ export class AppDebug {
             localStorage.setItem(key, setting);
         } catch (error) {
             console.warn(`${this.CLASS_NAME}: ${key}: ${error}`);
-            setting = 'false';
+            setting = "false";
         }
         return setting;
     }
@@ -153,7 +153,7 @@ export class AppDebug {
      *
      * @param {string} key
      *
-     * @returns {'true'|'false'|undefined}
+     * @returns {"true"|"false"|undefined}
      * @protected
      */
     static _get(key) {
@@ -196,7 +196,7 @@ export class AppDebug {
      * @returns {boolean}
      */
     static get active() {
-        return this._get(this.GLOBAL_STORE_KEY) === 'true';
+        return this._get(this.GLOBAL_STORE_KEY) === "true";
     }
 
     /**
@@ -205,7 +205,7 @@ export class AppDebug {
      * @param {BooleanValue} setting
      */
     static set active(setting) {
-        const unset = (typeof setting === 'undefined') || (setting === null);
+        const unset = (typeof setting === "undefined") || (setting === null);
         const value = unset ? false : setting;
         this._set(this.GLOBAL_STORE_KEY, value);
     }
@@ -233,7 +233,7 @@ export class AppDebug {
      *
      * @param {string} mod
      *
-     * @returns {'true'|'false'|undefined}
+     * @returns {"true"|"false"|undefined}
      */
     static get(mod) {
         const key = this._keyFor(mod);
@@ -247,11 +247,11 @@ export class AppDebug {
      * @param {string}       mod
      * @param {BooleanValue} [active]   Default: **true**.
      *
-     * @returns {'true'|'false'}
+     * @returns {"true"|"false"}
      */
     static set(mod, active) {
         const key = this._keyFor(mod);
-        const val = (typeof active === 'undefined') || active;
+        const val = (typeof active === "undefined") || active;
         return this._set(key, val);
     }
 
@@ -274,10 +274,10 @@ export class AppDebug {
      *
      * @param {string} mod
      *
-     * @returns {'true'|'false'}
+     * @returns {"true"|"false"}
      */
     static on(mod) {
-        if (!this.active) { console.warn('NOTE: window.APP_DEBUG not active') }
+        if (!this.active) { console.warn("NOTE: window.APP_DEBUG not active") }
         return this.set(mod, true);
     }
 
@@ -287,7 +287,7 @@ export class AppDebug {
      *
      * @param {string} mod
      *
-     * @returns {'true'|'false'}
+     * @returns {"true"|"false"}
      */
     static off(mod) {
         return this.set(mod, false);
@@ -303,7 +303,7 @@ export class AppDebug {
     static isActive(mod) {
         if (!this.active) { return false }
         const active = this.get(mod);
-        if (typeof active !== 'undefined') { return active === 'true' }
+        if (typeof active !== "undefined") { return active === "true" }
     }
 
     /**
@@ -317,7 +317,7 @@ export class AppDebug {
      */
     static activeFor(mod, mod_default) {
         const active = this.isActive(mod);
-        if (typeof active === 'undefined') {
+        if (typeof active === "undefined") {
             return mod_default || false;
         } else {
             return active;
@@ -351,7 +351,7 @@ export class AppDebug {
             parts = [...parts, ...args];
 
         // Formatting only applies to the first argument.
-        if (typeof parts[0] !== 'string') { return parts }
+        if (typeof parts[0] !== "string") { return parts }
 
         // First argument already has a substitution sequence.
         if (parts[0].match(this.CONSOLE_FMT_MATCH)) { return parts }
@@ -360,7 +360,7 @@ export class AppDebug {
         let found    = -1;
         const leader = [];
         $.each(parts, (idx, part) => {
-            if (typeof part === 'string') {
+            if (typeof part === "string") {
                 if (part.match(this.CONSOLE_FMT_MATCH)) {
                     found = idx;
                 }
@@ -370,7 +370,7 @@ export class AppDebug {
         });
 
         if (found >= 0) {
-            return [leader.join(' '), ...parts.slice(found+1)];
+            return [leader.join(" "), ...parts.slice(found+1)];
         } else {
             return parts;
         }
@@ -388,15 +388,15 @@ export class AppDebug {
     static consoleFmt(text, css, ...args) {
         let styles;
         if (Array.isArray(css)) {
-            styles = css.map(v => v.replace(/[;\s]+$/, ''));
-        } else if (typeof css === 'object') {
+            styles = css.map(v => v.replace(/[;\s]+$/, ""));
+        } else if (typeof css === "object") {
             styles = Object.entries(css).map(([k,v]) => `${k}: ${v}`);
-        } else if (typeof css === 'string') {
+        } else if (typeof css === "string") {
             styles = css.split(/;+\s+/);
         } else {
             return [text, ...args];
         }
-        return [`%c${text}`, styles.join('; '), ...args];
+        return [`%c${text}`, styles.join("; "), ...args];
     }
 
     /**
@@ -408,11 +408,11 @@ export class AppDebug {
      * @param {...*}    args
      */
     static file(path, name, debug, ...args) {
-        const mod = 'FILE';
+        const mod = "FILE";
         if (this.activeFor(mod, FILE_DEBUG)) {
             const msg = this.consoleFmt(mod, this.CONSOLE_BOX_FMT, path);
-            if (name  !== undefined) { msg.push('|', name) }
-            if (debug !== undefined) { msg.push('|', 'DEBUG =', debug) }
+            if (name  !== undefined) { msg.push("|", name) }
+            if (debug !== undefined) { msg.push("|", "DEBUG =", debug) }
             console.log(...msg, ...args);
         }
     }
@@ -479,4 +479,4 @@ export class AppDebug {
 
 window.APP_DEBUG ||= new AppDebug();
 
-AppDebug.file('application/debug');
+AppDebug.file("application/debug");

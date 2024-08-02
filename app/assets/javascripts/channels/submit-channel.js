@@ -1,20 +1,20 @@
 // app/assets/javascripts/channels/submit-channel.js
 
 
-import { AppDebug }           from '../application/debug';
-import { CableChannel }       from '../shared/cable-channel';
-import { hexRand }            from '../shared/random';
-import { SubmitResponseBase } from '../shared/submit-response';
+import { AppDebug }           from "../application/debug";
+import { CableChannel }       from "../shared/cable-channel";
+import { hexRand }            from "../shared/random";
+import { SubmitResponseBase } from "../shared/submit-response";
 import {
     SubmitControlRequest,
     SubmitRequest,
-} from '../shared/submit-request';
+} from "../shared/submit-request";
 
 
-const CHANNEL = 'SubmitChannel';
+const CHANNEL = "SubmitChannel";
 const DEBUG   = true;
 
-AppDebug.file('channels/submit-channel', CHANNEL, DEBUG);
+AppDebug.file("channels/submit-channel", CHANNEL, DEBUG);
 
 /**
  * SubmitChannel
@@ -28,7 +28,7 @@ export class SubmitChannel extends CableChannel {
 
     static CHANNEL_NAME   = CHANNEL;
     static STREAM_ID      = hexRand();
-    static DEFAULT_ACTION = 'submission_request';
+    static DEFAULT_ACTION = "submission_request";
 
     // ========================================================================
     // CableChannel overrides
@@ -50,7 +50,7 @@ export class SubmitChannel extends CableChannel {
      */
     request(data, action) {
         if (data instanceof SubmitControlRequest) {
-            return super.request(data, 'submission_control');
+            return super.request(data, "submission_control");
         } else {
             return super.request(data, action);
         }

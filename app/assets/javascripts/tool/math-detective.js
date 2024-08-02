@@ -6,26 +6,26 @@
 // @see https://api-docs.dev.mathdetective.ai Documentation
 
 
-import { AppDebug }                        from '../application/debug';
-import { handleClickAndKeypress }          from '../shared/accessibility';
-import { Api }                             from '../shared/api'
-import { Emma }                            from '../shared/assets';
-import { selector, toggleHidden }          from '../shared/css';
-import { isDefined, isMissing, isPresent } from '../shared/definitions';
-import * as HTTP                           from '../shared/http';
-import { encodeImageOrUrl }                from '../shared/image';
-import { SECONDS }                         from '../shared/time';
+import { AppDebug }                        from "../application/debug";
+import { handleClickAndKeypress }          from "../shared/accessibility";
+import { Api }                             from "../shared/api"
+import { Emma }                            from "../shared/assets";
+import { selector, toggleHidden }          from "../shared/css";
+import { isDefined, isMissing, isPresent } from "../shared/definitions";
+import * as HTTP                           from "../shared/http";
+import { encodeImageOrUrl }                from "../shared/image";
+import { SECONDS }                         from "../shared/time";
 import {
     handleEvent,
     handleHoverAndFocus,
     isEvent,
-} from '../shared/events';
+} from "../shared/events";
 
 
-const MODULE = 'MathDetectiveApi';
+const MODULE = "MathDetectiveApi";
 const DEBUG  = false;
 
-AppDebug.file('tool/math-detective', MODULE, DEBUG);
+AppDebug.file("tool/math-detective", MODULE, DEBUG);
 
 // ============================================================================
 // Constants
@@ -39,15 +39,15 @@ AppDebug.file('tool/math-detective', MODULE, DEBUG);
  */
 const PROXY = true;
 
-const API_KEY           = 'TBD';
-const BASE_URL          = 'https://api.dev.mathdetective.ai/v1';
-const IMAGE_PATH        = 'image-processing/images';
-//const BATCH_PATH      = 'image-processing/batches';
-//const TEXT_PATH       = 'text-processing/texts';
-//const STRINGS_PATH    = 'text-processing/strings';
+const API_KEY           = "TBD";
+const BASE_URL          = "https://api.dev.mathdetective.ai/v1";
+const IMAGE_PATH        = "image-processing/images";
+//const BATCH_PATH      = "image-processing/batches";
+//const TEXT_PATH       = "text-processing/texts";
+//const STRINGS_PATH    = "text-processing/strings";
 
-const MD_API_KEY        = PROXY ? '' : API_KEY;
-const MD_BASE_URL       = PROXY ? '' : BASE_URL;
+const MD_API_KEY        = PROXY ? "" : API_KEY;
+const MD_BASE_URL       = PROXY ? "" : BASE_URL;
 const MD_IMAGE_PATH     = endpoint(IMAGE_PATH, PROXY);
 //const MD_BATCH_PATH   = endpoint(BATCH_PATH, PROXY);
 //const MD_TEXT_PATH    = endpoint(TEXT_PATH, PROXY);
@@ -103,7 +103,7 @@ function endpoint(path, proxy) {
  */
 export function setupFor(root) {
 
-    const COPY_NOTE_CLASS    = 'copy-note';
+    const COPY_NOTE_CLASS    = "copy-note";
     const COPY_NOTE_SELECTOR = selector(COPY_NOTE_CLASS);
 
     // ========================================================================
@@ -139,7 +139,7 @@ export function setupFor(root) {
 
     if (isPresent($file_prompt)) {
         $file_input = $file_prompt.find('.file-input');
-        handleEvent($file_input, 'change', onNewFile);
+        handleEvent($file_input, "change", onNewFile);
     }
 
     $copy_icons.each((_, icon) => setupClipboardIcon(icon));
@@ -153,16 +153,16 @@ export function setupFor(root) {
      * reading image data from the clipboard, or hiding it if not.
      */
     function setupClipboardInput() {
-        const func = 'setupClipboardInput';
+        const func = "setupClipboardInput";
         // noinspection JSValidateTypes
         /** @type {PermissionDescriptor} */
-        const permission = { name: 'clipboard-read' };
+        const permission = { name: "clipboard-read" };
         navigator.permissions.query(permission).then(result => {
             let click = true, hover = true, note;
             switch (result.state) {
-                case 'granted':
+                case "granted":
                     break;
-                case 'prompt':
+                case "prompt":
                     check(); // Force the permissions prompt to appear.
                     break;
                 default:
@@ -175,10 +175,10 @@ export function setupFor(root) {
             showClipboardNote(note, func);
         }).catch(reason => {
             let message = (reason instanceof Error) ? reason.message : reason;
-            if (message?.includes('PermissionName')) {
+            if (message?.includes("PermissionName")) {
                 console.log(`${func}: not available for this browser`);
             } else {
-                console.warn(`${func}:`, (message || 'unknown error'));
+                console.warn(`${func}:`, (message || "unknown error"));
             }
             toggleHidden($clip_prompt, true);
         });
@@ -203,14 +203,14 @@ export function setupFor(root) {
      * @param {function(ClipboardItem?,string?)} [callback]
      */
     function checkClipboard(caller, callback) {
-        const func = caller || 'checkClipboard';
+        const func = caller || "checkClipboard";
         clip_item = clip_type = undefined;
         navigator.clipboard.read().then(items => {
             items.forEach(item => {
                 clip_item = item;
                 if (!clip_type) {
                     const types = item.types;
-                    clip_type = types.filter(t => t.startsWith('image'))[0];
+                    clip_type = types.filter(t => t.startsWith("image"))[0];
                     if (clip_type) {
                         callback?.(clip_item, clip_type);
                     }
@@ -229,7 +229,7 @@ export function setupFor(root) {
             data && showClipboardNote(`${data} ${IN_CLIPBOARD}`, func);
         }).catch(reason => {
             let message = (reason instanceof Error) ? reason.message : reason;
-            if (message?.includes('permission')) {
+            if (message?.includes("permission")) {
                 setupClipboardInput();
             } else {
                 message ||= Emma.Messages.md.clipboard.unknown;
@@ -246,7 +246,7 @@ export function setupFor(root) {
      * @param {ElementEvt} _event
      */
     function processClipboard(_event) {
-        const func = 'processClipboard';
+        const func = "processClipboard";
         processClipboardItem() || checkClipboard(func, processClipboardItem);
     }
 
@@ -286,7 +286,7 @@ export function setupFor(root) {
      */
     function resetClipboardNote() {
         if ($clip_note) {
-            $clip_note.text('');
+            $clip_note.text("");
             toggleHidden($clip_note, true);
         }
     }
@@ -301,7 +301,7 @@ export function setupFor(root) {
      * @param {ElementEvt} _event
      */
     function onNewFile(_event) {
-        const func = 'onNewFile';
+        const func = "onNewFile";
         let input, file;
         if (!(input = $file_input[0])) {
             console.error(`${func}: no $file_input element`);
@@ -378,7 +378,7 @@ export function setupFor(root) {
      * @param {string} [file_data]      New image data.
      */
     function showPreview(file_data) {
-        file_data && $preview.find('.file-preview').attr('src', file_data);
+        file_data && $preview.find('.file-preview').attr("src", file_data);
         showContainer($preview);
     }
 
@@ -425,7 +425,7 @@ export function setupFor(root) {
         if (output) {
             const $output = $container.find(selector);
             $output.text(output);
-            $output.removeAttr('style'); // Undo manual resizing.
+            $output.removeAttr("style"); // Undo manual resizing.
             $output.scrollTop(0);        // Forget previous scroll position.
         }
     }
@@ -460,9 +460,9 @@ export function setupFor(root) {
      */
     function setupClipboardIcon(icon) {
         const $icon = $(icon);
-        isDefined($icon.attr('title'))    || $icon.attr('title',    COPY_TIP);
-        isDefined($icon.attr('role'))     || $icon.attr('role',     'button');
-        isDefined($icon.attr('tabindex')) || $icon.attr('tabindex', 0);
+        isDefined($icon.attr("title"))    || $icon.attr("title",    COPY_TIP);
+        isDefined($icon.attr("role"))     || $icon.attr("role",     "button");
+        isDefined($icon.attr("tabindex")) || $icon.attr("tabindex", 0);
         addCopyNote($icon);
         // noinspection JSCheckFunctionSignatures
         handleClickAndKeypress($icon, copyOutput);
@@ -512,7 +512,7 @@ export function setupFor(root) {
      */
     function resetCopyNotes() {
         const $notes = $copy_icons.siblings(COPY_NOTE_SELECTOR);
-        toggleHidden($notes, true).text('');
+        toggleHidden($notes, true).text("");
     }
 }
 
@@ -527,7 +527,7 @@ export function setupFor(root) {
  */
 export class MathDetectiveApi extends Api {
 
-    static CLASS_NAME = 'MathDetectiveApi';
+    static CLASS_NAME = "MathDetectiveApi";
     static DEBUGGING  = DEBUG;
 
     // ========================================================================
@@ -696,7 +696,7 @@ export class MathDetectiveApi extends Api {
     // ========================================================================
 
     get started()   { return isPresent(this.md_status) }
-    get running()   { return (this.md_status === 'running') }
+    get running()   { return (this.md_status === "running") }
     get completed() { return this.started && !this.running }
 
     get handle()    { return this.result.sha256_sum }
@@ -714,8 +714,8 @@ export class MathDetectiveApi extends Api {
         let output;
         if (isPresent(this.result)) {
             output = {
-                name:   '', status: '', ocr_confidence: '' , labels: '',
-                mathml: '', latex:  '', spokentext: ''
+                name:   "", status: "", ocr_confidence: "" , labels: "",
+                mathml: "", latex:  "", spokentext: ""
             };
             Object.assign(output, this.result);
         }
@@ -734,7 +734,7 @@ export class MathDetectiveApi extends Api {
      */
     get _errorMessage() {
         const response = this.response;
-        return response['Message'] || response['message'];
+        return response["Message"] || response["message"];
     }
 
     // ========================================================================
@@ -810,7 +810,7 @@ export class MathDetectiveApi extends Api {
     _submitImageOnComplete(result, _warn, _err, xhr, callback) {
         // noinspection JSValidateTypes
         this.result = result || {};
-        this._updateStatus(xhr.status, 'submitImage');
+        this._updateStatus(xhr.status, "submitImage");
         this._showStatus();
         const cb = callback || this._on_fetch;
         if (this.running) {
@@ -856,7 +856,7 @@ export class MathDetectiveApi extends Api {
     _fetchImageOnComplete(result, _warn, _err, xhr, callback) {
         // noinspection JSValidateTypes
         this.result = result || {};
-        this._updateStatus(xhr.status, 'submitImage');
+        this._updateStatus(xhr.status, "submitImage");
         this._showStatus();
         if (!this.running) {
             const cb = callback || this._on_fetch;
@@ -873,7 +873,7 @@ export class MathDetectiveApi extends Api {
      * @protected
      */
     _updateStatus(xhr_status, caller) {
-        const func = caller || '_updateStatus';
+        const func = caller || "_updateStatus";
         let warn, err;
         /*
          * NOTE: [1] Image has completed processing

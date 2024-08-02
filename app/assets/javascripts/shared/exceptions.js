@@ -1,10 +1,10 @@
 // app/assets/javascripts/shared/exceptions.js
 
 
-import { AppDebug } from '../application/debug';
+import { AppDebug } from "../application/debug";
 
 
-AppDebug.file('shared/exceptions');
+AppDebug.file("shared/exceptions");
 
 // ============================================================================
 // Classes
@@ -17,7 +17,7 @@ AppDebug.file('shared/exceptions');
  */
 export class Exception extends Error {
 
-    static CLASS_NAME = 'Exception';
+    static CLASS_NAME = "Exception";
 
     // ========================================================================
     // Variables
@@ -52,9 +52,9 @@ export class Exception extends Error {
      * @returns {array}
      */
     get messageParts() {
-        let message = this.message || '';
+        let message = this.message || "";
         if (this.args.length) {
-            message = message.replace(/([^:])$/, '$1:');
+            message = message.replace(/([^:])$/, "$1:");
         }
         return [message, ...this.args];
     }
@@ -67,5 +67,5 @@ export class Exception extends Error {
  * @extends Exception
  */
 export class ValidationError extends Exception {
-    static CLASS_NAME = 'ValidationError';
+    static CLASS_NAME = "ValidationError";
 }

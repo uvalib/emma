@@ -3,17 +3,17 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { AppDebug }                         from '../application/debug';
-import { arrayWrap }                        from './arrays';
-import { ChannelRequest }                   from './channel-request';
-import { isMissing, isPresent, notDefined } from './definitions';
-import { deepFreeze, toObject }             from './objects';
+import { AppDebug }                         from "../application/debug";
+import { arrayWrap }                        from "./arrays";
+import { ChannelRequest }                   from "./channel-request";
+import { isMissing, isPresent, notDefined } from "./definitions";
+import { deepFreeze, toObject }             from "./objects";
 
 
-const MODULE = 'LookupRequest';
+const MODULE = "LookupRequest";
 const DEBUG  = true;
 
-AppDebug.file('shared/lookup-request', MODULE, DEBUG);
+AppDebug.file("shared/lookup-request", MODULE, DEBUG);
 
 // ============================================================================
 // Type definitions
@@ -52,11 +52,11 @@ AppDebug.file('shared/lookup-request', MODULE, DEBUG);
  * @enum {string}
  */
 const ID_TYPES = deepFreeze([
-    'isbn',
-    'issn',
-    'doi',
-    'oclc',
-    'lccn',
+    "isbn",
+    "issn",
+    "doi",
+    "oclc",
+    "lccn",
 ]);
 
 /**
@@ -66,9 +66,9 @@ const ID_TYPES = deepFreeze([
  * @enum {string}
  */
 const QUERY_TYPES = deepFreeze([
-    'author',
-    'title',
-    'keyword',
+    "author",
+    "title",
+    "keyword",
 ]);
 
 /**
@@ -93,9 +93,9 @@ const LOOKUP_TYPE = deepFreeze({
     limit:  LIMIT_TYPES,
 });
 
-const DEF_ID_TYPE     = 'isbn';
-const DEF_QUERY_TYPE  = 'keyword';
-const DEF_LOOKUP_TYPE = 'query';
+const DEF_ID_TYPE     = "isbn";
+const DEF_QUERY_TYPE  = "keyword";
+const DEF_LOOKUP_TYPE = "query";
 
 /**
  * Default set of characters interpreted as separating terms.
@@ -103,7 +103,7 @@ const DEF_LOOKUP_TYPE = 'query';
  * @readonly
  * @type {string}
  */
-const DEF_SEPARATORS = '|';
+const DEF_SEPARATORS = "|";
 
 /**
  * Selective URL encoding.
@@ -112,9 +112,9 @@ const DEF_SEPARATORS = '|';
  * @type {{[char: string]: string}}
  */
 const CHAR_ENCODE = deepFreeze({
-    '"': '%22',
-    "'": '%27',
-    ':': '%3A'
+    '"': "%22",
+    "'": "%27",
+    ":": "%3A",
 });
 
 // ============================================================================
@@ -129,7 +129,7 @@ const CHAR_ENCODE = deepFreeze({
  */
 export class LookupRequest extends ChannelRequest {
 
-    static CLASS_NAME = 'LookupRequest';
+    static CLASS_NAME = "LookupRequest";
     static DEBUGGING  = DEBUG;
 
     // ========================================================================
@@ -160,8 +160,8 @@ export class LookupRequest extends ChannelRequest {
      * @type {LookupTerms}
      */
     static LOOKUP_TERMS = deepFreeze({
-        or:  { dc_identifier: '' },
-        and: { dc_title: 'title', dc_creator: 'author' },
+        or:  { dc_identifier: "" },
+        and: { dc_title: "title", dc_creator: "author" },
     });
 
     /**
@@ -185,7 +185,7 @@ export class LookupRequest extends ChannelRequest {
      * @readonly
      * @type {string}
      */
-    static LOOKUP_CONDITION_DATA = 'lookupCondition';
+    static LOOKUP_CONDITION_DATA = "lookupCondition";
 
     // ========================================================================
     // Fields
@@ -205,7 +205,7 @@ export class LookupRequest extends ChannelRequest {
      */
     constructor(terms, chars) {
         super();
-        this.separators   = Array.isArray(chars) ? chars.join('') : chars;
+        this.separators   = Array.isArray(chars) ? chars.join("") : chars;
         this.separators ||= DEF_SEPARATORS;
         this.add(terms);
     }
@@ -273,7 +273,7 @@ export class LookupRequest extends ChannelRequest {
     add(term, prefix) {
         if (notDefined(term)) { return }
         const type  = typeof(term);
-        const obj   = (type !== 'string') && !Array.isArray(term);
+        const obj   = (type !== "string") && !Array.isArray(term);
         const value = obj ? term : this.parse(term, prefix);
         if (prefix && !obj) {
             this._warn(`prefix "${prefix}" ignored for ${type} term`);
@@ -290,9 +290,9 @@ export class LookupRequest extends ChannelRequest {
      * @returns {LookupRequestPayload}
      */
     parse(term_values, term_prefix) {
-        this._debug('parse', term_values);
+        this._debug("parse", term_values);
         const parts = this._blankParts();
-        const str   = (typeof term_values === 'string');
+        const str   = (typeof term_values === "string");
         let terms   = str ? term_values.split("\n") : arrayWrap(term_values);
 
         // Apply the provided prefix to each of the term value strings.
@@ -331,7 +331,7 @@ export class LookupRequest extends ChannelRequest {
      * - prefix:'value'     If the value string was single-quoted.
      * - prefix:"value"     If the value string was double-quoted.
      *
-     * Terms can be separated by one or more space, tab, '|' characters.
+     * Terms can be separated by one or more space, tab, "|" characters.
      * Values which contain any of those characters must be quoted, however the
      * quotes are removed from the returned elements.
      *
@@ -342,7 +342,7 @@ export class LookupRequest extends ChannelRequest {
      * @note The method signature differs from ChannelRequest.extractParts.
      */
     extractParts(terms) {
-        this._debug('extractParts', terms);
+        this._debug("extractParts", terms);
         const parts = terms.matchAll(this._termMatcher);
         return [...parts].map(part => {
             const prefix = part[2]?.toLowerCase();
@@ -417,7 +417,7 @@ export class LookupRequest extends ChannelRequest {
         const VAL_ = this._valueMatch;
         // part        ____2____             ___4___   ___5___  ____6____
         const TERM = `((${PRE_})\\s*:\\s*)?("([^"]*)"|'([^']*)'|(${VAL_}))`;
-        return new RegExp(TERM, 'g');
+        return new RegExp(TERM, "g");
     }
 
     // ========================================================================

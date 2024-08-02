@@ -1,11 +1,11 @@
 // app/assets/javascripts/shared/keyboard.js
 
 
-import { AppDebug } from '../application/debug';
-import { uniq }     from './arrays';
+import { AppDebug } from "../application/debug";
+import { uniq }     from "./arrays";
 
 
-AppDebug.file('shared/keyboard');
+AppDebug.file("shared/keyboard");
 
 // ============================================================================
 // Constants
@@ -17,14 +17,14 @@ AppDebug.file('shared/keyboard');
  * @type {Object.<string,string>}
  */
 const CONSOLE_KEY_FMT = {
-    display:            'inline-block',
-    padding:            '0 0.25em',
-    'line-height':      '1.25',
-    'font-weight':      'bold',
-    color:              'blue',
-    background:         'yellow',
-    outline:            '1px solid red',
-    'border-radius':    '0.25em',
+    display:            "inline-block",
+    padding:            "0 0.25em",
+    "line-height":      "1.25",
+    "font-weight":      "bold",
+    color:              "blue",
+    background:         "yellow",
+    outline:            "1px solid red",
+    "border-radius":    "0.25em",
 };
 
 /**
@@ -35,20 +35,20 @@ const CONSOLE_KEY_FMT = {
  * @see https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_key_values#modifier_keys
  */
 const MODIFIERS = Object.freeze(new Set([
-    'Alt',
-    'AltGraph',
-    'CapsLock',
-    'Control',
-    'Fn',
-    'FnLock',
-    'Hyper',
-    'Meta',
-    'NumLock',
-    'ScrollLock',
-    'Shift',
-    'Super',
-    'Symbol',
-    'SymbolLock',
+    "Alt",
+    "AltGraph",
+    "CapsLock",
+    "Control",
+    "Fn",
+    "FnLock",
+    "Hyper",
+    "Meta",
+    "NumLock",
+    "ScrollLock",
+    "Shift",
+    "Super",
+    "Symbol",
+    "SymbolLock",
 ]));
 
 // ============================================================================
@@ -71,13 +71,13 @@ const MODIFIERS = Object.freeze(new Set([
  */
 export function keyCombo(event) {
     const key = event?.key;
-    if (!key) { return '' }
+    if (!key) { return "" }
     const modifier = [];
-    if (event.ctrlKey)  { modifier.push('Control') }
-    if (event.shiftKey) { modifier.push('Shift') }
-    if (event.altKey)   { modifier.push('Alt') }
-    if (event.metaKey)  { modifier.push('Meta') }
-    const combo = uniq([...modifier, event.key]).join('+');
+    if (event.ctrlKey)  { modifier.push("Control") }
+    if (event.shiftKey) { modifier.push("Shift") }
+    if (event.altKey)   { modifier.push("Alt") }
+    if (event.metaKey)  { modifier.push("Meta") }
+    const combo = uniq([...modifier, event.key]).join("+");
     return combo.match(/^Shift\+.$/) ? key : combo;
 }
 
@@ -91,7 +91,7 @@ export function keyCombo(event) {
  * @returns {[string, string, ...*]}
  */
 export function keyFormat(text, key, ...args) {
-    const name  = (key === ' ') ? 'Space' : key;
+    const name  = (key === " ") ? "Space" : key;
     const parts = AppDebug.consoleFmt(name, CONSOLE_KEY_FMT, ...args);
     return text ? AppDebug.consoleArgs(text, ...parts) : parts;
 }
@@ -105,5 +105,5 @@ export function keyFormat(text, key, ...args) {
  * @returns {boolean}
  */
 export function modifiersOnly(key) {
-    return key.split('+').every(part => MODIFIERS.has(part));
+    return key.split("+").every(part => MODIFIERS.has(part));
 }

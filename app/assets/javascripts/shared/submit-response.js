@@ -3,15 +3,15 @@
 // noinspection JSValidateTypes
 
 
-import { AppDebug }             from '../application/debug';
-import { ChannelResponse }      from './channel-response';
-import { deepFreeze, isObject } from './objects';
+import { AppDebug }             from "../application/debug";
+import { ChannelResponse }      from "./channel-response";
+import { deepFreeze, isObject } from "./objects";
 
 
-const MODULE = 'SubmitResponse';
+const MODULE = "SubmitResponse";
 const DEBUG  = true;
 
-AppDebug.file('shared/submit-response', MODULE, DEBUG);
+AppDebug.file("shared/submit-response", MODULE, DEBUG);
 
 // ============================================================================
 // Type definitions
@@ -121,7 +121,7 @@ AppDebug.file('shared/submit-response', MODULE, DEBUG);
  */
 export class SubmitResponseBase extends ChannelResponse {
 
-    static CLASS_NAME = 'SubmitResponseBase';
+    static CLASS_NAME = "SubmitResponseBase";
     static DEBUGGING  = DEBUG;
 
     // ========================================================================
@@ -150,11 +150,11 @@ export class SubmitResponseBase extends ChannelResponse {
      * @see "SubmitChannel::Response#STATUS"
      */
     static STATUS = deepFreeze({
-        INITIAL:      'STARTING',
-        STEP:         'STEP',
-        INTERMEDIATE: 'DONE',
-        FINAL:        'COMPLETE',
-        ACK:          'ACK',
+        INITIAL:      "STARTING",
+        STEP:         "STEP",
+        INTERMEDIATE: "DONE",
+        FINAL:        "COMPLETE",
+        ACK:          "ACK",
     });
 
     // ========================================================================
@@ -256,7 +256,7 @@ export class SubmitResponseBase extends ChannelResponse {
  */
 export class SubmitResponse extends SubmitResponseBase {
 
-    static CLASS_NAME = 'SubmitResponse';
+    static CLASS_NAME = "SubmitResponse";
     static DEBUGGING  = DEBUG;
 
     // ========================================================================
@@ -306,7 +306,7 @@ export class SubmitResponse extends SubmitResponseBase {
  */
 export class SubmitInitialResponse extends SubmitResponse {
 
-    static CLASS_NAME = 'SubmitInitialResponse';
+    static CLASS_NAME = "SubmitInitialResponse";
     static DEBUGGING  = DEBUG;
 
     // ========================================================================
@@ -340,7 +340,7 @@ export class SubmitInitialResponse extends SubmitResponse {
  */
 export class SubmitStepResponse extends SubmitResponseBase {
 
-    static CLASS_NAME = 'SubmitStepResponse';
+    static CLASS_NAME = "SubmitStepResponse";
     static DEBUGGING  = DEBUG;
 
     // ========================================================================
@@ -428,7 +428,7 @@ export class SubmitStepResponse extends SubmitResponseBase {
  */
 export class SubmitFinalResponse extends SubmitStepResponse {
 
-    static CLASS_NAME = 'SubmitFinalResponse';
+    static CLASS_NAME = "SubmitFinalResponse";
     static DEBUGGING  = DEBUG;
 
     // ========================================================================
@@ -453,10 +453,10 @@ export class SubmitFinalResponse extends SubmitStepResponse {
  * A bulk submission job control response.
  *
  * COMMANDS =
- *  'start'
- *  'stop'
- *  'pause'
- *  'resume'
+ *  "start"
+ *  "stop"
+ *  "pause"
+ *  "resume"
  *
  * @extends SubmitResponseBase
  * @extends SubmitControlResponsePayload
@@ -466,7 +466,7 @@ export class SubmitFinalResponse extends SubmitStepResponse {
  */
 export class SubmitControlResponse extends SubmitResponseBase {
 
-    static CLASS_NAME = 'SubmitControlResponse';
+    static CLASS_NAME = "SubmitControlResponse";
     static DEBUGGING  = DEBUG;
 
     // ========================================================================
@@ -495,7 +495,7 @@ export class SubmitControlResponse extends SubmitResponseBase {
      * @param {SubmitControlResponse|SubmitControlResponsePayload|string} item
      */
     constructor(item) {
-        if (typeof item === 'string') {
+        if (typeof item === "string") {
             super();
             this.payload.command = item;
         } else {

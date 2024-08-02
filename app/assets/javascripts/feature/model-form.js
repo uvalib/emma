@@ -1,31 +1,31 @@
 // app/assets/javascripts/feature/model-form.js
 
 
-import { AppDebug }                        from '../application/debug';
-import { appSetup }                        from '../application/setup';
-import { arrayWrap }                       from '../shared/arrays';
-import { Emma }                            from '../shared/assets';
-import { pageController }                  from '../shared/controller';
-import { FORM_FIELD, turnOffAutocomplete } from '../shared/form';
-import * as HTTP                           from '../shared/http';
-import { LOOKUP_BUTTON, LookupModal }      from '../shared/lookup-modal';
-import { LookupRequest }                   from '../shared/lookup-request';
-import { K, asSize }                       from '../shared/math';
-import { CheckboxGroup, TextInputGroup }   from '../shared/nav-group';
-import { SearchInProgress }                from '../shared/search-in-progress';
-import { SingleUploader, UPLOADER }        from '../shared/uploader';
-import { cancelAction, makeUrl }           from '../shared/url';
-import { responseErrors, transientError }  from '../shared/xhr';
-import { Rails }                           from '../vendor/rails';
+import { AppDebug }                        from "../application/debug";
+import { appSetup }                        from "../application/setup";
+import { arrayWrap }                       from "../shared/arrays";
+import { Emma }                            from "../shared/assets";
+import { pageController }                  from "../shared/controller";
+import { FORM_FIELD, turnOffAutocomplete } from "../shared/form";
+import * as HTTP                           from "../shared/http";
+import { LOOKUP_BUTTON, LookupModal }      from "../shared/lookup-modal";
+import { LookupRequest }                   from "../shared/lookup-request";
+import { K, asSize }                       from "../shared/math";
+import { CheckboxGroup, TextInputGroup }   from "../shared/nav-group";
+import { SearchInProgress }                from "../shared/search-in-progress";
+import { SingleUploader, UPLOADER }        from "../shared/uploader";
+import { cancelAction, makeUrl }           from "../shared/url";
+import { responseErrors, transientError }  from "../shared/xhr";
+import { Rails }                           from "../vendor/rails";
 import {
     delegateInputClick,
     handleClickAndKeypress,
-} from '../shared/accessibility';
+} from "../shared/accessibility";
 import {
     selector,
     toggleClass,
     toggleHidden,
-} from '../shared/css';
+} from "../shared/css";
 import {
     isDefined,
     isEmpty,
@@ -33,25 +33,25 @@ import {
     isPresent,
     notDefined,
     presence,
-} from '../shared/definitions';
+} from "../shared/definitions";
 import {
     delayedBy,
     handleEvent,
     onPageExit,
-} from '../shared/events';
+} from "../shared/events";
 import {
     clearFlash,
     extractFlashMessage,
     flashError,
     flashMessage,
-} from '../shared/flash';
+} from "../shared/flash";
 import {
     CHECKBOX,
     htmlDecode,
     sameElements,
     scrollIntoView,
     selfOrParent,
-} from '../shared/html';
+} from "../shared/html";
 import {
     compact,
     deepDup,
@@ -59,26 +59,26 @@ import {
     dup,
     fromJSON,
     toObject,
-} from '../shared/objects';
+} from "../shared/objects";
 import {
     asString,
     camelCase,
     capitalize,
     pluralize,
     singularize,
-} from '../shared/strings';
+} from "../shared/strings";
 import {
     SECONDS,
     asDateTime,
     secondsSince,
     timeOf,
-} from '../shared/time';
+} from "../shared/time";
 
 
-const MODULE = 'ModelForm';
+const MODULE = "ModelForm";
 const DEBUG  = true;
 
-AppDebug.file('feature/model-form', MODULE, DEBUG);
+AppDebug.file("feature/model-form", MODULE, DEBUG);
 
 // noinspection FunctionTooLongJS
 appSetup(MODULE, function() {
@@ -89,7 +89,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const MODEL_FORM_CLASS = 'model-form';
+    const MODEL_FORM_CLASS = "model-form";
 
     /**
      * CSS class for single-entry form elements.
@@ -117,7 +117,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const BULK_FORM_CLASS = 'bulk-op-form';
+    const BULK_FORM_CLASS = "bulk-op-form";
 
     /**
      * CSS classes for bulk operation form elements.
@@ -455,24 +455,24 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const FORM_SELECTOR = MODEL_FORM_SELECTOR + ',' + BULK_FORM_SELECTOR;
+    const FORM_SELECTOR = MODEL_FORM_SELECTOR + "," + BULK_FORM_SELECTOR;
 
-    const BUTTON_TRAY_CLASS     = 'button-tray';
-    const SUBMIT_BUTTON_CLASS   = 'submit-button';
-    const CANCEL_BUTTON_CLASS   = 'cancel-button';
-    const FIELD_GROUP_CLASS     = 'field-group';
-    const FIELD_CONTAINER_CLASS = 'form-fields';
-    const SYMBOL_CLASS          = 'symbol';
+    const BUTTON_TRAY_CLASS     = "button-tray";
+    const SUBMIT_BUTTON_CLASS   = "submit-button";
+    const CANCEL_BUTTON_CLASS   = "cancel-button";
+    const FIELD_GROUP_CLASS     = "field-group";
+    const FIELD_CONTAINER_CLASS = "form-fields";
+    const SYMBOL_CLASS          = "symbol";
 
-    const VALID_MARKER          = 'valid';
-    const INVALID_MARKER        = 'invalid';
-    const REQUIRED_MARKER       = 'required';
-    const BEST_CHOICE_MARKER    = 'best-choice';
+    const VALID_MARKER          = "valid";
+    const INVALID_MARKER        = "invalid";
+    const REQUIRED_MARKER       = "required";
+    const BEST_CHOICE_MARKER    = "best-choice";
 
-    const MENU_CLASS            = 'menu';
-    const INPUT_CLASS           = 'input';
-    const MULTI_CLASS           = 'multi';
-    const SINGLE_CLASS          = 'single';
+    const MENU_CLASS            = "menu";
+    const INPUT_CLASS           = "input";
+    const MULTI_CLASS           = "multi";
+    const SINGLE_CLASS          = "single";
 
     const BUTTON_TRAY           = selector(BUTTON_TRAY_CLASS);
     const SUBMIT_BUTTON         = selector(SUBMIT_BUTTON_CLASS);
@@ -503,18 +503,18 @@ appSetup(MODULE, function() {
      */
     const FIELD_RELATIONSHIP = deepFreeze({
         rem_complete: {
-            name:           'rem_coverage',
-            required:       el => ($(el).val() !== 'true'),
-            unrequired_val: ''
+            name:           "rem_coverage",
+            required:       el => ($(el).val() !== "true"),
+            unrequired_val: ""
         },
         rem_coverage: {
-            name:           'rem_complete',
+            name:           "rem_complete",
             required:       el => isMissing($(el).val()),
-            required_val:   '',
-            unrequired_val: 'false'
+            required_val:   "",
+            unrequired_val: "false"
         },
         password: {
-            name:           'password_confirmation',
+            name:           "password_confirmation",
             required:       el => $(el).is(VALID),
         }
     });
@@ -530,9 +530,9 @@ appSetup(MODULE, function() {
      * @type {StringTable}
      */
     const FORM_STATE = deepFreeze({
-        SUBMITTING: 'submitting',
-        SUBMITTED:  'submitted',
-        CANCELED:   'canceled'
+        SUBMITTING: "submitting",
+        SUBMITTED:  "submitted",
+        CANCELED:   "canceled"
     });
 
     /**
@@ -541,7 +541,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const FORM_STATE_DATA = 'formState';
+    const FORM_STATE_DATA = "formState";
 
     const CREATE  = Emma.Messages.form.action.create;
     const CREATED = Emma.Messages.form.action.created;
@@ -558,7 +558,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const ID_VALIDATE_URL_BASE = '/search/validate?identifier=';
+    const ID_VALIDATE_URL_BASE = "/search/validate?identifier=";
 
     /**
      * Validation methods table.
@@ -596,8 +596,8 @@ appSetup(MODULE, function() {
     const PARENT_SEARCH_SUBMIT = '.search-button';
     const PARENT_SEARCH_CANCEL = '.search-cancel';
 
-    const FIXED_MARKER  = 'fixed';
-    const SEALED_MARKER = 'sealed';
+    const FIXED_MARKER  = "fixed";
+    const SEALED_MARKER = "sealed";
 
     const FIXED         = selector(FIXED_MARKER);
     const SEALED        = selector(SEALED_MARKER);
@@ -620,7 +620,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const BULK_OP_STORAGE_KEY = 'bulk-operation';
+    const BULK_OP_STORAGE_KEY = "bulk-operation";
 
     /**
      * CSS class indicating that the bulk operation results panel contains the
@@ -629,7 +629,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const OLD_DATA_MARKER = 'previous';
+    const OLD_DATA_MARKER = "previous";
 
     /**
      * CSS selector indicating that the bulk operation results panel contains
@@ -639,7 +639,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const OLD_DATA = '.' + OLD_DATA_MARKER;
+    const OLD_DATA = selector(OLD_DATA_MARKER);
 
     /**
      * Interval for checking the contents of the model database table.
@@ -656,7 +656,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const TMP_LINE_CLASS = 'start';
+    const TMP_LINE_CLASS = "start";
 
     /**
      * Filler displayed prior to detecting the first added database entry.
@@ -827,7 +827,7 @@ appSetup(MODULE, function() {
 
                 // Disable the file select button.
                 //
-                // The 'cancel' button is used to select a different file
+                // The "cancel" button is used to select a different file
                 // because previous metadata (manually or automatically
                 // acquired) may no longer be appropriate.
                 //
@@ -837,7 +837,7 @@ appSetup(MODULE, function() {
                 //
                 // When the form is submitted these values should take
                 // precedence over the original values which will be
-                // retransmitted the hidden '#entry_emma_data' field.
+                // retransmitted the hidden "#entry_emma_data" field.
                 //
                 populateFormFields(emma_data, $form) || validateForm($form);
             }
@@ -878,12 +878,12 @@ appSetup(MODULE, function() {
 
         // When the bulk manifest is submitted, begin a running tally of
         // the items that have been added/changed.
-        handleEvent($form, 'submit', monitorBulkOperation);
+        handleEvent($form, "submit", monitorBulkOperation);
 
         // When a file has been selected, display its name and enable submit.
         if (uploader) {
 
-            handleEvent(uploader.fileSelectInput(), 'change', setBulkFilename);
+            handleEvent(uploader.fileSelectInput(), "change", setBulkFilename);
 
             /**
              * Update the form after the bulk control file is selected.
@@ -909,7 +909,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}
      */
     function isBulkOpForm(form) {
-        return formElement(form).hasClass('bulk');
+        return formElement(form).hasClass("bulk");
     }
 
     // ========================================================================
@@ -943,7 +943,7 @@ appSetup(MODULE, function() {
      */
     function bulkOpResultsLabel(results) {
         const $results = bulkOpResults(results);
-        const lbl_id   = $results.attr('aria-labelledby');
+        const lbl_id   = $results.attr("aria-labelledby");
         return lbl_id ? $('#' + lbl_id) : $();
     }
 
@@ -959,17 +959,17 @@ appSetup(MODULE, function() {
      * @returns {string}
      */
     function bulkOpResultsNextId(results, record) {
-        const name     = 'nextId';
+        const name     = "nextId";
         const $results = bulkOpResults(results);
         let value      = $results.data(name);
         const initial  = isMissing(value);
         if (initial || isDefined(record)) {
-            value = (typeof record === 'object') ? record.id : record;
+            value = (typeof record === "object") ? record.id : record;
             value = (Number(value) || 0) + 1;
             $results.data(name, value);
         }
-        if ((value > 1) && !$results.data('firstId')) {
-            $results.data('firstId', value);
+        if ((value > 1) && !$results.data("firstId")) {
+            $results.data("firstId", value);
         }
         return value.toString();
     }
@@ -986,7 +986,7 @@ appSetup(MODULE, function() {
      * @returns {number}
      */
     function bulkOpResultsStartTime(results, start_time) {
-        const name     = 'startTime';
+        const name     = "startTime";
         const $results = bulkOpResults(results);
         let value      = $results.data(name);
         if (isPresent(start_time) || isMissing(value)) {
@@ -1011,12 +1011,12 @@ appSetup(MODULE, function() {
         const $label   = bulkOpResultsLabel($results);
         $results.removeClass(OLD_DATA_MARKER).empty();
         addBulkOpResult($results, TMP_LINE_TEXT, TMP_LINE_CLASS);
-        $label.text(Emma.Messages.uploader.results + ':');
+        $label.text(Emma.Messages.uploader.results + ":");
         toggleHidden($label,   false);
         toggleHidden($results, false);
 
         clearBulkOpTrace();
-        fetchEntryList('$', null, startMonitoring);
+        fetchEntryList("$", null, startMonitoring);
 
         /**
          * Establish the lower-bound of database ID's to search (starting with
@@ -1042,7 +1042,7 @@ appSetup(MODULE, function() {
     function scheduleCheckBulkOpResults(results, milliseconds) {
         const $results = bulkOpResults(results);
         const period   = milliseconds || BULK_CHECK_PERIOD;
-        const name     = 'checkPeriod';
+        const name     = "checkPeriod";
         const timer    = $results.data(name);
         if (isPresent(timer)) {
             clearTimeout(timer);
@@ -1062,7 +1062,7 @@ appSetup(MODULE, function() {
             return;
         }
         const start_id = bulkOpResultsNextId($results);
-        fetchEntryList(start_id, '$', addNewLines);
+        fetchEntryList(start_id, "$", addNewLines);
 
         /**
          * Add lines for any entries that have appeared since the last round
@@ -1109,7 +1109,7 @@ appSetup(MODULE, function() {
     function addBulkOpResult(results, entry, index, time) {
         const $results = bulkOpResults(results);
         let data;
-        if (typeof entry !== 'object') {
+        if (typeof entry !== "object") {
             data = entry.toString();
         } else if (isMissing(entry.submission_id)) {
             // A generic object.
@@ -1124,16 +1124,16 @@ appSetup(MODULE, function() {
             data = {
                 date: asDateTime(date),
                 time: secondsSince(start, date).toFixed(1),
-                id:   (entry.id            || '(missing)'),
-                sid:  (entry.submission_id || '(missing)'),
-                size: (asSize(md.size)     || '(missing)'),
-                file: (file && `"${file}"` || '(missing)')
+                id:   (entry.id            || "(missing)"),
+                sid:  (entry.submission_id || "(missing)"),
+                size: (asSize(md.size)     || "(missing)"),
+                file: (file && `"${file}"` || "(missing)")
             };
         }
         const $line = makeBulkOpResult(data, index);
         $line.appendTo($results);
         scrollIntoView($line);
-        return (typeof data === 'string') ? data : asString(data);
+        return (typeof data === "string") ? data : asString(data);
     }
 
     /**
@@ -1145,24 +1145,24 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function makeBulkOpResult(entry, index) {
-        const func  = 'makeBulkOpResult';
+        const func  = "makeBulkOpResult";
         const $line = $('<div>');
 
         // CSS classes for the new line.
-        let row = (typeof index === 'number') ? `row-${index}` : (index || '');
-        if (!row.includes('line')) {
+        let row = (typeof index === "number") ? `row-${index}` : (index || "");
+        if (!row.includes("line")) {
             row = `line ${row}`.trim();
         }
         $line.addClass(row);
 
         // Content for the new line.
-        let text, html = '';
-        if (typeof entry === 'object') {
+        let text, html = "";
+        if (typeof entry === "object") {
             for (const [k, v] of Object.entries(entry)) {
                 html += `<span class="label ${k}">${k}</span> `;
                 html += `<span class="value ${k}">${v}</span>\n`;
             }
-        } else if (typeof entry === 'string') {
+        } else if (typeof entry === "string") {
             text = entry;
         } else {
             OUT.error(`${func}: ${typeof entry} invalid`);
@@ -1184,10 +1184,10 @@ appSetup(MODULE, function() {
      * @returns {number}              Number of entries to be shown.
      */
     function showBulkOpResults(results, data) {
-        const func     = 'showBulkOpResults';
+        const func     = "showBulkOpResults";
         const $results = bulkOpResults(results);
         let entries = data || getBulkOpTrace();
-        if (entries && !entries.startsWith('[')) {
+        if (entries && !entries.startsWith("[")) {
             entries = `[${entries}]`;
         }
         const list = entries && fromJSON(entries, func) || [];
@@ -1206,12 +1206,12 @@ appSetup(MODULE, function() {
      */
     function fetchEntryList(min, max, callback) {
 
-        const func = 'fetchEntryList';
+        const func = "fetchEntryList";
         let range;
         if (min && max) { range = `${min}-${max}` }
         else if (max)   { range = `1-${max}` }
         else if (min)   { range = `${min}` }
-        else            { range = '*' }
+        else            { range = "*" }
         const base = `${PROPERTIES.Path.index}.json`;
         const url  = makeUrl(base, { selected: range });
 
@@ -1224,8 +1224,8 @@ appSetup(MODULE, function() {
 
         $.ajax({
             url:      url,
-            type:     'GET',
-            dataType: 'json',
+            type:     "GET",
+            dataType: "json",
             success:  onSuccess,
             error:    onError,
             complete: onComplete
@@ -1239,10 +1239,10 @@ appSetup(MODULE, function() {
          * @param {XMLHttpRequest} _xhr
          */
         function onSuccess(data, _status, _xhr) {
-            //_debugXhr(`${func}: received`, (data?.length || 0), 'bytes.');
+            //_debugXhr(`${func}: received`, (data?.length || 0), "bytes.");
             if (isMissing(data)) {
-                error = 'no data';
-            } else if (typeof(data) !== 'object') {
+                error = "no data";
+            } else if (typeof(data) !== "object") {
                 error = `unexpected data type ${typeof data}`;
             } else {
                 // The actual data may be inside '{ "response" : { ... } }'.
@@ -1278,13 +1278,13 @@ appSetup(MODULE, function() {
          * @param {string}         _status
          */
         function onComplete(xhr, _status) {
-            _debugXhr(`${func}: completed in`, secondsSince(start), 'sec.');
+            _debugXhr(`${func}: completed in`, secondsSince(start), "sec.");
             if (records) {
                 callback(records);
             } else if (warning) {
                 OUT.warn(`${func}: ${xhr.status}: ${warning} FROM ${url}`);
                 callback([]);
-            } else if (error ||= 'unknown failure') {
+            } else if (error ||= "unknown failure") {
                 OUT.error(`${func}: ${xhr.status}: ${error} - ABORT ${url}`);
             }
         }
@@ -1303,7 +1303,7 @@ appSetup(MODULE, function() {
      */
     function getBulkOpTrace(name) {
         const key = name || BULK_OP_STORAGE_KEY;
-        return sessionStorage.getItem(key) || '';
+        return sessionStorage.getItem(key) || "";
     }
 
     /**
@@ -1314,7 +1314,7 @@ appSetup(MODULE, function() {
      * @returns {string}              New stored value.
      */
     function clearBulkOpTrace(name) {
-        return setBulkOpTrace('', name, false);
+        return setBulkOpTrace("", name, false);
     }
 
     /**
@@ -1340,14 +1340,14 @@ appSetup(MODULE, function() {
      */
     function setBulkOpTrace(value, name, append) {
         const key = name || BULK_OP_STORAGE_KEY;
-        let entry = append && getBulkOpTrace(key) || '';
+        let entry = append && getBulkOpTrace(key) || "";
         if (isPresent(value)) {
-            const trace = (v) => (typeof v === 'string') ? v : asString(v);
+            const trace = (v) => (typeof v === "string") ? v : asString(v);
             const parts = arrayWrap(value).map(v => trace(v));
             if (entry) {
                 parts.unshift(entry);
             }
-            entry = parts.join(', ');
+            entry = parts.join(", ");
         }
         sessionStorage.setItem(key, entry);
         return entry;
@@ -1377,7 +1377,7 @@ appSetup(MODULE, function() {
      */
     function refreshRecord(form) {
 
-        const func  = 'refreshRecord';
+        const func  = "refreshRecord";
         const $form = formElement(form);
         let url;
         if (isNewForm($form)) {
@@ -1397,9 +1397,9 @@ appSetup(MODULE, function() {
 
         $.ajax({
             url:      url,
-            type:     'POST',
-            dataType: 'json',
-            headers:  { 'X-CSRF-Token': Rails.csrfToken() },
+            type:     "POST",
+            dataType: "json",
+            headers:  { "X-CSRF-Token": Rails.csrfToken() },
             async:    false,
             success:  onSuccess,
             error:    onError,
@@ -1414,10 +1414,10 @@ appSetup(MODULE, function() {
          * @param {XMLHttpRequest} _xhr
          */
         function onSuccess(data, _status, _xhr) {
-            //_debugXhr(`${func}: received`, (data?.length || 0), 'bytes.');
+            //_debugXhr(`${func}: received`, (data?.length || 0), "bytes.");
             if (isMissing(data)) {
-                error = 'no data';
-            } else if (typeof(data) !== 'object') {
+                error = "no data";
+            } else if (typeof(data) !== "object") {
                 error = `unexpected data type ${typeof data}`;
             } else {
                 // The actual data may be inside '{ "response" : { ... } }'.
@@ -1453,12 +1453,12 @@ appSetup(MODULE, function() {
          * @param {string}         _status
          */
         function onComplete(xhr, _status) {
-            _debugXhr(`${func}: completed in`, secondsSince(start), 'sec.');
+            _debugXhr(`${func}: completed in`, secondsSince(start), "sec.");
             if (record) {
                 //_debugXhr(`${func}: data from server:`, record);
             } else if (warning) {
                 OUT.warn(`${func}: ${xhr.status}: ${warning} FROM ${url}`);
-            } else if (error ||= 'unknown error') {
+            } else if (error ||= "unknown error") {
                 OUT.error(`${func}: ${xhr.status}: ${error} FROM ${url}`);
             }
             initializeModelForm($form, record);
@@ -1526,7 +1526,7 @@ appSetup(MODULE, function() {
         const $form    = formElement(form);
         const label    = submitLabel($form);
         const tip      = submitTooltip($form);
-        const $button  = submitButton($form).attr('title', tip).text(label);
+        const $button  = submitButton($form).attr("title", tip).text(label);
         const verify   = requiresRecaptcha($form);
         const callback = verify ? verifyRecaptcha : startSubmission;
         handleClickAndKeypress($button, callback);
@@ -1542,7 +1542,7 @@ appSetup(MODULE, function() {
         const $form   = formElement(form);
         const label   = cancelLabel($form);
         const tip     = cancelTooltip($form);
-        const $button = cancelButton($form).attr('title', tip).text(label);
+        const $button = cancelButton($form).attr("title", tip).text(label);
         handleClickAndKeypress($button, cancelSubmission);
     }
 
@@ -1554,7 +1554,7 @@ appSetup(MODULE, function() {
      * @param {string|object} [start_data]  Replacement data.
      */
     function initializeFormFields(form, start_data) {
-        const func    = 'initializeFormFields';
+        const func    = "initializeFormFields";
         const $form   = formElement(form);
         const data    = {};
         const extract = (value) => Object.assign(data, fromJSON(value, func));
@@ -1620,12 +1620,12 @@ appSetup(MODULE, function() {
      */
     function initializeInputField(field, data) {
         const $field = $(field);
-        const key    = $field.attr('data-field');
-        const value  = (typeof data === 'object') ? data[key] : data;
+        const key    = $field.attr("data-field");
+        const value  = (typeof data === "object") ? data[key] : data;
         updateInputField($field, value, true, true);
         if ($field.is(FIXED)) {
-            $field.prop('readonly', true);
-            $field.find('option').not(':selected').prop('disabled', true);
+            $field.prop("readonly", true);
+            $field.find('option').not(':selected').prop("disabled", true);
         }
     }
 
@@ -1674,8 +1674,8 @@ appSetup(MODULE, function() {
      * @see "BaseDecorator::Form#render_form_input_multi"
      */
     function updateInputGroup(target, new_value, trim, init) {
-        const func   = 'updateInputGroup';
-        const $field = selfOrParent(target, '[data-field]');
+        const func   = "updateInputGroup";
+        const $field = selfOrParent(target, "[data-field]");
 
         if (isEmpty($field)) {
             return OUT.error(`${func}: no data-field for`, target);
@@ -1689,7 +1689,7 @@ appSetup(MODULE, function() {
             $inputs.each((index, input) => {
                 let value = new_values[index];
                 if (init && !value) {
-                    value = '';
+                    value = "";
                 }
                 if (isDefined(value)) {
                     setValue(input, value, true, init);
@@ -1700,13 +1700,13 @@ appSetup(MODULE, function() {
             $inputs.each((_, input) => setOriginalValue(input));
             if (new_value) {
                 let value = new_value;
-                if ((trim !== false) && (typeof value === 'string')) {
+                if ((trim !== false) && (typeof value === "string")) {
                     value = value.trim();
                 }
                 let index = -1;
                 $inputs.each((idx, _input) => {
                     let done = false;
-                    const old_value = this.value || '';
+                    const old_value = this.value || "";
                     if (old_value === value) {
                         // The value is present in this slot.
                         index = -1;
@@ -1745,7 +1745,7 @@ appSetup(MODULE, function() {
      * @see "BaseDecorator::Form#render_form_menu_multi"
      */
     function updateCheckboxGroup(target, setting, init) {
-        const func   = 'updateCheckboxGroup';
+        const func   = "updateCheckboxGroup";
         const $field = selfOrParent(target, '[data-field]');
 
         if (isEmpty($field)) {
@@ -1764,7 +1764,7 @@ appSetup(MODULE, function() {
                 const checked = values.includes(cb.value);
                 setChecked(cb, checked, init);
             });
-        } else if (typeof setting === 'string') {
+        } else if (typeof setting === "string") {
             $checkboxes.each((_, cb) => {
                 if (cb.value === setting) {
                     setChecked(cb, true, init);
@@ -1796,7 +1796,7 @@ appSetup(MODULE, function() {
      * @returns {undefined}
      */
     function updateCheckboxInputField(target, setting, init) {
-        const func   = 'updateCheckboxInputField';
+        const func   = "updateCheckboxInputField";
         const $input = $(target);
         const $field = selfOrParent($input, '[data-field]');
 
@@ -1807,8 +1807,8 @@ appSetup(MODULE, function() {
         const checkbox = $input[0];
         let checked;
         switch (setting) {
-            case true:  case 'true':    checked = true;             break;
-            case false: case 'false':   checked = false;            break;
+            case true:  case "true":    checked = true;             break;
+            case false: case "false":   checked = false;            break;
             case checkbox.value:        checked = true;             break;
             default:                    checked = checkbox.checked; break;
         }
@@ -1837,7 +1837,7 @@ appSetup(MODULE, function() {
      * @see "BaseDecorator::Form#render_form_menu_single"
      */
     function updateMenu(target, new_value, init) {
-        const func   = 'updateMenu';
+        const func   = "updateMenu";
         const $input = $(target);
         const $field = selfOrParent($input, '[data-field]');
 
@@ -1870,7 +1870,7 @@ appSetup(MODULE, function() {
      * @see "BaseDecorator::Form#render_form_input"
      */
     function updateTextAreaField(target, new_value, trim, init) {
-        const func   = 'updateTextAreaField';
+        const func   = "updateTextAreaField";
         const $input = $(target);
         const $field = selfOrParent($input, '[data-field]');
 
@@ -1907,7 +1907,7 @@ appSetup(MODULE, function() {
      * @see "BaseDecorator::Form#render_form_input"
      */
     function updateTextInputField(target, new_value, trim, init) {
-        const func   = 'updateTextInputField';
+        const func   = "updateTextInputField";
         const $input = $(target);
         const $field = selfOrParent($input, '[data-field]');
 
@@ -1918,7 +1918,7 @@ appSetup(MODULE, function() {
         let value = new_value;
         if (Array.isArray(value)) {
             // noinspection JSUnresolvedFunction
-            value = compact(value).join('; ');
+            value = compact(value).join("; ");
         } else if (notDefined(value)) {
             value = $input.val();
         }
@@ -1963,7 +1963,7 @@ appSetup(MODULE, function() {
      * @returns {undefined | { name: string, modified: boolean|undefined }}
      */
     function updateRelatedField(name, other_name) {
-        const func = 'updateRelatedField';
+        const func = "updateRelatedField";
 
         if (isMissing(name)) {
             return OUT.error(`${func}: missing primary argument`);
@@ -1972,12 +1972,12 @@ appSetup(MODULE, function() {
         // Determine the element for the named field.
         const $form = formElement();
         let this_name, $this_field;
-        if (typeof name === 'string') {
+        if (typeof name === "string") {
             this_name   = name;
             $this_field = $form.find(`[name="${this_name}"]`);
         } else {
             $this_field = $(name);
-            this_name   = $this_field.attr('name');
+            this_name   = $this_field.attr("name");
         }
 
         /** @type {Relationship} */
@@ -1986,9 +1986,9 @@ appSetup(MODULE, function() {
         let error = undefined;
         /** @type {boolean|string|undefined} */
         let warn  = undefined;
-        if (typeof other_name === 'object') {
+        if (typeof other_name === "object") {
             other = dup(other_name);
-            error = isMissing(other) && 'empty secondary argument';
+            error = isMissing(other) && "empty secondary argument";
         } else if (isDefined(other_name)) {
             other = FIELD_RELATIONSHIP[other_name];
             error = isMissing(other) && `no table entry for ${this_name}`;
@@ -2035,19 +2035,19 @@ appSetup(MODULE, function() {
 
         function isBoolean(v, is_true) {
             let result = v;
-            if (typeof result === 'function') {
+            if (typeof result === "function") {
                 result = result($this_field);
             }
-            if (typeof result !== 'boolean') {
+            if (typeof result !== "boolean") {
                 result = String(result).toLowerCase();
-                result = is_true ? (result === 'true') : (result !== 'false');
+                result = is_true ? (result === "true") : (result !== "false");
             }
             return is_true ? result : !result;
         }
 
         function modifyOther(new_req, new_val) {
             let changed   = false;
-            const old_req = $other_field.attr('data-required')?.toString();
+            const old_req = $other_field.attr("data-required")?.toString();
             if (old_req !== new_req?.toString()) {
                 fieldRequired($other_field, new_req);
                 changed = true;
@@ -2055,9 +2055,9 @@ appSetup(MODULE, function() {
             if (isDefined(new_val) && ($other_field.val() !== new_val)) {
                 $other_field.val(new_val);
                 // This shouldn't be necessary.
-                if ((this_name === 'rem_complete') &&
-                    (rawOriginalValue($other_field) === '(ALL)')) {
-                    setOriginalValue($other_field, '');
+                if ((this_name === "rem_complete") &&
+                    (rawOriginalValue($other_field) === "(ALL)")) {
+                    setOriginalValue($other_field, "");
                     $other_field.text(new_val);
                 }
                 changed = true;
@@ -2080,21 +2080,21 @@ appSetup(MODULE, function() {
      */
     function updateFieldAndLabel(target, values) {
         const $field   = $(target);
-        const field    = $field.attr('data-field');
+        const field    = $field.attr("data-field");
         /** @type {jQuery} */
         const $label   = fieldLabel($field),
               $status  = $label.find('.status-marker'),
               $related = $field.siblings(`[data-for="${field}"]`);
         const parts    = [$field, $label, $status, ...$related];
 
-        if ($field.attr('readonly')) {
+        if ($field.attr("readonly")) {
 
             // Database fields should not be marked for validation.
-            toggleClass(parts, 'valid invalid', false);
+            toggleClass(parts, "valid invalid", false);
 
         } else {
 
-            const required = ($field.attr('data-required') === 'true');
+            const required = ($field.attr("data-required") === "true");
             const missing  = isEmpty(values);
             let invalid    = required && missing;
 
@@ -2126,7 +2126,7 @@ appSetup(MODULE, function() {
 
                 const plus_notes = isPresent(notes) && arrayWrap(notes);
                 if (tip && plus_notes) {
-                    setTooltip($status, [tip, '', ...plus_notes].join("\n"));
+                    setTooltip($status, [tip, "", ...plus_notes].join("\n"));
                 } else if (tip ||= plus_notes) {
                     setTooltip($status, tip);
                 } else {
@@ -2171,7 +2171,7 @@ appSetup(MODULE, function() {
      */
     function fieldLabel(target) {
         const $input = $(target);
-        const id     = $input.attr('id');
+        const id     = $input.attr("id");
         const match  = `[data-label-for="${id}"], label[for="${id}"]`;
         return $input.siblings(match);
     }
@@ -2190,9 +2190,9 @@ appSetup(MODULE, function() {
         /** @type {jQuery} */
         const $input = $(target);
         switch (setting) {
-            case true:  $input.attr('data-required', true); break;
-            case false: $input.removeAttr('data-required'); break;
-            default:    return $input.attr('data-required') || false;
+            case true:  $input.attr("data-required", true); break;
+            case false: $input.removeAttr("data-required"); break;
+            default:    return $input.attr("data-required") || false;
         }
         return fieldAriaRequired($input, setting);
     }
@@ -2212,9 +2212,9 @@ appSetup(MODULE, function() {
     function fieldAriaRequired(target, setting) {
         const $target = fieldAriaTarget(target);
         switch (setting) {
-            case true:  $target.attr('aria-required', true); return setting;
-            case false: $target.removeAttr('aria-required'); return setting;
-            default:    return $target.attr('aria-required') || false;
+            case true:  $target.attr("aria-required", true); return setting;
+            case false: $target.removeAttr("aria-required"); return setting;
+            default:    return $target.attr("aria-required") || false;
         }
     }
 
@@ -2233,9 +2233,9 @@ appSetup(MODULE, function() {
     function fieldAriaInvalid(target, setting) {
         const $target = fieldAriaTarget(target);
         switch (setting) {
-            case true:  $target.attr('aria-invalid', true); return setting;
-            case false: $target.removeAttr('aria-invalid'); return setting;
-            default:    return $target.attr('aria-invalid') || false;
+            case true:  $target.attr("aria-invalid", true); return setting;
+            case false: $target.removeAttr("aria-invalid"); return setting;
+            default:    return $target.attr("aria-invalid") || false;
         }
     }
 
@@ -2267,7 +2267,7 @@ appSetup(MODULE, function() {
         if (init) {
             setOriginalValue($checkbox, new_state);
         }
-        $checkbox.prop('checked', new_state);
+        $checkbox.prop("checked", new_state);
     }
 
     /**
@@ -2280,11 +2280,11 @@ appSetup(MODULE, function() {
      */
     function setValue(target, new_value, trim, init) {
         const $item = $(target);
-        let value   = new_value || '';
+        let value   = new_value || "";
         if (value === EMPTY_VALUE) {
-            $item.prop('placeholder', value);
-            value = '';
-        } else if ((trim !== false) && value && (typeof value === 'string')) {
+            $item.prop("placeholder", value);
+            value = "";
+        } else if ((trim !== false) && value && (typeof value === "string")) {
             value = value.trim();
         }
         if (init) {
@@ -2302,15 +2302,15 @@ appSetup(MODULE, function() {
      */
     function textAreaValue(value) {
         let result = value;
-        if (typeof result === 'string') {
+        if (typeof result === "string") {
             result = result.trim();
-            if (!result || (result === '[]')) {
-                result = '';
-            } else if (result[0] === '[') {
+            if (!result || (result === "[]")) {
+                result = "";
+            } else if (result[0] === "[") {
                 try {
                     result = JSON.parse(result);
                 } catch {
-                    if (result.slice(-1) === ']') {
+                    if (result.slice(-1) === "]") {
                         result = result.slice(1, -1);
                     } else {
                         result = result.slice(1);
@@ -2347,7 +2347,7 @@ appSetup(MODULE, function() {
             new_value = valueOf($item);
         }
         if (isDefined(new_value)) {
-            $item.attr('data-original-value', new_value);
+            $item.attr("data-original-value", new_value);
         }
     }
 
@@ -2360,7 +2360,7 @@ appSetup(MODULE, function() {
      */
     function getOriginalValue(target) {
         const value = rawOriginalValue(target);
-        return notDefined(value) ? '' : value;
+        return notDefined(value) ? "" : value;
     }
 
     /**
@@ -2372,7 +2372,7 @@ appSetup(MODULE, function() {
      */
     function rawOriginalValue(target) {
         const $item = $(target);
-        return $item.attr('data-original-value');
+        return $item.attr("data-original-value");
     }
 
     /**
@@ -2390,17 +2390,17 @@ appSetup(MODULE, function() {
      */
     function valueOf(item) {
         let value;
-        if (typeof item === 'object') {
+        if (typeof item === "object") {
             const $i = $(item);
             value = $i.is(CHECKBOX) ? $i[0].checked : $i.val();
         } else {
             value = item;
         }
         switch (typeof value) {
-            case 'boolean': return value ? 'true' : 'false';
-            case 'number':  return value.toString();
-            case 'string':  return value.trim();
-            default:        return '';
+            case "boolean": return value ? "true" : "false";
+            case "number":  return value.toString();
+            case "string":  return value.trim();
+            default:        return "";
         }
     }
 
@@ -2408,8 +2408,8 @@ appSetup(MODULE, function() {
     // Functions - form fields - deletion
     // ========================================================================
 
-    const TO_DELETE_ATTR = 'data-to-delete';
-    const DELETING_ATTR  = 'data-now-deleting';
+    const TO_DELETE_ATTR = "data-to-delete";
+    const DELETING_ATTR  = "data-now-deleting";
 
     /**
      * Mark a field to be transmitted as a deleted field when submitted.
@@ -2445,7 +2445,7 @@ appSetup(MODULE, function() {
      * @param {Selector} field
      */
     function markAsDeleting(field) {
-        const func   = 'markAsDeleting';
+        const func   = "markAsDeleting";
         const $field = $(field);
         const value  = Emma.Field.deleted;
 
@@ -2488,7 +2488,7 @@ appSetup(MODULE, function() {
      */
     function validate(target, new_value, callback) {
         const $input = $(target);
-        const field  = $input.attr('data-field');
+        const field  = $input.attr("data-field");
         const entry  = FIELD_VALIDATION[field];
         const value  = isDefined(new_value) ? new_value : $input.val();
         let valid, notes, min, max;
@@ -2497,19 +2497,19 @@ appSetup(MODULE, function() {
             notes = Emma.Messages.field.validation.empty;
             valid = undefined;
 
-        } else if (typeof entry === 'string') {
+        } else if (typeof entry === "string") {
             valid = remoteValidate(field, value, callback);
             if (notDefined(valid)) {
                 return;
             }
 
-        } else if (typeof entry === 'function') {
+        } else if (typeof entry === "function") {
             valid = entry(value);
 
-        } else if (typeof entry === 'boolean') {
+        } else if (typeof entry === "boolean") {
             valid = entry;
 
-        } else if (field === 'password_confirmation') {
+        } else if (field === "password_confirmation") {
             const $pwd = inputFields().filter('[data-field="password"]');
             if ($pwd.is(VALID)) {
                 valid = (value === $pwd.val());
@@ -2520,11 +2520,11 @@ appSetup(MODULE, function() {
         } else if ($input.is('[type="email"]')) {
             valid = !!value.match(/^[^@]+@[^.].*\.[^.]+$/);
 
-        } else if ((min = $input.attr('minlength')) && (value.length < min)) {
+        } else if ((min = $input.attr("minlength")) && (value.length < min)) {
             notes = Emma.Messages.field.validation.too_small;
             valid = false;
 
-        } else if ((max = $input.attr('maxlength')) && (value.length > max)) {
+        } else if ((max = $input.attr("maxlength")) && (value.length > max)) {
             notes = Emma.Messages.field.validation.too_big;
             valid = false;
 
@@ -2545,7 +2545,7 @@ appSetup(MODULE, function() {
      * @returns {boolean|undefined}
      */
     function remoteValidate(field, new_value, callback) {
-        const func = 'remoteValidate';
+        const func = "remoteValidate";
         let url    = FIELD_VALIDATION[field];
 
         if (isMissing(callback)) {
@@ -2556,12 +2556,12 @@ appSetup(MODULE, function() {
 
         // Prepare value for inclusion in the URL.
         let value = new_value;
-        if (typeof value === 'string') {
+        if (typeof value === "string") {
             value = value.split(/[,;|\t\n]/);
         }
-        if (['dc_identifier', 'dc_relation'].includes(field)) {
+        if (["dc_identifier", "dc_relation"].includes(field)) {
             value = value.filter(v =>
-                !v.match(/https?:/) || v.includes('doi.org') ||
+                !v.match(/https?:/) || v.includes("doi.org") ||
                     OUT.log(`${func}: ignoring "${v}"`)
             );
             if (isEmpty(value)) {
@@ -2570,13 +2570,13 @@ appSetup(MODULE, function() {
         } else if (isEmpty(value)) {
             return OUT.warn(`${func}: ${url}: no values given`) || false;
         }
-        value = value.join(',');
+        value = value.join(",");
 
         // If the URL is expecting to be completed, append the value string.
         // Otherwise provide it as a generic "value" URL parameter.
-        if (url.endsWith('=')) {
+        if (url.endsWith("=")) {
             url += value;
-        } else if (url.includes('?')) {
+        } else if (url.includes("?")) {
             url = makeUrl(url, { value: value });
         }
 
@@ -2585,7 +2585,7 @@ appSetup(MODULE, function() {
 
         $.ajax({
             url:      url,
-            type:     'GET',
+            type:     "GET",
             success:  onSuccess,
             error:    onError,
             complete: onComplete
@@ -2601,8 +2601,8 @@ appSetup(MODULE, function() {
         function onSuccess(data, _status, _xhr) {
             //_debugXhr(`${func}: received data:`, data);
             if (isMissing(data)) {
-                error = 'no data';
-            } else if (typeof(data) !== 'object') {
+                error = "no data";
+            } else if (typeof(data) !== "object") {
                 error = `unexpected data type ${typeof data}`;
             } else {
                 // The actual data may be inside '{ "response" : { ... } }'.
@@ -2633,7 +2633,7 @@ appSetup(MODULE, function() {
          * @param {string}         _status
          */
         function onComplete(xhr, _status) {
-            _debugXhr(`${func}: completed in`, secondsSince(start), 'sec.');
+            _debugXhr(`${func}: completed in`, secondsSince(start), "sec.");
             if (error) {
                 OUT.warn(`${func}: ${xhr.status}: ${error} FROM ${url}`);
                 callback(undefined, `system error: ${error}`);
@@ -2655,8 +2655,8 @@ appSetup(MODULE, function() {
 
     const FROM_PARENT = true;
     const CLEARED     = null;
-    const AS_IS       = '';
-    const NEW_REPO    = 'new_repo';
+    const AS_IS       = "";
+    const NEW_REPO    = "new_repo";
 
     /**
      * Template specifying update behavior for form fields.
@@ -2747,7 +2747,7 @@ appSetup(MODULE, function() {
      * @param {Selector} [form]       Default: {@link formElement}.
      */
     function monitorSourceRepository(form) {
-        const func  = 'monitorSourceRepository';
+        const func  = "monitorSourceRepository";
         const $form = formElement(form);
         const $menu = sourceRepositoryMenu($form);
 
@@ -2756,23 +2756,23 @@ appSetup(MODULE, function() {
 
         if (isEditForm($form) && $menu.val() && !$menu.is(FIXED)) {
             const note = Emma.Messages.field.readonly;
-            seal($menu, true).attr('title', note);
+            seal($menu, true).attr("title", note);
             return;
         }
 
-        const REPO_DATA = 'data-previous-value';
+        const REPO_DATA = "data-previous-value";
 
         // Listen for a change to the "Source Repository" selection.  If the
         // selection was cleared, or if the default repository was selected,
         // then proceed to form validation.  If a partner repository was
         // selected, prompt for the original item.
 
-        handleEvent($menu, 'change', function() {
+        handleEvent($menu, "change", function() {
             clearFlash();
-            const new_repo = $menu.val() || '';
+            const new_repo = $menu.val() || "";
             if (partnerRepository(new_repo)) {
                 showParentEntrySelect($form);
-                parentEntrySearchInput($form).trigger('focus');
+                parentEntrySearchInput($form).trigger("focus");
             } else {
                 hideParentEntrySelect($form);
                 setSourceRepository(new_repo);
@@ -2834,7 +2834,7 @@ appSetup(MODULE, function() {
             /** @type {SearchResultEntry} */
             const parent = list.shift();
             if (repo !== parent.emma_repository) {
-                error = 'PROBLEM: ';
+                error = "PROBLEM: ";
                 error += `new_repo == "${repo}" but parent `;
                 error += `emma_repository == "${parent.emma_repository}"`;
                 OUT.warn(`${func}:`, error);
@@ -2851,14 +2851,14 @@ appSetup(MODULE, function() {
                 const also    = Emma.Messages.also;
                 const match   = pluralize(Emma.Messages.match, one);
                 flashMessage(
-                    [many, other, results, from, repo, also, match].join(' ')
+                    [many, other, results, from, repo, also, match].join(" ")
                 );
                 const warn = (label, entry) => {
                     const id = entry.emma_titleId;
                     OUT.warn(`${func}: ${label}: title_id = ${id}`, entry);
                 };
-                warn('parent', parent);
-                mismatch.forEach(e => warn('other', e));
+                warn("parent", parent);
+                mismatch.forEach(e => warn("other", e));
             } else {
                 OUT.debug(`${func}: parent:`, parent);
             }
@@ -2876,7 +2876,7 @@ appSetup(MODULE, function() {
                 rem_metadataSource: [Emma.Repo.name[repo]],
             };
             for (const [field, value] of Object.entries(source_fields)) {
-                if (typeof value === 'function') {
+                if (typeof value === "function") {
                     // noinspection JSValidateTypes
                     update[field] = value(parent);
                 } else if (value === FROM_PARENT) {
@@ -2914,9 +2914,9 @@ appSetup(MODULE, function() {
             if (isDefined(new_repo)) {
                 $menu.attr(REPO_DATA, new_repo);
             } else {
-                new_repo = $menu.attr(REPO_DATA) || '';
+                new_repo = $menu.attr(REPO_DATA) || "";
             }
-            OUT.debug(`${func}:`, (new_repo || 'cleared'));
+            OUT.debug(`${func}:`, (new_repo || "cleared"));
             if (!partnerRepository(new_repo)) {
                 unsealFields();
                 resetLookupCondition($form, true);
@@ -2981,13 +2981,13 @@ appSetup(MODULE, function() {
      * @param {function}                      [error_callback]
      */
     function fetchIndexEntries(params, callback, error_callback) {
-        const func = 'fetchIndexEntries';
-        const url  = isPresent(params) && makeUrl('/search/direct', params);
+        const func = "fetchIndexEntries";
+        const url  = isPresent(params) && makeUrl("/search/direct", params);
         if (isEmpty(url)) {
             OUT.error(`${func}: empty search terms`);
             return;
         }
-        const title = params.title?.replace(/^"(.*)"$/, '$1')?.toLowerCase();
+        const title = params.title?.replace(/^"(.*)"$/, "$1")?.toLowerCase();
 
         _debugXhr(`${func}: VIA`, url);
 
@@ -2998,8 +2998,8 @@ appSetup(MODULE, function() {
 
         $.ajax({
             url:      url,
-            type:     'GET',
-            dataType: 'json',
+            type:     "GET",
+            dataType: "json",
             success:  onSuccess,
             error:    onError,
             complete: onComplete
@@ -3013,10 +3013,10 @@ appSetup(MODULE, function() {
          * @param {XMLHttpRequest}             _xhr
          */
         function onSuccess(data, _status, _xhr) {
-            //_debugXhr(`${func}: received`, (data?.length || 0), 'bytes.');
+            //_debugXhr(`${func}: received`, (data?.length || 0), "bytes.");
             if (isMissing(data)) {
-                error = 'no data';
-            } else if (typeof(data) !== 'object') {
+                error = "no data";
+            } else if (typeof(data) !== "object") {
                 error = `unexpected data type ${typeof data}`;
             } else if (!(records = data.response?.records)) {
                 records = [];
@@ -3052,13 +3052,13 @@ appSetup(MODULE, function() {
          * @param {string}         _status
          */
         function onComplete(xhr, _status) {
-            _debugXhr(`${func}: complete`, secondsSince(start), 'sec.');
+            _debugXhr(`${func}: complete`, secondsSince(start), "sec.");
             if (records) {
                 callback(records);
             } else if (warning) {
                 OUT.warn(`${func}: ${xhr.status}: ${warning} FROM ${url}`);
                 error_callback?.(warning);
-            } else if (error ||= 'unknown failure') {
+            } else if (error ||= "unknown failure") {
                 OUT.error(`${func}: ${xhr.status}: ${error} FROM ${url}`);
                 error_callback?.(error);
             }
@@ -3102,7 +3102,7 @@ appSetup(MODULE, function() {
      */
     function showParentEntrySelect(form) {
         const $popup_form = parentEntrySelect(form);
-        parentEntrySearchInput($popup_form).prop('disabled', false);
+        parentEntrySearchInput($popup_form).prop("disabled", false);
         return toggleHidden($popup_form, false);
     }
 
@@ -3115,7 +3115,7 @@ appSetup(MODULE, function() {
      */
     function hideParentEntrySelect(form) {
         const $popup_form = parentEntrySelect(form);
-        parentEntrySearchInput($popup_form).prop('disabled', true);
+        parentEntrySearchInput($popup_form).prop("disabled", true);
         return toggleHidden($popup_form, true);
     }
 
@@ -3141,9 +3141,9 @@ appSetup(MODULE, function() {
     function parentEntrySearchTerms(form, caller) {
         let error, result = {};
         const $input = parentEntrySearchInput(form);
-        const terms  = $input.val()?.trim() || '';
+        const terms  = $input.val()?.trim() || "";
         if (isEmpty(terms)) {
-            error = 'empty search terms';
+            error = "empty search terms";
         } else if (terms.match(/^[a-z]+:/)) {
             result.identifier = terms;
         } else if (terms.match(/^\d+[xX]?$/)) {
@@ -3154,7 +3154,7 @@ appSetup(MODULE, function() {
             result.title      = terms;
         }
         if (error) {
-            const func = caller || 'parentEntrySearchTerms';
+            const func = caller || "parentEntrySearchTerms";
             OUT.warn(`${func}: ${error}`);
         }
         return result;
@@ -3198,8 +3198,8 @@ appSetup(MODULE, function() {
      */
     function seal(item, disabled) {
         const $item = $(item);
-        $item.prop((disabled ? 'disabled' : 'readonly'), true);
-        $item.find('option').not(':selected').prop('disabled', true);
+        $item.prop((disabled ? "disabled" : "readonly"), true);
+        $item.find('option').not(':selected').prop("disabled", true);
         $item.toggleClass(SEALED_MARKER, true);
         return $item;
     }
@@ -3213,10 +3213,10 @@ appSetup(MODULE, function() {
      */
     function unseal(item) {
         const $item = $(item);
-        $item.prop('disabled', false);
-        $item.prop('readonly', false);
-        $item.prop('placeholder', '');
-        $item.find('option').prop('disabled', false);
+        $item.prop("disabled", false);
+        $item.prop("readonly", false);
+        $item.prop("placeholder", "");
+        $item.find('option').prop("disabled", false);
         $item.toggleClass(SEALED_MARKER, false);
         return $item;
     }
@@ -3307,11 +3307,11 @@ appSetup(MODULE, function() {
             message = $.map(compact(updates), (fields, update_type) => {
                 const items  = pluralize(Emma.Messages.item, fields.length);
                 const label  = `${update_type} ${items}`;
-                const attrs  = fields.map(fld => `[name="${fld}"]`).join(', ');
+                const attrs  = fields.map(fld => `[name="${fld}"]`).join(", ");
                 const inputs = $form.find(attrs).toArray();
                 const names  = inputs.map(input =>
                     fieldLabel(input).children('.text').text()
-                ).sort().join(', ');
+                ).sort().join(", ");
                 const type   = `<span class="type">${label}:</span>`;
                 const list   = `<span class="list">${names}.</span>`;
                 return `${type} ${list}`;
@@ -3319,13 +3319,13 @@ appSetup(MODULE, function() {
 
             // NOTE: This is a hack due to the way that publication date is
             //  handled versus copyright year.
-            if (Object.keys(data).includes('emma_publicationDate')) {
-                const $input = formField('emma_publicationDate', $form);
+            if (Object.keys(data).includes("emma_publicationDate")) {
+                const $input = formField("emma_publicationDate", $form);
                 const $label = fieldLabel($input);
-                $input.attr('title', $label.attr('title'));
+                $input.attr("title", $label.attr("title"));
                 $input.prop({ readonly: false, disabled: false });
                 [$input, $label].forEach($e => {
-                    $e.css('display','revert').toggleClass('disabled', false)
+                    $e.css("display","revert").toggleClass("disabled", false)
                 });
             }
 
@@ -3352,11 +3352,11 @@ appSetup(MODULE, function() {
                 return disableLookup($button, forbid);
             }
             if (forbid) {
-                OUT.error('enableLookup: cannot enable and forbid');
+                OUT.error("enableLookup: cannot enable and forbid");
             }
-            $button.prop('disabled', false);
-            $button.removeClass('forbidden disabled');
-            $button.attr('title', Emma.Lookup.if_enabled.tooltip);
+            $button.prop("disabled", false);
+            $button.removeClass("forbidden disabled");
+            $button.attr("title", Emma.Lookup.if_enabled.tooltip);
         }
         return $button;
     }
@@ -3372,16 +3372,16 @@ appSetup(MODULE, function() {
     function disableLookup(form, forbid) {
         const $button = lookupButton(form);
         if ($button) {
-            $button.prop('disabled', true);
-            $button.addClass('disabled');
+            $button.prop("disabled", true);
+            $button.addClass("disabled");
             let tooltip;
             if (forbid) {
-                $button.addClass('forbidden');
+                $button.addClass("forbidden");
                 tooltip = Emma.Messages.form.no_lookup;
             } else {
                 tooltip = Emma.Lookup.if_disabled.tooltip;
             }
-            $button.attr('title', tooltip);
+            $button.attr("title", tooltip);
         }
         return $button;
     }
@@ -3574,7 +3574,7 @@ appSetup(MODULE, function() {
      */
     function updateSearchTermsData(event) {
         const $button = $(event.target);
-        if ($button.prop('disabled')) { return }
+        if ($button.prop("disabled")) { return }
         if (isPresent(getSearchTermsData($button))) { return }
         clearSearchResultsData($button);
         setSearchTermsData($button);
@@ -3601,10 +3601,10 @@ appSetup(MODULE, function() {
                     const values = $field.val();
                     if (isPresent(values)) {
                         const prefix = LookupRequest.LOOKUP_PREFIX[field];
-                        if (prefix === '') {
+                        if (prefix === "") {
                             request.add(values);
                         } else {
-                            request.add(values, (prefix || 'keyword'));
+                            request.add(values, (prefix || "keyword"));
                         }
                     }
                 }
@@ -3667,8 +3667,8 @@ appSetup(MODULE, function() {
         const $form   = formElement(form);
         const $fields = inputFields($form);
 
-        handleEvent($fields, 'change', onChange);
-        handleEvent($fields, 'input',  delayedBy(REVALIDATE_DELAY, onInput));
+        handleEvent($fields, "change", onChange);
+        handleEvent($fields, "input",  delayedBy(REVALIDATE_DELAY, onInput));
 
         /**
          * Revalidate the form after the element's content changes. <p/>
@@ -3680,7 +3680,7 @@ appSetup(MODULE, function() {
          * @param {ElementEvt} event
          */
         function onChange(event) {
-            DEBUG_INPUT && OUT.debug('*** CHANGE ***');
+            DEBUG_INPUT && OUT.debug("*** CHANGE ***");
             validateInputField(event);
         }
 
@@ -3694,9 +3694,9 @@ appSetup(MODULE, function() {
          * @see https://www.w3.org/TR/input-events-1#interface-InputEvent
          */
         function onInput(event) {
-            const type = (event?.originalEvent || event)?.inputType || '';
+            const type = (event?.originalEvent || event)?.inputType || "";
             DEBUG_INPUT && OUT.debug(`*** INPUT ${type} ***`);
-            if (!type.startsWith('format')) {
+            if (!type.startsWith("format")) {
                 validateInputField(event, undefined, false);
             }
         }
@@ -3780,10 +3780,10 @@ appSetup(MODULE, function() {
         const tip   = submitReadyTooltip($form);
         return submitButton($form)
             .addClass(BEST_CHOICE_MARKER)
-            .removeClass('forbidden disabled')
-            .prop('disabled', false)
-            .attr('title', tip)
-            .attr('data-state', 'ready');
+            .removeClass("forbidden disabled")
+            .prop("disabled", false)
+            .attr("title", tip)
+            .attr("data-state", "ready");
     }
 
     /**
@@ -3798,10 +3798,10 @@ appSetup(MODULE, function() {
         const tip   = submitNotReadyTooltip($form);
         return submitButton($form)
             .removeClass(BEST_CHOICE_MARKER)
-            .addClass('forbidden')
-            .prop('disabled', true)
-            .attr('title', tip)
-            .attr('data-state', 'not-ready');
+            .addClass("forbidden")
+            .prop("disabled", true)
+            .attr("title", tip)
+            .attr("data-state", "not-ready");
     }
 
     // ========================================================================
@@ -3814,7 +3814,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const RECAPTCHA_FORM_CLASS = 'recaptcha-verification';
+    const RECAPTCHA_FORM_CLASS = "recaptcha-verification";
 
     /**
      * Determine whether submission of the form is dependent on reCAPTCHA.
@@ -3865,7 +3865,7 @@ appSetup(MODULE, function() {
      * RecaptchaHelper#recaptcha.)
      */
     function failedRecaptcha() {
-        console.error('failedRecaptcha:', arguments);
+        console.error("failedRecaptcha:", arguments);
     }
 
     // ========================================================================
@@ -3897,9 +3897,9 @@ appSetup(MODULE, function() {
      * @returns {object|undefined}
      */
     function revertEditData(form) {
-        const func = 'revertEditData';
+        const func = "revertEditData";
         const data = revertDataElement(form).val();
-        return (data && (data !== '{}')) ? fromJSON(data, func) : undefined;
+        return (data && (data !== "{}")) ? fromJSON(data, func) : undefined;
     }
 
     /**
@@ -3917,7 +3917,7 @@ appSetup(MODULE, function() {
         if (!formState($form)) {
             setFormCanceled($form);
             if (PROPERTIES.Path.cancel) {
-                const path   = $button.attr('data-path');
+                const path   = $button.attr("data-path");
                 const fields = isEditForm($form) && revertEditData($form);
                 cancelCurrent($form, path, fields);
             } else {
@@ -3956,7 +3956,7 @@ appSetup(MODULE, function() {
         if (fields) {
             /** @type {string} */
             let data = fields;
-            if (typeof data !== 'string') {
+            if (typeof data !== "string") {
                 data = JSON.stringify(data);
             }
             params.revert = encodeURIComponent(data);
@@ -3997,13 +3997,13 @@ appSetup(MODULE, function() {
         const params = submissionParams($form);
         if (fields) {
             params.revert = encodeURIComponent(
-                (typeof fields === 'string') ? fields : JSON.stringify(fields)
+                (typeof fields === "string") ? fields : JSON.stringify(fields)
             );
         }
         $.ajax({
             url:     makeUrl(url, params),
-            type:    'POST',
-            headers: { 'X-CSRF-Token': Rails.csrfToken() },
+            type:    "POST",
+            headers: { "X-CSRF-Token": Rails.csrfToken() },
             async:   false
         });
     }
@@ -4017,12 +4017,12 @@ appSetup(MODULE, function() {
 
         const $form = formElement(form);
 
-        handleEvent($form, 'ajax:before',     beforeAjax);
-        handleEvent($form, 'ajax:beforeSend', beforeAjaxFormSubmission);
-        handleEvent($form, 'ajax:stopped',    onAjaxStopped);
-        handleEvent($form, 'ajax:success',    onAjaxFormSubmissionSuccess);
-        handleEvent($form, 'ajax:error',      onAjaxFormSubmissionError);
-        handleEvent($form, 'ajax:complete',   onAjaxFormSubmissionComplete);
+        handleEvent($form, "ajax:before",     beforeAjax);
+        handleEvent($form, "ajax:beforeSend", beforeAjaxFormSubmission);
+        handleEvent($form, "ajax:stopped",    onAjaxStopped);
+        handleEvent($form, "ajax:success",    onAjaxFormSubmissionSuccess);
+        handleEvent($form, "ajax:error",      onAjaxFormSubmissionError);
+        handleEvent($form, "ajax:complete",   onAjaxFormSubmissionComplete);
 
         /**
          * Before the XHR request is generated.
@@ -4030,7 +4030,7 @@ appSetup(MODULE, function() {
          * @param {object} arg
          */
         function beforeAjax(arg) {
-            _debugXhr('ajax:before - arguments', Array.from(arguments));
+            _debugXhr("ajax:before - arguments", Array.from(arguments));
         }
 
         /**
@@ -4039,7 +4039,7 @@ appSetup(MODULE, function() {
          * @param {object} arg
          */
         function beforeAjaxFormSubmission(arg) {
-            _debugXhr('ajax:beforeSend - arguments', Array.from(arguments));
+            _debugXhr("ajax:beforeSend - arguments", Array.from(arguments));
 
             // Disable empty database fields so they are not transmitted back
             // as form data.
@@ -4052,8 +4052,8 @@ appSetup(MODULE, function() {
             // If the source repository control is disabled (when editing a
             // completed submission), re-enable it so that it *is* transmitted.
             const $repo = sourceRepositoryMenu($form);
-            if ($repo.prop('disabled')) {
-                $repo.prop('disabled', false);
+            if ($repo.prop("disabled")) {
+                $repo.prop("disabled", false);
             }
         }
 
@@ -4063,7 +4063,7 @@ appSetup(MODULE, function() {
          * @param {object} arg
          */
         function onAjaxStopped(arg) {
-            _debugXhr('ajax:stopped - arguments', Array.from(arguments));
+            _debugXhr("ajax:stopped - arguments", Array.from(arguments));
         }
 
         /**
@@ -4072,7 +4072,7 @@ appSetup(MODULE, function() {
          * @param {object} arg
          */
         function onAjaxFormSubmissionSuccess(arg) {
-            _debugXhr('ajax:success - arguments', Array.from(arguments));
+            _debugXhr("ajax:success - arguments", Array.from(arguments));
             const data  = arg.data;
             const event = arg.originalEvent || {};
             // noinspection JSUnusedLocalSymbols
@@ -4087,13 +4087,13 @@ appSetup(MODULE, function() {
          * @param {object} arg
          */
         function onAjaxFormSubmissionError(arg) {
-            _debugXhr('ajax:error - arguments', Array.from(arguments));
+            _debugXhr("ajax:error - arguments", Array.from(arguments));
             const error = arg.data;
             const event = arg.originalEvent || {};
             // noinspection JSUnusedLocalSymbols
             const [_resp, _status_text, xhr] = event.detail || [];
             const status = xhr.status;
-            OUT.error('ajax:error', status, 'error', error, 'xhr', xhr);
+            OUT.error("ajax:error", status, "error", error, "xhr", xhr);
             onCreateError(xhr, status, error);
         }
 
@@ -4103,7 +4103,7 @@ appSetup(MODULE, function() {
          * @param {object} arg
          */
         function onAjaxFormSubmissionComplete(arg) {
-            _debugXhr('ajax:complete - arguments', Array.from(arguments));
+            _debugXhr("ajax:complete - arguments", Array.from(arguments));
             onCreateComplete();
         }
 
@@ -4116,13 +4116,13 @@ appSetup(MODULE, function() {
          * @param {XMLHttpRequest} xhr
          */
         function onCreateSuccess(data, status, xhr) {
-            const func   = 'onCreateSuccess';
+            const func   = "onCreateSuccess";
             const flash  = compact(extractFlashMessage(xhr));
             const entry  = pluralize(Emma.Messages.entry, flash.length);
             const action = termActionOccurred();
             let message  = `${Emma.Messages.EMMA} ${entry} ${action}`;
             if (isPresent(flash)) {
-                message += ` ${Emma.Messages.for}: ` + flash.join(', ');
+                message += ` ${Emma.Messages.for}: ` + flash.join(", ");
             }
             OUT.debug(`${func}:`, message);
             showFlashMessage(message);
@@ -4140,14 +4140,14 @@ appSetup(MODULE, function() {
          * @param {string}         error
          */
         function onCreateError(xhr, status, error) {
-            const func   = 'onCreateError';
+            const func   = "onCreateError";
             const flash  = compact(extractFlashMessage(xhr));
             const action = termAction($form);
             let message  = `${action} ${Emma.Messages.error}:`.toUpperCase();
             if (flash.length > 1) {
                 message += "\n" + flash.join("\n");
             } else if (flash.length === 1) {
-                message += ' ' + flash[0];
+                message += " " + flash[0];
             } else {
                 message += ` ${status}: ${error}`;
             }
@@ -4221,8 +4221,8 @@ appSetup(MODULE, function() {
         }
         const $buttons = fieldDisplayFilterButtons($form);
         const $button  = $buttons.filter(`[value="${mode}"]`);
-        $button.prop('checked', true)
-        $button.trigger('change');
+        $button.prop("checked", true)
+        $button.trigger("change");
     }
 
     /**
@@ -4237,7 +4237,7 @@ appSetup(MODULE, function() {
         const $form    = formElement(form);
         const $buttons = fieldDisplayFilterButtons($form);
 
-        handleEvent($buttons, 'change', fieldDisplayFilterHandler);
+        handleEvent($buttons, "change", fieldDisplayFilterHandler);
 
         /**
          * Update field display filtering if the target is checked.
@@ -4268,17 +4268,17 @@ appSetup(MODULE, function() {
      * @see "BaseDecorator::Form#field_group_controls"
      */
     function filterFieldDisplay(new_mode, form_sel) {
-        const func  = 'filterFieldDisplay';
-        const obj   = (typeof new_mode === 'object');
+        const func  = "filterFieldDisplay";
+        const obj   = (typeof new_mode === "object");
         const form  = obj ? new_mode  : form_sel;
         const $form = formElement(form);
         const mode  =
             (obj ? undefined : new_mode) || fieldDisplayFilterCurrent($form);
         switch (mode) {
-            case 'available': fieldDisplayAvailable($form); break;
-            case 'invalid':   fieldDisplayInvalid($form);   break;
-            case 'filled':    fieldDisplayFilled($form);    break;
-            case 'all':       fieldDisplayAll($form);       break;
+            case "available": fieldDisplayAvailable($form); break;
+            case "invalid":   fieldDisplayInvalid($form);   break;
+            case "filled":    fieldDisplayFilled($form);    break;
+            case "all":       fieldDisplayAll($form);       break;
             default:          OUT.error(`${func}: invalid mode:`, mode);
         }
         // Scroll so that the first visible field is at the top of the display
@@ -4368,17 +4368,17 @@ appSetup(MODULE, function() {
      */
     function setTooltip(element, text) {
         const $element = $(element);
-        let old_tip    = $element.attr('data-title');
+        let old_tip    = $element.attr("data-title");
         if (isMissing(old_tip)) {
-            old_tip = $element.attr('title');
+            old_tip = $element.attr("title");
             if (isPresent(old_tip)) {
-                $element.attr('data-title', old_tip);
+                $element.attr("data-title", old_tip);
             }
         }
         if (isPresent(text)) {
-            $element.attr('title', text);
+            $element.attr("title", text);
         } else {
-            $element.removeAttr('title');
+            $element.removeAttr("title");
         }
     }
 
@@ -4389,11 +4389,11 @@ appSetup(MODULE, function() {
      */
     function restoreTooltip(element) {
         const $element = $(element);
-        const old_tip  = $element.attr('data-title');
+        const old_tip  = $element.attr("data-title");
         if (isPresent(old_tip)) {
-            $element.attr('title', old_tip);
+            $element.attr("title", old_tip);
         } else {
-            $element.removeAttr('title');
+            $element.removeAttr("title");
         }
     }
 
@@ -4406,11 +4406,11 @@ appSetup(MODULE, function() {
     function setIcon(element, icon) {
         const $element = $(element);
         const $icon    = presence($element.children(SYMBOL)) || $element;
-        let old_icon   = $element.attr('data-icon');
+        let old_icon   = $element.attr("data-icon");
         if (isMissing(old_icon)) {
             old_icon = $icon.text();
             if (isPresent(old_icon)) {
-                $element.attr('data-icon', old_icon);
+                $element.attr("data-icon", old_icon);
             }
         }
         const new_icon = icon || PROPERTIES.Status.blank.label;
@@ -4425,7 +4425,7 @@ appSetup(MODULE, function() {
     function restoreIcon(element) {
         const $element = $(element);
         const $icon    = presence($element.children(SYMBOL)) || $element;
-        const old_icon = $element.attr('data-icon') || '';
+        const old_icon = $element.attr("data-icon") || "";
         $icon.text(old_icon);
     }
 
@@ -4510,12 +4510,12 @@ appSetup(MODULE, function() {
      * @returns { {id: string} | {submission_id: string} | {} }
      */
     function submissionParams(form) {
-        if (MODEL === 'entry') {
-            const value = formField('submission_id', form).val();
+        if (MODEL === "entry") {
+            const value = formField("submission_id", form).val();
             if (value) { return { submission_id: value } }
             OUT.warn(`No submission ID for ${MODEL}`);
         } else {
-            const value = formField('id', form).val();
+            const value = formField("id", form).val();
             if (value) { return { id: value } }
             OUT.warn(`No database record ID for ${MODEL}`);
         }
@@ -4647,7 +4647,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}
      */
     function canSubmit(form) {
-        return submitButton(form).attr('data-state') === 'ready';
+        return submitButton(form).attr("data-state") === "ready";
     }
 
     /**
@@ -4698,7 +4698,7 @@ appSetup(MODULE, function() {
     function requireFormCancellation(form) {
         const $form   = formElement(form);
         const message = Emma.Messages.form.cancel_first;
-        const tooltip = { 'title': message };
+        const tooltip = { title: message };
         uploader?.cancel();
         uploader?.disableFileSelectButton();
         disableSubmit($form).attr(tooltip);
@@ -4758,7 +4758,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}
      */
     function isNewForm(form) {
-        return formElement(form).hasClass('new');
+        return formElement(form).hasClass("new");
     }
 
     /**
@@ -4770,7 +4770,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}
      */
     function isEditForm(form) {
-        return formElement(form).hasClass('edit');
+        return formElement(form).hasClass("edit");
     }
 
     /**
@@ -4806,7 +4806,7 @@ appSetup(MODULE, function() {
     function submitLabel(form, can_submit) {
         const $form = formElement(form);
         const asset = endpointProperties($form).submit || {};
-        const state = selectProperties($form, 'submit', can_submit, asset);
+        const state = selectProperties($form, "submit", can_submit, asset);
         return state?.label || asset.label;
     }
 
@@ -4821,7 +4821,7 @@ appSetup(MODULE, function() {
     function submitTooltip(form, can_submit) {
         const $form = formElement(form);
         const asset = endpointProperties($form).submit || {};
-        const state = selectProperties($form, 'submit', can_submit, asset);
+        const state = selectProperties($form, "submit", can_submit, asset);
         return state?.tooltip || asset?.tooltip;
     }
 
@@ -4858,7 +4858,7 @@ appSetup(MODULE, function() {
     function cancelLabel(form, can_cancel) {
         const $form = formElement(form);
         const asset = endpointProperties($form).cancel || {};
-        const state = selectProperties($form, 'cancel', can_cancel, asset);
+        const state = selectProperties($form, "cancel", can_cancel, asset);
         return state?.label || asset?.label;
     }
 
@@ -4873,7 +4873,7 @@ appSetup(MODULE, function() {
     function cancelTooltip(form, can_cancel) {
         const $form = formElement(form);
         const asset = endpointProperties($form).cancel || {};
-        const state = selectProperties($form, 'cancel', can_cancel, asset);
+        const state = selectProperties($form, "cancel", can_cancel, asset);
         return state?.tooltip || asset?.tooltip;
     }
 
@@ -4891,14 +4891,14 @@ appSetup(MODULE, function() {
      * @see SingleUploader._selectProperties
      */
     function selectProperties(form, op_name, can_perform, asset) {
-        const func  = 'selectProperties';
+        const func  = "selectProperties";
         const $form = formElement(form);
         let perform = can_perform;
         if (notDefined(perform)) {
             switch (op_name) {
-                case 'submit': perform = canSubmit($form); break;
-                case 'cancel': perform = canCancel($form); break;
-              //case 'select': perform = canSelect($form); break;
+                case "submit": perform = canSubmit($form); break;
+                case "cancel": perform = canCancel($form); break;
+              //case "select": perform = canSelect($form); break;
                 default:       OUT.error(`${func}: invalid: "${op_name}"`);
             }
         }
@@ -4958,7 +4958,7 @@ appSetup(MODULE, function() {
      * @param {...*} args
      */
     function _debugXhr(...args) {
-        DEBUG_XHR && OUT.debug('XHR:', ...args);
+        DEBUG_XHR && OUT.debug("XHR:", ...args);
     }
 
     // ========================================================================

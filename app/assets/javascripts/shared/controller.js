@@ -3,13 +3,13 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { AppDebug }               from '../application/debug';
-import { Emma }                   from './assets';
-import { isObject }               from './objects';
-import { camelCase, singularize } from './strings';
+import { AppDebug }               from "../application/debug";
+import { Emma }                   from "./assets";
+import { isObject }               from "./objects";
+import { camelCase, singularize } from "./strings";
 
 
-AppDebug.file('shared/controller');
+AppDebug.file("shared/controller");
 
 // ============================================================================
 // Type definitions
@@ -81,11 +81,11 @@ export function pageControllerAction(path) {
     } else if (isObject(path)) {
         [ctrlr, action] = [path.controller, path.action];
     } else {
-        let url = (typeof path === 'string') ? path : undefined;
-        url &&= url.replace(/^https?:/, '').replace(/^\/\//, '');
-        url &&= url.replace(/#.*$/, '').replace(/\?.*$/, '').trim();
-        url ||= window.location.pathname.replace(/^\//, '');
-        [ctrlr, action] = url.split('/')
+        let url = (typeof path === "string") ? path : undefined;
+        url &&= url.replace(/^https?:/, "").replace(/^\/\//, "");
+        url &&= url.replace(/#.*$/, "").replace(/\?.*$/, "").trim();
+        url ||= window.location.pathname.replace(/^\//, "");
+        [ctrlr, action] = url.split("/")
     }
-    return { controller: ctrlr, action: (action || 'index') };
+    return { controller: ctrlr, action: (action || "index") };
 }

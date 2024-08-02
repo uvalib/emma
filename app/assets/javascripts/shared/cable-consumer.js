@@ -3,17 +3,17 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { AppDebug }                         from '../application/debug';
-import { appTeardown }                      from '../application/setup';
-import { camelCase }                        from './strings';
-import { Consumer, createConsumer, logger } from '@rails/actioncable';
+import { AppDebug }                         from "../application/debug";
+import { appTeardown }                      from "../application/setup";
+import { camelCase }                        from "./strings";
+import { Consumer, createConsumer, logger } from "@rails/actioncable";
 
 
-const MODULE   = 'WebSocket';
+const MODULE   = "WebSocket";
 const DEBUG    = true;
 logger.enabled = DEBUG;
 
-AppDebug.file('shared/cable-consumer', MODULE, DEBUG);
+AppDebug.file("shared/cable-consumer", MODULE, DEBUG);
 
 // ============================================================================
 // Functions - internal
@@ -43,7 +43,7 @@ function consumer() {
  */
 function new_consumer() {
     const new_instance = createConsumer();
-    OUT.debug('new_consumer:', new_instance);
+    OUT.debug("new_consumer:", new_instance);
     appTeardown(MODULE, () => disconnect());
     return new_instance;
 }
@@ -54,7 +54,7 @@ function new_consumer() {
 
 /** @returns {undefined} */
 export function disconnect() {
-    const func = 'disconnect';
+    const func = "disconnect";
     if (!instance) {
         return OUT.warn(`${MODULE}: ${func}: not connected`);
     }
@@ -83,10 +83,10 @@ export function disconnect() {
  * @see "ApplicationCable::Channel#subscribed"
  */
 export function createChannel(stream, functions) {
-    OUT.debug('createChannel: stream =', stream);
+    OUT.debug("createChannel: stream =", stream);
     let params;
-    if ((typeof stream === 'string') && !stream.endsWith('Channel')) {
-        params = camelCase(stream) + 'Channel';
+    if ((typeof stream === "string") && !stream.endsWith("Channel")) {
+        params = camelCase(stream) + "Channel";
     } else {
         params = stream;
     }
@@ -101,6 +101,6 @@ export function createChannel(stream, functions) {
  * @returns {Subscription}
  */
 export function closeChannel(channel) {
-    OUT.debug('closeChannel: channel =', channel);
+    OUT.debug("closeChannel: channel =", channel);
     return consumer().subscriptions.remove(channel);
 }

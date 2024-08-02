@@ -11,10 +11,10 @@ import { isMissing }              from '../shared/definitions';
 import { SearchInProgress }       from '../shared/search-in-progress';
 
 
-const MODULE = 'Download';
+const MODULE = "Download";
 const DEBUG  = true;
 
-AppDebug.file('feature/download', MODULE, DEBUG);
+AppDebug.file("feature/download", MODULE, DEBUG);
 
 appSetup(MODULE, function() {
 

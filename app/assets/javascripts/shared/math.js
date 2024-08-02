@@ -1,10 +1,10 @@
 // app/assets/javascripts/shared/math.js
 
 
-import { AppDebug } from '../application/debug';
+import { AppDebug } from "../application/debug";
 
 
-AppDebug.file('shared/math');
+AppDebug.file("shared/math");
 
 // ============================================================================
 // Constants
@@ -61,7 +61,7 @@ export function percent(part, total) {
 export function asSize(value, full) {
     const n = Number.parseFloat(value);
     if (!n && (n !== 0)) {
-        return '';
+        return "";
     }
     let i = 0;
     // noinspection OverlyComplexBooleanExpressionJS
@@ -71,8 +71,8 @@ export function asSize(value, full) {
         ((n < Math.pow(K, ++i)) && i) || // MB
         ++i;                             // GB
     magnitude--;
-    const size_name = ['Bytes', 'Kilobytes', 'Megabytes', 'Gigabytes'];
-    const size_abbr = ['B', 'KB', 'MB', 'GB'];
+    const size_name = ["Bytes", "Kilobytes", "Megabytes", "Gigabytes"];
+    const size_abbr = ["B", "KB", "MB", "GB"];
     const units     = full ? size_name[magnitude] : size_abbr[magnitude];
     const precision = Math.min(magnitude, 2);
     const result    = (n / Math.pow(K, magnitude)).toFixed(precision);

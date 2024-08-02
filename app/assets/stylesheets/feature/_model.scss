@@ -1,13 +1,13 @@
 // app/assets/stylesheets/feature/_model.scss
 
-@use 'shared/variables'       as *;
-@use 'shared/functions'       as *;
-@use 'shared/mixins'          as *;
-@use 'shared/controls/grids'  as grid;
-@use 'shared/controls/lists'  as list;
-@use 'shared/controls/tables' as table;
-@use 'shared/feature/icons'   as icon;
-@use 'shared/feature/model'   as model;
+@use "shared/variables"       as *;
+@use "shared/functions"       as *;
+@use "shared/mixins"          as *;
+@use "shared/controls/grids"  as grid;
+@use "shared/controls/lists"  as list;
+@use "shared/controls/tables" as table;
+@use "shared/feature/icons"   as icon;
+@use "shared/feature/model"   as model;
 
 //=============================================================================
 // Internal mixins

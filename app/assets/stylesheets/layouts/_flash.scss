@@ -1,10 +1,10 @@
 // app/assets/stylesheets/layouts/_flash.scss
 
-@use 'shared/variables'        as *;
-@use 'shared/mixins'           as *;
-@use 'shared/controls/buttons' as button;
-@use 'shared/controls/popup'   as popup;
-@use 'shared/layouts/overlay'  as overlay;
+@use "shared/variables"        as *;
+@use "shared/mixins"           as *;
+@use "shared/controls/buttons" as button;
+@use "shared/controls/popup"   as popup;
+@use "shared/layouts/overlay"  as overlay;
 
 //=============================================================================
 // Flash message display.
@@ -106,7 +106,7 @@ $flash-optimal-width: 20em;
     // Variations
     //=========================================================================
 
-    // The container starts out hidden until 'visible' is added.
+    // The container starts out hidden until "visible" is added.
     &:not(.visible) {
         @include hidden;
     }
@@ -187,8 +187,8 @@ $flash-optimal-width: 20em;
     // Variations
     //=========================================================================
 
-    // The container starts out hidden until 'visible' is added.  (Not using
-    // "display: none" avoids an expensive re-render when it becomes visible.)
+    // The container starts out hidden until "visible" is added.  (Not using
+    // `display: none` avoids an expensive re-render when it becomes visible.)
     &:not(.visible) {
         z-index: $z-hidden;
         @include invisible;

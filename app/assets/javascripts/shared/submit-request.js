@@ -3,15 +3,15 @@
 // noinspection JSUnusedGlobalSymbols, JSValidateTypes
 
 
-import { AppDebug }             from '../application/debug';
-import { ChannelRequest }       from './channel-request';
-import { deepFreeze, isObject } from './objects';
+import { AppDebug }             from "../application/debug";
+import { ChannelRequest }       from "./channel-request";
+import { deepFreeze, isObject } from "./objects";
 
 
-const MODULE = 'SubmitRequest';
+const MODULE = "SubmitRequest";
 const DEBUG  = true;
 
-AppDebug.file('shared/submit-request', MODULE, DEBUG);
+AppDebug.file("shared/submit-request", MODULE, DEBUG);
 
 // ============================================================================
 // Type definitions
@@ -51,7 +51,7 @@ AppDebug.file('shared/submit-request', MODULE, DEBUG);
  */
 export class SubmitRequest extends ChannelRequest {
 
-    static CLASS_NAME = 'SubmitRequest';
+    static CLASS_NAME = "SubmitRequest";
     static DEBUGGING  = DEBUG;
 
     // ========================================================================
@@ -205,7 +205,7 @@ export class SubmitRequest extends ChannelRequest {
         if (obj && item.manifest_id) { return true }
         const items = obj ? item.items : item;
         const first = Array.isArray(items) && typeof(items[0]);
-        return (first === 'string') || (first === 'number');
+        return (first === "string") || (first === "number");
     }
 
 }
@@ -221,7 +221,7 @@ export class SubmitRequest extends ChannelRequest {
  */
 export class SubmitControlRequest extends SubmitRequest {
 
-    static CLASS_NAME = 'SubmitControlRequest';
+    static CLASS_NAME = "SubmitControlRequest";
     static DEBUGGING  = DEBUG;
 
     // ========================================================================
@@ -229,10 +229,10 @@ export class SubmitControlRequest extends SubmitRequest {
     // ========================================================================
 
     static ACTIONS = [
-        'start',
-        'stop',
-        'pause',
-        'resume',
+        "start",
+        "stop",
+        "pause",
+        "resume",
     ];
 
     /**

@@ -2,9 +2,9 @@
 //
 // Definitions supporting button controls.
 
-@use 'shared/variables' as v;
-@use 'shared/functions' as f;
-@use 'shared/mixins'    as x;
+@use "shared/variables" as v;
+@use "shared/functions" as f;
+@use "shared/mixins"    as x;
 
 // ============================================================================
 // Controls
@@ -54,7 +54,7 @@
     @include basic;
     @include x.hover-highlight;
 
-    // Restore some items that 'basic' has overridden:
+    // Restore some items that "basic" has overridden:
     & {
         margin:      0;
         padding:     10px 15px;

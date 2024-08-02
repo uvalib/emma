@@ -1,15 +1,15 @@
 // app/assets/javascripts/shared/search-in-progress.js
 
 
-import { AppDebug }   from '../application/debug';
-import { onPageExit } from './events';
-import { Overlay }    from './overlay';
+import { AppDebug }   from "../application/debug";
+import { onPageExit } from "./events";
+import { Overlay }    from "./overlay";
 
 
-const MODULE = 'SearchInProgress';
+const MODULE = "SearchInProgress";
 const DEBUG  = false;
 
-AppDebug.file('shared/search-in-progress', MODULE, DEBUG);
+AppDebug.file("shared/search-in-progress", MODULE, DEBUG);
 
 // ============================================================================
 // Class SearchInProgress
@@ -29,14 +29,14 @@ AppDebug.file('shared/search-in-progress', MODULE, DEBUG);
  */
 export class SearchInProgress extends Overlay {
 
-    static CLASS_NAME = 'SearchInProgress';
+    static CLASS_NAME = "SearchInProgress";
     static DEBUGGING  = DEBUG;
 
     // ========================================================================
     // Constants
     // ========================================================================
 
-    static OVERLAY_CLASS = 'search-in-progress';
+    static OVERLAY_CLASS = "search-in-progress";
 
     // ========================================================================
     // Class fields

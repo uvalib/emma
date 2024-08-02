@@ -3,16 +3,16 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { AppDebug }  from '../application/debug';
-import { flatten }   from './arrays';
-import { BaseClass } from './base-class';
-import { isEmpty }   from './definitions';
+import { AppDebug }  from "../application/debug";
+import { flatten }   from "./arrays";
+import { BaseClass } from "./base-class";
+import { isEmpty }   from "./definitions";
 
 
-const MODULE = 'Queue';
+const MODULE = "Queue";
 const DEBUG  = false;
 
-AppDebug.file('shared/queue', MODULE, DEBUG);
+AppDebug.file("shared/queue", MODULE, DEBUG);
 
 // ============================================================================
 // Class Queue
@@ -25,7 +25,7 @@ AppDebug.file('shared/queue', MODULE, DEBUG);
  */
 export class Queue extends BaseClass {
 
-    static CLASS_NAME = 'Queue';
+    static CLASS_NAME = "Queue";
     static DEBUGGING  = DEBUG;
 
     // ========================================================================
@@ -81,7 +81,7 @@ export class Queue extends BaseClass {
  */
 export class CallbackQueue extends Queue {
 
-    static CLASS_NAME = 'CallbackQueue';
+    static CLASS_NAME = "CallbackQueue";
 
     // ========================================================================
     // Fields
@@ -148,7 +148,7 @@ export class CallbackQueue extends Queue {
      */
     _validate(callback, from) {
         const type  = typeof(callback);
-        const valid = (type === 'function');
+        const valid = (type === "function");
         if (!valid) {
             const warning = `invalid element type "${type}"`;
             this._warn(from ? `${from}: ${warning}` : warning);

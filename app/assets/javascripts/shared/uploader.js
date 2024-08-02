@@ -1,30 +1,30 @@
 // app/assets/javascripts/shared/uploader.js
 
 
-import { AppDebug }                              from '../application/debug';
-import { arrayWrap, uniq }                       from './arrays';
-import { Emma }                                  from './assets';
-import { BaseClass }                             from './base-class';
-import { pageAction }                            from './controller';
-import { isHidden, selector, toggleHidden }      from './css';
-import { isDefined, isMissing, isPresent }       from './definitions';
-import { extractFlashMessage }                   from './flash';
-import { percent }                               from './math';
-import { CONTROL_GROUP }                         from './nav-group';
-import { compact, deepFreeze, fromJSON, hasKey } from './objects';
-import { camelCase }                             from './strings';
-import { MINUTES, SECONDS }                      from './time';
-import { makeUrl }                               from './url';
-import { Rails }                                 from '../vendor/rails';
+import { AppDebug }                              from "../application/debug";
+import { arrayWrap, uniq }                       from "./arrays";
+import { Emma }                                  from "./assets";
+import { BaseClass }                             from "./base-class";
+import { pageAction }                            from "./controller";
+import { isHidden, selector, toggleHidden }      from "./css";
+import { isDefined, isMissing, isPresent }       from "./definitions";
+import { extractFlashMessage }                   from "./flash";
+import { percent }                               from "./math";
+import { CONTROL_GROUP }                         from "./nav-group";
+import { compact, deepFreeze, fromJSON, hasKey } from "./objects";
+import { camelCase }                             from "./strings";
+import { MINUTES, SECONDS }                      from "./time";
+import { makeUrl }                               from "./url";
+import { Rails }                                 from "../vendor/rails";
 import {
     toggleVisibility,
     handleClickAndKeypress,
-} from './accessibility';
+} from "./accessibility";
 import {
     ID_ATTRIBUTES,
     selfOrDescendents,
     uniqAttrs,
-} from './html';
+} from "./html";
 import {
     Uppy,
     AwsS3,
@@ -41,13 +41,13 @@ import {
     ThumbnailGenerator,
     Url,
     XHRUpload,
-} from '../vendor/uppy';
+} from "../vendor/uppy";
 
 
-const MODULE = 'BaseUploader';
+const MODULE = "BaseUploader";
 const DEBUG  = true;
 
-AppDebug.file('shared/uploader', MODULE, DEBUG);
+AppDebug.file("shared/uploader", MODULE, DEBUG);
 
 // ============================================================================
 // Temporary (?) type definitions for Uppy
@@ -61,7 +61,7 @@ AppDebug.file('shared/uploader', MODULE, DEBUG);
 /**
  * @typedef FileProcessingInfo
  *
- * @property {'determinate'|'indeterminate'} mode
+ * @property {"determinate"|"indeterminate"} mode
  * @property {string}                        [message]
  * @property {number}                        [value]
  *
@@ -366,40 +366,40 @@ const RESUMED   = Emma.Messages.uploader.resumed.toUpperCase();
  * @see file://${PROJ_DIR}/node_modules/@uppy/core/src/Uppy.ts "UppyEventMap"
  */
 const UPPY_EVENTS = [
-    'back-online',
-    'cancel-all',
-    'complete',
-    'error',
-    'file-added',
-    'file-removed',
-    'files-added',
-    'info-hidden',
-    'info-visible',
-    'is-offline',
-    'is-online',
-    'pause-all',
-    'plugin-added',
-    'plugin-remove',
-    'postprocess-complete',
-    'postprocess-progress',
-    'preprocess-complete',
-    'preprocess-progress',
-    'progress',
-    'restored',
-    'restore-confirmed',
-    'restore-canceled',
-    'restriction-failed',
-    'resume-all',
-    'retry-all',
-  //'state-update',         // Redundant and too frequent to be useful.
-    'upload',
-    'upload-error',
-    'upload-pause',
-    'upload-progress',
-    'upload-retry',
-    'upload-stalled',
-    'upload-start',
-    'upload-success',
+    "back-online",
+    "cancel-all",
+    "complete",
+    "error",
+    "file-added",
+    "file-removed",
+    "files-added",
+    "info-hidden",
+    "info-visible",
+    "is-offline",
+    "is-online",
+    "pause-all",
+    "plugin-added",
+    "plugin-remove",
+    "postprocess-complete",
+    "postprocess-progress",
+    "preprocess-complete",
+    "preprocess-progress",
+    "progress",
+    "restored",
+    "restore-confirmed",
+    "restore-canceled",
+    "restriction-failed",
+    "resume-all",
+    "retry-all",
+  //"state-update",         // Redundant and too frequent to be useful.
+    "upload",
+    "upload-error",
+    "upload-pause",
+    "upload-progress",
+    "upload-retry",
+    "upload-stalled",
+    "upload-start",
+    "upload-success",
 ];
 
 // ============================================================================
@@ -414,7 +414,7 @@ const UPPY_EVENTS = [
  */
 class BaseUploader extends BaseClass {
 
-    static CLASS_NAME = 'BaseUploader';
+    static CLASS_NAME = "BaseUploader";
     static DEBUGGING  = DEBUG;
 
     // ========================================================================
@@ -632,7 +632,7 @@ class BaseUploader extends BaseClass {
     _locateDisplay(target) {
         const $target = target ? $(target) : this._root;
         const $result = $target?.parent();
-        this._debug('_locateDisplay ->', $result);
+        this._debug("_locateDisplay ->", $result);
         return isPresent($result) ? $result : undefined;
     }
 
@@ -688,7 +688,7 @@ class BaseUploader extends BaseClass {
      * state.
      */
     cancel() {
-        this._debug('cancel');
+        this._debug("cancel");
         this.hideProgressBar();
     }
 
@@ -704,22 +704,22 @@ class BaseUploader extends BaseClass {
      * @returns {BaseUploader}
      */
     initialize(options) {
-        this._debug('initialize: options =', options);
+        this._debug("initialize: options =", options);
         const marked = this.isUppyInitialized();
         const loaded = !!this._uppy;
         let init, warn;
         if (!marked && !loaded) {
             init = true;
         } else if (marked) {
-            warn = 'container has SELECTOR but this._uppy is missing';
+            warn = "container has SELECTOR but this._uppy is missing";
         } else if (loaded) {
-            warn = 'this._uppy is present but container missing SELECTOR';
+            warn = "this._uppy is present but container missing SELECTOR";
         } else {
             init = options?.force;
         }
         if (warn) {
             init = true;
-            warn = warn.replaceAll('SELECTOR', UPPY_ROOT);
+            warn = warn.replaceAll("SELECTOR", UPPY_ROOT);
             this._warn(`re-initializing: ${warn}`);
         }
         if (init) {
@@ -735,7 +735,7 @@ class BaseUploader extends BaseClass {
      */
     isUppyInitialized() {
         const $uppy_added = this._selfOrDescendent(this.$display, UPPY_ROOT);
-        this._debug('isUppyInitialized ->', $uppy_added);
+        this._debug("isUppyInitialized ->", $uppy_added);
         return isPresent($uppy_added);
     }
 
@@ -745,7 +745,7 @@ class BaseUploader extends BaseClass {
      * @param {UploaderOptions} [options]
      */
     initializeUppy(options) {
-        this._debug('initializeUppy: options =', options);
+        this._debug("initializeUppy: options =", options);
 
         // === Initialization ===
 
@@ -777,7 +777,7 @@ class BaseUploader extends BaseClass {
      * @returns {Uppy.Uppy}
      */
     buildUppy(options) {
-        this._debug('buildUppy: options =', options);
+        this._debug("buildUppy: options =", options);
 
         /** @type {UppyPluginOptions} */
         const opt  = { ...options?.plugin };
@@ -795,38 +795,38 @@ class BaseUploader extends BaseClass {
         };
 
         if (this._plugin.db) {
-            load_plugin('db', { inline: true });
+            load_plugin("db", { inline: true });
         } else {
             if (this._plugin.fi) {
                 const fi_label  = this.fileSelectLabel(true);
                 const fi_string = { chooseFiles: fi_label, ...opt.fi_string };
-                load_plugin('fi', { locale: { strings: fi_string } });
+                load_plugin("fi", { locale: { strings: fi_string } });
             }
-            load_plugin('dd');
-            load_plugin('pb');
-            load_plugin('sb', { showProgressDetails: true });
+            load_plugin("dd");
+            load_plugin("pb");
+            load_plugin("sb", { showProgressDetails: true });
         }
-        load_plugin('pm');
-        load_plugin('ip', { thumbnailWidth: 400 });
+        load_plugin("pm");
+        load_plugin("ip", { thumbnailWidth: 400 });
 
         if (this._plugin.aws) {
             const aws_opt = {
               //limit:      2,
                 timeout:    this.upload.timeout,
-                endpoint:   'https://companion.myapp.com/', // TODO: ???
+                endpoint:   "https://companion.myapp.com/", // TODO: ???
             };
-            load_plugin('aws', aws_opt);
+            load_plugin("aws", aws_opt);
         }
-        load_plugin('box');
-        load_plugin('dbx');
-        load_plugin('gdr');
-        load_plugin('odr');
-        load_plugin('url');
+        load_plugin("box");
+        load_plugin("dbx");
+        load_plugin("gdr");
+        load_plugin("odr");
+        load_plugin("url");
 
         if (this._plugin.xhr) {
             const xhr_opt = this._xhrOptions(opt.xhr_opt, opt.xhr_hdr);
             delete opt.xhr_opt;
-            load_plugin('xhr', xhr_opt);
+            load_plugin("xhr", xhr_opt);
         }
 
         return uppy;
@@ -847,7 +847,7 @@ class BaseUploader extends BaseClass {
     _uppyOptions(options) {
         /** @type {UppyOptions} */
         const opt = { ...this._options, ...options?.uppy };
-        opt.id                ||= `uppy-${this.$root.attr('id') || 0}`;
+        opt.id                ||= `uppy-${this.$root.attr("id") || 0}`;
         opt.onBeforeFileAdded ||= this._onBeforeFileAdded.bind(this);
         opt.onBeforeUpload    ||= this._onBeforeUpload.bind(this);
         return opt;
@@ -869,8 +869,8 @@ class BaseUploader extends BaseClass {
      * @protected
      */
     _onBeforeFileAdded(file, files) {
-        const func = '_onBeforeFileAdded';
-        this._debug(`${func}:`, file, '; files =', files);
+        const func = "_onBeforeFileAdded";
+        this._debug(`${func}:`, file, "; files =", files);
         if (this._debugging && (file.data instanceof Blob)) {
             file.data.text().then(text => {
                 const data_text   = `${func}: data.text()`;
@@ -908,7 +908,7 @@ class BaseUploader extends BaseClass {
     }
 
     /**
-     * Called in {@link Uppy.upload} before the 'upload' event.
+     * Called in {@link Uppy.upload} before the "upload" event.
      *
      * If it returns *false* the upload will be aborted.  If it returns an
      * Object, that is assumed to be a replacement for the original file table.
@@ -921,7 +921,7 @@ class BaseUploader extends BaseClass {
      * @protected
      */
     _onBeforeUpload(files) {
-        const func = '_onBeforeUpload';
+        const func = "_onBeforeUpload";
         this._debug(`${func}: files =`, files);
         if (FORCE_CHARSET) {
             for (const [_id, file] of Object.entries(files)) {
@@ -949,15 +949,15 @@ class BaseUploader extends BaseClass {
      * @see XHRUpload.createFormDataUpload
      * @see  * @see file://${PROJ_DIR}/node_modules/@uppy/xhr-upload/src/index.ts "XHRUpload#uploadLocalFile"
      */
-    _forceCharset(file, charset = 'utf-8') {
+    _forceCharset(file, charset = "utf-8") {
         const func = `_forceCharset(${charset})`;
         if (file.data instanceof Blob) {
             this._debug(`${func}: file =`, file);
-            const xhr  = this._uppy.getPlugin('XHRUpload');
+            const xhr  = this._uppy.getPlugin("XHRUpload");
             const size = file.data.size;
             const meta = file.meta || {};
             const name = meta.name;
-            const type = meta.type || 'application/octet-stream';
+            const type = meta.type || "application/octet-stream";
             const cset = `charset=${charset}`;
             const data = file.data.slice(0, size, `${type};${cset}`);
             // noinspection JSUnresolvedReference
@@ -998,15 +998,15 @@ class BaseUploader extends BaseClass {
         const xhr_opt = { ...opt };
 
         xhr_opt.headers  = { ...xhr_opt.headers, ...headers };
-        xhr_opt.headers['X-CSRF-Token'] ||= Rails.csrfToken();
+        xhr_opt.headers["X-CSRF-Token"] ||= Rails.csrfToken();
 
         xhr_opt.endpoint        ||= this._pathProperty.upload;
-        xhr_opt.fieldName       ||= 'file';
+        xhr_opt.fieldName       ||= "file";
         xhr_opt.limit           ||= 1; // NOTE: just to silence warning
         xhr_opt.timeout         ||= 0; // this.upload_timeout; // NOTE: for now
         xhr_opt.onBeforeRequest ||= this._xhrBeforeRequest.bind(this);
 
-        if (FORCE_CHARSET && !Object.hasOwn(xhr_opt, 'formData')) {
+        if (FORCE_CHARSET && !Object.hasOwn(xhr_opt, "formData")) {
             xhr_opt.formData = false;
         }
 
@@ -1032,27 +1032,27 @@ class BaseUploader extends BaseClass {
      * @see file://${PROJ_DIR}/node_modules/@uppy/utils/src/fetcher.ts
      */
     _xhrBeforeRequest(xhr, retry_count) {
-        this._debug('_xhrBeforeRequest; xhr =', xhr, 'retry =', retry_count);
+        this._debug("_xhrBeforeRequest; xhr =", xhr, "retry =", retry_count);
         const uppy_onload = xhr.onload;
         xhr.onload = async () => {
-            this._debug('_xhrBeforeRequest | onload | init xhr =', xhr);
+            this._debug("_xhrBeforeRequest | onload | init xhr =", xhr);
             const status  = xhr.status;
             const state   = xhr.readyState;
             const net_err = !status || ((state !== 0) && (state !== 4));
             const ok      = !net_err && (200 <= status) && (status < 300);
             if (!ok && !net_err) {
-                const resp  = fromJSON(xhr.response, 'Uppy.XHRUpload');
+                const resp  = fromJSON(xhr.response, "Uppy.XHRUpload");
                 const text  = resp?.message || xhr.response;
                 let msg     = text?.trim() || this.upload_error;
                 const flash = compact(extractFlashMessage(xhr));
                 if (isPresent(flash)) {
-                    const nl = (flash.length > 1) ? "\n" : ' ';
-                    msg = msg.replace(/([^:])$/, '$1:') + nl + flash.join(nl);
+                    const nl = (flash.length > 1) ? "\n" : " ";
+                    msg = msg.replace(/([^:])$/, "$1:") + nl + flash.join(nl);
                 } else {
-                    msg = msg.replace(/:$/, '');
+                    msg = msg.replace(/:$/, "");
                 }
-                xhr['flash-message'] = msg;
-                this._debug('_xhrBeforeRequest | onload | now xhr =', xhr);
+                xhr["flash-message"] = msg;
+                this._debug("_xhrBeforeRequest | onload | now xhr =", xhr);
             }
             await uppy_onload(undefined);
         }
@@ -1082,7 +1082,7 @@ class BaseUploader extends BaseClass {
      * @protected
      */
     _setupHandlers() {
-        this._debug('_setupHandlers');
+        this._debug("_setupHandlers");
 
         const onFileUploadStart    = this._onFileUploadStart.bind(this);
         const onFileUploadProgress = this._onFileUploadProgress.bind(this);
@@ -1098,14 +1098,14 @@ class BaseUploader extends BaseClass {
             this.feature.status_bar    = true;
         }
 
-        this._uppyEvent('upload',          onFileUploadStart);
-        this._uppyEvent('upload-progress', onFileUploadProgress);
-        this._uppyEvent('upload-error',    onFileUploadError);
-        this._uppyEvent('upload-success',  onFileUploadSuccess);
+        this._uppyEvent("upload",          onFileUploadStart);
+        this._uppyEvent("upload-progress", onFileUploadProgress);
+        this._uppyEvent("upload-error",    onFileUploadError);
+        this._uppyEvent("upload-success",  onFileUploadSuccess);
 
         if (this.feature.image_preview) {
             // noinspection JSCheckFunctionSignatures
-            this._uppyEvent('thumbnail:generated', onThumbnailGenerated);
+            this._uppyEvent("thumbnail:generated", onThumbnailGenerated);
         }
     }
 
@@ -1129,14 +1129,14 @@ class BaseUploader extends BaseClass {
      * @protected
      */
     _onFileUploadStart(data) {
-        this._debugUppy('upload START', data);
+        this._debugUppy("upload START", data);
         // noinspection JSValidateTypes
         const params = this.onStart?.(data);
-        const upload = this._uppy.getPlugin('XHRUpload');
+        const upload = this._uppy.getPlugin("XHRUpload");
         // noinspection JSUnresolvedFunction
         const url    = upload.getOptions({}).endpoint;
         if (isMissing(url)) {
-            this._error('_onFileUploadStart: No endpoint for upload');
+            this._error("_onFileUploadStart: No endpoint for upload");
         } else {
             if (isPresent(params)) {
                 // noinspection JSCheckFunctionSignatures
@@ -1163,13 +1163,13 @@ class BaseUploader extends BaseClass {
         const bytes = progress.bytesUploaded;
         const total = progress.bytesTotal;
         const pct   = percent(bytes, total);
-        const parts = [bytes, 'of', total, `bytes (${pct}%)`];
-        if (progress.uploadComplete) { parts.push('[DONE]') }
-        this._debugUppy('upload-progress:', ...parts);
+        const parts = [bytes, "of", total, `bytes (${pct}%)`];
+        if (progress.uploadComplete) { parts.push("[DONE]") }
+        this._debugUppy("upload-progress:", ...parts);
         // noinspection JSValidateTypes
         if (this.onProgress?.(file, progress) === false) {
             this._uppy.removeFile(file.id);
-            this._debugUppy('upload-progress: canceled', file.id);
+            this._debugUppy("upload-progress: canceled", file.id);
         }
     }
 
@@ -1186,14 +1186,14 @@ class BaseUploader extends BaseClass {
      * @see _xhrBeforeRequest
      */
     _onFileUploadError(file, error, response) {
-        this._warn('_onFileUploadError', file, error, response);
+        this._warn("_onFileUploadError", file, error, response);
 
-        // If _xhrBeforeRequest has added 'flash-message' to the response, then
+        // If _xhrBeforeRequest has added "flash-message" to the response, then
         // replace the Uppy-generated message so that the "onError" callback
         // can display the server-generated message to the user.
         // noinspection JSUnresolvedReference
         const req   = error?.request || {};
-        const flash = req['flash-message'];
+        const flash = req["flash-message"];
         if (flash) {
             error.message = flash;
         }
@@ -1222,7 +1222,7 @@ class BaseUploader extends BaseClass {
      * @see "Shrine::UploadEndpointExt#make_response"
      */
     _onFileUploadSuccess(file, response) {
-        this._debugUppy('upload-success', file, response);
+        this._debugUppy("upload-success", file, response);
         this._uppyInfoClear();
         // noinspection JSValidateTypes
         this.onSuccess?.(file, response);
@@ -1238,7 +1238,7 @@ class BaseUploader extends BaseClass {
      * @protected
      */
     _onThumbnailGenerated(file, image) {
-        this._debugUppy('thumbnail:generated', file, image);
+        this._debugUppy("thumbnail:generated", file, image);
         this.feature.image_preview.src = image;
     }
 
@@ -1252,7 +1252,7 @@ class BaseUploader extends BaseClass {
      * @protected
      */
     _setupMessages() {
-        this._debug('_setupMessages');
+        this._debug("_setupMessages");
         let evt;
         const show_info  = this._uppyInfo.bind(this);
         const show_popup = this._uppyPopup.bind(this);
@@ -1261,7 +1261,7 @@ class BaseUploader extends BaseClass {
         const debug      = this._debugUppy.bind(this);
         const warn       = this._warn.bind(this);
 
-        this._uppyEvent((evt = 'upload-start'), function(files) {
+        this._uppyEvent((evt = "upload-start"), function(files) {
             warn(`${evt}`, files);
             files.forEach(file => {
                 const name = file.name || file;
@@ -1269,7 +1269,7 @@ class BaseUploader extends BaseClass {
             });
         });
 
-        this._uppyEvent((evt = 'upload-pause'), function(file_id, is_paused) {
+        this._uppyEvent((evt = "upload-pause"), function(file_id, is_paused) {
             debug(`${evt}`, file_id, is_paused);
             if (is_paused) {
                 show_info(PAUSED);
@@ -1278,39 +1278,39 @@ class BaseUploader extends BaseClass {
             }
         });
 
-        this._uppyEvent((evt = 'upload-retry'), function(file_id) {
+        this._uppyEvent((evt = "upload-retry"), function(file_id) {
             debug(`${evt}`, file_id);
             show_warn(`${STATE.retrying}...`);
         });
 
-        this._uppyEvent((evt = 'retry-all'), function(files) {
+        this._uppyEvent((evt = "retry-all"), function(files) {
             debug(`${evt}`, files);
             const count   = files ? files.length : 0;
-            const uploads = (count === 1) ? 'upload' : `${count} uploads`;
+            const uploads = (count === 1) ? "upload" : `${count} uploads`;
             show_warn(`${STATE.retrying} ${uploads}...`);
         });
 
-        this._uppyEvent((evt = 'pause-all'), function() {
+        this._uppyEvent((evt = "pause-all"), function() {
             debug(`${evt}`);
             show_info(STATE.paused);
         });
 
-        this._uppyEvent((evt = 'cancel-all'), function(reason) {
+        this._uppyEvent((evt = "cancel-all"), function(reason) {
             debug(`${evt}`, reason);
             show_warn(STATE.canceled);
         });
 
-        this._uppyEvent((evt = 'resume-all'), function() {
+        this._uppyEvent((evt = "resume-all"), function() {
             debug(`${evt}`);
             show_warn(STATE.resumed);
         });
 
-        this._uppyEvent((evt = 'restriction-failed'), function(file, msg) {
+        this._uppyEvent((evt = "restriction-failed"), function(file, msg) {
             warn(`${evt}`, file, msg);
             show_error(msg);
         });
 
-        this._uppyEvent((evt = 'error'), function(msg) {
+        this._uppyEvent((evt = "error"), function(msg) {
             warn(`${evt}`, msg);
             show_error(msg);
         });
@@ -1323,34 +1323,34 @@ class BaseUploader extends BaseClass {
      * @protected
      */
     _setupDebugging() {
-        this._debug('_setupDebugging');
+        this._debug("_setupDebugging");
         const debug  = this._debugUppy.bind(this);
         const events = [...this._unhandled_events];
 
         if (this.feature.dashboard) {
             events.push(
-                'dashboard:modal-open',
-                'dashboard:modal-closed',
-                'dashboard:file-edit-start',
-                'dashboard:file-edit-complete'
+                "dashboard:modal-open",
+                "dashboard:modal-closed",
+                "dashboard:file-edit-start",
+                "dashboard:file-edit-complete"
             );
         }
         if (this.feature.image_preview) {
             events.push(
-                'thumbnail:request',
-                'thumbnail:cancel',
-                'thumbnail:error',
-                'thumbnail:all-generated'
+                "thumbnail:request",
+                "thumbnail:cancel",
+                "thumbnail:error",
+                "thumbnail:all-generated"
             );
         }
         if (this.feature.upload_to_aws) {
-            events.push('s3-multipart:part-uploaded');
+            events.push("s3-multipart:part-uploaded");
         }
 
         // Echo the included Uppy events on the console.
         uniq(events).forEach(event => {
-            const evt = event.toUpperCase().replace(':', ': ');
-            const tag = '*** ' + evt.replaceAll('-', ' ');
+            const evt = event.toUpperCase().replace(":", ": ");
+            const tag = "*** " + evt.replaceAll("-", " ");
             const fun = (...args) => debug(tag, ...compact(args));
             this._uppyEvent(event, fun);
         });
@@ -1369,7 +1369,7 @@ class BaseUploader extends BaseClass {
      * @protected
      */
     _uppyError(text, duration) {
-        this._uppyPopup(text, duration, 'error');
+        this._uppyPopup(text, duration, "error");
     }
 
     /**
@@ -1381,7 +1381,7 @@ class BaseUploader extends BaseClass {
      * @protected
      */
     _uppyWarn(text, duration) {
-        this._uppyPopup(text, duration, 'warning');
+        this._uppyPopup(text, duration, "warning");
     }
 
     /**
@@ -1389,7 +1389,7 @@ class BaseUploader extends BaseClass {
      *
      * @param {string}                   text
      * @param {number}                   [duration]
-     * @param {'info'|'warning'|'error'} [info_level]
+     * @param {"info"|"warning"|"error"} [info_level]
      *
      * @protected
      */
@@ -1406,12 +1406,12 @@ class BaseUploader extends BaseClass {
      *
      * @param {string}                   text
      * @param {number}                   [duration]
-     * @param {'info'|'warning'|'error'} [info_level]
+     * @param {"info"|"warning"|"error"} [info_level]
      *
      * @protected
      */
     _uppyInfo(text, duration, info_level) {
-        const level = info_level || 'info';
+        const level = info_level || "info";
         this._debug(`_uppyInfo: ${level}:`, text);
         if (!this.feature.popup_messages) { return }
         const time  = duration   || 1000 * MINUTES;
@@ -1426,7 +1426,7 @@ class BaseUploader extends BaseClass {
      */
     _uppyInfoClear() {
         if (!this.feature.popup_messages) { return }
-        this._debug('_uppyInfoClear');
+        this._debug("_uppyInfoClear");
         this.hideInfo();
     }
 
@@ -1434,7 +1434,7 @@ class BaseUploader extends BaseClass {
      * Allow display of Uppy Informer.
      */
     showInfo() {
-        this._debug('showInfo');
+        this._debug("showInfo");
         this._toggleInfo(true);
     }
 
@@ -1442,7 +1442,7 @@ class BaseUploader extends BaseClass {
      * Prevent display of Uppy Informer.
      */
     hideInfo() {
-        this._debug('hideInfo');
+        this._debug("hideInfo");
         this._uppy.hideInfo();
         this._toggleInfo(false);
     }
@@ -1456,7 +1456,7 @@ class BaseUploader extends BaseClass {
      * @protected
      */
     _toggleInfo(visible) {
-        //this._debug('toggleInfo: visible =', visible);
+        //this._debug("toggleInfo: visible =", visible);
         const $control = this.$display.find(INFORMER);
         toggleVisibility($control, visible);
     }
@@ -1476,7 +1476,7 @@ class BaseUploader extends BaseClass {
      */
     _initializeProgressBar() {
         if (!this.feature.progress_bar) { return }
-        this._debug('_initializeProgressBar');
+        this._debug("_initializeProgressBar");
         this.hideProgressBar();
     }
 
@@ -1484,7 +1484,7 @@ class BaseUploader extends BaseClass {
      * Start displaying the Uppy progress bar.
      */
     showProgressBar() {
-        this._debug('showProgressBar');
+        this._debug("showProgressBar");
         this._toggleProgressBar(true);
     }
 
@@ -1495,7 +1495,7 @@ class BaseUploader extends BaseClass {
      * *aria-hidden* -- it doesn't actually hide the control itself.
      */
     hideProgressBar() {
-        this._debug('hideProgressBar');
+        this._debug("hideProgressBar");
         this._toggleProgressBar(false);
     }
 
@@ -1508,7 +1508,7 @@ class BaseUploader extends BaseClass {
      * @protected
      */
     _toggleProgressBar(visible) {
-        this._debug('toggleProgressBar: visible =', visible);
+        this._debug("toggleProgressBar: visible =", visible);
         if (!this.feature.progress_bar) { return }
         const $control = this.$display.find(PROGRESS_BAR);
         toggleVisibility($control, visible);
@@ -1534,7 +1534,7 @@ class BaseUploader extends BaseClass {
      * @protected
      */
     _initializeFileSelectContainer(options) {
-        this._debug('_initializeFileSelectContainer: options =', options);
+        this._debug("_initializeFileSelectContainer: options =", options);
         const $container = this.fileSelectContainer();
         const tooltip    = this.fileSelectTooltip();
         const label_id   = options?.label_id;
@@ -1544,20 +1544,20 @@ class BaseUploader extends BaseClass {
 
         // Uppy will replace `<input type="file">` with its own mechanisms so
         // the original should not be displayed.
-        if (OLD_INPUT) { this.$root.find(OLD_INPUT).css('display', 'none') }
+        if (OLD_INPUT) { this.$root.find(OLD_INPUT).css("display", "none") }
 
         // This hidden element is inappropriately part of the tab order.
-        const input_attr = { tabindex: -1, 'aria-hidden': true };
-        if (label_id) { input_attr['aria-labelledby'] = label_id }
+        const input_attr = { tabindex: -1, "aria-hidden": true };
+        if (label_id) { input_attr["aria-labelledby"] = label_id }
         $container.find(NEW_INPUT).attr(input_attr);
 
         // Set the tooltip for the file select button.
-        $container.find('button,label').attr('title', tooltip);
+        $container.find('button,label').attr("title", tooltip);
 
         // Reposition it so that it comes before the display of the uploaded
         // filename.
         $container.insertBefore(this.uploadedFilenameDisplay());
-        $container.addClass('initialized');
+        $container.addClass("initialized");
     }
 
     /**
@@ -1600,15 +1600,15 @@ class BaseUploader extends BaseClass {
      * @protected
      */
     _initializeFileSelectButton() {
-        this._debug('_initializeFileSelectButton');
+        this._debug("_initializeFileSelectButton");
         const $button = this.fileSelectButton();
         const tooltip = this.fileSelectTooltip();
         const label   = false && this.fileSelectLabel();
         const debug   = this._debugUppy.bind(this);
         const handler = this.onSelect || (() => debug(FILE_BUTTON_CLASS));
         handleClickAndKeypress($button, handler);
-        if (tooltip) { $button.siblings('label').attr('title', tooltip) }
-        if (tooltip) { $button.attr('title', tooltip) }
+        if (tooltip) { $button.siblings('label').attr("title", tooltip) }
+        if (tooltip) { $button.attr("title", tooltip) }
         if (label)   { $button.text(label) } // The plugin will initialize this
         return $button.addClass(FILE_BUTTON_CLASS);
     }
@@ -1619,12 +1619,12 @@ class BaseUploader extends BaseClass {
      * @returns {jQuery}              The file select button.
      */
     disableFileSelectButton() {
-        this._debug('disableFileSelectButton');
-        const marker  = 'forbidden';
+        this._debug("disableFileSelectButton");
+        const marker  = "forbidden";
         const $button = this.fileSelectButton();
         const tooltip = this.fileSelectDisabledTooltip();
         const label   = false && this.fileSelectDisabledLabel();
-        if (tooltip) { $button.attr('title', tooltip) }
+        if (tooltip) { $button.attr("title", tooltip) }
         if (label)   { $button.text(label) }
         return $button.toggleClass(marker, true);
     }
@@ -1635,7 +1635,7 @@ class BaseUploader extends BaseClass {
      * @param {FileData} file_data
      */
     displayUploadedFilename(file_data) {
-        this._debug('displayUploadedFilename: file_data =', file_data);
+        this._debug("displayUploadedFilename: file_data =", file_data);
         const metadata = file_data?.metadata;
         const filename = metadata?.filename;
         this.displayFilename(filename);
@@ -1649,7 +1649,7 @@ class BaseUploader extends BaseClass {
      * @returns {boolean}
      */
     displayFilename(filename) {
-        this._debug('displayFilename: filename =', filename);
+        this._debug("displayFilename: filename =", filename);
         if (!this._filenameUpdate(filename)) { return false }
         this.hideFilename(false);
         this.hideProgressBar();
@@ -1665,10 +1665,10 @@ class BaseUploader extends BaseClass {
      * @protected
      */
     _filenameUpdate(filename) {
-        this._debug('_filenameUpdate: filename =', filename);
+        this._debug("_filenameUpdate: filename =", filename);
         if (isMissing(filename)) { return false }
         this._uploadedFilenameElement().text(filename);
-        this.uploadedFilenameDisplay().toggleClass('complete', true);
+        this.uploadedFilenameDisplay().toggleClass("complete", true);
         return true;
     }
 
@@ -1678,7 +1678,7 @@ class BaseUploader extends BaseClass {
      * @param {boolean} [hide]        If **false**, un-hide.
      */
     hideFilename(hide) {
-        this._debug('hideFilename: hide =', hide);
+        this._debug("hideFilename: hide =", hide);
         const hidden = (hide !== false);
         toggleHidden(this.uploadedFilenameDisplay(), hidden);
     }
@@ -1792,9 +1792,9 @@ class BaseUploader extends BaseClass {
     _defaultTarget(key) {
         let target;
         switch (key) {
-            case 'fi':  target = this.fileInputTarget;  break;
-            case 'dd':  target = this.dragTarget;       break;
-            case 'ip':  target = this.previewTarget;    break;
+            case "fi":  target = this.fileInputTarget;  break;
+            case "dd":  target = this.dragTarget;       break;
+            case "ip":  target = this.previewTarget;    break;
         }
         return target || this.$display[0];
     }
@@ -1834,7 +1834,7 @@ class BaseUploader extends BaseClass {
      * @returns {string}
      */
     fileSelectLabel(can_select) {
-        return this._selectProperties('label', can_select) || 'SELECT';
+        return this._selectProperties("label", can_select) || "SELECT";
     }
 
     /**
@@ -1845,7 +1845,7 @@ class BaseUploader extends BaseClass {
      * @returns {string|undefined}
      */
     fileSelectTooltip(can_select) {
-        return this._selectProperties('tooltip', can_select);
+        return this._selectProperties("tooltip", can_select);
     }
 
     /**
@@ -1928,7 +1928,7 @@ class BaseUploader extends BaseClass {
      * @protected
      */
     _debugUppy(...args) {
-        this._debugging && console.log('Uppy:', ...args);
+        this._debugging && console.log("Uppy:", ...args);
     }
 
 }
@@ -1940,7 +1940,7 @@ class BaseUploader extends BaseClass {
  */
 export class SingleUploader extends BaseUploader {
 
-    static CLASS_NAME = 'SingleUploader';
+    static CLASS_NAME = "SingleUploader";
 
     // ========================================================================
     // Type definitions
@@ -1952,8 +1952,8 @@ export class SingleUploader extends BaseUploader {
     // Constants
     // ========================================================================
 
-    static BUTTON_TRAY_CLASS  = 'button-tray';
-    static BEST_CHOICE_MARKER = 'best-choice';
+    static BUTTON_TRAY_CLASS  = "button-tray";
+    static BEST_CHOICE_MARKER = "best-choice";
 
     static BUTTON_TRAY = selector(this.BUTTON_TRAY_CLASS);
 
@@ -2018,7 +2018,7 @@ export class SingleUploader extends BaseUploader {
      */
     _initializeFileSelectContainer(options) {
         const input_id = `${this.model}_file`;
-        const label_id = 'fi_label';
+        const label_id = "fi_label";
         const opt      = { input_id, label_id, ...options };
         super._initializeFileSelectContainer(opt);
     }
@@ -2110,7 +2110,7 @@ export class SingleUploader extends BaseUploader {
  */
 export class MultiUploader extends BaseUploader {
 
-    static CLASS_NAME = 'MultiUploader';
+    static CLASS_NAME = "MultiUploader";
 
     // ========================================================================
     // Constants
@@ -2126,11 +2126,11 @@ export class MultiUploader extends BaseUploader {
      */
     static DISPLAY_IN_CTOR = true;
 
-    static VISIBLE_MARKER         = 'visible';
-    static DISPLAY_CLASS          = 'uploader-feedback';
-    static FILE_TYPE_CLASS        = 'from-uploader';
-    static PREPEND_CONTROLS_CLASS = 'uppy-FileInput-container-prepend';
-    static APPEND_CONTROLS_CLASS  = 'uppy-FileInput-container-append';
+    static VISIBLE_MARKER         = "visible";
+    static DISPLAY_CLASS          = "uploader-feedback";
+    static FILE_TYPE_CLASS        = "from-uploader";
+    static PREPEND_CONTROLS_CLASS = "uppy-FileInput-container-prepend";
+    static APPEND_CONTROLS_CLASS  = "uppy-FileInput-container-append";
 
     static DISPLAY          = selector(this.DISPLAY_CLASS);
     static FILE_TYPE        = selector(this.FILE_TYPE_CLASS);
@@ -2188,9 +2188,9 @@ export class MultiUploader extends BaseUploader {
             $result ||= $(match);
         if (isMissing($result)) {
             $result = $('<div>').addClass(css).appendTo('body');
-            this._debug('_locateDisplay append to body ->', $result);
+            this._debug("_locateDisplay append to body ->", $result);
         } else {
-            this._debug('_locateDisplay ->', $result);
+            this._debug("_locateDisplay ->", $result);
         }
         return $result;
     }
@@ -2220,8 +2220,8 @@ export class MultiUploader extends BaseUploader {
      */
     _setupHandlers() {
         super._setupHandlers();
-        this._uppyEvent('upload',   () => this.openDisplay());
-        this._uppyEvent('complete', () => this.closeDisplay());
+        this._uppyEvent("upload",   () => this.openDisplay());
+        this._uppyEvent("complete", () => this.closeDisplay());
     }
 
     // ========================================================================
@@ -2237,7 +2237,7 @@ export class MultiUploader extends BaseUploader {
      */
     _initializeFileSelectContainer(options) {
         const $elements = this.$root.children('[aria-labelledby]');
-        const label_id  = $elements.first().attr('aria-labelledby');
+        const label_id  = $elements.first().attr("aria-labelledby");
         const opt       = { label_id, ...options };
         super._initializeFileSelectContainer(opt);
 
@@ -2281,8 +2281,8 @@ export class MultiUploader extends BaseUploader {
         const $element = this.$root.find(selector);
         const $clones  = $element.children().clone();
         if (isPresent($clones)) {
-            const tag   = '0';
-            const attrs = [...ID_ATTRIBUTES, 'data-id'];
+            const tag   = "0";
+            const attrs = [...ID_ATTRIBUTES, "data-id"];
             $clones.each((_, element) => uniqAttrs(element, tag, attrs, true));
             if (prepend) {
                 this.fileSelectContainer().prepend($clones);
@@ -2321,8 +2321,8 @@ export class MultiUploader extends BaseUploader {
             /** @type {jQuery} */
             const $line  = $(line);
             const active = $line.is(uploader_type);
-            $line.attr('aria-hidden', !active);
-            $line.toggleClass('active', active);
+            $line.attr("aria-hidden", !active);
+            $line.toggleClass("active", active);
         });
         return true;
     }
@@ -2354,7 +2354,7 @@ export class MultiUploader extends BaseUploader {
      * @protected
      */
     _toggleDisplay(open) {
-        this._debug('toggleDisplay open =', open);
+        this._debug("toggleDisplay open =", open);
         this.$display.toggleClass(this.constructor.VISIBLE_MARKER, open);
     }
 }
@@ -2366,7 +2366,7 @@ export class MultiUploader extends BaseUploader {
  */
 export class BulkUploader extends BaseUploader {
 
-    static CLASS_NAME = 'BulkUploader';
+    static CLASS_NAME = "BulkUploader";
 
     // ========================================================================
     // Type definitions
@@ -2442,7 +2442,7 @@ export class BulkUploader extends BaseUploader {
     _xhrOptions(opt, headers) {
         const xhr_opt = super._xhrOptions(opt, headers);
         xhr_opt.limit = this.batchSize;
-        xhr_opt.headers['X-Update-FileData-Only'] = true;
+        xhr_opt.headers["X-Update-FileData-Only"] = true;
         return xhr_opt;
     }
 
@@ -2464,10 +2464,10 @@ export class BulkUploader extends BaseUploader {
      * @param {FileExt|FileExt[]} files
      */
     addFiles(files) {
-        this._debug('addFiles', files);
+        this._debug("addFiles", files);
         arrayWrap(files).forEach(file_item => {
             let file = file_item;
-            if ((file instanceof File) && hasKey(file, 'meta')) {
+            if ((file instanceof File) && hasKey(file, "meta")) {
                 file = {
                     meta: file.meta,
                     name: file.name,
@@ -2486,7 +2486,7 @@ export class BulkUploader extends BaseUploader {
      * @param {FileExt|FileExt[]} [files]
      */
     removeFiles(files) {
-        this._debug('removeFiles', files);
+        this._debug("removeFiles", files);
         let ids = Object.keys(this._uppy.getState()?.files || {});
         if (files) {
             ids = arrayWrap(files).filter(file => ids.includes(file));
@@ -2500,15 +2500,15 @@ export class BulkUploader extends BaseUploader {
     upload() {
         const files = this._uppy.getFiles();
         if (this._in_progress) {
-            this._debug('upload - ignored; already uploading');
+            this._debug("upload - ignored; already uploading");
         } else if (isMissing(files)) {
-            this._debug('upload - ignored; no files queued');
+            this._debug("upload - ignored; no files queued");
         } else {
             this._debug(`upload - ${files.length} files:`, files);
             this._in_progress = true;
             this._uppy.upload().then(
                 result => {
-                    this._debug('Uppy.upload final result:', result);
+                    this._debug("Uppy.upload final result:", result);
                     const log = [];
                     const err = [];
                     if (result) {
@@ -2526,14 +2526,14 @@ export class BulkUploader extends BaseUploader {
                             err.push(...result.failed);
                         }
                     } else {
-                        log.push('server failure');
+                        log.push("server failure");
                     }
                     log.forEach(line => this._log(line));
                     err.forEach(fail => this._warn(fail.error));
                     this._in_progress = false;
                 },
                 error => {
-                    this._debug('upload - error:', error);
+                    this._debug("upload - error:", error);
                     this._in_progress = false;
                 },
             );
@@ -2549,10 +2549,10 @@ export class BulkUploader extends BaseUploader {
      */
     cancel() {
         if (this.inProgress) {
-            this._debug('cancel');
+            this._debug("cancel");
             this._uppy.cancelAll();
         } else {
-            this._debug('cancel - ignored; not uploading');
+            this._debug("cancel - ignored; not uploading");
         }
     }
 
@@ -2563,10 +2563,10 @@ export class BulkUploader extends BaseUploader {
      */
     pause() {
         if (this.inProgress) {
-            this._debug('pause');
+            this._debug("pause");
             this._uppy.pauseAll();
         } else {
-            this._debug('pause - ignored; not uploading');
+            this._debug("pause - ignored; not uploading");
         }
     }
 
@@ -2577,10 +2577,10 @@ export class BulkUploader extends BaseUploader {
      */
     resume() {
         if (this.inProgress) {
-            this._debug('resume');
+            this._debug("resume");
             this._uppy.resumeAll();
         } else {
-            this._debug('resume - ignored; not uploading');
+            this._debug("resume - ignored; not uploading");
         }
     }
 }

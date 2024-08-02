@@ -1,10 +1,10 @@
 // app/assets/stylesheets/controllers/_upload.scss
 
-@use 'shared/variables'       as *;
-@use 'shared/controls/grids'  as grid;
-@use 'shared/controls/panels' as panel;
+@use "shared/variables"       as *;
+@use "shared/controls/grids"  as grid;
+@use "shared/controls/panels" as panel;
 
-@use 'controllers/entry'      as entry-classes;
+@use "controllers/entry"      as entry-classes;
 
 //=============================================================================
 // Upload index page

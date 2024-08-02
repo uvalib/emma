@@ -3,27 +3,27 @@
 // noinspection LocalVariableNamingConventionJS, JSUnusedGlobalSymbols
 
 
-import { AppDebug }                       from '../application/debug';
-import { Emma }                           from './assets';
-import { BaseClass }                      from './base-class';
-import { decodeObject }                   from './decode';
-import { handleEvent }                    from './events';
-import { scrollIntoView }                 from './html';
-import { keyCombo }                       from './keyboard';
-import { ModalHideHooks, ModalShowHooks } from './modal-hooks';
-import { NavGroup }                       from './nav-group';
+import { AppDebug }                       from "../application/debug";
+import { Emma }                           from "./assets";
+import { BaseClass }                      from "./base-class";
+import { decodeObject }                   from "./decode";
+import { handleEvent }                    from "./events";
+import { scrollIntoView }                 from "./html";
+import { keyCombo }                       from "./keyboard";
+import { ModalHideHooks, ModalShowHooks } from "./modal-hooks";
+import { NavGroup }                       from "./nav-group";
 import {
     currentFocusablesIn,
     handleClickAndKeypress,
     neutralizeFocusables,
     restoreFocusables,
-} from './accessibility';
+} from "./accessibility";
 import {
     elementName,
     isHidden,
     selector,
     toggleHidden,
-} from './css';
+} from "./css";
 import {
     isDefined,
     isEmpty,
@@ -31,13 +31,13 @@ import {
     isPresent,
     notDefined,
     presence,
-} from './definitions';
+} from "./definitions";
 
 
-const MODULE = 'ModalBase';
+const MODULE = "ModalBase";
 const DEBUG  = true;
 
-AppDebug.file('shared/modal-base', MODULE, DEBUG);
+AppDebug.file("shared/modal-base", MODULE, DEBUG);
 
 // ============================================================================
 // Type definitions
@@ -47,7 +47,7 @@ AppDebug.file('shared/modal-base', MODULE, DEBUG);
  * @typedef {CallbackChainFunction} onShowModalHook
  *
  * The signature of a callback function that can be provided via
- * `.data('ModalShowHooks')` on the modal popup activation toggle control. <p/>
+ * `.data("ModalShowHooks")` on the modal popup activation toggle control. <p/>
  *
  * If the function returns **false** then {@link _showModal} will not allow the
  * popup to open (and will avoid fetching any related deferred content if
@@ -58,7 +58,7 @@ AppDebug.file('shared/modal-base', MODULE, DEBUG);
  * @typedef {CallbackChainFunction} onHideModalHook
  *
  * The signature of a callback function that can be provided via
- * `.data('ModalHideHooks')` on the modal popup activation toggle control. <p/>
+ * `.data("ModalHideHooks")` on the modal popup activation toggle control. <p/>
  *
  * If then function returns **false** then {@link _hideModal} will not allow
  * the popup to close.
@@ -68,8 +68,8 @@ AppDebug.file('shared/modal-base', MODULE, DEBUG);
 // Constants
 // ============================================================================
 
-export const COMPLETE_MARKER = 'complete';
-export const Z_ORDER_MARKER  = 'z-order-capture';
+export const COMPLETE_MARKER = "complete";
+export const Z_ORDER_MARKER  = "z-order-capture";
 
 export const COMPLETE = selector(COMPLETE_MARKER);
 export const PANEL    = selector(Emma.Popup.panel.class);
@@ -85,7 +85,7 @@ export const CLOSER   = `.${Emma.Popup.closer.class}, [type="submit"]`;
  * @readonly
  * @type {string}
  */
-const Z_CAPTURES_DATA = 'z-captured-elements';
+const Z_CAPTURES_DATA = "z-captured-elements";
 
 /**
  * The .data() value assigned to an element whose z-index has been neutralized
@@ -94,7 +94,7 @@ const Z_CAPTURES_DATA = 'z-captured-elements';
  * @readonly
  * @type {string}
  */
-const Z_RESTORE_DATA = 'current-z-index';
+const Z_RESTORE_DATA = "current-z-index";
 
 // ============================================================================
 // Class ModalBase
@@ -107,7 +107,7 @@ const Z_RESTORE_DATA = 'current-z-index';
  */
 export class ModalBase extends BaseClass {
 
-    static CLASS_NAME = 'ModalBase';
+    static CLASS_NAME = "ModalBase";
     static DEBUGGING  = DEBUG;
 
     // ========================================================================
@@ -121,7 +121,7 @@ export class ModalBase extends BaseClass {
      * @readonly
      * @type {string}
      */
-    static INSTANCE_DATA = 'modalInstance';
+    static INSTANCE_DATA = "modalInstance";
 
     // ========================================================================
     // Fields
@@ -164,8 +164,8 @@ export class ModalBase extends BaseClass {
      */
     constructor(control, modal) {
         super();
-        this._debug('ModalBase CTOR: control =', control);
-        this._debug('ModalBase CTOR: modal   =', modal);
+        this._debug("ModalBase CTOR: control =", control);
+        this._debug("ModalBase CTOR: modal   =", modal);
         this.$toggle = control && this.associate(control);
         this.$modal  = modal   && this.setupPanel(modal);
     }
@@ -197,11 +197,11 @@ export class ModalBase extends BaseClass {
      * @returns {boolean}
      */
     open(no_halt) {
-        this._debug('open: no_halt =', no_halt);
+        this._debug("open: no_halt =", no_halt);
         if (this.isClosed) {
             return this._showModal(undefined, no_halt);
         } else {
-            this._warn('modal popup already open');
+            this._warn("modal popup already open");
             return true;
         }
     }
@@ -214,11 +214,11 @@ export class ModalBase extends BaseClass {
      * @returns {boolean}
      */
     close(no_halt) {
-        this._debug('close: no_halt =', no_halt);
+        this._debug("close: no_halt =", no_halt);
         if (this.isOpen) {
             return this._hideModal(undefined, no_halt);
         } else {
-            this._warn('modal popup already closed');
+            this._warn("modal popup already closed");
             return true;
         }
     }
@@ -235,7 +235,7 @@ export class ModalBase extends BaseClass {
      * @returns {boolean}
      */
     onToggleModal(event) {
-        this._debug('onToggleModal', event);
+        this._debug("onToggleModal", event);
         this.toggleModal(event.currentTarget || event.target);
         event.stopPropagation();
         return false;
@@ -251,14 +251,14 @@ export class ModalBase extends BaseClass {
      * @param {Selector} [target]     Default: {@link modalControl}.
      */
     toggleModal(target) {
-        const func  = 'toggleModal'; this._debug(`${func}: target =`, target);
+        const func  = "toggleModal"; this._debug(`${func}: target =`, target);
         let $target = target && $(target);
         if ($target) {
             const instance = this.constructor.instanceFor($target);
             if (instance === this) {
                 this.modalControl = $target;
             } else if (instance) {
-                this._warn('instanceFor($target) !== this', instance, this);
+                this._warn("instanceFor($target) !== this", instance, this);
             }
         }
         $target ||= this.modalControl;
@@ -278,7 +278,7 @@ export class ModalBase extends BaseClass {
      * @protected
      */
     _toggleIframeModal(target, caller) {
-        let func = caller ? `${caller}: IFRAME` : '_toggleIframeModal';
+        let func = caller ? `${caller}: IFRAME` : "_toggleIframeModal";
 
         const $target      = target ? $(target) : this.modalControl;
         const $modal       = this.modalPanel;
@@ -289,20 +289,20 @@ export class ModalBase extends BaseClass {
 
         // Include the ID of the iframe for logging.
         if (this._debugging) {
-            let id = $modal.data('id') || $iframe.attr('id');
+            let id = $modal.data("id") || $iframe.attr("id");
             // noinspection JSUnresolvedVariable
-            id ||= decodeObject($placeholder.attr('data-attr')).id;
-            id ||= 'unknown';
+            id ||= decodeObject($placeholder.attr("data-attr")).id;
+            id ||= "unknown";
             func += ` ${id}`;
         }
 
         // Restore placeholder text if necessary.
-        const placeholder_text = $placeholder.data('text');
+        const placeholder_text = $placeholder.data("text");
         if (placeholder_text) {
             $placeholder.text(placeholder_text);
         }
         if (isDefined(placeholder_text)) {
-            $placeholder.removeData('text');
+            $placeholder.removeData("text");
         }
 
         if (opening && complete) {
@@ -312,7 +312,7 @@ export class ModalBase extends BaseClass {
             this._info(`${func}: RE-OPENING`);
             if (this._showModal($target)) {
                 this.scrollIntoView();
-                this.scrollFrameDocument($iframe, $modal.data('topic'));
+                this.scrollFrameDocument($iframe, $modal.data("topic"));
             }
 
         } else if (opening) {
@@ -328,8 +328,8 @@ export class ModalBase extends BaseClass {
             // original then remove it in order to re-fetch the original the
             // next time it is opened.
             if (this._checkHideModal($target)) {
-                const refetch       = $modal.hasClass('refetch');
-                const expected_page = $modal.data('page');
+                const refetch       = $modal.hasClass("refetch");
+                const expected_page = $modal.data("page");
                 const content       = $iframe[0].contentDocument;
                 const current_page  = content?.location?.pathname;
                 if (!refetch && (expected_page === current_page)) {
@@ -359,7 +359,7 @@ export class ModalBase extends BaseClass {
      */
     _loadDeferredContent(placeholder) {
 
-        const func            = '_loadDeferredContent';
+        const func            = "_loadDeferredContent";
         const _warn           = this._warn.bind(this);
         const _info           = this._info.bind(this);
         const _debug          = this._debug.bind(this);
@@ -369,19 +369,19 @@ export class ModalBase extends BaseClass {
         const scrollFrame     = this.scrollFrameDocument.bind(this);
         const $modal          = this.modalPanel;
         const $placeholder    = $(placeholder);
-        const source_url      = $placeholder.attr('data-path');
-        const attributes      = $placeholder.attr('data-attr');
+        const source_url      = $placeholder.attr("data-path");
+        const attributes      = $placeholder.attr("data-attr");
 
         // Validate parameters and return if there is missing information.
         let type, error;
         if (isMissing(source_url)) {
-            error = 'no source URL';
-        } else if ($placeholder.hasClass('iframe')) {
-            type  = 'iframe';
-        } else if ($placeholder.hasClass('img')) {
-            type  = 'img';
+            error = "no source URL";
+        } else if ($placeholder.hasClass("iframe")) {
+            type  = "iframe";
+        } else if ($placeholder.hasClass("img")) {
+            type  = "img";
         } else {
-            error = 'no type';
+            error = "no type";
         }
         if (error) {
             _warn(`${func}: ${error}`);
@@ -394,10 +394,10 @@ export class ModalBase extends BaseClass {
         if (isPresent(attributes)) { $content.attr(decodeObject(attributes)) }
         toggleHidden($content, true);
         $content.insertAfter($placeholder);
-        handleEvent($content, 'error', onError);
-        handleEvent($content, 'load',  onLoad);
-        $content.attr('src', source_url);
-        $content.attr('aria-label', $modal.attr('aria-label'));
+        handleEvent($content, "error", onError);
+        handleEvent($content, "load",  onLoad);
+        $content.attr("src", source_url);
+        $content.attr("aria-label", $modal.attr("aria-label"));
 
         /**
          * If there was a problem with loading the content for the modal popup,
@@ -407,10 +407,10 @@ export class ModalBase extends BaseClass {
          */
         function onError(event) {
             _warn(`${func}: ${type} FAILED`, event);
-            if (!$placeholder.data('text')) {
-                $placeholder.data('text', $placeholder.text());
+            if (!$placeholder.data("text")) {
+                $placeholder.data("text", $placeholder.text());
             }
-            $placeholder.text('Could not load content.');
+            $placeholder.text("Could not load content.");
             $content.remove();
         }
 
@@ -435,13 +435,13 @@ export class ModalBase extends BaseClass {
                 // The initial load of the modal popup target page.
                 _info(`${func}: ${type} LOAD`);
                 const iframe = $content[0].contentDocument;
-                const topic  = $placeholder.attr('data-topic');
+                const topic  = $placeholder.attr("data-topic");
 
                 // Record the initial page and anchor displayed in the
                 // `<iframe>`.
-                $modal.data('id',    $content[0].id); // For logging.
-                $modal.data('page',  iframe.location.pathname);
-                $modal.data('topic', topic);
+                $modal.data("id",    $content[0].id); // For logging.
+                $modal.data("page",  iframe.location.pathname);
+                $modal.data("topic", topic);
                 $modal.addClass(COMPLETE_MARKER);
 
                 // Replace the placeholder with the downloaded content.
@@ -450,7 +450,7 @@ export class ModalBase extends BaseClass {
 
                 // Prepare to handle key presses that are directed to the
                 // `<iframe>`.
-                handleEvent($content.contents(), 'keyup', onIframeKeyUp);
+                handleEvent($content.contents(), "keyup", onIframeKeyUp);
 
                 // Make sure the associated modal popup element is displayed
                 // and scrolled into position.
@@ -473,8 +473,8 @@ export class ModalBase extends BaseClass {
          */
         function onIframeKeyUp(event) {
             const key = keyCombo(event);
-            if (key === 'Escape') {
-                _debug('ESC pressed in modal popup', $modal.data('id'));
+            if (key === "Escape") {
+                _debug("ESC pressed in modal popup", $modal.data("id"));
                 if (hideModal(event.target)) {
                     window.parent.focus();
                     return false;
@@ -492,7 +492,7 @@ export class ModalBase extends BaseClass {
      * @protected
      */
     _toggleContentModal(target, caller) {
-        const func         = caller || '_toggleContentModal';
+        const func         = caller || "_toggleContentModal";
         const $target      = target ? $(target) : this.modalControl;
         const $modal       = this.modalPanel;
         const $placeholder = $modal.children('.placeholder');
@@ -540,15 +540,15 @@ export class ModalBase extends BaseClass {
      */
     _loadDirectContent(placeholder) {
 
-        const func            = '_loadDirectContent';
+        const func            = "_loadDirectContent";
         const _warn           = this._warn.bind(this);
         const _info           = this._info.bind(this);
         const showModal       = this._showModal.bind(this);
         const scrollIntoView  = this.scrollIntoView.bind(this);
         const $modal          = this.modalPanel;
         const $placeholder    = $(placeholder);
-        const source_url      = $placeholder.attr('data-path');
-        const attributes      = $placeholder.attr('data-attr');
+        const source_url      = $placeholder.attr("data-path");
+        const attributes      = $placeholder.attr("data-attr");
 
         // Validate parameters and return if there is missing information.
         if (isMissing(source_url)) {
@@ -562,9 +562,9 @@ export class ModalBase extends BaseClass {
         if (isPresent(attributes)) { $content.attr(decodeObject(attributes)) }
         toggleHidden($content, true);
         $content.insertAfter($placeholder);
-        handleEvent($content, 'error', onError);
-        handleEvent($content, 'load',  onLoad);
-        $content.attr('src', source_url);
+        handleEvent($content, "error", onError);
+        handleEvent($content, "load",  onLoad);
+        $content.attr("src", source_url);
 
         /**
          * If there was a problem with loading the modal popup content, display
@@ -574,10 +574,10 @@ export class ModalBase extends BaseClass {
          */
         function onError(event) {
             _warn(`${func}: FAILED`, event);
-            if (!$placeholder.data('text')) {
-                $placeholder.data('text', $placeholder.text());
+            if (!$placeholder.data("text")) {
+                $placeholder.data("text", $placeholder.text());
             }
-            $placeholder.text('Could not load content.');
+            $placeholder.text("Could not load content.");
             $content.remove();
         }
 
@@ -598,7 +598,7 @@ export class ModalBase extends BaseClass {
 
                 // The initial load of the popup target content.
                 _info(`${func}: LOAD`);
-                $modal.data('id', $content[0].id); // For logging.
+                $modal.data("id", $content[0].id); // For logging.
                 $modal.addClass(COMPLETE_MARKER);
 
                 // Replace the placeholder with the downloaded content.
@@ -632,21 +632,21 @@ export class ModalBase extends BaseClass {
      */
     scrollFrameDocument(iframe, topic) {
         const $iframe = $(iframe);
-        const id      = $iframe.attr('id') || '???';
+        const id      = $iframe.attr("id") || "???";
         const func    = `scrollFrameDocument: modal popup ${id}`;
         const doc     = $iframe[0]?.contentDocument;
-        let anchor    = topic?.replace(/^#/, '');
+        let anchor    = topic?.replace(/^#/, "");
         let section   = anchor && doc?.getElementById(anchor);
         let error, warn;
         if (isEmpty($iframe)) {
-            error   = 'NO IFRAME';
+            error   = "NO IFRAME";
         } else if (isEmpty(doc)) {
-            error   = 'NO DOCUMENT';
+            error   = "NO DOCUMENT";
         } else if (notDefined(topic)) {
-            anchor  = '#TOP'; // For reporting.
+            anchor  = "#TOP"; // For reporting.
             section = doc.body;
         } else if (isMissing(anchor)) {
-            error   = 'NO ANCHOR';
+            error   = "NO ANCHOR";
         } else if (!section) {
             warn    = `${anchor}: ANCHOR MISSING IN DOCUMENT`;
         }
@@ -679,7 +679,7 @@ export class ModalBase extends BaseClass {
      * @protected
      */
     _showModal(target, no_halt) {
-        const func = '_showModal'; this._debugModal(func, target);
+        const func = "_showModal"; this._debugModal(func, target);
         const $tgt = target ? $(target) : this.modalControl;
         const show = (this._invokeOnShowModal($tgt) !== false) || no_halt;
         if (show) {
@@ -703,7 +703,7 @@ export class ModalBase extends BaseClass {
      * @protected
      */
     _hideModal(target, no_halt) {
-        const func = '_hideModal'; this._debugModal(func, target);
+        const func = "_hideModal"; this._debugModal(func, target);
         const $tgt = target ? $(target) : this.modalControl;
         const hide = (this._invokeOnHideModal($tgt) !== false) || no_halt;
         if (hide) {
@@ -711,7 +711,7 @@ export class ModalBase extends BaseClass {
             this._trapFocus(false);
             this._setModalHidden(true);
             this._zOrderRelease();
-            $tgt.trigger('focus');
+            $tgt.trigger("focus");
         } else {
             this._warn(`${func}: chain halted`);
         }
@@ -746,12 +746,12 @@ export class ModalBase extends BaseClass {
      */
     _trapFocus(trap) {
         const $modal  = this.modalPanel;
-        const parents = $modal.parents(":not('body,html')").toArray();
+        const parents = $modal.parents(':not(body,html)').toArray();
         const chain   = [$modal, ...parents];
         if (trap === false) {
-            chain.forEach(el => $(el).siblings().removeAttr('inert'));
+            chain.forEach(el => $(el).siblings().removeAttr("inert"));
         } else {
-            chain.forEach(el => $(el).siblings().attr('inert', true));
+            chain.forEach(el => $(el).siblings().attr("inert", true));
         }
     }
 
@@ -854,14 +854,14 @@ export class ModalBase extends BaseClass {
         if (!this._zOrderCapturing || this.modalPanel.data(Z_CAPTURES_DATA)) {
             return;
         }
-        this._debug('_zOrderCapture');
+        this._debug("_zOrderCapture");
         let z_captures = [];
         $('*:visible').not(this.modalPanel).each((_, element) => {
             const $e = $(element);
-            const z  = Number($e.css('z-index'));
+            const z  = Number($e.css("z-index"));
             if (z > 0) {
                 $e.data(Z_RESTORE_DATA, z);
-                $e.css('z-index', -1);
+                $e.css("z-index", -1);
                 z_captures.push($e);
                 this._debug(`CAPTURE z-index = ${z} from ${elementName($e)}`);
             }
@@ -882,10 +882,10 @@ export class ModalBase extends BaseClass {
         if (!this._zOrderCapturing) {
             return;
         }
-        this._debug('_zOrderRelease');
+        this._debug("_zOrderRelease");
         (this.modalPanel.data(Z_CAPTURES_DATA) || []).forEach($element => {
             const z = $element.data(Z_RESTORE_DATA);
-            $element.css('z-index', z);
+            $element.css("z-index", z);
             this._debug(`RELEASE z-index = ${z} to ${elementName($element)}`);
         });
         this.modalPanel.data(Z_CAPTURES_DATA, false);
@@ -940,7 +940,7 @@ export class ModalBase extends BaseClass {
      * Wipe all tabbable element references.
      */
     _clearTabCycle() {
-        this._debug('_clearTabCycle');
+        this._debug("_clearTabCycle");
         this._tab_cycle_start = undefined;
         this._tab_cycle_first = undefined;
         this._tab_cycle_last  = undefined;
@@ -956,7 +956,7 @@ export class ModalBase extends BaseClass {
      */
     _setTabCycle($focusables) {
         const $items = $focusables || currentFocusablesIn(this.modalPanel);
-        this._debug('_setTabCycle:', $focusables, '$items =', $items);
+        this._debug("_setTabCycle:", $focusables, "$items =", $items);
         this._setTabCycleFirst($items);
         this._setTabCycleLast($items);
         this._setTabCycleStart();
@@ -973,8 +973,8 @@ export class ModalBase extends BaseClass {
      */
     _setTabCycleStart($target) {
         const $item = $target || this.tabCycleFirst;
-        this._debug('_setTabCycleStart:', $target, '$item =', $item);
-        return this._tab_cycle_start = $item?.trigger('focus');
+        this._debug("_setTabCycleStart:", $target, "$item =", $item);
+        return this._tab_cycle_start = $item?.trigger("focus");
     }
 
     /**
@@ -987,10 +987,10 @@ export class ModalBase extends BaseClass {
      */
     _setTabCycleFirst($focusables) {
         const $items = $focusables || currentFocusablesIn(this.modalPanel);
-        this._debug('_setTabCycleFirst:', $focusables, '$items =', $items);
+        this._debug("_setTabCycleFirst:", $focusables, "$items =", $items);
         const $item  = presence($items.first());
         if ($item) {
-            this._handleEvent($item, 'keydown', this._onKeydownTabCycleFirst);
+            this._handleEvent($item, "keydown", this._onKeydownTabCycleFirst);
         }
         return this._tab_cycle_first = $item;
     }
@@ -1005,10 +1005,10 @@ export class ModalBase extends BaseClass {
      */
     _setTabCycleLast($focusables) {
         const $items = $focusables || currentFocusablesIn(this.modalPanel);
-        this._debug('_setTabCycleLast:', $focusables, '$items =', $items);
+        this._debug("_setTabCycleLast:", $focusables, "$items =", $items);
         const $item  = presence($items.last());
         if ($item) {
-            this._handleEvent($item, 'keydown', this._onKeydownTabCycleLast);
+            this._handleEvent($item, "keydown", this._onKeydownTabCycleLast);
         }
         return this._tab_cycle_last = $item;
     }
@@ -1025,10 +1025,10 @@ export class ModalBase extends BaseClass {
     _onKeydownTabCycleFirst(event) {
         const key = keyCombo(event);
         this._debug(`_onKeydownTabCycleFirst: key = "${key}";`, event);
-        if (key === 'Shift+Tab') {
+        if (key === "Shift+Tab") {
             event.preventDefault();
-            this.tabCycleLast?.trigger('focus');
-            this._info('TAB BACKWARD TO', this.tabCycleLast);
+            this.tabCycleLast?.trigger("focus");
+            this._info("TAB BACKWARD TO", this.tabCycleLast);
         }
     }
 
@@ -1044,10 +1044,10 @@ export class ModalBase extends BaseClass {
     _onKeydownTabCycleLast(event) {
         const key = keyCombo(event);
         this._debug(`_onKeydownTabCycleLast: key = "${key}";`, event);
-        if (key === 'Tab') {
+        if (key === "Tab") {
             event.preventDefault();
-            this.tabCycleFirst?.trigger('focus');
-            this._info('TAB FORWARD TO', this.tabCycleFirst);
+            this.tabCycleFirst?.trigger("focus");
+            this._info("TAB FORWARD TO", this.tabCycleFirst);
         }
     }
 
@@ -1063,7 +1063,7 @@ export class ModalBase extends BaseClass {
      * @return {jQuery|undefined}
      */
     associate(toggle) {
-        const func  = 'associate';
+        const func  = "associate";
         const $ctrl = $(toggle);
         const name  = this.INSTANCE_DATA;
         const modal = $ctrl.data(name);
@@ -1090,7 +1090,7 @@ export class ModalBase extends BaseClass {
      * @return {jQuery}
      */
     setupPanel(panel) {
-        const func     = 'setupPanel'; this._debug(`${func}: panel =`, panel);
+        const func     = "setupPanel"; this._debug(`${func}: panel =`, panel);
         const name     = this.INSTANCE_DATA;
         const $modal   = this.$modal = $(panel);
         const instance = $modal.data(name);
@@ -1164,18 +1164,18 @@ export class ModalBase extends BaseClass {
      */
     _debugModal(label, target) {
         if (!this._debugging) { return }
-        const func    = label.endsWith(':') ? label : `${label}:`;
+        const func    = label.endsWith(":") ? label : `${label}:`;
         const $modal  = this.modalPanel;
         const $toggle = this.modalControl;
         const $target = target && $(target);
         const $ctrl   = $target || $toggle;
         const parts   = [];
-        parts.push('| id',             ($modal?.data('id')            || '-'));
-        parts.push('| page',           ($modal?.data('page')          || '-'));
-        parts.push('| topic',          ($modal?.data('topic')         || '-'));
-        parts.push('| ModalShowHooks', ($ctrl?.data('ModalShowHooks') || '-'));
-        parts.push('| ModalHideHooks', ($ctrl?.data('ModalHideHooks') || '-'));
-        parts.push(`| ${$target ? '$target' : '$toggle'}`, ($ctrl || '-'));
+        parts.push("| id",             ($modal?.data("id")            || "-"));
+        parts.push("| page",           ($modal?.data("page")          || "-"));
+        parts.push("| topic",          ($modal?.data("topic")         || "-"));
+        parts.push("| ModalShowHooks", ($ctrl?.data("ModalShowHooks") || "-"));
+        parts.push("| ModalHideHooks", ($ctrl?.data("ModalHideHooks") || "-"));
+        parts.push(`| ${$target ? "$target" : "$toggle"}`, ($ctrl || "-"));
         this._debug(func, ...parts);
     }
 

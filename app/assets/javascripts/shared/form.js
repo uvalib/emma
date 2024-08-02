@@ -1,12 +1,12 @@
 // app/assets/javascripts/shared/form.js
 
 
-import { AppDebug }   from '../application/debug';
-import { isMissing }  from './definitions'
-import { deepFreeze } from './objects';
+import { AppDebug }   from "../application/debug";
+import { isMissing }  from "./definitions"
+import { deepFreeze } from "./objects";
 
 
-AppDebug.file('shared/form');
+AppDebug.file("shared/form");
 
 // ============================================================================
 // Constants
@@ -42,7 +42,7 @@ export const FORM_FIELD_TYPES = deepFreeze([
  * @readonly
  * @type {string}
  */
-export const FORM_FIELD = FORM_FIELD_TYPES.join(', ');
+export const FORM_FIELD = FORM_FIELD_TYPES.join(", ");
 
 // ============================================================================
 // Functions
@@ -61,17 +61,17 @@ export function turnOffAutocomplete(inputs, filter) {
     const $elements = filter ? $inputs.filter(FORM_FIELD) : $inputs;
     $elements.each((_, element) => {
         const $element    = $(element);
-        const spell_check = $element.attr('spellcheck');
-        const last_pass   = $element.attr('data-lpignore');
-        let autocomplete  = $element.attr('autocomplete');
+        const spell_check = $element.attr("spellcheck");
+        const last_pass   = $element.attr("data-lpignore");
+        let autocomplete  = $element.attr("autocomplete");
         if (isMissing(spell_check)) {
-            $element.attr('spellcheck', 'false');
+            $element.attr("spellcheck", "false");
         }
         if (isMissing(autocomplete)) {
-            $element.attr('autocomplete', (autocomplete = 'off'));
+            $element.attr("autocomplete", (autocomplete = "off"));
         }
-        if (isMissing(last_pass) && (autocomplete === 'off')) {
-            $element.attr('data-lpignore', 'true'); // Needed for LastPass.
+        if (isMissing(last_pass) && (autocomplete === "off")) {
+            $element.attr("data-lpignore", "true"); // Needed for LastPass.
         }
     });
 }

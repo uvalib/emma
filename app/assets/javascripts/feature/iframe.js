@@ -1,16 +1,16 @@
 // app/assets/javascripts/feature/iframe.js
 
 
-import { AppDebug }               from '../application/debug';
-import { appSetup }               from '../application/setup';
-import { handleClickAndKeypress } from '../shared/accessibility';
-import { isMissing }              from '../shared/definitions';
+import { AppDebug }               from "../application/debug";
+import { appSetup }               from "../application/setup";
+import { handleClickAndKeypress } from "../shared/accessibility";
+import { isMissing }              from "../shared/definitions";
 
 
-const MODULE = 'Iframe';
+const MODULE = "Iframe";
 const DEBUG  = true;
 
-AppDebug.file('feature/iframe', MODULE, DEBUG);
+AppDebug.file("feature/iframe", MODULE, DEBUG);
 
 appSetup(MODULE, function() {
 
@@ -56,7 +56,7 @@ appSetup(MODULE, function() {
      * @returns {boolean|undefined}     False indicates event has been handled.
      */
     function scrollToAnchor(event) {
-        const func    = 'IFRAME scrollToAnchor';
+        const func    = "IFRAME scrollToAnchor";
         const $link   = $(event ? event.target : this);
         const anchor  = $link[0].hash;
         const $anchor = anchor && $(anchor);

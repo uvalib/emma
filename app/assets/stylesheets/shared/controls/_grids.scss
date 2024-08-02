@@ -2,10 +2,10 @@
 //
 // Definitions supporting grid controls.
 
-@use 'sass:map';
-@use 'sass:meta';
+@use "sass:map";
+@use "sass:meta";
 
-@use 'shared/variables' as v;
+@use "shared/variables" as v;
 
 //=============================================================================
 // Grid definitions.
@@ -100,7 +100,7 @@
 ///
 @mixin column-classes($max-cols, $template: false, $template-map: false) {
 
-    @if meta.type-of($template-map) != 'map' {
+    @if meta.type-of($template-map) != "map" {
 
         @include columns($template, $max-cols);
 
@@ -116,18 +116,18 @@
 
     } @else {
 
-        $wide-map:        map.get($template-map, 'wide');
-        $medium-map:      map.get($template-map, 'medium');
-        $narrow-map:      map.get($template-map, 'narrow');
+        $wide-map:        map.get($template-map, "wide");
+        $medium-map:      map.get($template-map, "medium");
+        $narrow-map:      map.get($template-map, "narrow");
 
-        $wide-max:        map.get($wide-map,   'columns')  or $max-cols;
-        $wide-template:   map.get($wide-map,   'template') or $template;
+        $wide-max:        map.get($wide-map,   "columns")  or $max-cols;
+        $wide-template:   map.get($wide-map,   "template") or $template;
 
-        $medium-max:      map.get($medium-map, 'columns')  or $wide-max;
-        $medium-template: map.get($medium-map, 'template') or $wide-template;
+        $medium-max:      map.get($medium-map, "columns")  or $wide-max;
+        $medium-template: map.get($medium-map, "template") or $wide-template;
 
-        $narrow-max:      map.get($narrow-map, 'columns')  or $medium-max;
-        $narrow-template: map.get($narrow-map, 'template') or $medium-template;
+        $narrow-max:      map.get($narrow-map, "columns")  or $medium-max;
+        $narrow-template: map.get($narrow-map, "template") or $medium-template;
 
         @for $n from 1 through $max-cols {
             &.columns-#{$n} {

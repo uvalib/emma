@@ -1,30 +1,30 @@
 // app/assets/javascripts/shared/accessibility.js
 
 
-import { AppDebug }                    from '../application/debug';
-import { attributeSelector, selector } from './css';
-import { handleEvent }                 from './events';
-import { keyCombo, modifiersOnly }     from './keyboard';
-import { deepFreeze }                  from './objects';
+import { AppDebug }                    from "../application/debug";
+import { attributeSelector, selector } from "./css";
+import { handleEvent }                 from "./events";
+import { keyCombo, modifiersOnly }     from "./keyboard";
+import { deepFreeze }                  from "./objects";
 import {
     isDefined,
     isPresent,
     notDefined,
     presence,
-} from './definitions';
+} from "./definitions";
 import {
     CHECKBOX,
     RADIO,
     sameElements,
     selfOrDescendents,
     single,
-} from './html';
+} from "./html";
 
 
-const MODULE = 'Accessibility';
+const MODULE = "Accessibility";
 const DEBUG  = true;
 
-AppDebug.file('shared/accessibility', MODULE, DEBUG);
+AppDebug.file("shared/accessibility", MODULE, DEBUG);
 
 /**
  * Console output functions for this module.
@@ -54,13 +54,13 @@ const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
  * @type {string[]}
  */
 export const FOCUSABLE_ELEMENTS = deepFreeze([
-    'a',
-    'area',
-    'button',
-    'details',
-    'input',
-    'select',
-    'textarea',
+    "a",
+    "area",
+    "button",
+    "details",
+    "input",
+    "select",
+    "textarea",
 ]);
 
 /**
@@ -69,7 +69,7 @@ export const FOCUSABLE_ELEMENTS = deepFreeze([
  * @readonly
  * @type {string}
  */
-export const FOCUSABLE_ELEMENT = FOCUSABLE_ELEMENTS.join(', ');
+export const FOCUSABLE_ELEMENT = FOCUSABLE_ELEMENTS.join(", ");
 
 /**
  * Attributes indicating that an element should receive focus.
@@ -78,17 +78,17 @@ export const FOCUSABLE_ELEMENT = FOCUSABLE_ELEMENTS.join(', ');
  * @type {string[]}
  */
 export const FOCUSABLE_ATTRS = deepFreeze([
-    'controls',
-    'data-path',
-    'draggable',
-    'href',
+    "controls",
+    "data-path",
+    "draggable",
+    "href",
     'role="cell"',
     'role="columnheader"',
     'role="grid"',
     'role="gridcell"',
     'role="listbox"',
     'role="rowheader"',
-    'tabindex',
+    "tabindex",
 ]);
 
 /**
@@ -105,7 +105,7 @@ export const FOCUSABLE_ATTRIBUTE = attributeSelector(FOCUSABLE_ATTRS);
  * @readonly
  * @type {string}
  */
-export const FOCUSABLE = FOCUSABLE_ELEMENT + ', ' + FOCUSABLE_ATTRIBUTE;
+export const FOCUSABLE = FOCUSABLE_ELEMENT + ", " + FOCUSABLE_ATTRIBUTE;
 
 /**
  * Attributes indicating that an element should not be interactive.
@@ -113,7 +113,7 @@ export const FOCUSABLE = FOCUSABLE_ELEMENT + ', ' + FOCUSABLE_ATTRIBUTE;
  * @readonly
  * @type {string[]}
  */
-export const NO_TOUCH_ATTRS = deepFreeze(['disabled', 'inert']);
+export const NO_TOUCH_ATTRS = deepFreeze(["disabled", "inert"]);
 
 /**
  * Selector for elements that should not be interactive.
@@ -145,7 +145,7 @@ export const NON_FOCUSABLE = attributeSelector(NO_FOCUS_ATTRS);
  *
  * @type {string}
  */
-export const ORIG_TABINDEX_ATTR = 'data-original-tabindex';
+export const ORIG_TABINDEX_ATTR = "data-original-tabindex";
 
 /**
  * Selector for elements that have been initialized via {@link setFocusable}.
@@ -163,7 +163,7 @@ export const ORIG_TABINDEX = attributeSelector(ORIG_TABINDEX_ATTR);
  */
 export const ORIGINALLY_NONFOCUSABLE = `[${ORIG_TABINDEX_ATTR}="-1"]`;
 
-export const INVISIBLE_MARKER = 'invisible';
+export const INVISIBLE_MARKER = "invisible";
 export const INVISIBLE        = selector(INVISIBLE_MARKER);
 
 // ============================================================================
@@ -180,9 +180,9 @@ export const INVISIBLE        = selector(INVISIBLE_MARKER);
  * @returns {jQuery}
  */
 export function handleClickAndKeypress(element, callback) {
-    OUT.debug('handleClickAndKeypress:', element, callback);
+    OUT.debug("handleClickAndKeypress:", element, callback);
     const $elem = ensureFocusable(element);
-    return handleEvent($elem, 'click', callback).each(handleActivationAsClick);
+    return handleEvent($elem, "click", callback).each(handleActivationAsClick);
 }
 
 /**
@@ -213,7 +213,7 @@ export function handleClickAndKeypress(element, callback) {
  * @returns {jQuery}
  */
 function handleActivationAsClick(selector, direct, match, except) {
-    //OUT.debug('handleActivationAsClick:', selector, direct, match, except);
+    //OUT.debug("handleActivationAsClick:", selector, direct, match, except);
 
     // noinspection JSCheckFunctionSignatures
     /**
@@ -221,34 +221,34 @@ function handleActivationAsClick(selector, direct, match, except) {
      *
      * @type {jQuery}
      */
-    let $elements = (typeof selector === 'number') ? $(this) : $(selector);
+    let $elements = (typeof selector === "number") ? $(this) : $(selector);
 
     // Apply match criteria to select all elements that would be expected to
     // receive a key press based on their attributes.
     const criteria = [];
-    if (match && (typeof match === 'string')) {
+    if (match && (typeof match === "string")) {
         criteria.push(match);
     } else if (direct || (match === true) || notDefined(match)) {
         criteria.push(FOCUSABLE_ATTRIBUTE);
     }
     if (isPresent(criteria)) {
-        const sel = criteria.join(', ');
+        const sel = criteria.join(", ");
         $elements = direct ? $elements.filter(sel) : $elements.find(sel);
     }
 
     // Ignore elements that won't be reached by tabbing to them.
     const exceptions = [NON_FOCUSABLE];
-    if (except && (typeof except === 'string')) {
+    if (except && (typeof except === "string")) {
         exceptions.push(except);
     }
     if (isPresent(exceptions)) {
-        const sel = exceptions.join(', ');
+        const sel = exceptions.join(", ");
         $elements = $elements.not(sel);
     }
 
     // Attach the handler to any remaining elements, ensuring that the
     // handler is not added twice.
-    return handleEvent($elements, 'keydown', handleActivationKeypress);
+    return handleEvent($elements, "keydown", handleActivationKeypress);
 }
 
 /**
@@ -264,14 +264,14 @@ function handleActivationAsClick(selector, direct, match, except) {
 function handleActivationKeypress(event) {
     const key = keyCombo(event);
     if (OUT.debugging() && key && !modifiersOnly(key)) {
-        OUT.debug('handleActivationKeypress:', event);
+        OUT.debug("handleActivationKeypress:", event);
     }
-    if ((key === ' ') || (key === 'Enter')) {
+    if ((key === " ") || (key === "Enter")) {
         const $target = $(event.target);
-        const href    = $target.attr('href');
-        if (!href || (href === '#')) {
-            $target.trigger('click');
-            $target.trigger('focusin');
+        const href    = $target.attr("href");
+        if (!href || (href === "#")) {
+            $target.trigger("click");
+            $target.trigger("focusin");
             return false;
         }
     }
@@ -295,11 +295,11 @@ export function nextInTabOrder(from, opt = {}) {
     const $from = $(from);
     $from.nextAll().each((_, sibling) => {
         const $sibling = $(sibling);
-        const display  = $sibling.css('display');
-        if (display === 'contents') {
-            // This will not be ':visible' and it will not be focusable but it
+        const display  = $sibling.css("display");
+        if (display === "contents") {
+            // This will not be ":visible" and it will not be focusable but it
             // may still have focusable descendent(s).
-        } else if (display === 'none') {
+        } else if (display === "none") {
             // Otherwise, this is not focusable and it does not have any
             // descendents that could be part of the tab order.
             return true; // continue loop
@@ -332,11 +332,11 @@ export function prevInTabOrder(from, opt = {}) {
     const $from = $(from);
     $from.prevAll().each((_, sibling) => {
         const $sibling = $(sibling);
-        const display  = $sibling.css('display');
-        if (display === 'contents') {
-            // This will not be ':visible' and it will not be focusable but it
+        const display  = $sibling.css("display");
+        if (display === "contents") {
+            // This will not be ":visible" and it will not be focusable but it
             // may still have focusable descendent(s).
-        } else if (display === 'none') {
+        } else if (display === "none") {
             // Otherwise, this is not focusable and it does not have any
             // descendents that could be part of the tab order.
             return true; // continue loop
@@ -371,7 +371,7 @@ export function prevInTabOrder(from, opt = {}) {
  */
 export function delegateInputClick(element) {
 
-    const func     = 'delegateInputClick';
+    const func     = "delegateInputClick";
     const $element = $(element);
     const $input   = selfOrDescendents($element, `${CHECKBOX}, ${RADIO}`);
     const count    = $input.length;
@@ -385,7 +385,7 @@ export function delegateInputClick(element) {
     handleClickAndKeypress($element, function(event) {
         if (!sameElements($input, event.target)) {
             event.preventDefault();
-            $input.trigger('click');
+            $input.trigger("click");
         }
     });
 }
@@ -518,10 +518,10 @@ export function currentFocusablesIn(item) {
  * @returns {jQuery}
  */
 export function ensureFocusable(item) {
-    const func = 'ensureFocusable'; //OUT.debug(`${func}:`, item);
+    const func = "ensureFocusable"; //OUT.debug(`${func}:`, item);
     return $(item).each((_, element) => {
         const $element = $(element);
-        if (!$element.is(FOCUSABLE_ELEMENT) && !$element.attr('tabindex')) {
+        if (!$element.is(FOCUSABLE_ELEMENT) && !$element.attr("tabindex")) {
             setFocusable($element, true, func);
         }
     });
@@ -542,9 +542,9 @@ export function ensureFocusable(item) {
  * @returns {boolean}
  */
 export function setFocusable(elem, value, caller, log) {
-    const func      = 'setFocusable'; //OUT.debug(`${func}: ${value};`, elem);
+    const func      = "setFocusable"; //OUT.debug(`${func}: ${value};`, elem);
     const tag       = caller ? `${caller}: ${func}` : func;
-    const enable    = (value !== false) && (String(value) !== '-1');
+    const enable    = (value !== false) && (String(value) !== "-1");
     const $elem     = single(elem);
     const disabled  = $elem.is(`${NON_TOUCHABLE}, ${ORIGINALLY_NONFOCUSABLE}`);
     const focusable = enable && !disabled;
@@ -554,10 +554,10 @@ export function setFocusable(elem, value, caller, log) {
         OUT.debug(`${tag}: "${focusable}" for element`, $elem);
     }
     if (!$elem.is(ORIG_TABINDEX)) {
-        const orig = disabled && -1 || Number($elem.attr('tabindex')) || 0;
+        const orig = disabled && -1 || Number($elem.attr("tabindex")) || 0;
         $elem.attr(ORIG_TABINDEX_ATTR, orig);
     }
-    $elem.attr('tabindex', (focusable ? 0 : -1));
+    $elem.attr("tabindex", (focusable ? 0 : -1));
     return focusable;
 }
 
@@ -576,8 +576,8 @@ export function setFocusable(elem, value, caller, log) {
  * @see restoreFocusables
  */
 export function neutralizeFocusables(element, except, depth = 0) {
-    const func     = 'neutralizeFocusables';
-    const bool_arg = (typeof except === 'boolean');
+    const func     = "neutralizeFocusables";
+    const bool_arg = (typeof except === "boolean");
     const children = !bool_arg || except;
     const rejected = !bool_arg && except;
     const $element = element ? $(element) : undefined;
@@ -615,8 +615,8 @@ export function neutralizeFocusables(element, except, depth = 0) {
  * @see neutralizeFocusables
  */
 export function restoreFocusables(element, except, depth = 0) {
-    const func     = 'restoreFocusables';
-    const bool_arg = (typeof except === 'boolean');
+    const func     = "restoreFocusables";
+    const bool_arg = (typeof except === "boolean");
     const children = !bool_arg || except;
     const rejected = !bool_arg && except;
     const $element = element && $(element);
@@ -627,7 +627,7 @@ export function restoreFocusables(element, except, depth = 0) {
 
     getMaybeFocusables($here).each((_, el) => {
         const $el     = $(el);
-        const visible = ($el.attr('aria-hidden') !== 'true');
+        const visible = ($el.attr("aria-hidden") !== "true");
         setFocusable($el, visible, func, false);
     });
 
@@ -635,7 +635,7 @@ export function restoreFocusables(element, except, depth = 0) {
         const level = depth + 1;
         $element.each((_, el) => {
             const $el = $(el);
-            if ($el.attr('aria-hidden') !== 'true') {
+            if ($el.attr("aria-hidden") !== "true") {
                 $el.children().each((_, ch) => {
                     restoreFocusables(ch, except, level);
                 });
@@ -654,7 +654,7 @@ export function restoreFocusables(element, except, depth = 0) {
  * If *setting* is not given then visibility is toggled to the opposite state.
  *
  * @note An "invisible" element still takes up space on the display; a "hidden"
- *  element does not.  Both cases result in 'aria-hidden' being set to make it
+ *  element does not.  Both cases result in "aria-hidden" being set to make it
  *  unavailable to screen readers.
  *
  * @param {Selector} element
@@ -665,21 +665,21 @@ export function restoreFocusables(element, except, depth = 0) {
  * @see toggleHidden
  */
 export function toggleVisibility(element, setting) {
-    //OUT.debug('toggleVisibility: setting =', setting, 'for', element);
+    //OUT.debug("toggleVisibility: setting =", setting, "for", element);
     /** @type {jQuery} */
     const $element = $(element);
     let becoming_visible, now_hidden, visibility;
     if (isDefined(setting)) {
         becoming_visible = setting;
-    } else if ((now_hidden = $element.attr('aria-hidden'))) {
-        becoming_visible = (now_hidden === 'true');
-    } else if ((visibility = $element.css('visibility'))) {
-        becoming_visible = (visibility === 'hidden');
+    } else if ((now_hidden = $element.attr("aria-hidden"))) {
+        becoming_visible = (now_hidden === "true");
+    } else if ((visibility = $element.css("visibility"))) {
+        becoming_visible = (visibility === "hidden");
     } else {
         becoming_visible = isInvisible($element);
     }
     $element.toggleClass(INVISIBLE_MARKER, !becoming_visible);
-    $element.attr('aria-hidden', !becoming_visible);
+    $element.attr("aria-hidden", !becoming_visible);
     return becoming_visible;
 }
 

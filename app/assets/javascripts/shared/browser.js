@@ -3,10 +3,10 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { AppDebug } from '../application/debug';
+import { AppDebug } from "../application/debug";
 
 
-AppDebug.file('shared/browser');
+AppDebug.file("shared/browser");
 
 // ============================================================================
 // Functions
@@ -36,7 +36,7 @@ export function pageLoadType() {
  */
 /*
 export function pageLoadFromHistory() {
-    return pageLoadType() === 'back_forward';
+    return pageLoadType() === "back_forward";
 }
 */
 
@@ -50,7 +50,7 @@ export function pageLoadFromHistory() {
  */
 /*
 export function pageLoadFromReload() {
-    return pageLoadType() === 'reload';
+    return pageLoadType() === "reload";
 }
 */
 
@@ -63,7 +63,7 @@ export function pageLoadFromReload() {
  */
 /*
 export function pageLoadNormal() {
-    return !['back_forward', 'reload'].includes(pageLoadType());
+    return !["back_forward", "reload"].includes(pageLoadType());
 }
 */
 
@@ -80,5 +80,5 @@ export function isInternetExplorer() {
     // If NavigatorUAData is present then no actual check is required.
     // noinspection JSUnresolvedVariable, PlatformDetectionJS
     const ua = navigator.userAgentData ? undefined : navigator.userAgent;
-    return ua?.includes('MSIE ') || ua?.includes('Trident/') || false;
+    return ua?.includes("MSIE ") || ua?.includes("Trident/") || false;
 }

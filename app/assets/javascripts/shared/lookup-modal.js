@@ -5,52 +5,52 @@
 // noinspection LocalVariableNamingConventionJS, JSUnusedGlobalSymbols
 
 
-import { AppDebug }                       from '../application/debug';
-import { appTeardown }                    from '../application/setup';
-import { LookupChannel }                  from '../channels/lookup-channel';
-import { toggleVisibility }               from './accessibility';
-import { arrayWrap, intersects }          from './arrays';
-import { Emma }                           from './assets';
-import { selector, toggleHidden }         from './css';
-import { turnOffAutocomplete }            from './form';
-import { HTML_BREAK }                     from './html';
-import { renderJson }                     from './json';
-import { LookupRequest }                  from './lookup-request';
-import { ModalDialog }                    from './modal-dialog';
-import { ModalHideHooks, ModalShowHooks } from './modal-hooks';
-import { randomizeName }                  from './random';
-import { camelCase, capitalize }          from './strings';
+import { AppDebug }                       from "../application/debug";
+import { appTeardown }                    from "../application/setup";
+import { LookupChannel }                  from "../channels/lookup-channel";
+import { toggleVisibility }               from "./accessibility";
+import { arrayWrap, intersects }          from "./arrays";
+import { Emma }                           from "./assets";
+import { selector, toggleHidden }         from "./css";
+import { turnOffAutocomplete }            from "./form";
+import { HTML_BREAK }                     from "./html";
+import { renderJson }                     from "./json";
+import { LookupRequest }                  from "./lookup-request";
+import { ModalDialog }                    from "./modal-dialog";
+import { ModalHideHooks, ModalShowHooks } from "./modal-hooks";
+import { randomizeName }                  from "./random";
+import { camelCase, capitalize }          from "./strings";
 import {
     isDefined,
     isEmpty,
     isMissing,
     isPresent,
     presence,
-} from './definitions';
+} from "./definitions";
 import {
     debounce,
     handleEvent,
     handleHoverAndFocus,
     isEvent,
-} from './events';
+} from "./events";
 import {
     deepFreeze,
     dupObject,
     hasKey,
     toObject,
-} from './objects';
+} from "./objects";
 
 
-const MODULE = 'LookupModal';
+const MODULE = "LookupModal";
 const DEBUG  = true;
 
-AppDebug.file('shared/lookup-modal', MODULE, DEBUG);
+AppDebug.file("shared/lookup-modal", MODULE, DEBUG);
 
 // ============================================================================
 // Constants
 // ============================================================================
 
-export const LOOKUP_BUTTON_CLASS = 'lookup-button';
+export const LOOKUP_BUTTON_CLASS = "lookup-button";
 export const LOOKUP_BUTTON       = selector(LOOKUP_BUTTON_CLASS);
 
 const COLUMN = deepFreeze({
@@ -83,7 +83,7 @@ const UNLOCK_TIP = Emma.Messages.lookup.unlock.tooltip;
  */
 export class LookupModal extends ModalDialog {
 
-    static CLASS_NAME = 'LookupModal';
+    static CLASS_NAME = "LookupModal";
     static DEBUGGING  = DEBUG;
 
     // ========================================================================
@@ -96,7 +96,7 @@ export class LookupModal extends ModalDialog {
      * @readonly
      * @type {string}
      */
-    static REQUEST_DATA = 'lookupRequest';
+    static REQUEST_DATA = "lookupRequest";
 
     /**
      * The .data() key for storing the field replacements selected by the user.
@@ -104,7 +104,7 @@ export class LookupModal extends ModalDialog {
      * @readonly
      * @type {string}
      */
-    static FIELD_RESULTS_DATA = 'lookupFieldResults';
+    static FIELD_RESULTS_DATA = "lookupFieldResults";
 
     /**
      * The name by which parts of a search request can be passed in via jQuery
@@ -113,7 +113,7 @@ export class LookupModal extends ModalDialog {
      * @readonly
      * @type {string}
      */
-    static SEARCH_TERMS_DATA = 'lookupSearchTerms';
+    static SEARCH_TERMS_DATA = "lookupSearchTerms";
 
     /**
      * The name by which the result of a search request can be passed back via
@@ -122,7 +122,7 @@ export class LookupModal extends ModalDialog {
      * @readonly
      * @type {string}
      */
-    static SEARCH_RESULT_DATA = 'lookupSearchResult';
+    static SEARCH_RESULT_DATA = "lookupSearchResult";
 
     /**
      * For saving a previous field value via jQuery .data() to compare against
@@ -131,7 +131,7 @@ export class LookupModal extends ModalDialog {
      * @readonly
      * @type {string}
      */
-    static FIELD_LATEST_DATA = 'latestValue';
+    static FIELD_LATEST_DATA = "latestValue";
 
     /**
      * For persisting the field value lock state via jQuery .data().
@@ -139,7 +139,7 @@ export class LookupModal extends ModalDialog {
      * @readonly
      * @type {string}
      */
-    static FIELD_LOCKED_DATA = 'locked';
+    static FIELD_LOCKED_DATA = "locked";
 
     /**
      * For storing and retrieving entries values via jQuery .data().
@@ -147,29 +147,29 @@ export class LookupModal extends ModalDialog {
      * @readonly
      * @type {string}
      */
-    static ENTRY_ITEM_DATA = 'itemData';
+    static ENTRY_ITEM_DATA = "itemData";
 
     // ========================================================================
     // Constants
     // ========================================================================
 
-    static MODAL_CLASS          = 'lookup-popup';
-    static CONTAINER_CLASS      = 'lookup-container';
-    static LOADING_CLASS        = 'loading-in-progress';
-    static QUERY_PANEL_CLASS    = 'lookup-query';
-    static QUERY_TERMS_CLASS    = 'terms';
-    static STATUS_DISPLAY_CLASS = 'lookup-status';
-    static NOTICE_CLASS         = 'notice';
-    static SERVICES_CLASS       = 'services';
-    static ENTRIES_CLASS        = 'lookup-entries';
-    static HEAD_ENTRY_CLASS     = 'head';
-    static FIELD_VALUES_CLASS   = 'field-values';
-    static FIELD_LOCKS_CLASS    = 'field-locks';
-    static LOCK_CLASS           = 'lock-input';
-    static ORIG_VALUES_CLASS    = 'original-values';
-    static RESULT_CLASS         = 'result';
-    static COMMIT_CLASS         = 'commit';
-    static DISABLED_MARKER      = 'disabled';
+    static MODAL_CLASS          = "lookup-popup";
+    static CONTAINER_CLASS      = "lookup-container";
+    static LOADING_CLASS        = "loading-in-progress";
+    static QUERY_PANEL_CLASS    = "lookup-query";
+    static QUERY_TERMS_CLASS    = "terms";
+    static STATUS_DISPLAY_CLASS = "lookup-status";
+    static NOTICE_CLASS         = "notice";
+    static SERVICES_CLASS       = "services";
+    static ENTRIES_CLASS        = "lookup-entries";
+    static HEAD_ENTRY_CLASS     = "head";
+    static FIELD_VALUES_CLASS   = "field-values";
+    static FIELD_LOCKS_CLASS    = "field-locks";
+    static LOCK_CLASS           = "lock-input";
+    static ORIG_VALUES_CLASS    = "original-values";
+    static RESULT_CLASS         = "result";
+    static COMMIT_CLASS         = "commit";
+    static DISABLED_MARKER      = "disabled";
 
     static MODAL                = selector(this.MODAL_CLASS);
     static CONTAINER            = selector(this.CONTAINER_CLASS);
@@ -193,27 +193,27 @@ export class LookupModal extends ModalDialog {
         this.HEAD_ENTRY,
         this.FIELD_VALUES,
         this.FIELD_LOCKS,
-    ].join(',');
+    ].join(",");
 
     static RESERVED_ROWS = [
         this.HEAD_ENTRY,
         this.FIELD_VALUES,
         this.FIELD_LOCKS,
         this.ORIG_VALUES,
-    ].join(',');
+    ].join(",");
 
     // Manual input elements
 
-    static PROMPT_CLASS         = 'lookup-prompt';
+    static PROMPT_CLASS         = "lookup-prompt";
     static PROMPT               = selector(this.PROMPT_CLASS);
 
     // Diagnostic output elements
 
-    static HEADING_CLASS        = 'lookup-heading';
-    static OUTPUT_CLASS         = 'lookup-output';
-    static RESULTS_CLASS        = 'item-results';
-    static ERRORS_CLASS         = 'item-errors';
-    static DIAGNOSTICS_CLASS    = 'item-diagnostics';
+    static HEADING_CLASS        = "lookup-heading";
+    static OUTPUT_CLASS         = "lookup-output";
+    static RESULTS_CLASS        = "item-results";
+    static ERRORS_CLASS         = "item-errors";
+    static DIAGNOSTICS_CLASS    = "item-diagnostics";
 
     static HEADING              = selector(this.HEADING_CLASS);
     static OUTPUT               = selector(this.OUTPUT_CLASS);
@@ -274,8 +274,8 @@ export class LookupModal extends ModalDialog {
      * @type {StringTable}
      */
     static SEPARATORS = {
-        space: '\\s|',
-        pipe:  '|',
+        space: "\\s|",
+        pipe:  "|",
     };
 
     /**
@@ -284,7 +284,7 @@ export class LookupModal extends ModalDialog {
      * @readonly
      * @type {string}
      */
-    static DEF_SEPARATORS_KEY = 'pipe';
+    static DEF_SEPARATORS_KEY = "pipe";
 
     // ========================================================================
     // Class fields
@@ -386,7 +386,7 @@ export class LookupModal extends ModalDialog {
         super(modal);
 
         this._debug(`ctor: manual = "${manual}"; output = "${output}"`);
-        this._debug('ctor: modal =', modal);
+        this._debug("ctor: modal =", modal);
 
         this.$modal ||= this.setupPanel(this.constructor.$modal);
         this.manual   = isDefined(manual) && manual;
@@ -401,7 +401,7 @@ export class LookupModal extends ModalDialog {
         if (this.manual) {
             const submit = this.manualSubmission;
             this._handleClickAndKeypress(this.inputSubmit, submit);
-            this._handleEvent(this.inputText, 'keyup', submit);
+            this._handleEvent(this.inputText, "keyup", submit);
             turnOffAutocomplete(this.inputText);
             toggleHidden(this.queryPanel, true);
         } else {
@@ -440,9 +440,9 @@ export class LookupModal extends ModalDialog {
     static set channel(channel) {
         if (channel) {
             channel.disconnectOnPageExit(this._debugging);
-            this._info('set channel', channel);
+            this._info("set channel", channel);
         } else {
-            this._info('clear channel');
+            this._info("clear channel");
         }
         this._channel = channel;
     }
@@ -470,7 +470,7 @@ export class LookupModal extends ModalDialog {
      * @returns {LookupChannel|undefined}
      */
     static reserveChannel(owner) {
-        const func    = 'reserveChannel';
+        const func    = "reserveChannel";
         const control = (owner instanceof this) ? owner.modalControl : owner;
         if (!control) {
             this._warn(`${func}: null owner invalid`);
@@ -498,7 +498,7 @@ export class LookupModal extends ModalDialog {
      * @returns {LookupChannel|undefined}
      */
     static async setupFor(toggle, show_hooks, hide_hooks) {
-        const func = 'setupFor'; this._debug(`${func}: toggle =`, toggle);
+        const func = "setupFor"; this._debug(`${func}: toggle =`, toggle);
         const curr = this.instanceFor(toggle);
         this._debug(`${func}: current toggle.data(modalInstance) =`, curr);
         this._debug(`${func}: current LookupModal._channel =`, this._channel);
@@ -526,7 +526,7 @@ export class LookupModal extends ModalDialog {
      * @returns {LookupChannel|undefined}
      */
     static async setupChannel(callbacks) {
-        console.warn('*** LookupModal CHANNEL SETUP ***');
+        console.warn("*** LookupModal CHANNEL SETUP ***");
         const channel = await LookupChannel.newInstance(callbacks);
         if (channel) {
             appTeardown(this.CLASS_NAME, this.teardownChannel.bind(this));
@@ -538,7 +538,7 @@ export class LookupModal extends ModalDialog {
      * Teardown the channel for this subclass if connected.
      */
     static teardownChannel() {
-        console.warn('*** LookupModal CHANNEL TEARDOWN ***', this.channel);
+        console.warn("*** LookupModal CHANNEL TEARDOWN ***", this.channel);
         this.channel?.disconnect();
         this.channel = undefined;
     }
@@ -606,7 +606,7 @@ export class LookupModal extends ModalDialog {
      * @protected
      */
     _setHooksFor($toggle, show_hooks, hide_hooks) {
-        this._debug('_setHooksFor:', $toggle, show_hooks, hide_hooks);
+        this._debug("_setHooksFor:", $toggle, show_hooks, hide_hooks);
         const show_modal = this.onShowModal.bind(this);
         const hide_modal = this.onHideModal.bind(this);
         ModalShowHooks.set($toggle, show_hooks, show_modal);
@@ -691,10 +691,10 @@ export class LookupModal extends ModalDialog {
      * @param {KeyboardEvt} event
      */
     manualSubmission(event) {
-        if (isEvent(event, KeyboardEvent) && (event.key !== 'Enter')) {
+        if (isEvent(event, KeyboardEvent) && (event.key !== "Enter")) {
             return;
         }
-        this._debug('manualSubmission:', event);
+        this._debug("manualSubmission:", event);
         if (this.isModal) {
             // Don't allow the manual submission to close the dialog.
             event.stopPropagation();
@@ -718,7 +718,7 @@ export class LookupModal extends ModalDialog {
      * @see onShowModalHook
      */
     onShowModal(_$target, check_only, halted) {
-        this._debug('onShowModal:', _$target, check_only, halted);
+        this._debug("onShowModal:", _$target, check_only, halted);
         if (check_only || halted) { return undefined }
         this.resetSearchResultsData();
         this.clearFieldResultsData();
@@ -741,7 +741,7 @@ export class LookupModal extends ModalDialog {
      * @see onHideModalHook
      */
     onHideModal($target, check_only, halted) {
-        this._debug('onHideModal:', $target, check_only, halted);
+        this._debug("onHideModal:", $target, check_only, halted);
         if (check_only || halted) { return undefined }
         if ($target.is(this.COMMIT)) {
             this.commitFieldValuesEntry();
@@ -754,10 +754,10 @@ export class LookupModal extends ModalDialog {
      * Perform the lookup request.
      */
     performRequest() {
-        this._debug('performRequest');
+        this._debug("performRequest");
         const channel = this._reserveChannel();
         if (!channel) {
-            this._error('Could not acquire lookup channel');
+            this._error("Could not acquire lookup channel");
             return;
         }
         this.initializeStatusDisplay();
@@ -790,7 +790,7 @@ export class LookupModal extends ModalDialog {
      * @returns {LookupRequest}       The current request object.
      */
     setRequestData(data) {
-        this._debug('setRequestData:', data);
+        this._debug("setRequestData:", data);
         let request;
         if (data instanceof LookupRequest) {
             request = data;
@@ -806,7 +806,7 @@ export class LookupModal extends ModalDialog {
      * Clear the current lookup request.
      */
     clearRequestData() {
-        this._debug('clearRequestData');
+        this._debug("clearRequestData");
         this.dataElement.removeData(this.REQUEST_DATA);
     }
 
@@ -836,7 +836,7 @@ export class LookupModal extends ModalDialog {
      * @param {LookupResults|undefined} value
      */
     set searchResultsData(value) {
-        this._debug('set searchResultsData:', value);
+        this._debug("set searchResultsData:", value);
         const new_value = value || this._blankSearchResultsData();
         this.dataElement.data(this.SEARCH_RESULT_DATA, new_value);
     }
@@ -847,7 +847,7 @@ export class LookupModal extends ModalDialog {
      * @returns {LookupResults}
      */
     resetSearchResultsData() {
-        this._debug('resetSearchResultsData');
+        this._debug("resetSearchResultsData");
         return this.searchResultsData = this._blankSearchResultsData();
     }
 
@@ -857,8 +857,8 @@ export class LookupModal extends ModalDialog {
      * @param {LookupResponse} message
      */
     updateSearchResultsData(message) {
-        this._debug('updateSearchResultsData:', message);
-        const key = message.job_id || randomizeName('response');
+        this._debug("updateSearchResultsData:", message);
+        const key = message.job_id || randomizeName("response");
         const obj = this.searchResultsData || this.resetSearchResultsData();
         obj[key]  = message.toObject();
     }
@@ -896,7 +896,7 @@ export class LookupModal extends ModalDialog {
     getOriginalFieldValues(caller) {
         const data = this.originalFieldValues;
         if (isMissing(data)) {
-            const func = caller || 'getOriginalFieldValues';
+            const func = caller || "getOriginalFieldValues";
             const name = this.ENTRY_ITEM_DATA;
             this._warn(`${func}: toggle missing .data(${name})`);
         }
@@ -922,7 +922,7 @@ export class LookupModal extends ModalDialog {
      * @param {LookupResponseItem|undefined} value
      */
     set fieldResultsData(value) {
-        this._debug('set fieldResultsData:', value);
+        this._debug("set fieldResultsData:", value);
         const new_value = value || {};
         this.dataElement.data(this.FIELD_RESULTS_DATA, new_value);
     }
@@ -931,7 +931,7 @@ export class LookupModal extends ModalDialog {
      * Clear the user-selected field values from lookup.
      */
     clearFieldResultsData() {
-        this._debug('clearFieldResultsData');
+        this._debug("clearFieldResultsData");
         this.dataElement.removeData(this.FIELD_RESULTS_DATA);
     }
 
@@ -991,9 +991,9 @@ export class LookupModal extends ModalDialog {
     setStatusNotice(value, tooltip) {
         const $notice = this.statusNotice.text(value);
         if (tooltip) {
-            $notice.addClass('tooltip').attr('title', tooltip);
+            $notice.addClass("tooltip").attr("title", tooltip);
         } else {
-            $notice.removeClass('tooltip').removeAttr('title');
+            $notice.removeClass("tooltip").removeAttr("title");
         }
     }
 
@@ -1012,19 +1012,19 @@ export class LookupModal extends ModalDialog {
      * @param {string|string[]} services
      */
     addServiceStatuses(services) {
-        this._debug('addServiceStatuses:', services);
+        this._debug("addServiceStatuses:", services);
         const $services = this.serviceStatuses;
-        const lbl_css   = 'label';
+        const lbl_css   = "label";
         if (isMissing($services.children(selector(lbl_css)))) {
-            const $lbl = $('<span>').addClass(lbl_css).text('Searching:');
+            const $lbl = $('<span>').addClass(lbl_css).text("Searching:");
             $lbl.prependTo($services);
         }
         let names = arrayWrap(services);
-        let data  = $services.data('names');
+        let data  = $services.data("names");
         if (data) {
             names = names.filter(srv => !data.includes(srv));
         } else {
-            $services.data('names', (data = []));
+            $services.data("names", (data = []));
         }
         if (isPresent(names)) {
             const statuses = names.map(name => this.makeServiceStatus(name));
@@ -1038,8 +1038,8 @@ export class LookupModal extends ModalDialog {
      * Clear service status contents and data.
      */
     clearServiceStatuses() {
-        this._debug('clearServiceStatuses');
-        this.serviceStatuses.removeData('names').find('.service').remove();
+        this._debug("clearServiceStatuses");
+        this.serviceStatuses.removeData("names").find('.service').remove();
     }
 
     /**
@@ -1048,7 +1048,7 @@ export class LookupModal extends ModalDialog {
      * @param {LookupResponse} message
      */
     updateStatusDisplay(message) {
-        const func  = 'updateStatusDisplay';
+        const func  = "updateStatusDisplay";
         this._debug(`${func}:`, message);
         const state = message.status?.toUpperCase();
         const srv   = message.service;
@@ -1059,35 +1059,35 @@ export class LookupModal extends ModalDialog {
 
             // Waiter states
 
-            case 'STARTING':
-                notice = 'Working';
+            case "STARTING":
+                notice = "Working";
                 this.addServiceStatuses(srv);
                 break;
-            case 'TIMEOUT':
-                notice = 'Done';
-                n_tip  = 'Some searches took longer than expected';
+            case "TIMEOUT":
+                notice = "Done";
+                n_tip  = "Some searches took longer than expected";
                 finish = true;
                 break;
-            case 'PARTIAL':
-                notice = 'Done';
-                n_tip  = 'Partial results received';
+            case "PARTIAL":
+                notice = "Done";
+                n_tip  = "Partial results received";
                 finish = true;
                 break;
-            case 'COMPLETE':
-                notice = 'Done';
+            case "COMPLETE":
+                notice = "Done";
                 finish = true;
                 break;
 
             // Worker states
 
-            case 'WORKING':
+            case "WORKING":
                 notice = `${this.statusNotice.text()}.`;
                 break;
-            case 'LATE':
-                status = 'late';
+            case "LATE":
+                status = "late";
                 break;
-            case 'DONE':
-                status = isEmpty(data?.items) ? ['done', 'empty'] : 'done';
+            case "DONE":
+                status = isEmpty(data?.items) ? ["done", "empty"] : "done";
                 break;
 
             // Other
@@ -1110,10 +1110,10 @@ export class LookupModal extends ModalDialog {
      * status elements removed.
      */
     initializeStatusDisplay() {
-        this._debug('initializeStatusDisplay');
+        this._debug("initializeStatusDisplay");
         toggleVisibility(this.serviceStatuses, false);
         this.clearServiceStatuses();
-        this.setStatusNotice('Starting...');
+        this.setStatusNotice("Starting...");
     }
 
     /**
@@ -1157,8 +1157,8 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     makeServiceStatus(name) {
-        const css     = 'service';
-        const service = name || 'unknown';
+        const css     = "service";
+        const service = name || "unknown";
         const classes = `${css} ${service}`;
         const label   = camelCase(service);
         return $('<div>').addClass(classes).text(label);
@@ -1186,11 +1186,11 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}              The commit button(s).
      */
     enableCommit(enable) {
-        this._debug('enableCommit:', enable);
+        this._debug("enableCommit:", enable);
         const $button = this.commitButton;
         const marker  = this.constructor.DISABLED_MARKER;
         const set     = (enable === false);
-        return $button.toggleClass(marker, set).prop('disabled', set);
+        return $button.toggleClass(marker, set).prop("disabled", set);
     }
 
     /**
@@ -1201,11 +1201,11 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}              The commit button(s).
      */
     disableCommit(disable) {
-        this._debug('disableCommit:', disable);
+        this._debug("disableCommit:", disable);
         const $button = this.commitButton;
         const marker  = this.constructor.DISABLED_MARKER;
         const set     = (disable !== false);
-        return $button.toggleClass(marker, set).prop('disabled', set);
+        return $button.toggleClass(marker, set).prop("disabled", set);
     }
 
     // ========================================================================
@@ -1222,7 +1222,7 @@ export class LookupModal extends ModalDialog {
     getValue(element) {
         const $elem = $(element);
         if ($elem.is('textarea')) {
-            return $elem.val()?.trim() || '';
+            return $elem.val()?.trim() || "";
         } else {
             return this.getLatestFieldValue($elem) || $elem.text().trim();
         }
@@ -1239,8 +1239,8 @@ export class LookupModal extends ModalDialog {
         if (Array.isArray(item)) {
             return item.map(v => v?.trim ? v.trim() : v).filter(v => v);
 
-        } else if (typeof item !== 'string') {
-            return item?.toString() || '';
+        } else if (typeof item !== "string") {
+            return item?.toString() || "";
 
         } else if (item.includes("\n")) {
             // noinspection TailRecursionJS
@@ -1259,7 +1259,7 @@ export class LookupModal extends ModalDialog {
      * @returns {string}
      */
     toInputValue(item) {
-        if (typeof item === 'string') {
+        if (typeof item === "string") {
             return item.trim();
 
         } else if (Array.isArray(item)) {
@@ -1302,7 +1302,7 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     refreshFieldValuesEntry(caller) {
-        const func   = caller || 'refreshFieldValuesEntry';
+        const func   = caller || "refreshFieldValuesEntry";
         const data   = this.getOriginalFieldValues(func);
         const $entry = this.fieldValuesEntry;
         this.fillEntry($entry, data);
@@ -1311,7 +1311,7 @@ export class LookupModal extends ModalDialog {
             const $lock   = this.lockFor($column);
             const field   = this.fieldFor($column);
             const locked  = !!this.getValue($column);
-            $lock.prop('checked', locked);
+            $lock.prop("checked", locked);
             this.lockField(field, locked);
         });
         return $entry;
@@ -1321,7 +1321,7 @@ export class LookupModal extends ModalDialog {
      * Invoked when the user commits to the new field values.
      */
     commitFieldValuesEntry() {
-        const func     = 'commitFieldValuesEntry'; this._debug(func);
+        const func     = "commitFieldValuesEntry"; this._debug(func);
         const original = this.getOriginalFieldValues(func);
         const current  = this.getColumnValues(this.fieldValuesEntry);
         const result   = {};
@@ -1347,9 +1347,9 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     fieldValueCell(field) {
-        const func = 'fieldValueCell';
+        const func = "fieldValueCell";
         let $result;
-        if (typeof field === 'string') {
+        if (typeof field === "string") {
             $result = this.fieldValuesEntry.find(`[data-field="${field}"]`);
         } else {
             $result = $(field);
@@ -1369,7 +1369,7 @@ export class LookupModal extends ModalDialog {
      * @returns {string|undefined}
      */
     fieldFor(target) {
-        const df   = 'data-field';
+        const df   = "data-field";
         const $tgt = $(target);
         return $tgt.attr(df) || $tgt.parents(`[${df}]`).first().attr(df);
     }
@@ -1381,18 +1381,18 @@ export class LookupModal extends ModalDialog {
      * @param {ElementEvt} event
      */
     lockIfChanged(event) {
-        this._debug('lockIfChanged:', event);
+        this._debug("lockIfChanged:", event);
         const $textarea = $(event.target);
         const current   = this.getValue($textarea);
         const previous  = this.getLatestFieldValue($textarea);
         if (current !== previous) {
             this.setLatestFieldValue($textarea, current);
             if (!this.isLockedFieldValue($textarea)) {
-                this.lockFor($textarea).trigger('click');
+                this.lockFor($textarea).trigger("click");
             }
         }
-        const field    = $textarea.attr('data-field');
-        const original = this.originalFieldValues[field] || '';
+        const field    = $textarea.attr("data-field");
+        const original = this.originalFieldValues[field] || "";
         if (current !== this.toInputValue(original)) {
             this.enableCommit();
         }
@@ -1406,7 +1406,7 @@ export class LookupModal extends ModalDialog {
      * @returns {string}
      */
     getLatestFieldValue($textarea) {
-        return $textarea.data(this.FIELD_LATEST_DATA)?.trim() || '';
+        return $textarea.data(this.FIELD_LATEST_DATA)?.trim() || "";
     }
 
     /**
@@ -1479,20 +1479,20 @@ export class LookupModal extends ModalDialog {
      * @param {boolean}                   [locking] If **false** unlock instead
      */
     lockFieldValue(field, locking) {
-        this._debug('lockFieldValue:', field, locking);
+        this._debug("lockFieldValue:", field, locking);
         const $cell   = this.fieldValueCell(field);
         const $lock   = this.lockFor($cell);
         const $input  = $lock;
         const $slider = $lock.parent().find('.slider');
         const $state  = $lock.parent().find('.state');
-        const name    = $state.attr('data-name');
+        const name    = $state.attr("data-name");
         const locked  = (locking !== false);
         const tip     = locked ? UNLOCK_TIP : LOCK_TIP;
         const label   = locked ? LOCK_LBL   : UNLOCK_LBL;
-        const status  = locked ? 'locked'   : 'unlocked';
+        const status  = locked ? "locked"   : "unlocked";
         $cell.data(this.FIELD_LOCKED_DATA, locked);
-        $input.attr('title', tip);
-        $slider.css('--label', `'${label}'`);
+        $input.attr("title", tip);
+        $slider.css("--label", `'${label}'`);
         $state.text(`${name} ${Emma.Messages.lookup.field_is} ${status}`);
     }
 
@@ -1503,7 +1503,7 @@ export class LookupModal extends ModalDialog {
      * @param {boolean}                   [locking] If **false** unlock instead
      */
     lockField(field, locking) {
-        this._debug('lockField:', field, locking);
+        this._debug("lockField:", field, locking);
         this.lockFieldValue(field, locking);
         this.columnLockout(field, locking);
     }
@@ -1514,7 +1514,7 @@ export class LookupModal extends ModalDialog {
      * @param {ElementEvt} event
      */
     toggleFieldLock(event) {
-        this._debug('toggleFieldLock:', event);
+        this._debug("toggleFieldLock:", event);
         const $target = $(event.target);
         const field   = this.fieldFor($target);
         const locked  = $target.is(':checked');
@@ -1532,7 +1532,7 @@ export class LookupModal extends ModalDialog {
         const HEAD    = this.constructor.HEADING_ROWS;
         const $rows   = this.entriesList.children('.row').not(HEAD);
         const $column = $rows.children(`[data-field="${field}"]`);
-        $column.toggleClass('locked-out', lock);
+        $column.toggleClass("locked-out", lock);
     }
 
     /**
@@ -1544,9 +1544,9 @@ export class LookupModal extends ModalDialog {
     fieldLockout(entry) {
         $(entry).children('[data-field]').each((_, column) => {
             const $field = $(column);
-            const field  = $field.attr('data-field');
+            const field  = $field.attr("data-field");
             const locked = this.isLockedFieldValue(field);
-            $field.toggleClass('locked-out', locked);
+            $field.toggleClass("locked-out", locked);
         });
     }
 
@@ -1583,7 +1583,7 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     refreshOriginalValuesEntry(caller) {
-        const func   = caller || 'refreshOriginalValuesEntry';
+        const func   = caller || "refreshOriginalValuesEntry";
         const data   = this.getOriginalFieldValues(func);
         const $entry = this.originalValuesEntry;
         this.fillEntry($entry, data);
@@ -1618,7 +1618,7 @@ export class LookupModal extends ModalDialog {
      * Reset the selected entry to the "ORIGINAL" entry.
      */
     resetSelectedEntry() {
-        this._debug('resetSelectedEntry');
+        this._debug("resetSelectedEntry");
         this.$selected_entry = null;
     }
 
@@ -1628,7 +1628,7 @@ export class LookupModal extends ModalDialog {
      * @param {Selector} [entry]      Default: {@link selectedEntry}
      */
     useSelectedEntry(entry) {
-        this._debug('useSelectedEntry:', entry);
+        this._debug("useSelectedEntry:", entry);
         const $entry   = entry && (this.selectedEntry = $(entry));
         const values   = this.entryValues($entry || this.selectedEntry);
         const $fields  = this.fieldValuesEntry;
@@ -1647,16 +1647,16 @@ export class LookupModal extends ModalDialog {
      * @param {ElementEvt} event
      */
     selectEntry(event) {
-        this._debug('selectEntry:', event);
+        this._debug("selectEntry:", event);
         this.hideLoadingOverlay();
         /** @type {jQuery} */
         const $target = $(event.currentTarget || event.target),
               $entry  = $target.parents('.row').first();
-        if ($target.attr('type') !== 'radio') {
-            $target.trigger('focus');
-            $entry.find('[type="radio"]').trigger('click');
+        if ($target.attr("type") !== "radio") {
+            $target.trigger("focus");
+            $entry.find('[type="radio"]').trigger("click");
         } else if ($target.is(':checked')) {
-            this.entrySelectButtons.not($target).prop('checked', false);
+            this.entrySelectButtons.not($target).prop("checked", false);
             this.useSelectedEntry($entry);
             if ($entry.is(this.RESULT)) {
                 this.enableCommit();
@@ -1667,7 +1667,7 @@ export class LookupModal extends ModalDialog {
                     const $field = $(column);
                     const value  = this.getValue($field);
                     if (isPresent(value)) {
-                        this.lockFor($field).trigger('click');
+                        this.lockFor($field).trigger("click");
                     }
                 });
             }
@@ -1684,7 +1684,7 @@ export class LookupModal extends ModalDialog {
     highlightEntry(event) {
         const $target = $(event.target);
         const $entry  = $target.parents('.row').first();
-        $entry.children().toggleClass('highlight', true);
+        $entry.children().toggleClass("highlight", true);
     }
 
     /**
@@ -1697,7 +1697,7 @@ export class LookupModal extends ModalDialog {
     unhighlightEntry(event) {
         const $target = $(event.target);
         const $entry  = $target.parents('.row').first();
-        $entry.children().toggleClass('highlight', false);
+        $entry.children().toggleClass("highlight", false);
     }
 
     // ========================================================================
@@ -1769,7 +1769,7 @@ export class LookupModal extends ModalDialog {
             // value parts visually with breaks.
             let $text = $column.children('.text');
             if (isMissing($text)) {
-                $text = $('<div>').addClass('text').appendTo($column);
+                $text = $('<div>').addClass("text").appendTo($column);
             }
             value = this.toDataValue(field_value);
             if (Array.isArray(value)) {
@@ -1825,11 +1825,11 @@ export class LookupModal extends ModalDialog {
      * @param {LookupResponse} message
      */
     updateEntries(message) {
-        const func = 'updateEntries';
+        const func = "updateEntries";
         const data = message.data;
         const init = this.isModal && !this.tabCycleStart;
 
-        if (message.status === 'STARTING') {
+        if (message.status === "STARTING") {
             this._debug(`${func}: ignoring STARTING message`);
 
         } else if (isMissing(data)) {
@@ -1868,7 +1868,7 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     addEntry(item, label, css_class) {
-        this._debug('addEntry:', item, label, css_class);
+        this._debug("addEntry:", item, label, css_class);
         const $list  = this.entriesList;
         const row    = $list.children('.row').length;
         const $entry = this.makeResultEntry(row, label, css_class);
@@ -1902,7 +1902,7 @@ export class LookupModal extends ModalDialog {
      * If $entries_list does not exist, this returns immediately.
      */
     resetEntries() {
-        const func = 'resetEntries'; this._debug(func);
+        const func = "resetEntries"; this._debug(func);
         const RESERVED_ROWS = this.constructor.RESERVED_ROWS;
         this.entriesList.children().not(RESERVED_ROWS).remove();
         this.refreshOriginalValuesEntry(func);
@@ -1933,7 +1933,7 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     makeEntriesList() {
-        const css        = 'list';
+        const css        = "list";
         const cols       = this.ALL_COLUMNS.length;
         const $list      = $('<div>').addClass(`${css} columns-${cols}`);
         let row          = 0;
@@ -1992,8 +1992,8 @@ export class LookupModal extends ModalDialog {
         const css     = this.constructor.FIELD_LOCKS_CLASS;
         const fields  = this.DATA_COLUMNS;
         const TABLE   = this.ENTRY_TABLE;
-        const $select = this.makeBlankColumn(TABLE['selection'].label);
-        const $label  = this.makeTagColumn(TABLE['tag'].label);
+        const $select = this.makeBlankColumn(TABLE["selection"].label);
+        const $label  = this.makeTagColumn(TABLE["tag"].label);
         const locks   = fields.map(field => this.makeFieldLockColumn(field));
         const cols    = [$select, $label, ...locks];
         return this.fieldLocksEntry = this.makeEntry(row, cols, css);
@@ -2007,7 +2007,7 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     makeOriginalValuesEntry(row) {
-        const func = 'makeOriginalValuesEntry';
+        const func = "makeOriginalValuesEntry";
         const tag  = Emma.Messages.original.toUpperCase();
         const css  = this.constructor.ORIG_VALUES_CLASS;
         this.originalValuesEntry = this.makeResultEntry(row, tag, css);
@@ -2063,7 +2063,7 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     makeFieldInputColumn(field, value, css_class) {
-        const $cell = $('<textarea>').attr('data-field', field);
+        const $cell = $('<textarea>').attr("data-field", field);
         if (css_class) { $cell.addClass(css_class) }
         $cell.val(this.toInputValue(value));
         this.monitorEditing($cell);
@@ -2080,7 +2080,7 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     makeFieldLockColumn(field, value, css_class) {
-        const $cell = $('<div>').attr('data-field', field);
+        const $cell = $('<div>').attr("data-field", field);
         const parts = this.makeLockControl(field);
         if (css_class) { $cell.addClass(css_class) }
         return $cell.append(parts);
@@ -2103,24 +2103,24 @@ export class LookupModal extends ModalDialog {
 
         /** @type {jQuery} */
         const $checkbox = $(`<input class="${this.constructor.LOCK_CLASS}">`);
-        $checkbox.attr('type',            'checkbox');
-        $checkbox.attr('role',            'switch');
-        $checkbox.attr('name',            name);
-        $checkbox.attr('aria-labelledby', lbl_id);
-        $checkbox.attr('aria-checked',    locked);
-        $checkbox.prop('checked',         locked);
+        $checkbox.attr("type",            "checkbox");
+        $checkbox.attr("role",            "switch");
+        $checkbox.attr("name",            name);
+        $checkbox.attr("aria-labelledby", lbl_id);
+        $checkbox.attr("aria-checked",    locked);
+        $checkbox.prop("checked",         locked);
 
         /** @type {jQuery} */
         const $slider = $('<div class="slider">');
         const $state  = $('<div class="state">');
-        $state.attr('id',        lbl_id);
-        $state.attr('data-name', label);
+        $state.attr("id",        lbl_id);
+        $state.attr("data-name", label);
 
         /** @type {jQuery} */
         const $indicator = $('<div class="lock-indicator">');
-        $indicator.attr('aria-hidden', true).append($slider).append($state);
+        $indicator.attr("aria-hidden", true).append($slider).append($state);
 
-        this._handleEvent($checkbox, 'change', this.toggleFieldLock);
+        this._handleEvent($checkbox, "change", this.toggleFieldLock);
         return [$checkbox, $indicator];
     }
 
@@ -2132,7 +2132,7 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     makeSelectColumn(active) {
-        const css   = 'selection';
+        const css   = "selection";
         const $cell = $('<div>').addClass(css);
         const parts = this.makeSelectControl(active);
         return $cell.append(parts);
@@ -2147,13 +2147,13 @@ export class LookupModal extends ModalDialog {
      * @returns {[jQuery,jQuery]}
      */
     makeSelectControl(active, css_class) {
-        const $outer     = $('<div>').addClass('outer');
-        const $inner     = $('<div>').addClass('inner');
-        const $indicator = $('<div>').addClass('select-indicator');
-        const $radio     = $('<input>').attr('type', 'radio');
+        const $outer     = $('<div>').addClass("outer");
+        const $inner     = $('<div>').addClass("inner");
+        const $indicator = $('<div>').addClass("select-indicator");
+        const $radio     = $('<input>').attr("type", "radio");
         if (css_class) { $radio.addClass(css_class) }
-        $radio.prop('checked', (active === true));
-        this._handleEvent($radio, 'change', this.selectEntry);
+        $radio.prop("checked", (active === true));
+        this._handleEvent($radio, "change", this.selectEntry);
         this.$start_tabbable ||= $radio;
         return [$radio, $indicator.append($outer, $inner)];
     }
@@ -2179,7 +2179,7 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     makeTagColumn(label) {
-        const css = 'tag';
+        const css = "tag";
         return this.makeBlankColumn(label).addClass(css);
     }
 
@@ -2194,7 +2194,7 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     makeDataColumn(field, value, css_class) {
-        const $cell = this.makeBlankColumn(value).attr('data-field', field);
+        const $cell = this.makeBlankColumn(value).attr("data-field", field);
         if (css_class) { $cell.addClass(css_class) }
         this._handleClickAndKeypress($cell, this.selectEntry);
         return $cell;
@@ -2209,7 +2209,7 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     makeBlankColumn(label, css_class) {
-        const $content = $('<span class="text">').text(label || '');
+        const $content = $('<span class="text">').text(label || "");
         const $cell    = $('<div>');
         if (css_class) { $cell.addClass(css_class) }
         return $cell.append($content);
@@ -2227,7 +2227,7 @@ export class LookupModal extends ModalDialog {
      */
     monitorEditing(item) {
         const locker = this.lockIfChanged.bind(this);
-        handleEvent(item, 'input', debounce(locker));
+        handleEvent(item, "input", debounce(locker));
     }
 
     /**
@@ -2250,7 +2250,7 @@ export class LookupModal extends ModalDialog {
      */
     respondAsVisibleOnFocus(_items) {
         //const scroll = (ev => $(ev.target)[0].scrollIntoView(false));
-        //arrayWrap(items).forEach(i => handleEvent(i, 'focus', scroll));
+        //arrayWrap(items).forEach(i => handleEvent(i, "focus", scroll));
     }
 
     // ========================================================================
@@ -2316,23 +2316,23 @@ export class LookupModal extends ModalDialog {
      * @returns {jQuery}
      */
     setSearchTerms(terms, separator) {
-        this._debug('setSearchTerms:', terms, separator);
-        const chars  = (separator || this.separators).replaceAll('\\s', ' ');
+        this._debug("setSearchTerms:", terms, separator);
+        const chars  = (separator || this.separators).replaceAll("\\s", " ");
         const sep    = chars[0];
         const parts  = arrayWrap(terms);
         const $query = this.queryTerms;
         if (isPresent($query)) {
             const query_parts =
                 parts.map(part => {
-                    const words  = part.split(':');
+                    const words  = part.split(":");
                     const prefix = words.shift();
-                    let value    = words.join(':');
+                    let value    = words.join(":");
                     if (value.match(/\s/)) {
                         value = `"${value}"`;
                     }
                     return `${prefix}:${value}`;
                 });
-            $query.text(query_parts.join(' '));
+            $query.text(query_parts.join(" "));
         }
         return this.inputText.val(parts.join(sep));
     }
@@ -2344,7 +2344,7 @@ export class LookupModal extends ModalDialog {
      * @param {ElementEvt} [event]
      */
     updateSearchTerms(event) {
-        this._debug('updateSearchTerms:', event);
+        this._debug("updateSearchTerms:", event);
         const $data_src = event ? $(event.target) : this.dataElement;
         const data      = $data_src.data(this.SEARCH_TERMS_DATA);
         const request   = this.setRequestData(data);
@@ -2376,7 +2376,7 @@ export class LookupModal extends ModalDialog {
             const $separator = this.inputSeparator;
             $.each(this.SEPARATORS, (key, characters) => {
                 if (new_characters !== characters) { return true } // continue
-                $separator.filter(`[value="${key}"]`).trigger('click');
+                $separator.filter(`[value="${key}"]`).trigger("click");
                 return false; // break
             });
         }
@@ -2439,21 +2439,21 @@ export class LookupModal extends ModalDialog {
      * Remove result display contents.
      */
     clearResultDisplay() {
-        this.resultDisplay.text('');
+        this.resultDisplay.text("");
     }
 
     /**
      * Remove error display contents.
      */
     clearErrorDisplay() {
-        this.errorDisplay.text('');
+        this.errorDisplay.text("");
     }
 
     /**
      * Remove diagnostic display contents.
      */
     clearDiagnosticDisplay() {
-        this.diagnosticDisplay.text('');
+        this.diagnosticDisplay.text("");
     }
 
     /**
@@ -2481,7 +2481,7 @@ export class LookupModal extends ModalDialog {
      * @param {object} data
      */
     updateDiagnosticDisplay(data) {
-        this.updateDisplay(this.diagnosticDisplay, data, '');
+        this.updateDisplay(this.diagnosticDisplay, data, "");
     }
 
     /**
@@ -2508,10 +2508,10 @@ export class LookupModal extends ModalDialog {
      * @param {jQuery} $element
      */
     initializeDisplay($element) {
-        if (!$element.attr('readonly')) {
-            $element.attr('readonly', 'true');
+        if (!$element.attr("readonly")) {
+            $element.attr("readonly", "true");
         }
-        $element.text('');
+        $element.text("");
     }
 
     // ========================================================================
@@ -2539,7 +2539,7 @@ export class LookupModal extends ModalDialog {
     makeLoadingOverlay(visible) {
         const css    = this.constructor.LOADING_CLASS;
         const hidden = (visible !== true);
-        const $image = $('<div>').addClass('content');
+        const $image = $('<div>').addClass("content");
         const $line  = $('<div>').addClass(css).append($image);
         return toggleHidden($line, hidden);
     }
@@ -2583,7 +2583,7 @@ export class LookupModal extends ModalDialog {
      * @returns {LookupModal|undefined}
      */
     static associate(toggles) {
-        const func     = 'associate';
+        const func     = "associate";
         const name     = this.INSTANCE_DATA;
         const instance = this.$modal.data(name);
         if (instance) {

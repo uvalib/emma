@@ -3,12 +3,12 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { AppDebug }                         from '../application/debug';
-import { isDefined, isPresent, notDefined } from './definitions';
-import { dup }                              from './objects';
+import { AppDebug }                         from "../application/debug";
+import { isDefined, isPresent, notDefined } from "./definitions";
+import { dup }                              from "./objects";
 
 
-AppDebug.file('shared/arrays');
+AppDebug.file("shared/arrays");
 
 // ============================================================================
 // Functions - returning Array
@@ -73,7 +73,7 @@ export function flatten(...args) {
         args.forEach(v => result.push(...flatten(v)));
     } else if (Array.isArray((item = args[0]))) {
         item.forEach(v => result.push(...flatten(v)));
-    } else if (typeof item === 'string') {
+    } else if (typeof item === "string") {
         (item = item.trim()) && result.push(item);
     } else {
         isDefined(item) && result.push(item);
@@ -129,7 +129,7 @@ export function intersects(item1, item2) {
 export function maxSize(item, minimum = 0) {
     return arrayWrap(item).reduce(
         (max, val) => {
-            const size = (typeof val === 'number') ? val : (val?.length || 0);
+            const size = (typeof val === "number") ? val : (val?.length || 0);
             return Math.max(size, max);
         },
         minimum

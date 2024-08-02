@@ -1,12 +1,12 @@
 // app/assets/javascripts/feature/flash.js
 
 
-import { AppDebug }                    from '../application/debug';
-import { appSetup }                    from '../application/setup';
-import { flashInitialize, clearFlash } from '../shared/flash';
+import { AppDebug }                    from "../application/debug";
+import { appSetup }                    from "../application/setup";
+import { flashInitialize, clearFlash } from "../shared/flash";
 
 
-const PATH = 'feature/flash';
+const PATH = "feature/flash";
 
 AppDebug.file(PATH);
 

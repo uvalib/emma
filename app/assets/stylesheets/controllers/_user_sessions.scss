@@ -1,8 +1,8 @@
 // app/assets/stylesheets/controllers/_user_sessions.scss
 
-@use 'shared/variables'        as *;
-@use 'shared/mixins'           as *;
-@use 'shared/controls/buttons' as button;
+@use "shared/variables"        as *;
+@use "shared/mixins"           as *;
+@use "shared/controls/buttons" as button;
 
 //=============================================================================
 // Page header
@@ -163,7 +163,7 @@ body.user_sessions {
 
         .actions {
 
-            input[type='submit'] {
+            input[type="submit"] {
 
                 @include button.basic;
 
@@ -211,7 +211,7 @@ body.user_sessions {
                 font-weight: normal;
             }
 
-            input[type='checkbox'] {
+            input[type="checkbox"] {
                 @media #{$wide-screen} {
                     margin-right: calc($flex-gap-x / 2);
                 }

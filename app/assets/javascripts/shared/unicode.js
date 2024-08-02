@@ -1,10 +1,10 @@
 // app/assets/javascripts/shared/unicode.js
 
 
-import { AppDebug } from '../application/debug';
+import { AppDebug } from "../application/debug";
 
 
-AppDebug.file('shared/unicode');
+AppDebug.file("shared/unicode");
 
 // ============================================================================
 // Constants

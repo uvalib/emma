@@ -1,17 +1,17 @@
 // app/assets/javascripts/feature/skip-nav.js
 
 
-import { AppDebug }             from '../application/debug';
-import { appSetup }             from '../application/setup';
-import { selector }             from '../shared/css';
-import { isMissing, isPresent } from '../shared/definitions';
-import { selfOrParent }         from '../shared/html';
+import { AppDebug }             from "../application/debug";
+import { appSetup }             from "../application/setup";
+import { selector }             from "../shared/css";
+import { isMissing, isPresent } from "../shared/definitions";
+import { selfOrParent }         from "../shared/html";
 
 
-const MODULE = 'SkipNav';
+const MODULE = "SkipNav";
 const DEBUG  = true;
 
-AppDebug.file('feature/skip-nav', MODULE, DEBUG);
+AppDebug.file("feature/skip-nav", MODULE, DEBUG);
 
 appSetup(MODULE, function() {
 
@@ -21,7 +21,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const SKIP_MENU_CLASS = 'skip-nav';
+    const SKIP_MENU_CLASS = "skip-nav";
     const SKIP_MENU       = selector(SKIP_MENU_CLASS);
 
     /** @type {jQuery} */
@@ -52,12 +52,12 @@ appSetup(MODULE, function() {
         const $menu = selfOrParent(target, SKIP_MENU);
         if (OUT.debugging()) {
             switch (new_state) {
-                case true:  OUT.debug('SHOW skip menu');   break;
-                case false: OUT.debug('HIDE skip menu');   break;
-                default:    OUT.debug('TOGGLE skip menu'); break;
+                case true:  OUT.debug("SHOW skip menu");   break;
+                case false: OUT.debug("HIDE skip menu");   break;
+                default:    OUT.debug("TOGGLE skip menu"); break;
             }
         }
-        return $menu.toggleClass('visible', new_state).hasClass('visible');
+        return $menu.toggleClass("visible", new_state).hasClass("visible");
     }
 
     // ========================================================================
@@ -67,8 +67,8 @@ appSetup(MODULE, function() {
     // Make the hidden navigation menu visible when one of its links receives
     // focus.
     $nav.find('a')
-        .on('focus', function() { toggleSkipMenu(this, true) })
-        .on('blur',  function() { toggleSkipMenu(this, false) });
+        .on("focus", function() { toggleSkipMenu(this, true) })
+        .on("blur",  function() { toggleSkipMenu(this, false) });
 
     // ========================================================================
     // Actions
@@ -88,11 +88,11 @@ appSetup(MODULE, function() {
 
 /*
     // Inject a hidden target for the "#top" anchor.  (This is needed because
-    // "target: '_top'" alone will not move the focus -- without an anchor tag,
+    // 'target: "_top"' alone will not move the focus -- without an anchor tag,
     // after clicking on the "Skip to top" link the view would scroll to the
     // top but tabbing would resume with the link following "Skip to top".)
     if (isMissing($('#top'))) {
-        $('<div id="top">').addClass('visuallyhidden').prependTo('body');
+        $('<div id="top">').addClass("visuallyhidden").prependTo('body');
     }
 */
 

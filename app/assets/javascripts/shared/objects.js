@@ -1,11 +1,11 @@
 // app/assets/javascripts/shared/objects.js
 
 
-import { AppDebug }             from '../application/debug';
-import { isDefined, isPresent } from './definitions';
+import { AppDebug }             from "../application/debug";
+import { isDefined, isPresent } from "./definitions";
 
 
-AppDebug.file('shared/objects');
+AppDebug.file("shared/objects");
 
 // ============================================================================
 // Functions
@@ -21,15 +21,15 @@ AppDebug.file('shared/objects');
  * @returns {object|undefined}
  */
 export function fromJSON(item, caller, reviver) {
-    const func = isDefined(caller) ? caller : 'fromJSON';
+    const func = isDefined(caller) ? caller : "fromJSON";
     const type = item && typeof(item);
     let result;
-    if (type === 'object') {
+    if (type === "object") {
         result = item;
         if (reviver) {
             console.warn(`${func}: reviver not called for item =`, item);
         }
-    } else if (type === 'string') {
+    } else if (type === "string") {
         try {
             result = reviver ? JSON.parse(item, reviver) : JSON.parse(item);
         } catch (error) {
@@ -58,7 +58,7 @@ export function compact(item, trim) {
     } else if (item instanceof jQuery) {
         return item;
 
-    } else if (typeof item === 'string') {
+    } else if (typeof item === "string") {
         return (trim === false) ? `${item}` : item.trim();
 
     } else if (Array.isArray(item)) {
@@ -121,9 +121,9 @@ export function deepDup(item) {
  * @returns {T}
  */
 export function dup(item, deep) {
-    if (typeof item === 'string') { return `${item}` }
-    if (typeof item !== 'object') { return item }
-    if (typeof item.toObject === 'function') {
+    if (typeof item === "string") { return `${item}` }
+    if (typeof item !== "object") { return item }
+    if (typeof item.toObject === "function") {
         return item.toObject(); // NOTE: Expected to be a deep copy.
     } else if (Array.isArray(item)) {
         return deep ? item.map(v => dup(v, deep)) : [...item];
@@ -145,7 +145,7 @@ export function dup(item, deep) {
  * @returns {boolean}
  */
 export function isObject(item, or_array) {
-    return !!item && (typeof item === 'object') &&
+    return !!item && (typeof item === "object") &&
         (!!or_array || !Array.isArray(item));
 }
 
@@ -197,10 +197,10 @@ export function dupObject(item, shallow) {
  * @returns {object}
  */
 export function toObject(arg, map_fn, pair_out) {
-    const func   = 'toObject';
+    const func   = "toObject";
     const src    = asObject(arg) || arg;
     const object = isObject(src);
-    const mapper = (typeof map_fn === 'function') ? map_fn : undefined;
+    const mapper = (typeof map_fn === "function") ? map_fn : undefined;
     const arity  = mapper?.length || -1;
     let result;
     if (!object && !Array.isArray(src)) {

@@ -2,18 +2,18 @@
 //
 // Bulk operation manifests
 
-@use 'sass:map';
+@use "sass:map";
 
-@use 'shared/variables'        as *;
-@use 'shared/functions'        as *;
-@use 'shared/mixins'           as *;
-@use 'shared/controls/buttons' as button;
-@use 'shared/controls/grids'   as grid;
-@use 'shared/feature/emoji'    as emoji;
-@use 'shared/feature/model'    as model;
-@use 'shared/feature/scroll'   as scroll;
+@use "shared/variables"        as *;
+@use "shared/functions"        as *;
+@use "shared/mixins"           as *;
+@use "shared/controls/buttons" as button;
+@use "shared/controls/grids"   as grid;
+@use "shared/feature/emoji"    as emoji;
+@use "shared/feature/model"    as model;
+@use "shared/feature/scroll"   as scroll;
 
-@use 'controllers/entry'       as entry-classes;
+@use "controllers/entry"       as entry-classes;
 
 //=============================================================================
 // Manifest item properties
@@ -119,7 +119,7 @@ $max-columns: 55; // The number of ManifestItem database columns.
 
     &.head {
         font-weight:  bold;
-        border-color: black; // NOTE: only because border-bottom above is 'red'
+        border-color: black; // NOTE: only because border-bottom above is "red"
     }
 
     &:not(.head) {
@@ -408,9 +408,9 @@ table.manifest_item-grid {
             .indicators {
 
                 @mixin emoji_before($color, $prop) {
-                    $base:  map.get($prop, 'base');
-                    $emoji: map.get($prop, 'emoji');
-                    $size:  map.get($prop, 'size');
+                    $base:  map.get($prop, "base");
+                    $emoji: map.get($prop, "emoji");
+                    $size:  map.get($prop, "size");
                     &::before {
                         content:   $emoji;
                         font-size: $size;
@@ -1372,7 +1372,7 @@ table.manifest_item-grid {
                         }
 
                         &::after {
-                            content: ' '; // Maintains vertical displacement.
+                            content: " "; // Maintains vertical displacement.
                         }
                     }
                 }

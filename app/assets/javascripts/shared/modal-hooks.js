@@ -1,16 +1,16 @@
 // app/assets/javascripts/shared/modal-hooks.js
 
 
-import { AppDebug }      from '../application/debug';
-import { BaseClass }     from './base-class';
-import { CallbackChain } from './callbacks';
-import { isPresent }     from './definitions';
+import { AppDebug }      from "../application/debug";
+import { BaseClass }     from "./base-class";
+import { CallbackChain } from "./callbacks";
+import { isPresent }     from "./definitions";
 
 
-const MODULE = 'ModalHooks';
+const MODULE = "ModalHooks";
 const DEBUG  = false;
 
-AppDebug.file('shared/modal-hooks', MODULE, DEBUG);
+AppDebug.file("shared/modal-hooks", MODULE, DEBUG);
 
 // ============================================================================
 // Class ModalHooks
@@ -24,14 +24,14 @@ AppDebug.file('shared/modal-hooks', MODULE, DEBUG);
  */
 class ModalHooks extends BaseClass {
 
-    static CLASS_NAME = 'ModalHooks';
+    static CLASS_NAME = "ModalHooks";
     static DEBUGGING  = DEBUG;
 
     // ========================================================================
     // Constructor
     // ========================================================================
 
-    constructor(..._) { super(); this._error('INVALID CALL TO CONSTRUCTOR') }
+    constructor(..._) { super(); this._error("INVALID CALL TO CONSTRUCTOR") }
 
     // ========================================================================
     // Class methods
@@ -57,7 +57,7 @@ class ModalHooks extends BaseClass {
      */
     static set(toggle, ...callbacks) {
         const $toggle = $(toggle);
-        this._check('set', $toggle, callbacks);
+        this._check("set", $toggle, callbacks);
         const hooks = new CallbackChain(...callbacks);
         $toggle.data(this.dataName, hooks);
         return hooks;
@@ -73,7 +73,7 @@ class ModalHooks extends BaseClass {
      */
     static append(toggle, ...callbacks) {
         const $toggle = $(toggle);
-        this._check('append', $toggle, callbacks);
+        this._check("append", $toggle, callbacks);
         /** @type {CallbackChain|undefined} */
         const hooks = $toggle.data(this.dataName);
         return hooks?.append(...callbacks) || this.set($toggle, ...callbacks);
@@ -89,7 +89,7 @@ class ModalHooks extends BaseClass {
      */
     static prepend(toggle, ...callbacks) {
         const $toggle = $(toggle);
-        this._check('prepend', $toggle, callbacks);
+        this._check("prepend", $toggle, callbacks);
         /** @type {CallbackChain|undefined} */
         const hooks = $toggle.data(this.dataName);
         return hooks?.prepend(...callbacks) || this.set($toggle, ...callbacks);
@@ -132,7 +132,7 @@ class ModalHooks extends BaseClass {
  */
 export class ModalShowHooks extends ModalHooks {
 
-    static CLASS_NAME = 'ModalShowHooks';
+    static CLASS_NAME = "ModalShowHooks";
 
     // No subclass-specific methods currently defined.
 }
@@ -149,7 +149,7 @@ export class ModalShowHooks extends ModalHooks {
  */
 export class ModalHideHooks extends ModalHooks {
 
-    static CLASS_NAME = 'ModalHideHooks';
+    static CLASS_NAME = "ModalHideHooks";
 
     // No subclass-specific methods currently defined.
 }

@@ -1,19 +1,19 @@
 // app/assets/javascripts/controllers/manifest-remit.js
 
 
-import { AppDebug }                             from '../application/debug';
-import { appSetup }                             from '../application/setup';
-import { handleClickAndKeypress }               from '../shared/accessibility';
-import { arrayWrap, uniq }                      from '../shared/arrays';
-import { Emma }                                 from '../shared/assets';
-import { BaseClass }                            from '../shared/base-class';
-import { selector, toggleHidden }               from '../shared/css';
-import { handleEvent }                          from '../shared/events';
-import { clearFlash, flashError, flashMessage } from '../shared/flash';
-import { initializeGridNavigation }             from '../shared/grids';
-import { capitalize, pluralize }                from '../shared/strings';
-import { SubmitModal }                          from '../shared/submit-modal';
-import { BulkUploader }                         from '../shared/uploader';
+import { AppDebug }                             from "../application/debug";
+import { appSetup }                             from "../application/setup";
+import { handleClickAndKeypress }               from "../shared/accessibility";
+import { arrayWrap, uniq }                      from "../shared/arrays";
+import { Emma }                                 from "../shared/assets";
+import { BaseClass }                            from "../shared/base-class";
+import { selector, toggleHidden }               from "../shared/css";
+import { handleEvent }                          from "../shared/events";
+import { clearFlash, flashError, flashMessage } from "../shared/flash";
+import { initializeGridNavigation }             from "../shared/grids";
+import { capitalize, pluralize }                from "../shared/strings";
+import { SubmitModal }                          from "../shared/submit-modal";
+import { BulkUploader }                         from "../shared/uploader";
 import {
     isDefined,
     isEmpty,
@@ -21,13 +21,13 @@ import {
     isPresent,
     notDefined,
     presence,
-} from '../shared/definitions';
+} from "../shared/definitions";
 import {
     CHECKBOX,
     htmlDecode,
     selfOrDescendents,
     selfOrParent,
-} from '../shared/html';
+} from "../shared/html";
 import {
     BEST_CHOICE_MARKER,
     DISABLED_MARKER,
@@ -39,12 +39,12 @@ import {
     enableButton,
     initializeButtonSet,
     serverSend,
-} from '../shared/manifests';
+} from "../shared/manifests";
 import {
     CellControlGroup,
     NavGroup,
     SingletonGroup,
-} from '../shared/nav-group';
+} from "../shared/nav-group";
 import {
     compact,
     dup,
@@ -53,17 +53,17 @@ import {
     isObject,
     remove,
     toObject,
-} from '../shared/objects';
+} from "../shared/objects";
 import {
     SubmitControlResponse,
     SubmitStepResponse,
-} from '../shared/submit-response';
+} from "../shared/submit-response";
 
 
-const MODULE = 'ManifestRemit';
+const MODULE = "ManifestRemit";
 const DEBUG  = true;
 
-AppDebug.file('controllers/manifest-remit', MODULE, DEBUG);
+AppDebug.file("controllers/manifest-remit", MODULE, DEBUG);
 
 // noinspection SpellCheckingInspection, FunctionTooLongJS
 appSetup(MODULE, function() {
@@ -109,43 +109,43 @@ appSetup(MODULE, function() {
     // Constants
     // ========================================================================
 
-    const SUBMISSION_TRAY_CLASS     = 'submission-controls';
-    const START_BUTTON_CLASS        = 'start-button';
-    const STOP_BUTTON_CLASS         = 'stop-button';
-    const PAUSE_BUTTON_CLASS        = 'pause-button';
-    const RESUME_BUTTON_CLASS       = 'resume-button';
-    const MONITOR_BUTTON_CLASS      = 'monitor-button';
+    const SUBMISSION_TRAY_CLASS     = "submission-controls";
+    const START_BUTTON_CLASS        = "start-button";
+    const STOP_BUTTON_CLASS         = "stop-button";
+    const PAUSE_BUTTON_CLASS        = "pause-button";
+    const RESUME_BUTTON_CLASS       = "resume-button";
+    const MONITOR_BUTTON_CLASS      = "monitor-button";
 
-    const AUXILIARY_TRAY_CLASS      = 'auxiliary-buttons';
-    const REMOTE_FILE_CLASS         = 'remote-file';
-    const LOCAL_FILE_CLASS          = 'local-file';
-    const FILE_BUTTON_CLASS         = 'file-button';
+    const AUXILIARY_TRAY_CLASS      = "auxiliary-buttons";
+    const REMOTE_FILE_CLASS         = "remote-file";
+    const LOCAL_FILE_CLASS          = "local-file";
+    const FILE_BUTTON_CLASS         = "file-button";
 
-    const SUBMISSION_COUNTS_CLASS   = 'submission-counts'
-    const TOTAL_COUNT_CLASS         = 'total';
-    const READY_COUNT_CLASS         = 'ready';
-    const TRANSMITTING_COUNT_CLASS  = 'transmitting';
-    const FAILED_COUNT_CLASS        = 'failed';
-    const SUCCEEDED_COUNT_CLASS     = 'succeeded';
+    const SUBMISSION_COUNTS_CLASS   = "submission-counts"
+    const TOTAL_COUNT_CLASS         = "total";
+    const READY_COUNT_CLASS         = "ready";
+    const TRANSMITTING_COUNT_CLASS  = "transmitting";
+    const FAILED_COUNT_CLASS        = "failed";
+    const SUCCEEDED_COUNT_CLASS     = "succeeded";
 
-    const SUBMISSION_GRID_CLASS     = 'submission-status-grid';
-    const SUBMISSION_ROW_CLASS      = 'submission-status';
-    const CONTROLS_CLASS            = 'controls';
-    const DATA_STATUS_CLASS         = 'data-status';
-    const FILE_STATUS_CLASS         = 'file-status';
-    const UPLOAD_STATUS_CLASS       = 'upload-status';
-    const INDEX_STATUS_CLASS        = 'index-status';
-    const ENTRY_STATUS_CLASS        = 'entry-status';
-    const ACTIVE_MARKER             = 'active';
-    const NOT_STARTED_MARKER        = 'not-started';
-    const UNSAVED_MARKER            = 'unsaved';
-    const FILE_NEEDED_MARKER        = 'file-needed';
-    const FILE_MISSING_MARKER       = 'file-missing';
-    const DATA_MISSING_MARKER       = 'data-missing';
-    const BLOCKED_MARKER            = 'blocked';
-    const FAILED_MARKER             = 'failed';
-    const SUCCEEDED_MARKER          = 'succeeded';
-    const DONE_MARKER               = 'done';
+    const SUBMISSION_GRID_CLASS     = "submission-status-grid";
+    const SUBMISSION_ROW_CLASS      = "submission-status";
+    const CONTROLS_CLASS            = "controls";
+    const DATA_STATUS_CLASS         = "data-status";
+    const FILE_STATUS_CLASS         = "file-status";
+    const UPLOAD_STATUS_CLASS       = "upload-status";
+    const INDEX_STATUS_CLASS        = "index-status";
+    const ENTRY_STATUS_CLASS        = "entry-status";
+    const ACTIVE_MARKER             = "active";
+    const NOT_STARTED_MARKER        = "not-started";
+    const UNSAVED_MARKER            = "unsaved";
+    const FILE_NEEDED_MARKER        = "file-needed";
+    const FILE_MISSING_MARKER       = "file-missing";
+    const DATA_MISSING_MARKER       = "data-missing";
+    const BLOCKED_MARKER            = "blocked";
+    const FAILED_MARKER             = "failed";
+    const SUCCEEDED_MARKER          = "succeeded";
+    const DONE_MARKER               = "done";
 
     const SUBMISSION_TRAY       = selector(SUBMISSION_TRAY_CLASS);
     const START_BUTTON          = selector(START_BUTTON_CLASS);
@@ -201,7 +201,7 @@ appSetup(MODULE, function() {
      */
     class Counter extends BaseClass {
 
-        static CLASS_NAME = 'BaseClass';
+        static CLASS_NAME = "BaseClass";
 
         /**
          * Default console debug output setting (overridden per class).
@@ -255,7 +255,7 @@ appSetup(MODULE, function() {
         constructor(selector, initial) {
             super();
             let sel, val;
-            if (typeof selector === 'number') {
+            if (typeof selector === "number") {
                 [sel, val] = [undefined, selector.toString()];
             } else if (isDefined(initial)) {
                 [sel, val] = [selector,  initial.toString()];
@@ -311,7 +311,7 @@ appSetup(MODULE, function() {
      * @extends Counter
      */
     class TotalCounter extends Counter {
-        static CLASS_NAME = 'TotalCounter';
+        static CLASS_NAME = "TotalCounter";
         constructor()       { super(TOTAL_COUNT) }
         static get $items() { return allItems() }
     }
@@ -322,7 +322,7 @@ appSetup(MODULE, function() {
      * @extends Counter
      */
     class ReadyCounter extends Counter {
-        static CLASS_NAME = 'ReadyCounter';
+        static CLASS_NAME = "ReadyCounter";
         constructor()       { super(READY_COUNT) }
         static get $items() { return itemsReady() }
     }
@@ -333,7 +333,7 @@ appSetup(MODULE, function() {
      * @extends Counter
      */
     class TransmitCounter extends Counter {
-        static CLASS_NAME = 'TransmitCounter';
+        static CLASS_NAME = "TransmitCounter";
         constructor()       { super(TRANSMITTING_COUNT) }
         static get $items() { return itemsTransmitting() }
     }
@@ -344,7 +344,7 @@ appSetup(MODULE, function() {
      * @extends Counter
      */
     class FailedCounter extends Counter {
-        static CLASS_NAME = 'FailedCounter';
+        static CLASS_NAME = "FailedCounter";
         constructor()       { super(FAILED_COUNT) }
         static get $items() { return itemsFailed() }
     }
@@ -355,7 +355,7 @@ appSetup(MODULE, function() {
      * @extends Counter
      */
     class SucceededCounter extends Counter {
-        static CLASS_NAME = 'SucceededCounter';
+        static CLASS_NAME = "SucceededCounter";
         constructor()       { super(SUCCEEDED_COUNT) }
         static get $items() { return itemsSucceeded() }
     }
@@ -432,7 +432,7 @@ appSetup(MODULE, function() {
      * Initialize the Manifest submission controls.
      */
     function initializeSubmissionForm() {
-        OUT.debug('initializeSubmissionForm');
+        OUT.debug("initializeSubmissionForm");
         initializeSubmissionMonitor();
         initializeSubmissionButtons();
         initializeHeaderRow();
@@ -459,7 +459,7 @@ appSetup(MODULE, function() {
      * Set up elements within the header row.
      */
     function initializeHeaderRow() {
-        OUT.debug('initializeHeaderRow');
+        OUT.debug("initializeHeaderRow");
         $head_row.children().each((_, column) => setupCellNavGroup(column));
     }
 
@@ -470,7 +470,7 @@ appSetup(MODULE, function() {
      * @param {Selector} cell
      */
     function setupCellNavGroup(cell) {
-        const func      = 'setupCellNavGroup'; OUT.debug(`${func}:`, cell);
+        const func      = "setupCellNavGroup"; OUT.debug(`${func}:`, cell);
         const $cell     = $(cell);
         const ITEM_NAME = '.item-name';
         const STATUS    = '.status';
@@ -522,7 +522,7 @@ appSetup(MODULE, function() {
      * initializeSubmissionButtons
      */
     function initializeSubmissionButtons() {
-        const func = 'initializeSubmissionButtons'; //OUT.debug(func);
+        const func = "initializeSubmissionButtons"; //OUT.debug(func);
         initializeButtonSet(SUBMISSION_BUTTONS, func);
         submissionsActive(false);
     }
@@ -537,7 +537,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery|undefined}
      */
     function enableSubmissionButton(type, enable, prop) {
-        const func    = 'enableSubmissionButton';
+        const func    = "enableSubmissionButton";
         OUT.debug(`${func}: type = "${type}"; enable = "${enable}"`);
         const $button = buttonFor(type, SUBMISSION_BUTTONS, func);
         return enableButton($button, enable, type, prop);
@@ -549,7 +549,7 @@ appSetup(MODULE, function() {
      * @param {ElementEvt} [event]
      */
     function onSubmissionStart(event) {
-        const func = 'onSubmissionStart'; OUT.debug(`${func}: event =`, event);
+        const func = "onSubmissionStart"; OUT.debug(`${func}: event =`, event);
         const fail = Emma.Messages.submission.failed.submit;
         if (submissionsActive()) {
             OUT.error(`${fail} - already submitting`);
@@ -567,7 +567,7 @@ appSetup(MODULE, function() {
      * @param {ElementEvt} event
      */
     function onSubmissionStop(event) {
-        const func = 'onSubmissionStop'; OUT.debug(`${func}: event =`, event);
+        const func = "onSubmissionStop"; OUT.debug(`${func}: event =`, event);
         const fail = Emma.Messages.submission.failed.cancel;
         if (!submissionsActive()) {
             OUT.error(`${fail} - not submitting`);
@@ -585,7 +585,7 @@ appSetup(MODULE, function() {
      * @param {ElementEvt} event
      */
     function onSubmissionPause(event) {
-        const func = 'onSubmissionPause'; OUT.debug(`${func}: event =`, event);
+        const func = "onSubmissionPause"; OUT.debug(`${func}: event =`, event);
         const fail = Emma.Messages.submission.failed.pause;
         if (!submissionsActive()) {
             OUT.error(`${fail} - not submitting`);
@@ -605,7 +605,7 @@ appSetup(MODULE, function() {
      * @param {ElementEvt} event
      */
     function onSubmissionResume(event) {
-        const func = 'onSubmissionResume'; OUT.debug(`${func}: event=`, event);
+        const func = "onSubmissionResume"; OUT.debug(`${func}: event=`, event);
         const fail = Emma.Messages.submission.failed.resume;
         if (!submissionsActive()) {
             OUT.error(`${fail} - not submitting`);
@@ -626,7 +626,7 @@ appSetup(MODULE, function() {
      * @param {{caller?:string, fail?:string, data?:object}} [options]
      */
     function submissionRequest(action, options) {
-        const func = options?.caller || 'submissionRequest';
+        const func = options?.caller || "submissionRequest";
         OUT.debug(`${func}: ${action}`);
         if (!submissionMonitor().command(action, options?.data)) {
             const tag  = options?.fail || `${action} failed`;
@@ -659,7 +659,7 @@ appSetup(MODULE, function() {
      * If not ready, a custom tooltip is provided to indicate the reason.
      */
     function updateSubmitReady() {
-        OUT.debug('updateSubmitReady');
+        OUT.debug("updateSubmitReady");
 
         const remote_needed = isPresent(files_remaining.remote);
         const local_needed  = isPresent(files_remaining.local);
@@ -685,11 +685,11 @@ appSetup(MODULE, function() {
      * @param {boolean} first
      */
     function showRemoteFilesPrompt(visible, first) {
-        //OUT.debug('showRemoteFilesPrompt:', visible, first);
+        //OUT.debug("showRemoteFilesPrompt:", visible, first);
         if (visible) {
             $remote_button.toggleClass(BEST_CHOICE_MARKER, first);
             $remote_button.toggleClass(DISABLED_MARKER, !first);
-            $remote_input.prop('disabled', !first);
+            $remote_input.prop("disabled", !first);
         }
         toggleHidden($remote_prompt, !visible);
     }
@@ -701,11 +701,11 @@ appSetup(MODULE, function() {
      * @param {boolean} first
      */
     function showLocalFilesPrompt(visible, first) {
-        //OUT.debug('showLocalFilesPrompt:', visible, first);
+        //OUT.debug("showLocalFilesPrompt:", visible, first);
         if (visible) {
             $local_button.toggleClass(BEST_CHOICE_MARKER, first);
             $local_button.toggleClass(DISABLED_MARKER, !first);
-            $local_input.prop('disabled', !first);
+            $local_input.prop("disabled", !first);
         }
         toggleHidden($local_prompt, !visible);
     }
@@ -720,14 +720,14 @@ appSetup(MODULE, function() {
      * @returns {string}              Submission action.
      */
     function startSubmissions() {
-        OUT.debug('START SUBMISSIONS');
+        OUT.debug("START SUBMISSIONS");
         if (isMissing(itemsChecked())) {
             itemsReady().each((_, item) => selectItem(item));
             updateGroupCheckbox();
         }
         setSubmissionRequest();
         submissionsActive(true);
-        return 'start';
+        return "start";
     }
 
     /**
@@ -736,9 +736,9 @@ appSetup(MODULE, function() {
      * @returns {string}              Submission action.
      */
     function stopSubmissions() {
-        OUT.debug('STOP SUBMISSIONS');
+        OUT.debug("STOP SUBMISSIONS");
         submissionsActive(false);
-        return 'stop';
+        return "stop";
     }
 
     /**
@@ -747,9 +747,9 @@ appSetup(MODULE, function() {
      * @returns {string}              Submission action.
      */
     function pauseSubmissions() {
-        OUT.debug('PAUSE SUBMISSIONS');
+        OUT.debug("PAUSE SUBMISSIONS");
         submissionsPaused(true);
-        return 'pause';
+        return "pause";
     }
 
     /**
@@ -758,9 +758,9 @@ appSetup(MODULE, function() {
      * @returns {string}              Submission action.
      */
     function resumeSubmissions() {
-        OUT.debug('RESUME SUBMISSIONS');
+        OUT.debug("RESUME SUBMISSIONS");
         submissionsPaused(false);
-        return 'resume';
+        return "resume";
     }
 
     let started = false;
@@ -776,7 +776,7 @@ appSetup(MODULE, function() {
     function submissionsActive(now) {
         if (isDefined(now)) {
             started = !!now;
-            OUT.debug('SUBMISSION', (started ? 'STARTED' : 'STOPPED'));
+            OUT.debug("SUBMISSION", (started ? "STARTED" : "STOPPED"));
             const prop = started ? { highlight: false } : {};
             SUBMISSION_ENABLE.start(!started, prop);
             SUBMISSION_ENABLE.stop(started);
@@ -784,9 +784,9 @@ appSetup(MODULE, function() {
             SUBMISSION_ENABLE.resume(false);
             SUBMISSION_ENABLE.monitor(true, prop);
             if (!started) {
-                const no_submission = $stop.attr('title');
-                $pause.attr( 'title', no_submission);
-                $resume.attr('title', no_submission);
+                const no_submission = $stop.attr("title");
+                $pause.attr( "title", no_submission);
+                $resume.attr("title", no_submission);
             }
             paused = false;
         }
@@ -803,7 +803,7 @@ appSetup(MODULE, function() {
     function submissionsPaused(now) {
         if (isDefined(now)) {
             paused = !!now;
-            OUT.debug('SUBMISSION', (paused ? 'PAUSED' : 'RESUMED'));
+            OUT.debug("SUBMISSION", (paused ? "PAUSED" : "RESUMED"));
             SUBMISSION_ENABLE.pause(!paused);
             SUBMISSION_ENABLE.resume(paused);
         }
@@ -825,10 +825,10 @@ appSetup(MODULE, function() {
     };
 
     const STATUS_SELECTORS = Object.keys(NOT_READY_VALUES);
-    const STATUS_TYPES     = STATUS_SELECTORS.map(s => s.replace(/^\./, ''));
+    const STATUS_TYPES     = STATUS_SELECTORS.map(s => s.replace(/^\./, ""));
 
-    const FILE_NAME_ATTR   = 'data-file-name';
-    const FILE_URL_ATTR    = 'data-file-url';
+    const FILE_NAME_ATTR   = "data-file-name";
+    const FILE_URL_ATTR    = "data-file-url";
 
     /**
      * All item rows.
@@ -843,7 +843,7 @@ appSetup(MODULE, function() {
      * initializeItems
      */
     function initializeItems() {
-        OUT.debug('initializeItems');
+        OUT.debug("initializeItems");
         const local = {}, remote = {};
         let unsaved = false;
         allItems().each((_, item) => {
@@ -854,17 +854,17 @@ appSetup(MODULE, function() {
                 let name;
                 const $status = $item.find(status);
                 if ($status.is(FILE_NEEDED)) {
-                    const path = $item.attr(FILE_NAME_ATTR) || '';
-                    if ((name = path.split('\\').pop().split('/').pop())) {
+                    const path = $item.attr(FILE_NAME_ATTR) || "";
+                    if ((name = path.split("\\").pop().split("/").pop())) {
                         local[item_id] = name;
                     } else if ((name = $item.attr(FILE_URL_ATTR))) {
                         remote[item_id] = name;
                     }
                 }
                 if (unsaved) {
-                    $status.attr('aria-disabled', true);
+                    $status.attr("aria-disabled", true);
                 } else {
-                    $status.removeAttr('aria-disabled');
+                    $status.removeAttr("aria-disabled");
                     unsaved = $status.is(UNSAVED);
                 }
                 initializeStatusFor($item, status, name);
@@ -872,8 +872,8 @@ appSetup(MODULE, function() {
             updateItemSelect($item);
             $item.children().each((_, column) => setupCellNavGroup(column));
         });
-        OUT.debug('INITIAL file_references.local  =', local);
-        OUT.debug('INITIAL file_references.remote =', remote);
+        OUT.debug("INITIAL file_references.local  =", local);
+        OUT.debug("INITIAL file_references.remote =", remote);
         file_references.local  = local;
         file_references.remote = remote;
         setFilesRemaining();
@@ -904,7 +904,7 @@ appSetup(MODULE, function() {
      * @param {boolean} [total]       If **true**, allow FILE_NEEDED.
      */
     function resetItems(total) {
-        OUT.debug('resetItems');
+        OUT.debug("resetItems");
         itemsToTransmit().each((_, item) => {
             const $item = $(item);
             STATUS_TYPES.forEach(stat => resetStatusFor($item, stat, total));
@@ -1178,7 +1178,7 @@ appSetup(MODULE, function() {
     function checkbox(item, check, indeterminate) {
         /** @type {HTMLInputElement} */
         const cb   = selfOrDescendents(item, CHECKBOX)[0];
-        const func = 'checkbox';
+        const func = "checkbox";
         if (!cb) { return OUT.warn(`${func}: missing for item`, item) }
         if (isDefined(check)) {
             const was = cb.checked;
@@ -1186,7 +1186,7 @@ appSetup(MODULE, function() {
             if (was === now) {
                 OUT.debug(`${func}: check "${was}" no change for`, item);
             } else {
-                OUT.debug('${func}: check', was, '->', now, 'for', item);
+                OUT.debug("${func}: check", was, "->", now, "for", item);
                 cb.checked = now;
             }
         }
@@ -1196,7 +1196,7 @@ appSetup(MODULE, function() {
             if (was === now) {
                 OUT.debug(`${func}: indeterminate "${was}" no change for`,item)
             } else {
-                OUT.debug('${func}: indeterminate', was, '->', now, 'for',item)
+                OUT.debug("${func}: indeterminate", was, "->", now, "for",item)
                 cb.indeterminate = now;
             }
         }
@@ -1211,7 +1211,7 @@ appSetup(MODULE, function() {
      * @param {boolean}  [indeterminate]
      */
     function selectItem(item, check, indeterminate) {
-        OUT.debug('selectItem:', item, check, indeterminate);
+        OUT.debug("selectItem:", item, check, indeterminate);
         const $item = itemRow(item);
         if (indeterminate || (notDefined(indeterminate) && isUnsaved($item))) {
             checkbox($item, false, true);
@@ -1244,7 +1244,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}                   If selectability changed.
      */
     function enableItemSelect(item, enable, indeterminate) {
-        OUT.debug('enableItemSelect:', item, enable, indeterminate);
+        OUT.debug("enableItemSelect:", item, enable, indeterminate);
         const $item = itemRow(item);
         const cb    = checkbox($item); if (!cb) { return false }
         const ind   =
@@ -1266,7 +1266,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}                   If selectability changed.
      */
     function disableItemSelect(item, disable, indeterminate) {
-        OUT.debug('disableItemSelect:', item, disable, indeterminate);
+        OUT.debug("disableItemSelect:", item, disable, indeterminate);
         const enable = (disable === false);
         return enableItemSelect(item, enable, indeterminate);
     }
@@ -1281,25 +1281,25 @@ appSetup(MODULE, function() {
     function updateItemSelect(item) {
         const $item       = itemRow(item);
         const was_enabled = isItemSelectable($item);
-        const old_tooltip = $item.attr('title');
+        const old_tooltip = $item.attr("title");
         if (old_tooltip) {
-            const tip_data = was_enabled ? 'enabledTip' : 'disabledTip';
+            const tip_data = was_enabled ? "enabledTip" : "disabledTip";
             if (notDefined($item.data(tip_data))) {
                 $item.data(tip_data, old_tooltip);
             }
         }
         const now_enabled = isStartable($item);
-        const tip_data    = now_enabled ? 'enabledTip' : 'disabledTip';
+        const tip_data    = now_enabled ? "enabledTip" : "disabledTip";
         let new_tooltip   = $item.data(tip_data);
         if (notDefined(new_tooltip) && !now_enabled) {
             const item_      = capitalize(Emma.Messages.item);
-            const number     = $item.attr('data-number');
+            const number     = $item.attr("data-number");
             const disallowed = Emma.Messages.submission.not_selectable;
             new_tooltip      = `${item_} ${number} ${disallowed}`;
             $item.data(tip_data, new_tooltip);
-            $item.attr('title', new_tooltip);
+            $item.attr("title", new_tooltip);
         }
-        $item.attr('title', (new_tooltip || ''));
+        $item.attr("title", (new_tooltip || ""));
         return enableItemSelect($item, now_enabled);
     }
 
@@ -1307,7 +1307,7 @@ appSetup(MODULE, function() {
      * Update the state of the group select checkbox.
      */
     function updateGroupCheckbox() {
-        const func     = 'updateGroupCheckbox'; OUT.debug(func);
+        const func     = "updateGroupCheckbox"; OUT.debug(func);
         const group_cb = checkbox($group_checkbox);
         if (!group_cb) { return }
         const count    = $item_checkboxes.filter((_, cb) => cb.checked).length;
@@ -1322,7 +1322,7 @@ appSetup(MODULE, function() {
      * @param {CheckboxEvt} event
      */
     function onGroupCheckboxChange(event) {
-        const func          = 'onGroupCheckboxChange';
+        const func          = "onGroupCheckboxChange";
         const group_cb      = event.currentTarget || event.target;
         const $all_items    = $item_checkboxes;
         const checked_items = $all_items.filter((_, cb) => cb.checked).length;
@@ -1341,7 +1341,7 @@ appSetup(MODULE, function() {
      * @param {ElementEvt} event
      */
     function onItemCheckboxChange(event) {
-        OUT.debug('onItemCheckboxChange: event =', event);
+        OUT.debug("onItemCheckboxChange: event =", event);
         updateItemsSelected();
     }
 
@@ -1358,10 +1358,10 @@ appSetup(MODULE, function() {
     // Functions - submission status
     // ========================================================================
 
-    const DEFAULT_LABEL = '???';
-    const LABELS_ATTR   = 'data-labels';
-    const STATUS_DATA   = 'status';
-    const SAVED_DATA    = 'statusInitial';
+    const DEFAULT_LABEL = "???";
+    const LABELS_ATTR   = "data-labels";
+    const STATUS_DATA   = "status";
+    const SAVED_DATA    = "statusInitial";
 
     /** @type {Object.<string,string>} */
     let status_value_labels;
@@ -1384,7 +1384,7 @@ appSetup(MODULE, function() {
      * @returns {Object.<string,string>}
      */
     function getStatusValueLabels() {
-        const func = 'getStatusValueLabels'; //OUT.debug(func);
+        const func = "getStatusValueLabels"; //OUT.debug(func);
         const src  = $grid.attr(LABELS_ATTR);
         let result;
         if (isMissing(src)) {
@@ -1431,7 +1431,7 @@ appSetup(MODULE, function() {
         //OUT.debug(`statusFor "${status}" for item =`, item);
         const $item = itemRow(item);
         const data  = $item.data(STATUS_DATA);
-        const key   = status.replace(/^\./, '');
+        const key   = status.replace(/^\./, "");
         return data && data[key] || setStatusFor($item, key);
     }
 
@@ -1468,7 +1468,7 @@ appSetup(MODULE, function() {
         OUT.debug(`setStatusFor "${new_value}" -> "${status}" for item`, item);
         const $item = itemRow(item);
         const data  = $item.data(STATUS_DATA);
-        const key   = status.replace(/^\./, '');
+        const key   = status.replace(/^\./, "");
         let value   = new_value;
         value &&= setStatusValueFor($item, key, value, new_note);
         value ||= getStatusValueFor($item, key);
@@ -1506,7 +1506,7 @@ appSetup(MODULE, function() {
         //OUT.debug(`setStatusValueFor "${new_value}" -> "${status}"`);
         const $item   = itemRow(item);
         const $status = $item.find(selector(status));
-        const value   = new_value.replace(/^\./, '');
+        const value   = new_value.replace(/^\./, "");
         if (!$status.hasClass(value)) {
             const label = statusValueLabels()[value];
             $status.removeClass(Array.from(statusValues()));
@@ -1551,7 +1551,7 @@ appSetup(MODULE, function() {
             const $note = $details.children('.name');
             let file = note;
             if (file) { $note.text(file) } else { file = $note.text() }
-            if (file) { $details.attr('title', `${label}: ${file}`) }
+            if (file) { $details.attr("title", `${label}: ${file}`) }
             $details.children('summary').text(label);
         } else {
             $text.text(label);
@@ -1590,7 +1590,7 @@ appSetup(MODULE, function() {
     const BEFORE_FIRST_STEP = ALL_SUBMIT_STEPS[0];
     const [FINAL_STEP, AFTER_FINAL_STEP] = ALL_SUBMIT_STEPS.slice(-2);
 
-    const SUBMITTING_DATA = 'submitIds';
+    const SUBMITTING_DATA = "submitIds";
 
     /**
      * @typedef SubmissionTableEntry
@@ -1621,7 +1621,7 @@ appSetup(MODULE, function() {
      * @returns {SubmissionTable}
      */
     function setSubmissionTable(arg) {
-        OUT.debug('setSubmissionTable: arg =', arg);
+        OUT.debug("setSubmissionTable: arg =", arg);
         let table;
         if (isObject(arg)) {
             table = arg;
@@ -1643,7 +1643,7 @@ appSetup(MODULE, function() {
      * @returns {SubmissionTable}
      */
     function updateSubmissionTable(replacement) {
-        OUT.debug('updateSubmissionTable: replacement =', replacement);
+        OUT.debug("updateSubmissionTable: replacement =", replacement);
         const item_table = setSubmissionTable(replacement);
         const item_done  = (item) => (item.step === AFTER_FINAL_STEP);
         if (Object.values(item_table).every(item_done)) {
@@ -1659,7 +1659,7 @@ appSetup(MODULE, function() {
      * @param {SubmitResponseSubclass} message
      */
     function onSubmissionResponse(message) {
-        const func = 'onSubmissionResponse';
+        const func = "onSubmissionResponse";
         OUT.debug(`${func}: message =`, message);
         if (message.isAck) {
             onAcknowledgement(message);
@@ -1682,7 +1682,7 @@ appSetup(MODULE, function() {
      * @param {SubmitResponseSubclass} message
      */
     function onAcknowledgement(message) {
-        const func = 'onAcknowledgement'; OUT.debug(func);
+        const func = "onAcknowledgement"; OUT.debug(func);
         if (message instanceof SubmitControlResponse) {
             const command = message.command;
             OUT.debug(`${func}: TODO: command =`, command);
@@ -1698,11 +1698,11 @@ appSetup(MODULE, function() {
      * @param {SubmitResponse} message
      */
     function onInitialResponse(message) {
-        const func = 'onInitialResponse'; OUT.debug(func);
+        const func = "onInitialResponse"; OUT.debug(func);
         let items  = message.items;
         // noinspection JSUnresolvedVariable
         items = items.map(v => isObject(v) ? v.items : v).flat();
-        items = items.map(v => (typeof v === 'number') ? `${v}` : v);
+        items = items.map(v => (typeof v === "number") ? `${v}` : v);
 
         const table = setSubmissionTable(items);
         if (isEmpty(table)) {
@@ -1722,7 +1722,7 @@ appSetup(MODULE, function() {
      * @param {SubmitStepResponse} message
      */
     function onStepResponse(message) {
-        const func  = 'onStepResponse'; OUT.debug(func);
+        const func  = "onStepResponse"; OUT.debug(func);
         const table = { ...getSubmissionTable() };
 
         if (isEmpty(table)) {
@@ -1791,7 +1791,7 @@ appSetup(MODULE, function() {
      * @param {SubmitStepResponse} message
      */
     function onBatchResponse(message) {
-        const func  = 'onBatchResponse'; OUT.debug(func);
+        const func  = "onBatchResponse"; OUT.debug(func);
         const table = { ...getSubmissionTable() };
 
         if (isEmpty(table)) {
@@ -1855,7 +1855,7 @@ appSetup(MODULE, function() {
      * @param {SubmitFinalResponse} message
      */
     function onFinalResponse(message) {
-        const func  = 'onFinalResponse'; OUT.debug(func);
+        const func  = "onFinalResponse"; OUT.debug(func);
         const data  = message.data || {};
         const table = getSubmissionTable() || {};
 
@@ -1908,7 +1908,7 @@ appSetup(MODULE, function() {
      * attempt (probably because reauthorization is required).
      */
     function onSubmissionRejected() {
-        OUT.debug('onSubmissionRejected');
+        OUT.debug("onSubmissionRejected");
         const error = Emma.Messages.submission.conn_error;
         const note  = Emma.Messages.submission.refresh;
         flashError(`${error}: ${note}`);
@@ -1921,7 +1921,7 @@ appSetup(MODULE, function() {
      * @param {boolean} [preserve_files]    If **true** keep file selections.
      */
     function submissionsEnded(preserve_files) {
-        OUT.debug('submissionsEnded: preserve_files =', preserve_files);
+        OUT.debug("submissionsEnded: preserve_files =", preserve_files);
         if (!preserve_files) {
             clearLocalFileSelection();
             clearRemoteFileSelection();
@@ -1953,7 +1953,7 @@ appSetup(MODULE, function() {
      * @returns {SubmitRequest}
      */
     function getSubmissionRequest() {
-        //OUT.debug('getSubmissionRequest');
+        //OUT.debug("getSubmissionRequest");
         return submissionMonitor().getRequestData() || setSubmissionRequest();
     }
 
@@ -1966,14 +1966,14 @@ appSetup(MODULE, function() {
      * @returns {SubmitRequest}
      */
     function setSubmissionRequest(values) {
-        OUT.debug('setSubmissionRequest:', values);
+        OUT.debug("setSubmissionRequest:", values);
         let data = values;
         if (notDefined(data)) {
             data = itemsChecked().toArray();
             data = { items: data.map(item => $(item).attr(ITEM_ATTR)) };
         } else if (Array.isArray(data)) {
             data = { items: data };
-        } else if (typeof data !== 'object') {
+        } else if (typeof data !== "object") {
             data = { items: arrayWrap(data) };
         }
         data = { manifest_id: manifestId(), ...data };
@@ -1984,7 +1984,7 @@ appSetup(MODULE, function() {
      * Open a channel for making and controlling submissions.
      */
     function initializeSubmissionMonitor() {
-        OUT.debug('initializeSubmissionMonitor');
+        OUT.debug("initializeSubmissionMonitor");
 
         // noinspection JSCheckFunctionSignatures
         SubmitModal.setupFor($monitor, {
@@ -1995,12 +1995,12 @@ appSetup(MODULE, function() {
         });
 
         function onOpen($activator, check_only, halted) {
-            OUT.debug('onOpen SubmitModal', halted, check_only, $activator);
+            OUT.debug("onOpen SubmitModal", halted, check_only, $activator);
             // TODO: SubmitModal.onOpen ?
         }
 
         function onClose($activator, check_only, halted) {
-            OUT.debug('onClose SubmitModal', halted, check_only, $activator);
+            OUT.debug("onClose SubmitModal", halted, check_only, $activator);
             // TODO: SubmitModal.onClose ?
         }
     }
@@ -2029,10 +2029,10 @@ appSetup(MODULE, function() {
      * @returns {BulkUploader}
      */
     function newUploader(owner) {
-        //OUT.debug('newUploader: owner =', owner);
+        //OUT.debug("newUploader: owner =", owner);
         // noinspection JSUnusedGlobalSymbols
         const cbs      = { onSelect, onStart, onProgress, onError, onSuccess };
-        const func     = 'uploader';
+        const func     = "uploader";
         const $owner   = $(owner);
         const features = { debugging: DEBUG };
         const instance = new BulkUploader($owner, ITEM_MODEL, features, cbs);
@@ -2080,12 +2080,12 @@ appSetup(MODULE, function() {
             const status  = statusFor($item, UPLOAD_STATUS);
             OUT.debug(
                 `${tag}: item =`,       item_id,
-                '| status =',           status,
-                '| uploadStarted =',    progress.uploadStarted,
-                '| uploadComplete =',   progress.uploadComplete,
-                '| bytesTotal = ',      progress.bytesTotal,
-                '| bytesUploaded = ',   progress.bytesUploaded,
-                '| percentage = ',      progress.percentage
+                "| status =",           status,
+                "| uploadStarted =",    progress.uploadStarted,
+                "| uploadComplete =",   progress.uploadComplete,
+                "| bytesTotal = ",      progress.bytesTotal,
+                "| bytesUploaded = ",   progress.bytesUploaded,
+                "| percentage = ",      progress.percentage
             );
             if (status === FAILED_MARKER) {
                 OUT.debug(`${tag}: CANCEL: ${item_id} | file =`, file);
@@ -2135,7 +2135,7 @@ appSetup(MODULE, function() {
      * Setup handlers for local file selection.
      */
     function initializeLocalFilesResolution() {
-        OUT.debug('initializeLocalFilesResolution');
+        OUT.debug("initializeLocalFilesResolution");
         clearLocalFileSelection();
         setupLocalFilePrompt();
     }
@@ -2145,12 +2145,12 @@ appSetup(MODULE, function() {
      */
     function setupLocalFilePrompt() {
         // Set up the visible button to proxy for the non-visible `<input>`.
-        $local_button.attr('tabindex', 0);
+        $local_button.attr("tabindex", 0);
         handleClickAndKeypress($local_button, beforeLocalFilesSelected);
 
         // The `<input>` is made non-visible.
-        $local_input.attr('tabindex', -1).attr('aria-hidden', true);
-        handleEvent($local_input, 'change', afterLocalFilesSelected);
+        $local_input.attr("tabindex", -1).attr("aria-hidden", true);
+        handleEvent($local_input, "change", afterLocalFilesSelected);
     }
 
     /**
@@ -2188,7 +2188,7 @@ appSetup(MODULE, function() {
      * Clear any previous file selection.
      */
     function clearLocalFileSelection() {
-        OUT.debug('clearLocalFileSelection');
+        OUT.debug("clearLocalFileSelection");
         $local_input.val(null);
         uploader.removeFiles();
         local_file_selection = undefined;
@@ -2200,10 +2200,10 @@ appSetup(MODULE, function() {
      * @param {ElementEvt} event
      */
     function beforeLocalFilesSelected(event) {
-        OUT.debug('beforeLocalFilesSelected: event =', event);
+        OUT.debug("beforeLocalFilesSelected: event =", event);
         if (event.currentTarget === event.target) {
             clearLocalFileSelection();
-            $local_input.trigger('click');
+            $local_input.trigger("click");
         }
     }
 
@@ -2213,7 +2213,7 @@ appSetup(MODULE, function() {
      * @param {InputEvt} event
      */
     function afterLocalFilesSelected(event) {
-        const func  = 'afterLocalFilesSelected';
+        const func  = "afterLocalFilesSelected";
         const files = event.currentTarget?.files || event.target?.files;
         //OUT.debug(`*** ${func}: event =`, event);
         if (!files) {
@@ -2265,7 +2265,7 @@ appSetup(MODULE, function() {
      * files.
      */
     function preProcessLocalFiles() {
-        const func  = 'preProcessLocalFiles';
+        const func  = "preProcessLocalFiles";
         const lines = [];
         const names = [];
         const good  = [];
@@ -2308,12 +2308,12 @@ appSetup(MODULE, function() {
             if (sel_changed) {
                 updateItemsSelected();
             }
-            lines.push(resolvedLabel(resolved), ...good, '');
+            lines.push(resolvedLabel(resolved), ...good, "");
             sendFileSizes(pairs);
         }
 
         if (problematic) {
-            lines.push(problematicLabel(problematic), ...bad, '');
+            lines.push(problematicLabel(problematic), ...bad, "");
         }
 
         const remaining = files_remaining.local.length;
@@ -2341,7 +2341,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Configured terms for 'file' or 'files'.
+     * Configured terms for "file" or "files".
      *
      * @param {number} [count]
      *
@@ -2430,7 +2430,7 @@ appSetup(MODULE, function() {
      * Setup for acquiring files from cloud-based storage.
      */
     function initializeRemoteFilesResolution() {
-        const func = 'initializeRemoteFilesResolution'; OUT.debug(func);
+        const func = "initializeRemoteFilesResolution"; OUT.debug(func);
         clearRemoteFileSelection();
         setupRemoteFilePrompt();
     }
@@ -2440,12 +2440,12 @@ appSetup(MODULE, function() {
      */
     function setupRemoteFilePrompt() {
         // Set up the visible button to proxy for the non-visible `<input>`.
-        $remote_button.attr('tabindex', 0);
+        $remote_button.attr("tabindex", 0);
         handleClickAndKeypress($remote_button, beforeRemoteFilesSelected);
 
         // The `<input>` is made non-visible.
-        $remote_input.attr('tabindex', -1).attr('aria-hidden', true);
-        handleEvent($remote_input, 'change', afterRemoteFilesSelected);
+        $remote_input.attr("tabindex", -1).attr("aria-hidden", true);
+        handleEvent($remote_input, "change", afterRemoteFilesSelected);
     }
 
     /**
@@ -2487,7 +2487,7 @@ appSetup(MODULE, function() {
      * Clear any previous file selection.
      */
     function clearRemoteFileSelection() {
-        OUT.debug('clearRemoteFileSelection');
+        OUT.debug("clearRemoteFileSelection");
         $remote_input.val(null);
 /*
         uploader.removeFiles();
@@ -2501,10 +2501,10 @@ appSetup(MODULE, function() {
      * @param {ElementEvt} event
      */
     function beforeRemoteFilesSelected(event) {
-        OUT.debug('*** beforeRemoteFilesSelected: event =', event);
+        OUT.debug("*** beforeRemoteFilesSelected: event =", event);
         if (event.currentTarget === event.target) {
             clearRemoteFileSelection();
-            $remote_input.trigger('click');
+            $remote_input.trigger("click");
         }
     }
 
@@ -2514,7 +2514,7 @@ appSetup(MODULE, function() {
      * @param {ElementEvt} _event
      */
     function afterRemoteFilesSelected(_event) {
-        const func = 'afterRemoteFilesSelected';
+        const func = "afterRemoteFilesSelected";
         const urls = []; // event.currentTarget?.files || event.target?.files;
         //OUT.debug(`*** ${func}: event =`, _event);
         if (!urls) {
@@ -2565,7 +2565,7 @@ appSetup(MODULE, function() {
      * remote files.
      */
     function preProcessRemoteFiles() {
-        const func  = 'preProcessRemoteFiles';
+        const func  = "preProcessRemoteFiles";
         const lines = [];
         const names = [];
         const good  = [];
@@ -2598,7 +2598,7 @@ appSetup(MODULE, function() {
                 const $status = $item.find(status);
                 const needed  = $status.is(FILE_NEEDED);
                 const name    = needed && $status.find('.name').text();
-                if (name && (fulfilled.has(name) || name.startsWith('http'))) {
+                if (name && (fulfilled.has(name) || name.startsWith("http"))) {
                     setStatusFor($item, status, SUCCEEDED);
                     sel_changed = updateItemSelect($item) || sel_changed;
                 }
@@ -2606,11 +2606,11 @@ appSetup(MODULE, function() {
             if (sel_changed) {
                 updateItemsSelected();
             }
-            //lines.push(resolvedLabel(resolved), ...good, '');
+            //lines.push(resolvedLabel(resolved), ...good, "");
         }
 
         if (problematic) {
-            lines.push(problematicLabel(problematic), ...bad, '');
+            lines.push(problematicLabel(problematic), ...bad, "");
         }
 
         const remaining = files_remaining.remote.length;
@@ -2641,11 +2641,11 @@ appSetup(MODULE, function() {
     function sendFieldUpdates(items, options) {
         const opt      = { ...options };
         const caller   = opt.caller;            delete opt.caller;
-        const method   = opt.method || 'PUT';   delete opt.method;
+        const method   = opt.method || "PUT";   delete opt.method;
         const headers  = { ...opt.headers };    delete opt.headers;
         const params   = { data: items, ...(opt.params || opt) };
 
-        const func     = caller || 'sendFieldUpdates';
+        const func     = caller || "sendFieldUpdates";
         const manifest = manifestId();
         OUT.debug(`${func}: manifest = ${manifest}; items =`, items);
 
@@ -2654,8 +2654,8 @@ appSetup(MODULE, function() {
             return;
         }
 
-        headers['Accept']       ||= 'text/html';
-        headers['Content-Type'] ||= 'multipart/form-data';
+        headers["Accept"]       ||= "text/html";
+        headers["Content-Type"] ||= "multipart/form-data";
 
         serverSend(`bulk/fields/${manifest}`, {
             caller:  func,
@@ -2706,7 +2706,7 @@ appSetup(MODULE, function() {
      * @returns {string|undefined}
      */
     function manifestFor(target) {
-        const func = 'manifestFor'; //OUT.debug(`${func}: target =`, target);
+        const func = "manifestFor"; //OUT.debug(`${func}: target =`, target);
         let id;
         if (target) {
             (id = attribute(target, MANIFEST_ATTR)) ||
@@ -2727,8 +2727,8 @@ appSetup(MODULE, function() {
     handleClickAndKeypress($pause,  onSubmissionPause);
     handleClickAndKeypress($resume, onSubmissionResume);
 
-    handleEvent($group_checkbox,  'change', onGroupCheckboxChange);
-    handleEvent($item_checkboxes, 'change', onItemCheckboxChange);
+    handleEvent($group_checkbox,  "change", onGroupCheckboxChange);
+    handleEvent($item_checkboxes, "change", onItemCheckboxChange);
 
     // ========================================================================
     // Actions

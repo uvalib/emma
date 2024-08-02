@@ -1,10 +1,10 @@
 // app/assets/javascripts/shared/definitions.js
 
 
-import { AppDebug } from '../application/debug';
+import { AppDebug } from "../application/debug";
 
 
-AppDebug.file('shared/definitions');
+AppDebug.file("shared/definitions");
 
 // ============================================================================
 // Functions - Element values
@@ -18,7 +18,7 @@ AppDebug.file('shared/definitions');
  * @returns {boolean}
  */
 export function isDefined(item) {
-    return typeof item !== 'undefined';
+    return typeof item !== "undefined";
 }
 
 /**
@@ -29,7 +29,7 @@ export function isDefined(item) {
  * @returns {boolean}
  */
 export function notDefined(item) {
-    return typeof item === 'undefined';
+    return typeof item === "undefined";
 }
 
 /**
@@ -46,7 +46,7 @@ export function isEmpty(item) {
         case (!item):                       return true;
         case isDefined(item?.size):         return !item.size;
         case isDefined(item?.length):       return !item.length;
-        case (typeof item === 'object'):    return !Object.keys(item).length;
+        case (typeof item === "object"):    return !Object.keys(item).length;
         default:                            return false;
     }
 }

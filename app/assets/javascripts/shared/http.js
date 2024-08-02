@@ -1,10 +1,10 @@
 // app/assets/javascripts/shared/http.js
 
 
-import { AppDebug } from '../application/debug';
+import { AppDebug } from "../application/debug";
 
 
-AppDebug.file('shared/http');
+AppDebug.file("shared/http");
 
 // ============================================================================
 // HTTP response codes

@@ -5,18 +5,18 @@
 // NOTE: This is intended to come last in ./index.js.
 
 
-import { AppDebug }                  from '../application/debug';
-import { appSetup }                  from '../application/setup';
-import { Analytics }                 from '../shared/analytics';
-import { initializeTables }          from '../shared/grids';
-import { InlinePopup }               from '../shared/inline-popup';
-import { initializeMenuControls }    from '../shared/menu';
-import { ModalDialog }               from '../shared/modal-dialog';
+import { AppDebug }                  from "../application/debug";
+import { appSetup }                  from "../application/setup";
+import { Analytics }                 from "../shared/analytics";
+import { initializeTables }          from "../shared/grids";
+import { InlinePopup }               from "../shared/inline-popup";
+import { initializeMenuControls }    from "../shared/menu";
+import { ModalDialog }               from "../shared/modal-dialog";
 
 
-const MODULE = 'Generic';
+const MODULE = "Generic";
 
-AppDebug.file('controllers/generic', MODULE);
+AppDebug.file("controllers/generic", MODULE);
 
 appSetup(MODULE, function() {
 

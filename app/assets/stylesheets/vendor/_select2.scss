@@ -1,10 +1,10 @@
 // app/assets/stylesheets/vendor/_select2.scss
 
-// @use '../../../node_modules/select2/dist/css/select2.css';
+// @use "../../../node_modules/select2/dist/css/select2.css";
 
-@use 'shared/variables'        as *;
-@use 'shared/mixins'           as *;
-@use 'shared/controls/buttons' as button;
+@use "shared/variables"        as *;
+@use "shared/mixins"           as *;
+@use "shared/controls/buttons" as button;
 
 //=============================================================================
 // Overrides of Select2 styles (node_modules/select2/dist/css/select2.css)

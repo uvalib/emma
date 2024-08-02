@@ -2,7 +2,7 @@
 //
 // General-use SCSS @mixin definitions.
 
-@use 'shared/variables' as v;
+@use "shared/variables" as v;
 
 // ============================================================================
 // Generic - Widths
@@ -140,7 +140,7 @@
 /// @param {Boolean} $force           If true, add "!important".
 ///
 @mixin invisible($force: false) {
-    $important: if($force, '!important', '');
+    $important: if($force, "!important", "");
     @include self-and-descendents {
         overflow:   visible #{$important};
         visibility: hidden  #{$important};
@@ -152,7 +152,7 @@
 /// @param {Boolean} $force           If true, add "!important".
 ///
 @mixin invisible-height($force: false) {
-    $important: if($force, '!important', '');
+    $important: if($force, "!important", "");
     @include self-and-descendents {
         height:         0       #{$important};
         min-height:     0       #{$important};
@@ -171,7 +171,7 @@
 /// @param {Boolean} $force           If true, add "!important".
 ///
 @mixin invisible-width($force: false) {
-    $important: if($force, '!important', '');
+    $important: if($force, "!important", "");
     @include self-and-descendents {
         width:          0       #{$important};
         min-width:      0       #{$important};
@@ -193,7 +193,7 @@
 ///
 @mixin disabled($force: false, $cursor: default) {
 
-    $important: if($force, '!important', '');
+    $important: if($force, "!important", "");
 
     & {
         text-decoration: none    #{$important};

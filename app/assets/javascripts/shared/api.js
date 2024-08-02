@@ -1,15 +1,15 @@
 // app/assets/javascripts/shared/api.js
 
 
-import { AppDebug }  from '../application/debug';
-import { BaseClass } from './base-class';
-import * as HTTP     from './http';
-import { makeUrl }   from './url';
-import * as xhr      from './xhr';
-import { Rails }     from '../vendor/rails';
+import { AppDebug }  from "../application/debug";
+import { BaseClass } from "./base-class";
+import * as HTTP     from "./http";
+import { makeUrl }   from "./url";
+import * as xhr      from "./xhr";
+import { Rails }     from "../vendor/rails";
 
 
-AppDebug.file('shared/api');
+AppDebug.file("shared/api");
 
 // ============================================================================
 // Class API
@@ -22,7 +22,7 @@ AppDebug.file('shared/api');
  */
 export class Api extends BaseClass {
 
-    static CLASS_NAME = 'Api';
+    static CLASS_NAME = "Api";
 
     // ========================================================================
     // Type definitions
@@ -41,8 +41,8 @@ export class Api extends BaseClass {
     // ========================================================================
 
     /** @type {object}                   */ result      = {};
-    /** @type {string}                   */ base_url    = '';
-    /** @type {string}                   */ state       = 'initialized';
+    /** @type {string}                   */ base_url    = "";
+    /** @type {string}                   */ state       = "initialized";
     /** @type {number}                   */ status      = HTTP.ok;
     /** @type {string|undefined}         */ api_key;
     /** @type {XmitCallback|undefined}   */ callback;
@@ -63,7 +63,7 @@ export class Api extends BaseClass {
      */
     constructor(base_url, options = {}) {
         super();
-        this.base_url = base_url || options.base_url || '';
+        this.base_url = base_url || options.base_url || "";
         this.api_key  = options.api_key;
         this.callback = options.callback;
     }
@@ -72,7 +72,7 @@ export class Api extends BaseClass {
     // Properties
     // ========================================================================
 
-    get isRemote() { return this.base_url?.startsWith('http') || false }
+    get isRemote() { return this.base_url?.startsWith("http") || false }
     get isLocal()  { return !this.isRemote }
     get response() { return xhr.response(this.xhr) }
 
@@ -80,11 +80,11 @@ export class Api extends BaseClass {
     // Methods
     // ========================================================================
 
-    get(  path, prm, opt, cb) { this.xmit('GET',   path, prm, opt, cb) }
-    head( path, prm, opt, cb) { this.xmit('HEAD',  path, prm, opt, cb) }
-    put(  path, prm, opt, cb) { this.xmit('PUT',   path, prm, opt, cb) }
-    post( path, prm, opt, cb) { this.xmit('POST',  path, prm, opt, cb) }
-    patch(path, prm, opt, cb) { this.xmit('PATCH', path, prm, opt, cb) }
+    get(  path, prm, opt, cb) { this.xmit("GET",   path, prm, opt, cb) }
+    head( path, prm, opt, cb) { this.xmit("HEAD",  path, prm, opt, cb) }
+    put(  path, prm, opt, cb) { this.xmit("PUT",   path, prm, opt, cb) }
+    post( path, prm, opt, cb) { this.xmit("POST",  path, prm, opt, cb) }
+    patch(path, prm, opt, cb) { this.xmit("PATCH", path, prm, opt, cb) }
 
     /**
      * Transmit to an external API resource.
@@ -101,7 +101,7 @@ export class Api extends BaseClass {
         let url;
         if (!path) {
             url = this.base_url;
-        } else if (path.startsWith('http')) {
+        } else if (path.startsWith("http")) {
             url = path;
         } else {
             url = makeUrl(this.base_url, path);
@@ -109,8 +109,8 @@ export class Api extends BaseClass {
 
         let caller_cb, settings;
         switch (typeof opt) {
-            case 'function': caller_cb = opt;        break;
-            case 'object':   settings  = { ...opt }; break;
+            case "function": caller_cb = opt;        break;
+            case "object":   settings  = { ...opt }; break;
         }
         caller_cb ||= cb || this.callback;
         settings  ||= {};
@@ -138,7 +138,7 @@ export class Api extends BaseClass {
      */
     _xmitOnComplete(result, warning, error, xhr, cb) {
         this.result  = result || {};
-        this.message = this.result.message || 'done';
+        this.message = this.result.message || "done";
         this.warning = warning;
         this.error   = error;
         this.xhr     = xhr;
@@ -157,10 +157,10 @@ export class Api extends BaseClass {
     _addHeaders(current_headers) {
         const headers = { ...current_headers };
         if (this.isLocal) {
-            headers['X-CSRF-Token'] = Rails.csrfToken();
+            headers["X-CSRF-Token"] = Rails.csrfToken();
         }
         if (this.api_key) {
-            headers['X-API-Key'] = this.api_key;
+            headers["X-API-Key"] = this.api_key;
         }
         return headers;
     }

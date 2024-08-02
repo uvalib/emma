@@ -1,10 +1,10 @@
 // app/assets/javascripts/shared/image.js
 
 
-import { AppDebug } from '../application/debug';
+import { AppDebug } from "../application/debug";
 
 
-AppDebug.file('shared/image');
+AppDebug.file("shared/image");
 
 // ============================================================================
 // Functions
@@ -19,10 +19,10 @@ AppDebug.file('shared/image');
  */
 export function encodeImage(image) {
     const start = image?.slice(0,5);
-    if (start === 'data:') {
+    if (start === "data:") {
         return image;
     } else if (start) {
-        return 'data:image/jpeg;base64,' + window.btoa(image);
+        return "data:image/jpeg;base64," + window.btoa(image);
     }
 }
 
@@ -35,7 +35,7 @@ export function encodeImage(image) {
  */
 export function encodeImageOrUrl(image) {
     const start = image?.slice(0,5);
-    if (['https', 'http:', 'data:'].includes(start)) {
+    if (["https", "http:", "data:"].includes(start)) {
         return image;
     } else if (start) {
         return encodeImage(image);

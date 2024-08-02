@@ -2,8 +2,8 @@
 //
 // Shared definitions supporting `layouts/overlay/*`.
 
-@use 'shared/variables' as v;
-@use 'shared/functions' as f;
+@use "shared/variables" as v;
+@use "shared/functions" as f;
 
 //=============================================================================
 // Constants
@@ -99,10 +99,10 @@ $default-height: 100vh;     // Enough to cover the viewport.
     $x-pos:  unset,
     $fill:   true,
 ) {
-    $width:  if($width,  $width,  'unset');
-    $height: if($height, $height, 'unset');
-    $y-pos:  if($y-pos,  $y-pos,  'unset');
-    $x-pos:  if($x-pos,  $x-pos,  'unset');
+    $width:  if($width,  $width,  "unset");
+    $height: if($height, $height, "unset");
+    $y-pos:  if($y-pos,  $y-pos,  "unset");
+    $x-pos:  if($x-pos,  $x-pos,  "unset");
 
     @if $fill {
         @include fill-animated;
@@ -121,7 +121,7 @@ $default-height: 100vh;     // Enough to cover the viewport.
         height:  $height;
         margin:  0;
         padding: 0;
-        @if ($height == 'unset') or ($width == 'unset') {
+        @if ($height == "unset") or ($width == "unset") {
             aspect-ratio: 1/1;
         }
     }

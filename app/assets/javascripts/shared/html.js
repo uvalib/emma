@@ -3,14 +3,14 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { AppDebug }                       from '../application/debug';
-import { cssClassList }                   from './css';
-import { isDefined, isPresent, presence } from './definitions';
-import { isObject }                       from './objects';
-import { hexRand }                        from './random';
+import { AppDebug }                       from "../application/debug";
+import { cssClassList }                   from "./css";
+import { isDefined, isPresent, presence } from "./definitions";
+import { isObject }                       from "./objects";
+import { hexRand }                        from "./random";
 
 
-AppDebug.file('shared/html');
+AppDebug.file("shared/html");
 
 // ============================================================================
 // Constants
@@ -33,11 +33,11 @@ export const HTML_BREAK = "<br/>\n";
  * @type {StringTable}
  */
 export const HTML_ENTITY = {
-    "'": '&apos;',
-    '"': '&quot;',
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
+    "'": "&apos;",
+    '"': "&quot;",
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
 };
 
 export const CHECKBOX = '[type="checkbox"]';
@@ -55,9 +55,9 @@ export const RADIO    = '[type="radio"]';
  * @returns {string}
  */
 export function htmlEncode(arg) {
-    const txt = arg?.toString()?.trim() || '';
-    const str = txt.includes('&') ? htmlDecode(txt) : txt;
-    return str ? [...str].map(c => HTML_ENTITY[c] || c).join('') : '';
+    const txt = arg?.toString()?.trim() || "";
+    const str = txt.includes("&") ? htmlDecode(txt) : txt;
+    return str ? [...str].map(c => HTML_ENTITY[c] || c).join("") : "";
 }
 
 /**
@@ -68,9 +68,9 @@ export function htmlEncode(arg) {
  * @returns {string}
  */
 export function htmlDecode(arg) {
-    const str = arg?.toString()?.trim() || '';
-    const doc = str && new DOMParser().parseFromString(str, 'text/html');
-    return doc?.documentElement?.textContent || '';
+    const str = arg?.toString()?.trim() || "";
+    const doc = str && new DOMParser().parseFromString(str, "text/html");
+    return doc?.documentElement?.textContent || "";
 }
 
 // ============================================================================
@@ -137,7 +137,7 @@ export function selfOrDescendents(target, match) {
  */
 export function selfOrParent(target, match, caller) {
     //console.log(`selfOrParent: match = "${match}"; target =`, target);
-    const func = (caller !== false) && (caller || 'selfOrParent');
+    const func = (caller !== false) && (caller || "selfOrParent");
     const $t   = $(target);
     return $t.is(match) ? single($t, func) : $t.parents(match).first();
 }
@@ -155,7 +155,7 @@ export function single(target, caller) {
     const count = $elem?.length || 0;
     if (count === 1) { return $elem }
     if (caller !== false) {
-        const func = caller || 'single';
+        const func = caller || "single";
         console.warn(`${func}: ${count} results; 1 expected`);
     }
     return $elem.first();
@@ -229,7 +229,7 @@ export function scrollIntoView(element) {
             elem.scrollIntoView(false);
         }
     } else {
-        console.error('scrollIntoView: empty element:', element);
+        console.error("scrollIntoView: empty element:", element);
     }
     return $element;
 }
@@ -248,9 +248,9 @@ export function scrollIntoView(element) {
 export function noScroll(callback) {
     const [current_x, current_y] = [window.scrollX, window.scrollY];
     const scroll_lock = () => window.scroll(current_x, current_y);
-    window.addEventListener('scroll', scroll_lock);
+    window.addEventListener("scroll", scroll_lock);
     callback();
-    setTimeout(() => window.removeEventListener('scroll', scroll_lock));
+    setTimeout(() => window.removeEventListener("scroll", scroll_lock));
 }
 
 /**
@@ -265,18 +265,18 @@ export function noScroll(callback) {
  */
 export function unreverseFlexChildren(container) {
     const $container = $(container);
-    const direction  = $container.css('flex-direction') || '';
-    if (direction.endsWith('-reverse')) {
-        const wrap      = $container.css('flex-wrap') || '';
+    const direction  = $container.css("flex-direction") || "";
+    if (direction.endsWith("-reverse")) {
+        const wrap      = $container.css("flex-wrap") || "";
         const $children = $container.children();
         const reversed  = $children.toArray().reverse();
         $children.detach();
-        if (wrap.endsWith('-reverse')) {
-            $container.attr('data-original-flex-wrap', wrap);
-            $container.css('flex-wrap', wrap.replace('-reverse', ''));
+        if (wrap.endsWith("-reverse")) {
+            $container.attr("data-original-flex-wrap", wrap);
+            $container.css("flex-wrap", wrap.replace("-reverse", ""));
         }
-        $container.attr('data-original-flex-direction', direction);
-        $container.css('flex-direction', direction.replace('-reverse', ''));
+        $container.attr("data-original-flex-direction", direction);
+        $container.css("flex-direction", direction.replace("-reverse", ""));
         $container.append(reversed);
     }
     return $container;
@@ -293,17 +293,17 @@ export function unreverseFlexChildren(container) {
 export function create(element, properties) {
     const obj  = isObject(element);
     const prop = (obj ? element     : properties) || {};
-    const tag  = (obj ? element.tag : element)    || 'div';
+    const tag  = (obj ? element.tag : element)    || "div";
 
     // noinspection HtmlUnknownTag
-    const $element = (tag[0] === '<') ? $(tag) : $(`<${tag}>`);
+    const $element = (tag[0] === "<") ? $(tag) : $(`<${tag}>`);
     prop.class   && $element.addClass(cssClassList(prop.class));
-    prop.type    && $element.attr('type',  prop.type);
-    prop.tooltip && $element.attr('title', prop.tooltip);
+    prop.type    && $element.attr("type",  prop.type);
+    prop.tooltip && $element.attr("title", prop.tooltip);
 
-    if      (typeof prop.html  === 'string') { $element.html(prop.html)  }
-    else if (typeof prop.label === 'string') { $element.text(prop.label) }
-    else if (typeof prop.text  === 'string') { $element.text(prop.text)  }
+    if      (typeof prop.html  === "string") { $element.html(prop.html)  }
+    else if (typeof prop.label === "string") { $element.text(prop.label) }
+    else if (typeof prop.text  === "string") { $element.text(prop.text)  }
     return $element;
 }
 
@@ -321,19 +321,19 @@ export function create(element, properties) {
  * @type {string[]}
  */
 export const ID_ATTRIBUTES = [
-    'aria-activedescendant',
-    'aria-controls',
-    'aria-describedby',
-    'aria-details',
-    'aria-errormessage',
-    'aria-flowto',
-    'aria-labelledby',
-    'aria-owns',
-    'for',                      // @see [label]#attr-for
-    'form',                     // @see [input]#form
-    'id',                       // @see [input]#id
-    'list',                     // @see [input]#list
-  //'name',                     // NOTE: Must *not* be included.
+    "aria-activedescendant",
+    "aria-controls",
+    "aria-describedby",
+    "aria-details",
+    "aria-errormessage",
+    "aria-flowto",
+    "aria-labelledby",
+    "aria-owns",
+    "for",                      // @see [label]#attr-for
+    "form",                     // @see [input]#form
+    "id",                       // @see [input]#id
+    "list",                     // @see [input]#list
+  //"name",                     // NOTE: Must *not* be included.
 ];
 
 /**

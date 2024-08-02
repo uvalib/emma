@@ -1,17 +1,17 @@
 // app/assets/javascripts/shared/channel-request.js
 
 
-import { AppDebug }                       from '../application/debug';
-import { arrayWrap }                      from './arrays'
-import { BaseClass }                      from './base-class';
-import { isEmpty, isPresent, notDefined } from './definitions';
-import { fromJSON, toObject }             from './objects';
+import { AppDebug }                       from "../application/debug";
+import { arrayWrap }                      from "./arrays"
+import { BaseClass }                      from "./base-class";
+import { isEmpty, isPresent, notDefined } from "./definitions";
+import { fromJSON, toObject }             from "./objects";
 
 
-const MODULE = 'ChannelRequest';
+const MODULE = "ChannelRequest";
 const DEBUG  = true;
 
-AppDebug.file('shared/channel-request', MODULE, DEBUG);
+AppDebug.file("shared/channel-request", MODULE, DEBUG);
 
 // ============================================================================
 // Type definitions
@@ -32,7 +32,7 @@ AppDebug.file('shared/channel-request', MODULE, DEBUG);
  */
 export class ChannelRequest extends BaseClass {
 
-    static CLASS_NAME = 'ChannelRequest';
+    static CLASS_NAME = "ChannelRequest";
     static DEBUGGING  = DEBUG;
 
     // ========================================================================
@@ -104,7 +104,7 @@ export class ChannelRequest extends BaseClass {
      * Clear all request parts.
      */
     clear() {
-        this._debug('clear');
+        this._debug("clear");
         this._parts = this._blankParts();
     }
 
@@ -115,15 +115,15 @@ export class ChannelRequest extends BaseClass {
      * @param {*} [_args]
      */
     add(item, ..._args) {
-        this._debug('add', item);
+        this._debug("add", item);
         if (notDefined(item)) { return }
         const type  = typeof(item);
-        const obj   = (type !== 'string') && !Array.isArray(item);
+        const obj   = (type !== "string") && !Array.isArray(item);
         const value = obj ? item : this.parse(item, ..._args);
         if (isPresent(value)) {
             this._appendParts(value.parts || value);
         } else {
-            this._warn('nothing to add');
+            this._warn("nothing to add");
         }
     }
 
@@ -136,8 +136,8 @@ export class ChannelRequest extends BaseClass {
      * @returns {ChannelRequestPayload}
      */
     parse(v, ..._args) {
-        this._debug('parse', v);
-        const items = (typeof v === 'string') ? v.split("\n") : arrayWrap(v);
+        this._debug("parse", v);
+        const items = (typeof v === "string") ? v.split("\n") : arrayWrap(v);
         return toObject(items, (item) => this.extractParts(item));
     }
 
@@ -150,7 +150,7 @@ export class ChannelRequest extends BaseClass {
      * @returns {object}
      */
     extractParts(item) {
-        this._debug('extractParts', item);
+        this._debug("extractParts", item);
         return { ...this._blankParts(), ...fromJSON(item) };
     }
 
@@ -166,7 +166,7 @@ export class ChannelRequest extends BaseClass {
      * @protected
      */
     _appendParts(src) {
-        this._debug('_appendParts', src);
+        this._debug("_appendParts", src);
         const template = this.constructor.TEMPLATE;
         Object.keys(template).forEach(key => {
             const src_v = src[key];

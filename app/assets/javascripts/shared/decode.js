@@ -3,12 +3,12 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { AppDebug }           from '../application/debug';
-import { isDefined }          from './definitions';
-import { fromJSON, isObject } from './objects';
+import { AppDebug }           from "../application/debug";
+import { isDefined }          from "./definitions";
+import { fromJSON, isObject } from "./objects";
 
 
-AppDebug.file('shared/decode');
+AppDebug.file("shared/decode");
 
 // ============================================================================
 // Functions - Type conversions
@@ -28,10 +28,10 @@ AppDebug.file('shared/decode');
  * @see file:config/boot.rb "#js"
  */
 export function decodeJSON(arg) {
-    const func = 'decodeJSON';
-    const str  = arg.replaceAll(/\n/g, '\\n');
+    const func = "decodeJSON";
+    const str  = arg.replaceAll(/\n/g, "\\n");
     return fromJSON(str, func, (k, v) => {
-        const encoded = (typeof v === 'string') && v.includes('%5C');
+        const encoded = (typeof v === "string") && v.includes("%5C");
         return encoded ? decodeURIComponent(v).replaceAll(/\\"/g, '"') : v;
     });
 }
@@ -44,14 +44,14 @@ export function decodeJSON(arg) {
  *
  * @returns {array}
  */
-export function decodeArray(arg, separator = ',') {
+export function decodeArray(arg, separator = ",") {
     let s;
     switch (true) {
         case (!arg):                            return [];
         case Array.isArray(arg):                return arg;
-        case (typeof arg === 'object'):         return Object.values(arg);
-        case (typeof arg !== 'string'):         return [arg];
-        case (s = arg.trim()).startsWith('['):  return decodeJSON(s);
+        case (typeof arg === "object"):         return Object.values(arg);
+        case (typeof arg !== "string"):         return [arg];
+        case (s = arg.trim()).startsWith("["):  return decodeJSON(s);
     }
     return s.split(separator).map(v => v.trim());
 }
@@ -64,7 +64,7 @@ export function decodeArray(arg, separator = ',') {
  * @returns {object}
  */
 export function decodeObject(arg) {
-    const result = (typeof arg === 'string') ? decodeJSON(arg) : arg;
+    const result = (typeof arg === "string") ? decodeJSON(arg) : arg;
     return isObject(result) ? result : {};
 }
 
@@ -77,8 +77,8 @@ export function decodeObject(arg) {
  */
 export function decodeBoolean(arg) {
     switch (typeof arg) {
-        case 'boolean': return arg;
-        case 'string':  return arg.toLowerCase() === 'true';
+        case "boolean": return arg;
+        case "string":  return arg.toLowerCase() === "true";
         default:        return isDefined(arg);
     }
 }
@@ -92,8 +92,8 @@ export function decodeBoolean(arg) {
  */
 export function decodeInteger(arg) {
     switch (typeof arg) {
-        case 'number': return arg;
-        case 'string': return Math.max(0, parseInt(arg));
+        case "number": return arg;
+        case "string": return Math.max(0, parseInt(arg));
         default:       return 0;
     }
 }

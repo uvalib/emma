@@ -1,11 +1,11 @@
 // app/assets/stylesheets/controllers/_enrollment.scss
 
-@use 'shared/variables'         as *;
-@use 'shared/controls/buttons'  as button;
-@use 'shared/controls/grids'    as grid;
-@use 'shared/feature/model'     as model;
+@use "shared/variables"         as *;
+@use "shared/controls/buttons"  as button;
+@use "shared/controls/grids"    as grid;
+@use "shared/feature/model"     as model;
 
-@use 'feature/model'            as model-classes;
+@use "feature/model"            as model-classes;
 
 //=============================================================================
 // Enrollment controls
@@ -44,9 +44,9 @@
     $max-columns:  30;
     $template:     minmax(max-content, 1fr);
     $template-map: (
-        'wide':   ('columns': $max-columns),
-        'medium': ('columns': 1, 'template': minmax(max-content, 0.33fr) 1fr),
-        'narrow': ('columns': 1, 'template': 1fr)
+        "wide":   ("columns": $max-columns),
+        "medium": ("columns": 1, "template": minmax(max-content, 0.33fr) 1fr),
+        "narrow": ("columns": 1, "template": 1fr)
     );
 
     @include grid.column-classes($max-columns, $template, $template-map);

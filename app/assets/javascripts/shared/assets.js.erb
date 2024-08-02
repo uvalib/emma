@@ -15,16 +15,16 @@
 // noinspection JSFileReferences, ES6UnusedImports, LongLine, LocalVariableNamingConventionJS
 
 
-import { AppDebug }   from '../javascripts/application/debug';
-import { deepFreeze } from '../javascripts/shared/objects';
+import { AppDebug }   from "../javascripts/application/debug";
+import { deepFreeze } from "../javascripts/shared/objects";
 import {
     decodeArray   as a$,
     decodeBoolean as b$,
     decodeObject  as o$,
-} from '../javascripts/shared/decode';
+} from "../javascripts/shared/decode";
 
 
-AppDebug.file('shared/assets.js.erb');
+AppDebug.file("shared/assets.js.erb");
 
 // ============================================================================
 // Type definitions
@@ -524,7 +524,7 @@ export const Emma = (function() {
      */
     const ASSET_OVERRIDES   = { ...window.ASSET_OVERRIDES };
     const setting_overrides = ASSET_OVERRIDES.OverrideScriptSettings  || {};
-    const image_placeholder = ASSET_OVERRIDES.Image_placeholder_asset || '';
+    const image_placeholder = ASSET_OVERRIDES.Image_placeholder_asset || "";
 
     // ========================================================================
     // General settings (at the time of asset creation).
@@ -532,7 +532,7 @@ export const Emma = (function() {
 
     /** @type {string} */
     const RAILS_ENV =       '<%= Rails.env.to_s %>',
-          SESSION_ID =      '';
+          SESSION_ID =      "";
 
     /** @type {boolean} */
     const DEPLOYED =        b$('<%= application_deployed? %>'),
@@ -655,10 +655,10 @@ export const Emma = (function() {
     /** @type {DownloadProperties} */
     const Download = {
         button: {
-            class:          'button',
+            class:          "button",
         },
         progress: {
-            class:          'progress',
+            class:          "progress",
             image: {
                 alt:        '<%= js config_page(:download, :progress, :image, :alt) %>',
             }
@@ -902,17 +902,17 @@ export const Emma = (function() {
     };
 
     // Update with any configuration values injected from the server.
-    const tag = 'OverrideScriptSettings';
+    const tag = "OverrideScriptSettings";
     for (const [key, value] of Object.entries(setting_overrides)) {
         const current = settings[key];
         const type    = typeof value;
-        if (type === 'undefined') {
+        if (type === "undefined") {
             console.log(`${tag}: ${key}: skipping "${type}" value`);
-        } else if (type === 'function') {
+        } else if (type === "function") {
             console.warn(`${tag}: ${key}: invalid "${type}" value`);
-        } else if (Array.isArray(current) || (typeof current !== 'object')) {
+        } else if (Array.isArray(current) || (typeof current !== "object")) {
             settings[key] = value;
-        } else if (type === 'object') {
+        } else if (type === "object") {
             settings[key] = { ...settings[key], ...value };
         } else {
             console.warn(`${tag}: ${key}: cannot merge "${type}" value`);

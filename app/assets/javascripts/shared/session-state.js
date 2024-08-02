@@ -3,15 +3,15 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { AppDebug }              from '../application/debug';
-import { BaseClass }             from './base-class';
-import { isPresent, notDefined } from './definitions';
-import { fromJSON }              from './objects';
+import { AppDebug }              from "../application/debug";
+import { BaseClass }             from "./base-class";
+import { isPresent, notDefined } from "./definitions";
+import { fromJSON }              from "./objects";
 
 
-const MODULE = 'SessionState';
+const MODULE = "SessionState";
 
-AppDebug.file('shared/session-state', MODULE);
+AppDebug.file("shared/session-state", MODULE);
 
 // ============================================================================
 // Functions
@@ -26,7 +26,7 @@ AppDebug.file('shared/session-state', MODULE);
  * @returns {number}                  Items removed.
  */
 export function removeByPrefix(name, debug) {
-    const func   = 'removeByPrefix';
+    const func   = "removeByPrefix";
     const prefix = `${name}-`;
     const keys   = [];
     let key, idx = 0;
@@ -59,7 +59,7 @@ export function removeByPrefix(name, debug) {
  */
 export class SessionState extends BaseClass {
 
-    static CLASS_NAME = 'SessionState';
+    static CLASS_NAME = "SessionState";
 
     // ========================================================================
     // Fields
@@ -166,9 +166,9 @@ export class SessionState extends BaseClass {
      */
     _objectify(v) {
         switch (typeof v) {
-            case 'object':  return v;
-            case 'boolean': return { enabled: v };
-            case 'symbol':  return { value:   v.description };
+            case "object":  return v;
+            case "boolean": return { enabled: v };
+            case "symbol":  return { value:   v.description };
             default:        return { value:   v };
         }
     }
@@ -185,21 +185,21 @@ export class SessionState extends BaseClass {
     _makeKeyName(v) {
         let result;
         switch (typeof v) {
-            case 'string':  result = v;                                 break;
-            case 'bigint':  result = v.toString();                      break;
-            case 'number':  result = v.toString();                      break;
-            case 'boolean': result = v.toString();                      break;
-            case 'symbol':  result = v.description;                     break;
-            case 'object':  result = (v instanceof RegExp) && v.source; break;
+            case "string":  result = v;                                 break;
+            case "bigint":  result = v.toString();                      break;
+            case "number":  result = v.toString();                      break;
+            case "boolean": result = v.toString();                      break;
+            case "symbol":  result = v.description;                     break;
+            case "object":  result = (v instanceof RegExp) && v.source; break;
         }
         if ((result = result?.trim())) {
-            result = result.replaceAll(/[^a-z0-9_]+/ig, '-');
+            result = result.replaceAll(/[^a-z0-9_]+/ig, "-");
         } else if (v) {
-            console.error('makeKeyName: invalid:', v);
+            console.error("makeKeyName: invalid:", v);
         } else {
-            console.error('makeKeyName: missing base key name');
+            console.error("makeKeyName: missing base key name");
         }
-        result ||= 'KEY_NAME';
+        result ||= "KEY_NAME";
         return this.keyPrefix ? `${this.keyPrefix}-${result}` : result;
     }
 
@@ -222,7 +222,7 @@ export class SessionState extends BaseClass {
  */
 export class SessionToggle extends SessionState {
 
-    static CLASS_NAME = 'SessionToggle';
+    static CLASS_NAME = "SessionToggle";
 
     // ========================================================================
     // Type definitions

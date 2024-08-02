@@ -1,14 +1,14 @@
 // app/assets/javascripts/shared/callbacks.js
 
 
-import { AppDebug }  from '../application/debug';
-import { BaseClass } from './base-class';
+import { AppDebug }  from "../application/debug";
+import { BaseClass } from "./base-class";
 
 
-const MODULE = 'CallbackChain';
+const MODULE = "CallbackChain";
 const DEBUG  = false;
 
-AppDebug.file('shared/callbacks', MODULE, DEBUG);
+AppDebug.file("shared/callbacks", MODULE, DEBUG);
 
 // ============================================================================
 // Type definitions
@@ -45,7 +45,7 @@ AppDebug.file('shared/callbacks', MODULE, DEBUG);
  */
 export class CallbackChain extends BaseClass {
 
-    static CLASS_NAME = 'CallbackChain';
+    static CLASS_NAME = "CallbackChain";
 
     // ========================================================================
     // Fields

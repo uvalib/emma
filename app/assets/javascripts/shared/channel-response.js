@@ -1,15 +1,15 @@
 // app/assets/javascripts/shared/channel-response.js
 
 
-import { AppDebug }            from '../application/debug';
-import { BaseClass }           from './base-class';
-import { deepDup, deepFreeze } from './objects';
+import { AppDebug }            from "../application/debug";
+import { BaseClass }           from "./base-class";
+import { deepDup, deepFreeze } from "./objects";
 
 
-const MODULE = 'ChannelResponse';
+const MODULE = "ChannelResponse";
 const DEBUG  = true;
 
-AppDebug.file('shared/channel-response', MODULE, DEBUG);
+AppDebug.file("shared/channel-response", MODULE, DEBUG);
 
 // ============================================================================
 // Type definitions
@@ -46,7 +46,7 @@ AppDebug.file('shared/channel-response', MODULE, DEBUG);
  */
 export class ChannelResponse extends BaseClass {
 
-    static CLASS_NAME = 'ChannelResponse';
+    static CLASS_NAME = "ChannelResponse";
     static DEBUGGING  = DEBUG;
 
     // ========================================================================
@@ -59,18 +59,18 @@ export class ChannelResponse extends BaseClass {
      * @enum {string}
      */
     static JOB_STATUS = deepFreeze([
-        'STARTING',
-        'STEP',
-        'WORKING',
-        'LATE',
-        'DONE',
-        'WAITING',
-        'COMPLETE',
-        'PARTIAL',
-        'TIMEOUT',
+        "STARTING",
+        "STEP",
+        "WORKING",
+        "LATE",
+        "DONE",
+        "WAITING",
+        "COMPLETE",
+        "PARTIAL",
+        "TIMEOUT",
     ]);
 
-    static FINAL_STATES = deepFreeze(['COMPLETE', 'PARTIAL', 'TIMEOUT']);
+    static FINAL_STATES = deepFreeze(["COMPLETE", "PARTIAL", "TIMEOUT"]);
 
     /**
      * A blank payload object.
@@ -113,7 +113,7 @@ export class ChannelResponse extends BaseClass {
         super();
         if (msg_obj instanceof this.constructor) {
             this._payload = msg_obj.toObject();
-        } else if (typeof msg_obj === 'object') {
+        } else if (typeof msg_obj === "object") {
             this._payload = deepDup(msg_obj);
         } else if (msg_obj) {
             const error = `${typeof msg_obj} unexpected`;

@@ -1,9 +1,9 @@
 // app/assets/stylesheets/controllers/_org.scss
 
-@use 'shared/variables'      as *;
-@use 'shared/controls/grids' as grid;
+@use "shared/variables"      as *;
+@use "shared/controls/grids" as grid;
 
-@use 'feature/model'         as model-classes;
+@use "feature/model"         as model-classes;
 
 //=============================================================================
 // Organization index page
@@ -28,9 +28,9 @@
     $max-columns:  30;
     $template:     minmax(max-content, 1fr);
     $template-map: (
-        'wide':   ('columns': $max-columns),
-        'medium': ('columns': 1, 'template': minmax(max-content, 0.33fr) 1fr),
-        'narrow': ('columns': 1, 'template': 1fr)
+        "wide":   ("columns": $max-columns),
+        "medium": ("columns": 1, "template": minmax(max-content, 0.33fr) 1fr),
+        "narrow": ("columns": 1, "template": 1fr)
     );
 
     @include grid.column-classes($max-columns, $template, $template-map);

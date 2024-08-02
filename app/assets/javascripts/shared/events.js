@@ -1,11 +1,11 @@
 // app/assets/javascripts/shared/events.js
 
 
-import { AppDebug }                           from '../application/debug';
-import { appEventListener, DOC_KEY, WIN_KEY } from '../application/setup';
+import { AppDebug }                           from "../application/debug";
+import { appEventListener, DOC_KEY, WIN_KEY } from "../application/setup";
 
 
-AppDebug.file('shared/events');
+AppDebug.file("shared/events");
 
 // ============================================================================
 // Type definitions
@@ -47,10 +47,10 @@ export const DEFAULT_DELAY = 100;
 export const DEBOUNCE_DELAY = 250;
 
 export const PHASE = [
-    'NONE',         // Event.NONE
-    'CAPTURING',    // Event.CAPTURING_PHASE
-    'AT_TARGET',    // Event.AT_TARGET
-    'BUBBLING',     // Event.BUBBLING_PHASE
+    "NONE",         // Event.NONE
+    "CAPTURING",    // Event.CAPTURING_PHASE
+    "AT_TARGET",    // Event.AT_TARGET
+    "BUBBLING",     // Event.BUBBLING_PHASE
 ];
 
 // ============================================================================
@@ -70,8 +70,8 @@ export function isEvent(item, type) {
     const ev    = (item instanceof Event);
     const event = (jq && item.originalEvent) || (ev && item);
     switch (typeof type) {
-        case 'undefined': return !!event;
-        case 'string':    return !!event && (event.type === type);
+        case "undefined": return !!event;
+        case "string":    return !!event && (event.type === type);
         default:          return !!event && (event instanceof type);
     }
 }
@@ -152,12 +152,12 @@ export function handleEvent(element, name, callback) {
 export function handleHoverAndFocus(element, cbEnter, cbLeave) {
     const $element = $(element);
     if (cbEnter) {
-        handleEvent($element, 'mouseenter', cbEnter);
-        handleEvent($element, 'focus',      cbEnter);
+        handleEvent($element, "mouseenter", cbEnter);
+        handleEvent($element, "focus",      cbEnter);
     }
     if (cbLeave) {
-        handleEvent($element, 'mouseleave', cbLeave);
-        handleEvent($element, 'blur',       cbLeave);
+        handleEvent($element, "mouseleave", cbLeave);
+        handleEvent($element, "blur",       cbLeave);
     }
 }
 
@@ -174,7 +174,7 @@ export function handleHoverAndFocus(element, cbEnter, cbLeave) {
  */
 export function handleCapture(element, name, callback, options) {
     let opt = { capture: true, remove: true, listen: true };
-    if (typeof options === 'object') {
+    if (typeof options === "object") {
         opt = { ...opt, ...options };
     } else if (options === false) {
         opt.capture = false;
@@ -227,11 +227,11 @@ export function onPageExit(callback, _debug) {
     const cb = debug ? (
         e => { console.warn(`>>>>> ${e.type} EVENT <<<<<`, e); callback(e) }
     ) : callback;
-    windowEvent('beforeunload', cb);        // [1]
-    documentEvent('turbolinks:click', cb);  // [2]
+    windowEvent("beforeunload", cb);        // [1]
+    documentEvent("turbolinks:click", cb);  // [2]
 */
     // TODO: Generating an internal callback function makes it impossible to
     //  teardown these handlers
-    windowEvent('beforeunload', callback);        // [1]
-    documentEvent('turbolinks:click', callback);  // [2]
+    windowEvent("beforeunload", callback);        // [1]
+    documentEvent("turbolinks:click", callback);  // [2]
 }

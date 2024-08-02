@@ -1,13 +1,13 @@
 // app/assets/javascripts/controllers/user_sessions.js
 
 
-import { AppDebug }               from '../application/debug';
-import { appSetup }               from '../application/setup';
-import { isMissing }              from '../shared/definitions';
-import { handleClickAndKeypress } from '../shared/accessibility';
+import { AppDebug }               from "../application/debug";
+import { appSetup }               from "../application/setup";
+import { isMissing }              from "../shared/definitions";
+import { handleClickAndKeypress } from "../shared/accessibility";
 
 
-const PATH = 'controllers/user_sessions';
+const PATH = "controllers/user_sessions";
 
 AppDebug.file(PATH);
 
@@ -32,7 +32,7 @@ appSetup(PATH, function() {
      *
      * @see file:app/assets/stylesheets/controllers/_user_sessions.scss .sign-in-form.inline.obscured
      */
-    const INVISIBLE_MARKER = 'obscured';
+    const INVISIBLE_MARKER = "obscured";
 
     // ========================================================================
     // Variables

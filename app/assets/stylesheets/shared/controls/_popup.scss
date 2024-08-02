@@ -2,7 +2,7 @@
 //
 // Definitions supporting pop-up elements.
 
-@use 'shared/variables' as *;
+@use "shared/variables" as *;
 
 //=============================================================================
 // Responsive breakpoint values
@@ -29,8 +29,8 @@ $max-height: var(--popup-max-height);
 
 /// Used to make an element float in the center of the screen.
 ///
-/// @param {Numeric} $width           Must be in 'vw' units.
-/// @param {Numeric} $height          Must be in 'vh' units.
+/// @param {Numeric} $width           Must be in "vw" units.
+/// @param {Numeric} $height          Must be in "vh" units.
 ///
 @mixin center-float($width: $max-width, $height: $max-height) {
     & {
@@ -46,8 +46,8 @@ $max-height: var(--popup-max-height);
 
 /// Used to make a floating container element in the center of the screen.
 ///
-/// @param {Numeric} $width           Must be in 'vw' units.
-/// @param {Numeric} $height          Must be in 'vh' units.
+/// @param {Numeric} $width           Must be in "vw" units.
+/// @param {Numeric} $height          Must be in "vh" units.
 ///
 @mixin center-float-container($width, $height) {
 
@@ -64,7 +64,7 @@ $max-height: var(--popup-max-height);
 /// Used to make a floating container element that expands vertically around
 /// the horizontal center line of the screen.
 ///
-/// @param {Numeric} $width           Must be in 'vw' units.
+/// @param {Numeric} $width           Must be in "vw" units.
 ///
 @mixin center-float-vertical($width: $max-width) {
 
@@ -84,7 +84,7 @@ $max-height: var(--popup-max-height);
 /// Used to make a floating container element that expands horizontally around
 /// the vertical midline of the screen.
 ///
-/// @param {Numeric} $height          Must be in 'vh' units.
+/// @param {Numeric} $height          Must be in "vh" units.
 ///
 @mixin center-float-horizontal($height: $max-height) {
 

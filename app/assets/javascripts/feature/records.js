@@ -1,28 +1,28 @@
 // app/assets/javascripts/feature/records.js
 
 
-import { AppDebug }               from '../application/debug';
-import { appSetup }               from '../application/setup';
-import { toggleVisibility }       from '../shared/accessibility';
-import { Emma }                   from '../shared/assets';
-import { pageController }         from '../shared/controller';
-import { toggleHidden }           from '../shared/css';
-import { isMissing, isPresent }   from '../shared/definitions';
-import { keyCombo }               from '../shared/keyboard';
-import { CheckboxGroup }          from '../shared/nav-group';
-import { camelCase, singularize } from '../shared/strings';
-import { asParams }               from '../shared/url';
+import { AppDebug }               from "../application/debug";
+import { appSetup }               from "../application/setup";
+import { toggleVisibility }       from "../shared/accessibility";
+import { Emma }                   from "../shared/assets";
+import { pageController }         from "../shared/controller";
+import { toggleHidden }           from "../shared/css";
+import { isMissing, isPresent }   from "../shared/definitions";
+import { keyCombo }               from "../shared/keyboard";
+import { CheckboxGroup }          from "../shared/nav-group";
+import { camelCase, singularize } from "../shared/strings";
+import { asParams }               from "../shared/url";
 import {
     handleEvent,
     handleHoverAndFocus,
     isEvent,
-} from '../shared/events';
+} from "../shared/events";
 
 
-const MODULE = 'Records';
+const MODULE = "Records";
 const DEBUG  = true;
 
-AppDebug.file('feature/records', MODULE, DEBUG);
+AppDebug.file("feature/records", MODULE, DEBUG);
 
 appSetup(MODULE, function() {
 
@@ -233,8 +233,8 @@ appSetup(MODULE, function() {
         const target  = isEvent(tgt) ? (tgt.currentTarget || tgt.target) : tgt;
         const $target = $(target);
         const indent  = $target.position().left;
-        const text    = $target.attr('data-label');
-        $group_panel_note.css('margin-left', indent);
+        const text    = $target.attr("data-label");
+        $group_panel_note.css("margin-left", indent);
         $group_panel_note.text(text);
         toggleVisibility($group_panel_note, true);
     }
@@ -244,7 +244,7 @@ appSetup(MODULE, function() {
      * over or focused on.
      */
     function hideGroupNote() {
-        $group_panel_note.html('&nbsp;'); // Keep filled to maintain height.
+        $group_panel_note.html("&nbsp;"); // Keep filled to maintain height.
         toggleVisibility($group_panel_note, false);
     }
 
@@ -255,7 +255,7 @@ appSetup(MODULE, function() {
      */
     function onClickGroupNote(ev) {
         const key = keyCombo(ev);
-        if (!key || (key === ' ') || (key === 'Enter')) {
+        if (!key || (key === " ") || (key === "Enter")) {
             const target = isEvent(ev) ? (ev.currentTarget || ev.target) : ev;
             if ($(target).is('.disabled')) {
                 ev.preventDefault();
@@ -288,10 +288,10 @@ appSetup(MODULE, function() {
         let group = new_group;
         group ||= requestedStateGroup();
         group ||= defaultStateGroup($buttons.map((_, button) => button.value));
-        group ||= 'done';
+        group ||= "done";
         const $button = $buttons.filter(`[value="${group}"]`);
-        $button.prop('checked', true);
-        $button.trigger('change');
+        $button.prop("checked", true);
+        $button.trigger("change");
     }
 
     /**
@@ -302,10 +302,10 @@ appSetup(MODULE, function() {
      * @see "BaseCollectionDecorator::List#list_filter"
      */
     function filterPageDisplay(new_group) {
-        const func  = 'filterPageDisplay';
+        const func  = "filterPageDisplay";
         const group = new_group || listFilterCurrent();
         OUT.debug(`${func}: arg = "${new_group}"; group = "${group}"`);
-        if (group === 'all') {
+        if (group === "all") {
             filterPageDisplayAll();
         } else {
             filterPageDisplayOnly(`[data-group="${group}"]`);
@@ -352,7 +352,7 @@ appSetup(MODULE, function() {
         let unchecked = 0;
         $options_checkboxes.each((_, cb) => {
             const $checkbox = $(cb);
-            if ($checkbox.val() === 'ALL_FILTERS') {
+            if ($checkbox.val() === "ALL_FILTERS") {
                 all = cb;
             } else if ($checkbox.is(':checked')) {
                 checked++;
@@ -376,15 +376,15 @@ appSetup(MODULE, function() {
      * @see "BaseCollectionDecorator::List#list_filter_options"
      */
     function filterOptionToggle(checkbox) {
-        const func    = 'filterOptionToggle';
+        const func    = "filterOptionToggle";
         const $option = $(checkbox);
         const enable  = $option.is(':checked');
         const group   = $option.val();
         OUT.debug(`${func}: group = "${group}"; enable = "${enable}"`);
         let $sel_controls, $pag_controls, any_checked;
-        if (group === 'ALL_FILTERS') {
+        if (group === "ALL_FILTERS") {
             $options_checkboxes.each((_, cb) => {
-                if ($(cb).val() === 'ALL_FILTERS') {
+                if ($(cb).val() === "ALL_FILTERS") {
                     cb.indeterminate = false;
                 } else {
                     cb.checked = enable;
@@ -409,7 +409,7 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     // Listen for a change to the record filter selection.
-    handleEvent($list_filter_radio_buttons, 'change', (event) => {
+    handleEvent($list_filter_radio_buttons, "change", (event) => {
         const $target = $(event.currentTarget || event.target);
         if ($target.is(':checked')) {
             filterPageDisplay($target.val());
@@ -417,15 +417,15 @@ appSetup(MODULE, function() {
     });
 
     // Listen for a change to the debug-only filter options checkboxes.
-    handleEvent($options_checkboxes, 'change', (event) => {
+    handleEvent($options_checkboxes, "change", (event) => {
         filterOptionToggle(event.currentTarget || event.target);
     });
 
     // When hovering/focusing on a group selection button, display its
     // description below the group selection panel.
     handleHoverAndFocus($group_panel_controls, showGroupNote, hideGroupNote);
-    handleEvent($group_panel_controls, 'click',   onClickGroupNote);
-    handleEvent($group_panel_controls, 'keydown', onClickGroupNote);
+    handleEvent($group_panel_controls, "click",   onClickGroupNote);
+    handleEvent($group_panel_controls, "keydown", onClickGroupNote);
 
     // Initialize controls and the initial record filtering.
     initializeFilterOptions();

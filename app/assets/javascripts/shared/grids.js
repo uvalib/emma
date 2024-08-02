@@ -3,44 +3,44 @@
 // Support for generic grid accessibility.
 
 
-import { AppDebug }                           from '../application/debug';
-import { BaseClass }                          from './base-class';
-import { selector }                           from './css';
-import { keyCombo, keyFormat, modifiersOnly } from './keyboard';
-import { NavGroup }                           from './nav-group';
-import { isObject }                           from './objects';
+import { AppDebug }                           from "../application/debug";
+import { BaseClass }                          from "./base-class";
+import { selector }                           from "./css";
+import { keyCombo, keyFormat, modifiersOnly } from "./keyboard";
+import { NavGroup }                           from "./nav-group";
+import { isObject }                           from "./objects";
 import {
     ensureFocusable,
     maybeFocusable,
     neutralizeFocusables,
     restoreFocusables,
     setFocusable,
-} from './accessibility';
+} from "./accessibility";
 import {
     isDefined,
     isMissing,
     isPresent,
     notDefined,
     presence,
-} from './definitions';
+} from "./definitions";
 import {
     delayedBy,
     handleCapture,
     handleEvent,
     phase,
-} from './events';
+} from "./events";
 import {
     containedBy,
     contains,
     sameElements,
     selfOrParent,
-} from './html';
+} from "./html";
 
 
-const MODULE = 'Grids';
+const MODULE = "Grids";
 const DEBUG  = true;
 
-AppDebug.file('shared/grids', MODULE, DEBUG);
+AppDebug.file("shared/grids", MODULE, DEBUG);
 
 /**
  * Console output functions for this module.
@@ -51,25 +51,25 @@ const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
 // Constants
 // ============================================================================
 
-const ACTIVE     = 'grid';
-const PASSIVE    = 'table';
+const ACTIVE     = "grid";
+const PASSIVE    = "table";
 const GRID_ROLES = [ACTIVE, PASSIVE];
-const GRIDS      = GRID_ROLES.map(type => `[role="${type}"]`).join(',');
+const GRIDS      = GRID_ROLES.map(type => `[role="${type}"]`).join(",");
 const GRID       = GRIDS;
 
-const ROW_ROLES  = ['row'];
-const ROWS       = ROW_ROLES.map(type => `[role="${type}"]`).join(',');
+const ROW_ROLES  = ["row"];
+const ROWS       = ROW_ROLES.map(type => `[role="${type}"]`).join(",");
 const ROW        = ROWS;
 
-const CELL_ROLES = ['cell', 'gridcell', 'rowheader', 'columnheader'];
-const CELLS      = CELL_ROLES.map(type => `[role="${type}"]`).join(',');
+const CELL_ROLES = ["cell", "gridcell", "rowheader", "columnheader"];
+const CELLS      = CELL_ROLES.map(type => `[role="${type}"]`).join(",");
 const CELL       = CELLS;
 
-const HIDDEN     = selector(['hidden', 'undisplayed', '[aria-hidden="true"]']);
+const HIDDEN     = selector(["hidden", "undisplayed", '[aria-hidden="true"]']);
 
-const LOC_DATA   = 'gridLocation';
-const FOCUS_DATA = 'gridFocus';
-const DIM_DATA   = 'gridDimensions';
+const LOC_DATA   = "gridLocation";
+const FOCUS_DATA = "gridFocus";
+const DIM_DATA   = "gridDimensions";
 
 const ROW_CURR   = 0;
 const ROW_FIRST  = 1;
@@ -143,7 +143,7 @@ const COL_PAGE   = 10; // TODO: dynamic?
  */
 class GridLocation extends BaseClass {
 
-    static CLASS_NAME = 'GridLocation';
+    static CLASS_NAME = "GridLocation";
     static DEBUGGING  = DEBUG;
     static DEBUG_CTOR = false;
 
@@ -247,7 +247,7 @@ class GridLocation extends BaseClass {
         let row_col;
         if (row instanceof GridLocation) {
             row_col = { ...row.get_current() };
-        } else if (typeof row === 'object') {
+        } else if (typeof row === "object") {
             row_col = { ...row };
         } else {
             row_col = { row, col };
@@ -283,7 +283,7 @@ class GridLocation extends BaseClass {
  */
 class GridMoveTo extends GridLocation {
 
-    static CLASS_NAME = 'GridMoveTo';
+    static CLASS_NAME = "GridMoveTo";
 
     // ========================================================================
     // Variables
@@ -348,7 +348,7 @@ class GridMoveTo extends GridLocation {
         let bounds;
         if (row_min instanceof GridMoveTo) {
             bounds = row_min.getBounds();
-        } else if (typeof row_min === 'object') {
+        } else if (typeof row_min === "object") {
             bounds = { ...row_min };
         } else {
             bounds = { row_min, row_max, col_min, col_max };
@@ -368,8 +368,8 @@ class GridMoveTo extends GridLocation {
      * @returns {GridLocation}
      */
     applyTo(location, bounds) {
-        const func = 'applyTo'; this._debug(`${func}:`, location, bounds);
-        if (typeof bounds === 'object') { this.setBounds(bounds) }
+        const func = "applyTo"; this._debug(`${func}:`, location, bounds);
+        if (typeof bounds === "object") { this.setBounds(bounds) }
         let row = (this.row === ROW_LAST) ? this.row_max : this.row;
         let col = (this.col === COL_LAST) ? this.col_max : this.col;
         if (!(Number(row) > 0)) { row = location.row }
@@ -415,7 +415,7 @@ class GridMoveTo extends GridLocation {
  */
 class GridMoveBy extends GridMoveTo {
 
-    static CLASS_NAME = 'GridMoveBy';
+    static CLASS_NAME = "GridMoveBy";
 
     // ========================================================================
     // Constants
@@ -526,7 +526,7 @@ class GridMoveBy extends GridMoveTo {
         if (row_delta instanceof GridMoveBy) {
             obj = row_delta.getDelta();
             lim = col_delta;
-        } else if (typeof row_delta === 'object') {
+        } else if (typeof row_delta === "object") {
             obj = { ...row_delta };
             lim = col_delta;
         } else {
@@ -553,8 +553,8 @@ class GridMoveBy extends GridMoveTo {
      * @returns {GridLocation}
      */
     applyTo(location, bounds) {
-        const func = 'applyTo'; this._debug(`${func}:`, location, bounds);
-        if (typeof bounds === 'object') { this.setBounds(bounds) }
+        const func = "applyTo"; this._debug(`${func}:`, location, bounds);
+        if (typeof bounds === "object") { this.setBounds(bounds) }
         const limit = this._limit;
         let row = location.row + this.row_delta;
         let col = location.col + this.col_delta;
@@ -642,12 +642,12 @@ const GRID_NAV = Object.freeze({
     PageDown:               n => GridMoveBy.PAGE_DOWN(n),
     Home:                   _ => GridMoveTo.ROW_START(),
     End:                    _ => GridMoveTo.ROW_END(),
-    'Control+ArrowLeft':    _ => GridMoveTo.ROW_START(),
-    'Control+ArrowRight':   _ => GridMoveTo.ROW_END(),
-    'Control+ArrowUp':      _ => GridMoveTo.COL_START(),
-    'Control+ArrowDown':    _ => GridMoveTo.COL_END(),
-    'Control+Home':         _ => GridMoveTo.TOP_LEFT(),
-    'Control+End':          _ => GridMoveTo.BOTTOM_RIGHT(),
+    "Control+ArrowLeft":    _ => GridMoveTo.ROW_START(),
+    "Control+ArrowRight":   _ => GridMoveTo.ROW_END(),
+    "Control+ArrowUp":      _ => GridMoveTo.COL_START(),
+    "Control+ArrowDown":    _ => GridMoveTo.COL_END(),
+    "Control+Home":         _ => GridMoveTo.TOP_LEFT(),
+    "Control+End":          _ => GridMoveTo.BOTTOM_RIGHT(),
 });
 
 // ============================================================================
@@ -675,12 +675,12 @@ export function initializeTables() {
  * @param {Selector} table
  */
 export function initializeTableNavigation(table) {
-    const func = 'initializeTableNavigation'; OUT.debug(`${func}:`, table);
+    const func = "initializeTableNavigation"; OUT.debug(`${func}:`, table);
     let $table = gridFor(table);
     if (isMissing($table)) {
         OUT.debug(`${func}: setting role=${PASSIVE} for:`, table);
-        $table = $(table).attr('role', PASSIVE);
-    } else if ($table.attr('role') === ACTIVE) {
+        $table = $(table).attr("role", PASSIVE);
+    } else if ($table.attr("role") === ACTIVE) {
         OUT.warn(`${func}: skipping grid:`, table);
         return;
     }
@@ -698,12 +698,12 @@ export function initializeTableNavigation(table) {
  * @param {Selector} grid
  */
 export function initializeGridNavigation(grid) {
-    const func = 'initializeGridNavigation'; OUT.debug(`${func}:`, grid);
+    const func = "initializeGridNavigation"; OUT.debug(`${func}:`, grid);
     let $grid  = gridFor(grid);
     if (isMissing($grid)) {
         OUT.debug(`${func}: setting role=${ACTIVE} for:`, grid);
-        $grid = $(grid).attr('role', ACTIVE);
-    } else if ($grid.attr('role') === PASSIVE) {
+        $grid = $(grid).attr("role", ACTIVE);
+    } else if ($grid.attr("role") === PASSIVE) {
         OUT.warn(`${func}: skipping non-grid:`, grid);
         return;
     }
@@ -720,9 +720,9 @@ export function initializeGridNavigation(grid) {
  * @param {Selector} grid
  */
 export function updateGridNavigation(grid) {
-    const func  = 'updateGridNavigation'; OUT.debug(`${func}:`, grid);
+    const func  = "updateGridNavigation"; OUT.debug(`${func}:`, grid);
     const $grid = gridFor(grid);
-    if ($grid.attr('role') === ACTIVE) {
+    if ($grid.attr("role") === ACTIVE) {
         setupGridRows($grid);
     } else {
         OUT.warn(`${func}: skipping non-grid:`, grid);
@@ -739,7 +739,7 @@ export function updateGridNavigation(grid) {
  * @param {jQuery} $grid
  */
 function setupNavigation($grid) {
-    //OUT.debug('setupNavigation: $grid =', $grid);
+    //OUT.debug("setupNavigation: $grid =", $grid);
     ensureFocusable($grid);
     setupGridRows($grid);
     setupGridNavigation($grid);
@@ -755,7 +755,7 @@ function setupNavigation($grid) {
  * @param {jQuery} $grid
  */
 function setupGridRows($grid) {
-    const func  = 'setupGridRows'; OUT.debug(`${func}: $grid =`, $grid);
+    const func  = "setupGridRows"; OUT.debug(`${func}: $grid =`, $grid);
     const $rows = gridRows($grid);
     const $temp = $grid.find(ROW).filter(HIDDEN); // Hidden template rows.
 
@@ -763,19 +763,19 @@ function setupGridRows($grid) {
     $temp.each((_,   row) => { $cols = setupGridColumns(row) })
     $rows.each((idx, row) => { $cols = setupGridColumns(row, (idx + 1)) });
 
-    const row_cnt = Number($grid.attr('aria-rowcount')) || 0;
+    const row_cnt = Number($grid.attr("aria-rowcount")) || 0;
     const row_min = ROW_FIRST;
     const row_max = $rows?.length || row_cnt;
     if (row_max > row_cnt) {
-        $grid.attr('aria-rowcount', row_max);
+        $grid.attr("aria-rowcount", row_max);
         OUT.debug(`${func}: row_count was ${row_cnt}; now ${row_max}`);
     }
 
-    const col_cnt = Number($grid.attr('aria-colcount')) || 0;
+    const col_cnt = Number($grid.attr("aria-colcount")) || 0;
     const col_min = COL_FIRST;
     const col_max = $cols?.length || col_cnt;
     if (col_max !== col_cnt) {
-        $grid.attr('aria-colcount', col_max);
+        $grid.attr("aria-colcount", col_max);
         OUT.debug(`${func}: col_count was ${col_cnt}; now ${col_max}`);
     }
 
@@ -792,13 +792,13 @@ function setupGridRows($grid) {
  */
 function setupGridColumns(row, row_number) {
     const num    = row_number || 0;
-    const func   = 'setupGridColumns'; OUT.debug(`${func}: row ${num} =`, row);
+    const func   = "setupGridColumns"; OUT.debug(`${func}: row ${num} =`, row);
     const $cells = gridCells(row);
     $cells.each((col_index, col_element) => {
         const col   = col_index + 1;
         const $cell = $(col_element);
-        $cell.attr('aria-colindex', col);
-        if (!$cell.attr('tabindex')) { $cell.attr('tabindex', 0) }
+        $cell.attr("aria-colindex", col);
+        if (!$cell.attr("tabindex")) { $cell.attr("tabindex", 0) }
         if (!getGridLocation($cell)) { setupCellNavigation($cell) }
         setGridLocation($cell, num, col);
         neutralizeFocusables($cell); // NOTE: _not_ neutralizeCellFocusables
@@ -951,9 +951,9 @@ function validateGridEventAnalysis(result, caller) {
         if (v && FLAGS.has(k)) { flags.push(k) }
     }
     if (flags.length < 1) {
-        err.push(['no condition flag was set']);
+        err.push(["no condition flag was set"]);
     } else if (flags.length > 1) {
-        err.push(['only one should be true:', flags]);
+        err.push(["only one should be true:", flags]);
     }
 
     // Verify that `in_modal` is appropriate.
@@ -961,14 +961,14 @@ function validateGridEventAnalysis(result, caller) {
     const modal  = group?.MODAL_ROOT || NavGroup.MODAL_ROOT;
     const inside = containedBy($tgt, modal);
     if (in_modal && !inside) {
-        err.push(['not in modal as expected:', $tgt]);
+        err.push(["not in modal as expected:", $tgt]);
     } else if (inside && !in_modal) {
-        err.push(['unexpectedly in modal:', $tgt]);
+        err.push(["unexpectedly in modal:", $tgt]);
     }
 
     // Report error(s) to the console.
     if (isPresent(err)) {
-        const func = caller || 'validateGridEventAnalysis';
+        const func = caller || "validateGridEventAnalysis";
         err.forEach(line => OUT.error(`${func}:`, ...line));
         return false;
     }
@@ -984,7 +984,7 @@ function validateGridEventAnalysis(result, caller) {
  * @param {string}              [caller]
  */
 function logGridEventAnalysis(result, event, key, caller) {
-    const func = caller || 'logGridEventAnalysis';
+    const func = caller || "logGridEventAnalysis";
     const msg  = key ? keyFormat(`${func}: key`, key) : [`${func}:`];
     const prop = {
         eventPhase:       phase(event),
@@ -997,7 +997,7 @@ function logGridEventAnalysis(result, event, key, caller) {
             OUT.debug(...msg, `${k.padEnd(width)} =`, v);
         }
     }
-    OUT.debug(`*** ${''.padEnd(72,'v')} ***`);
+    OUT.debug(`*** ${"".padEnd(72,"v")} ***`);
     log_values(prop);
     log_values(result);
 }
@@ -1010,10 +1010,10 @@ function logGridEventAnalysis(result, event, key, caller) {
  * @param {string}     [caller]
  */
 function logGridEventEnd(event, key, caller) {
-    const func = caller || 'logGridEventEnd';
+    const func = caller || "logGridEventEnd";
     const msg  = key ? keyFormat(`${func}: key`, key) : [`${func}:`];
-    OUT.debug(...msg, 'defaultPrevented ->', event.defaultPrevented);
-    OUT.debug(`*** ${''.padEnd(72,'^')} ***`);
+    OUT.debug(...msg, "defaultPrevented ->", event.defaultPrevented);
+    OUT.debug(`*** ${"".padEnd(72,"^")} ***`);
 }
 
 // ============================================================================
@@ -1026,10 +1026,10 @@ function logGridEventEnd(event, key, caller) {
  * @param {jQuery} $grid
  */
 function setupGridNavigation($grid) {
-    OUT.debug('setupGridNavigation: $grid =', $grid);
-    handleEvent(  $grid, 'focus',   onGridFocus);
-    handleEvent(  $grid, 'blur',    onGridBlur);
-    handleCapture($grid, 'keydown', onGridKeydownCapture);
+    OUT.debug("setupGridNavigation: $grid =", $grid);
+    handleEvent(  $grid, "focus",   onGridFocus);
+    handleEvent(  $grid, "blur",    onGridBlur);
+    handleCapture($grid, "keydown", onGridKeydownCapture);
 }
 
 /**
@@ -1038,7 +1038,7 @@ function setupGridNavigation($grid) {
  * @param {FocusEvt} event
  */
 function onGridFocus(event) {
-    const func  = 'onGridFocus';
+    const func  = "onGridFocus";
     const leave = event.relatedTarget;
     const enter = event.currentTarget;
     const $grid = gridFor(enter);
@@ -1053,12 +1053,12 @@ function onGridFocus(event) {
     if (OUT.debugging()) {
         const msg = [];
         switch (true) {
-            case !leave:        msg.push('no previous focus before');   break;
-            case entering_grid: msg.push('new outside focus:');         break;
-            default:            msg.push('new inside focus:');          break;
+            case !leave:        msg.push("no previous focus before");   break;
+            case entering_grid: msg.push("new outside focus:");         break;
+            default:            msg.push("new inside focus:");          break;
         }
         leave && msg.push(leave);
-        OUT.debug(`${func}:`, ...msg, '$grid = ', $grid, 'event =', event);
+        OUT.debug(`${func}:`, ...msg, "$grid = ", $grid, "event =", event);
     }
 
     if (entering_grid) {
@@ -1072,7 +1072,7 @@ function onGridFocus(event) {
  * @param {FocusEvt} event
  */
 function onGridBlur(event) {
-    const func  = 'onGridBlur';
+    const func  = "onGridBlur";
     const enter = event.relatedTarget;
     const leave = event.currentTarget;
     const $grid = gridFor(leave);
@@ -1087,12 +1087,12 @@ function onGridBlur(event) {
     if (OUT.debugging()) {
         const msg = [];
         switch (true) {
-            case !enter:        msg.push('no new focus from');  break;
-            case leaving_grid:  msg.push('new outside focus:'); break;
-            default:            msg.push('new inside focus:');  break;
+            case !enter:        msg.push("no new focus from");  break;
+            case leaving_grid:  msg.push("new outside focus:"); break;
+            default:            msg.push("new inside focus:");  break;
         }
         enter && msg.push(enter);
-        OUT.debug(`${func}:`, ...msg, '$grid = ', $grid, 'event =', event);
+        OUT.debug(`${func}:`, ...msg, "$grid = ", $grid, "event =", event);
     }
 
     if (leaving_grid) {
@@ -1111,7 +1111,7 @@ function onGridBlur(event) {
  * @see https://www.w3.org/WAI/ARIA/apg/patterns/grid/#gridNav_focus
  */
 function onGridKeydownCapture(event) {
-    const func = 'onGridKeydownCapture';
+    const func = "onGridKeydownCapture";
     const key  = keyCombo(event);
     if (!key) { return OUT.warn(`${func}: not a KeyboardEvent`, event) }
     if (modifiersOnly(key)) { return undefined } // Avoid excess logging.
@@ -1137,13 +1137,13 @@ function onGridKeydownCapture(event) {
         // Event for an element which is inside the group element but is
         // not a group control (e.g. focusables in a popup modal dialog).
     } else if (active) {
-        leave = (key === 'Escape');
+        leave = (key === "Escape");
     } else {
         switch (key) {
-            case 'F2':        enter = !!group;       break;
-            case 'Enter':     enter = !!group;       break;
-            case 'Tab':       tab   = true;          break;
-            case 'Shift+Tab': tab   = true;          break;
+            case "F2":        enter = !!group;       break;
+            case "Enter":     enter = !!group;       break;
+            case "Tab":       tab   = true;          break;
+            case "Shift+Tab": tab   = true;          break;
             default:          move  = GRID_NAV[key]; break;
         }
     }
@@ -1151,24 +1151,24 @@ function onGridKeydownCapture(event) {
     if (OUT.debugging()) {
         const msg = keyFormat(`${func}: key`, key);
         switch (true) {
-            case !!move:    msg.push('GRID NAV');                        break;
-            case tab:       msg.push('LEAVE GRID');                      break;
-            case enter:     msg.push('ENTER CELL NAV');                  break;
-            case leave:     msg.push('LEAVE CELL NAV');                  break;
-            case in_modal:  msg.push('to modal under');                  break;
+            case !!move:    msg.push("GRID NAV");                        break;
+            case tab:       msg.push("LEAVE GRID");                      break;
+            case enter:     msg.push("ENTER CELL NAV");                  break;
+            case leave:     msg.push("LEAVE CELL NAV");                  break;
+            case in_modal:  msg.push("to modal under");                  break;
             case to_cell:                                                break;
-            case to_group:  msg.push('to');                              break;
-            case to_entry:  msg.push('to entry',      $entry,   "\nin"); break;
-            case to_ctrl:   msg.push('to control',    $control, "\nin"); break;
-            case !!$target: msg.push('to $target',    $target,  "\nin"); break;
-            default:        msg.push('non-focusable', $tgt,     "\nin"); break;
+            case to_group:  msg.push("to");                              break;
+            case to_entry:  msg.push("to entry",      $entry,   "\nin"); break;
+            case to_ctrl:   msg.push("to control",    $control, "\nin"); break;
+            case !!$target: msg.push("to $target",    $target,  "\nin"); break;
+            default:        msg.push("non-focusable", $tgt,     "\nin"); break;
         }
         if (group && !tab && !move) {
-            msg.push(active ? 'active' : 'inactive');
+            msg.push(active ? "active" : "inactive");
             msg.push(`${group.CLASS_NAME} =`, group);
         }
-        $cell && msg.push('in $cell =', $cell);
-        OUT.debug(...msg, 'event =', event);
+        $cell && msg.push("in $cell =", $cell);
+        OUT.debug(...msg, "event =", event);
     }
 
     if (move) {
@@ -1202,11 +1202,11 @@ function onGridKeydownCapture(event) {
  * @param {jQuery} $cell
  */
 function setupCellNavigation($cell) {
-    //OUT.debug('setupCellNavigation: $cell =', $cell);
-    handleEvent(  $cell, 'focus',   onGridCellFocus);
-    handleEvent(  $cell, 'blur',    onGridCellBlur);
-    handleCapture($cell, 'click',   onGridCellClickCapture);
-    handleCapture($cell, 'keydown', onGridCellKeydownCapture);
+    //OUT.debug("setupCellNavigation: $cell =", $cell);
+    handleEvent(  $cell, "focus",   onGridCellFocus);
+    handleEvent(  $cell, "blur",    onGridCellBlur);
+    handleCapture($cell, "click",   onGridCellClickCapture);
+    handleCapture($cell, "keydown", onGridCellKeydownCapture);
 }
 
 /**
@@ -1215,7 +1215,7 @@ function setupCellNavigation($cell) {
  * @param {FocusEvt} event
  */
 function onGridCellFocus(event) {
-    const func   = 'onGridCellFocus';
+    const func   = "onGridCellFocus";
     const enter  = event.currentTarget;
     const leave  = event.relatedTarget;
     const $cell  = gridCell(enter);
@@ -1238,16 +1238,16 @@ function onGridCellFocus(event) {
         }
         let s;
         switch (true) {
-            case !leave:        s = 'no previous focus for';            break;
-            case entering_grid: s = 'old focus outside the grid:';      break;
-            case entering_cell: s = 'old focus in grid outside cell:';  break;
-            case leaving_group: s = 'old focus inside cell nav group:'; break;
-            case leaving_ctrl:  s = 'old focus inside cell control:';   break;
-            default:            s = 'old focus is same cell:';          break;
+            case !leave:        s = "no previous focus for";            break;
+            case entering_grid: s = "old focus outside the grid:";      break;
+            case entering_cell: s = "old focus in grid outside cell:";  break;
+            case leaving_group: s = "old focus inside cell nav group:"; break;
+            case leaving_ctrl:  s = "old focus inside cell control:";   break;
+            default:            s = "old focus is same cell:";          break;
         }
         const msg = [s];
         leave && msg.push(leave);
-        OUT.debug(`${func}:`, ...msg, '$cell =', $cell, 'event =', event);
+        OUT.debug(`${func}:`, ...msg, "$cell =", $cell, "event =", event);
     }
 
     if (!$group) {
@@ -1264,7 +1264,7 @@ function onGridCellFocus(event) {
  * @param {FocusEvt} event
  */
 function onGridCellBlur(event) {
-    const func   = 'onGridCellBlur';
+    const func   = "onGridCellBlur";
     const enter  = event.relatedTarget;
     const leave  = event.currentTarget;
     const $cell  = gridCell(leave);
@@ -1288,16 +1288,16 @@ function onGridCellBlur(event) {
     if (OUT.debugging()) {
         let s;
         switch (true) {
-            case !enter:         s = 'no new focus from';                break;
-            case leaving_grid:   s = 'new focus outside the grid:';      break;
-            case leaving_cell:   s = 'new focus in grid outside cell:';  break;
-            case entering_group: s = 'new focus inside cell nav group:'; break;
-            case entering_ctrl:  s = 'new focus inside cell control:';   break;
-            default:             s = 'new focus is same cell:';          break;
+            case !enter:         s = "no new focus from";                break;
+            case leaving_grid:   s = "new focus outside the grid:";      break;
+            case leaving_cell:   s = "new focus in grid outside cell:";  break;
+            case entering_group: s = "new focus inside cell nav group:"; break;
+            case entering_ctrl:  s = "new focus inside cell control:";   break;
+            default:             s = "new focus is same cell:";          break;
         }
         const msg = [s];
         enter && msg.push(enter);
-        OUT.debug(`${func}:`, ...msg, '$cell =', $cell, 'event =', event);
+        OUT.debug(`${func}:`, ...msg, "$cell =", $cell, "event =", event);
     }
 
     if (!$group) {
@@ -1329,7 +1329,7 @@ function onGridCellBlur(event) {
  * @param {MouseEvt|KeyboardEvt} event
  */
 function onGridCellClickCapture(event) {
-    const func = 'onGridCellClickCapture';
+    const func = "onGridCellClickCapture";
     const {
         $tgt,
         $grid,
@@ -1350,19 +1350,19 @@ function onGridCellClickCapture(event) {
     if (OUT.debugging()) {
         const msg = [];
         switch (true) {
-            case in_modal:  msg.push('to modal under');                  break;
-            case to_cell:   msg.push('enter');                           break;
-            case to_group:  msg.push('to');                              break;
-            case to_entry:  msg.push('to entry',      $entry,   "\nin"); break;
-            case to_ctrl:   msg.push('to control',    $control, "\nin"); break;
-            case !!$target: msg.push('to $target',    $target,  "\nin"); break;
-            default:        msg.push('non-focusable', $tgt,     "\nin"); break;
+            case in_modal:  msg.push("to modal under");                  break;
+            case to_cell:   msg.push("enter");                           break;
+            case to_group:  msg.push("to");                              break;
+            case to_entry:  msg.push("to entry",      $entry,   "\nin"); break;
+            case to_ctrl:   msg.push("to control",    $control, "\nin"); break;
+            case !!$target: msg.push("to $target",    $target,  "\nin"); break;
+            default:        msg.push("non-focusable", $tgt,     "\nin"); break;
         }
         if (group) {
-            msg.push(active ? 'active' : 'inactive');
+            msg.push(active ? "active" : "inactive");
             msg.push(`${group.CLASS_NAME} =`, group);
         }
-        OUT.debug(`${func}:`, ...msg, '$cell =', $cell, 'event =', event);
+        OUT.debug(`${func}:`, ...msg, "$cell =", $cell, "event =", event);
     }
 
     //let handled;
@@ -1395,7 +1395,7 @@ function onGridCellClickCapture(event) {
  * @see https://www.w3.org/WAI/ARIA/apg/patterns/grid/#gridNav_inside
  */
 function onGridCellKeydownCapture(event) {
-    const func = 'onGridCellKeydownCapture';
+    const func = "onGridCellKeydownCapture";
     const key  = keyCombo(event);
     if (!key) { return OUT.warn(`${func}: not a KeyboardEvent`, event) }
     if (modifiersOnly(key)) { return undefined } // Avoid excess logging.
@@ -1421,36 +1421,36 @@ function onGridCellKeydownCapture(event) {
         // Event for an element which is inside the group element but is
         // not a group control (e.g. focusables in a popup modal dialog).
     } else if (active) {
-        leave = (key === 'Escape');
+        leave = (key === "Escape");
     } else if (group) {
-        enter = (key === 'F2') || (key === 'Enter');
+        enter = (key === "F2") || (key === "Enter");
     }
 
     if (OUT.debugging()) {
         const msg = keyFormat(`${func}: key`, key);
         switch (true) {
-            case enter:     msg.push('ENTERING');                        break;
-            case leave:     msg.push('LEAVING');                         break;
-            case in_modal:  msg.push('to modal under');                  break;
+            case enter:     msg.push("ENTERING");                        break;
+            case leave:     msg.push("LEAVING");                         break;
+            case in_modal:  msg.push("to modal under");                  break;
             case to_cell:                                                break;
-            case to_group:  msg.push('to');                              break;
-            case to_entry:  msg.push('to entry',      $entry,   "\nin"); break;
-            case to_ctrl:   msg.push('to control',    $control, "\nin"); break;
-            case !!$target: msg.push('to $target',    $target,  "\nin"); break;
-            default:        msg.push('non-focusable', $tgt,     "\nin"); break;
+            case to_group:  msg.push("to");                              break;
+            case to_entry:  msg.push("to entry",      $entry,   "\nin"); break;
+            case to_ctrl:   msg.push("to control",    $control, "\nin"); break;
+            case !!$target: msg.push("to $target",    $target,  "\nin"); break;
+            default:        msg.push("non-focusable", $tgt,     "\nin"); break;
         }
         if (group) {
-            msg.push(active ? 'active' : 'inactive');
+            msg.push(active ? "active" : "inactive");
             msg.push(`${group.CLASS_NAME} =`, group);
         }
-        OUT.debug(...msg, 'in $cell =', $cell, 'event =', event);
+        OUT.debug(...msg, "in $cell =", $cell, "event =", event);
     }
 
     if (enter && (to_entry || to_ctrl)) {
         group.activate($entry ? group.control($entry) : $control);
 
     } else if (enter && group.activate()) {
-        group.activeControls.first().trigger('focus');
+        group.activeControls.first().trigger("focus");
 
     } else if (leave || enter) {
         group.deactivate();
@@ -1480,7 +1480,7 @@ function onGridCellKeydownCapture(event) {
  * @returns {jQuery|undefined}
  */
 function moveGridCellFocus($grid, motion, focus) {
-    const func      = 'moveGridCellFocus'; OUT.debug(func);
+    const func      = "moveGridCellFocus"; OUT.debug(func);
     const $old_cell = getGridCellFocus($grid);
     const $cur_cell = moveGridCellCursor($grid, motion);
     const $new_cell = $cur_cell && setGridCellFocus($grid, $cur_cell, focus);
@@ -1489,12 +1489,12 @@ function moveGridCellFocus($grid, motion, focus) {
     if (OUT.debugging()) {
         const msg = [];
         switch (true) {
-            case !!same_cell: msg.push('same:', $old_cell, $new_cell); break;
-            case !!$old_cell: msg.push('leaving:', $old_cell); break;
-            case !!$new_cell: msg.push('new cell'); break;
-            default:          msg.push('invalid'); break;
+            case !!same_cell: msg.push("same:", $old_cell, $new_cell); break;
+            case !!$old_cell: msg.push("leaving:", $old_cell); break;
+            case !!$new_cell: msg.push("new cell"); break;
+            default:          msg.push("invalid"); break;
         }
-        OUT.debug(`${func}:`, ...msg, '*** motion =', motion);
+        OUT.debug(`${func}:`, ...msg, "*** motion =", motion);
     }
 
     if (!$new_cell) {
@@ -1516,7 +1516,7 @@ function moveGridCellFocus($grid, motion, focus) {
  * @returns {jQuery|undefined}
  */
 function getGridCellFocus($grid) {
-    //OUT.debug('getGridCellFocus: $grid =', $grid);
+    //OUT.debug("getGridCellFocus: $grid =", $grid);
     return $grid.data(FOCUS_DATA);
 }
 
@@ -1530,7 +1530,7 @@ function getGridCellFocus($grid) {
  * @returns {jQuery|undefined}
  */
 function setGridCellFocus($grid, $cell, focus) {
-    const func      = 'setGridCellFocus';
+    const func      = "setGridCellFocus";
     const $new_cell = presence($cell);
     const same_grid = $new_cell && sameElements($grid, gridFor($new_cell));
 
@@ -1538,20 +1538,20 @@ function setGridCellFocus($grid, $cell, focus) {
         const msg = [];
         switch (true) {
             case !$new_cell: msg.push(`clear ${FOCUS_DATA} for`);       break;
-            case !same_grid: msg.push('outside grid; $cell =', $cell);  break;
-            default:         msg.push('$cell =', $cell);                break;
+            case !same_grid: msg.push("outside grid; $cell =", $cell);  break;
+            default:         msg.push("$cell =", $cell);                break;
         }
-        OUT.debug(`${func}:`, ...msg, '$grid =', $grid);
+        OUT.debug(`${func}:`, ...msg, "$grid =", $grid);
     }
 
     if (!$new_cell) {
         $grid.removeData(FOCUS_DATA);
     } else if (!same_grid) {
-        OUT.warn(`${func}: not inside; $cell =`, $cell, '$grid =', $grid);
+        OUT.warn(`${func}: not inside; $cell =`, $cell, "$grid =", $grid);
     } else {
         setFocusable($cell, true, func);
         $grid.data(FOCUS_DATA, $cell);
-        return (focus === false) ? $cell : $cell.trigger('focus');
+        return (focus === false) ? $cell : $cell.trigger("focus");
     }
 }
 
@@ -1571,9 +1571,9 @@ function setGridCellFocus($grid, $cell, focus) {
  * @returns {jQuery|undefined}        Blank if *motion* is invalid.
  */
 function moveGridCellCursor($grid, motion) {
-    OUT.debug('moveGridCellCursor: motion =', motion);
+    OUT.debug("moveGridCellCursor: motion =", motion);
     let location = getGridCellCursor($grid) || setGridCellCursor($grid);
-    const move   = (typeof motion === 'function') ? motion() : motion;
+    const move   = (typeof motion === "function") ? motion() : motion;
     if (move) {
         location = move.applyTo(location, getGridBounds($grid));
         setGridCellCursor($grid, location);
@@ -1591,7 +1591,7 @@ function moveGridCellCursor($grid, motion) {
  */
 function getGridCellCursor($grid) {
     const value = $grid.data(LOC_DATA);
-    //OUT.debug('getGridCellCursor:', value, 'for $grid =', $grid);
+    //OUT.debug("getGridCellCursor:", value, "for $grid =", $grid);
     return value;
 }
 
@@ -1618,7 +1618,7 @@ function getGridCellCursor($grid) {
  *  @param {number} c
  */
 function setGridCellCursor($grid, r, c) {
-    OUT.debug('setGridCellCursor:', r, c);
+    OUT.debug("setGridCellCursor:", r, c);
     const loc = new GridLocation(r, c);
     $grid.data(LOC_DATA, loc);
     return loc;
@@ -1638,7 +1638,7 @@ function setGridCellCursor($grid, r, c) {
 function getGridLocation(cell) {
     const $cell = gridCell(cell);
     const value = $cell.data(LOC_DATA);
-    //OUT.debug('getGridLocation:', value, 'for $cell =', $cell);
+    //OUT.debug("getGridLocation:", value, "for $cell =", $cell);
     return value;
 }
 
@@ -1654,7 +1654,7 @@ function getGridLocation(cell) {
 function setGridLocation(cell, row, col) {
     const $cell = gridCell(cell);
     const value = new GridLocation(row, col);
-    //OUT.debug('setGridLocation:', row, col, $cell);
+    //OUT.debug("setGridLocation:", row, col, $cell);
     $cell.data(LOC_DATA, value);
     return value;
 }
@@ -1672,7 +1672,7 @@ function setGridLocation(cell, row, col) {
  */
 function getGridBounds($grid) {
     const value = $grid.data(DIM_DATA);
-    //OUT.debug('getGridBounds:', value, 'for $grid =', $grid);
+    //OUT.debug("getGridBounds:", value, "for $grid =", $grid);
     return value;
 }
 
@@ -1694,7 +1694,7 @@ function setGridBounds($grid, row_min, row_max, col_min, col_max) {
     } else {
         value = { row_min, row_max, col_min, col_max };
     }
-    OUT.debug('setGridBounds:', value, $grid);
+    OUT.debug("setGridBounds:", value, $grid);
     $grid.data(DIM_DATA, value);
     return value;
 }
@@ -1709,7 +1709,7 @@ function setGridBounds($grid, row_min, row_max, col_min, col_max) {
  * @returns {undefined}
  */
 function scrollToEdge(cell, grid) {
-    const func   = 'scrollToEdge';
+    const func   = "scrollToEdge";
     const $cell  = gridCell(cell);
     const $grid  = gridFor(grid || $cell);
     const bounds = getGridBounds($grid);
@@ -1732,7 +1732,7 @@ function scrollToEdge(cell, grid) {
         case bounds.row_max: scroll.top = $grid[0].scrollHeight; break;
     }
     if (isMissing(scroll)) {
-        OUT.debug(`${func}: not on edge: loc =`, loc, '$cell =', $cell);
+        OUT.debug(`${func}: not on edge: loc =`, loc, "$cell =", $cell);
     } else {
         $grid[0].scrollTo(scroll);
     }
@@ -1751,9 +1751,9 @@ function scrollIntoView(cell, grid) {
     const $cell = gridCell(cell);
     const $grid = gridFor(grid || $cell);
 
-    const css_val  = (v) => Number($grid.css(v)?.replaceAll(/[^\d]/g, ''));
-    const x_offset = css_val('scroll-padding-left') || 0;
-    const y_offset = css_val('scroll-padding-top')  || 0;
+    const css_val  = (v) => Number($grid.css(v)?.replaceAll(/[^\d]/g, ""));
+    const x_offset = css_val("scroll-padding-left") || 0;
+    const y_offset = css_val("scroll-padding-top")  || 0;
 
     const r_cell = $cell[0].getBoundingClientRect();
     const r_grid = $grid[0].getBoundingClientRect();
@@ -1783,7 +1783,7 @@ function scrollIntoView(cell, grid) {
  * @param {boolean} [plus_cell]
  */
 function neutralizeCellFocusables($cell, plus_cell = true) {
-    const func = 'neutralizeCellFocusables'; //OUT.debug(`${func}:`, $cell);
+    const func = "neutralizeCellFocusables"; //OUT.debug(`${func}:`, $cell);
     if (isActiveGrid($cell)) {
         const group = NavGroup.instanceFor($cell);
         if (!group) {
@@ -1805,7 +1805,7 @@ function neutralizeCellFocusables($cell, plus_cell = true) {
  * @param {boolean} [plus_cell]
  */
 function restoreCellFocusables($cell, plus_cell = false) {
-    const func = 'restoreCellFocusables'; //OUT.debug(`${func}:`, $cell);
+    const func = "restoreCellFocusables"; //OUT.debug(`${func}:`, $cell);
     if (isActiveGrid($cell)) {
         const group = NavGroup.instanceFor($cell);
         if (!group) {
@@ -1833,7 +1833,7 @@ function restoreCellFocusables($cell, plus_cell = false) {
  * @returns {boolean}
  */
 function isActiveGrid(target) {
-    return gridFor(target).attr('role') === ACTIVE;
+    return gridFor(target).attr("role") === ACTIVE;
 }
 
 /**
@@ -1844,7 +1844,7 @@ function isActiveGrid(target) {
  * @returns {jQuery}
  */
 function gridFor(target) {
-    const func = 'gridFor'; //OUT.debug(`${func}: target =`, target);
+    const func = "gridFor"; //OUT.debug(`${func}: target =`, target);
     return selfOrParent(target, GRID, func);
 }
 
@@ -1856,7 +1856,7 @@ function gridFor(target) {
  * @returns {jQuery}
  */
 function gridCell(target) {
-    const func = 'gridCell'; //OUT.debug(`${func}: target =`, target);
+    const func = "gridCell"; //OUT.debug(`${func}: target =`, target);
     return selfOrParent(target, CELL, func);
 }
 

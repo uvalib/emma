@@ -3,17 +3,17 @@
 // noinspection LocalVariableNamingConventionJS, JSUnusedGlobalSymbols
 
 
-import { AppDebug }                    from '../application/debug';
-import { arrayWrap }                   from './arrays';
-import { Emma }                        from './assets';
-import { BaseClass }                   from './base-class';
-import { isEmpty }                     from './definitions';
-import { htmlEncode }                  from './html';
-import { compact, fromJSON, isObject } from './objects';
-import { asString }                    from './strings';
+import { AppDebug }                    from "../application/debug";
+import { arrayWrap }                   from "./arrays";
+import { Emma }                        from "./assets";
+import { BaseClass }                   from "./base-class";
+import { isEmpty }                     from "./definitions";
+import { htmlEncode }                  from "./html";
+import { compact, fromJSON, isObject } from "./objects";
+import { asString }                    from "./strings";
 
 
-AppDebug.file('shared/field');
+AppDebug.file("shared/field");
 
 // ============================================================================
 // Type definitions
@@ -61,7 +61,7 @@ AppDebug.file('shared/field');
  */
 export class Properties extends BaseClass {
 
-    static CLASS_NAME = 'Properties';
+    static CLASS_NAME = "Properties";
     static DEBUGGING  = false;
 
     // ========================================================================
@@ -69,23 +69,23 @@ export class Properties extends BaseClass {
     // ========================================================================
 
     static TYPE = {
-        field:          'string',
-        label:          'string',
-        type:           'string',
-        min:            'number',
-        max:            'number',
-        tooltip:        'string',
-        notes:          'string',
-        notes_html:     'string',
-        placeholder:    'string',
-        origin:         'string',
-        ignored:        'boolean',
-        required:       'boolean',
-        readonly:       'boolean',
-        array:          'boolean',
-        role:           'string',
-        cond:           'object',
-        pairs:          'object',   // Enumeration value/label pairs.
+        field:          "string",
+        label:          "string",
+        type:           "string",
+        min:            "number",
+        max:            "number",
+        tooltip:        "string",
+        notes:          "string",
+        notes_html:     "string",
+        placeholder:    "string",
+        origin:         "string",
+        ignored:        "boolean",
+        required:       "boolean",
+        readonly:       "boolean",
+        array:          "boolean",
+        role:           "string",
+        cond:           "object",
+        pairs:          "object",   // Enumeration value/label pairs.
     };
 
     // ========================================================================
@@ -124,11 +124,11 @@ export class Properties extends BaseClass {
         } else if (arg instanceof this.constructor) {
             this._value = this._extractFromObject(arg.value);
 
-        } else if (typeof arg === 'object') {
+        } else if (typeof arg === "object") {
             this._value = this._extractFromObject(arg);
 
         } else if (arg) {
-            this._error('unexpected arg =', arg);
+            this._error("unexpected arg =", arg);
         }
         this._value ||= {};
     }
@@ -149,8 +149,8 @@ export class Properties extends BaseClass {
         const result = {};
         Array.from(arg).forEach(attr => {
             const name = attr.name;
-            if (name.startsWith('data-')) {
-                const key = name.replace(/^data-/, '');
+            if (name.startsWith("data-")) {
+                const key = name.replace(/^data-/, "");
                 result[key] = attr.value;
             }
         });
@@ -173,16 +173,16 @@ export class Properties extends BaseClass {
                 case typeof(v):
                     result[k] = v;
                     break;
-                case 'number':
+                case "number":
                     result[k] = ((n = Number(v)) || (n === 0)) ? n : null;
                     break;
-                case 'boolean':
+                case "boolean":
                     result[k] = Boolean(v);
                     break;
-                case 'object':
+                case "object":
                     result[k] = fromJSON(v) || null;
                     break;
-                case 'string':
+                case "string":
                     result[k] = v?.toString() || null;
                     break;
                 default:
@@ -244,7 +244,7 @@ export class Properties extends BaseClass {
  */
 export class Value extends BaseClass {
 
-    static CLASS_NAME = 'Value';
+    static CLASS_NAME = "Value";
     static DEBUGGING  = false;
 
     // ========================================================================
@@ -254,13 +254,13 @@ export class Value extends BaseClass {
     static EMPTY_VALUE = Emma.Field.empty;
 
     static TRANSLATION = {
-        textarea: 'array',
-        textbox:  'array',
-        text:     'string',
-        date:     'string', // TODO: convert to Date (?); limiter for date-only?
-        time:     'string', // TODO: convert to Date (?); limiter for time-only?
-        datetime: 'string', // TODO: convert to Date (?)
-        json:     'object',
+        textarea: "array",
+        textbox:  "array",
+        text:     "string",
+        date:     "string", // TODO: convert to Date (?); limiter for date-only?
+        time:     "string", // TODO: convert to Date (?); limiter for time-only?
+        datetime: "string", // TODO: convert to Date (?)
+        json:     "object",
     };
 
     // ========================================================================
@@ -353,9 +353,9 @@ export class Value extends BaseClass {
         this._unset = other._unset;
         this._type  = other._type;
         switch (this._typeFor(other._value)) {
-            case 'array':  this._value = [ ...other._value ]; break;
-            case 'object': this._value = { ...other._value }; break;
-            case 'string': this._value = `${other._value}`;   break;
+            case "array":  this._value = [ ...other._value ]; break;
+            case "object": this._value = { ...other._value }; break;
+            case "string": this._value = `${other._value}`;   break;
             default:       this._value = other._value;        break;
         }
     }
@@ -388,31 +388,31 @@ export class Value extends BaseClass {
     _setFrom(arg, as_type) {
         const arg_type  = this._typeFor(arg);
         let type, value = this._normalize(arg, arg_type);
-        const prop      = (typeof(as_type) === 'object');
+        const prop      = (typeof(as_type) === "object");
         if (prop) {
             // noinspection JSValidateTypes
             this._map   = { ...as_type.pairs };
             this._required = !!as_type.required;
-            type = as_type.array ? 'array' : as_type.type;
+            type = as_type.array ? "array" : as_type.type;
         } else {
-            type = as_type || 'undefined';
+            type = as_type || "undefined";
         }
         type = this._translateType(type);
-        if ((type === 'undefined') && (arg_type === 'undefined')) {
-            [type, value] = ['string', ''];
+        if ((type === "undefined") && (arg_type === "undefined")) {
+            [type, value] = ["string", ""];
         } else {
             switch (type) {
-               case 'array':   value = this._asArray(value, arg_type);   break;
-               case 'object':  value = this._asObject(value, arg_type);  break;
-               case 'string':  value = this._asString(value, arg_type);  break;
-               case 'number':  value = this._asNumber(value, arg_type);  break;
-               case 'boolean': value = this._asBoolean(value, arg_type); break;
+               case "array":   value = this._asArray(value, arg_type);   break;
+               case "object":  value = this._asObject(value, arg_type);  break;
+               case "string":  value = this._asString(value, arg_type);  break;
+               case "number":  value = this._asNumber(value, arg_type);  break;
+               case "boolean": value = this._asBoolean(value, arg_type); break;
                default:        type  = arg_type; break;
            }
         }
         this._type  = type;
         this._value = value;
-        this._unset = (arg_type === 'undefined');
+        this._unset = (arg_type === "undefined");
     }
 
     // ========================================================================
@@ -429,8 +429,8 @@ export class Value extends BaseClass {
      */
     _typeFor(value) {
         switch (true) {
-            case Array.isArray(value):  return 'array';
-            case (value === null):      return 'undefined';
+            case Array.isArray(value):  return "array";
+            case (value === null):      return "undefined";
             default:                    return typeof(value);
         }
     }
@@ -445,7 +445,7 @@ export class Value extends BaseClass {
      */
     _translateType(type) {
         const translation = type && this.constructor.TRANSLATION[type];
-        return translation || type || 'string';
+        return translation || type || "string";
     }
 
     /**
@@ -472,9 +472,9 @@ export class Value extends BaseClass {
     _normalize(val, type) {
         let v, empty = this.constructor.EMPTY_VALUE;
         switch (type || this._typeFor(val)) {
-            case 'array':   return compact(val).filter(v => (v !== empty));
-            case 'string':  return (v = val.trim()) && (v === empty) ? '' : v;
-            default:        return this._significant(val) ? val : '';
+            case "array":   return compact(val).filter(v => (v !== empty));
+            case "string":  return (v = val.trim()) && (v === empty) ? "" : v;
+            default:        return this._significant(val) ? val : "";
         }
     }
 
@@ -508,10 +508,10 @@ export class Value extends BaseClass {
      */
     _asString(value, type) {
         switch (type || this._typeFor(value)) {
-            case 'string':  return value;
-            case 'array':   return value.join("\n");
-            case 'object':  return asString(value);
-            default:        return value?.toString() || '';
+            case "string":  return value;
+            case "array":   return value.join("\n");
+            case "object":  return asString(value);
+            default:        return value?.toString() || "";
         }
     }
 
@@ -526,7 +526,7 @@ export class Value extends BaseClass {
      */
     _asBoolean(value, type) {
         switch (type || this._typeFor(value)) {
-            case 'string':  return (value.toLowerCase() === 'true');
+            case "string":  return (value.toLowerCase() === "true");
             default:        return Boolean(value);
         }
     }
@@ -604,7 +604,7 @@ export class Value extends BaseClass {
             } else {
                 msg.push(v || Emma.Messages.invalid);
             }
-            this._errors[k] = msg.join('; ');
+            this._errors[k] = msg.join("; ");
         }
     }
 
@@ -640,9 +640,9 @@ export class Value extends BaseClass {
      * @returns {string}
      */
     toString(separator = "\n") {
-        if (this.type === 'array') {
+        if (this.type === "array") {
             let val = this.value;
-            let sep = separator || '';
+            let sep = separator || "";
             if (sep.trim()) {
                 val = val.map(v => this._asString(v));
                 val = val.map(v => v.endsWith(sep) ? v : (v + sep));
@@ -660,7 +660,7 @@ export class Value extends BaseClass {
      * @returns {string[]}
      */
     toArray() {
-        if (this.type === 'array') {
+        if (this.type === "array") {
             return this.value;
         } else {
             const value = this._asString(this.value, this.type);
@@ -688,10 +688,10 @@ export class Value extends BaseClass {
      */
     toHtml(cls_or_fn) {
         let fn;
-        if (typeof(cls_or_fn) === 'function') {
+        if (typeof(cls_or_fn) === "function") {
             fn = cls_or_fn;
         } else {
-            const cls = ['item', ...arrayWrap(cls_or_fn)].join(' ');
+            const cls = ["item", ...arrayWrap(cls_or_fn)].join(" ");
             fn = (v, idx) => `<div class="${cls} item-${idx}">${v}</div>`;
         }
         const values = this.toArray().map(v => this._representation(v));
@@ -724,7 +724,7 @@ export class Value extends BaseClass {
      *  @returns {string|string[]}
      */
     forDisplay(encode) {
-        if (this.type === 'array') {
+        if (this.type === "array") {
             return (encode === false) ? this.value : this.toHtml();
         } else {
             const value = this._representation(this.value, this.type);
@@ -735,7 +735,7 @@ export class Value extends BaseClass {
     /**
      * Return a representation of the value for initializing an input.
      *
-     * @param {string} [separator]  Only for {@link type} === 'array'.
+     * @param {string} [separator]  Only for {@link type} === "array".
      *
      * @returns {string}
      */
@@ -817,12 +817,12 @@ export class Value extends BaseClass {
     static differ(value1, value2, ordered, value_only) {
         const [v1, v2] = [value1, value2].map(v => this.wrap(v));
 
-        const [a1, a2] = [v1, v2].map(v => (v.type === 'array'));
+        const [a1, a2] = [v1, v2].map(v => (v.type === "array"));
         if (a1 || a2) {
             return !a1 || !a2 || this._diffArray(v1.value, v2.value, ordered);
         }
 
-        const [o1, o2] = [v1, v2].map(v => (v.type === 'object'));
+        const [o1, o2] = [v1, v2].map(v => (v.type === "object"));
         if (o1 || o2) {
             return !o1 || !o2 || this._diffObject(v1.value, v2.value, ordered);
         }
@@ -883,7 +883,7 @@ export class Value extends BaseClass {
         const [a1, a2] = [v1, v2].map(v => Array.isArray(v));
         if (a1 || a2) { return !a1 || !a2 || this._diffArray(v1, v2, ordered) }
 
-        const [o1, o2] = [v1, v2].map(v => (typeof(v) === 'object'));
+        const [o1, o2] = [v1, v2].map(v => (typeof(v) === "object"));
         return !o1 || !o2 || this._diffObject(v1, v2, ordered);
     }
 

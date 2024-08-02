@@ -2,7 +2,7 @@
 //
 // Entry point for the SASS build designated in package.json.
 
-@use 'layouts';     // Base page styles
-@use 'vendor';      // Library style overrides
-@use 'feature';     // Base feature styles
-@use 'controllers'; // Controller-specific styles
+@use "layouts";     // Base page styles
+@use "vendor";      // Library style overrides
+@use "feature";     // Base feature styles
+@use "controllers"; // Controller-specific styles

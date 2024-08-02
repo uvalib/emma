@@ -1,9 +1,9 @@
 // app/assets/stylesheets/layouts/header/_nav_bar.scss
 
-@use 'shared/variables'        as *;
-@use 'shared/mixins'           as *;
-@use 'shared/controls/buttons' as button;
-@use 'shared/layouts/header'   as header;
+@use "shared/variables"        as *;
+@use "shared/mixins"           as *;
+@use "shared/controls/buttons" as button;
+@use "shared/layouts/header"   as header;
 
 // Navigation bar (<nav>) at the top of every page just below the top banner.
 .layout-navbar {

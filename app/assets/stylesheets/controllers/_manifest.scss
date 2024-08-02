@@ -2,17 +2,17 @@
 //
 // Bulk operation manifests
 
-@use 'shared/variables'        as *;
-@use 'shared/functions'        as *;
-@use 'shared/mixins'           as *;
-@use 'shared/controls/buttons' as button;
-@use 'shared/controls/grids'   as grid;
-@use 'shared/controls/popup'   as popup;
-@use 'shared/controls/tables'  as table;
-@use 'shared/feature/model'    as model;
-@use 'shared/layouts/overlay'  as overlay;
+@use "shared/variables"        as *;
+@use "shared/functions"        as *;
+@use "shared/mixins"           as *;
+@use "shared/controls/buttons" as button;
+@use "shared/controls/grids"   as grid;
+@use "shared/controls/popup"   as popup;
+@use "shared/controls/tables"  as table;
+@use "shared/feature/model"    as model;
+@use "shared/layouts/overlay"  as overlay;
 
-@use 'controllers/entry'       as entry-classes;
+@use "controllers/entry"       as entry-classes;
 
 //=============================================================================
 // Manifest index page
@@ -236,8 +236,8 @@ body.manifest.edit:not(.select) {
             @media #{$narrow-screen} {
 
                 grid-template-areas:
-                    'heading title-edit'
-                    'heading help-popup';
+                    "heading title-edit"
+                    "heading help-popup";
 
                 .heading    { grid-area: heading; }
                 .title-edit { grid-area: title-edit; }
@@ -262,8 +262,8 @@ body.manifest.edit:not(.select) {
                 .line-editor {
 
                     grid-template-areas:
-                        'input update'
-                        'input cancel';
+                        "input update"
+                        "input cancel";
 
                     input   { grid-area: input; height: max-content; }
                     .update { grid-area: update; }
@@ -926,7 +926,7 @@ body.manifest.remit:not(.select) {
                 //=============================================================
 
                 &.active::after {
-                    content:    ' ';
+                    content:    " ";
                     height:     100%;
                     box-shadow: 0 0 1.25rem 1.5rem $bg-clear;
                 }

@@ -1,17 +1,17 @@
 // app/assets/javascripts/feature/panel.js
 
 
-import { AppDebug }               from '../application/debug';
-import { appSetup }               from '../application/setup';
-import { handleClickAndKeypress } from '../shared/accessibility';
-import { Emma }                   from '../shared/assets';
-import { isMissing, isPresent }   from '../shared/definitions';
+import { AppDebug }               from "../application/debug";
+import { appSetup }               from "../application/setup";
+import { handleClickAndKeypress } from "../shared/accessibility";
+import { Emma }                   from "../shared/assets";
+import { isMissing, isPresent }   from "../shared/definitions";
 
 
-const MODULE = 'Panel';
+const MODULE = "Panel";
 const DEBUG  = true;
 
-AppDebug.file('feature/panel', MODULE, DEBUG);
+AppDebug.file("feature/panel", MODULE, DEBUG);
 
 appSetup(MODULE, function() {
 
@@ -45,7 +45,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const OPEN = 'open';
+    const OPEN = "open";
 
     /**
      * State value indicating that the panel is hidden.
@@ -53,7 +53,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const CLOSED = 'closed';
+    const CLOSED = "closed";
 
     /**
      * Marker class indicating that the panel is displayed.
@@ -61,7 +61,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const OPEN_MARKER = 'open';
+    const OPEN_MARKER = "open";
 
     // ========================================================================
     // Functions
@@ -78,8 +78,8 @@ appSetup(MODULE, function() {
         if (isPresent($panel)) {
             const opening = !$panel.hasClass(OPEN_MARKER);
             if (OUT.debugging()) {
-                const action = opening ? 'SHOW' : 'HIDE';
-                OUT.debug(action, getPanelId($button), 'panel');
+                const action = opening ? "SHOW" : "HIDE";
+                OUT.debug(action, getPanelId($button), "panel");
             }
             if (RESTORE_PANEL_STATE) {
                 setState($button, opening);
@@ -108,7 +108,7 @@ appSetup(MODULE, function() {
      * @returns {string|undefined}
      */
     function getPanelId(button) {
-        return $(button).attr('aria-controls');
+        return $(button).attr("aria-controls");
     }
 
     /**
@@ -120,7 +120,7 @@ appSetup(MODULE, function() {
      */
     function getPanelSelector(button) {
         const $button = $(button);
-        return $button.attr('data-selector') || ('#' + getPanelId($button));
+        return $button.attr("data-selector") || ('#' + getPanelId($button));
     }
 
     /**
@@ -132,8 +132,8 @@ appSetup(MODULE, function() {
     function setState(target, opening) {
         let panel = target;
         let state = opening;
-        if (typeof panel !== 'string') { panel = getPanelSelector(panel) }
-        if (typeof state !== 'string') { state = state ? OPEN : CLOSED }
+        if (typeof panel !== "string") { panel = getPanelSelector(panel) }
+        if (typeof state !== "string") { state = state ? OPEN : CLOSED }
         sessionStorage.setItem(panel, state);
     }
 
@@ -146,7 +146,7 @@ appSetup(MODULE, function() {
      */
     function getState(target) {
         let panel = target;
-        if (typeof panel !== 'string') { panel = getPanelSelector(panel) }
+        if (typeof panel !== "string") { panel = getPanelSelector(panel) }
         return sessionStorage.getItem(panel);
     }
 
@@ -198,8 +198,8 @@ appSetup(MODULE, function() {
         /** @type {{label: string, tooltip: string}} */
         const value = opening ? Emma.Panel.closer : Emma.Panel.opener;
         $button.html(value.label);
-        $button.attr('title', value.tooltip);
-        $button.attr('aria-expanded', opening);
+        $button.attr("title", value.tooltip);
+        $button.attr("aria-expanded", opening);
     }
 
     // ========================================================================

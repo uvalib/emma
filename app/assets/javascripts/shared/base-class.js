@@ -3,13 +3,13 @@
 // noinspection FunctionNamingConventionJS, JSUnusedGlobalSymbols
 
 
-import { AppDebug } from '../application/debug';
+import { AppDebug } from "../application/debug";
 
 
-const MODULE = 'BaseClass';
+const MODULE = "BaseClass";
 const DEBUG  = false;
 
-AppDebug.file('shared/base-class', MODULE, DEBUG);
+AppDebug.file("shared/base-class", MODULE, DEBUG);
 
 // ============================================================================
 // Class BaseClass
@@ -27,7 +27,7 @@ AppDebug.file('shared/base-class', MODULE, DEBUG);
  */
 export class BaseClass {
 
-    static CLASS_NAME = 'BaseClass';
+    static CLASS_NAME = "BaseClass";
 
     /**
      * Default console debug output setting (overridden per class).
@@ -42,8 +42,8 @@ export class BaseClass {
      * @type {number}
      */
     static CLASS_ALIGN = AppDebug.MOD_ALIGN;
-    static IN_INSTANCE = Symbol('');
-    static IN_CLASS    = Symbol('CLASS');
+    static IN_INSTANCE = Symbol("");
+    static IN_CLASS    = Symbol("CLASS");
 
     /**
      * If debugging, emit a log entry for the constructor.
@@ -57,7 +57,7 @@ export class BaseClass {
     // ========================================================================
 
     constructor() {
-        if (this.constructor.DEBUG_CTOR) { this._debug('CTOR') }
+        if (this.constructor.DEBUG_CTOR) { this._debug("CTOR") }
     }
 
     // ========================================================================
@@ -165,15 +165,15 @@ export class BaseClass {
      */
     static _prefix(first, ...args) {
         let start, context;
-        if (typeof first === 'symbol') {
+        if (typeof first === "symbol") {
             start   = Array.isArray(args[0]) ? args.shift() : [];
             context = first;
         } else if (Array.isArray(first)) {
             start   = first;
-            context = (typeof start[0] === 'symbol') && start.shift();
+            context = (typeof start[0] === "symbol") && start.shift();
         } else {
             start   = [first];
-            context = (typeof args[0] === 'symbol') && args.shift();
+            context = (typeof args[0] === "symbol") && args.shift();
         }
         if (!context) {
             start = [this.CONTEXT.description, ...start]; // Def. class context

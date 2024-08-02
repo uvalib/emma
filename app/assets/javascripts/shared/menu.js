@@ -3,20 +3,20 @@
 // Advanced menus with Select2.
 
 
-import { AppDebug }                      from '../application/debug';
-import { arrayWrap, maxSize }            from './arrays';
-import { Emma }                          from './assets';
-import { selector }                      from './css';
-import { isMissing, isPresent }          from './definitions';
-import { handleEvent }                   from './events';
-import { selfOrDescendents }             from './html';
-import { compact, deepFreeze, toObject } from './objects';
+import { AppDebug }                      from "../application/debug";
+import { arrayWrap, maxSize }            from "./arrays";
+import { Emma }                          from "./assets";
+import { selector }                      from "./css";
+import { isMissing, isPresent }          from "./definitions";
+import { handleEvent }                   from "./events";
+import { selfOrDescendents }             from "./html";
+import { compact, deepFreeze, toObject } from "./objects";
 
 
-const MODULE = 'Menu';
+const MODULE = "Menu";
 const DEBUG  = true;
 
-AppDebug.file('shared/menu', MODULE, DEBUG);
+AppDebug.file("shared/menu", MODULE, DEBUG);
 
 // ============================================================================
 // Type definitions
@@ -61,7 +61,7 @@ const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
  * @readonly
  * @type {string}
  */
-const ADVANCED_MARKER = 'advanced';
+const ADVANCED_MARKER = "advanced";
 
 /**
  * CSS class for `<select>` elements managed by Select2.
@@ -69,11 +69,11 @@ const ADVANCED_MARKER = 'advanced';
  * @readonly
  * @type {string}
  */
-const SELECT2_ATTACHED_CLASS = 'select2-hidden-accessible';
+const SELECT2_ATTACHED_CLASS = "select2-hidden-accessible";
 
-const MENU_CLASS        = 'menu-control';
-const SINGLE_CLASS      = 'single';
-const MULTIPLE_CLASS    = 'multiple';
+const MENU_CLASS        = "menu-control";
+const SINGLE_CLASS      = "single";
+const MULTIPLE_CLASS    = "multiple";
 
 const ADVANCED          = selector(ADVANCED_MARKER);
 const SELECT2_ATTACHED  = selector(SELECT2_ATTACHED_CLASS);
@@ -88,18 +88,18 @@ const MULTIPLE          = selector(MULTIPLE_CLASS);
  * @type {string[]}
  */
 const SELECT2_EVENTS = deepFreeze([
-    'change',
-    'change.select2',
-    'select2:clearing',
-    'select2:clear',
-    'select2:opening',
-    'select2:open',
-    'select2:selecting',
-    'select2:select',
-    'select2:unselecting',
-    'select2:unselect',
-    'select2:closing',
-    'select2:close',
+    "change",
+    "change.select2",
+    "select2:clearing",
+    "select2:clear",
+    "select2:opening",
+    "select2:open",
+    "select2:selecting",
+    "select2:select",
+    "select2:unselecting",
+    "select2:unselect",
+    "select2:closing",
+    "select2:close",
 ]);
 
 /**
@@ -110,7 +110,7 @@ const SELECT2_EVENTS = deepFreeze([
  * @type {string[]}
  */
 const PRE_CHANGE_EVENTS =
-    deepFreeze(['select2:selecting', 'select2:unselecting']);
+    deepFreeze(["select2:selecting", "select2:unselecting"]);
 
 /**
  * Select2 events which follow a change which causes a new search to be
@@ -120,18 +120,18 @@ const PRE_CHANGE_EVENTS =
  * @type {string[]}
  */
 const POST_CHANGE_EVENTS =
-    deepFreeze(['select2:select', 'select2:unselect']);
+    deepFreeze(["select2:select", "select2:unselect"]);
 
 // ============================================================================
 // Functions
 // ============================================================================
 
 /**
- * The 'data-*' attribute used to save the originally selected menu item(s).
+ * The "data-*" attribute used to save the originally selected menu item(s).
  *
  * @type {string}
  */
-export const DATA_ORIGINAL = 'data-original';
+export const DATA_ORIGINAL = "data-original";
 
 /**
  * Return the originally selected menu item(s).
@@ -153,7 +153,7 @@ export function getOriginalMenuValue(menu) {
  * @returns {string|undefined}
  */
 export function setOriginalMenuValue(menu, value) {
-    menuFor(menu).attr(DATA_ORIGINAL, (value || ''));
+    menuFor(menu).attr(DATA_ORIGINAL, (value || ""));
 }
 
 // ============================================================================
@@ -182,7 +182,7 @@ export function initializeMenuControls(root, opt) {
  * @returns {undefined}
  */
 export function initializeSingleSelect(entries, opt) {
-    const func = 'initializeSingleSelect';
+    const func = "initializeSingleSelect";
     const $all = menusIn(entries, SINGLE);
     if (isMissing($all)) { return OUT.debug(`${func}: no menus found`) }
 
@@ -204,14 +204,14 @@ export function initializeSingleSelect(entries, opt) {
         eventHandlers($menus, SELECT2_EVENTS, logSelectEvent);
     }
     if (opt?.on_change) {
-        eventHandlers($menus, 'change', opt.on_change);
+        eventHandlers($menus, "change", opt.on_change);
     }
-    eventHandlers($menus, 'select2:open', _event => {
+    eventHandlers($menus, "select2:open", _event => {
         const $dropdown = $('.select2-container--open');
         const $input    = $dropdown.find('input.select2-search__field');
-        const text      = 'Search in list...'; // TODO: I18n
-        $input.attr('placeholder', text);
-        $input.attr('data-lpignore', true); // Needed for LastPass.
+        const text      = "Search in list..."; // TODO: I18n
+        $input.attr("placeholder", text);
+        $input.attr("data-lpignore", true); // Needed for LastPass.
     });
 }
 
@@ -224,7 +224,7 @@ export function initializeSingleSelect(entries, opt) {
  * @returns {undefined}
  */
 export function initializeMultiSelect(entries, opt) {
-    const func = 'initializeMultiSelect';
+    const func = "initializeMultiSelect";
     const $all = menusIn(entries, MULTIPLE);
     if (isMissing($all)) { return OUT.debug(`${func}: no menus found`) }
 
@@ -270,8 +270,8 @@ function initializeGenericMenu($menus, opt) {
     $menus.each((_, menu) => {
         const $menu = menuFor(menu);
         if ($menu.not(SELECT2_ATTACHED)) {
-            if (form_id)   { $menu.attr('form', form_id) }
-            if (on_change) { handleEvent($menu, 'change', on_change) }
+            if (form_id)   { $menu.attr("form", form_id) }
+            if (on_change) { handleEvent($menu, "change", on_change) }
             setOriginalMenuValue($menu, $menu.val());
         }
     });
@@ -296,22 +296,22 @@ function initializeSingleSelectMenus($menus, opt) {
 
         // Special handling for form-based dropdown menus (i.e. those not
         // generated from LayoutHelper::SearchFilters#menu_control).
-        if (!$menu.attr('data-unset')) {
+        if (!$menu.attr("data-unset")) {
 
             // Set an explicit width style to satisfy Select2 configuration
-            // width settings 'style' or (the default) 'resolve' including
+            // width settings "style" or (the default) "resolve" including
             // extra room for the arrow which Select2 adds.
             const width = $menu.outerWidth(false) + 20;
-            $menu.css('width', width);
+            $menu.css("width", width);
 
-            // The text of initial `<option>` entries which do not represent ''
+            // The text of initial `<option>` entries which do not represent ""
             // as a valid data selection need to be represented to Select2 as a
             // placeholder so that it doesn't appear as an actual menu choice.
             const $first = $menu.find('option').first();
             const text   = $first.text();
-            if (!text.startsWith('(')) {
+            if (!text.startsWith("(")) {
                 options = { ...options, placeholder: text };
-                $first.text('');
+                $first.text("");
             }
         }
 
@@ -332,8 +332,8 @@ function initializeMultiSelectMenus($menus, opt) {
         dropdownCssClass:   MULTIPLE_CLASS,
         ...opt?.options
     };
-    const aria_attrs     = ['aria-label', 'aria-labelledby'];
-    const to_be_labelled = '[aria-haspopup], [tabindex]';
+    const aria_attrs     = ["aria-label", "aria-labelledby"];
+    const to_be_labelled = "[aria-haspopup], [tabindex]";
     $menus.each((_, menu) => {
         let options = opt_options;
         const $menu = $(menu);
@@ -347,7 +347,7 @@ function initializeMultiSelectMenus($menus, opt) {
 
         // Special handling for multi-select menus generated by
         // LayoutHelper::SearchFilters#menu_control.
-        const text = $menu.attr('data-unset');
+        const text = $menu.attr("data-unset");
         if (text) {
             options = { ...options, placeholder: text };
         }
@@ -368,7 +368,7 @@ function initializeMultiSelectMenus($menus, opt) {
 function initializeSelect2Menus($menus, opt) {
     /** @type {Select2Options} */
     const options = {
-        width:                      'resolve',
+        width:                      "resolve",
         debug:                      OUT.debugging(),
         language:                   select2Language(),
         minimumResultsForSearch:    10,
@@ -406,33 +406,33 @@ function select2Language() {
  */
 function generateSelect2Language() {
     const text = {
-      //errorLoading:    'The results could not be loaded.',
-      //inputTooLong:    'Please delete {n} character',
-      //inputTooShort:   'Please enter {n} or more characters',
-      //loadingMore:     'Loading more results…',
-      //maximumSelected: 'You can only select {n} item',
-      //noResults:       'No results found',
-      //searching:       'Searching…',
+      //errorLoading:    "The results could not be loaded.",
+      //inputTooLong:    "Please delete {n} character",
+      //inputTooShort:   "Please enter {n} or more characters",
+      //loadingMore:     "Loading more results…",
+      //maximumSelected: "You can only select {n} item",
+      //noResults:       "No results found",
+      //searching:       "Searching…",
         removeAllItems:  Emma.Messages.search_filters.remove_all,
     };
     const translations = {};
     for (const [name, value] of Object.entries(text)) {
         let fn;
         switch (name) {
-            case 'inputTooLong':
+            case "inputTooLong":
                 fn = (args) => {
                     const overage = args.input.length - args.maximum;
                     const result  = value.replace(/{n}/, `${overage}`);
                     return (overage === 1) ? result : `${result}s`;
                 };
                 break;
-            case 'inputTooShort':
+            case "inputTooShort":
                 fn = (args) => {
                     const remaining = args.minimum - args.input.length;
                     return value.replace(/{n}/, `${remaining}`);
                 };
                 break;
-            case 'maximumSelected':
+            case "maximumSelected":
                 fn = (args) => {
                     const limit  = args.maximum;
                     const result = value.replace(/{n}/, limit);
@@ -452,7 +452,7 @@ function generateSelect2Language() {
 // Functions -- immediate
 // ============================================================================
 
-const IMMEDIATE_EVENT_PROP = 'ongoing-event';
+const IMMEDIATE_EVENT_PROP = "ongoing-event";
 
 /**
  * Set up the given menus for immediate action leading to replacement of the
@@ -466,7 +466,7 @@ function initializeImmediate($menus, pre_change) {
         eventHandlers($menus, PRE_CHANGE_EVENTS, pre_change);
     }
     eventHandlers($menus, POST_CHANGE_EVENTS, multiSelectPostChange);
-    eventHandlers($menus, 'select2:opening',  suppressMenuOpen);
+    eventHandlers($menus, "select2:opening",  suppressMenuOpen);
 }
 
 /**
@@ -494,7 +494,7 @@ function suppressMenuOpen(event) {
     if ($menu.prop(IMMEDIATE_EVENT_PROP)) {
         event.preventDefault();
         event.stopImmediatePropagation();
-        $menu.removeProp(IMMEDIATE_EVENT_PROP).select2('close');
+        $menu.removeProp(IMMEDIATE_EVENT_PROP).select2("close");
     }
 }
 
@@ -546,7 +546,7 @@ function isAdvanced(menu) {
 
 /**
  * Get all menus at or below the element(s) described by *base*, limited to
- * 'single' or 'multiple' if *type* is given.
+ * "single" or "multiple" if *type* is given.
  *
  * @param {Selector} base
  * @param {string}   [type]           Either SINGLE_CLASS or MULTIPLE_CLASS.
@@ -590,14 +590,14 @@ const SELECT2_EVENTS_WIDTH = maxSize(SELECT2_EVENTS);
 function logSelectEvent(event) {
     const type = `${event.type}`.padEnd(SELECT2_EVENTS_WIDTH);
     const menu = event.currentTarget || event.target;
-    let target = '';
+    let target = "";
   //if (menu.localName) { target += menu.localName }
-    if (menu.id)        { target += '#' + menu.id }
-  //if (menu.className) { target += '.' + menu.className }
+    if (menu.id)        { target += "#" + menu.id }
+  //if (menu.className) { target += "." + menu.className }
   //if (menu.type)      { target += `[${menu.type}]` }
     // noinspection JSCheckFunctionSignatures
     const $selected = $(menu).siblings().find('[aria-activedescendant]');
-    const selected  = $selected.attr('aria-activedescendant');
-    if (selected) { target += ' ' + selected }
-    OUT.debug('SELECT2', type, target);
+    const selected  = $selected.attr("aria-activedescendant");
+    if (selected) { target += " " + selected }
+    OUT.debug("SELECT2", type, target);
 }

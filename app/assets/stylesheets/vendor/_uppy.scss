@@ -1,8 +1,8 @@
 // app/assets/stylesheets/vendor/_uppy.scss
 
-@use 'shared/variables'        as *;
-@use 'shared/functions'        as *;
-@use 'shared/controls/buttons' as button;
+@use "shared/variables"        as *;
+@use "shared/functions"        as *;
+@use "shared/controls/buttons" as button;
 
 //=============================================================================
 // Overrides of Uppy styles (node_modules/@uppy/core/src/_common.scss)

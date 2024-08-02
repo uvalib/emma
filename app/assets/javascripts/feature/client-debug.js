@@ -3,17 +3,17 @@
 // This module supports dev-only display of client-side information.
 
 
-import { AppDebug }             from '../application/debug';
-import { appSetup }             from '../application/setup';
-import { classesWithin }        from '../shared/css';
-import { isMissing, isPresent } from '../shared/definitions';
-import { dataAttributesWithin } from '../shared/html';
+import { AppDebug }             from "../application/debug";
+import { appSetup }             from "../application/setup";
+import { classesWithin }        from "../shared/css";
+import { isMissing, isPresent } from "../shared/definitions";
+import { dataAttributesWithin } from "../shared/html";
 
 
-const MODULE = 'ClientDebug';
+const MODULE = "ClientDebug";
 const DEBUG  = false;
 
-AppDebug.file('feature/client-debug', MODULE, DEBUG);
+AppDebug.file("feature/client-debug", MODULE, DEBUG);
 
 appSetup(MODULE, function() {
 
@@ -52,7 +52,7 @@ appSetup(MODULE, function() {
         if (isPresent($value)) {
             const names = items_in($root);
             const html  = names.map(name => item(name)).join("\n");
-            $value.html(html || '&ndash;');
+            $value.html(html || "&ndash;");
         }
     }
 
@@ -61,9 +61,9 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     // Show data-* attributes used within the page. (DEBUG_DATA_ATTR)
-    fillIn('data-*', dataAttributesWithin);
+    fillIn("data-*", dataAttributesWithin);
 
     // Show CSS classes used within the page. (DEBUG_CSS_CLASS)
-    fillIn('class', classesWithin);
+    fillIn("class", classesWithin);
 
 });

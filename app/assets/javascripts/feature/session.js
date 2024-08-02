@@ -1,17 +1,17 @@
 // app/assets/javascripts/feature/session.js
 
 
-import { AppDebug }           from '../application/debug';
-import { appSetup }           from '../application/setup';
-import { currentlyFocusable } from '../shared/accessibility';
-import { isInternetExplorer } from '../shared/browser';
-import { isPresent }          from '../shared/definitions';
-import { documentEvent }      from '../shared/events';
-import { SearchInProgress }   from '../shared/search-in-progress';
-import { urlFrom }            from '../shared/url';
+import { AppDebug }           from "../application/debug";
+import { appSetup }           from "../application/setup";
+import { currentlyFocusable } from "../shared/accessibility";
+import { isInternetExplorer } from "../shared/browser";
+import { isPresent }          from "../shared/definitions";
+import { documentEvent }      from "../shared/events";
+import { SearchInProgress }   from "../shared/search-in-progress";
+import { urlFrom }            from "../shared/url";
 
 
-const PATH = 'feature/session';
+const PATH = "feature/session";
 
 AppDebug.file(PATH);
 
@@ -30,10 +30,10 @@ appSetup(PATH, function() {
     // ========================================================================
 
     // Ignore Turbolinks on anchor links.
-    documentEvent('turbolinks:click', checkInPageAnchor);
+    documentEvent("turbolinks:click", checkInPageAnchor);
 
     // Monitor page visibility.
-    documentEvent('visibilitychange', pageVisibility);
+    documentEvent("visibilitychange", pageVisibility);
 
     // ========================================================================
     // Actions
@@ -49,11 +49,11 @@ appSetup(PATH, function() {
 
     // Display an alert if running from MS Internet Explorer.
     if (isInternetExplorer()) {
-        window.document.body.style.display = 'none';
+        window.document.body.style.display = "none";
         alert(
-            'EMMA does not support Microsoft Internet Explorer.' + "\n\n" +
-            'Please view this site in Chrome, Firefox, Safari, ' +
-            'Microsoft Edge or other modern web browser.'
+            "EMMA does not support Microsoft Internet Explorer." + "\n\n" +
+            "Please view this site in Chrome, Firefox, Safari, " +
+            "Microsoft Edge or other modern web browser."
         );
     }
 
@@ -75,23 +75,23 @@ appSetup(PATH, function() {
      */
     function getInPageAnchor(arg, bare) {
         let path;
-        if (typeof arg === 'string') {
+        if (typeof arg === "string") {
             path = arg;
         } else if (isPresent(arg)) {
             path = urlFrom(arg);
         } else {
             path = window.location.hash;
         }
-        if (path.startsWith('http')) {
+        if (path.startsWith("http")) {
             let in_page = false;
-            if (path.includes('#')) {
-                const curr_url = window.location.href.replace(/#.*$/, '');
-                const new_url  = path.replace(/#.*$/, '');
+            if (path.includes("#")) {
+                const curr_url = window.location.href.replace(/#.*$/, "");
+                const new_url  = path.replace(/#.*$/, "");
                 in_page = (new_url === curr_url);
             }
-            path = in_page ? path.replace(/^.*#/, '') : '';
+            path = in_page ? path.replace(/^.*#/, "") : "";
         }
-        const anchor = path.split('#').pop();
+        const anchor = path.split("#").pop();
         return (anchor && !bare) ? `#${anchor}` : anchor;
     }
 
@@ -131,12 +131,12 @@ appSetup(PATH, function() {
      *
      */
     function focusAnchor(event) {
-        const func   = 'focusAnchor';
+        const func   = "focusAnchor";
         const anchor = getInPageAnchor(event);
         let $anchor  = anchor && $(anchor);
         DEBUG && console.log(`${func}: $anchor =`, $anchor);
         if (($anchor &&= $anchor.first()) && currentlyFocusable($anchor)) {
-            $anchor.trigger('focus');
+            $anchor.trigger("focus");
         }
     }
 
@@ -154,7 +154,7 @@ appSetup(PATH, function() {
      * @see https://github.com/turbolinks/turbolinks/issues/75
      */
     function checkInPageAnchor(event) {
-        const func   = 'checkInPageAnchor';
+        const func   = "checkInPageAnchor";
         const anchor = getInPageAnchor(event);
         if (anchor) {
             console.log(`${func}: anchor "${anchor}" for`, event);
@@ -181,7 +181,7 @@ appSetup(PATH, function() {
      */
     function pageVisibility(event) {
         const state  = document.visibilityState;
-        const change = (state === 'visible') ? 'VISIBLE NOW' : 'NOT VISIBLE';
+        const change = (state === "visible") ? "VISIBLE NOW" : "NOT VISIBLE";
         const target = event.target.URL;
         console.warn(`PAGE ${change} ${target}`);
     }

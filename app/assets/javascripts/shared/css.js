@@ -1,14 +1,14 @@
 // app/assets/javascripts/shared/css.js
 
 
-import { AppDebug }                      from '../application/debug';
-import { arrayWrap }                     from './arrays';
-import { Emma }                          from './assets';
-import { isDefined, isEmpty, isPresent } from './definitions';
-import { isObject }                      from './objects';
+import { AppDebug }                      from "../application/debug";
+import { arrayWrap }                     from "./arrays";
+import { Emma }                          from "./assets";
+import { isDefined, isEmpty, isPresent } from "./definitions";
+import { isObject }                      from "./objects";
 
 
-AppDebug.file('shared/css');
+AppDebug.file("shared/css");
 
 // ============================================================================
 // Constants
@@ -35,9 +35,9 @@ export function toggleClass(target, cls, setting) {
 /**
  * Hide/show an element.
  *
- * @note A "hidden" element is effectively removed from the display; an
- *  "invisible" element still takes up space on the display.  Both cases result
- *  in 'aria-hidden' being set to make it unavailable to screen readers.
+ * @note A *hidden* element is effectively removed from the display; an
+ *  *invisible* element still takes up space on the display.  Both cases result
+ *  in "aria-hidden" being set to make it unavailable to screen readers.
  *
  * @param {Selector} target
  * @param {boolean}  [hide]       Default: toggle state.
@@ -51,9 +51,9 @@ export function toggleHidden(target, hide) {
     const $target = $(target);
     $target.toggleClass(HIDDEN_MARKER, hide);
     if (isDefined(hide) ? hide : isHidden($target)) {
-        $target.attr('aria-hidden', true);
+        $target.attr("aria-hidden", true);
     } else {
-        $target.removeAttr('aria-hidden');
+        $target.removeAttr("aria-hidden");
     }
     return $target;
 }
@@ -83,8 +83,8 @@ export function isHidden(target) {
 export function cssClasses(...args) {
     // noinspection FunctionWithInconsistentReturnsJS
     return args.map(arg => {
-        if (typeof arg === 'string') {
-            const vals = arg.replace(/[.\s]+/g, ' ').replace(/[#[]/g, ' $&');
+        if (typeof arg === "string") {
+            const vals = arg.replace(/[.\s]+/g, " ").replace(/[#[]/g, " $&");
             return vals.trim().split(/\s*,\s*|\s+/);
         } else if (arg instanceof Element) {
             return [...arg.classList];
@@ -94,7 +94,7 @@ export function cssClasses(...args) {
         } else if (Array.isArray(arg)) {
             return cssClasses(...arg);
         } else if (isObject(arg)) {
-            return arg['class'] && cssClasses(arg['class']);
+            return arg["class"] && cssClasses(arg["class"]);
         }
     }).flat().filter(v => isPresent(v));
 }
@@ -107,7 +107,7 @@ export function cssClasses(...args) {
  * @returns {string}
  */
 export function cssClassList(...args) {
-    return cssClasses(...args).join(' ');
+    return cssClasses(...args).join(" ");
 }
 
 /**
@@ -118,7 +118,7 @@ export function cssClassList(...args) {
  * @returns {string}
  */
 export function selector(...args) {
-    const func   = 'selector';
+    const func   = "selector";
     const result = [];
     args.forEach(arg => {
         let insert, append;
@@ -126,30 +126,30 @@ export function selector(...args) {
             //console.warn(`${func}: skipping empty ${typeof arg} = ${arg}`);
 
         } else if (Array.isArray(arg)) {
-            append = arg.map(v => selector(v)).join(', ');
+            append = arg.map(v => selector(v)).join(", ");
 
-        } else if (typeof arg === 'object') {
-            append = arg['class'] && selector(arg['class']);
+        } else if (typeof arg === "object") {
+            append = arg["class"] && selector(arg["class"]);
 
-        } else if (typeof arg !== 'string') {
+        } else if (typeof arg !== "string") {
             console.warn(`${func}: ignored ${typeof arg} = ${arg}`);
 
-        } else if (arg === ',') {
-            append = ', ';
+        } else if (arg === ",") {
+            append = ", ";
 
-        } else if (arg.includes(',')) {
-            append = cssClasses(arg).map(v => selector(v)).join(', ');
+        } else if (arg.includes(",")) {
+            append = cssClasses(arg).map(v => selector(v)).join(", ");
 
-        } else if (arg.includes(' ')) {
-            append = cssClasses(arg).map(v => selector(v)).join('');
+        } else if (arg.includes(" ")) {
+            append = cssClasses(arg).map(v => selector(v)).join("");
 
-        } else if (arg[0] === '#') {    // ID selector
+        } else if (arg[0] === "#") {    // ID selector
             insert = arg;
 
-        } else if (arg[0] === '[') {    // Attribute selector
+        } else if (arg[0] === "[") {    // Attribute selector
             insert = arg;
 
-        } else if (arg[0] === '.') {    // CSS class selector
+        } else if (arg[0] === ".") {    // CSS class selector
             append = arg;
 
         } else {                        // CSS class
@@ -158,7 +158,7 @@ export function selector(...args) {
         insert && result.unshift(insert);
         append && result.push(append);
     });
-    return result.join('').trim().replace(/\s*,$/, '');
+    return result.join("").trim().replace(/\s*,$/, "");
 }
 
 /**
@@ -169,27 +169,27 @@ export function selector(...args) {
  * @returns {string}
  */
 export function attributeSelector(attributes) {
-    if (isEmpty(attributes)) { return '' }
+    if (isEmpty(attributes)) { return "" }
 
     let attr = attributes;
-    if (typeof attr === 'string') {
-        attr = attr.split(',');
+    if (typeof attr === "string") {
+        attr = attr.split(",");
     } else if (isObject(attr)) {
         attr = Object.entries(attr);
     } else if (!Array.isArray(attr)) {
         attr = arrayWrap(attr);
     } else if (!Array.isArray(attr[0])) {
-        attr = attr.join(',').split(',');
+        attr = attr.join(",").split(",");
     }
 
     if (Array.isArray(attr[0])) {
-        attr = attr.map(([k,v]) => [k, (v ? `${v}`.trim() : '')]);
+        attr = attr.map(([k,v]) => [k, (v ? `${v}`.trim() : "")]);
         attr = attr.map(([k,v]) => `[${k}="${v}"]`);
     } else {
         attr = attr.map(v => v && `${v}`.trim()).filter(v => v);
         attr = attr.map(v => v.match(/^\[.*]$/) ? v : `[${v}]`);
     }
-    return attr.join(', ');
+    return attr.join(", ");
 }
 
 /**
@@ -202,10 +202,10 @@ export function attributeSelector(attributes) {
  */
 export function elementName(element) {
     const e = $(element)[0];
-    if (!e)   { return '' }
+    if (!e)   { return "" }
     if (e.id) { return `#${e.id}` }
     const [name, css] = [e.localName, e.className];
-    return css ? [name, ...css.split(/\s+/)].join('.') : name;
+    return css ? [name, ...css.split(/\s+/)].join(".") : name;
 }
 
 /**

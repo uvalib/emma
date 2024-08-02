@@ -1,10 +1,10 @@
 // app/assets/javascripts/shared/random.js
 
 
-import { AppDebug } from '../application/debug';
+import { AppDebug } from "../application/debug";
 
 
-AppDebug.file('shared/random');
+AppDebug.file("shared/random");
 
 // ============================================================================
 // Constants
@@ -41,13 +41,13 @@ export const DEF_HEX_DIGITS = 6;
  */
 export function hexString(value, length) {
     let result;
-    if (typeof value === 'number') {
+    if (typeof value === "number") {
         result = value.toString(HEX_BASE);
     } else {
-        result = value.replaceAll(/\P{Hex}/ug, '').toLowerCase();
+        result = value.replaceAll(/\P{Hex}/ug, "").toLowerCase();
     }
     const fill = length ? (length - result.length) : 0;
-    return (fill > 0) ? ('0'.repeat(fill) + result) : result;
+    return (fill > 0) ? ("0".repeat(fill) + result) : result;
 }
 
 /**
@@ -71,5 +71,5 @@ export function hexRand(length = DEF_HEX_DIGITS) {
  * @returns {string}
  */
 export function randomizeName(css_class) {
-    return css_class + '-' + hexRand();
+    return css_class + "-" + hexRand();
 }

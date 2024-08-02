@@ -1,44 +1,44 @@
 // app/assets/javascripts/feature/advanced-search.js
 
 
-import { AppDebug }                       from '../application/debug';
-import { appSetup }                       from '../application/setup';
-import { arrayWrap }                      from '../shared/arrays';
-import { Emma }                           from '../shared/assets';
-import { debounce, handleEvent, isEvent } from '../shared/events';
-import { turnOffAutocomplete }            from '../shared/form';
-import { compact, deepFreeze }            from '../shared/objects';
-import { randomizeName }                  from '../shared/random';
-import { urlParameters }                  from '../shared/url';
+import { AppDebug }                       from "../application/debug";
+import { appSetup }                       from "../application/setup";
+import { arrayWrap }                      from "../shared/arrays";
+import { Emma }                           from "../shared/assets";
+import { debounce, handleEvent, isEvent } from "../shared/events";
+import { turnOffAutocomplete }            from "../shared/form";
+import { compact, deepFreeze }            from "../shared/objects";
+import { randomizeName }                  from "../shared/random";
+import { urlParameters }                  from "../shared/url";
 import {
     toggleVisibility,
     handleClickAndKeypress,
-} from '../shared/accessibility';
+} from "../shared/accessibility";
 import {
     HIDDEN,
     isHidden,
     selector,
     toggleHidden,
-} from '../shared/css';
+} from "../shared/css";
 import {
     isDefined,
     isEmpty,
     isMissing,
     isPresent,
     notDefined,
-} from '../shared/definitions';
+} from "../shared/definitions";
 import {
     DATA_ORIGINAL,
     getOriginalMenuValue,
     initializeMenuControls,
     setOriginalMenuValue,
-} from '../shared/menu';
+} from "../shared/menu";
 
 
-const MODULE = 'AdvancedSearch';
+const MODULE = "AdvancedSearch";
 const DEBUG  = true;
 
-AppDebug.file('feature/advanced-search', MODULE, DEBUG);
+AppDebug.file("feature/advanced-search", MODULE, DEBUG);
 
 // noinspection FunctionTooLongJS
 appSetup(MODULE, function() {
@@ -62,18 +62,18 @@ appSetup(MODULE, function() {
     // Constants
     // ========================================================================
 
-    const IMMEDIATE_MARKER          = 'immediate-search-marker';
-    const SEARCH_BAR_CLASS          = 'search-bar-container';
-    const SEARCH_BAR_ROW_CLASS      = 'search-bar-row';
-    const SEARCH_BUTTON_CLASS       = 'search-button';
-    const SEARCH_CLEAR_CLASS        = 'search-clear';
-    const SEARCH_CONTROLS_CLASS     = 'search-controls';
-    const SEARCH_FILTER_CLASS       = 'menu-control';
-    const SEARCH_FILTERS_CLASS      = 'search-filter-container';
-    const SEARCH_INPUT_CLASS        = 'search-input';
-    const SEARCH_TOGGLE_CLASS       = 'advanced-search-toggle';
-    const SEARCH_TYPE_LABEL_CLASS   = 'search-input-label';
-    const SEARCH_TYPE_MENU_CLASS    = 'search-input-select';
+    const IMMEDIATE_MARKER          = "immediate-search-marker";
+    const SEARCH_BAR_CLASS          = "search-bar-container";
+    const SEARCH_BAR_ROW_CLASS      = "search-bar-row";
+    const SEARCH_BUTTON_CLASS       = "search-button";
+    const SEARCH_CLEAR_CLASS        = "search-clear";
+    const SEARCH_CONTROLS_CLASS     = "search-controls";
+    const SEARCH_FILTER_CLASS       = "menu-control";
+    const SEARCH_FILTERS_CLASS      = "search-filter-container";
+    const SEARCH_INPUT_CLASS        = "search-input";
+    const SEARCH_TOGGLE_CLASS       = "advanced-search-toggle";
+    const SEARCH_TYPE_LABEL_CLASS   = "search-input-label";
+    const SEARCH_TYPE_MENU_CLASS    = "search-input-select";
 
     const IMMEDIATE                 = selector(IMMEDIATE_MARKER);
     const SEARCH_BAR                = selector(SEARCH_BAR_CLASS);
@@ -94,7 +94,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const OPEN = 'open';
+    const OPEN = "open";
 
     /**
      * State value indicating the search filter panel is closed (contracted).
@@ -102,7 +102,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const CLOSED = 'closed';
+    const CLOSED = "closed";
 
     /**
      * Marker class indicating the search filter panel is open (expanded).
@@ -110,7 +110,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const OPEN_MARKER = 'open';
+    const OPEN_MARKER = "open";
 
     /**
      * The search target controller embedded in the HTML.
@@ -118,7 +118,7 @@ appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const SEARCH_TARGET = $search_sections.attr('data-target') || 'search';
+    const SEARCH_TARGET = $search_sections.attr("data-target") || "search";
 
     /**
      * Search types and their display properties.
@@ -268,7 +268,7 @@ appSetup(MODULE, function() {
             // persisted state).
             let was_open;
             if (isMissing($search_filters.filter('.row-2'))) {
-                $advanced_toggle.toggleClass('visible', false);
+                $advanced_toggle.toggleClass("visible", false);
                 toggleHidden($advanced_toggle, true);
                 was_open = true;
             } else {
@@ -310,7 +310,7 @@ appSetup(MODULE, function() {
      * @param {object} [url_params]   Default: {@link urlParameters}
      */
     function initializeSearchTerms(url_params) {
-        const func   = 'initializeSearchTerms';
+        const func   = "initializeSearchTerms";
         const params = url_params || urlParameters();
         const $rows  = $search_bar_rows;
 
@@ -319,7 +319,7 @@ appSetup(MODULE, function() {
             const $row = $(row);
             const type = SEARCH_TYPES[0];
             setSearchType($row, type, func, false);
-            setSearchInput($row, '', func, false);
+            setSearchInput($row, "", func, false);
         });
 
         // noinspection FunctionWithInconsistentReturnsJS
@@ -349,7 +349,7 @@ appSetup(MODULE, function() {
                 }
             });
             if (isEmpty(remaining_rows)) {
-                OUT.error(`${func}: ignoring`, type, param.join(','));
+                OUT.error(`${func}: ignoring`, type, param.join(","));
                 return true; // continue outer loop
             }
 
@@ -357,7 +357,7 @@ appSetup(MODULE, function() {
             // param rows until there are.
             while (param.length > remaining_rows.length) {
                 OUT.debug(`${func}: condensing ${type} param:`, param);
-                param = [...param.slice(0, -2), param.slice(-2).join(' ')];
+                param = [...param.slice(0, -2), param.slice(-2).join(" ")];
             }
 
             // Fill remaining rows with param term(s).
@@ -379,13 +379,13 @@ appSetup(MODULE, function() {
      * @param {object} [url_params]   Default: {@link urlParameters}
      */
     function initializeSearchFilters(url_params) {
-        const func   = 'initializeSearchFilters';
+        const func   = "initializeSearchFilters";
         const params = url_params || urlParameters();
         $search_filters.each((_, element) => {
             const $menu = getSearchFilterMenu(element, func);
-            const name  = $menu.attr('name');
-            const type  = name.replace('[]', '');
-            const param = params[type] || $menu.attr('data-default');
+            const name  = $menu.attr("name");
+            const type  = name.replace("[]", "");
+            const param = params[type] || $menu.attr("data-default");
             const array = (type === name) && Array.isArray(param);
             const value = array ? param.pop() : param;
             $menu.val(value);
@@ -405,7 +405,7 @@ appSetup(MODULE, function() {
         if (immediate) {
             opt.immediate = preChange;
         } else {
-            opt.form_id   = getSearchForm().attr('id');
+            opt.form_id   = getSearchForm().attr("id");
         }
         initializeMenuControls($search_filters, opt);
     }
@@ -420,14 +420,14 @@ appSetup(MODULE, function() {
         const $controls  = $filter_controls.siblings(SEARCH_CONTROLS),
               $filter_sb = $controls.find(SEARCH_BUTTON);
         if (isMissing($search_button.filter(':visible'))) {
-            if (!$search_button.attr('value')) {
+            if (!$search_button.attr("value")) {
                 const label = Emma.Messages.search_bar.button.label;
-                $search_button.attr('value', label);
-                $search_button.css('row-gap', '0.5rem');
+                $search_button.attr("value", label);
+                $search_button.css("row-gap", "0.5rem");
             }
-            toggleHidden($filter_sb, false).toggleClass('visible', true);
+            toggleHidden($filter_sb, false).toggleClass("visible", true);
         } else if ($filter_sb.is(':visible')) {
-            toggleHidden($filter_sb, true ).toggleClass('visible', false);
+            toggleHidden($filter_sb, true ).toggleClass("visible", false);
         }
     }
 
@@ -438,7 +438,7 @@ appSetup(MODULE, function() {
      * @see file:app/assets/stylesheets/layouts/header/_search.scss
      */
     function reorderSearchControls() {
-        const order    = (elem) => Number($(elem).css('order'));
+        const order    = (elem) => Number($(elem).css("order"));
         const by_order = (elem1, elem2) => order(elem1) - order(elem2);
         $(SEARCH_CONTROLS).each((_, container) => {
             const $container = $(container);
@@ -460,7 +460,7 @@ appSetup(MODULE, function() {
      */
     function initializeImmediateSearch() {
         if (!IMMEDIATE_SEARCH) { return }
-        OUT.debug('initializeImmediateSearch');
+        OUT.debug("initializeImmediateSearch");
         initializeSearchFormParams();
         initializeSearchFilterParams();
         persistImmediateSearch();
@@ -474,9 +474,9 @@ appSetup(MODULE, function() {
      */
     function persistImmediateSearch() {
         const $form = getSearchForm();
-        const id    = $form.attr('id');
-        const name  = 'immediate_search';
-        const value = 'true';
+        const id    = $form.attr("id");
+        const name  = "immediate_search";
+        const value = "true";
         addHiddenInputTo($form, value, { name: name, id: `${id}-${name}` });
         setSearchFilterParams(name, value);
     }
@@ -490,7 +490,7 @@ appSetup(MODULE, function() {
      */
     function preChange(event) {
         const $menu = $(event.currentTarget || event.target);
-        OUT.debug('preChange: $menu =', $menu);
+        OUT.debug("preChange: $menu =", $menu);
         // setSearchFormParamsFromFilters($menu);
         // setSearchFilterParamsFromFilters($menu);
     }
@@ -505,7 +505,7 @@ appSetup(MODULE, function() {
      * @param {ElementEvt} event
      */
     function performSearch(event) {
-        OUT.debug('performSearch:', event);
+        OUT.debug("performSearch:", event);
         resolveFormFields();
     }
 
@@ -520,7 +520,7 @@ appSetup(MODULE, function() {
      *   submission as multiple values.
      */
     function resolveFormFields() {
-        const func    = 'resolveFormFields';
+        const func    = "resolveFormFields";
         const $rows   = $search_bar_rows;
         const $hidden = $rows.find('input[type="hidden"]');
         const count   = {};
@@ -536,7 +536,7 @@ appSetup(MODULE, function() {
         // Check hidden input fields (if any).
         $hidden.each((_, input) => {
             const $input    = $(input);
-            const ignore_if = (value) => (value === '*');
+            const ignore_if = (value) => (value === "*");
             checkInput($input, ignore_if);
         });
 
@@ -549,8 +549,8 @@ appSetup(MODULE, function() {
         // URL parameter that is unneeded.
         getSearchFilter().each((_, element) => {
             const $menu = getSearchFilterMenu(element);
-            if ($menu.val() === $menu.attr('data-default')) {
-                $menu.attr('name', '');
+            if ($menu.val() === $menu.attr("data-default")) {
+                $menu.attr("name", "");
             }
         });
 
@@ -563,13 +563,13 @@ appSetup(MODULE, function() {
          *                                          input should be ignored.
          */
         function checkInput($input, skip) {
-            const name  = $input.attr('name');
+            const name  = $input.attr("name");
             if (!name) { return }
-            const type  = name.replace('[]', '');
+            const type  = name.replace("[]", "");
             count[type] = count[type] || 0;
-            const text  = ($input.val() || '').trim();
-            if (!text || ((typeof skip === 'function') ? skip(text) : skip)) {
-                $input.attr('name', '');
+            const text  = ($input.val() || "").trim();
+            if (!text || ((typeof skip === "function") ? skip(text) : skip)) {
+                $input.attr("name", "");
                 OUT.debug(`${func}: ignoring ${type} ("${text}")`);
             } else {
                 count[type]++;
@@ -582,16 +582,16 @@ appSetup(MODULE, function() {
          * @param {jQuery} $input
          */
         function adjustInputName($input) {
-            const curr = $input.attr('name');
+            const curr = $input.attr("name");
             if (!curr) { return }
-            const type = curr.replace('[]', '');
+            const type = curr.replace("[]", "");
             let name;
             switch (count[type]) {
-                case 0:  name = '';          break; // "can't happen"
+                case 0:  name = "";          break; // "can't happen"
                 case 1:  name = type;        break;
                 default: name = `${type}[]`; break;
             }
-            $input.attr('name', name);
+            $input.attr("name", name);
         }
     }
 
@@ -606,7 +606,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}
      */
     function searchReady() {
-        return $search_button.hasClass('ready');
+        return $search_button.hasClass("ready");
     }
 
     /**
@@ -634,12 +634,12 @@ appSetup(MODULE, function() {
             ready ||= isPresent(newSearchFilters());
             ready &&= isPresent(compact(allSearchTerms($rows)));
         }
-        const tooltip = ready ? 'data-ready' : 'data-not-ready';
+        const tooltip = ready ? "data-ready" : "data-not-ready";
         const title   = $search_button.attr(tooltip);
         if (isDefined(title)) {
-            $search_button.attr('title', title);
+            $search_button.attr("title", title);
         }
-        $search_button.toggleClass('ready', ready);
+        $search_button.toggleClass("ready", ready);
     }
 
     /**
@@ -649,9 +649,9 @@ appSetup(MODULE, function() {
      */
     function monitorSearchFields() {
 
-        handleEvent($search_input_select, 'change', updatedSearchType);
-        handleEvent($search_input,        'change', onChange);
-        handleEvent($search_input,        'input',  debounce(onInput));
+        handleEvent($search_input_select, "change", updatedSearchType);
+        handleEvent($search_input,        "change", onChange);
+        handleEvent($search_input,        "input",  debounce(onInput));
 
         /**
          * Check readiness after the element's content changes.
@@ -659,7 +659,7 @@ appSetup(MODULE, function() {
          * @param {ElementEvt} event
          */
         function onChange(event) {
-            //OUT.debug('*** CHANGE ***');
+            //OUT.debug("*** CHANGE ***");
             updatedSearchTerm(event);
         }
 
@@ -673,9 +673,9 @@ appSetup(MODULE, function() {
          * @see https://www.w3.org/TR/input-events-1#interface-InputEvent
          */
         function onInput(event) {
-            const type = (event?.originalEvent || event)?.inputType || '';
+            const type = (event?.originalEvent || event)?.inputType || "";
             //OUT.debug(`*** INPUT ${type} ***`);
-            if (!type.startsWith('format')) {
+            if (!type.startsWith("format")) {
                 updatedSearchTerm(event);
             }
         }
@@ -699,7 +699,7 @@ appSetup(MODULE, function() {
      */
     function toggleFilterPanel() {
         const opening = !isExpandedFilterPanel();
-        OUT.debug((opening ? 'SHOW' : 'HIDE'), 'search filters');
+        OUT.debug((opening ? "SHOW" : "HIDE"), "search filters");
         setFilterPanelState(opening);
         setFilterPanelDisplay(opening);
     }
@@ -711,7 +711,7 @@ appSetup(MODULE, function() {
      */
     function setFilterPanelState(opening) {
         let state = opening;
-        if (typeof state !== 'string') {
+        if (typeof state !== "string") {
             state = state ? OPEN : CLOSED;
         }
         sessionStorage.setItem(SEARCH_CONTROLS_CLASS, state);
@@ -743,10 +743,10 @@ appSetup(MODULE, function() {
      * @param {boolean} opening
      */
     function setFilterPanelToggle(opening) {
-        const action = opening ? 'closer' : 'opener';
+        const action = opening ? "closer" : "opener";
         const button = Emma.Search.Filter.control[action];
         $advanced_toggle.html(button.label);
-        $advanced_toggle.attr('title', button.tooltip);
+        $advanced_toggle.attr("title", button.tooltip);
     }
 
     /**
@@ -773,7 +773,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function getSearchForm(form) {
-        const selector = 'form';
+        const selector = "form";
         const $form    = form ? $(form) : $search_bar_container;
         return $form.is(selector) ? $form : $form.find(selector).first();
     }
@@ -789,7 +789,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function getSearchRow(target, caller) {
-        const func = caller || 'getSearchRow';
+        const func = caller || "getSearchRow";
         const tgt  = target || getSearchForm();
         return getContainerElement(tgt, SEARCH_BAR_ROW, func);
     }
@@ -841,7 +841,7 @@ appSetup(MODULE, function() {
      * @param {ElementEvt} event
      */
     function showNextRow(event) {
-        const func      = 'showNextRow';
+        const func      = "showNextRow";
         const $this_row = getSearchRow(event, func);
         const $hidden   = $this_row.siblings(HIDDEN);
         const available = $hidden.length;
@@ -858,7 +858,7 @@ appSetup(MODULE, function() {
      * @param {ElementEvt} event
      */
     function hideThisRow(event) {
-        const func      = 'hideThisRow';
+        const func      = "hideThisRow";
         const $this_row = getSearchRow(event, func);
         if ($this_row.is('.first')) {
             OUT.error(`${func}: cannot hide first row`);
@@ -882,7 +882,7 @@ appSetup(MODULE, function() {
      * @returns {string}
      */
     function searchTerm(target) {
-        return getSearchInput(target, 'searchTerm').val() || '';
+        return getSearchInput(target, "searchTerm").val() || "";
     }
 
     /**
@@ -892,7 +892,7 @@ appSetup(MODULE, function() {
      * undefined if no change.
      *
      * @param {Selector}        target          Passed to {@link getSearchRow}
-     * @param {string|string[]} [new_terms]     New search terms (default: '').
+     * @param {string|string[]} [new_terms]     New search terms (default: "").
      * @param {string}          [caller]        For logging.
      * @param {boolean}         [set_original]  Update {@link DATA_ORIGINAL}.
      *
@@ -900,7 +900,7 @@ appSetup(MODULE, function() {
      */
     function setSearchInput(target, new_terms, caller, set_original) {
         if (!target) {
-            const func = caller || 'setSearchInput';
+            const func = caller || "setSearchInput";
             return OUT.error(`${func}: target: missing/empty`);
         }
         const $row   = getSearchRow(target);
@@ -909,9 +909,9 @@ appSetup(MODULE, function() {
             arrayWrap(new_terms)
                 .map(term => term?.trim())
                 .filter(term => term)
-                .map(term => decodeURIComponent(term.replaceAll('+', ' ')))
-                .join(' ');
-        if (terms === '*') { terms = '' }
+                .map(term => decodeURIComponent(term.replaceAll("+", " ")))
+                .join(" ");
+        if (terms === "*") { terms = "" }
 
         $input.val(terms);
         updateSearchClear($input);
@@ -919,7 +919,7 @@ appSetup(MODULE, function() {
         if (notDefined(set_original)) {
             const original = $input.attr(DATA_ORIGINAL);
             if (notDefined(original)) {
-                $input.attr(DATA_ORIGINAL, '');
+                $input.attr(DATA_ORIGINAL, "");
             } else if (terms === original) {
                 terms = undefined;
             }
@@ -938,7 +938,7 @@ appSetup(MODULE, function() {
      * @param {string}          [caller]    For logging.
      */
     function setSearchTerm(target, new_terms, caller) {
-        const func = caller || 'setSearchTerm';
+        const func = caller || "setSearchTerm";
         setSearchInput(target, new_terms, func);
         if (IMMEDIATE_SEARCH) {
             setSearchFilterParams(searchType(target), searchTerm(target));
@@ -953,10 +953,10 @@ appSetup(MODULE, function() {
      * @see monitorSearchFields
      */
     function updatedSearchTerm(event) {
-        const func   = 'updatedSearchTerm';
+        const func   = "updatedSearchTerm";
         const target = event.currentTarget || event.target;
         const $input = getSearchInput(target, func);
-        const time   = 'timestamp';
+        const time   = "timestamp";
         const prev_t = $input.data(time);
         const this_t = event.timeStamp;
         if (!prev_t || (prev_t < this_t)) {
@@ -977,9 +977,9 @@ appSetup(MODULE, function() {
      *                                      an `<a>` to preserve tab order).
      */
     function clearSearchTerm(event, allow_default) {
-        const func   = 'clearSearchTerm';
+        const func   = "clearSearchTerm";
         const target = event.currentTarget || event.target;
-        setSearchTerm(target, '', func);
+        setSearchTerm(target, "", func);
         if (isEvent(event) && !allow_default) {
             event.preventDefault();
         }
@@ -994,7 +994,7 @@ appSetup(MODULE, function() {
     function updateSearchClear(target) {
         const $input  = getSearchInput(target);
         const $button = getSearchClear($input);
-        const text    = ($input.val() || '').trim();
+        const text    = ($input.val() || "").trim();
         toggleVisibility($button, isPresent(text));
     }
 
@@ -1012,7 +1012,7 @@ appSetup(MODULE, function() {
      * @returns {{type: string, query: string|string[]}}
      */
     function allSearchTerms(target, caller, new_only) {
-        const func    = caller || 'allSearchTerms';
+        const func    = caller || "allSearchTerms";
         const $rows   = target ? getSearchRow(target, func) : $search_bar_rows;
         const queries = {}
         $rows.each((_, row) => {
@@ -1020,15 +1020,15 @@ appSetup(MODULE, function() {
             const $input = getSearchInput($row);
             const $menu  = getSearchInputSelect($row);
             const hidden = isHidden($row);
-            const name   = $input.attr('name') || '';
+            const name   = $input.attr("name") || "";
             const type   = isPresent($menu) ? searchType($menu) : name;
             const value  = $input.val().trim();
 
             let skip;
             if (!name) {
-                skip = 'ignored';
+                skip = "ignored";
             } else if (new_only) {
-                const original_value = $input.attr(DATA_ORIGINAL) || '';
+                const original_value = $input.attr(DATA_ORIGINAL) || "";
                 const original_type  = getOriginalMenuValue($menu);
                 if (original_type && (type !== original_type)) {
                     // Whatever the value, if the type has changed then this
@@ -1039,12 +1039,12 @@ appSetup(MODULE, function() {
                     // up as a change (to guarantee that newSearchTerms() will
                     // not return an empty object.
                 } else if (hidden) {
-                    skip = 'hidden';
+                    skip = "hidden";
                 } else if (value === original_value) {
                     skip = `"${value}" same as ${DATA_ORIGINAL}`;
                 }
             } else if (hidden) {
-                skip = 'hidden';
+                skip = "hidden";
             }
 
             if (skip) {
@@ -1070,7 +1070,7 @@ appSetup(MODULE, function() {
      * @returns {{type: string, query: string|string[]}}
      */
     function newSearchTerms(target) {
-        return allSearchTerms(target, 'newSearchTerms', true);
+        return allSearchTerms(target, "newSearchTerms", true);
     }
 
     // ========================================================================
@@ -1085,7 +1085,7 @@ appSetup(MODULE, function() {
      * @returns {string}
      */
     function searchType(target) {
-        return getSearchInputSelect(target, 'searchType').val() || '';
+        return getSearchInputSelect(target, "searchType").val() || "";
     }
 
     /**
@@ -1104,13 +1104,13 @@ appSetup(MODULE, function() {
      */
     function setSearchType(target, new_type, caller, set_original) {
         if (!target) {
-            const func = caller || 'setSearchType';
+            const func = caller || "setSearchType";
             return OUT.error(`${func}: target: missing/empty`);
         }
         const $row   = getSearchRow(target);
         const $menu  = getSearchInputSelect($row);
-        const name   = new_type ? new_type.trim().toLowerCase() : '';
-        let type     = name.replace('[]', '');
+        const name   = new_type ? new_type.trim().toLowerCase() : "";
+        let type     = name.replace("[]", "");
         const config = SEARCH_TYPE[type];
 
         $menu.val(type);
@@ -1121,7 +1121,7 @@ appSetup(MODULE, function() {
         if (notDefined(set_original)) {
             const original = getOriginalMenuValue($menu);
             if (notDefined(original)) {
-                setOriginalMenuValue($menu, '');
+                setOriginalMenuValue($menu, "");
             } else if (type === original) {
                 type = undefined;
             }
@@ -1138,7 +1138,7 @@ appSetup(MODULE, function() {
      * @param {ElementEvt} event
      */
     function updatedSearchType(event) {
-        const func   = 'updatedSearchType'; OUT.debug(`${func}:`, event);
+        const func   = "updatedSearchType"; OUT.debug(`${func}:`, event);
         const target = event.currentTarget || event.target;
         const $menu  = getSearchInputSelect(target);
         const type   = $menu.val();
@@ -1163,7 +1163,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function getSearchFilter(target, caller) {
-        const func = caller || 'getSearchFilter';
+        const func = caller || "getSearchFilter";
         const tgt  = target || $search_filters;
         return getContainerElement(tgt, SEARCH_FILTER, func);
     }
@@ -1191,31 +1191,31 @@ appSetup(MODULE, function() {
      * @returns {{type: string, query: string|string[]}}
      */
     function allSearchFilters(target, caller, new_only) {
-        const func    = caller || 'allSearchFilters'; OUT.debug(func);
+        const func    = caller || "allSearchFilters"; OUT.debug(func);
         const filters = {}
         const array   = (item) => {
             if (isEmpty(item))       { return [] }
             if (Array.isArray(item)) { return item.sort() }
-            return item.split(',').sort();
+            return item.split(",").sort();
         };
         getSearchFilter(target).each((_, element) => {
             const $ctrl = $(element);
             const $menu = getSearchFilterMenu($ctrl);
-            const name  = $menu.attr('name') || '';
-            const arr   = name.endsWith('[]');
-            const type  = arr ? name.replace('[]', '')  : name;
-            const value = arr ? array($menu.val()) : ($menu.val() || '');
+            const name  = $menu.attr("name") || "";
+            const arr   = name.endsWith("[]");
+            const type  = arr ? name.replace("[]", "")  : name;
+            const value = arr ? array($menu.val()) : ($menu.val() || "");
 
             let skip;
             if (!name) {
-                skip = 'ignored';
+                skip = "ignored";
             } else if (isHidden($ctrl)) {
-                skip = 'hidden';
+                skip = "hidden";
             } else if (new_only) {
                 const original = getOriginalMenuValue($menu);
                 const val      = value.toString();
                 if (notDefined(original) && !val) {
-                    skip = 'empty value';
+                    skip = "empty value";
                 } else if (val === array(original).toString()) {
                     skip = `"${val}" same as ${DATA_ORIGINAL}`;
                 }
@@ -1244,7 +1244,7 @@ appSetup(MODULE, function() {
      * @returns {{type: string, query: string|string[]}}
      */
     function newSearchFilters(target) {
-        const func = 'newSearchFilters';
+        const func = "newSearchFilters";
         return allSearchFilters(target, func, true);
     }
 
@@ -1389,16 +1389,16 @@ appSetup(MODULE, function() {
      * @param {string}             [new_value]
      */
     function updateHiddenInputs(dst, menu, new_type, new_value) {
-        const func  = 'updateHiddenInputs';
+        const func  = "updateHiddenInputs";
         const $menu = menu && $(menu);
-        const base  = $menu?.attr('name')?.replace('[]', '') || 'input';
+        const base  = $menu?.attr("name")?.replace("[]", "") || "input";
         let values;
-        if (typeof new_type === 'object') {
+        if (typeof new_type === "object") {
             values = new_type;
         } else if (new_type) {
             values = Object.fromEntries([[new_type, new_value]]);
         } else if ($menu) {
-            values = Object.fromEntries([[$menu.attr('name'), $menu.val()]]);
+            values = Object.fromEntries([[$menu.attr("name"), $menu.val()]]);
         } else {
             OUT.error(`${func}: no menu selector given`);
             return;
@@ -1407,9 +1407,9 @@ appSetup(MODULE, function() {
             /** @type {jQuery} */
             const $dst    = $(element);
             const $hidden = $dst.find('input[type="hidden"]');
-            const base_id = $dst.attr('id') || randomizeName(base);
+            const base_id = $dst.attr("id") || randomizeName(base);
             for (const [name, value] of Object.entries(values)) {
-                const type     = name.replace('[]', '');
+                const type     = name.replace("[]", "");
                 const selector = `[name="${type}"]`;
                 const input_id = `${base_id}-${type}`;
                 if ((type !== name) || Array.isArray(value)) {
@@ -1476,13 +1476,13 @@ appSetup(MODULE, function() {
     function getContainerElement(target, selector, caller, def_target) {
         /** @type {jQuery} */
         let $target;
-        let func    = caller || 'getContainerElement';
+        let func    = caller || "getContainerElement";
         if (isEvent(target)) {
             func    = caller || `${target.type} handler`;
             $target = $(target.currentTarget || target.target);
         } else if (target) {
             $target = $(target);
-        } else if (typeof def_target === 'function') {
+        } else if (typeof def_target === "function") {
             $target = def_target();
         } else if (def_target) {
             $target = $(def_target);
@@ -1517,7 +1517,7 @@ appSetup(MODULE, function() {
     function getContainedElement(target, selector, caller, container) {
         /** @type {jQuery} */
         let $target;
-        let func    = caller || 'getContainedElement';
+        let func    = caller || "getContainedElement";
         if (isEvent(target)) {
             func    = caller || `${target.type} handler`;
             $target = $(target.currentTarget || target.target);
@@ -1530,7 +1530,7 @@ appSetup(MODULE, function() {
             OUT.error(`${func}: target missing/empty`);
         } else if ($target.is(selector)) {
             $result = $target;
-        } else if (typeof container === 'function') {
+        } else if (typeof container === "function") {
             $result = container($target, func).find(selector);
         } else if (container) {
             $result = $(container).find(selector);

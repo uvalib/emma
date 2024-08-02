@@ -1,8 +1,8 @@
 // app/assets/stylesheets/controllers/_sys.scss
 
-@use 'shared/variables'        as *;
-@use 'shared/controls/buttons' as button;
-@use 'shared/controls/grids'   as grid;
+@use "shared/variables"        as *;
+@use "shared/controls/buttons" as button;
+@use "shared/controls/grids"   as grid;
 
 //=============================================================================
 // Internal mixins
@@ -294,14 +294,14 @@ body.sys {
 
             .value:has(img) {
                 padding:             1rem 0;
-                background-image:    url('loading-balls.gif');
+                background-image:    url("loading-balls.gif");
                 background-repeat:   no-repeat;
                 background-position: left;
             }
         }
     }
 
-    // For the '/sys/analytics' report graphs.
+    // For the "/sys/analytics" report graphs.
     .pairs.analytics-reports {
 
         gap: 1.5rem 1.25rem;
@@ -499,7 +499,7 @@ body.sys.settings {
                 }
 
                 .value::before {
-                    content: '= ';
+                    content: "= ";
                 }
             }
         }

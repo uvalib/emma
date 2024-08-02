@@ -1,7 +1,7 @@
 // app/assets/stylesheets/layouts/_overlay.scss
 
-@use '../shared/variables'       as *;
-@use '../shared/layouts/overlay' as overlay;
+@use "../shared/variables"       as *;
+@use "../shared/layouts/overlay" as overlay;
 
 //=============================================================================
 // Overlay container
@@ -36,7 +36,7 @@
     // An indicator that is presented during a time-consuming search.
     .search-in-progress {
 
-        @include overlay.image('loading-balls.gif', $width: max(5vw,2cm));
+        @include overlay.image("loading-balls.gif", $width: max(5vw,2cm));
 
         // When the search is done, hide the overlay immediately rather than
         // easing back to transparency.

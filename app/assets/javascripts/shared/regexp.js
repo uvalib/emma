@@ -1,30 +1,30 @@
 // app/assets/javascripts/shared/regexp.js
 
 
-import { AppDebug } from '../application/debug';
-import { uniq }     from './arrays';
+import { AppDebug } from "../application/debug";
+import { uniq }     from "./arrays";
 
 
-AppDebug.file('shared/regexp');
+AppDebug.file("shared/regexp");
 
 // ============================================================================
 // Type definitions
 // ============================================================================
 
 /**
- * @typedef {('d'|'g'|'i'|'m'|'s'|'u'|'v'|'y')} RegExpFlag
+ * @typedef {("d"|"g"|"i"|"m"|"s"|"u"|"v"|"y")} RegExpFlag
  */
 
 /**
  * @typedef {(
- *  'hasIndices'    |
- *  'global'        |
- *  'ignoreCase'    |
- *  'multiline'     |
- *  'dotAll'        |
- *  'unicode'       |
- *  'unicodeSets'   |
- *  'sticky'
+ *  "hasIndices"    |
+ *  "global"        |
+ *  "ignoreCase"    |
+ *  "multiline"     |
+ *  "dotAll"        |
+ *  "unicode"       |
+ *  "unicodeSets"   |
+ *  "sticky"
  * )} RegExpProp
  */
 
@@ -58,20 +58,20 @@ AppDebug.file('shared/regexp');
  * @type {Object<RegExpProp, RegExpFlag>}
  */
 export const REGEX_OPTIONS = {
-    hasIndices:  'd',
-    global:      'g',
-    ignoreCase:  'i',
-    multiline:   'm',
-    dotAll:      's',
-    unicode:     'u',
-    unicodeSets: 'v',
-    sticky:      'y',
+    hasIndices:  "d",
+    global:      "g",
+    ignoreCase:  "i",
+    multiline:   "m",
+    dotAll:      "s",
+    unicode:     "u",
+    unicodeSets: "v",
+    sticky:      "y",
 };
 
 /**
  * @type {string}
  */
-export const REGEX_FLAGS = Object.values(REGEX_OPTIONS).join('');
+export const REGEX_FLAGS = Object.values(REGEX_OPTIONS).join("");
 
 // ============================================================================
 // Functions
@@ -91,7 +91,7 @@ export const REGEX_FLAGS = Object.values(REGEX_OPTIONS).join('');
 export function regexp(...args) {
     let flags, last = args.at(-1);
     if (last && !(last instanceof RegExp)) {
-        if (typeof last === 'string') {
+        if (typeof last === "string") {
             last = Array.from(last);
         } else {
             flags = []; // Ensure that args gets popped.
@@ -101,15 +101,15 @@ export function regexp(...args) {
             if (last.every(c => is_flag.test(c))) {
                 flags = last;
             }
-        } else if (typeof last === 'object') {
+        } else if (typeof last === "object") {
             for (const [prop, flag] of Object.entries(REGEX_OPTIONS)) {
                 if (last[prop] || last[flag]) { flags.push(flag) }
             }
         }
         if (flags) { args.pop() }
-        flags = flags?.length ? uniq(flags).join('') : undefined;
+        flags = flags?.length ? uniq(flags).join("") : undefined;
     }
-    const expr = args.map(v => (v instanceof RegExp) ? v.source : v).join('');
+    const expr = args.map(v => (v instanceof RegExp) ? v.source : v).join("");
     return flags ? new RegExp(expr, flags) : new RegExp(expr);
 }
 
@@ -124,13 +124,13 @@ export function union(...args) {
     let flags = [];
     let expr  = args.map(v => {
         const re = (v instanceof RegExp) ? v : regexp(v);
-        if (re.flags)       { flags.push(...re.flags.split('')) }
-        if (re.hasIndices)  { flags.push('d') }
-        if (re.dotAll)      { flags.push('s') }
-        if (re.unicodeSets) { flags.push('v') }
+        if (re.flags)       { flags.push(...re.flags.split("")) }
+        if (re.hasIndices)  { flags.push("d") }
+        if (re.dotAll)      { flags.push("s") }
+        if (re.unicodeSets) { flags.push("v") }
         return re.source;
     });
-    expr  = expr.join('|');
-    flags = flags.length ? uniq(flags).join('') : undefined;
+    expr  = expr.join("|");
+    flags = flags.length ? uniq(flags).join("") : undefined;
     return flags ? new RegExp(expr, flags) : new RegExp(expr);
 }

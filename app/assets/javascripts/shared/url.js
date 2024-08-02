@@ -1,17 +1,17 @@
 // app/assets/javascripts/shared/url.js
 
 
-import { AppDebug }          from '../application/debug';
-import { compact, isObject } from './objects';
+import { AppDebug }          from "../application/debug";
+import { compact, isObject } from "./objects";
 import {
     isDefined,
     isEmpty,
     isPresent,
     notDefined,
-} from './definitions';
+} from "./definitions";
 
 
-AppDebug.file('shared/url');
+AppDebug.file("shared/url");
 
 // ============================================================================
 // Functions
@@ -26,7 +26,7 @@ AppDebug.file('shared/url');
  */
 export function baseUrl(path) {
     if (path) {
-        return path.replace(/\?.*$/, '').replace(/\/+$/, '');
+        return path.replace(/\?.*$/, "").replace(/\/+$/, "");
     } else {
         return window.location.origin + window.location.pathname;
     }
@@ -41,9 +41,9 @@ export function baseUrl(path) {
  */
 export function urlFrom(arg) {
     let result;
-    if (typeof arg === 'string') {      // Assumedly the caller expecting a URL
+    if (typeof arg === "string") {      // Assumedly the caller expecting a URL
         result = arg;
-    } else if (!arg || (typeof arg !== 'object')) {
+    } else if (!arg || (typeof arg !== "object")) {
         // Skipping invalid argument.
     } else if (isDefined(arg.target)) { // Event or jQuery.Event
         // noinspection JSValidateTypes
@@ -55,7 +55,7 @@ export function urlFrom(arg) {
     } else if (isDefined(arg.url)) {    // object
         result = arg.url;
     }
-    return result || '';
+    return result || "";
 }
 
 /**
@@ -66,17 +66,17 @@ export function urlFrom(arg) {
  * @returns {object}
  */
 export function asParams(item) {
-    const func = 'asParams';
+    const func = "asParams";
     let result = {};
-    if (typeof item === 'string') {
-        item.trim().replace(/^[?&]+/, '').split('&').forEach(pair => {
-            const kv    = decodeURIComponent(pair.replaceAll('+', ' '));
-            const parts = kv.split('=');
-            let [k, v]  = [parts.shift(), parts.join('=')];
+    if (typeof item === "string") {
+        item.trim().replace(/^[?&]+/, "").split("&").forEach(pair => {
+            const kv    = decodeURIComponent(pair.replaceAll("+", " "));
+            const parts = kv.split("=");
+            let [k, v]  = [parts.shift(), parts.join("=")];
             if (k && v) {
-                const array = k.endsWith('[]');
+                const array = k.endsWith("[]");
                 if (array) {
-                    k = k.replace('[]', '');
+                    k = k.replace("[]", "");
                 }
                 if (notDefined(result[k])) {
                     result[k] = array ? [v] : v;
@@ -105,7 +105,7 @@ export function asParams(item) {
  * @returns {object}
  */
 export function urlParameters(path) {
-    const prms = path ? path.replace(/^[^?]*\?/, '') : window.location.search;
+    const prms = path ? path.replace(/^[^?]*\?/, "") : window.location.search;
     return asParams(prms);
 }
 
@@ -117,7 +117,7 @@ export function urlParameters(path) {
  * @returns {string}
  */
 export function makeUrl(...parts) {
-    const func = 'makeUrl';
+    const func = "makeUrl";
     let path   = [];
     let params = {};
     let path_start, start_idx = 0;
@@ -132,10 +132,10 @@ export function makeUrl(...parts) {
         let start, keep, part;
 
         switch (typeof arg) {
-            case 'string':  part = arg.trim();  break;
-            case 'bigint':  part = `${arg}`;    break;
-            case 'number':  part = `${arg}`;    break;
-            case 'boolean': part = `${arg}`;    break;
+            case "string":  part = arg.trim();  break;
+            case "bigint":  part = `${arg}`;    break;
+            case "number":  part = `${arg}`;    break;
+            case "boolean": part = `${arg}`;    break;
             default:        part = arg;         break;
         }
 
@@ -148,49 +148,49 @@ export function makeUrl(...parts) {
         } else if (isObject(part)) {
             return Object.assign(params, part);
 
-        } else if (typeof part !== 'string') {
+        } else if (typeof part !== "string") {
             return console.warn(`${func}: ignored part`, part);
 
-        } else if (part === '//') {
+        } else if (part === "//") {
             // A token which distinctly denotes the beginning of a URL but is
             // without the leading protocol portion.
             start = window.location.protocol + part;
 
-        } else if (part.startsWith('//')) {
+        } else if (part.startsWith("//")) {
             // A URL fragment without the leading protocol portion.
             processPart(window.location.protocol);
-            processPart(part.replace(/^../, ''));
+            processPart(part.replace(/^../, ""));
             return;
 
-        } else if (part.startsWith('javascript:')) {
+        } else if (part.startsWith("javascript:")) {
             // Show this as-is (although it probably shouldn't be seen here).
             start = part;
             keep  = true;
 
-        } else if ((part === 'https://') || (part === 'http://')) {
+        } else if ((part === "https://") || (part === "http://")) {
             start = part;
 
-        } else if ((part === 'https:') || (part === 'http:')) {
-            start = part + '//';
+        } else if ((part === "https:") || (part === "http:")) {
+            start = part + "//";
 
-        } else if (part.startsWith('https:') || part.startsWith('http:')) {
+        } else if (part.startsWith("https:") || part.startsWith("http:")) {
             // Full URL with leading protocol ("https://host/path?params").
-            const parts = part.split('//');
+            const parts = part.split("//");
             processPart(parts.shift());    // Protocol portion.
-            processPart(parts.join('//')); // Remainder of the argument.
+            processPart(parts.join("//")); // Remainder of the argument.
             return;
 
-        } else if (part.includes('?')) {
-            const parts = part.split('?');
-            parts.shift().split('/').forEach(processPart);    // Path portion
-            Object.assign(params, asParams(parts.join('&'))); // Params portion
+        } else if (part.includes("?")) {
+            const parts = part.split("?");
+            parts.shift().split("/").forEach(processPart);    // Path portion
+            Object.assign(params, asParams(parts.join("&"))); // Params portion
             return;
 
-        } else if (part.includes('&') || part.includes('=')) {
+        } else if (part.includes("&") || part.includes("=")) {
             return Object.assign(params, asParams(part));
 
-        } else if (part.includes('/')) {
-            return part.split('/').forEach(processPart);
+        } else if (part.includes("/")) {
+            return part.split("/").forEach(processPart);
         }
 
         // Add to the path, with adjustments as determined above.
@@ -201,12 +201,12 @@ export function makeUrl(...parts) {
         } else if (start) {
             // Prepare leading URL part (ending with "//") so that the right
             // number of slashes remain when joined below.
-            part       = keep ? start : start.replace(/\/\/$/, '/').trim();
+            part       = keep ? start : start.replace(/\/\/$/, "/").trim();
             path_start = part;
             start_idx  = path.length;
         } else if (!keep) {
             // Remove leading and trailing slash(es), if any.
-            part = part.replace(/^\/+/, '').replace(/\/+$/, '').trim();
+            part = part.replace(/^\/+/, "").replace(/\/+$/, "").trim();
         }
 
         if (part) {
@@ -231,10 +231,10 @@ export function makeUrl(...parts) {
     }
 
     // Assemble the parts of the parameters.
-    let url = path.join('/');
+    let url = path.join("/");
     params  = compact(params);
     if (isPresent(params)) {
-        url += '?' + $.map(params, (v,k) => `${k}=${v}`).join('&');
+        url += "?" + $.map(params, (v,k) => `${k}=${v}`).join("&");
     }
     return url;
 }
@@ -247,15 +247,15 @@ export function makeUrl(...parts) {
  */
 export function cancelAction(arg) {
     let url, $el;
-    const str = (typeof arg === 'string') ? arg : undefined;
+    const str = (typeof arg === "string") ? arg : undefined;
     if (str?.match(/^back$|^\/|^https?:|^javascript:/i)) {
         url = arg;
     } else if (arg) {
         $el = $(arg);
-        url = $el.attr('data-path') || $el.attr('href') || 'back';
+        url = $el.attr("data-path") || $el.attr("href") || "back";
     }
-    if (url?.toLowerCase() === 'back') {
-        url = '';                       // Previous page.
+    if (url?.toLowerCase() === "back") {
+        url = "";                       // Previous page.
     } else if (!url && window.location.search && !window.history.length) {
         url = window.location.pathname; // Current page with no URL parameters.
     }

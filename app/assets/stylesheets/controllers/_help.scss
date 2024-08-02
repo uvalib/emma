@@ -1,13 +1,13 @@
 // app/assets/stylesheets/controllers/_help.scss
 
-@use 'shared/variables'      as *;
-@use 'shared/mixins'         as *;
-@use 'shared/controls/grids' as grid;
-@use 'shared/feature/icons'  as icon;
-@use 'shared/feature/model'  as model;
+@use "shared/variables"      as *;
+@use "shared/mixins"         as *;
+@use "shared/controls/grids" as grid;
+@use "shared/feature/icons"  as icon;
+@use "shared/feature/model"  as model;
 
-@use 'feature/model'         as model-classes;
-@use 'vendor/uppy';
+@use "feature/model"         as model-classes;
+@use "vendor/uppy";
 
 //=============================================================================
 // Internal mixins

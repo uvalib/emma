@@ -3,16 +3,16 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { AppDebug }          from '../application/debug';
-import { selector }          from './css';
-import { isMissing }         from './definitions';
-import { ModalBase, TOGGLE } from './modal-base';
+import { AppDebug }          from "../application/debug";
+import { selector }          from "./css";
+import { isMissing }         from "./definitions";
+import { ModalBase, TOGGLE } from "./modal-base";
 
 
-const MODULE = 'ModalDialog';
+const MODULE = "ModalDialog";
 const DEBUG  = true;
 
-AppDebug.file('shared/modal-dialog', MODULE, DEBUG);
+AppDebug.file("shared/modal-dialog", MODULE, DEBUG);
 
 // ============================================================================
 // Class ModalDialog
@@ -26,10 +26,10 @@ AppDebug.file('shared/modal-dialog', MODULE, DEBUG);
  */
 export class ModalDialog extends ModalBase {
 
-    static CLASS_NAME = 'ModalDialog';
+    static CLASS_NAME = "ModalDialog";
     static DEBUGGING  = DEBUG;
 
-    static MODAL_CLASS = 'modal-popup';
+    static MODAL_CLASS = "modal-popup";
     static MODAL       = selector(this.MODAL_CLASS);
 
     /**
@@ -39,7 +39,7 @@ export class ModalDialog extends ModalBase {
      * @readonly
      * @type {string}
      */
-    static SELECTOR_ATTR = 'data-modal-selector';
+    static SELECTOR_ATTR = "data-modal-selector";
 
     /**
      * The attribute which specifies the subclass which should be generated for
@@ -48,7 +48,7 @@ export class ModalDialog extends ModalBase {
      * @readonly
      * @type {string}
      */
-    static CLASS_ATTR = 'data-modal-class';
+    static CLASS_ATTR = "data-modal-class";
 
     // ========================================================================
     // Class fields
@@ -132,7 +132,7 @@ export class ModalDialog extends ModalBase {
         if (this.modalControl) {
             return super.open(no_halt);
         } else {
-            this._error('cannot open - this.modalControl not set');
+            this._error("cannot open - this.modalControl not set");
             return false;
         }
     }
@@ -150,7 +150,7 @@ export class ModalDialog extends ModalBase {
      * @returns {jQuery}              The provided or discovered toggles.
      */
     associateAll(toggles) {
-        this._debug('associateAll: toggles =', toggles, 'modal =', this);
+        this._debug("associateAll: toggles =", toggles, "modal =", this);
         const $toggles = toggles ? $(toggles) : this.allToggles;
         return $toggles.map((_, toggle) => this.associate(toggle));
     }
@@ -190,7 +190,7 @@ export class ModalDialog extends ModalBase {
      * @returns {boolean}
      */
     static initializeAll() {
-        const func  = 'initializeAll';
+        const func  = "initializeAll";
         let updated = false;
         let $modals;
         if (this.all_initialized) {

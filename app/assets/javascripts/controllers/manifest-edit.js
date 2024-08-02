@@ -1,24 +1,24 @@
 // app/assets/javascripts/controllers/manifest-edit.js
 
 
-import { AppDebug }                        from '../application/debug';
-import { appSetup }                        from '../application/setup';
-import { handleClickAndKeypress }          from '../shared/accessibility';
-import { arrayWrap }                       from '../shared/arrays';
-import { Emma }                            from '../shared/assets';
-import { pageAttributes }                  from '../shared/controller';
-import { HIDDEN, selector, toggleHidden }  from '../shared/css';
-import * as Field                          from '../shared/field';
-import { turnOffAutocompleteIn }           from '../shared/form';
-import { InlinePopup }                     from '../shared/inline-popup';
-import { keyCombo }                        from '../shared/keyboard';
-import { LookupModal }                     from '../shared/lookup-modal';
-import { LookupRequest }                   from '../shared/lookup-request';
-import { ModalHideHooks, ModalShowHooks }  from '../shared/modal-hooks';
-import { randomizeName }                   from '../shared/random';
-import { pluralize }                       from '../shared/strings';
-import { timestamp }                       from '../shared/time';
-import { asParams, cancelAction, makeUrl } from '../shared/url';
+import { AppDebug }                        from "../application/debug";
+import { appSetup }                        from "../application/setup";
+import { handleClickAndKeypress }          from "../shared/accessibility";
+import { arrayWrap }                       from "../shared/arrays";
+import { Emma }                            from "../shared/assets";
+import { pageAttributes }                  from "../shared/controller";
+import { HIDDEN, selector, toggleHidden }  from "../shared/css";
+import * as Field                          from "../shared/field";
+import { turnOffAutocompleteIn }           from "../shared/form";
+import { InlinePopup }                     from "../shared/inline-popup";
+import { keyCombo }                        from "../shared/keyboard";
+import { LookupModal }                     from "../shared/lookup-modal";
+import { LookupRequest }                   from "../shared/lookup-request";
+import { ModalHideHooks, ModalShowHooks }  from "../shared/modal-hooks";
+import { randomizeName }                   from "../shared/random";
+import { pluralize }                       from "../shared/strings";
+import { timestamp }                       from "../shared/time";
+import { asParams, cancelAction, makeUrl } from "../shared/url";
 import {
     isDefined,
     isEmpty,
@@ -26,7 +26,7 @@ import {
     isPresent,
     notDefined,
     presence,
-} from '../shared/definitions';
+} from "../shared/definitions";
 import {
     delayedBy,
     handleEvent,
@@ -34,17 +34,17 @@ import {
     isEvent,
     onPageExit,
     windowEvent,
-} from '../shared/events';
+} from "../shared/events";
 import {
     addFlashError,
     clearFlash,
     flashError,
     flashMessage,
-} from '../shared/flash';
+} from "../shared/flash";
 import {
     initializeGridNavigation,
     updateGridNavigation,
-} from '../shared/grids';
+} from "../shared/grids";
 import {
     ID_ATTRIBUTES,
     htmlEncode,
@@ -53,7 +53,7 @@ import {
     selfOrParent,
     single,
     uniqAttrsTree,
-} from '../shared/html';
+} from "../shared/html";
 import {
     ITEM_ATTR,
     ITEM_MODEL,
@@ -64,7 +64,7 @@ import {
     initializeButtonSet,
     serverBulkSend,
     serverSend,
-} from '../shared/manifests';
+} from "../shared/manifests";
 import {
     CONTROL_GROUP,
     CellControlGroup,
@@ -73,26 +73,26 @@ import {
     NavGroup,
     SingletonGroup,
     TextInputGroup,
-} from '../shared/nav-group';
+} from "../shared/nav-group";
 import {
     compact,
     deepDup,
     hasKey,
     isObject,
     toObject,
-} from '../shared/objects';
+} from "../shared/objects";
 import {
     FILE_SELECT,
     UPLOADER,
     UPLOADED_NAME,
     MultiUploader,
-} from '../shared/uploader';
+} from "../shared/uploader";
 
 
-const MODULE = 'ManifestEdit';
+const MODULE = "ManifestEdit";
 const DEBUG  = true;
 
-AppDebug.file('controllers/manifest-edit', MODULE, DEBUG);
+AppDebug.file("controllers/manifest-edit", MODULE, DEBUG);
 
 // noinspection SpellCheckingInspection, FunctionTooLongJS
 appSetup(MODULE, function() {
@@ -311,46 +311,46 @@ appSetup(MODULE, function() {
      *
      * @type {string}
      */
-    const FIELD_ATTR = 'data-field';
+    const FIELD_ATTR = "data-field";
 
-    const HEADING_CLASS         = 'heading-bar';
-    const TITLE_TEXT_CLASS      = 'text.name';
-    const TITLE_EDIT_CLASS      = 'title-edit';
-    const TITLE_EDITOR_CLASS    = 'line-editor';
-    const TITLE_UPDATE_CLASS    = 'update';
-    const TITLE_CANCEL_CLASS    = 'cancel';
+    const HEADING_CLASS         = "heading-bar";
+    const TITLE_TEXT_CLASS      = "text.name";
+    const TITLE_EDIT_CLASS      = "title-edit";
+    const TITLE_EDITOR_CLASS    = "line-editor";
+    const TITLE_UPDATE_CLASS    = "update";
+    const TITLE_CANCEL_CLASS    = "cancel";
 
-    const CONTAINER_CLASS       = 'manifest-grid-container';
-    const SUBMIT_CLASS          = 'submit-button';
-    const CANCEL_CLASS          = 'cancel-button';
-    const IMPORT_CLASS          = 'import-button';
-    const EXPORT_CLASS          = 'export-button';
-    const SUBMISSION_CLASS      = 'submission-button';
-    const COMM_STATUS_CLASS     = 'comm-status';
-    const GRID_CLASS            = 'manifest_item-grid';
-    const CTRL_EXPANDED_MARKER  = 'controls-expanded';
-    const HEAD_EXPANDED_MARKER  = 'head-expanded';
-    const TO_DELETE_MARKER      = 'deleting';
-    const ROW_CLASS             = 'manifest_item-grid-item';
-    const HEAD_CLASS            = 'head';
-    const COL_EXPANDER_CLASS    = 'column-expander';
-    const ROW_EXPANDER_CLASS    = 'row-expander';
-    const EXPANDED_MARKER       = 'expanded';
-    const CONTROLS_CELL_CLASS   = 'controls-cell';
-    const TRAY_CLASS            = 'icon-tray';
-    const ICON_CLASS            = 'icon';
-    const DETAILS_CLASS         = 'details';
-    const INDICATORS_CLASS      = 'indicators';
-    const INDICATOR_CLASS       = 'indicator';
-    const DATA_CELL_CLASS       = 'cell';
-    const EDITING_MARKER        = 'editing';
-    const CHANGED_MARKER        = 'changed';
-    const ERROR_MARKER          = 'error';
-  //const REQUIRED_MARKER       = 'required';
-    const ROW_FIELD_CLASS       = 'value';
+    const CONTAINER_CLASS       = "manifest-grid-container";
+    const SUBMIT_CLASS          = "submit-button";
+    const CANCEL_CLASS          = "cancel-button";
+    const IMPORT_CLASS          = "import-button";
+    const EXPORT_CLASS          = "export-button";
+    const SUBMISSION_CLASS      = "submission-button";
+    const COMM_STATUS_CLASS     = "comm-status";
+    const GRID_CLASS            = "manifest_item-grid";
+    const CTRL_EXPANDED_MARKER  = "controls-expanded";
+    const HEAD_EXPANDED_MARKER  = "head-expanded";
+    const TO_DELETE_MARKER      = "deleting";
+    const ROW_CLASS             = "manifest_item-grid-item";
+    const HEAD_CLASS            = "head";
+    const COL_EXPANDER_CLASS    = "column-expander";
+    const ROW_EXPANDER_CLASS    = "row-expander";
+    const EXPANDED_MARKER       = "expanded";
+    const CONTROLS_CELL_CLASS   = "controls-cell";
+    const TRAY_CLASS            = "icon-tray";
+    const ICON_CLASS            = "icon";
+    const DETAILS_CLASS         = "details";
+    const INDICATORS_CLASS      = "indicators";
+    const INDICATOR_CLASS       = "indicator";
+    const DATA_CELL_CLASS       = "cell";
+    const EDITING_MARKER        = "editing";
+    const CHANGED_MARKER        = "changed";
+    const ERROR_MARKER          = "error";
+  //const REQUIRED_MARKER       = "required";
+    const ROW_FIELD_CLASS       = "value";
     const CELL_VALUE_CLASS      = ROW_FIELD_CLASS;
     const CELL_DISPLAY_CLASS    = CELL_VALUE_CLASS;
-    const CELL_EDIT_CLASS       = 'edit';
+    const CELL_EDIT_CLASS       = "edit";
 
     const HEADING       = selector(HEADING_CLASS);
     const TITLE_TEXT    = selector(TITLE_TEXT_CLASS);
@@ -490,7 +490,7 @@ appSetup(MODULE, function() {
     // Functions - heading
     // ========================================================================
 
-    const TITLE_DATA = 'titleValue';
+    const TITLE_DATA = "titleValue";
 
     /**
      * Enter title edit mode.
@@ -498,7 +498,7 @@ appSetup(MODULE, function() {
      * @param {ElementEvt} event
      */
     function onStartTitleEdit(event) {
-        OUT.debug('onStartTitleEdit: event =', event);
+        OUT.debug("onStartTitleEdit: event =", event);
         beginTitleEdit();
     }
 
@@ -506,12 +506,12 @@ appSetup(MODULE, function() {
      * Enter title edit mode.
      */
     function beginTitleEdit() {
-        //OUT.debug('beginTitleEdit');
-        const old_name = $title_text.text()?.trim() || '';
+        //OUT.debug("beginTitleEdit");
+        const old_name = $title_text.text()?.trim() || "";
         $title_heading.toggleClass(EDITING_MARKER, true);
         $title_heading.data(TITLE_DATA, old_name);
         $title_input.val(old_name);
-        $title_input.trigger('focus');
+        $title_input.trigger("focus");
     }
 
     /**
@@ -520,9 +520,9 @@ appSetup(MODULE, function() {
      * @param {ElementEvt} event
      */
     function onUpdateTitleEdit(event) {
-        OUT.debug('onUpdateTitleEdit: event =', event);
-        const new_name = $title_input.val()?.trim() || '';
-        const old_name = $title_heading.data(TITLE_DATA) || '';
+        OUT.debug("onUpdateTitleEdit: event =", event);
+        const new_name = $title_input.val()?.trim() || "";
+        const old_name = $title_heading.data(TITLE_DATA) || "";
         const update   = (new_name === old_name) ? undefined : new_name;
         endTitleEdit(update);
     }
@@ -533,7 +533,7 @@ appSetup(MODULE, function() {
      * @param {ElementEvt} event
      */
     function onCancelTitleEdit(event) {
-        OUT.debug('onCancelTitleEdit: event =', event);
+        OUT.debug("onCancelTitleEdit: event =", event);
         endTitleEdit();
     }
 
@@ -549,7 +549,7 @@ appSetup(MODULE, function() {
             $title_text.text(new_name);
         }
         $title_heading.toggleClass(EDITING_MARKER, false);
-        $title_edit.trigger('focus');
+        $title_edit.trigger("focus");
     }
 
     /**
@@ -561,8 +561,8 @@ appSetup(MODULE, function() {
      */
     function onTitleEditKeypress(event) {
         switch (keyCombo(event)) {
-            case 'Enter':  onUpdateTitleEdit(event); break;
-            case 'Escape': onCancelTitleEdit(event); break;
+            case "Enter":  onUpdateTitleEdit(event); break;
+            case "Escape": onCancelTitleEdit(event); break;
             default:       return undefined;
         }
         event.stopImmediatePropagation();
@@ -577,7 +577,7 @@ appSetup(MODULE, function() {
      * Initialize the grid and controls.
      */
     function initializeEditForm() {
-        OUT.debug('initializeEditForm');
+        OUT.debug("initializeEditForm");
         setTimeout(scrollToTop, 0);
         initializeHeaderRow();
         initializeGridContent();
@@ -619,7 +619,7 @@ appSetup(MODULE, function() {
      * @see "ManifestDecorator#submit_button"
      */
     function initializeControlButtons() {
-        const func = 'initializeControlButtons'; //OUT.debug(func);
+        const func = "initializeControlButtons"; //OUT.debug(func);
         initializeButtonSet(CONTROL_BUTTONS, func);
         // enableSave(false); // NOTE: Initial state determined by server.
         enableExport();
@@ -636,7 +636,7 @@ appSetup(MODULE, function() {
     function enableSave(setting) {
         //OUT.debug(`enableSave: setting = "${setting}"`);
         const enable = isDefined(setting) ? setting : checkFormChanged();
-        return enableControlButton('submit', enable);
+        return enableControlButton("submit", enable);
     }
 
     /**
@@ -649,7 +649,7 @@ appSetup(MODULE, function() {
     function enableExport(setting) {
         //OUT.debug(`enableExport: setting = "${setting}"`);
         const yes = isDefined(setting) ? setting : isPresent(activeDataRows());
-        return enableControlButton('export', yes);
+        return enableControlButton("export", yes);
     }
 
     /**
@@ -662,7 +662,7 @@ appSetup(MODULE, function() {
     function enableSubmission(setting) {
         //OUT.debug(`enableSubmission: setting = "${setting}"`);
         const yes = isDefined(setting) ? setting : isPresent(activeDataRows());
-        return enableControlButton('submission', yes);
+        return enableControlButton("submission", yes);
     }
 
     /**
@@ -674,7 +674,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery|undefined}
      */
     function enableControlButton(type, enable) {
-        const func = 'enableControlButton';
+        const func = "enableControlButton";
         OUT.debug(`${func}: type = "${type}"; enable = "${enable}"`);
         const $button = buttonFor(type, CONTROL_BUTTONS, func);
         return enableButton($button, enable, type);
@@ -696,13 +696,13 @@ appSetup(MODULE, function() {
      * @see "ManifestConcern#save_changes"
      */
     function saveUpdates(event) {
-        const func     = 'saveUpdates';
+        const func     = "saveUpdates";
         const $button  = $(event.currentTarget || event.target);
         const manifest = manifestId();
         OUT.debug(`${func}: manifest = ${manifest}; event =`, event);
 
         cancelActiveCell();             // Abandon any active edit.
-        finalizeDataRows('original');   // Update "original" cell values.
+        finalizeDataRows("original");   // Update "original" cell values.
 
         // It should not be possible to get here unless the form is associated
         // with a real persisted Manifest record.
@@ -751,14 +751,14 @@ appSetup(MODULE, function() {
      * @see "ManifestConcern#cancel_changes"
      */
     function cancelUpdates(event) {
-        const func     = 'cancelUpdates';
+        const func     = "cancelUpdates";
         const manifest = manifestId();
         const finalize = () => cancelAction($cancel);
         OUT.debug(`${func}: manifest = ${manifest}; event =`, event);
 
         cancelActiveCell();             // Abandon any active edit.
         deleteRows(blankDataRows());    // Eliminate rows unseen by the server.
-        finalizeDataRows('original');   // Restore original cell values.
+        finalizeDataRows("original");   // Restore original cell values.
 
         // The form never resulted in the creation of a Manifest record so
         // there is nothing to inform the server about.
@@ -785,7 +785,7 @@ appSetup(MODULE, function() {
      * @param {ElementEvt} event
      */
     function importRows(event) {
-        const func = 'importRows'; OUT.debug(`${func}: event =`, event);
+        const func = "importRows"; OUT.debug(`${func}: event =`, event);
         let input, file;
         if (!(input = $import[0])) {
             OUT.error(`${func}: no $import element`);
@@ -804,7 +804,7 @@ appSetup(MODULE, function() {
      * @param {File} file
      */
     function importFile(file) {
-        OUT.debug('importFile: file =', file);
+        OUT.debug("importFile: file =", file);
         const reader = new FileReader();
         reader.readAsText(file);
         reader.onloadend = (evt) => importData(evt.target.result, file.name);
@@ -817,7 +817,7 @@ appSetup(MODULE, function() {
      * @param {string} [filename]     For diagnostics only.
      */
     function importData(data, filename) {
-        const func  = 'importData';
+        const func  = "importData";
         const type  = dataType(data);
         const opt   = { caller: func, type: type };
         const $last = allDataRows().last();
@@ -839,7 +839,7 @@ appSetup(MODULE, function() {
      * @param {string} [filename]     For diagnostics only.
      */
     function reImportData(data, filename) {
-        const func = 'reImportData';
+        const func = "reImportData";
         const type = dataType(data);
         const opt  = { caller: func, type: type };
         OUT.debug(`${func}: from "${filename}": type "${type}"; data =`, data);
@@ -856,9 +856,9 @@ appSetup(MODULE, function() {
      * @param {ElementEvt} event
      */
     function exportRows(event) {
-        OUT.debug('exportRows: event =', event);
+        OUT.debug("exportRows: event =", event);
         const $button  = $(event.currentTarget || event.target);
-        const message  = 'EXPORT - FUTURE ENHANCEMENT'; // TODO: exportRows
+        const message  = "EXPORT - FUTURE ENHANCEMENT"; // TODO: exportRows
         flashMessage(message, { refocus: $button });
     }
 
@@ -890,7 +890,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}             Changed status.
      */
     function checkFormChanged(grid) {
-        //OUT.debug('checkFormChanged: grid =', grid);
+        //OUT.debug("checkFormChanged: grid =", grid);
         return checkGridChanged(grid);
     }
 
@@ -909,7 +909,7 @@ appSetup(MODULE, function() {
         '.menu.single',
         '.input.multi',
         '.input.single',
-    ].join(', ');
+    ].join(", ");
 
     /**
      * Initial adjustments for the grid display.
@@ -917,7 +917,7 @@ appSetup(MODULE, function() {
      * @param {Selector} [grid]       Default: {@link $grid}.
      */
     function initializeGridContent(grid) {
-        OUT.debug('initializeGridContent; grid =', grid);
+        OUT.debug("initializeGridContent; grid =", grid);
         const $cells = dataCells(grid, true);
         initializeCellDisplays($cells);
         initializeCellInputs($cells);
@@ -932,7 +932,7 @@ appSetup(MODULE, function() {
      * @param {Selector} [cells]      Default: {@link allDataCells}
      */
     function initializeCellDisplays(cells) {
-        //OUT.debug('initializeCellDisplays: cells =', cells);
+        //OUT.debug("initializeCellDisplays: cells =", cells);
         dataCells(cells).each((_, cell) => updateCellDisplayValue(cell));
     }
 
@@ -942,17 +942,17 @@ appSetup(MODULE, function() {
      * @param {Selector} [cells]      Default: {@link allDataCells}
      */
     function initializeCellInputs(cells) {
-        //OUT.debug('initializeCellInputs: cells =', cells);
+        //OUT.debug("initializeCellInputs: cells =", cells);
         const property = fieldProperty();
         dataCells(cells).each((_, cell) => {
             /** @type {jQuery} */
             const $cell = $(cell);
             const field = $cell.attr(FIELD_ATTR);
-            if (field === 'file_data') {
-                $cell.attr('aria-required', true);
+            if (field === "file_data") {
+                $cell.attr("aria-required", true);
             } else if (property[field]?.required) {
-                $cell.attr('aria-required', true);
-                $cell.find(INPUTS).attr('aria-required', true);
+                $cell.attr("aria-required", true);
+                $cell.find(INPUTS).attr("aria-required", true);
             }
         });
     }
@@ -974,22 +974,22 @@ appSetup(MODULE, function() {
      * @param {number}   [scale]      Heuristic for variable width fonts.
      */
     function initializeTextareaColumns(cells, min_cols = 20, scale = 1.2) {
-        //OUT.debug('initializeTextareaColumns: cells =', cells);
+        //OUT.debug("initializeTextareaColumns: cells =", cells);
         const $textareas   = dataCells(cells).find('textarea');
         const column_width = (max_cols, textarea) => {
             const $area = $(textarea);
-            const min   = $area.attr('placeholder')?.length || 0;
+            const min   = $area.attr("placeholder")?.length || 0;
             const lines = getCellCurrentValue($area).lines.map(v => v.length);
             return Math.max(min, ...lines, max_cols);
         };
         for (const [field, prop] of Object.entries(fieldProperty())) {
-            if (prop.type?.startsWith('text')) {
+            if (prop.type?.startsWith("text")) {
                 const data_field = `[${FIELD_ATTR}="${field}"]`;
                 const $column    = $textareas.filter(data_field);
                 const textareas  = $column.toArray();
                 const max_width  = textareas.reduce(column_width, min_cols);
                 const max_cols   = Math.round(max_width * scale);
-                textareas.forEach(ta => $(ta).attr('cols', max_cols));
+                textareas.forEach(ta => $(ta).attr("cols", max_cols));
             }
         }
     }
@@ -1027,7 +1027,7 @@ appSetup(MODULE, function() {
      * Refresh all grid rows.
      */
     function refreshGrid() {
-        OUT.debug('refreshGrid');
+        OUT.debug("refreshGrid");
         allDataRows().each((_, row) => refreshDataRow(row));
     }
 
@@ -1042,7 +1042,7 @@ appSetup(MODULE, function() {
      * @param {boolean}  [expand]
      */
     function toggleHeaderRow(button, expand) {
-        const func      = 'toggleHeaderRow';
+        const func      = "toggleHeaderRow";
         OUT.debug(`${func}: expand = ${expand}; button =`, button);
         const $button   = button ? $(button) : headerRowToggle();
         const $target   = selfOrParent($button, HEADER_ROW, func);
@@ -1050,8 +1050,8 @@ appSetup(MODULE, function() {
         const config    = Emma.Grid.Headers.row;
         const mode      = expanding ? config.closer : config.opener;
 
-        $button.attr('aria-expanded', expanding);
-        $button.attr('title', mode.tooltip);
+        $button.attr("aria-expanded", expanding);
+        $button.attr("title", mode.tooltip);
         if (!CONTROLS_ROTATE) {
             $button.html(mode.label);
         }
@@ -1059,7 +1059,7 @@ appSetup(MODULE, function() {
         const $items = headerRow();
         $items.toggleClass(EXPANDED_MARKER, expanding);
         if (!expanding) {
-            $items.find('details').removeAttr('open');
+            $items.find('details').removeAttr("open");
         }
         $grid.toggleClass(HEAD_EXPANDED_MARKER, expanding);
     }
@@ -1071,7 +1071,7 @@ appSetup(MODULE, function() {
      * @param {boolean}  [expand]
      */
     function toggleControlsColumn(button, expand) {
-        const func      = 'toggleControlsColumn';
+        const func      = "toggleControlsColumn";
         OUT.debug(`${func}: expand = ${expand}; button =`, button);
         const $button   = button ? $(button) : controlsColumnToggle();
         const $target   = selfOrParent($button, CONTROLS_CELL, func);
@@ -1079,8 +1079,8 @@ appSetup(MODULE, function() {
         const config    = Emma.Grid.Headers.column;
         const mode      = expanding ? config.closer : config.opener;
 
-        $button.attr('aria-expanded', expanding);
-        $button.attr('title', mode.tooltip);
+        $button.attr("aria-expanded", expanding);
+        $button.attr("title", mode.tooltip);
         if (!CONTROLS_ROTATE) {
             $button.html(mode.label);
         }
@@ -1088,9 +1088,9 @@ appSetup(MODULE, function() {
         const $items   = controlsColumn();
         const $details = $items.find('details');
         if (expanding) {
-            $details.removeAttr('tabindex');
+            $details.removeAttr("tabindex");
         } else {
-            $details.removeAttr('open').attr('tabindex', -1);
+            $details.removeAttr("open").attr("tabindex", -1);
         }
         $items.toggleClass(EXPANDED_MARKER, expanding);
         $grid.toggleClass(CTRL_EXPANDED_MARKER, expanding);
@@ -1110,7 +1110,7 @@ appSetup(MODULE, function() {
      *
      * @type {string}
      */
-    const DELTA_TABLE_DATA = 'deltaTable';
+    const DELTA_TABLE_DATA = "deltaTable";
 
     /**
      * Get the delta table, creating it if necessary.
@@ -1142,7 +1142,7 @@ appSetup(MODULE, function() {
      */
     function nextDeltaCounter(r) {
         const table = getDeltaTable();
-        const row   = (typeof r === 'number') ? r : dbRowValue(r);
+        const row   = (typeof r === "number") ? r : dbRowValue(r);
         const delta = table[row] = 1 + (table[row] || 0);
         setDeltaTable(table);
         return delta;
@@ -1157,7 +1157,7 @@ appSetup(MODULE, function() {
         const table = getDeltaTable();
         if (isPresent(table)) {
             arrayWrap(rows).forEach(r => {
-                const row = (typeof r === 'number') ? r : dbRowValue(r);
+                const row = (typeof r === "number") ? r : dbRowValue(r);
                 delete table[row];
             });
             setDeltaTable(table);
@@ -1176,7 +1176,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}             False if no changes.
      */
     function evaluateGridChanged(grid) {
-        OUT.debug('evaluateGridChanged: grid =', grid);
+        OUT.debug("evaluateGridChanged: grid =", grid);
         const evaluate_row = (change, row) => updateRowChanged(row) || change;
         return dataRows(grid).toArray().reduce(evaluate_row, false);
     }
@@ -1191,7 +1191,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}             False if no changes.
      */
     function checkGridChanged(grid) {
-        //OUT.debug('checkGridChanged: grid =', grid);
+        //OUT.debug("checkGridChanged: grid =", grid);
         const check_row = (change, row) => change || checkRowChanged(row);
         return dataRows(grid).toArray().reduce(check_row, false);
     }
@@ -1233,7 +1233,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function dataRow(target) {
-        const func  = 'dataRow'; //OUT.debug(`${func}: target =`, target);
+        const func  = "dataRow"; //OUT.debug(`${func}: target =`, target);
         const match = DATA_ROW;
         return selfOrParent(target, match, func);
     }
@@ -1295,8 +1295,8 @@ appSetup(MODULE, function() {
      * @returns {EmmaData}            Updated fields.
      */
     function updateDataRow(target, data) {
-        const func = 'updateDataRow';
-        OUT.debug(`${func}: data =`, data, 'target =', target);
+        const func = "updateDataRow";
+        OUT.debug(`${func}: data =`, data, "target =", target);
 
         /** @type {EmmaData} */
         const updated = {};
@@ -1314,10 +1314,10 @@ appSetup(MODULE, function() {
                 return updated;
             }
         }
-        if (hasKey(data, 'row')) {
+        if (hasKey(data, "row")) {
             setDbRowValue($row, data.row);
         }
-        if (hasKey(data, 'delta')) {
+        if (hasKey(data, "delta")) {
             setDbRowDelta($row, data.delta);
         }
         if (data.deleting) {
@@ -1358,7 +1358,7 @@ appSetup(MODULE, function() {
                     changed = true;
                 }
 
-                let tooltip = '';
+                let tooltip = "";
                 if (err) {
                     const tag = Emma.Messages.error.toUpperCase();
                     let parts;
@@ -1368,9 +1368,9 @@ appSetup(MODULE, function() {
                     } else {
                         parts = arrayWrap(err);
                     }
-                    tooltip = `${tag}: ` + parts.join('; ');
+                    tooltip = `${tag}: ` + parts.join("; ");
                 }
-                cellDisplay($cell).attr('title', tooltip);
+                cellDisplay($cell).attr("title", tooltip);
             }
         });
 
@@ -1390,7 +1390,7 @@ appSetup(MODULE, function() {
      * Set up elements within the header row.
      */
     function initializeHeaderRow() {
-        OUT.debug('initializeHeaderRow');
+        OUT.debug("initializeHeaderRow");
         headerColumns().each((_, column) => setupCellNavGroup(column));
     }
 
@@ -1399,7 +1399,7 @@ appSetup(MODULE, function() {
      * If not, an empty row is inserted.
      */
     function initializeAllDataRows() {
-        OUT.debug('initializeAllDataRows');
+        OUT.debug("initializeAllDataRows");
         const $rows = allDataRows();
         if (isPresent($rows)) {
             $rows.each((_, row) => initializeDataRow(row));
@@ -1416,7 +1416,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function initializeDataRow(row) {
-        //OUT.debug('initializeDataRow: row =', row);
+        //OUT.debug("initializeDataRow: row =", row);
         const $row = dataRow(row);
         initializeDbRowValue($row);
         initializeDbRowDelta($row);
@@ -1431,7 +1431,7 @@ appSetup(MODULE, function() {
      * @param {jQuery} $row
      */
     function setupRowFunctionality($row) {
-        OUT.debug('setupRowFunctionality: $row =', $row);
+        OUT.debug("setupRowFunctionality: $row =", $row);
         setupLookup($row);
         setupUploader($row);
         setupRowOperations($row);
@@ -1465,7 +1465,7 @@ appSetup(MODULE, function() {
      * @param {Selector} row
      */
     function refreshDataRow(row) {
-        OUT.debug('refreshDataRow: row =', row);
+        OUT.debug("refreshDataRow: row =", row);
         dataCells(row).each((_, cell) => resetDataCell(cell));
     }
 
@@ -1478,7 +1478,7 @@ appSetup(MODULE, function() {
      *
      * @type {string}
      */
-    const ACTION_ATTR = 'data-action';
+    const ACTION_ATTR = "data-action";
 
     /**
      * Attach handlers for row control icon buttons.
@@ -1486,7 +1486,7 @@ appSetup(MODULE, function() {
      * @param {Selector} [$row]     Default: all {@link rowControls}.
      */
     function setupRowOperations($row) {
-        OUT.debug('setupRowOperations: $row =', $row);
+        OUT.debug("setupRowOperations: $row =", $row);
         const $cell = controlsColumn($row);
         setupCellNavGroup($cell);
         controlsColumnToggleAdd($cell);
@@ -1498,20 +1498,20 @@ appSetup(MODULE, function() {
      * @param {Selector|ElementEvt} arg
      */
     function rowOperation(arg) {
-        const func     = 'rowOperation'; OUT.debug(`${func}: arg =`, arg);
+        const func     = "rowOperation"; OUT.debug(`${func}: arg =`, arg);
         const evt      = isEvent(arg);
         const $control = $(evt ? arg.target : arg);
         const $current = dataRow($control);
         const action   = $control.attr(ACTION_ATTR);
         let $row;
         switch (action) {
-            case 'lookup':
+            case "lookup":
                 lookupRow($current);
                 break;
-            case 'insert':
+            case "insert":
                 $row = insertRow($current);
                 break;
-            case 'delete':
+            case "delete":
                 const $next = presence($current.next()) || $current.prev();
                 if (deleteRow($current)) {
                     $row = $next;
@@ -1521,7 +1521,7 @@ appSetup(MODULE, function() {
                 evt && OUT.error(`${func}: no function for "${action}"`);
                 break;
         }
-        $row?.children()?.first()?.trigger('focus');
+        $row?.children()?.first()?.trigger("focus");
     }
 
     /**
@@ -1612,8 +1612,8 @@ appSetup(MODULE, function() {
             return $button;
         }
 
-        const is_forbidden      = $button.hasClass('forbidden');
-        const old_was_forbidden = $button.hasClass('was-forbidden');
+        const is_forbidden      = $button.hasClass("forbidden");
+        const old_was_forbidden = $button.hasClass("was-forbidden");
         let now_disabled, now_forbidden, new_was_forbidden;
         if (enable === true) {
             config            = { ...config, ...config.if_enabled };
@@ -1626,7 +1626,7 @@ appSetup(MODULE, function() {
             now_disabled      = true;
             now_forbidden     = forbid || false;
             new_was_forbidden = false;
-        } else if ($button.hasClass('disabled')) { // Toggling to enabled state
+        } else if ($button.hasClass("disabled")) { // Toggling to enabled state
             now_disabled      = false;
             now_forbidden     = false;
             new_was_forbidden = is_forbidden || old_was_forbidden;
@@ -1636,13 +1636,13 @@ appSetup(MODULE, function() {
             new_was_forbidden = !old_was_forbidden;
         }
 
-        const tooltip = (action === 'lookup') && now_forbidden && NO_LOOKUP;
-        $button.attr('title', (tooltip || config.tooltip || ''));
+        const tooltip = (action === "lookup") && now_forbidden && NO_LOOKUP;
+        $button.attr("title", (tooltip || config.tooltip || ""));
 
-        $button.prop('disabled', now_disabled);
-        $button.toggleClass('disabled',      now_disabled);
-        $button.toggleClass('forbidden',     now_forbidden);
-        $button.toggleClass('was-forbidden', new_was_forbidden);
+        $button.prop("disabled", now_disabled);
+        $button.toggleClass("disabled",      now_disabled);
+        $button.toggleClass("forbidden",     now_forbidden);
+        $button.toggleClass("was-forbidden", new_was_forbidden);
         return $button;
     }
 
@@ -1665,14 +1665,14 @@ appSetup(MODULE, function() {
      * @returns {jQuery}                    The new row.
      */
     function insertRow(after, data, intermediate) {
-        OUT.debug('insertRow after', after);
+        OUT.debug("insertRow after", after);
         const with_data = isPresent(data);
         const $old_row  = after ? dataRow(after) : undefined;
         const $new_row  = emptyDataRow($old_row, with_data);
         if ($old_row) {
             $new_row.insertAfter($old_row);
         } else {
-            $new_row.attr('id', 'manifest_item-item-1');
+            $new_row.attr("id", "manifest_item-item-1");
             $grid.children('tbody').prepend($new_row);
         }
         if (with_data) {
@@ -1692,7 +1692,7 @@ appSetup(MODULE, function() {
      * @param {boolean}        [intermediate]   If more row changes coming.
      */
     function appendRows(list, intermediate) {
-        OUT.debug('appendRows: list =', list);
+        OUT.debug("appendRows: list =", list);
         /** @type {ManifestItem[]} */
         const items = arrayWrap(list);
         const $last = allDataRows().last();
@@ -1719,7 +1719,7 @@ appSetup(MODULE, function() {
         if (!intermediate) {
             updateGridRowCount(items.length);
             updateGridNavigation($grid);
-            $first_added?.children()?.first()?.trigger('focus');
+            $first_added?.children()?.first()?.trigger("focus");
         }
         if (isPresent(mod)) {
             sendUpdateRecords(mod);
@@ -1735,7 +1735,7 @@ appSetup(MODULE, function() {
      * @see "ManifestItemController#bulk_create"
      */
     function sendCreateRecords(items, options) {
-        const func = 'sendCreateRecords';
+        const func = "sendCreateRecords";
         const opt  = { caller: func, ...options, create: true };
         sendUpsertRecords(items, opt);
     }
@@ -1749,7 +1749,7 @@ appSetup(MODULE, function() {
      * @see "ManifestItemController#bulk_update"
      */
     function sendUpdateRecords(items, options) {
-        const func = 'sendUpdateRecords';
+        const func = "sendUpdateRecords";
         const opt  = { caller: func, ...options, create: false };
         sendUpsertRecords(items, opt);
     }
@@ -1767,8 +1767,8 @@ appSetup(MODULE, function() {
         const headers  = { ...opt.headers };   delete opt.headers;
         const params   = { ...(opt.params || opt), data: items };
 
-        const func     = caller || 'sendUpsertRecords';
-        const op       = create ? 'create' : 'update';
+        const func     = caller || "sendUpsertRecords";
+        const op       = create ? "create" : "update";
         const manifest = manifestId();
         OUT.debug(`${func}: (${op}) manifest = ${manifest}; items =`, items);
 
@@ -1777,8 +1777,8 @@ appSetup(MODULE, function() {
             return;
         }
 
-        headers['Accept']       ||= 'text/html';
-        headers['Content-Type'] ||= 'multipart/form-data';
+        headers["Accept"]       ||= "text/html";
+        headers["Content-Type"] ||= "multipart/form-data";
 
         serverItemSend(`bulk/${op}/${manifest}`, {
             caller:     func,
@@ -1797,7 +1797,7 @@ appSetup(MODULE, function() {
      * @see "SerializationConcern#index_values"
      */
     function processReceivedItems(body) {
-        const func = 'processReceivedItems'; OUT.debug(`${func}: body =`,body);
+        const func = "processReceivedItems"; OUT.debug(`${func}: body =`,body);
         const data = body?.items || body || {};
         const list = data.list;
         if (isEmpty(data)) {
@@ -1821,7 +1821,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function markRow(target) {
-        const func = 'markRow'; //OUT.debug(`${func}: target =`, target);
+        const func = "markRow"; //OUT.debug(`${func}: target =`, target);
         const $row = dataRow(target);
         if ($row.is(TO_DELETE)) {
             OUT.debug(`${func}: already marked ${TO_DELETE} -`, $row);
@@ -1844,7 +1844,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}                   **false** if not deleted.
      */
     function deleteRow(target, intermediate) {
-        const func = 'deleteRow'; OUT.debug(`${func}: target =`, target);
+        const func = "deleteRow"; OUT.debug(`${func}: target =`, target);
         const $row = dataRow(target);
 
         // Avoid removing the final row of the grid.
@@ -1881,7 +1881,7 @@ appSetup(MODULE, function() {
      * @param {boolean} [intermediate]      If more row changes coming.
      */
     function deleteRows(list, preserve_last, intermediate) {
-        const func   = 'deleteRows'; OUT.debug(`${func}: list =`, list);
+        const func   = "deleteRows"; OUT.debug(`${func}: list =`, list);
         const $rows  = allDataRows();
         const blanks = [];
         const db_ids =
@@ -1947,7 +1947,7 @@ appSetup(MODULE, function() {
      * @param {boolean}         [intermediate]  If more row changes coming.
      */
     function sendDeleteRecords(items, intermediate) {
-        const func     = 'sendDeleteRecords';
+        const func     = "sendDeleteRecords";
         const manifest = manifestId();
         OUT.debug(`${func}: manifest = ${manifest}; items =`, items);
 
@@ -1956,14 +1956,14 @@ appSetup(MODULE, function() {
             return;
         }
 
-        const accept   = 'application/json';
-        const content  = 'multipart/form-data';
+        const accept   = "application/json";
+        const content  = "multipart/form-data";
 
         serverItemSend(`bulk/destroy/${manifest}`, {
             caller:     func,
-            method:     'DELETE',
+            method:     "DELETE",
             params:     { ids: arrayWrap(items) },
-            headers:    { 'Content-Type': content, Accept: accept },
+            headers:    { "Content-Type": content, Accept: accept },
             onSuccess:  processDeleteResponse,
         });
 
@@ -1996,7 +1996,7 @@ appSetup(MODULE, function() {
      * @param {boolean}                 [intermediate]
      */
     function removeDeletedRows(list, intermediate) {
-        const func   = 'removeDeletedRows'; OUT.debug(`${func}: list =`, list);
+        const func   = "removeDeletedRows"; OUT.debug(`${func}: list =`, list);
         const $rows  = allDataRows();
         const to_del = $rows.filter(TO_DELETE).toArray();
         const marked = compact(to_del.map(e => getManifestItemId(e)));
@@ -2038,7 +2038,7 @@ appSetup(MODULE, function() {
      * @param {boolean}  [intermediate]     If more row changes coming.
      */
     function removeGridRows(rows, intermediate) {
-        OUT.debug('removeGridRows: rows =', rows);
+        OUT.debug("removeGridRows: rows =", rows);
         const $rows = dataRows(rows);
         destroyGridRowElements($rows, intermediate);
     }
@@ -2050,7 +2050,7 @@ appSetup(MODULE, function() {
      * @param {boolean}  [intermediate]     If more row changes coming.
      */
     function removeGridRow(target, intermediate) {
-        OUT.debug('removeGridRow: item =', target);
+        OUT.debug("removeGridRow: item =", target);
         const $row = dataRow(target);
         destroyGridRowElements($row, intermediate);
     }
@@ -2065,7 +2065,7 @@ appSetup(MODULE, function() {
      * @param {boolean} [intermediate]      If more row changes coming.
      */
     function destroyGridRowElements($rows, intermediate) {
-        //OUT.debug('destroyGridRowElements: $rows =', $rows);
+        //OUT.debug("destroyGridRowElements: $rows =", $rows);
         const row_count = $rows.length;
         toggleHidden($rows, true);
         $rows.each((_, row) => controlsColumnToggleRemove(row));
@@ -2083,7 +2083,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function deleteButton(row) {
-        return rowButton(row, 'delete');
+        return rowButton(row, "delete");
     }
 
     /**
@@ -2096,7 +2096,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}              The submit button.
      */
     function enableDelete(row, enable, forbid) {
-        return enableRowButton(row, 'delete', enable, forbid);
+        return enableRowButton(row, "delete", enable, forbid);
     }
 
     /**
@@ -2115,7 +2115,7 @@ appSetup(MODULE, function() {
      * If there is only one grid row, disable
      */
     function updateDeleteButtons() {
-        OUT.debug('updateDeleteButtons');
+        OUT.debug("updateDeleteButtons");
         const $rows = allDataRows();
         if ($rows.length > 1) {
             $rows.each((_, row) => enableDelete(row));
@@ -2133,7 +2133,7 @@ appSetup(MODULE, function() {
      *
      * @type {string}
      */
-    const LOOKUP_DATA = 'lookup';
+    const LOOKUP_DATA = "lookup";
 
     /**
      * Invoke bibliographic lookup for the row associated with the target.
@@ -2141,14 +2141,14 @@ appSetup(MODULE, function() {
      * @param {Selector} target
      */
     function lookupRow(target) {
-        const func  = 'lookupRow'; OUT.debug(`${func}: target =`, target);
+        const func  = "lookupRow"; OUT.debug(`${func}: target =`, target);
         const $row  = dataRow(target);
         const $ctrl = lookupButton($row);
         const modal = LookupModal.instanceFor($ctrl);
         if (modal) {
             modal.toggleModal($ctrl);
         } else {
-            OUT.error(`${func}: no LookupModal for`, $ctrl, 'in row', $row);
+            OUT.error(`${func}: no LookupModal for`, $ctrl, "in row", $row);
         }
     }
 
@@ -2160,7 +2160,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function lookupButton(row) {
-        return rowButton(row, 'lookup');
+        return rowButton(row, "lookup");
     }
 
     /**
@@ -2169,7 +2169,7 @@ appSetup(MODULE, function() {
      * @param {jQuery} $row
      */
     function setupLookup($row) {
-        OUT.debug('setupLookup: $row =', $row);
+        OUT.debug("setupLookup: $row =", $row);
 
         const $button = lookupButton($row);
 
@@ -2189,7 +2189,7 @@ appSetup(MODULE, function() {
          * @see onShowModalHook
          */
         function onLookupStart($activator, check_only, halted) {
-            OUT.debug('LOOKUP START | $activator =', $activator);
+            OUT.debug("LOOKUP START | $activator =", $activator);
             if (check_only || halted) { return undefined }
             clearSearchResultsData($row);
             setSearchTermsData($row);
@@ -2209,10 +2209,10 @@ appSetup(MODULE, function() {
          * @see onHideModalHook
          */
         function onLookupComplete($activator, check_only, halted) {
-            OUT.debug('LOOKUP COMPLETE | $activator =', $activator);
+            OUT.debug("LOOKUP COMPLETE | $activator =", $activator);
             if (check_only || halted) { return undefined }
 
-            const func  = 'onLookupComplete';
+            const func  = "onLookupComplete";
             let message = Emma.Messages.lookup.no_changes;
             const data  = getFieldResultsData($row);
 
@@ -2237,7 +2237,7 @@ appSetup(MODULE, function() {
                     const cells = dataFields($cells, fields).toArray();
                     const names = cells.map(cell =>
                         $(cell).find('.label .text').first().text()
-                    ).sort().join(', ');
+                    ).sort().join(", ");
                     const type  = `<span class="type">${label}:</span>`;
                     const list  = `<span class="list">${names}.</span>`;
                     return `${type} ${list}`;
@@ -2246,13 +2246,13 @@ appSetup(MODULE, function() {
                 // NOTE: This is a hack due to the way that publication date is
                 //  handled versus copyright year.
 /*
-            if (Object.keys(data).includes('emma_publicationDate')) {
-                const $input = formField('emma_publicationDate', $row);
+            if (Object.keys(data).includes("emma_publicationDate")) {
+                const $input = formField("emma_publicationDate", $row);
                 const $label = $input.siblings(`[for="${$input.attr('id')}"]`);
-                $input.attr('title', $label.attr('title'));
+                $input.attr("title", $label.attr("title"));
                 $input.prop({ readonly: false, disabled: false });
                 [$input, $label].forEach($e => {
-                    $e.css('display','revert').toggleClass('disabled', false)
+                    $e.css("display","revert").toggleClass("disabled", false)
                 });
             }
 */
@@ -2276,7 +2276,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}              The submit button.
      */
     function enableLookup(row, enable, forbid) {
-        return enableRowButton(row, 'lookup', enable, forbid);
+        return enableRowButton(row, "lookup", enable, forbid);
     }
 
     /**
@@ -2318,7 +2318,7 @@ appSetup(MODULE, function() {
      * @returns {LookupCondition}
      */
     function setLookupCondition(row, value) {
-        OUT.debug('setLookupCondition: row =', row);
+        OUT.debug("setLookupCondition: row =", row);
         const condition = value || evaluateLookupCondition(row);
         lookupButton(row).data(LOOKUP_CONDITION_DATA, condition);
         return condition;
@@ -2330,7 +2330,7 @@ appSetup(MODULE, function() {
      * @param {Selector} row
      */
     function clearLookupCondition(row) {
-        OUT.debug('clearLookupCondition: row =', row);
+        OUT.debug("clearLookupCondition: row =", row);
         lookupButton(row).removeData(LOOKUP_CONDITION_DATA);
     }
 
@@ -2343,7 +2343,7 @@ appSetup(MODULE, function() {
      * @param {boolean}  [permit]
      */
     function updateLookupCondition(row, permit) {
-        OUT.debug('updateLookupCondition: row =', row);
+        OUT.debug("updateLookupCondition: row =", row);
         const $row    = dataRow(row);
         const $button = lookupButton($row);
         let forbid, enable = false;
@@ -2372,7 +2372,7 @@ appSetup(MODULE, function() {
      * @returns {LookupCondition}
      */
     function evaluateLookupCondition(row) {
-        const func      = 'evaluateLookupCondition';
+        const func      = "evaluateLookupCondition";
         OUT.debug(`${func}: row =`, row);
         const $row      = dataRow(row);
         const $cells    = dataCells($row);
@@ -2400,7 +2400,7 @@ appSetup(MODULE, function() {
      * @param {EmmaData} [data]
      */
     function setOriginalValues(row, data) {
-        const func = 'setOriginalValues'; OUT.debug(`${func}: row =`, row);
+        const func = "setOriginalValues"; OUT.debug(`${func}: row =`, row);
         const $row = dataRow(row);
         let values;
         if (data) {
@@ -2439,7 +2439,7 @@ appSetup(MODULE, function() {
      * @returns {LookupRequest}     The data object assigned to the button.
      */
     function setSearchTermsData(row, value) {
-        OUT.debug('setSearchTermsData:', row, (value || '-'));
+        OUT.debug("setSearchTermsData:", row, (value || "-"));
         let request;
         if (value instanceof LookupRequest) {
             request = value;
@@ -2458,7 +2458,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function clearSearchTermsData(row) {
-        OUT.debug('clearSearchTermsData: row =', row);
+        OUT.debug("clearSearchTermsData: row =", row);
         return lookupButton(row).removeData(LookupModal.SEARCH_TERMS_DATA);
     }
 
@@ -2472,9 +2472,9 @@ appSetup(MODULE, function() {
      * @param {ElementEvt} event
      */
     function updateSearchTermsData(event) {
-        OUT.debug('updateSearchTermsData: event =', event);
+        OUT.debug("updateSearchTermsData: event =", event);
         const $button = $(event.currentTarget || event.target);
-        if ($button.prop('disabled')) { return }
+        if ($button.prop("disabled")) { return }
         if (isPresent(getSearchTermsData($button))) { return }
         clearSearchResultsData($button);
         setSearchTermsData($button);
@@ -2489,7 +2489,7 @@ appSetup(MODULE, function() {
      * @returns {LookupRequest}
      */
     function generateLookupRequest(row, value) {
-        const func      = 'generateLookupRequest'; OUT.debug(func, row, value);
+        const func      = "generateLookupRequest"; OUT.debug(func, row, value);
         const request   = new LookupRequest();
         const $row      = dataRow(row);
         const $cells    = dataCells($row);
@@ -2501,10 +2501,10 @@ appSetup(MODULE, function() {
                     const values = $fld && getCellCurrentValue($fld)?.value;
                     if (isPresent(values)) {
                         const prefix = LookupRequest.LOOKUP_PREFIX[field];
-                        if (prefix === '') {
+                        if (prefix === "") {
                             request.add(values);
                         } else {
-                            request.add(values, (prefix || 'keyword'));
+                            request.add(values, (prefix || "keyword"));
                         }
                     }
                 }
@@ -2525,7 +2525,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function clearSearchResultsData(row) {
-        OUT.debug('clearSearchResultsData: row =', row);
+        OUT.debug("clearSearchResultsData: row =", row);
         return lookupButton(row).removeData(LookupModal.SEARCH_RESULT_DATA);
     }
 
@@ -2558,7 +2558,7 @@ appSetup(MODULE, function() {
      * @see "ManifestItemController#start_edit"
      */
     function postRowUpdate(changed_row, new_values) {
-        const func  = 'postRowUpdate';
+        const func  = "postRowUpdate";
         const $row  = dataRow(changed_row);
         const item  = getManifestItemId($row);
 
@@ -2594,7 +2594,7 @@ appSetup(MODULE, function() {
      * @see "ActiveModel::Errors"
      */
     function parseRowUpdateResponse(row, body) {
-        OUT.debug('parseRowUpdateResponse: body =', body);
+        OUT.debug("parseRowUpdateResponse: body =", body);
         parseUpdateResponse(row, body);
     }
 
@@ -2610,8 +2610,8 @@ appSetup(MODULE, function() {
      * @returns {string|undefined}
      */
     function repositoryFor(row) {
-        const func  = 'repositoryFor';
-        const field = ['repository', 'emma_repository'];
+        const func  = "repositoryFor";
+        const field = ["repository", "emma_repository"];
         const $cell = dataField(row, field, func);
         return $cell && getCellCurrentValue($cell)?.value;
     }
@@ -2640,7 +2640,7 @@ appSetup(MODULE, function() {
      *
      * @type {string}
      */
-    const UPLOADER_DATA = 'uploader';
+    const UPLOADER_DATA = "uploader";
 
     /**
      * Get the uploader instance for the row.
@@ -2660,7 +2660,7 @@ appSetup(MODULE, function() {
      * @param {MultiUploader|undefined} uploader
      */
     function setUploader(row, uploader) {
-        //OUT.debug('setUploader: row =', row);
+        //OUT.debug("setUploader: row =", row);
         const $row = dataRow(row);
         if (uploader) {
             $row.data(UPLOADER_DATA, uploader);
@@ -2677,13 +2677,13 @@ appSetup(MODULE, function() {
      * @returns {MultiUploader}
      */
     function newUploader(row) {
-        //OUT.debug('newUploader: row =', row);
+        //OUT.debug("newUploader: row =", row);
         // noinspection JSUnusedGlobalSymbols
         const cbs      = { onSelect, onStart, onError, onSuccess };
         const $row     = dataRow(row);
         const features = { debugging: DEBUG };
         const instance = new MultiUploader($row, ITEM_MODEL, features, cbs);
-        const func     = 'uploader';
+        const func     = "uploader";
         let name_shown;
 
         // Clear display elements of an existing uploader.
@@ -2834,12 +2834,12 @@ appSetup(MODULE, function() {
             const $cell = $row.find(UPLOADER_CELL),
                   $name = $cell.find(UPLOADED_NAME),
                   $from = $name.children();
-            const HOVER = 'data-hover';
-            const attrs = [...ID_ATTRIBUTES, 'data-id'];
+            const HOVER = "data-hover";
+            const attrs = [...ID_ATTRIBUTES, "data-id"];
 
             $(container).each((_, element) => {
                 const $elem   = uniqAttrsTree(element, undefined, attrs);
-                const type    = $elem.attr('data-type');
+                const type    = $elem.attr("data-type");
                 const $type   = $from.filter(`.from-${type}`);
 
                 const popup   = new InlinePopup($elem);
@@ -2849,7 +2849,7 @@ appSetup(MODULE, function() {
                 const $submit = $panel.find('button.input-submit');
                 const $cancel = $panel.find('button.input-cancel');
 
-                // handleEvent($input, 'keyup', onInput); // See function def.
+                // handleEvent($input, "keyup", onInput); // See function def.
                 handleClickAndKeypress($submit, onSubmit);
                 handleClickAndKeypress($cancel, onCancel);
 
@@ -2869,11 +2869,11 @@ appSetup(MODULE, function() {
                  */
 /*
                 function onInput(event) {
-                    OUT.debug('onInput: event =', event);
+                    OUT.debug("onInput: event =", event);
                     const key = keyCombo(event);
-                    if (key === 'Enter') {
+                    if (key === "Enter") {
                         event.stopImmediatePropagation();
-                        $submit.trigger('click');
+                        $submit.trigger("click");
                         return false;
                     }
                 }
@@ -2886,7 +2886,7 @@ appSetup(MODULE, function() {
                  * @param {ElementEvt} event
                  */
                 function onSubmit(event) {
-                    OUT.debug('onSubmit: event =', event);
+                    OUT.debug("onSubmit: event =", event);
                     const value = $input.val()?.trim();
                     if (value) {
                         setUploaderDisplayValue($cell, value, type);
@@ -2902,7 +2902,7 @@ appSetup(MODULE, function() {
                  * @param {ElementEvt} event
                  */
                 function onCancel(event) {
-                    OUT.debug('onCancel: event =', event);
+                    OUT.debug("onCancel: event =", event);
                     popup.close();
                 }
 
@@ -2913,7 +2913,7 @@ appSetup(MODULE, function() {
                  * @param {ElementEvt} _event
                  */
                 function hoverToggle(_event) {
-                    //OUT.debug('hoverToggle: event =', _event);
+                    //OUT.debug("hoverToggle: event =", _event);
                     $cell.attr(HOVER, type);
                 }
 
@@ -2924,7 +2924,7 @@ appSetup(MODULE, function() {
                  * @param {ElementEvt} _event
                  */
                 function unhoverToggle(_event) {
-                    //OUT.debug('unhoverToggle: event =', _event);
+                    //OUT.debug("unhoverToggle: event =", _event);
                     if ($cell.attr(HOVER) === type) {
                         $cell.removeAttr(HOVER);
                     }
@@ -2938,7 +2938,7 @@ appSetup(MODULE, function() {
                  * @param {boolean} [halted]
                  */
                 function onShow($target, check_only, halted) {
-                    OUT.debug('onShow:', $target, check_only, halted);
+                    OUT.debug("onShow:", $target, check_only, halted);
                     if (check_only || halted) { return }
                     const value = $type.text()?.trim();
                     if (value) {
@@ -2956,7 +2956,7 @@ appSetup(MODULE, function() {
                  * @param {boolean} [halted]
                  */
                 function onHide($target, check_only, halted) {
-                    OUT.debug('onHide:', $target, check_only, halted);
+                    OUT.debug("onHide:", $target, check_only, halted);
                     if (check_only || halted) { return }
                     restoreGridHeight();
                 }
@@ -2973,11 +2973,11 @@ appSetup(MODULE, function() {
                     const grid_box  = $grid[0].getBoundingClientRect();
                     const obscured  = panel_box.bottom - grid_box.bottom;
                     if (obscured > 0) {
-                        grid_height = $grid.prop('style').height;
+                        grid_height = $grid.prop("style").height;
                         grid_resize = true;
                         const old_ht    = grid_box.height;
                         const scrollbar = old_ht - $grid[0].clientHeight;
-                        $grid.css('height', (old_ht + obscured + scrollbar));
+                        $grid.css("height", (old_ht + obscured + scrollbar));
                     }
                 }
 
@@ -2987,14 +2987,14 @@ appSetup(MODULE, function() {
                  */
                 function restoreGridHeight() {
                     if (grid_resize) {
-                        $grid.prop('style').height = grid_height;
+                        $grid.prop("style").height = grid_height;
                         grid_resize = grid_height = undefined;
                     }
                 }
             });
 
             const $upload = instance.fileSelectButton();
-            const type    = 'uploader';
+            const type    = "uploader";
             handleHoverAndFocus($upload, hoverUpload, unhoverUpload);
 
             /**
@@ -3004,7 +3004,7 @@ appSetup(MODULE, function() {
              * @param {ElementEvt} _event
              */
             function hoverUpload(_event) {
-                //OUT.debug('hoverUpload: event =', _event);
+                //OUT.debug("hoverUpload: event =", _event);
                 $cell.attr(HOVER, type);
             }
 
@@ -3015,7 +3015,7 @@ appSetup(MODULE, function() {
              * @param {ElementEvt} _event
              */
             function unhoverUpload(_event) {
-                //OUT.debug('unhoverUpload: event =', _event);
+                //OUT.debug("unhoverUpload: event =", _event);
                 if ($cell.attr(HOVER) === type) {
                     $cell.removeAttr(HOVER);
                 }
@@ -3029,7 +3029,7 @@ appSetup(MODULE, function() {
      * @param {Selector} row
      */
     function initializeUploader(row) {
-        //OUT.debug('initializeUploader: row =', row);
+        //OUT.debug("initializeUploader: row =", row);
         const $row = dataRow(row);
         if (!getUploader($row)) {
             setUploader($row, newUploader($row));
@@ -3060,7 +3060,7 @@ appSetup(MODULE, function() {
      *
      * @type {string}
      */
-    const GRID_ROW_INDEX_ATTR = 'aria-rowindex';
+    const GRID_ROW_INDEX_ATTR = "aria-rowindex";
 
     /**
      * The start of CSS class names related to the ordering of grid-spanning
@@ -3069,7 +3069,7 @@ appSetup(MODULE, function() {
      *
      * @type {string}
      */
-    const ROW_CLASS_PREFIX = 'row-';
+    const ROW_CLASS_PREFIX = "row-";
 
     /**
      * Get the grid row index associated with the target.
@@ -3093,7 +3093,7 @@ appSetup(MODULE, function() {
      */
     function gridRowClassNumber(target, prefix = ROW_CLASS_PREFIX) {
         const cls = getClass(target, prefix);
-        return cls && Number(cls.replace(prefix, '')) || undefined;
+        return cls && Number(cls.replace(prefix, "")) || undefined;
     }
 
     /**
@@ -3106,10 +3106,10 @@ appSetup(MODULE, function() {
      * delta number would appropriately reflect its ordinal position).
      */
     function updateGridRowIndexes() {
-        OUT.debug('updateGridRowIndexes');
+        OUT.debug("updateGridRowIndexes");
         const $rows   = allDataRows();
-        const first_c = `${ROW_CLASS_PREFIX}first`; // E.g. 'row-first'
-        const last_c  = `${ROW_CLASS_PREFIX}last`;  // E.g. 'row-last'
+        const first_c = `${ROW_CLASS_PREFIX}first`; // E.g. "row-first"
+        const last_c  = `${ROW_CLASS_PREFIX}last`;  // E.g. "row-last"
         const start_i = gridRowIndex($rows.first());
         const start_c = gridRowClassNumber($rows.first());
         let row_index = start_i || gridRowIndex(headerRow())       || 1;
@@ -3119,7 +3119,7 @@ appSetup(MODULE, function() {
         $rows.each((_, row) => {
             const $row = $(row);
             $row.removeClass([first_c, last_c]);
-            replaceClass($row, 'row-', row_class++);
+            replaceClass($row, "row-", row_class++);
             $row.attr(GRID_ROW_INDEX_ATTR, row_index++);
 
             if (dbRowDelta($row)) {
@@ -3142,7 +3142,7 @@ appSetup(MODULE, function() {
      * @param {number} by
      */
     function updateGridRowCount(by) {
-        OUT.debug('updateGridRowCount: by', by);
+        OUT.debug("updateGridRowCount: by", by);
         changeItemCounts(by);
         updateDeleteButtons();
         updateGridRowIndexes();
@@ -3152,11 +3152,11 @@ appSetup(MODULE, function() {
     // Functions - row - database row/delta
     // ========================================================================
 
-    const DB_ROW_ATTR   = 'data-item-row';
-    const DB_DELTA_ATTR = 'data-item-delta';
+    const DB_ROW_ATTR   = "data-item-row";
+    const DB_DELTA_ATTR = "data-item-delta";
 
-    const DB_ROW_DATA   = 'itemRow';
-    const DB_DELTA_DATA = 'itemDelta';
+    const DB_ROW_DATA   = "itemRow";
+    const DB_DELTA_DATA = "itemDelta";
 
     /**
      * ManifestItem "row" column value for the row. <p/>
@@ -3268,12 +3268,12 @@ appSetup(MODULE, function() {
      * @see "ManifestController#save"
      */
     function updateDbRowDelta(target, data) {
-        const func = 'updateDbRowDelta';
+        const func = "updateDbRowDelta";
         const $row = $(target);
-        OUT.debug(`${func}: target = `, target, `data =`, data);
+        OUT.debug(`${func}: target = `, target, "data =", data);
         if (isEmpty(data)) {
             OUT.debug(`${func}: no data supplied`);
-        } else if (typeof data === 'number') {
+        } else if (typeof data === "number") {
             setDbRowValue($row, data);
             setDbRowDelta($row, 0);
         } else {
@@ -3290,7 +3290,7 @@ appSetup(MODULE, function() {
      * @see "ManifestController#save"
      */
     function updateRowValues(table) {
-        const func = 'updateRowValues'; OUT.debug(`${func}: table =`, table);
+        const func = "updateRowValues"; OUT.debug(`${func}: table =`, table);
         allDataRows().each((_, row) => {
             const $row  = $(row);
             const db_id = getManifestItemId($row);
@@ -3331,7 +3331,7 @@ appSetup(MODULE, function() {
      *
      * @type {string}
      */
-    const STATUS_DEFAULT = 'missing';
+    const STATUS_DEFAULT = "missing";
 
     /**
      * Indicate whether the item record is in its initial state.
@@ -3379,9 +3379,9 @@ appSetup(MODULE, function() {
     function statusData(data) {
         if (isEmpty(data)) { return {} }
         if (isUnsavedData(data)) {
-            data.ready_status = 'unsaved';
-        } else if (!hasKey(data, 'ready_status') && !isInitialData(data)) {
-            data.ready_status = 'ready';
+            data.ready_status = "unsaved";
+        } else if (!hasKey(data, "ready_status") && !isInitialData(data)) {
+            data.ready_status = "ready";
         }
         return compact(toObject(STATUS_TYPE_VALUES, t => presence(data[t])));
     }
@@ -3445,14 +3445,14 @@ appSetup(MODULE, function() {
      * @see "ManifestItem::Config::STATUS"
      */
     function updateRowIndicator(target, type, status, text) {
-        const func       = 'updateRowIndicator';
+        const func       = "updateRowIndicator";
         const value      = status || STATUS_DEFAULT;
         const $indicator = rowIndicators(target).filter(`.${type}`);
         OUT.debug(`${func}: ${type}: status = "${status}"`);
 
         // Update status text description.
         const label = isDefined(text) ? text : statusLabel(type, value);
-        const l_id  = $indicator.attr('aria-describedby');
+        const l_id  = $indicator.attr("aria-describedby");
         let $label;
         if (isPresent(l_id)) {
             $label  = $(`#${l_id}`);
@@ -3461,10 +3461,10 @@ appSetup(MODULE, function() {
             OUT.warn(`${func}: no id for`, $indicator);
         }
         $label.text(label);
-        $indicator.attr('title', label);
+        $indicator.attr("title", label);
 
         // Update indicator CSS.
-        replaceClass($indicator, 'value-', value);
+        replaceClass($indicator, "value-", value);
     }
 
     /**
@@ -3475,7 +3475,7 @@ appSetup(MODULE, function() {
      * @param {ManifestItemData|object|undefined} data
      */
     function updateRowIndicators(target, data) {
-        //OUT.debug('updateRowIndicators: target =', target);
+        //OUT.debug("updateRowIndicators: target =", target);
         const $row   = dataRow(target);
         const status = statusData(data);
         for (const [type, value] of Object.entries(status)) {
@@ -3489,7 +3489,7 @@ appSetup(MODULE, function() {
      * @param {Selector} target       Row or cell.
      */
     function resetRowIndicators(target) {
-        //OUT.debug('resetRowIndicators: target =', target);
+        //OUT.debug("resetRowIndicators: target =", target);
         const $row = dataRow(target);
         STATUS_TYPES.forEach(type => clearRowIndicator($row, type));
     }
@@ -3500,15 +3500,15 @@ appSetup(MODULE, function() {
      * @param {jQuery} $row
      */
     function initializeRowIndicators($row) {
-        //OUT.debug('initializeRowIndicators: $row =', $row);
+        //OUT.debug("initializeRowIndicators: $row =", $row);
         const $panel = rowIndicatorPanel($row);
         $panel.find(INDICATOR).each((_, indicator) => {
             const $indicator = $(indicator);
-            const tooltip    = $indicator.attr('title');
-            const label_id   = $indicator.attr('aria-describedby');
+            const tooltip    = $indicator.attr("title");
+            const label_id   = $indicator.attr("aria-describedby");
             if (label_id && !tooltip) {
                 const $label = $panel.find(`#${label_id}`);
-                $indicator.attr('title', $label.text());
+                $indicator.attr("title", $label.text());
             }
         });
     }
@@ -3541,7 +3541,7 @@ appSetup(MODULE, function() {
      * @see "ManifestItemDecorator#row_field_error_details"
      */
     function updateRowDetailsItems(target, data) {
-        //OUT.debug('updateRowDetailsItems: target =', target);
+        //OUT.debug("updateRowDetailsItems: target =", target);
         if (isEmpty(data)) { return }
         const html_encode = (s) => htmlEncode(s);
         getRowDetailsItems(target).each((_, item) => {
@@ -3584,7 +3584,7 @@ appSetup(MODULE, function() {
      * @param {Selector} target
      */
     function resetRowDetailsItems(target) {
-        //OUT.debug('resetRowDetailsItems: target =', target);
+        //OUT.debug("resetRowDetailsItems: target =", target);
         const $items = getRowDetailsItems(target);
         $items.each((_, item) => $(item).empty().text(BLANK_DETAIL_VALUE));
     }
@@ -3598,7 +3598,7 @@ appSetup(MODULE, function() {
      *
      * @type {string}
      */
-    const ROW_CHANGED_DATA = 'changed';
+    const ROW_CHANGED_DATA = "changed";
 
     /**
      * Indicate whether any of the cells of the related data row have changed.
@@ -3657,7 +3657,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}
      */
     function evaluateRowChanged(row) {
-        OUT.debug('evaluateRowChanged: row =', row);
+        OUT.debug("evaluateRowChanged: row =", row);
         const $row    = dataRow(row);
         const changed = (change, cell) => evaluateCellChanged(cell) || change;
         return dataCells($row).toArray().reduce(changed, false);
@@ -3674,7 +3674,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}
      */
     function checkRowChanged(row) {
-        //OUT.debug('checkRowChanged: row =', row);
+        //OUT.debug("checkRowChanged: row =", row);
         const $row  = dataRow(row);
         let changed = getRowChanged($row);
         if (notDefined(changed)) {
@@ -3690,7 +3690,7 @@ appSetup(MODULE, function() {
      * @param {Selector} row          Row or cell.
      */
     function clearRowChanged(row) {
-        //OUT.debug('clearRowChanged: row =', row);
+        //OUT.debug("clearRowChanged: row =", row);
         dataRow(row).removeData(ROW_CHANGED_DATA);
     }
 
@@ -3718,7 +3718,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function emptyDataRow(original, clear_errors) {
-        OUT.debug('emptyDataRow: original =', original);
+        OUT.debug("emptyDataRow: original =", original);
         const $copy = cloneDataRow(original);
         clearManifestItemId($copy);
         initializeDataCells($copy, clear_errors);
@@ -3735,11 +3735,11 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function cloneDataRow(original) {
-        //OUT.debug('cloneDataRow: original =', original);
+        //OUT.debug("cloneDataRow: original =", original);
         const $row  = original ? dataRow(original) : $template_row;
         const $copy = $row.clone();
 
-        //_debugWantNoDataValues($copy, '$copy');
+        //_debugWantNoDataValues($copy, "$copy");
 
         // If the row is being inserted after an inserted row, look to the
         // original row for information.
@@ -3798,7 +3798,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function dataCell(cell) {
-        const func = 'dataCell'; //OUT.debug(`${func}: cell =`, cell);
+        const func = "dataCell"; //OUT.debug(`${func}: cell =`, cell);
         return selfOrParent(cell, DATA_CELL, func);
     }
 
@@ -3812,7 +3812,7 @@ appSetup(MODULE, function() {
      */
     function dataFields(target, fields) {
         const selectors = arrayWrap(fields).map(f => `[${FIELD_ATTR}="${f}"]`);
-        return dataCells(target).filter(selectors.join(', '));
+        return dataCells(target).filter(selectors.join(", "));
     }
 
     /**
@@ -3835,7 +3835,7 @@ appSetup(MODULE, function() {
         }
         if (isPresent($cell)) { return $cell }
         if (caller === null)  { return }
-        const func = caller || 'dataField';
+        const func = caller || "dataField";
         OUT.warn(`${func}: no dataCell with ${match} in target =`, target);
     }
 
@@ -3858,7 +3858,7 @@ appSetup(MODULE, function() {
      * @returns {Properties}
      */
     function cellProperties(cell) {
-        const func   = 'cellProperties';
+        const func   = "cellProperties";
         const field  = cellDbColumn(cell);
         const result = field && fieldProperty()[field];
         if (!field) {
@@ -3880,7 +3880,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}             Whether the cell value changed.
      */
     function dataCellUpdate(cell, data, changed, valid) {
-        OUT.debug('dataCellUpdate: data =', data, cell);
+        OUT.debug("dataCellUpdate: data =", data, cell);
         const $cell     = dataCell(cell);
         const value     = $cell.makeValue(data);
         const original  = getCellOriginalValue($cell);
@@ -3907,7 +3907,7 @@ appSetup(MODULE, function() {
      * @param {boolean}  [clear_errors]     If **true**, remove error status.
      */
     function initializeDataCells(target, clear_errors) {
-        OUT.debug('initializeDataCells: target =', target);
+        OUT.debug("initializeDataCells: target =", target);
         const $cells = dataCells(target);
         $cells.each((_, cell) => initializeDataCell(cell, clear_errors));
     }
@@ -3921,7 +3921,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function initializeDataCell(cell, clear_errors) {
-        //OUT.debug('initializeDataCell: cell =', cell);
+        //OUT.debug("initializeDataCell: cell =", cell);
         const $cell = dataCell(cell);
         turnOffAutocompleteIn($cell);
         cellEditClear($cell);
@@ -3939,7 +3939,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function resetDataCell(cell, reset_uploader) {
-        //OUT.debug('resetDataCell: cell =', cell);
+        //OUT.debug("resetDataCell: cell =", cell);
         const $cell = dataCell(cell);
         if (reset_uploader || !$cell.is(UPLOADER_CELL)) {
             clearCellOriginalValue($cell);
@@ -3959,7 +3959,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function refreshDataCell(cell, clear_errors) {
-        //OUT.debug('refreshDataCell: cell =', cell);
+        //OUT.debug("refreshDataCell: cell =", cell);
         const $cell = dataCell(cell);
         if (clear_errors) {
             $cell.removeClass(ALL_STATUS_MARKERS);
@@ -3977,7 +3977,7 @@ appSetup(MODULE, function() {
      * @param {jQuery} $row
      */
     function setupDataCellEditing($row) {
-        OUT.debug('setupDataCellEditing: $row =', $row);
+        OUT.debug("setupDataCellEditing: $row =", $row);
         dataCells($row, true).each((_, cell) => setupCellNavGroup(cell));
     }
 
@@ -3988,7 +3988,7 @@ appSetup(MODULE, function() {
      * @param {Selector} cell
      */
     function setupCellNavGroup(cell) {
-        const func  = 'setupCellNavGroup'; OUT.debug(`${func}:`, cell);
+        const func  = "setupCellNavGroup"; OUT.debug(`${func}:`, cell);
         const $cell = $(cell);
 
         let group   = NavGroup.instanceFor($cell);
@@ -4015,7 +4015,7 @@ appSetup(MODULE, function() {
 
         } else if ($cell.is(CONTROLS_HEAD)) {
             OUT.debug(`${func}: CONTROLS_HEAD - $cell =`, $cell);
-            group.addCallback('activate', onNavGroupGridControls);
+            group.addCallback("activate", onNavGroupGridControls);
 
         } else if ($cell.is(DATA_HEAD)) {
             OUT.debug(`${func}: DATA_HEAD - $cell =`, $cell);
@@ -4023,7 +4023,7 @@ appSetup(MODULE, function() {
 
         } else if ($cell.is(CONTROLS_CELL)) {
             OUT.debug(`${func}: CONTROLS_CELL - $cell =`, $cell);
-            group.addCallback('activate', onNavGroupRowControls);
+            group.addCallback("activate", onNavGroupRowControls);
 
         } else if ($cell.is(UPLOADER_CELL)) {
             OUT.debug(`${func}: UPLOADER_CELL - $cell =`, $cell);
@@ -4031,8 +4031,8 @@ appSetup(MODULE, function() {
 
         } else if ($cell.is(DATA_CELL)) {
             OUT.debug(`${func}: DATA_CELL - $cell =`, $cell);
-            group.addCallback('activate',   onNavGroupStartValueEdit);
-            group.addCallback('deactivate', onNavGroupFinishValueEdit);
+            group.addCallback("activate",   onNavGroupStartValueEdit);
+            group.addCallback("deactivate", onNavGroupFinishValueEdit);
 
         } else {
             OUT.warn(`${func}: unexpected $cell =`, $cell);
@@ -4047,7 +4047,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}
      */
     function onNavGroupGridControls(arg) {
-        const func  = 'onNavGroupGridControls';
+        const func  = "onNavGroupGridControls";
         const $ctrl = arg.control && $(arg.control);
         if (!$ctrl) {
             OUT.debug(`${func}: group activated`);
@@ -4077,7 +4077,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}
      */
     function onNavGroupRowControls(arg) {
-        const func  = 'onNavGroupRowControls';
+        const func  = "onNavGroupRowControls";
         const $ctrl = arg.control && $(arg.control);
         if (!$ctrl) {
             OUT.debug(`${func}: group activated`);
@@ -4102,7 +4102,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}
      */
     function onNavGroupUploadControls(arg) {
-        const func  = 'onNavGroupUploadControls';
+        const func  = "onNavGroupUploadControls";
         const $ctrl = arg.control && $(arg.control);
         let modal;
         if (!$ctrl) {
@@ -4132,15 +4132,15 @@ appSetup(MODULE, function() {
      * @returns {boolean}
      */
     function onNavGroupStartValueEdit(arg) {
-        const func  = 'onNavGroupStartValueEdit';
+        const func  = "onNavGroupStartValueEdit";
         const $cell = dataCell(arg.container);
         const $ctrl = arg.control && $(arg.control);
         if ($ctrl) {
-            OUT.debug(`${func}: unused: $ctrl = `, $ctrl, 'arg =', arg);
+            OUT.debug(`${func}: unused: $ctrl =`, $ctrl, "arg =", arg);
         } else {
-            OUT.debug(`${func}: arg = `, arg);
+            OUT.debug(`${func}: arg =`, arg);
         }
-        startValueEdit($cell) && cellEdit($cell).trigger('focus');
+        startValueEdit($cell) && cellEdit($cell).trigger("focus");
         // TODO: move the caret to the perceived location of the mouse click
         return true;
     }
@@ -4153,13 +4153,13 @@ appSetup(MODULE, function() {
      * @returns {boolean}
      */
     function onNavGroupFinishValueEdit(arg) {
-        const func  = 'onNavGroupFinishValueEdit';
+        const func  = "onNavGroupFinishValueEdit";
         const $cell = dataCell(arg.container);
         const $ctrl = arg.control && $(arg.control);
         if ($ctrl) {
-            OUT.debug(`${func}: unused: $ctrl = `, $ctrl, 'arg =', arg);
+            OUT.debug(`${func}: unused: $ctrl =`, $ctrl, "arg =", arg);
         } else {
-            OUT.debug(`${func}: arg = `, arg);
+            OUT.debug(`${func}: arg =`, arg);
         }
         finishValueEdit($cell);
         return true;
@@ -4184,7 +4184,7 @@ appSetup(MODULE, function() {
         const from_curr = $c => (v = curr($c)) && setCellOriginalValue($c, v);
         const from_orig = $c => (v = orig($c)) && setCellCurrentValue($c, v);
         const from_disp = $c => getCellDisplayValue($c);
-        const current   = notDefined(from) || (from === 'current');
+        const current   = notDefined(from) || (from === "current");
 
         dataCells(target).each((_, cell) => {
             const $cell = $(cell);
@@ -4207,7 +4207,7 @@ appSetup(MODULE, function() {
      *
      * @type {string}
      */
-    const VALUE_CHANGED_DATA = 'valueChanged';
+    const VALUE_CHANGED_DATA = "valueChanged";
 
     /**
      * Indicate whether the related cell's data has changed. <p/>
@@ -4244,7 +4244,7 @@ appSetup(MODULE, function() {
      * @param {Selector} cell         A cell or element inside a cell.
      */
     function clearCellChanged(cell) {
-        //OUT.debug('clearCellChanged: cell =', cell);
+        //OUT.debug("clearCellChanged: cell =", cell);
         dataCell(cell).removeData(VALUE_CHANGED_DATA);
     }
 
@@ -4272,7 +4272,7 @@ appSetup(MODULE, function() {
      * @returns {boolean}
      */
     function evaluateCellChanged(cell) {
-        OUT.debug('evaluateCellChanged: cell =', cell);
+        OUT.debug("evaluateCellChanged: cell =", cell);
         const $cell = dataCell(cell);
         let changed = getCellChanged($cell);
         if (notDefined(changed)) {
@@ -4296,7 +4296,7 @@ appSetup(MODULE, function() {
      *
      * @type {string}
      */
-    const CELL_VALID_DATA = 'valid';
+    const CELL_VALID_DATA = "valid";
 
     /**
      * Indicate whether the related cell's data is currently valid.
@@ -4326,11 +4326,11 @@ appSetup(MODULE, function() {
         const $input = $cell.find(`[name="${field}"]`);
         const valid  = (setting !== false);
         if (!valid) {
-            $input.attr('aria-invalid', true);
-        } else if ($input.attr('aria-required') === 'true') {
-            $input.attr('aria-invalid', false);
+            $input.attr("aria-invalid", true);
+        } else if ($input.attr("aria-required") === "true") {
+            $input.attr("aria-invalid", false);
         } else {
-            $input.removeAttr('aria-invalid');
+            $input.removeAttr("aria-invalid");
         }
         $cell.toggleClass(ERROR_MARKER, !valid);
         $cell.data(CELL_VALID_DATA, valid);
@@ -4364,8 +4364,8 @@ appSetup(MODULE, function() {
      * @returns {boolean}
      */
     function evaluateCellValid(cell, current) {
-        //OUT.debug('evaluateCellValid: cell =', cell);
-        /** @type {Value|undefined} */
+        //OUT.debug("evaluateCellValid: cell =", cell);
+        /** @type {Field.Value|undefined} */
         let value;
         const $cell = dataCell(cell);
         if ($cell.is(ERROR)) {
@@ -4392,7 +4392,7 @@ appSetup(MODULE, function() {
      *
      * @type {string}
      */
-    const ORIGINAL_VALUE_DATA = 'originalValue';
+    const ORIGINAL_VALUE_DATA = "originalValue";
 
     /**
      * The original value of the associated cell.
@@ -4414,7 +4414,7 @@ appSetup(MODULE, function() {
      * @returns {Field.Value}
      */
     function setCellOriginalValue(cell, new_value) {
-        //OUT.debug('setCellOriginalValue: new_value =', new_value, cell);
+        //OUT.debug("setCellOriginalValue: new_value =", new_value, cell);
         const $cell = dataCell(cell);
         const value = $cell.makeValue(new_value);
         $cell.data(ORIGINAL_VALUE_DATA, value);
@@ -4427,7 +4427,7 @@ appSetup(MODULE, function() {
      * @param {Selector} cell         A cell or element inside a cell.
      */
     function clearCellOriginalValue(cell) {
-        //OUT.debug('clearCellOriginalValue: cell =', cell);
+        //OUT.debug("clearCellOriginalValue: cell =", cell);
         dataCell(cell).removeData(ORIGINAL_VALUE_DATA);
     }
 
@@ -4440,7 +4440,7 @@ appSetup(MODULE, function() {
      *
      * @type {string}
      */
-    const CURRENT_VALUE_DATA = 'currentValue';
+    const CURRENT_VALUE_DATA = "currentValue";
 
     /**
      * The current value of the associated cell.
@@ -4462,7 +4462,7 @@ appSetup(MODULE, function() {
      * @returns {Field.Value}
      */
     function setCellCurrentValue(cell, new_value) {
-        //OUT.debug('setCellCurrentValue: new_value =', new_value, cell);
+        //OUT.debug("setCellCurrentValue: new_value =", new_value, cell);
         const $cell = dataCell(cell);
         const value = $cell.makeValue(new_value);
         $cell.data(CURRENT_VALUE_DATA, value);
@@ -4475,7 +4475,7 @@ appSetup(MODULE, function() {
      * @param {Selector} cell         A cell or element inside a cell.
      */
     function clearCellCurrentValue(cell) {
-        //OUT.debug('clearCellCurrentValue: cell =', cell);
+        //OUT.debug("clearCellCurrentValue: cell =", cell);
         dataCell(cell).removeData(CURRENT_VALUE_DATA);
     }
 
@@ -4540,14 +4540,14 @@ appSetup(MODULE, function() {
      * @param {Field.Value} new_value
      */
     function setCellDisplayValue(cell, new_value) {
-        //OUT.debug('setCellDisplayValue: new_value =', new_value, cell);
+        //OUT.debug("setCellDisplayValue: new_value =", new_value, cell);
         const $cell = dataCell(cell);
         if ($cell.is(UPLOADER_CELL)) {
             setUploaderDisplayValue(cell, new_value);
         } else {
             const $value = cellDisplay($cell);
             if (notDefined(new_value)) {
-                $value.text('');
+                $value.text("");
             } else {
                 const value = $cell.makeValue(new_value);
                 const list  = $cell.is('.textbox');
@@ -4563,7 +4563,7 @@ appSetup(MODULE, function() {
      * @param {Field.Value} [new_value]     Default: from {@link cellDisplay}.
      */
     function updateCellDisplayValue(cell, new_value) {
-        //OUT.debug('updateCellDisplayValue: new_value =', new_value, cell);
+        //OUT.debug("updateCellDisplayValue: new_value =", new_value, cell);
         const $cell = dataCell(cell);
         let value;
         if (isDefined(new_value)) {
@@ -4635,7 +4635,7 @@ appSetup(MODULE, function() {
      * @param {Selector} cell         A cell or element inside a cell.
      */
     function cellEditClear(cell) {
-        //OUT.debug('cellEditClear:', cell);
+        //OUT.debug("cellEditClear:", cell);
         const $edit = cellEdit(cell);
         editValueClear($edit);
     }
@@ -4660,7 +4660,7 @@ appSetup(MODULE, function() {
      * @param {Field.Value} [new_value]     Default from displayed value.
      */
     function setCellEditValue(cell, new_value) {
-        //OUT.debug('setCellEditValue: new_value =', new_value, cell);
+        //OUT.debug("setCellEditValue: new_value =", new_value, cell);
         const $cell = dataCell(cell);
         const $edit = cellEdit($cell);
         let value   = new_value && $cell.makeValue(new_value);
@@ -4680,7 +4680,7 @@ appSetup(MODULE, function() {
      * @param {object}   new_value
      */
     function atomicEdit(cell, new_value) {
-        const func  = 'atomicEdit'; OUT.debug(`${func}: cell =`, cell);
+        const func  = "atomicEdit"; OUT.debug(`${func}: cell =`, cell);
         const $cell = dataCell(cell);
         if (startValueEdit($cell)) {
             delayedBy(250, () => finishValueEdit($cell, new_value))();
@@ -4695,7 +4695,7 @@ appSetup(MODULE, function() {
      * @return {boolean}              **false** if already editing.
      */
     function startValueEdit(cell) {
-        const func  = 'startValueEdit';
+        const func  = "startValueEdit";
         const $cell = dataCell(cell);
 
         if (getCellEditMode($cell)) {
@@ -4719,7 +4719,7 @@ appSetup(MODULE, function() {
      * @see "ManifestItemController#start_edit"
      */
     function postStartEdit(cell) {
-        const func  = 'postStartEdit'; OUT.debug(`${func}: cell =`, cell);
+        const func  = "postStartEdit"; OUT.debug(`${func}: cell =`, cell);
 
         if (!manifestId()) {
             OUT.debug(`${func}: triggering manifest creation`);
@@ -4755,7 +4755,7 @@ appSetup(MODULE, function() {
      * @return {boolean}              **false** if not currently editing.
      */
     function finishValueEdit(cell, new_value) {
-        const func  = 'finishValueEdit';
+        const func  = "finishValueEdit";
         const $cell = dataCell(cell);
 
         if (!getCellEditMode($cell)) {
@@ -4773,7 +4773,7 @@ appSetup(MODULE, function() {
         }
 
         if (value) {
-            OUT.debug(`<<< ${func}: value =`, value, '$cell =', $cell);
+            OUT.debug(`<<< ${func}: value =`, value, "$cell =", $cell);
             postFinishEdit($cell, value);
         } else {
             OUT.debug(`<<< ${func}: $cell =`, $cell);
@@ -4789,7 +4789,7 @@ appSetup(MODULE, function() {
      * @param {Field.Value} [new_value]     Default from displayed value.
      */
     function cellEditBegin(cell, new_value) {
-        OUT.debug('cellEditBegin: new_value =', new_value, cell);
+        OUT.debug("cellEditBegin: new_value =", new_value, cell);
         const $cell = dataCell(cell);
         setCellEditValue($cell, new_value);
         registerActiveCell($cell);
@@ -4803,7 +4803,7 @@ appSetup(MODULE, function() {
      * @returns {Field.Value}
      */
     function cellEditEnd(cell) {
-        OUT.debug('cellEditEnd:', cell);
+        OUT.debug("cellEditEnd:", cell);
         const $cell     = dataCell(cell);
         const old_value = getCellCurrentValue($cell);
         const new_value = getCellEditValue($cell);
@@ -4832,7 +4832,7 @@ appSetup(MODULE, function() {
      * @see "ManifestItemController#start_edit"
      */
     function postFinishEdit(cell, new_value) {
-        const func     = 'postFinishEdit';
+        const func     = "postFinishEdit";
         const $cell    = dataCell(cell);
         const $row     = dataRow($cell);
         const item     = getManifestItemId($row);
@@ -4879,7 +4879,7 @@ appSetup(MODULE, function() {
      * @see "ManifestItemConcern#create_record"
      */
     function parseCreateResponse($cell, body) {
-        OUT.debug('parseCreateResponse: body =', body);
+        OUT.debug("parseCreateResponse: body =", body);
         // noinspection JSValidateTypes
         /** @type {ManifestItem} */
         const data = body?.response || body;
@@ -4900,14 +4900,14 @@ appSetup(MODULE, function() {
      * @see "ActiveModel::Errors"
      */
     function parseUpdateResponse($cell, body) {
-        OUT.debug('parseUpdateResponse: body =', body);
+        OUT.debug("parseUpdateResponse: body =", body);
         const data     = body?.response || body || {};
         const items    = presence(data.items);
         const pending  = presence(data.pending);
         const problems = presence(data.problems);
 
         // Update fields(s) echoed back from the server.  This may also include
-        // 'file_status' and/or 'data_status'
+        // "file_status" and/or "data_status"
         // @see "ManifestItemConcern#finish_editing"
         const $row   = dataRow($cell);
         const db_id  = getManifestItemId($row);
@@ -4959,7 +4959,7 @@ appSetup(MODULE, function() {
      * @see "ActiveModel::Errors"
      */
     function parseFinishEditResponse($cell, body) {
-        OUT.debug('parseFinishEditResponse: body =', body);
+        OUT.debug("parseFinishEditResponse: body =", body);
         parseUpdateResponse($cell, body);
     }
 
@@ -5087,7 +5087,7 @@ appSetup(MODULE, function() {
      *
      * @type {string}
      */
-    const ACTIVE_CELL_DATA = 'activeCell';
+    const ACTIVE_CELL_DATA = "activeCell";
 
     /**
      * The data cell which is currently being edited.
@@ -5104,7 +5104,7 @@ appSetup(MODULE, function() {
      * @param {Selector} cell         A cell or element inside a cell.
      */
     function setActiveCell(cell) {
-        const func   = 'setActiveCell';
+        const func   = "setActiveCell";
         const active = dataCell(cell)[0];
         if (active) {
             OUT.debug(`${func}:`, active);
@@ -5129,7 +5129,7 @@ appSetup(MODULE, function() {
      * @param {Selector} cell         A cell or element inside a cell.
      */
     function registerActiveCell(cell) {
-        OUT.debug('registerActiveCell: cell =', cell);
+        OUT.debug("registerActiveCell: cell =", cell);
         deregisterActiveCell();
         setActiveCell(cell);
     }
@@ -5155,11 +5155,11 @@ appSetup(MODULE, function() {
 
             if (OUT.debugging) {
                 const msg = [];
-                $cell   && msg.push(outside ? 'outside' : 'inside');
-                finish  && msg.push('finishing');
-                $active && msg.push('$active =', $active);
-                event   && msg.push('event =', event);
-                OUT.debug('deregisterActiveCell:', ...msg);
+                $cell   && msg.push(outside ? "outside" : "inside");
+                finish  && msg.push("finishing");
+                $active && msg.push("$active =", $active);
+                event   && msg.push("event =", event);
+                OUT.debug("deregisterActiveCell:", ...msg);
             }
 
             if (finish) { finishValueEdit($active, false) }
@@ -5173,7 +5173,7 @@ appSetup(MODULE, function() {
      *  @returns {undefined}
      */
     function cancelActiveCell() {
-        const func = 'cancelActiveCell';
+        const func = "cancelActiveCell";
         if (getActiveCell()) {
             OUT.debug(func);
             deregisterActiveCell();
@@ -5252,8 +5252,8 @@ appSetup(MODULE, function() {
      *
      * @returns {jQuery}
      */
-    function headerRowToggleCreate(target, id_base = 'col') {
-        //OUT.debug('headerRowToggleCreate: target =', target);
+    function headerRowToggleCreate(target, id_base = "col") {
+        //OUT.debug("headerRowToggleCreate: target =", target);
         const $toggle  = target ? $(target) : headerRow().find(ROW_EXPANDER);
         const $columns = headerColumns().filter(DATA_CELL);
         toggleControlsCreate($toggle, id_base);
@@ -5281,8 +5281,8 @@ appSetup(MODULE, function() {
      *
      * @returns {jQuery}
      */
-    function controlsColumnToggleCreate(target, id_base = 'row') {
-        //OUT.debug('controlsColumnToggleCreate: target =', target);
+    function controlsColumnToggleCreate(target, id_base = "row") {
+        //OUT.debug("controlsColumnToggleCreate: target =", target);
         const $toggle = target ? $(target) : headerRow().find(COL_EXPANDER);
         return toggleControlsCreate($toggle, id_base);
     }
@@ -5294,7 +5294,7 @@ appSetup(MODULE, function() {
      * @param {Selector} target
      */
     function controlsColumnToggleAdd(target) {
-        //OUT.debug('controlsColumnToggleAdd: target =', target);
+        //OUT.debug("controlsColumnToggleAdd: target =", target);
         const $toggle = controlsColumnToggle();
         const $cell   = controlsColumn(target);
         toggleControlsAdd($toggle, $cell);
@@ -5306,14 +5306,14 @@ appSetup(MODULE, function() {
      * @param {Selector} target
      */
     function controlsColumnToggleRemove(target) {
-        //OUT.debug('controlsColumnToggleRemove: target =', target);
+        //OUT.debug("controlsColumnToggleRemove: target =", target);
         const $toggle = controlsColumnToggle();
         const $cell   = controlsColumn(target);
         toggleControlsRemove($toggle, $cell);
     }
 
-    const CONTROLS_IDS_DATA  = 'controlsIds';
-    const CONTROLS_BASE_DATA = 'controlsBase';
+    const CONTROLS_IDS_DATA  = "controlsIds";
+    const CONTROLS_BASE_DATA = "controlsBase";
 
     /**
      * Finalize a control for expanding/contracting a set of elements.
@@ -5325,7 +5325,7 @@ appSetup(MODULE, function() {
      */
     function toggleControlsCreate($toggle, base_name) {
         //OUT.debug(`toggleControlsCreate: ${base_name}: $toggle =`, $toggle);
-        const list = $toggle.attr('aria-controls');
+        const list = $toggle.attr("aria-controls");
         const ids  = isPresent(list) ? list.split(/\s+/) : [];
         $toggle.data(CONTROLS_IDS_DATA,  ids);
         $toggle.data(CONTROLS_BASE_DATA, randomizeName(base_name));
@@ -5339,17 +5339,17 @@ appSetup(MODULE, function() {
      * @param {Selector} elements
      */
     function toggleControlsAdd($toggle, elements) {
-        //OUT.debug('toggleControlsAdd:', $toggle, elements);
+        //OUT.debug("toggleControlsAdd:", $toggle, elements);
         const base  = $toggle.data(CONTROLS_BASE_DATA);
         const ids   = $toggle.data(CONTROLS_IDS_DATA) || [];
         const start = ids.length;
         let index   = start;
         $(elements).each((_, element) => {
             const $element = $(element);
-            let element_id = $element.attr('id');
+            let element_id = $element.attr("id");
             if (isMissing(element_id)) {
                 element_id = `${base}-${++index}`;
-                $element.attr('id', element_id);
+                $element.attr("id", element_id);
             }
             if (!ids.includes(element_id)) {
                 ids.push(element_id);
@@ -5357,7 +5357,7 @@ appSetup(MODULE, function() {
         });
         if (ids.length > start) {
             $toggle.data(CONTROLS_IDS_DATA, ids);
-            $toggle.attr('aria-controls', ids.join(' '));
+            $toggle.attr("aria-controls", ids.join(" "));
         }
     }
 
@@ -5368,15 +5368,15 @@ appSetup(MODULE, function() {
      * @param {Selector} elements
      */
     function toggleControlsRemove($toggle, elements) {
-        //OUT.debug('toggleControlsRemove:', $toggle, elements);
+        //OUT.debug("toggleControlsRemove:", $toggle, elements);
         // noinspection JSCheckFunctionSignatures
-        const ids       = $(elements).toArray().map(el => $(el).attr('id'));
+        const ids       = $(elements).toArray().map(el => $(el).attr("id"));
         const id_set    = new Set(compact(ids));
         const start_ids = $toggle.data(CONTROLS_IDS_DATA) || [];
         const final_ids = start_ids.filter(id => !id_set.has(id));
         if (final_ids.length < start_ids.length) {
             $toggle.data(CONTROLS_IDS_DATA, final_ids);
-            $toggle.attr('aria-controls', final_ids.join(' '));
+            $toggle.attr("aria-controls", final_ids.join(" "));
         }
     }
 
@@ -5405,7 +5405,7 @@ appSetup(MODULE, function() {
      * @returns {string|undefined}
      */
     function manifestFor(target) {
-        const func = 'manifestFor'; //OUT.debug(`${func}: target =`, target);
+        const func = "manifestFor"; //OUT.debug(`${func}: target =`, target);
         let id;
         if (target) {
             (id = attribute(target, MANIFEST_ATTR)) ||
@@ -5441,14 +5441,14 @@ appSetup(MODULE, function() {
      * @param {XmitCallback} [callback]
      */
     function createManifest(data, callback) {
-        const func   = 'createManifest';
+        const func   = "createManifest";
         const params = { ...data };
-        const method = params.method || 'POST'; delete params.method;
-        OUT.debug(`${func}: manifest = ${params.id || '-'}`);
+        const method = params.method || "POST"; delete params.method;
+        OUT.debug(`${func}: manifest = ${params.id || "-"}`);
 
         params.name ||= $title_text.text();
 
-        serverManifestSend('create', {
+        serverManifestSend("create", {
             caller:     func,
             method:     method,
             params:     params,
@@ -5464,14 +5464,14 @@ appSetup(MODULE, function() {
      * @param {XmitCallback} [callback]
      */
     function updateManifest(data, callback) {
-        const func     = 'updateManifest';
+        const func     = "updateManifest";
         const params   = { ...data };
-        const method   = params.method || 'PUT';    delete params.method;
+        const method   = params.method || "PUT";    delete params.method;
         const manifest = params.id || manifestId(); delete params.id;
         OUT.debug(`${func}: manifest = ${manifest}`);
 
         if (isMissing(manifest)) {
-            const error = 'no manifest ID';
+            const error = "no manifest ID";
             OUT.error(`${func}: ${error}`);
             callback?.(undefined, undefined, error, new XMLHttpRequest());
             return;
@@ -5492,7 +5492,7 @@ appSetup(MODULE, function() {
      * @param {Manifest} data
      */
     function processManifestData(data) {
-        const func = 'processManifestData';
+        const func = "processManifestData";
         OUT.debug(`${func}: data =`, data);
         if (isEmpty(data)) {
             return;
@@ -5518,27 +5518,27 @@ appSetup(MODULE, function() {
      * @param {string} [id]           Default: {@link manifestId}.
      * @param {string} [action]       Base server controller endpoint name.
      */
-    function manifestIdChanged(id, action = 'remit') {
+    function manifestIdChanged(id, action = "remit") {
         const new_id  = id || manifestId();
-        const current = $submission.attr('href') || '';
-        const [path, ...params] = current.split('?');
+        const current = $submission.attr("href") || "";
+        const [path, ...params] = current.split("?");
 
-        const parts   = path.split('/');
-        if ([`${action}_select`, 'SELECT'].includes(parts.at(-1))) {
+        const parts   = path.split("/");
+        if ([`${action}_select`, "SELECT"].includes(parts.at(-1))) {
             parts.pop();
         }
         if (parts.at(-1) !== action) {
             parts.push(action);
         }
         parts.push(new_id);
-        const new_path = parts.join('/');
+        const new_path = parts.join("/");
 
-        const new_params = asParams(params.join('?'));
+        const new_params = asParams(params.join("?"));
         delete new_params.selected;
         delete new_params.id;
 
         const new_url = makeUrl(new_path, new_params);
-        $submission.attr('href', new_url);
+        $submission.attr("href", new_url);
     }
 
     // ========================================================================
@@ -5570,7 +5570,7 @@ appSetup(MODULE, function() {
      * @returns {number|undefined}
      */
     function setManifestItemId(target, value) {
-        const func = 'setManifestItemId';
+        const func = "setManifestItemId";
         OUT.debug(`${func}: value = "${value}"; target =`, target);
         const db_id = Number(value);
         if (db_id) {
@@ -5587,7 +5587,7 @@ appSetup(MODULE, function() {
      * @param {Selector} target       Row or cell.
      */
     function clearManifestItemId(target) {
-        const func = 'clearManifestItemId';
+        const func = "clearManifestItemId";
         OUT.debug(`${func}: target =`, target);
         selfOrParent(target, `[${ITEM_ATTR}]`, func).removeAttr(ITEM_ATTR);
     }
@@ -5614,7 +5614,7 @@ appSetup(MODULE, function() {
      * @param {XmitCallback} [callback]
      */
     function createManifestItem(grid_row, data, callback) {
-        const func     = 'createManifestItem';
+        const func     = "createManifestItem";
         const $row     = dataRow(grid_row);
         const row      = dbRowValue($row);
         const delta    = dbRowDelta($row);
@@ -5660,7 +5660,7 @@ appSetup(MODULE, function() {
      * @returns {PropertiesTable}
      */
     function findFieldProperties() {
-        const func   = 'findFieldProperties';
+        const func   = "findFieldProperties";
         const result = {};
         headerColumns().each((_, column) => {
             selfOrDescendents(column, `[${FIELD_ATTR}]`).each((_, element) => {
@@ -5683,7 +5683,7 @@ appSetup(MODULE, function() {
      * @type {Object.<string,string>}
      */
     const FIELD_MAP = {
-        repository: 'emma_repository',
+        repository: "emma_repository",
     }
 
     /**
@@ -5722,10 +5722,10 @@ appSetup(MODULE, function() {
      * center first before aligning the title to the top of the viewport.
      */
     function scrollToTop() {
-        OUT.debug('scrollToTop');
+        OUT.debug("scrollToTop");
         const anchor = window.location.hash;
         if (anchor) { scrollToCenter(anchor) }
-        $('#main')[0].scrollIntoView({block: 'start', inline: 'nearest'});
+        $('#main')[0].scrollIntoView({ block: "start", inline: "nearest" });
     }
 
     /**
@@ -5739,14 +5739,14 @@ appSetup(MODULE, function() {
      * @params {string} target
      */
     function scrollToCenter(target) {
-        const func   = 'scrollToCenter';
-        const anchor = target.trim().replace(/^#/, '');
-        const parts  = anchor.split('=');
+        const func   = "scrollToCenter";
+        const anchor = target.trim().replace(/^#/, "");
+        const parts  = anchor.split("=");
         OUT.debug(`${func}: target =`, target);
         let $target;
         if ((parts.length > 1) && !anchor.match(/^\[(.*)]$/)) {
             const attr  = parts.shift();
-            const val   = parts.join('=').trim();
+            const val   = parts.join("=").trim();
             const value = val.match(/^(["'])(.*)\1$/)?.at(2) || val;
             $target     = $(`[${attr}="${value}"]`);
         } else {
@@ -5766,7 +5766,7 @@ appSetup(MODULE, function() {
             }
         }
         if (isPresent($target)) {
-            $target[0].scrollIntoView({block: 'center', inline: 'start'});
+            $target[0].scrollIntoView({ block: "center", inline: "start" });
         } else {
             OUT.debug(`${func}: missing target =`, target);
         }
@@ -5813,7 +5813,7 @@ appSetup(MODULE, function() {
      */
     function getPageItemCount() {
         const count = Number(pageItems().text());
-        OUT.debug('getPageItemCount: ', count);
+        OUT.debug("getPageItemCount:", count);
         return count || 0;
     }
 
@@ -5825,7 +5825,7 @@ appSetup(MODULE, function() {
      * @returns {number}
      */
     function setPageItemCount(value) {
-        OUT.debug('setPageItemCount: value =', value);
+        OUT.debug("setPageItemCount: value =", value);
         const count = Number(value) || 0;
         pageItems().text(count);
         return count;
@@ -5838,7 +5838,7 @@ appSetup(MODULE, function() {
      */
     function getTotalItemCount() {
         const count = Number(totalItems().text());
-        OUT.debug('getTotalItemCount: ', count);
+        OUT.debug("getTotalItemCount:", count);
         return count || 0;
     }
 
@@ -5850,7 +5850,7 @@ appSetup(MODULE, function() {
      * @returns {number}
      */
     function setTotalItemCount(value) {
-        OUT.debug('setTotalItemCount: value =', value);
+        OUT.debug("setTotalItemCount: value =", value);
         const count = Number(value) || 0;
         totalItems().text(count);
         return count;
@@ -5862,7 +5862,7 @@ appSetup(MODULE, function() {
      * @param {number} increment
      */
     function changeItemCounts(increment) {
-        const func  = 'changeItemCounts';
+        const func  = "changeItemCounts";
         //OUT.debug(`${func}: increment =`, increment);
         let count  = getPageItemCount();
         let total  = getTotalItemCount();
@@ -5874,8 +5874,8 @@ appSetup(MODULE, function() {
             OUT.error(`${func}: invalid:`, increment);
         }
         const single = !(total > count);
-        itemCounts().toggleClass('multi-page', !single);
-        itemCounts().toggleClass('single-page', single);
+        itemCounts().toggleClass("multi-page", !single);
+        itemCounts().toggleClass("single-page", single);
     }
 
     // ========================================================================
@@ -5888,7 +5888,7 @@ appSetup(MODULE, function() {
      *
      * @type {string}
      */
-    const OFFLINE_DATA = 'offline';
+    const OFFLINE_DATA = "offline";
 
     /**
      * Indicate whether the EMMA server appears to be available.
@@ -5920,26 +5920,26 @@ appSetup(MODULE, function() {
         if (offline !== is_offline) {
             const $rows  = allDataRows();
             const note   = `\n${NOT_CHANGEABLE}`;
-            const attrs  = ['disabled', 'readonly'];
+            const attrs  = ["disabled", "readonly"];
             const inputs = 'button, input, textarea, select';
             let change_tip, change_attr;
             if (is_offline) {
-                change_tip  = ($e, t) => $e.attr('title', t.replace(note, ''));
+                change_tip  = ($e, t) => $e.attr("title", t.replace(note, ""));
                 change_attr = ($e, a) => $e.removeAttr(a);
             } else {
-                change_tip  = ($e, t) => $e.attr('title', `${t}${note}`);
+                change_tip  = ($e, t) => $e.attr("title", `${t}${note}`);
                 change_attr = ($e, a) => $e.attr(a, true);
             }
             $rows.find('[title]').each((_, element) => {
                 const $element = $(element);
-                change_tip($element, $element.attr('title'));
+                change_tip($element, $element.attr("title"));
             });
             $rows.find(inputs).each((_, element) => {
                 const $input = $(element);
                 attrs.forEach(a => change_attr($input, a));
             });
         }
-        const marker = 'offline';
+        const marker = "offline";
         $container.toggleClass(marker, offline);
         $container.find('.button-tray *').toggleClass(marker, offline);
         $comm_status.toggleClass(marker, offline);
@@ -5960,7 +5960,7 @@ appSetup(MODULE, function() {
      * @see serverSend
      */
     function serverItemSend(ctr_act, send_options) {
-        const func = 'serverItemSend';
+        const func = "serverItemSend";
         const opt  = { ...send_options };
         opt.caller       ||= func;
         opt.onCommStatus ||= onCommStatus;
@@ -5976,7 +5976,7 @@ appSetup(MODULE, function() {
      * @see serverBulkSend
      */
     function serverManifestSend(action, send_options) {
-        const func = 'serverManifestSend';
+        const func = "serverManifestSend";
         const opt  = { ...send_options };
         opt.caller       ||= func;
         opt.onCommStatus ||= onCommStatus;
@@ -6012,7 +6012,7 @@ appSetup(MODULE, function() {
      */
     function getClass(target, base, caller) {
         //OUT.debug(`getClass: ${base} for target =`, target);
-        const func    = caller || 'getClass';
+        const func    = caller || "getClass";
         const $target = single(target, func);
         if (isMissing($target)) {
             OUT.error(`${func}: no target element`);
@@ -6039,7 +6039,7 @@ appSetup(MODULE, function() {
      */
     function replaceClass(target, base, value, caller) {
         //OUT.debug(`replaceClass: ${base}${value} for target =`, target);
-        const func    = caller || 'replaceClass';
+        const func    = caller || "replaceClass";
         const $target = single(target, func);
         if (isMissing($target)) {
             OUT.error(`${func}: no target element`);
@@ -6082,10 +6082,10 @@ appSetup(MODULE, function() {
      */
     function dataType(data) {
         switch (true) {
-            case isEmpty(data):         return 'text';
-            case /^\s*[{[]/.test(data): return 'json';
-            case /^\s*</.test(data):    return 'xml';
-            default:                    return 'csv';
+            case isEmpty(data):         return "text";
+            case /^\s*[{[]/.test(data): return "json";
+            case /^\s*</.test(data):    return "xml";
+            default:                    return "csv";
         }
     }
 
@@ -6131,7 +6131,7 @@ appSetup(MODULE, function() {
         UPLOADER_DATA,
         VALUE_CHANGED_DATA,
     ]) {
-        const tag = leader ? `${leader} ` : '';
+        const tag = leader ? `${leader} ` : "";
         names.forEach(name => {
             const v = $root.data(name);
             if (isDefined(v)) {
@@ -6162,10 +6162,10 @@ appSetup(MODULE, function() {
         tooltip.push(`ORIGINAL: "${getCellOriginalValue($display)}"`);
         tooltip.push(`CURRENT:  "${getCellCurrentValue($display)}"`);
         tooltip.push(`CHANGED:  "${getCellChanged($display)}"`);
-        if (dataCell($display).attr('title')?.endsWith(NOT_CHANGEABLE)) {
+        if (dataCell($display).attr("title")?.endsWith(NOT_CHANGEABLE)) {
             tooltip.push(NOT_CHANGEABLE);
         }
-        $display.attr('title', tooltip.join("\n"));
+        $display.attr("title", tooltip.join("\n"));
     }
 
     // ========================================================================
@@ -6176,17 +6176,17 @@ appSetup(MODULE, function() {
     handleClickAndKeypress($title_edit,   onStartTitleEdit);
     handleClickAndKeypress($title_update, onUpdateTitleEdit);
     handleClickAndKeypress($title_cancel, onCancelTitleEdit);
-    handleEvent($title_input, 'keydown',  onTitleEditKeypress);
+    handleEvent($title_input, "keydown",  onTitleEditKeypress);
 
     // Main control buttons.
     handleClickAndKeypress($save,   saveUpdates);
     handleClickAndKeypress($cancel, cancelUpdates);
     handleClickAndKeypress($export, exportRows);
-    handleEvent($import, 'change',  importRows);
+    handleEvent($import, "change",  importRows);
 
     // Cell editing.
-    windowEvent('focus',     deregisterActiveCell, true);
-    windowEvent('mousedown', deregisterActiveCell, true);
+    windowEvent("focus",     deregisterActiveCell, true);
+    windowEvent("mousedown", deregisterActiveCell, true);
     onPageExit(deregisterActiveCell, OUT.debugging());
 
     // ========================================================================

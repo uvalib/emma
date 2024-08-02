@@ -1,23 +1,23 @@
 // app/assets/javascripts/feature/scroll.js
 
 
-import { AppDebug }               from '../application/debug';
-import { appSetup }               from '../application/setup';
-import { Emma }                   from '../shared/assets';
-import { selector, toggleHidden } from '../shared/css';
-import { isMissing }              from '../shared/definitions';
-import { windowEvent }            from '../shared/events';
-import { deepFreeze }             from '../shared/objects';
+import { AppDebug }               from "../application/debug";
+import { appSetup }               from "../application/setup";
+import { Emma }                   from "../shared/assets";
+import { selector, toggleHidden } from "../shared/css";
+import { isMissing }              from "../shared/definitions";
+import { windowEvent }            from "../shared/events";
+import { deepFreeze }             from "../shared/objects";
 import {
     currentFocusablesIn,
     handleClickAndKeypress,
-} from '../shared/accessibility';
+} from "../shared/accessibility";
 
 
-const MODULE = 'Scroll';
+const MODULE = "Scroll";
 const DEBUG  = true;
 
-AppDebug.file('feature/scroll', MODULE, DEBUG);
+AppDebug.file("feature/scroll", MODULE, DEBUG);
 
 appSetup(MODULE, function() {
 
@@ -113,7 +113,7 @@ appSetup(MODULE, function() {
      * page is scrolled sufficiently far it presents as a "scroll-up" button.
      */
     function updateScrollButton() {
-        //OUT.debug('updateScrollButton');
+        //OUT.debug("updateScrollButton");
         let visible;
         const target   = $scroll_target[0].getBoundingClientRect();
         const html     = document.documentElement;
@@ -130,7 +130,7 @@ appSetup(MODULE, function() {
                 const icon  = prop.label;
                 const $icon = $('<span class="symbol" aria-hidden="true">');
                 $scroll_button.html($icon.text(icon));
-                $scroll_button.attr({ title: name, 'aria-label': name });
+                $scroll_button.attr({ title: name, "aria-label": name });
                 $scroll_button.toggleClass(SCROLL_DOWN_CLASS, down);
             }
         }
@@ -141,9 +141,9 @@ appSetup(MODULE, function() {
      * Scroll so that the top of the target element is visible.
      */
     function scrollToTop() {
-        OUT.debug('scrollToTop');
+        OUT.debug("scrollToTop");
         $scroll_target[0].scrollIntoView();
-        currentFocusablesIn($scroll_target).first().trigger('focus');
+        currentFocusablesIn($scroll_target).first().trigger("focus");
     }
 
     /**
@@ -157,7 +157,7 @@ appSetup(MODULE, function() {
      * @see "SearchDecorator#prev_next_controls"
      */
     function scrollToPrev(event) {
-        OUT.debug('scrollToPrev');
+        OUT.debug("scrollToPrev");
         return scrollToRecord(event, PREV);
     }
 
@@ -172,7 +172,7 @@ appSetup(MODULE, function() {
      * @see "SearchDecorator#prev_next_controls"
      */
     function scrollToNext(event) {
-        OUT.debug('scrollToNext');
+        OUT.debug("scrollToNext");
         return scrollToRecord(event, NEXT);
     }
 
@@ -189,9 +189,9 @@ appSetup(MODULE, function() {
      */
     function scrollToRecord(event, button_selector) {
         const $button = $(event.currentTarget || event.target);
-        if (!$button.hasClass('disabled') && !$button.hasClass('forbidden')) {
+        if (!$button.hasClass("disabled") && !$button.hasClass("forbidden")) {
 
-            const record_id = $button.attr('href');
+            const record_id = $button.attr("href");
             const $title    = $(record_id);
             const $t_pair   = $title.parents('.pair').first();
             const $f_pair   = $t_pair.siblings(':not(.field-Title)').first();
@@ -221,7 +221,7 @@ appSetup(MODULE, function() {
             }
 
             // Set focus to the button which matches the original action.
-            $title.find(button_selector).trigger('focus');
+            $title.find(button_selector).trigger("focus");
         }
         return false;
     }
@@ -235,9 +235,9 @@ appSetup(MODULE, function() {
     function invalidPrevNext(button) {
         /** @type {jQuery} */
         const $button = $(button);
-        $button.attr('href', '#');
-        $button.attr('disabled', true);
-        $button.attr('aria-disabled', true);
+        $button.attr("href", "#");
+        $button.attr("disabled", true);
+        $button.attr("aria-disabled", true);
     }
 
     // ========================================================================
@@ -248,7 +248,7 @@ appSetup(MODULE, function() {
     handleClickAndKeypress($prev_buttons,  scrollToPrev);
     handleClickAndKeypress($next_buttons,  scrollToNext);
 
-    windowEvent('scroll', updateScrollButton);
+    windowEvent("scroll", updateScrollButton);
 
     // ========================================================================
     // Actions

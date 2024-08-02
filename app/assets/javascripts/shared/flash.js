@@ -3,23 +3,23 @@
 // noinspection JSUnusedGlobalSymbols
 
 
-import { AppDebug }                          from '../application/debug';
-import { handleClickAndKeypress }            from './accessibility';
-import { arrayWrap }                         from './arrays';
-import { Emma }                              from './assets';
-import { selector }                          from './css';
-import { isMissing, isPresent }              from './definitions';
-import { handleEvent, isEvent, windowEvent } from './events';
-import { noScroll, scrollIntoView }          from './html';
-import { keyCombo }                          from './keyboard';
-import { SECONDS }                           from './time';
-import { HEAVY_X }                           from './unicode';
+import { AppDebug }                          from "../application/debug";
+import { handleClickAndKeypress }            from "./accessibility";
+import { arrayWrap }                         from "./arrays";
+import { Emma }                              from "./assets";
+import { selector }                          from "./css";
+import { isMissing, isPresent }              from "./definitions";
+import { handleEvent, isEvent, windowEvent } from "./events";
+import { noScroll, scrollIntoView }          from "./html";
+import { keyCombo }                          from "./keyboard";
+import { SECONDS }                           from "./time";
+import { HEAVY_X }                           from "./unicode";
 
 
-const MODULE = 'Flash';
+const MODULE = "Flash";
 const DEBUG  = true;
 
-AppDebug.file('shared/flash', MODULE, DEBUG);
+AppDebug.file("shared/flash", MODULE, DEBUG);
 
 /**
  * Console output functions for this module.
@@ -59,13 +59,13 @@ const FLOAT = true;
  * @readonly
  * @type {string}
  */
-const CONTAINER_CLASS = 'flash-messages';
-const INLINE_CLASS    = 'inline';
-const FLOATING_CLASS  = 'floating';
-const NO_RESET_CLASS  = 'no-reset';
-const VISIBLE_MARKER  = 'visible';
-const ITEM_CLASS      = 'flash';
-const CLOSER_CLASS    = 'closer';
+const CONTAINER_CLASS = "flash-messages";
+const INLINE_CLASS    = "inline";
+const FLOATING_CLASS  = "floating";
+const NO_RESET_CLASS  = "no-reset";
+const VISIBLE_MARKER  = "visible";
+const ITEM_CLASS      = "flash";
+const CLOSER_CLASS    = "closer";
 
 /**
  * Selector root for flash messages.
@@ -127,7 +127,7 @@ export function flashContainer(selector) {
  * @see file:app/views/layouts/_flash.html.erb
  */
 export function flashInitialize(fc) {
-    //OUT.debug('flashInitialize: fc =', fc);
+    //OUT.debug("flashInitialize: fc =", fc);
     const $fc    = flashContainer(fc);
     const $items = $fc.find(FLASH_ITEM);
     let $first_closer;
@@ -137,7 +137,7 @@ export function flashInitialize(fc) {
             let $closer = $item.find(CLOSER);
             if (isMissing($closer)) {
                 $closer = makeCloser();
-                const $m = $('<div>').addClass('text').html($item.html());
+                const $m = $('<div>').addClass("text").html($item.html());
                 $item.empty().append($m, $closer);
             } else {
                 initializeCloser($closer);
@@ -148,7 +148,7 @@ export function flashInitialize(fc) {
         $fc.toggleClass(FLOATING_CLASS, true);
     }
     if (isPresent($items)) {
-        $first_closer?.trigger('focus');
+        $first_closer?.trigger("focus");
         showFlash($fc, true);
     }
     return !!$first_closer;
@@ -160,7 +160,7 @@ export function flashInitialize(fc) {
  * @param {Selector} [fc]             Default: {@link flashContainer}.
  */
 export function flashReset(fc) {
-    //OUT.debug('flashReset: fc =', fc);
+    //OUT.debug("flashReset: fc =", fc);
     const $fc = flashContainer(fc);
     if (!flashEmpty($fc)) {
         if ($fc.is(NO_RESET)) {
@@ -180,7 +180,7 @@ export function flashReset(fc) {
  * @param {boolean} [all]
  */
 export function suppressFlash(all) {
-    //OUT.debug('suppressFlash: all =', all);
+    //OUT.debug("suppressFlash: all =", all);
     switch (all) {
         case false: return show_flash.messages = show_flash.errors = true;
         case true:  return show_flash.messages = show_flash.errors = false;
@@ -194,7 +194,7 @@ export function suppressFlash(all) {
  * @param {boolean} [all]
  */
 export function enableFlash(all) {
-    //OUT.debug('enableFlash: all =', all);
+    //OUT.debug("enableFlash: all =", all);
     switch (all) {
         case false: return show_flash.messages = show_flash.errors = false;
         case true:  return show_flash.messages = show_flash.errors = true;
@@ -213,7 +213,7 @@ export function enableFlash(all) {
  * @returns {jQuery}                  The flash container.
  */
 export function flashMessage(text, opt = {}) {
-    //OUT.debug('flashMessage:', text, opt);
+    //OUT.debug("flashMessage:", text, opt);
     const $fc = opt.$fc || flashContainer(opt.fc);
     if (show_flash.messages) {
         $fc.empty();
@@ -233,7 +233,7 @@ export function flashMessage(text, opt = {}) {
  * @returns {jQuery}                  The flash container.
  */
 export function flashError(text, opt = {}) {
-    //OUT.debug('flashError:', text, opt);
+    //OUT.debug("flashError:", text, opt);
     const $fc = opt.$fc || flashContainer(opt.fc);
     if (show_flash.errors) {
         $fc.empty();
@@ -250,7 +250,7 @@ export function flashError(text, opt = {}) {
  * @returns {jQuery}                  The flash container.
  */
 export function clearFlash(fc) {
-    //OUT.debug('clearFlash: fc =', fc);
+    //OUT.debug("clearFlash: fc =", fc);
     return hideFlash(fc).empty();
 }
 
@@ -303,7 +303,7 @@ function floating(fc) {
  * @returns {jQuery}                  The flash container.
  */
 function showFlash(fc, force) {
-    //OUT.debug('showFlash: fc =', fc, force);
+    //OUT.debug("showFlash: fc =", fc, force);
     const $fc   = flashContainer(fc);
     const show  = force || flashHidden($fc);
     const float = floating($fc);
@@ -328,7 +328,7 @@ function showFlash(fc, force) {
  * @returns {jQuery}                  The flash container.
  */
 function hideFlash(fc, force) {
-    //OUT.debug('hideFlash: fc =', fc, force);
+    //OUT.debug("hideFlash: fc =", fc, force);
     const $fc = flashContainer(fc);
     if (force || !flashHidden($fc)) {
         if (floating($fc)) {
@@ -338,7 +338,7 @@ function hideFlash(fc, force) {
         const option = getOptionsData($fc);
         if (option) {
             option.onClose?.();
-            option.refocus?.trigger('focus');
+            option.refocus?.trigger("focus");
             clearOptionsData($fc);
         }
     }
@@ -356,11 +356,11 @@ function hideFlash(fc, force) {
  * @return {jQuery}
  */
 function toggleFlashContainer($fc, show) {
-    //OUT.debug('toggleFlashContainer: fc =', fc, show);
+    //OUT.debug("toggleFlashContainer: fc =", fc, show);
     if (show) {
-        $fc.removeAttr('aria-hidden');
+        $fc.removeAttr("aria-hidden");
     } else {
-        $fc.attr('aria-hidden', true);
+        $fc.attr("aria-hidden", true);
     }
     return $fc.toggleClass(VISIBLE_MARKER, show);
 }
@@ -378,8 +378,8 @@ function toggleFlashContainer($fc, show) {
  * @returns {jQuery}                  The flash container.
  */
 export function addFlashMessage(text, opt) {
-    //OUT.debug('addFlashMessage:', text, opt);
-    return addFlashItem(text, { type: 'notice', ...opt });
+    //OUT.debug("addFlashMessage:", text, opt);
+    return addFlashItem(text, { type: "notice", ...opt });
 }
 
 /**
@@ -391,8 +391,8 @@ export function addFlashMessage(text, opt) {
  * @returns {jQuery}                  The flash container.
  */
 export function addFlashError(text, opt) {
-    //OUT.debug('addFlashError:', text, opt);
-    return addFlashItem(text, { type: 'alert', ...opt });
+    //OUT.debug("addFlashError:", text, opt);
+    return addFlashItem(text, { type: "alert", ...opt });
 }
 
 // ============================================================================
@@ -408,28 +408,28 @@ export function addFlashError(text, opt) {
  * @returns {jQuery}                  The flash container.
  */
 function addFlashItem(text, opt = {}) {
-    //OUT.debug('addFlashItem:', text, opt);
+    //OUT.debug("addFlashItem:", text, opt);
     const css_class = `${ITEM_CLASS} ${opt.type}`.trim();
-    const aria_role = opt.role || 'alert';
-    const plain     = (typeof text === 'string') && !text.startsWith('<');
+    const aria_role = opt.role || "alert";
+    const plain     = (typeof text === "string") && !text.startsWith("<");
     const lines     = plain ? text.split(/<br\/?>|\n/) : arrayWrap(text);
-    const message   = lines.map(v => v?.toString ? v?.toString() : '???');
-    const $message  = $('<div>').html(message.join('<br/>'));
+    const message   = lines.map(v => v?.toString ? v?.toString() : "???");
+    const $message  = $('<div>').html(message.join("<br/>"));
 
     let $item, $closer;
     const $fc = opt.$fc || flashContainer(opt.fc);
     if (floating($fc)) {
-        $message.addClass('text');
+        $message.addClass("text");
         $closer = makeCloser();
         $item   = $('<div>').append($message, $closer);
     } else {
         $item   = $message;
     }
-    initializeFlashItem($item).addClass(css_class).attr('role', aria_role);
+    initializeFlashItem($item).addClass(css_class).attr("role", aria_role);
 
     setOptionsData($fc, opt);
     showFlash($fc).append($item);
-    $closer?.trigger('focus');
+    $closer?.trigger("focus");
     return $fc;
 }
 
@@ -441,9 +441,9 @@ function addFlashItem(text, opt = {}) {
  * @returns {jQuery}
  */
 function initializeFlashItem($item) {
-    //OUT.debug('initializeFlashItem:', $item);
-    handleEvent($item, 'keyup',     onKeyUpFlashItem);
-    handleEvent($item, 'mousedown', onMouseDownFlashItem);
+    //OUT.debug("initializeFlashItem:", $item);
+    handleEvent($item, "keyup",     onKeyUpFlashItem);
+    handleEvent($item, "mousedown", onMouseDownFlashItem);
     return $item;
 }
 
@@ -465,7 +465,7 @@ function flashItem(arg) {
  * @param {ElementEvt} event
  */
 function closeFlashItem(event) {
-    OUT.debug('closeFlashItem: event =', event);
+    OUT.debug("closeFlashItem: event =", event);
     flashItem(event).remove();
     const $fc = flashContainer();
     if (flashEmpty($fc)) {
@@ -481,7 +481,7 @@ function closeFlashItem(event) {
 function onKeyUpFlashItem(event) {
     const key = keyCombo(event);
     OUT.debug(`onKeyUpFlashItem: "${key}"; event =`, event);
-    if (key === 'Escape') {
+    if (key === "Escape") {
         event.stopImmediatePropagation();
         closeFlashItem(event);
     }
@@ -494,7 +494,7 @@ function onKeyUpFlashItem(event) {
  * @param {MouseEvt} event
  */
 function onMouseDownFlashItem(event) {
-    OUT.debug('onMouseDownFlashItem: event =', event);
+    OUT.debug("onMouseDownFlashItem: event =", event);
     event.stopPropagation();
 }
 
@@ -502,7 +502,7 @@ function onMouseDownFlashItem(event) {
 // Functions - closer control - internal
 // ============================================================================
 
-const OPTIONS_DATA  = 'flashOptions';
+const OPTIONS_DATA  = "flashOptions";
 
 /**
  * Get the options for this flash occurrence.
@@ -544,8 +544,8 @@ function clearOptionsData($fc) {
  * @returns {jQuery}
  */
 function makeCloser() {
-    //OUT.debug('makeCloser');
-    const $closer = $('<button>').addClass('closer').text(HEAVY_X);
+    //OUT.debug("makeCloser");
+    const $closer = $('<button>').addClass("closer").text(HEAVY_X);
     return initializeCloser($closer);
 }
 
@@ -557,7 +557,7 @@ function makeCloser() {
  * @returns {jQuery}
  */
 function initializeCloser($closer) {
-    //OUT.debug('initializeCloser: closer =', $closer);
+    //OUT.debug("initializeCloser: closer =", $closer);
     handleClickAndKeypress($closer, closeFlashItem);
     return $closer;
 }
@@ -572,8 +572,8 @@ function initializeCloser($closer) {
  * @type {Object.<string,function(MouseEvt|KeyboardEvt)>}
  */
 const WINDOW_EVENTS = {
-    'keyup':     onKeyUpWindow,
-    'mousedown': onMouseDownWindow,
+    "keyup":     onKeyUpWindow,
+    "mousedown": onMouseDownWindow,
 };
 
 /**
@@ -583,7 +583,7 @@ const WINDOW_EVENTS = {
  * @param {boolean} [on]
  */
 function monitorWindowEvents(on = true) {
-    OUT.debug('monitorWindowEvents: on =', on);
+    OUT.debug("monitorWindowEvents: on =", on);
     for (const [type, callback] of Object.entries(WINDOW_EVENTS)) {
         windowEvent(type, callback, { listen: on });
     }
@@ -597,7 +597,7 @@ function monitorWindowEvents(on = true) {
 function onKeyUpWindow(event) {
     const key = keyCombo(event);
     OUT.debug(`onKeyUpWindow: "${key}"; event =`, event);
-    if (key === 'Escape') {
+    if (key === "Escape") {
         event.stopImmediatePropagation();
         clearFlash();
     }
@@ -609,7 +609,7 @@ function onKeyUpWindow(event) {
  * @param {MouseEvt} event
  */
 function onMouseDownWindow(event) {
-    OUT.debug('onMouseDownWindow: event =', event);
+    OUT.debug("onMouseDownWindow: event =", event);
     clearFlash();
 }
 
@@ -628,16 +628,16 @@ function onMouseDownWindow(event) {
  * @see "UploadController#post_response"
  */
 export function extractFlashMessage(xhr) {
-    const func  = 'extractFlashMessage'; OUT.debug(`${func}: xhr =`, xhr);
+    const func  = "extractFlashMessage"; OUT.debug(`${func}: xhr =`, xhr);
     const lines = [];
-    let text    = xhr?.getResponseHeader('X-Flash-Message') || '';
-    text = text.startsWith('http') ? fetchFlashMessage(text) : xhrDecode(text);
-    if (text.startsWith('{') || text.startsWith('[')) {
+    let text    = xhr?.getResponseHeader("X-Flash-Message") || "";
+    text = text.startsWith("http") ? fetchFlashMessage(text) : xhrDecode(text);
+    if (text.startsWith("{") || text.startsWith("[")) {
         try {
             const messages = JSON.parse(text);
             if (Array.isArray(messages)) {
                 messages.forEach(msg => lines.push(`${msg}`));
-            } else if (typeof messages === 'object') {
+            } else if (typeof messages === "object") {
                 $.each(messages, (k, v) => lines.push(`${k}: ${v}`));
             } else {
                 lines.push(`${messages}`);
@@ -659,8 +659,8 @@ export function extractFlashMessage(xhr) {
  * @see "EncodingHelper#xhr_encode"
  */
 export function xhrDecode(data) {
-    //OUT.debug('xhrDecode: data =', data);
-    if (isMissing(data)) { return '' }
+    //OUT.debug("xhrDecode: data =", data);
+    if (isMissing(data)) { return "" }
     const string  = data.toString();
     const encoded = !!string.match(/%[0-9A-F][0-9A-F]/i);
     return (encoded ? decodeURIComponent(string) : string).trim();
@@ -675,14 +675,14 @@ export function xhrDecode(data) {
  * @returns {string}
  */
 export function fetchFlashMessage(url) {
-    const func = 'fetchFlash'; //OUT.debug(`${func}: url =`, url);
+    const func = "fetchFlash"; //OUT.debug(`${func}: url =`, url);
     let error  = Emma.Messages.flash.client.no_fetch;
     let content;
 
     function onSuccess(data) {
         if (isMissing(data)) {
             error = Emma.Messages.flash.client.no_data;
-        } else if (typeof(data) !== 'string') {
+        } else if (typeof(data) !== "string") {
             error = `${Emma.Messages.flash.client.bad_data} ${typeof data}`;
         } else {
             content = data;
@@ -696,8 +696,8 @@ export function fetchFlashMessage(url) {
 
     $.ajax({
         url:      url,
-        type:     'GET',
-        dataType: 'text',
+        type:     "GET",
+        dataType: "text",
         async:    false,
         timeout:  3 * SECONDS,
         success:  onSuccess,

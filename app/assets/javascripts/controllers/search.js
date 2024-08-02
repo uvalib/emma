@@ -1,27 +1,27 @@
 // app/assets/javascripts/controllers/search.js
 
 
-import { AppDebug }               from '../application/debug';
-import { appSetup }               from '../application/setup'
-import { cloneTitle }             from '../feature/search-analysis';
-import { handleClickAndKeypress } from '../shared/accessibility';
-import { Emma }                   from '../shared/assets';
-import { selector, toggleHidden } from '../shared/css';
-import { handleEvent }            from '../shared/events';
-import { unreverseFlexChildren }  from '../shared/html';
-import { makeUrl, urlParameters } from '../shared/url';
+import { AppDebug }               from "../application/debug";
+import { appSetup }               from "../application/setup"
+import { cloneTitle }             from "../feature/search-analysis";
+import { handleClickAndKeypress } from "../shared/accessibility";
+import { Emma }                   from "../shared/assets";
+import { selector, toggleHidden } from "../shared/css";
+import { handleEvent }            from "../shared/events";
+import { unreverseFlexChildren }  from "../shared/html";
+import { makeUrl, urlParameters } from "../shared/url";
 import {
     isDefined,
     isEmpty,
     isMissing,
     notDefined,
-} from '../shared/definitions';
+} from "../shared/definitions";
 
 
-const MODULE = 'Search';
+const MODULE = "Search";
 const DEBUG  = false;
 
-AppDebug.file('controllers/search', MODULE, DEBUG);
+AppDebug.file("controllers/search", MODULE, DEBUG);
 
 appSetup(MODULE, function() {
 
@@ -44,11 +44,11 @@ appSetup(MODULE, function() {
     // Constants
     // ========================================================================
 
-    const ITEM_CLASS      = 'search-list-item';
-    const TOGGLE_CLASS    = 'toggle';
+    const ITEM_CLASS      = "search-list-item";
+    const TOGGLE_CLASS    = "toggle";
     const CONTROL_CLASS   = `${TOGGLE_CLASS} for-item`;
-    const OPEN_MARKER     = 'open';
-    const DISABLED_MARKER = 'disabled';
+    const OPEN_MARKER     = "open";
+    const DISABLED_MARKER = "disabled";
 
     /**
      * Selector for item sub-sections.
@@ -102,18 +102,18 @@ appSetup(MODULE, function() {
      */
     const current_mode = $mode_menu.val();
 
-    const FILE_RESULTS  = (current_mode === 'file');
+    const FILE_RESULTS  = (current_mode === "file");
     const TITLE_RESULTS = !FILE_RESULTS;
 
     // ========================================================================
     // Actions - results type
     // ========================================================================
 
-    handleEvent($mode_menu, 'change', function(event) {
+    handleEvent($mode_menu, "change", function(event) {
         const $menu    = $(event.currentTarget || event.target);
         const new_mode = $menu.val();
         if (new_mode !== current_mode) {
-            const path   = $menu.attr('data-path') || window.location.pathname;
+            const path   = $menu.attr("data-path") || window.location.pathname;
             const params = { ...urlParameters(), results: new_mode };
             window.location.href = makeUrl(path, params);
         }
@@ -136,9 +136,9 @@ appSetup(MODULE, function() {
     function onlyOne($item, caller, arg_name) {
         const only_one = ($item.length === 1);
         if (!only_one) {
-            const func    = caller   || 'onlyOne';
-            const arg     = arg_name || 'selector';
-            const problem = $item.length ? 'too many' : 'no';
+            const func    = caller   || "onlyOne";
+            const arg     = arg_name || "selector";
+            const problem = $item.length ? "too many" : "no";
             OUT.warn(`${func}: ${arg}: ${problem} elements`);
         }
         return only_one;
@@ -154,13 +154,13 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function makeButton(items, controls, open) {
-        const func   = 'makeButton';
+        const func   = "makeButton";
         const $items = $(items);
         const attrs  = {
-            role:            'button',
+            role:            "button",
             tabindex:        0,
-            'aria-controls': controls,
-            'aria-expanded': !!open,
+            "aria-controls": controls,
+            "aria-expanded": !!open,
         };
         if (isEmpty(controls)) {
             OUT.error(`${func}: no id for aria-controls`);
@@ -192,7 +192,7 @@ appSetup(MODULE, function() {
         const $section = $(element);
         const is_open  = notDefined(open) || open;
         $section.toggleClass(OPEN_MARKER, is_open);
-        $section.attr('aria-expanded', is_open);
+        $section.attr("aria-expanded", is_open);
     }
 
     /**
@@ -232,7 +232,7 @@ appSetup(MODULE, function() {
             $sections.each((_, section) => updateSectionOpenClosed(section));
         }
 
-        $title.attr('aria-expanded', opening);
+        $title.attr("aria-expanded", opening);
         updateControl($controls, $number, opening);
     }
 
@@ -255,8 +255,8 @@ appSetup(MODULE, function() {
         }
         const config = is_open ? Emma.Tree.closer : Emma.Tree.opener;
         $control.html(config.label);
-        $control.attr('title', config.tooltip);
-        $control.attr('aria-expanded', is_open);
+        $control.attr("title", config.tooltip);
+        $control.attr("aria-expanded", is_open);
         return $control;
     }
 
@@ -274,9 +274,9 @@ appSetup(MODULE, function() {
         const $control = $('<button>');
         $control.addClass(`${CONTROL_CLASS} ${row}`);
         $control.toggleClass(OPEN_MARKER, is_open);
-        $control.attr('type',          'button');
-        $control.attr('data-row',      `.${row}`);
-        $control.attr('aria-controls', target);
+        $control.attr("type",          "button");
+        $control.attr("data-row",      `.${row}`);
+        $control.attr("aria-controls", target);
         return updateControl($control);
     }
 
@@ -291,9 +291,9 @@ appSetup(MODULE, function() {
      * @param {Selector} parent
      */
     function setupToggleControl(parent) {
-        const func    = 'setupControl';
+        const func    = "setupControl";
         const $number = $(parent);
-        if (!onlyOne($number, func, 'number')) {
+        if (!onlyOne($number, func, "number")) {
             return;
         }
 
@@ -311,7 +311,7 @@ appSetup(MODULE, function() {
         let $wide_control = $children.filter(CONTROL);
         if (isMissing($wide_control)) {
             const $item   = $number.next();
-            const target  = $item.attr('id');
+            const target  = $item.attr("id");
             $wide_control = createToggleControl(row, target).appendTo($number);
         } else {
             updateControl($wide_control);
@@ -343,9 +343,9 @@ appSetup(MODULE, function() {
         let title_id, $title = $item.find('.value.field-Title .title');
         if (TITLE_RESULTS) {
             title_id = `title_${id}`;
-            $title.attr('id', title_id);
+            $title.attr("id", title_id);
         } else if ($title.length > 1) {
-            title_id = $title.filter('[data-mode="txt"]').attr('id');
+            title_id = $title.filter('[data-mode="txt"]').attr("id");
             $title   = $title.filter('[data-mode="btn"]');
         } else if (Emma.SEARCH_ANALYSIS) {
             title_id = cloneTitle($item, $title);
@@ -355,7 +355,7 @@ appSetup(MODULE, function() {
 
         // Make the item's title present as the label for the number.
         const $number = $item.prev();
-        $number.attr('aria-labelledby', title_id);
+        $number.attr("aria-labelledby", title_id);
     });
 
     // ========================================================================
@@ -398,12 +398,12 @@ appSetup(MODULE, function() {
      * @param {boolean}  [open]       Default: current section open state.
      */
     function updateSectionOpenClosed(section, toggle, open) {
-        const func     = 'updateSectionOpenClosed';
+        const func     = "updateSectionOpenClosed";
         const $section = $(section);
         let is_open;
         if (isDefined(open)) {
             is_open = open;
-        } else if (onlyOne($section, func, 'section')) {
+        } else if (onlyOne($section, func, "section")) {
             is_open = $section.is(OPEN);
         } else {
             return;
@@ -423,7 +423,7 @@ appSetup(MODULE, function() {
     function toggleSection(event, open) {
         const $tgt    = $(event.currentTarget || event.target);
         const $toggle = $tgt.is(TOGGLE) ? $tgt : $tgt.siblings(TOGGLE);
-        const id      = $toggle.attr('aria-controls');
+        const id      = $toggle.attr("aria-controls");
         const $sect   = id ? $(`#${id}`) : $toggle.parents(SUBSECTION).first();
         const opening = isDefined(open) ? open : !$sect.is(OPEN);
         markAsOpen($sect, opening);
@@ -462,8 +462,8 @@ appSetup(MODULE, function() {
     function sectionSelector(item) {
         let v;
         const $item = $(item);
-        const attrs = ['data-part', 'data-format', 'data-file'];
-        return attrs.map(a => (v = $item.attr(a)) && `[${a}="${v}"]`).join('');
+        const attrs = ["data-part", "data-format", "data-file"];
+        return attrs.map(a => (v = $item.attr(a)) && `[${a}="${v}"]`).join("");
     }
 
     // ========================================================================
@@ -486,8 +486,8 @@ appSetup(MODULE, function() {
         $sections.find(TOGGLE).not('.for-item').each((_, toggle) => {
             const $toggle = $(toggle);
             const $label  = $toggle.parent();
-            if ($label.attr('data-value')) {
-                const target = $toggle.attr('aria-controls');
+            if ($label.attr("data-value")) {
+                const target = $toggle.attr("aria-controls");
                 const $text  = makeButton($toggle.siblings('.text'), target);
                 handleClickAndKeypress($text,   toggleSection);
                 handleClickAndKeypress($toggle, toggleSection);

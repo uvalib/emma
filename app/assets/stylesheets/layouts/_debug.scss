@@ -1,8 +1,8 @@
 // app/assets/stylesheets/layouts/terminal/_debug.scss
 
-@use 'shared/variables'        as *;
-@use 'shared/controls/buttons' as button;
-@use 'shared/controls/panels'  as panel;
+@use "shared/variables"        as *;
+@use "shared/controls/buttons" as button;
+@use "shared/controls/panels"  as panel;
 
 //=============================================================================
 // Debugging.
@@ -73,7 +73,7 @@
             word-break: keep-all;
         }
         .item:not(:last-child)::after {
-            content: ', ';
+            content: ", ";
         }
     }
 
