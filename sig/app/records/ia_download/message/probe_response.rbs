@@ -1,0 +1,31 @@
+# Determine the readiness of a file for download via the Internet Archive
+# "Printdisabled Unencrypted Ebook API".
+#
+class IaDownload::Message::ProbeResponse < IaDownload::Api::Message
+  include IaDownload::Shared::ResponseMethods
+
+  # Indicate whether the file is ready for download.
+  #
+  # @return [Boolean]
+  #
+  attr_reader ready: bool
+
+  # Indicate whether the file is currently being generated on-the-fly.
+  #
+  # @return [Boolean]
+  #
+  attr_reader waiting: bool
+
+  # Indicate whether the file is unavailable.
+  #
+  # @return [Boolean]
+  #
+  attr_reader error: bool
+
+  # Initialize a new instance.
+  #
+  # @param [Faraday::Response, Hash, nil] src
+  # @param [Hash, nil]                    opt
+  #
+  def initialize: (untyped src, ?untyped? opt) -> void
+end

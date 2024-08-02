@@ -1,0 +1,6 @@
+# A response from an Internet Archive "Printdisabled Unencrypted Ebook API"
+# :json_only request.
+#
+class IaDownload::Record::ResponseRecord < Ingest::Api::Record
+  include IaDownload::Shared::CommonMethods
+end

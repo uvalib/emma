@@ -267,6 +267,14 @@ module Import::IaBulk
 
   protected
 
+  # Base Internet Archive download path.
+  #
+  # NOTE: This has been superseded by IA_DOWNLOAD_API_URL.
+  #
+  # @type [String]
+  #
+  IA_DOWNLOAD_BASE_URL = 'https://archive.org/download'
+
   # Normalize single-element arrays to scalar values and sort the fields for
   # easier comparison when reviewing/debugging.
   #

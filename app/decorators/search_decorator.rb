@@ -486,7 +486,6 @@ class SearchDecorator
 
   # Make a clickable link to retrieve a remediated file.
   #
-  # @param [String] label             Link text (default: the URL).
   # @param [String] url               Overrides `object.record_download_url`.
   # @param [Hash]   opt               Passed to link method except for:
   #
@@ -494,12 +493,13 @@ class SearchDecorator
   # @return [nil]                       If no *url* was provided or found.
   #
   # @see RepositoryHelper#emma_retrieval_link
-  # @see RepositoryHelper#ia_retrieval_link
+  # @see BaseDecorator::Download#ia_retrieval_link
   #
-  def source_retrieval_link(label: nil, url: nil, **opt)
+  def source_retrieval_link(url: nil, **opt)
     url   ||= object.record_download_url.presence or return
     repo    = repository_for(url, object)
-    label ||= CGI.unescape(url.to_s)
+    format  = object.dc_format
+    opt.merge!(format: format) if %i[ace internetArchive].include?(repo)
 
     # Adjust the link depending on whether the current session is permitted to
     # perform the download.
@@ -509,7 +509,7 @@ class SearchDecorator
     # Set up the tooltip to be shown before the item has been requested.
     opt[:title] ||=
       if allowed
-        fmt = object.dc_format.to_s.underscore.upcase.tr('_', ' ')
+        fmt = format.to_s.underscore.upcase.tr('_', ' ')
         rep = download_src(repo)
         config_term(:search, :source, :retrieval_tip, fmt: fmt, repo: rep)
       else
@@ -520,11 +520,11 @@ class SearchDecorator
         config_page(:download, :link, key, :tooltip, **cpo)
       end
 
-    case repo&.to_sym
-      when :emma            then emma_retrieval_link(url, label, **opt)
-      when :ace             then ace_retrieval_link( url, label, **opt)
-      when :internetArchive then ia_retrieval_link(  url, label, **opt)
-      when :openAlex        then oa_retrieval_link(  url, label, **opt)
+    case repo
+      when :emma            then emma_retrieval_link(url, **opt)
+      when :ace             then ace_retrieval_link( url, **opt)
+      when :internetArchive then ia_retrieval_link(  url, **opt)
+      when :openAlex        then oa_retrieval_link(  url, **opt)
       else Log.error { "#{__method__}: #{repo.inspect}: unexpected" } if repo
     end
   end

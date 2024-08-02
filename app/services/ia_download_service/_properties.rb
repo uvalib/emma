@@ -61,6 +61,15 @@ module IaDownloadService::Properties
     "#{name}=#{parts}"
   }.join('; ').freeze
 
+  # Headers needed to authenticate with the IA server.
+  #
+  # @type [Hash{String=>String}]
+  #
+  IA_HEADERS = {
+    Authorization: IA_AUTH,
+    Cookie:        IA_COOKIES,
+  }.stringify_keys.deep_freeze
+
   # ===========================================================================
   # :section: ApiService::Properties overrides
   # ===========================================================================

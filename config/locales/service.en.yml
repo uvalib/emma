@@ -15,8 +15,7 @@ en:
 
       ia_download:
         name:           'Internet Archive download service'
-        endpoint:       ENV[IA_DOWNLOAD_BASE_URL]
-        max_redirects:  10
+        endpoint:       ENV[IA_DOWNLOAD_API_URL]
 
       ingest:
         name:           'EMMA Unified Ingest service'

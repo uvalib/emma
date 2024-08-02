@@ -137,7 +137,7 @@ class AppSettings < AppGlobal
     nil,
 
     # === Internet Archive
-    :IA_DOWNLOAD_BASE_URL,
+    :IA_DOWNLOAD_API_URL,
     :IA_ACCESS,
     :IA_SECRET,
     :IA_USER_COOKIE,

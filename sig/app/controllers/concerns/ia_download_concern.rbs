@@ -20,18 +20,33 @@ module IaDownloadConcern
   #
   SEND_DATA_OPT: symArray
 
+  # Check for availability of a download from Internet Archive.  If the file
+  # requires on-the-fly generation, this will be triggered here.
+  #
+  # @param [String]         identifier  IA item identifier.
+  # @param [Symbol, String] type        Requested file type.
+  # @param [Hash]           opt         To IaDownloadService#probe
+  #
+  # @return [Hash]
+  #
+  def ia_download_probe: (identifier: String, type: Symbol|String, **untyped opt) -> symHash
+
   # Send a copy of a file downloaded from Internet Archive.
   #
-  # @param [String]       url
-  # @param [Boolean, nil] new_tab     If *true* show in a new browser tab.
-  # @param [Hash]         opt         To IaDownloadService#download, except
-  #                                     #SEND_DATA_OPT to #send_data.
+  # This should only be invoked after #ia_download_probe indicates that the
+  # requested content file has been generated.
+  #
+  # @param [String]         identifier  IA item identifier.
+  # @param [Symbol, String] type        Requested file type.
+  # @param [Boolean, nil]   new_tab     If *true* show in a new browser tab.
+  # @param [Hash]           opt         To IaDownloadService#download, except
+  #                                       #SEND_DATA_OPT to #send_data.
   #
   # @raise [ExecError]                @see IaDownloadService#download
   #
   # @return [void]
   #
-  def ia_download_response: (String url, ?new_tab: bool|nil, **untyped opt) -> void
+  def ia_download_retrieval: (identifier: String, type: Symbol|String, ?new_tab: bool|nil, **untyped opt) -> symHash
 
   private
 

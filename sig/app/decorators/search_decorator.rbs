@@ -269,7 +269,6 @@ class SearchDecorator
 
   # Make a clickable link to retrieve a remediated file.
   #
-  # @param [String] label             Link text (default: the URL).
   # @param [String] url               Overrides `object.record_download_url`.
   # @param [Hash]   opt               Passed to link method except for:
   #
@@ -277,9 +276,9 @@ class SearchDecorator
   # @return [nil]                       If no *url* was provided or found.
   #
   # @see RepositoryHelper#emma_retrieval_link
-  # @see RepositoryHelper#ia_retrieval_link
+  # @see BaseDecorator::Download#ia_retrieval_link
   #
-  def source_retrieval_link: (?label: String|nil, ?url: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def source_retrieval_link: (?url: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # Render a metadata listing of a search result item.
   #

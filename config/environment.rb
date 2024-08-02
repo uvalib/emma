@@ -17,7 +17,7 @@ if respond_to?(:rails_application?) && rails_application?
     :INGEST_API_KEY,
 
     # === Internet Archive downloads
-    :IA_DOWNLOAD_BASE_URL,
+    :IA_DOWNLOAD_API_URL,
     :IA_ACCESS,
     :IA_SECRET,
     :IA_SIG_COOKIE,

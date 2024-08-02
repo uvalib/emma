@@ -1,0 +1,14 @@
+# The base class for inbound messages from the EMMA Unified IaDownload API.
+#
+class IaDownload::Api::Message < IaDownload::Api::Record
+  include Api::Message
+
+  include IaDownload::Shared::ResponseMethods
+
+  # Initialize a new instance.
+  #
+  # @param [Faraday::Response, Hash, nil] src
+  # @param [Hash, nil]                    opt
+  #
+  def initialize: (Faraday::Response|symHash|nil src, ?(untyped|nil) opt) -> void
+end

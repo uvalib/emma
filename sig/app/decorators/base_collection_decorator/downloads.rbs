@@ -1,0 +1,11 @@
+# Methods supporting managed downloads.
+#
+module BaseCollectionDecorator::Downloads
+  include BaseDecorator::Download
+
+  include BaseCollectionDecorator::Common
+
+  private
+
+  def self.included: (Module base) -> void
+end

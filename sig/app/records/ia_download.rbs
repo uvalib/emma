@@ -1,0 +1,19 @@
+# Namespace for objects ...
+#
+module IaDownload
+  module Api
+  end
+
+  module Message
+  end
+
+  module Record
+  end
+
+  module Shared
+  end
+end
+
+module IaDownload
+  include IaDownload::Api::Common
+end

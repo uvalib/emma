@@ -1,0 +1,7 @@
+# Base class for object-specific serializers that process JSON data.
+#
+class IaDownload::Api::Serializer::Json < Api::Serializer::Json
+  include IaDownload::Api::Serializer::Json::Schema
+
+  include IaDownload::Api::Serializer::Json::Associations
+end

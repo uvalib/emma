@@ -170,18 +170,15 @@ module LinkHelper
 
   # Produce a link to download an item to the client's browser.
   #
-  # @param [String]      path
-  # @param [String, nil] label        Default: *path*.
-  # @param [String]      css          Characteristic CSS class/selector.
-  # @param [Hash]        opt
+  # @param [String] path
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #external_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #external_link
-  #
-  def download_link(path, label = nil, css: '.download', **opt, &blk)
+  def download_link(path, css: '.download', **opt, &blk)
     prepend_css!(opt, css)
-    external_link(path, label, **opt, &blk)
+    external_link(path, **opt, &blk)
   end
 
   # ===========================================================================

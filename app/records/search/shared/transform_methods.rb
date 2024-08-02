@@ -54,6 +54,9 @@ module Search::Shared::TransformMethods
 
   # Set the original repository content download URL if not already present.
   #
+  # For Internet Archive items, the value is replaced with one that will cause
+  # a download request to proxy through EMMA.
+  #
   # @param [Hash, nil] data           Default: *self*.
   # @param [Symbol]    field
   #
@@ -61,6 +64,7 @@ module Search::Shared::TransformMethods
   #
   def normalize_download_url!(data = nil, field: :emma_retrievalLink)
     url = get_field_value(data, field)
+    url = nil if url&.match?(%r{^https?://archive\.org/download/})
     set_field_value!(data, field, generate_download_url) if url.blank?
   end
 

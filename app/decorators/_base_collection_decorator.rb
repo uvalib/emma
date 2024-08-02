@@ -12,6 +12,7 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
   include BaseCollectionDecorator::Common
   include BaseCollectionDecorator::Configuration
   include BaseCollectionDecorator::Controls
+  include BaseCollectionDecorator::Downloads
   include BaseCollectionDecorator::Fields
   include BaseCollectionDecorator::Form
   include BaseCollectionDecorator::Grid

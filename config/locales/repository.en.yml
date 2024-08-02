@@ -49,11 +49,8 @@ en:
         title_path:     'https://archive.org/details'
         record_src:     'Internet Archive'
         download_src:   'Internet Archive'
-        download_path:  'https://archive.org/download'
-        download_url:
-          daisy:        '%{download_path}/%{id}/%{id}_daisy.zip'
-          epub:         '%{download_path}/%{id}/%{id}.epub'
-          pdf:          '%{download_path}/%{id}/%{id}.pdf'
+        download_path:  'retrieval' # @see retrieval_path
+        download_url:   '%{download_path}?identifier=%{id}&type=%{fmt}'
 
       _template_remote: &PARTNER_TEMPLATE
         partner:        true  # Submitted via the "partner repository workflow"

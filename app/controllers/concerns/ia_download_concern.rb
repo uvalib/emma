@@ -41,31 +41,47 @@ module IaDownloadConcern
   #
   # @type [Array<Symbol>]
   #
-  SEND_DATA_OPT = %i[filename type disposition status].freeze
+  SEND_DATA_OPT = %i[filename disposition status].freeze
+
+  # Check for availability of a download from Internet Archive.  If the file
+  # requires on-the-fly generation, this will be triggered here.
+  #
+  # @param [String]         identifier  IA item identifier.
+  # @param [Symbol, String] type        Requested file type.
+  # @param [Hash]           opt         To IaDownloadService#probe
+  #
+  # @return [Hash]
+  #
+  def ia_download_probe(identifier:, type:, **opt)
+    opt.except!(*SEND_DATA_OPT)
+    opt.merge!(identifier: identifier, type: type)
+    ia_download_api.probe(**opt)
+  end
 
   # Send a copy of a file downloaded from Internet Archive.
   #
-  # @param [String]       url
-  # @param [Boolean, nil] new_tab     If *true* show in a new browser tab.
-  # @param [Hash]         opt         To IaDownloadService#download, except
-  #                                     #SEND_DATA_OPT to #send_data.
+  # This should only be invoked after #ia_download_probe indicates that the
+  # requested content file has been generated.
+  #
+  # @param [String]         identifier  IA item identifier.
+  # @param [Symbol, String] type        Requested file type.
+  # @param [Boolean, nil]   new_tab     If *true* show in a new browser tab.
+  # @param [Hash]           opt         To IaDownloadService#download, except
+  #                                       #SEND_DATA_OPT to #send_data.
   #
   # @raise [ExecError]                @see IaDownloadService#download
   #
   # @return [void]
   #
-  def ia_download_response(url, new_tab: false, **opt)
-    dl_opt = opt.slice!(*SEND_DATA_OPT)
-    name, type, data = ia_download_api.download(url, **dl_opt)
+  def ia_download_retrieval(identifier:, type:, new_tab: false, **opt)
+    send_opt = opt.extract!(*SEND_DATA_OPT)
+    opt.merge!(identifier: identifier, type: type)
+    name, mime, data = ia_download_api.download(**opt)
     return if data.blank?
-    opt[:type]     ||= type
-    opt[:filename] ||= name
-    case new_tab
-      when true  then opt[:disposition]   = 'attachment'
-      when false then opt[:disposition]   = 'inline'
-      else            opt[:disposition] ||= 'inline'
-    end
-    send_data(data, opt)
+    send_opt[:type]        ||= mime
+    send_opt[:filename]    ||= name
+    send_opt[:disposition] ||= new_tab ? 'attachment' : 'inline'
+    send_data(data, send_opt)
   end
 
   # ===========================================================================

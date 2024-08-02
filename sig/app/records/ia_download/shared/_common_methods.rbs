@@ -1,0 +1,5 @@
+# General shared methods.
+#
+module IaDownload::Shared::CommonMethods
+  include Api::Shared::CommonMethods
+end

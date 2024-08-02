@@ -16,6 +16,7 @@ class BaseDecorator < Draper::Decorator
   include BaseDecorator::Common
   include BaseDecorator::Configuration
   include BaseDecorator::Controls
+  include BaseDecorator::Download
   include BaseDecorator::Fields
   include BaseDecorator::Form
   include BaseDecorator::Grid
@@ -144,6 +145,7 @@ class BaseDecorator < Draper::Decorator
     include BaseDecorator::Common
     include BaseDecorator::Configuration
     include BaseDecorator::Controls
+    include BaseDecorator::Download
     include BaseDecorator::Fields
     include BaseDecorator::Form
     include BaseDecorator::Grid

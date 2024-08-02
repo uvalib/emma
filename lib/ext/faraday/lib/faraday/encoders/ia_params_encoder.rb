@@ -39,13 +39,17 @@ module Faraday
         unless params.respond_to?(:to_hash)
           raise TypeError, "Can't convert #{params.class} into Hash."
         end
-        params = params.to_hash.map { |key, value| [key.to_s, value] }
+        params = params.to_hash
+        params = params.map do |key, value|
+          key = key.to_s if key.is_a?(Symbol)
+          [key, value]
+        end
       end
 
       # The params have form [['key1', 'value1'], ['key2', 'value2']].
       params.map { |parent, value|
         encode_pair(escape(parent), value)
-      }.join('&').chop
+      }.join('&')
     end
 
   end

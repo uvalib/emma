@@ -243,12 +243,12 @@ IA_USER_COOKIE = ENV.fetch('IA_USER_COOKIE', nil).freeze
 #
 IA_SIG_COOKIE = ENV.fetch('IA_SIG_COOKIE', nil).freeze
 
-# Base Internet Archive download path.
+# Internet Archive "Printdisabled Unencrypted Ebook API" endpoint.
 #
 # @type [String]
 #
-IA_DOWNLOAD_BASE_URL =
-  ENV.fetch('IA_DOWNLOAD_BASE_URL', 'https://archive.org/download')
+IA_DOWNLOAD_API_URL =
+  ENV.fetch('IA_DOWNLOAD_API_URL', 'https://archive.org/services/printdisabled/fetch_or_make_ebook.php')
     .strip
     .sub(%r{^(http:)?//}, 'https://')
     .sub(%r{/+$}, '')

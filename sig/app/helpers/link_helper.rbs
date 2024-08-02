@@ -81,16 +81,13 @@ module LinkHelper
 
   # Produce a link to download an item to the client's browser.
   #
-  # @param [String]      path
-  # @param [String, nil] label        Default: *path*.
-  # @param [String]      css          Characteristic CSS class/selector.
-  # @param [Hash]        opt
+  # @param [String] path
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #external_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #external_link
-  #
-  def download_link: (String path, ?(String|nil) label, ?css: String|nil, **untyped opt) ?{ () -> String } -> ActiveSupport::SafeBuffer
+  def download_link: (String path, ?css: String|nil, **untyped opt) ?{ () -> String } -> ActiveSupport::SafeBuffer
 
   # Base URL for references to the EMMA project repository.
   #

@@ -217,6 +217,14 @@ class User < ApplicationRecord
     email
   end
 
+  # The full personal name of the user.
+  #
+  # @return [String]
+  #
+  def full_name
+    [first_name, last_name].compact_blank.join(' ')
+  end
+
   # The email address to use for communications with the user.
   #
   # @return [String]

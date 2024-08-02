@@ -84,7 +84,7 @@ module Search::Shared::LinkMethods
     cfg  = configuration_for(src)            or raise "#{src}: invalid source"
     fmt  = cfg.dig(:download_fmt, fmt)       or raise "#{fmt}: invalid format"
     url  = cfg[:download_url]
-    url  = url[fmt] if url.is_a?(Hash)
+    url  = url[fmt.to_sym] || url[:any] if url.is_a?(Hash)
     path = cfg[:download_path]
     path = absolute_path(path, src) || path
     raise 'no download_path' if path.blank?

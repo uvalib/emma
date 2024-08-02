@@ -17,20 +17,6 @@ module RepositoryHelper
 
   public
 
-  # Internet Archive items that don't require EMMA login.
-  #
-  # @type [Array<String,Regexp>]
-  #
-  IA_DIRECT_LINK_PATTERNS = [
-    /[_.]daisy\.zip$/,
-  ].deep_freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Indicate whether the given URL is an EMMA link.
   #
   # @param [String, nil] url
@@ -154,59 +140,50 @@ module RepositoryHelper
 
   # Produce a link to retrieve an EMMA file.
   #
-  # @param [String]      url
-  # @param [String, nil] label        Default: *path*.
-  # @param [Hash]        opt          Passed to #retrieval_link
+  # @param [String] url
+  # @param [Hash]   opt               Passed to #retrieval_link
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def emma_retrieval_link(url, label = nil, **opt)
+  def emma_retrieval_link(url, **opt)
     url = url.sub(%r{localhost:\d+}, 'localhost') if not_deployed?
-    retrieval_link(url, label, **opt)
+    retrieval_link(url, **opt)
   end
 
   # Produce a link to retrieve an Internet Archive file.
   #
-  # @param [String]      url
-  # @param [String, nil] label        Default: *path*.
-  # @param [Hash]        opt          Passed to #retrieval_link
+  # @param [String] url
+  # @param [Hash]   opt               Passed to #retrieval_link
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # === Implementation Notes
-  # Encrypted DAISY files are handled differently; for an explanation:
-  # @see IaDownloadConcern#ia_download_response
-  #
-  def ia_retrieval_link(url, label = nil, **opt)
-    url = retrieval_path(url: url)
-    retrieval_link(url, label, **opt)
+  def ia_retrieval_link(url, **opt)
+    retrieval_link(url, **opt)
   end
 
   # Produce a link to retrieve an ACE file.
   #
-  # @param [String]      url
-  # @param [String, nil] label        Default: *path*.
-  # @param [Hash]        opt          Passed to #ia_retrieval_link
+  # @param [String] url
+  # @param [Hash]   opt               Passed to #ia_retrieval_link
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def ace_retrieval_link(url, label = nil, **opt)
-    ia_retrieval_link(url, label, **opt)
+  def ace_retrieval_link(url, **opt)
+    ia_retrieval_link(url, **opt)
   end
 
   # Produce a link to retrieve an OpenAlex file.
   #
-  # @param [String]      url
-  # @param [String, nil] label        Default: *path*.
-  # @param [Hash]        opt          Passed to #retrieval_link
+  # @param [String] url
+  # @param [Hash]   opt               Passed to #retrieval_link
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # === Implementation Notes
   # OpenAlex only has direct download of PDF files.
   #
-  def oa_retrieval_link(url, label = nil, **opt)
-    retrieval_link(url, label, **opt)
+  def oa_retrieval_link(url, **opt)
+    retrieval_link(url, **opt)
   end
 
   # ===========================================================================
@@ -217,14 +194,13 @@ module RepositoryHelper
 
   # Produce a link to retrieve a content file.
   #
-  # @param [String]      url
-  # @param [String, nil] label        Default: *path*.
-  # @param [Hash]        opt          Passed to LinkHelper#download_link
+  # @param [String] url
+  # @param [Hash]   opt               Passed to LinkHelper#download_link
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def retrieval_link(url, label = nil, css: '.artifact', **opt)
-    link  = download_link(url, label, **opt)
+  def retrieval_link(url, css: '.retrieval', **opt)
+    link  = download_link(url, **opt)
     error = html_span('', class: 'failure hidden')
     html_div(class: css_classes(css)) do
       link << error

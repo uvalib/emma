@@ -373,16 +373,6 @@ en:
             Opened search format dropdown menu with "DAISY" format selection
             highlighted.
 
-        ia_timeout:
-          asset:        'help/ia_timeout.png'
-          alt:
-            >-
-            Alert message with Internet Archive download service response:
-            "Sorry, we need more time to finish generating your ebook.
-            Please refresh this page after a few minutes."
-            And the EMMA note:
-            Close this browser tab and retry the original download link.
-
         local_login:
           asset:        'help/local_login.png'
           alt:

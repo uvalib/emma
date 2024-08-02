@@ -99,8 +99,9 @@ Rails.application.routes.draw do
   # File download operations
   # ===========================================================================
 
-  get    '/download/:id',         to: 'upload#download',      as: 'file_download'
-  get    '/retrieval',            to: 'upload#retrieval',     as: 'retrieval'
+  get    '/download/:id',           to: 'upload#download',        as: 'file_download'
+  get    '/retrieval',              to: 'upload#retrieval',       as: 'retrieval'
+  get    '/probe_retrieval',        to: 'upload#probe_retrieval', as: 'probe_retrieval'
 
   # ===========================================================================
   # EMMA bulk operations - manifests

@@ -41,6 +41,12 @@ module IaDownloadService::Properties
   #
   IA_COOKIES: String
 
+  # Headers needed to authenticate with the IA server.
+  #
+  # @type [Hash{String=>String}]
+  #
+  IA_HEADERS: Hash[String,String]
+
   # Configuration for the API service.
   #
   # @return [Hash]

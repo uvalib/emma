@@ -13,11 +13,27 @@ module IaDownloadService::Common
 
   include IaDownloadService::Properties
 
+  include Emma::Common
+  include Emma::Json
+
   # ===========================================================================
   # :section: ApiService::Common overrides
   # ===========================================================================
 
   protected
+
+  # Include user identification.
+  #
+  # @param [Hash, nil] params         Default: @params.
+  #
+  # @return [Hash]                    New API parameters.
+  #
+  def api_options(params = nil)
+    super.tap do |result|
+      result[:requestor_name]  ||= user.full_name
+      result[:requestor_email] ||= user.email_address
+    end
+  end
 
   # Include IA authorization headers.
   #
@@ -30,10 +46,7 @@ module IaDownloadService::Common
   #
   def api_headers(params = nil, headers = nil, body = nil)
     super.tap do |_prms, hdrs, _body|
-      auth   = hdrs.delete(:authorization) || IA_AUTH
-      cookie = hdrs.delete(:cookie)        || IA_COOKIES
-      hdrs['Authorization'] ||= auth
-      hdrs['Cookie']        ||= cookie
+      hdrs.reverse_merge!(IA_HEADERS)
     end
   end
 
@@ -43,7 +56,7 @@ module IaDownloadService::Common
 
   protected
 
-  # Send an API request.
+  # Send an Internet Archive "Printdisabled Unencrypted Ebook API" request.
   #
   # @param [Symbol]            verb     Should always be :get.
   # @param [String]            action   Path to IA download.
@@ -65,31 +78,9 @@ module IaDownloadService::Common
   # === Usage Notes
   # Sets @response as a side-effect.
   #
-  # === Implementation Notes
-  # This will take several iterations, depending on the nature of the IA file.
-  #
-  # 1. If the file is unencrypted and the item is public-domain then the
-  # original URL of the form "https:://archive.org/download/IDENT/IDENT.FORMAT"
-  # will probably succeed.
-  #
-  # 2. Otherwise a redirect will occur to
-  #
-  #   "https://ia803005.us.archive.org/FORMAT/index.php?id=IDENT&dir=/00/items/IDENT&doc=IDENT&type=FORMAT"
-  #
-  # which will succeed if the unencrypted item can be generated "on-the-fly".
-  #
-  # 3. As a last-ditch fallback, the encrypted form of the original URL is
-  # explicitly requested.
-  #
-  # NOTE: This method does not handle DAISY downloads from IA.
-  # At this time IA does not support "on-the-fly" generation of unencrypted
-  # DAISY.  The link to download encrypted DAISY is available without
-  # authentication directly from the client browser.  In fact, attempting to
-  # request it via this method has become problematic.
-  #
   def transmit(verb, action, params, headers, **opt)
-    pass = opt[:redirection].to_i
-    dbg  = +"... #{__method__} | #{pass}"
+    dbg, t1 = "... #{__method__}", Time.now
+    elapsed = ->(t2 = Time.now) { '%.2f sec.' % (t2 - t1) }
     __debug_line(dbg) { { action: action, params: params, headers: headers } }
 
     redirect  = nil
@@ -97,49 +88,45 @@ module IaDownloadService::Common
     raise empty_result_error if @response.nil?
 
     case @response.status
-      when 202, 204
-        # No response body expected -- NOTE: not expected from archive.org
+      when 202
+        # 202: "The file does not exist yet, but is being created."
+        message = json_parse(@response.body)&.dig(:message) || 'Generating...'
+        __debug_line(dbg, 'REQUESTED', elapsed.(), message)
 
       when 200..299
-        # If the requested file is directly available from S3 then we arrive
-        # here in pass 1.  In later passes, the requested file will have been
-        # generated on-the-fly by the IA server.
+        # 200: "An ebook exists and is being served with this response."
         result = @response.body
-        __debug_line(dbg, 'GOOD') { "#{result&.size || 0} bytes" }
+        __debug_line(dbg, 'GOOD', elapsed.()) { "#{result&.size || 0} bytes" }
         raise empty_result_error(@response) if result.blank?
         raise html_result_error(@response)  if result =~ /\A\s*</
 
       when 301, 302, 303, 307, 308
-        # If the requested file was not directly available, the redirect
-        # should indicate the protected file if it exists.
-        redirect  = @response['Location'] || ''
-        encrypted = redirect.match?(/_encrypted[_.]/)
-        redirect  = redirect.remove('_encrypted') if encrypted
-        __debug_line(dbg, 'REDIRECT') do
-          parts = []
-          parts << 'trying unencrypted first' if encrypted
-          parts << "next = #{redirect.inspect}"
+        # NOTE: This is not currently a part of the API
+        redirect = @response['Location'] || ''
+        __debug_line(dbg, "REDIRECT #{redirect.inspect}", elapsed.())
+
+      when 400...409
+        # 400: "Invalid ebook type: XXX."
+        # 400: "Required request params are missing or invalid."
+        # 401: "The user must authorize to access the API."
+        # 403: "The user is not allowed to access the API."
+        __debug_line(dbg, 'CLIENT FAILURE', elapsed.()) do
+          json_parse(@response.body)&.dig(:message) || 'unknown'
         end
 
-      when 400..499
-        # If the redirected URL failed there is still another possibility,
-        # which is to request generation of an encrypted version of the file.
-        # (The existence of this step was inferred by observing the behavior
-        # of the "ia" Python script when executing "ia download".)  If the
-        # URL that was requested already contains "_encrypted" then there are
-        # no more things to try.
-        if action.include?('_encrypted')
-          __debug_line(dbg, 'FAIL', 'encrypted fallback failed')
-          raise request_error(@response)
+      when 503
+        # 503: "The service is temporarily unavailable."
+        __debug_line(dbg, 'SERVICE UNAVAILABLE', elapsed.()) do
+          json_parse(@response.body)&.dig(:message)
         end
-        base = File.basename(action)
-        ext  = base.sub!(/^.*(_[^.]*\.zip)$/, '\1') || File.extname(action)
-        otf  = action.include?('&type=')
-        err  = otf ? 'on-the-fly failed' : 'trying encrypted'
-        redirect = action.sub(/(#{ext})$/, '_encrypted\1')
-        __debug_line(dbg, 'ERROR', err) { { next: redirect } }
+
+      when 500..599
+        __debug_line(dbg, 'SERVER FAILURE', elapsed.()) do
+          json_parse(@response.body)&.dig(:message) || 'unknown'
+        end
 
       else
+        __debug_line(dbg, "UNEXPECTED STATUS #{@response.status}", elapsed.())
         raise response_error(@response)
     end
 
@@ -147,7 +134,7 @@ module IaDownloadService::Common
       @response
     elsif redirect.blank?
       raise redirect_error(@response)
-    elsif pass >= max_redirects
+    elsif (pass = opt[:redirection].to_i) >= max_redirects
       raise redirect_limit_error
     else
       opt[:redirection] = (pass += 1)

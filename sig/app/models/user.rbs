@@ -105,6 +105,12 @@ class User < ApplicationRecord
   #
   def account: () -> String
 
+  # The full personal name of the user.
+  #
+  # @return [String]
+  #
+  def full_name: () -> String
+
   # The email address to use for communications with the user.
   #
   # @return [String]

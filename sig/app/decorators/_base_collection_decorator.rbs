@@ -7,6 +7,8 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
 
   include BaseCollectionDecorator::Controls
 
+  include BaseCollectionDecorator::Downloads
+
   include BaseCollectionDecorator::Fields
 
   include BaseCollectionDecorator::Form

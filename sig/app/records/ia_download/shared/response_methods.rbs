@@ -1,0 +1,7 @@
+# Methods mixed in to message elements supporting error reporting.
+#
+module IaDownload::Shared::ResponseMethods
+  include Api::Shared::ResponseMethods
+
+  include IaDownload::Shared::CommonMethods
+end

@@ -789,21 +789,30 @@ class UploadController < ApplicationController
   # Retrieve a file from a partner repository that supports proxying through
   # the EMMA server.
   #
-  # @raise [ExecError] @see IaDownloadConcern#ia_download_response
+  # @raise [ExecError] @see IaDownloadConcern#ia_download_retrieval
   #
   # @see #retrieval_path              Route helper
   #
   def retrieval
     __log_activity
     __debug_route
-    url = params[:url]
-    if !ia_link?(url)
-      Log.error { "/retrieval can't handle #{url.inspect}" }
-    elsif IA_DIRECT_LINK_PATTERNS.any? { |pattern| url.match?(pattern) }
-      return redirect_to url
-    else
-      ia_download_response(url)
-    end
+    ia_download_retrieval(**url_parameters)
+  end
+
+  # === GET /probe_retrieval?identifier=IA_ITEM_ID&type=FORMAT
+  #
+  # Probe Internet Archive to see whether the requested file is available.
+  #
+  # @raise [ExecError] @see IaDownloadConcern#ia_download_probe
+  #
+  # @see #retrieval_path              Route helper
+  #
+  # @see file:app/assets/javascripts/feature/download.js *ProbeResponse*
+  #
+  def probe_retrieval
+    __log_activity
+    __debug_route
+    render_json ia_download_probe(**url_parameters)
   end
 
   # ===========================================================================

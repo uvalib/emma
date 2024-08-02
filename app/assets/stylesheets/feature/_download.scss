@@ -1,7 +1,8 @@
 // app/assets/stylesheets/feature/_download.scss
 
-@use 'shared/variables'        as *;
-@use 'shared/controls/buttons' as button;
+@use "shared/variables"        as *;
+@use "shared/mixins"           as *;
+@use "shared/controls/buttons" as button;
 
 //=============================================================================
 // Internal mixins
@@ -32,7 +33,7 @@
 //=============================================================================
 
 // @see RepositoryHelper#retrieval_link
-.artifact {
+.retrieval {
 
     // @see file:javascripts/feature/download.js *showFailureMessage*
     .failure {
@@ -45,6 +46,35 @@
             background-color: $alert-bg;
             border-radius:    3px;
             cursor:           default;
+        }
+    }
+
+    // @see file:javascripts/feature/download.js *showProgressIndicator*
+    .progress {
+        @include transient-control;
+    }
+
+    // @see file:javascripts/feature/download.js *initiateDownload*
+    .probe {
+        &:not(.complete) {
+            @include link-appearance;
+        }
+    }
+
+    // @see file:javascripts/feature/download.js *showDownloadButton*
+    .button {
+
+        @include transient-control;
+
+        & {
+            padding:          2px 6px;
+            background-color: $success-bg;
+            border:           1px solid black;
+            border-radius:    6px;
+        }
+
+        &:hover {
+            text-decoration:  underline;
         }
     }
 }

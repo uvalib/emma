@@ -1,0 +1,9 @@
+# Obj-specific definition overrides for serialization.
+#
+# @see Api::Serializer::Obj::Schema
+#
+module IaDownload::Api::Serializer::Obj::Schema
+  include IaDownload::Api::Serializer::Schema
+
+  include Api::Serializer::Obj::Schema
+end

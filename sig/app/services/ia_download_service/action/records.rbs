@@ -3,15 +3,28 @@
 module IaDownloadService::Action::Records
   include IaDownloadService::Common
 
+  # Check for availability of a download from Internet Archive.  If the file
+  # requires on-the-fly generation, this will be triggered here.
+  #
+  # @param [Hash] opt                 Includes :identifier and :type.
+  #
+  # @return [Hash]
+  #
+  # @see file:app/assets/javascripts/feature/download.js *ProbeResponse*
+  #
+  def probe: (**untyped opt) -> symHash
+
   # Get a download from Internet Archive, possibly generated on-the-fly.
   #
-  # @param [String] url
-  # @param [Hash]   opt
+  # This should only be invoked after #probe indicates that the requested
+  # content file has been generated.
+  #
+  # @param [Hash] opt                 Includes :identifier and :type.
   #
   # @raise [ExecError]                If the download failed.
   #
   # @return [Array(String,String,String)]
   # @return [Array(String,String,nil)]
   #
-  def download: (String url, **untyped opt) -> [String, String, (String|nil)]
+  def download: (**untyped opt) -> [String, String, (String|nil)]
 end

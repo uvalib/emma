@@ -308,6 +308,16 @@
     }
 }
 
+/// Gives text the appearance of a link.
+///
+@mixin link-appearance {
+    & {
+        color:           LinkText;
+        cursor:          pointer;
+        text-decoration: underline;
+    }
+}
+
 // ============================================================================
 // Layout
 // ============================================================================

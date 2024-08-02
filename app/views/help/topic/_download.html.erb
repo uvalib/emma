@@ -23,12 +23,6 @@
 
   signed_in           = help_jump('signed in', :sign_in)
   search              = help_jump('search',    :search)
-  ia_timeout          = help_image(:ia_timeout, class: 'no-border wide')
-
-  archive_org_help    = 'https://help.archive.org/help'
-  is_disability_help  = 'disability-access-general-information'
-  ia_disability_page  = "#{archive_org_help}/#{is_disability_help}"
-  ia_disability_link  = external_link(ia_disability_page, 'Disability Access')
 
   # Page anchors
 
@@ -81,37 +75,20 @@
   </h2>
 
   <p>
-    EMMA manages downloads from Internet Archive in two ways, depending on the
-    type of file:
+    EMMA dynamically accesses Internet Archive to retrieve files from it.
+    Depending on the item, the file may be immediately available or it may
+    require "on-the-fly" generation before Internet Archive can provide the
+    file in the requested format.
   </p>
 
   <p>
-    For DAISY, Internet Archive currently only delivers encrypted content.
-    In this case, the download link is a direct link to Internet Archive
-    because the file itself is freely-available.
-  </p>
-
-  <p>
-    Use of the DAISY content, however, will require a key as described within
-    the download itself.
-    Refer to IA's article on <%= ia_disability_link -%> for details.
-  </p>
-
-  <p>
-    For other types (EPUB, PDF, etc.), EMMA intercedes by making a request to
-    Internet Archive's facility for generating unencumbered sources
-    "on-the-fly".
-    Because these files are created dynamically, there may be some delay before
-    the browser download dialog appears.
-  </p>
-
-  <p>
-    You may see an error message:
-    <%= ia_timeout %>
-    This indicates that the current attempt to download was completed
-    unsuccessfully.
-    Retrying the download link after a few minutes, however, should result in
-    the download without further delay.
+    If on-the-fly generation is required,
+    Expect a delay of several minutes before the item has been prepared for
+    download.
+    (Requests for DAISY format may result in substantially longer delays than
+    requests for EPUB format.)
+    When it is ready, a DOWNLOAD button will appear.
+    Click this to perform the actual file download via your browser.
   </p>
 
 </section>

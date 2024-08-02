@@ -1,0 +1,16 @@
+# Definitions used within the #schema block when it is executed in the context
+# of the class which includes this module.
+#
+# @see Api::Record::Associations
+#
+module IaDownload::Api::Record::Associations
+  extend ActiveSupport::Concern
+
+  include Api::Record::Associations
+
+  module ClassMethods
+    include IaDownload::Api::Schema
+
+    include Api::Record::Associations::ClassMethods
+  end
+end

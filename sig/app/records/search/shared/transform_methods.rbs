@@ -30,6 +30,9 @@ module Search::Shared::TransformMethods
 
   # Set the original repository content download URL if not already present.
   #
+  # For Internet Archive items, the value is replaced with one that will cause
+  # a download request to proxy through EMMA.
+  #
   # @param [Hash, nil] data           Default: *self*.
   # @param [Symbol]    field
   #
