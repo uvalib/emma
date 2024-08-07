@@ -676,14 +676,14 @@ export function xhrDecode(data) {
  */
 export function fetchFlashMessage(url) {
     const func = "fetchFlash"; //OUT.debug(`${func}: url =`, url);
-    let error  = Emma.Messages.flash.client.no_fetch;
+    let error  = Emma.Terms.flash.client.no_fetch;
     let content;
 
     function onSuccess(data) {
         if (isMissing(data)) {
-            error = Emma.Messages.flash.client.no_data;
+            error = Emma.Terms.flash.client.no_data;
         } else if (typeof(data) !== "string") {
-            error = `${Emma.Messages.flash.client.bad_data} ${typeof data}`;
+            error = `${Emma.Terms.flash.client.bad_data} ${typeof data}`;
         } else {
             content = data;
         }

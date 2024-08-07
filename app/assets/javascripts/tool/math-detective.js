@@ -57,24 +57,24 @@ const DEF_RECHECK_TIME  = 5 * SECONDS;
 const DEF_RECHECK_MAX   = 5; // attempts
 const MAX_SIZE          = undefined; // 5 * MB;
 
-const IN_CLIPBOARD      = Emma.Messages.md.clipboard.saved;
-const CLIPBOARD_FILE    = Emma.Messages.md.clipboard.input.file_name;
+const IN_CLIPBOARD      = Emma.Terms.md.clipboard.saved;
+const CLIPBOARD_FILE    = Emma.Terms.md.clipboard.input.file_name;
 
-const COPY_TIP          = Emma.Messages.md.copy.tooltip;
+const COPY_TIP          = Emma.Terms.md.copy.tooltip;
 
-const COPIED_NOTE       = Emma.Messages.md.clipboard.copied;
-const FAILED_NOTE       = Emma.Messages.md.clipboard.failed;
+const COPIED_NOTE       = Emma.Terms.md.clipboard.copied;
+const FAILED_NOTE       = Emma.Terms.md.clipboard.failed;
 
-const STATUS            = Emma.Messages.md.status;
+const STATUS            = Emma.Terms.md.status;
 
-const ERROR             = Emma.Messages.md.response.error;
-const FATAL             = Emma.Messages.md.response.fatal;
-const UNKNOWN           = Emma.Messages.md.response.unknown;
-const NO_ITEM           = Emma.Messages.md.response.no_item;
-const SIZE_LIMIT        = Emma.Messages.md.response.size_limit;
-const BAD_HTTP          = Emma.Messages.md.response.bad_http;
-const NO_DATA           = Emma.Messages.md.response.no_data;
-const NO_REQ            = Emma.Messages.md.response.no_req;
+const ERROR             = Emma.Terms.md.response.error;
+const FATAL             = Emma.Terms.md.response.fatal;
+const UNKNOWN           = Emma.Terms.md.response.unknown;
+const NO_ITEM           = Emma.Terms.md.response.no_item;
+const SIZE_LIMIT        = Emma.Terms.md.response.size_limit;
+const BAD_HTTP          = Emma.Terms.md.response.bad_http;
+const NO_DATA           = Emma.Terms.md.response.no_data;
+const NO_REQ            = Emma.Terms.md.response.no_req;
 
 // ============================================================================
 // Internal functions
@@ -167,7 +167,7 @@ export function setupFor(root) {
                     break;
                 default:
                     hover = false;
-                    note  = Emma.Messages.md.clipboard.access;
+                    note  = Emma.Terms.md.clipboard.access;
                     break;
             }
             click && handleClickAndKeypress($clip_input, processClipboard);
@@ -220,11 +220,11 @@ export function setupFor(root) {
             if (clip_type && callback) {
                 // Processing has started.
             } if (clip_type) {
-                data = Emma.Messages.md.clipboard.data.image;
+                data = Emma.Terms.md.clipboard.data.image;
             } else if (clip_item) {
-                data = Emma.Messages.md.clipboard.data.no_image;
+                data = Emma.Terms.md.clipboard.data.no_image;
             } else {
-                data = Emma.Messages.md.clipboard.data.nothing;
+                data = Emma.Terms.md.clipboard.data.nothing;
             }
             data && showClipboardNote(`${data} ${IN_CLIPBOARD}`, func);
         }).catch(reason => {
@@ -232,7 +232,7 @@ export function setupFor(root) {
             if (message?.includes("permission")) {
                 setupClipboardInput();
             } else {
-                message ||= Emma.Messages.md.clipboard.unknown;
+                message ||= Emma.Terms.md.clipboard.unknown;
                 console.warn(`${func}:`, message);
                 showClipboardNote(message, func);
             }

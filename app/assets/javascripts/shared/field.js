@@ -613,7 +613,7 @@ export class Value extends BaseClass {
             if (Array.isArray(v)) {
                 msg.push(...v);
             } else {
-                msg.push(v || Emma.Messages.invalid);
+                msg.push(v || Emma.Terms.invalid);
             }
             this._errors[k] = msg.join("; ");
         }

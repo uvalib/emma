@@ -85,11 +85,11 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      */
     const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
 
-    const LOCK_LBL   = Emma.Messages.lookup.lock.label;
-    const UNLOCK_LBL = Emma.Messages.lookup.unlock.label;
+    const LOCK_LBL   = Emma.Terms.lookup.lock.label;
+    const UNLOCK_LBL = Emma.Terms.lookup.unlock.label;
 
-    const LOCK_TIP   = Emma.Messages.lookup.lock.tooltip;
-    const UNLOCK_TIP = Emma.Messages.lookup.unlock.tooltip;
+    const LOCK_TIP   = Emma.Terms.lookup.lock.tooltip;
+    const UNLOCK_TIP = Emma.Terms.lookup.unlock.tooltip;
 
     // ========================================================================
     // Channel
@@ -1048,7 +1048,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
         $cell.data(LookupModal.FIELD_LOCKED_DATA, locked);
         $input.attr("title", tip);
         $slider.css("--label", `"${label}"`);
-        $state.text(`${name} ${Emma.Messages.lookup.field_is} ${status}`);
+        $state.text(`${name} ${Emma.Terms.lookup.field_is} ${status}`);
     }
 
     /**
@@ -1572,7 +1572,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      */
     function makeOriginalValuesEntry(row) {
         const func = "makeOriginalValuesEntry";
-        const tag  = Emma.Messages.original.toUpperCase();
+        const tag  = Emma.Terms.original.toUpperCase();
         const css  = LookupModal.ORIG_VALUES_CLASS;
         setOriginalValuesEntry(makeResultEntry(row, tag, css));
         return refreshOriginalValuesEntry(func);
@@ -1590,7 +1590,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     function makeResultEntry(row, tag, css_class) {
         const css    = css_class || LookupModal.RESULT_CLASS;
         const fields = LookupModal.DATA_COLUMNS;
-        const label  = tag || capitalize(Emma.Messages.result);
+        const label  = tag || capitalize(Emma.Terms.result);
         const $radio = makeSelectColumn();
         const $label = makeTagColumn(label);
         const values = fields.map(field => makeDataColumn(field));

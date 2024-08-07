@@ -54,22 +54,22 @@ export const LOOKUP_BUTTON_CLASS = "lookup-button";
 export const LOOKUP_BUTTON       = selector(LOOKUP_BUTTON_CLASS);
 
 const COLUMN = deepFreeze({
-    selection:              Emma.Messages.lookup.column.selection,
-    tag:                    Emma.Messages.lookup.column.tag,
-    dc_identifier:          Emma.Messages.lookup.column.dc_identifier,
-    dc_title:               Emma.Messages.lookup.column.dc_title,
-    dc_creator:             Emma.Messages.lookup.column.dc_creator,
-    dc_publisher:           Emma.Messages.lookup.column.dc_publisher,
-    emma_publicationDate:   Emma.Messages.lookup.column.emma_publicationDate,
-    dcterms_dateCopyright:  Emma.Messages.lookup.column.dcterms_dateCopyright,
-    dc_description:         Emma.Messages.lookup.column.dc_description,
+    selection:              Emma.Terms.lookup.column.selection,
+    tag:                    Emma.Terms.lookup.column.tag,
+    dc_identifier:          Emma.Terms.lookup.column.dc_identifier,
+    dc_title:               Emma.Terms.lookup.column.dc_title,
+    dc_creator:             Emma.Terms.lookup.column.dc_creator,
+    dc_publisher:           Emma.Terms.lookup.column.dc_publisher,
+    emma_publicationDate:   Emma.Terms.lookup.column.emma_publicationDate,
+    dcterms_dateCopyright:  Emma.Terms.lookup.column.dcterms_dateCopyright,
+    dc_description:         Emma.Terms.lookup.column.dc_description,
 });
 
-const LOCK_LBL   = Emma.Messages.lookup.lock.label;
-const UNLOCK_LBL = Emma.Messages.lookup.unlock.label;
+const LOCK_LBL   = Emma.Terms.lookup.lock.label;
+const UNLOCK_LBL = Emma.Terms.lookup.unlock.label;
 
-const LOCK_TIP   = Emma.Messages.lookup.lock.tooltip;
-const UNLOCK_TIP = Emma.Messages.lookup.unlock.tooltip;
+const LOCK_TIP   = Emma.Terms.lookup.lock.tooltip;
+const UNLOCK_TIP = Emma.Terms.lookup.unlock.tooltip;
 
 // ============================================================================
 // Class LookupModal
@@ -1493,7 +1493,7 @@ export class LookupModal extends ModalDialog {
         $cell.data(this.FIELD_LOCKED_DATA, locked);
         $input.attr("title", tip);
         $slider.css("--label", `'${label}'`);
-        $state.text(`${name} ${Emma.Messages.lookup.field_is} ${status}`);
+        $state.text(`${name} ${Emma.Terms.lookup.field_is} ${status}`);
     }
 
     /**
@@ -2008,7 +2008,7 @@ export class LookupModal extends ModalDialog {
      */
     makeOriginalValuesEntry(row) {
         const func = "makeOriginalValuesEntry";
-        const tag  = Emma.Messages.original.toUpperCase();
+        const tag  = Emma.Terms.original.toUpperCase();
         const css  = this.constructor.ORIG_VALUES_CLASS;
         this.originalValuesEntry = this.makeResultEntry(row, tag, css);
         return this.refreshOriginalValuesEntry(func);
@@ -2026,7 +2026,7 @@ export class LookupModal extends ModalDialog {
     makeResultEntry(row, tag, css_class) {
         const css    = css_class || this.constructor.RESULT_CLASS;
         const fields = this.DATA_COLUMNS;
-        const label  = tag || capitalize(Emma.Messages.result);
+        const label  = tag || capitalize(Emma.Terms.result);
         const $radio = this.makeSelectColumn();
         const $label = this.makeTagColumn(label);
         const values = fields.map(field => this.makeDataColumn(field));

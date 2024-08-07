@@ -98,7 +98,7 @@ appSetup(MODULE, function() {
      *
      * @type {Object.<SortDirection,string>}
      */
-    const SORT = Emma.Messages.table.sort;
+    const SORT = Emma.Terms.table.sort;
 
     /**
      *  Sorting strategies.

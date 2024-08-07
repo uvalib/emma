@@ -323,7 +323,7 @@ const MESSAGE_DURATION = 30 * SECONDS;
  * @readonly
  * @type {string}
  */
-const UPLOAD_ERROR_MESSAGE = Emma.Messages.uploader.error;
+const UPLOAD_ERROR_MESSAGE = Emma.Terms.uploader.error;
 
 /**
  * Indicate whether UppyFile should be overridden to force its "Content-Type"
@@ -353,9 +353,9 @@ export const PROGRESS_BAR   = selector(PROGRESS_BAR_CLASS);
 export const FILE_NAME      = selector(FILE_NAME_CLASS);
 export const UPLOADED_NAME  = selector(UPLOADED_NAME_CLASS);
 
-const STATE     = Emma.Messages.uploader.state;
-const PAUSED    = Emma.Messages.uploader.paused.toUpperCase();
-const RESUMED   = Emma.Messages.uploader.resumed.toUpperCase();
+const STATE     = Emma.Terms.uploader.state;
+const PAUSED    = Emma.Terms.uploader.paused.toUpperCase();
+const RESUMED   = Emma.Terms.uploader.resumed.toUpperCase();
 
 /**
  * The names of events defined by Uppy.

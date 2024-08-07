@@ -421,7 +421,7 @@ appSetup(MODULE, function() {
               $filter_sb = $controls.find(SEARCH_BUTTON);
         if (isMissing($search_button.filter(':visible'))) {
             if (!$search_button.attr("value")) {
-                const label = Emma.Messages.search_bar.button.label;
+                const label = Emma.Terms.search_bar.button.label;
                 $search_button.attr("value", label);
                 $search_button.css("row-gap", "0.5rem");
             }

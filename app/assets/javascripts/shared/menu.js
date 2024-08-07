@@ -413,7 +413,7 @@ function generateSelect2Language() {
       //maximumSelected: "You can only select {n} item",
       //noResults:       "No results found",
       //searching:       "Searching…",
-        removeAllItems:  Emma.Messages.search_filters.remove_all,
+        removeAllItems:  Emma.Terms.search_filters.remove_all,
     };
     const translations = {};
     for (const [name, value] of Object.entries(text)) {

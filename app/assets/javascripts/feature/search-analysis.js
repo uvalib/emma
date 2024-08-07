@@ -814,7 +814,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const LATE_EXILE_TIP = Emma.Messages.search_analysis.late_exile;
+    const LATE_EXILE_TIP = Emma.Terms.search_analysis.late_exile;
 
     /**
      * Tooltip text for an erroneous item.
@@ -822,7 +822,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
      * @readonly
      * @type {string}
      */
-    const EARLY_EXILE_TIP = Emma.Messages.search_analysis.early_exile;
+    const EARLY_EXILE_TIP = Emma.Terms.search_analysis.early_exile;
 
     /**
      * Maximum integer color value.
@@ -907,8 +907,8 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
             const $item  = $(item);
             const $score = $item.find('.item-score');
             const order  = SORTED[SORT_ORDER];
-            const desc   = order || Emma.Messages.search_analysis.fields;
-            const tip    = `${Emma.Messages.search_analysis.tooltip} ${desc}`;
+            const desc   = order || Emma.Terms.search_analysis.fields;
+            const tip    = `${Emma.Terms.search_analysis.tooltip} ${desc}`;
             return $score.addClass("disabled").attr("title", tip).text(BLANK);
         }
 
@@ -1853,7 +1853,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
         _markItemAsError(item) {
             const $item = $(item);
             $item.addClass(ERROR_MARKER)
-            this._itemStateTip($item, Emma.Messages.search_analysis.error);
+            this._itemStateTip($item, Emma.Terms.search_analysis.error);
             return true;
         }
 
@@ -1916,7 +1916,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
             let $t_tag;
             if (error) {
                 $t_tag = $(`<a href="#${identity}">`).addClass(ERROR_MARKER);
-                $t_tag.attr("title", Emma.Messages.search_analysis.jump);
+                $t_tag.attr("title", Emma.Terms.search_analysis.jump);
                 if (exile) { $t_tag.addClass(EXILE_MARKER) }
             } else if (exile) {
                 $t_tag = $('<div>').addClass(EXILE_MARKER);

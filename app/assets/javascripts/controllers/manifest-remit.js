@@ -550,7 +550,7 @@ appSetup(MODULE, function() {
      */
     function onSubmissionStart(event) {
         const func = "onSubmissionStart"; OUT.debug(`${func}: event =`, event);
-        const fail = Emma.Messages.submission.failed.submit;
+        const fail = Emma.Terms.submission.failed.submit;
         if (submissionsActive()) {
             OUT.error(`${fail} - already submitting`);
         } else {
@@ -568,7 +568,7 @@ appSetup(MODULE, function() {
      */
     function onSubmissionStop(event) {
         const func = "onSubmissionStop"; OUT.debug(`${func}: event =`, event);
-        const fail = Emma.Messages.submission.failed.cancel;
+        const fail = Emma.Terms.submission.failed.cancel;
         if (!submissionsActive()) {
             OUT.error(`${fail} - not submitting`);
         } else {
@@ -586,7 +586,7 @@ appSetup(MODULE, function() {
      */
     function onSubmissionPause(event) {
         const func = "onSubmissionPause"; OUT.debug(`${func}: event =`, event);
-        const fail = Emma.Messages.submission.failed.pause;
+        const fail = Emma.Terms.submission.failed.pause;
         if (!submissionsActive()) {
             OUT.error(`${fail} - not submitting`);
         } else if (submissionsPaused()) {
@@ -606,7 +606,7 @@ appSetup(MODULE, function() {
      */
     function onSubmissionResume(event) {
         const func = "onSubmissionResume"; OUT.debug(`${func}: event=`, event);
-        const fail = Emma.Messages.submission.failed.resume;
+        const fail = Emma.Terms.submission.failed.resume;
         if (!submissionsActive()) {
             OUT.error(`${fail} - not submitting`);
         } else if (!submissionsPaused()) {
@@ -630,7 +630,7 @@ appSetup(MODULE, function() {
         OUT.debug(`${func}: ${action}`);
         if (!submissionMonitor().command(action, options?.data)) {
             const tag  = options?.fail || `${action} failed`;
-            const note = Emma.Messages.submission.refresh;
+            const note = Emma.Terms.submission.refresh;
             flashError(`${tag}: ${note}`);
         }
     }
@@ -670,9 +670,9 @@ appSetup(MODULE, function() {
         let blocked;
         const prop = {};
         if ((blocked = remote_needed || local_needed)) {
-            prop.tooltip = Emma.Messages.submission.blocked;
+            prop.tooltip = Emma.Terms.submission.blocked;
         } else if ((blocked = !counter.ready.reset())) {
-            prop.tooltip = Emma.Messages.submission.none_saved;
+            prop.tooltip = Emma.Terms.submission.none_saved;
         }
         prop.highlight = !blocked;
         SUBMISSION_ENABLE.start(!blocked, prop);
@@ -1292,9 +1292,9 @@ appSetup(MODULE, function() {
         const tip_data    = now_enabled ? "enabledTip" : "disabledTip";
         let new_tooltip   = $item.data(tip_data);
         if (notDefined(new_tooltip) && !now_enabled) {
-            const item_      = capitalize(Emma.Messages.item);
+            const item_      = capitalize(Emma.Terms.item);
             const number     = $item.attr("data-number");
-            const disallowed = Emma.Messages.submission.not_selectable;
+            const disallowed = Emma.Terms.submission.not_selectable;
             new_tooltip      = `${item_} ${number} ${disallowed}`;
             $item.data(tip_data, new_tooltip);
             $item.attr("title", new_tooltip);
@@ -1909,8 +1909,8 @@ appSetup(MODULE, function() {
      */
     function onSubmissionRejected() {
         OUT.debug("onSubmissionRejected");
-        const error = Emma.Messages.submission.conn_error;
-        const note  = Emma.Messages.submission.refresh;
+        const error = Emma.Terms.submission.conn_error;
+        const note  = Emma.Terms.submission.refresh;
         flashError(`${error}: ${note}`);
         submissionsEnded(true);
     }
@@ -2348,7 +2348,7 @@ appSetup(MODULE, function() {
      * @returns {string}
      */
     function files(count) {
-        return pluralize(Emma.Messages.file, count);
+        return pluralize(Emma.Terms.file, count);
     }
 
     /**
@@ -2359,7 +2359,7 @@ appSetup(MODULE, function() {
      * @returns {string}
      */
     function resolvedLabel(count) {
-        return `${Emma.Messages.resolved} ${files(count)}:`.toUpperCase();
+        return `${Emma.Terms.resolved} ${files(count)}:`.toUpperCase();
     }
 
     /**
@@ -2370,7 +2370,7 @@ appSetup(MODULE, function() {
      * @returns {string}
      */
     function problematicLabel(count) {
-        return `${Emma.Messages.problem} ${files(count)}:`.toUpperCase();
+        return `${Emma.Terms.problem} ${files(count)}:`.toUpperCase();
     }
 
     /**
@@ -2382,7 +2382,7 @@ appSetup(MODULE, function() {
      */
     function remainingLabel(count) {
         const number = Number(count) || 0;
-        const needed = Emma.Messages.submission.still_needed;
+        const needed = Emma.Terms.submission.still_needed;
         return `${number} ${files(number)} ${needed}:`.toUpperCase();
     }
 
@@ -2394,31 +2394,31 @@ appSetup(MODULE, function() {
     function allResolvedLabel() {
         const total  = allItems().length;
         const ready  = itemsReady().length;
-        let resolved = Emma.Messages.submission.all_resolved;
+        let resolved = Emma.Terms.submission.all_resolved;
         let submittable, count;
         if (ready) {
             if (ready === total) {
-                count = (total > 1) ? Emma.Messages.all : Emma.Messages.the;
+                count = (total > 1) ? Emma.Terms.all : Emma.Terms.the;
             } else {
                 const selected = itemsSelected().length;
                 if (!selected) {
                     count = ready.toString();
                 } else if (ready >= selected) {
-                    count = Emma.Messages.submission.all_selected;
+                    count = Emma.Terms.submission.all_selected;
                 } else {
-                    count = Emma.Messages.submission.some_selected;
+                    count = Emma.Terms.submission.some_selected;
                 }
             }
-            const items = pluralize(Emma.Messages.item, ready);
-            const to_go = Emma.Messages.submission.ready_for_upload;
+            const items = pluralize(Emma.Terms.item, ready);
+            const to_go = Emma.Terms.submission.ready_for_upload;
             submittable = `${count} ${items} ${to_go}`;
         } else {
-            const items = pluralize(Emma.Messages.item, total);
-            const still = Emma.Messages.still;
-            const need  = pluralize(Emma.Messages.require, (total === 1));
-            const attn  = Emma.Messages.attention;
+            const items = pluralize(Emma.Terms.item, total);
+            const still = Emma.Terms.still;
+            const need  = pluralize(Emma.Terms.require, (total === 1));
+            const attn  = Emma.Terms.attention;
             submittable = `${total} ${items} ${still} ${need} ${attn}`;
-            resolved    = `${Emma.Messages.not} ${resolved}`;
+            resolved    = `${Emma.Terms.not} ${resolved}`;
         }
         return `${resolved} - ${submittable}`.toUpperCase();
     }

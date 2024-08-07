@@ -506,7 +506,7 @@ AppDebug.file("shared/assets.js.erb");
  * @property {ModelProperties}      Manifest
  * @property {ModelProperties}      ManifestItem
  *
- * @property {object}               Messages
+ * @property {object}               Terms
  */
 export const Emma = (function() {
 
@@ -687,11 +687,11 @@ export const Emma = (function() {
           ManifestItem =    o$('<%= js ManifestItemDecorator.js_properties %>');
 
     // ========================================================================
-    // Messages
+    // Vocabulary terms
     // ========================================================================
 
     /** @type {Object} */
-    const Messages = {
+    const Terms = {
 
         EMMA:                           '<%= js config_term(:EMMA) %>',
 
@@ -903,7 +903,7 @@ export const Emma = (function() {
         Upload,
         Manifest,
         ManifestItem,
-        Messages,
+        Terms,
     };
 
     // Update with any configuration values injected from the server.

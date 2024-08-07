@@ -504,9 +504,9 @@ appSetup(MODULE, function() {
     const PAGE_ATTRIBUTES = pageAttributes();
     const PAGE_PROPERTIES = PAGE_ATTRIBUTES.properties;
 
-    const SUCCESS         = Emma.Messages.form.success;
-    const NO_LOOKUP       = Emma.Messages.form.no_lookup;
-    const NOT_CHANGEABLE  = Emma.Messages.form.unchangeable;
+    const SUCCESS         = Emma.Terms.form.success;
+    const NO_LOOKUP       = Emma.Terms.form.no_lookup;
+    const NOT_CHANGEABLE  = Emma.Terms.form.unchangeable;
 
     // ========================================================================
     // Variables
@@ -1455,7 +1455,7 @@ appSetup(MODULE, function() {
 
                 let tooltip = "";
                 if (err) {
-                    const tag = Emma.Messages.error.toUpperCase();
+                    const tag = Emma.Terms.error.toUpperCase();
                     let parts;
                     if (isObject(err)) {
                         parts = Object.entries(err);
@@ -2308,7 +2308,7 @@ appSetup(MODULE, function() {
             if (check_only || halted) { return undefined }
 
             const func  = "onLookupComplete";
-            let message = Emma.Messages.lookup.no_changes;
+            let message = Emma.Terms.lookup.no_changes;
             const data  = getFieldResultsData($row);
 
             if (isPresent(data)) {
@@ -2327,7 +2327,7 @@ appSetup(MODULE, function() {
                     }
                 }
                 message = $.map(compact(updates), (fields, update_type) => {
-                    const items = pluralize(Emma.Messages.item, fields.length);
+                    const items = pluralize(Emma.Terms.item, fields.length);
                     const label = `${update_type} ${items}`;
                     const cells = dataFields($cells, fields).toArray();
                     const names = cells.map(cell =>
@@ -6067,7 +6067,7 @@ appSetup(MODULE, function() {
      */
     function onCommStatus(online) {
         const offline = !online;
-        const error   = offline && isOnline() && Emma.Messages.status.offline;
+        const error   = offline && isOnline() && Emma.Terms.status.offline;
         if (error) { flashError(error) }
         setOffline(offline);
     }

@@ -74,7 +74,7 @@ const RESULTS              = selector(RESULTS_CLASS);
 const ERRORS               = selector(ERRORS_CLASS);
 const DIAGNOSTICS          = selector(DIAGNOSTICS_CLASS);
 
-const STATUS               = Emma.Messages.submission.status;
+const STATUS               = Emma.Terms.submission.status;
 
 // ============================================================================
 // Class SubmitModal
@@ -812,7 +812,7 @@ export class SubmitModal extends ModalDialog {
             if (isObject(v)) {
                 const [sid, err] = [v.submission_id, v.error];
                 if (sid && !err) {
-                    line = `${Emma.Messages.submission.submitted_as} ${sid}`;
+                    line = `${Emma.Terms.submission.submitted_as} ${sid}`;
                 } else if (err && !sid) {
                     line = err;
                 }
@@ -821,7 +821,7 @@ export class SubmitModal extends ModalDialog {
             return htmlDecode(line) || line || "";
         };
         const val = (v) => Array.isArray(v) ? v.map(fmt).join("; ") : fmt(v);
-        const sub = Emma.Messages.submission.submitted;
+        const sub = Emma.Terms.submission.submitted;
         let added;
         if (Array.isArray(data)) {
             added = data.map(k => isString(k) ? `${k}: ${sub}` : val(k));

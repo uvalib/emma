@@ -328,7 +328,7 @@ export function serverSend(ctr_act, send_options) {
         if (!err && !warn && !offline) {
             cb_ok?.(result, warn, err, xhr);
         } else if (offline && !cb_comm) {
-            err = Emma.Messages.status.offline;
+            err = Emma.Terms.status.offline;
         }
         if (err || warn) {
             if (!offline || !cb_comm) {
