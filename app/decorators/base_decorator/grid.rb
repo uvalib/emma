@@ -241,7 +241,7 @@ module BaseDecorator::Grid
 
     parts   = opt.extract!(*BaseDecorator::Table::MODEL_TABLE_PART_OPT).compact
     pg_opt  = opt.extract!(*ROW_PAGE_PARAMS)
-    row_opt = t_opt.merge(tag: tag, cols: cols, wrap: false)
+    row_opt = t_opt.merge(tag: tag, cols: cols, wrap: table)
 
     # Create `<thead>` if not provided by the caller.
     parts[:thead] ||=
@@ -267,13 +267,7 @@ module BaseDecorator::Grid
     end
 
     prepend_css!(opt, css)
-    html_tag(tag, **opt) do
-      if table
-        parts.map { |part, content| html_tag(part, content, **t_opt) }
-      else
-        parts.values
-      end
-    end
+    html_tag(tag, *parts.values, **opt)
   end
 
   # Generate a header row from field names in the order they are emitted.

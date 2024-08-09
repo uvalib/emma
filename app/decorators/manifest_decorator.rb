@@ -894,20 +894,24 @@ class ManifestDecorator
     css:    '.submission-status-grid',
     **opt
   )
+    trace_attrs!(opt)
     index ||= paginator.first_index
     r_start = row || 0
     table   = for_html_table?(tag)
     tag     = table && :table || tag || :div
+    t_opt   = trace_attrs_from(opt)
+    h_opt   = t_opt.merge(tag: tag, row: row, wrap: table)
+    r_opt   = t_opt.merge(tag: tag)
 
     # Create `<thead>`.
     opt[:thead] =
-      ManifestItemDecorator.submission_status_header(tag: tag, row: row)
-    row += 1 if opt[:thead]
+      ManifestItemDecorator.submission_status_header(**h_opt)
+    row += 1
 
     # Create `<tbody>`.
     rows =
       submit_items.map.with_index(index) do |item, i|
-        decorate(item).submission_status(tag: tag, index: i, row: (row + i))
+        decorate(item).submission_status(**r_opt, index: i, row: (row + i))
       end
     row += rows.size
     opt[:tbody] = table ? html_tbody(*rows) : safe_join(rows, "\n")

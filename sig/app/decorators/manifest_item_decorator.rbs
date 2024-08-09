@@ -343,6 +343,8 @@ class ManifestItemDecorator < BaseDecorator
     # @param [String]  css
     # @param [Hash]    opt
     #
+    # @option opt [Boolean] :wrap     If *false* don't wrap in `<thead>`.
+    #
     # @return [ActiveSupport::SafeBuffer]
     #
     # @see #submit_status_element

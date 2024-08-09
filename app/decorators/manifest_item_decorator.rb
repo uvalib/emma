@@ -694,16 +694,19 @@ class ManifestItemDecorator < BaseDecorator
     # @param [String]  css
     # @param [Hash]    opt
     #
+    # @option opt [Boolean] :wrap     If *false* don't wrap in `<thead>`.
+    #
     # @return [ActiveSupport::SafeBuffer]
     #
     # @see #submit_status_element
     #
     def submission_status_header(row: HEADER_ROW, css: '.head', **opt)
-      ctrl = nil
-      name = config_term(:manifest_item, :submit, :item_name)
-      stat = SUBMIT_STEPS
+      trace_attrs!(opt)
       prepend_css!(opt, css)
-      submit_status_element(ctrl, name, stat, row: row, **opt)
+      wrap = !opt.key?(:wrap) || opt.delete(:wrap)
+      name = config_term(:manifest_item, :submit, :item_name)
+      line = submit_status_element(nil, name, SUBMIT_STEPS, row: row, **opt)
+      wrap ? html_thead(line) : line
     end
 
     # =========================================================================
@@ -735,6 +738,7 @@ class ManifestItemDecorator < BaseDecorator
       css:      '.submission-status',
       **opt
     )
+      trace_attrs!(opt)
       table   = for_html_table?(tag)
       tag     = :tr if table
       heading = (row == HEADER_ROW)
@@ -1569,16 +1573,19 @@ class ManifestItemDecorator
   # @see #submit_status_element
   #
   def submission_status(row: nil, col: 1, index: nil, **opt)
+    submitted = object.submitted?
+
     opt[:'data-number']    ||= index&.succ
     opt[:'data-item-id']   ||= object.id
     opt[:'data-manifest']  ||= object.manifest_id
     opt[:'data-file-name'] ||= object.pending_file_name
     opt[:'data-file-url']  ||= object.pending_file_url
+    opt[:'data-submitted']   = submitted if submitted
 
     ctrl = submit_status_ctls(col: col, **opt.slice(:tag, :'data-number'))
 
     stat = SUBMIT_STEPS.transform_values { nil }
-    stat[:entry]  = object.submitted?
+    stat[:entry]  = submitted
     stat[:index]  = object.in_index?
     stat[:upload] = object.file_uploaded?
     stat[:file]   = stat[:upload]   || object.file_literal?

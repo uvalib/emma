@@ -696,7 +696,8 @@ module ManifestItemConcern
   # @return [Array<Hash>]             Modified items.
   #
   def bulk_fields_manifest_items
-    current_post_params[:data].map { |id, updates|
+    data = current_post_params[:data] || {}
+    data.map { |id, updates|
       id = id.to_s.to_i
       ManifestItem.find(id).set_fields_direct(updates) rescue next
       { id: id }

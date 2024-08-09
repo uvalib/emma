@@ -313,7 +313,7 @@ appSetup(MODULE, function() {
     class TotalCounter extends Counter {
         static CLASS_NAME = "TotalCounter";
         constructor()       { super(TOTAL_COUNT) }
-        static get $items() { return allItems() }
+        static get $items() { return itemsToTransmit() }
     }
 
     /**
@@ -661,21 +661,23 @@ appSetup(MODULE, function() {
     function updateSubmitReady() {
         OUT.debug("updateSubmitReady");
 
-        const remote_needed = isPresent(files_remaining.remote);
-        const local_needed  = isPresent(files_remaining.local);
+        counter.total.reset();
 
-        showRemoteFilesPrompt(remote_needed, remote_needed);
-        showLocalFilesPrompt(local_needed, !remote_needed);
+        const need_remote = isPresent(files_remaining.remote);
+        const need_local  = isPresent(files_remaining.local);
+        const ready       = counter.ready.reset();
+        const blocked     = need_local || need_remote || !ready;
 
-        let blocked;
-        const prop = {};
-        if ((blocked = remote_needed || local_needed)) {
+        const prop = { highlight: !blocked };
+        if (need_local || need_remote) {
             prop.tooltip = Emma.Terms.submission.blocked;
-        } else if ((blocked = !counter.ready.reset())) {
+        } else if (!ready) {
             prop.tooltip = Emma.Terms.submission.none_saved;
         }
-        prop.highlight = !blocked;
         SUBMISSION_ENABLE.start(!blocked, prop);
+
+        showRemoteFilesPrompt(need_remote, need_remote);
+        showLocalFilesPrompt(need_local, !need_remote);
     }
 
     /**
@@ -721,7 +723,7 @@ appSetup(MODULE, function() {
      */
     function startSubmissions() {
         OUT.debug("START SUBMISSIONS");
-        if (isMissing(itemsChecked())) {
+        if (isMissing(itemsSelected())) {
             itemsReady().each((_, item) => selectItem(item));
             updateGroupCheckbox();
         }
@@ -840,7 +842,11 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * initializeItems
+     * Initialize all rows, accumulating the list of files to be resolved.
+     *
+     * Any row associated with a manifest item that has already been submitted
+     * will be made unselectable, removing it from the set of items eligible
+     * for transmission.
      */
     function initializeItems() {
         OUT.debug("initializeItems");
@@ -848,12 +854,14 @@ appSetup(MODULE, function() {
         let unsaved = false;
         allItems().each((_, item) => {
             /** @type {jQuery} */
-            const $item   = $(item);
-            const item_id = manifestItemId($item);
+            const $item     = $(item);
+            const item_id   = manifestItemId($item);
+            const submitted = isAlreadySubmitted($item);
             STATUS_SELECTORS.forEach(status => {
-                let name;
+                /** @type {jQuery} */
                 const $status = $item.find(status);
-                if ($status.is(FILE_NEEDED)) {
+                let name;
+                if ($status.is(FILE_NEEDED) && !submitted) {
                     const path = $item.attr(FILE_NAME_ATTR) || "";
                     if ((name = path.split("\\").pop().split("/").pop())) {
                         local[item_id] = name;
@@ -869,7 +877,12 @@ appSetup(MODULE, function() {
                 }
                 initializeStatusFor($item, status, name);
             });
-            updateItemSelect($item);
+            if (submitted) {
+                $item.attr('title', Emma.Terms.submission.completed);
+                disableItemSelect($item);
+            } else {
+                updateItemSelect($item);
+            }
             $item.children().each((_, column) => setupCellNavGroup(column));
         });
         OUT.debug("INITIAL file_references.local  =", local);
@@ -928,7 +941,25 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function itemsToTransmit() {
-        return presence(itemsSelected()) || allItems();
+        return presence(itemsSelected()) || itemsSelectable();
+    }
+
+    /**
+     * Return all items which have been previously submitted.
+     *
+     * @returns {jQuery}
+     */
+    function itemsAlreadySubmitted() {
+        return allItemsWhere(isAlreadySubmitted);
+    }
+
+    /**
+     * Return all items which can be selected by the user.
+     *
+     * @returns {jQuery}
+     */
+    function itemsSelectable() {
+        return allItemsWhere(isSelectable);
     }
 
     /**
@@ -937,7 +968,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function itemsStartable() {
-        return itemsWhere(isStartable);
+        return itemsToTransmitWhere(isStartable);
     }
 
     /**
@@ -946,26 +977,16 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function itemsReady() {
-        return itemsWhere(isReady);
+        return itemsToTransmitWhere(isReady);
     }
 
     /**
-     * Return all items which have a checkmark and are not disabled.
+     * Return all items which have a checkmark.
      *
      * @returns {jQuery}
      */
     function itemsSelected() {
-        return itemsWhere(isSelected);
-    }
-
-    /**
-     * Return all items which have a checkmark (whether or not they are
-     * disabled).
-     *
-     * @returns {jQuery}
-     */
-    function itemsChecked() {
-        return itemsWhere(isChecked);
+        return allItemsWhere(isSelected);
     }
 
     /**
@@ -974,7 +995,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function itemsTransmitting() {
-        return itemsWhere(isTransmitting);
+        return itemsToTransmitWhere(isTransmitting);
     }
 
     /**
@@ -983,7 +1004,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function itemsSucceeded() {
-        return itemsWhere(isSucceeded);
+        return itemsToTransmitWhere(isSucceeded);
     }
 
     /**
@@ -992,7 +1013,7 @@ appSetup(MODULE, function() {
      * @returns {jQuery}
      */
     function itemsFailed() {
-        return itemsWhere(isFailed);
+        return itemsToTransmitWhere(isFailed);
     }
 
     /**
@@ -1003,26 +1024,26 @@ appSetup(MODULE, function() {
      *
      * @returns {jQuery}
      */
-    function itemsWhere(has_condition, ...args) {
-        return allItems().filter((_, item) => has_condition(item, ...args));
+    function allItemsWhere(has_condition, ...args) {
+        const $items = allItems();
+        return $items.filter((_, item) => has_condition(item, ...args));
     }
 
     /**
-     * Indicate whether the item's checkbox is checked (regardless of whether
-     * it is disabled or not).
+     * Return the matching submittable item rows.
      *
-     * @param {Selector} item
+     * @param {function(Selector,...) : boolean} has_condition
+     * @param {...}                              [args]
      *
-     * @returns {boolean}
+     * @returns {jQuery}
      */
-    function isChecked(item) {
-        const $item = itemRow(item);
-        const cb    = checkbox($item);
-        return !!cb && cb.checked && !cb.indeterminate;
+    function itemsToTransmitWhere(has_condition, ...args) {
+        const $items = itemsToTransmit();
+        return $items.filter((_, item) => has_condition(item, ...args));
     }
 
     /**
-     * Indicate whether the item is checked and not disabled.
+     * Indicate whether the item is checked.
      *
      * @param {Selector} item
      *
@@ -1031,7 +1052,7 @@ appSetup(MODULE, function() {
     function isSelected(item) {
         const $item = itemRow(item);
         const cb    = checkbox($item);
-        return !!cb && cb.checked && !cb.disabled && !cb.indeterminate;
+        return !!cb && cb.checked && !cb.indeterminate;
     }
 
     /**
@@ -1046,6 +1067,32 @@ appSetup(MODULE, function() {
         const entries  = dup(NOT_READY_VALUES); delete entries[FILE_STATUS];
         const statuses = Object.entries(entries);
         return !statuses.some(([s, invalid]) => $item.find(s).is(invalid));
+    }
+
+    /**
+     * Indicate whether the item had already been submitted in a previous
+     * session with this page (and is therefore not counted among the items
+     * eligible for submission in this session).
+     *
+     * @param {Selector} item
+     *
+     * @returns {boolean}
+     *
+     * @see "ManifestItemDecorator::SharedGenericMethods#submission_status"
+     */
+    function isAlreadySubmitted(item) {
+        return itemRow(item).attr('data-submitted') === "true";
+    }
+
+    /**
+     * Indicate whether the item can be selected by the user.
+     *
+     * @param {Selector} item
+     *
+     * @returns {boolean}
+     */
+    function isSelectable(item) {
+        return !isAlreadySubmitted(item);
     }
 
     /**
@@ -1163,7 +1210,11 @@ appSetup(MODULE, function() {
 
     const $group_checkbox  = $head_row.find(`${CONTROLS} ${CHECKBOX}`);
 
-    /** @type {jQuery<HTMLInputElement>} */
+    /**
+     * NOTE: This is only used when setting up the event handlers.
+     *
+     * @type {jQuery<HTMLInputElement>}
+     */
     const $item_checkboxes = $item_rows.find(`${CONTROLS} ${CHECKBOX}`);
 
     /**
@@ -1260,15 +1311,16 @@ appSetup(MODULE, function() {
      * Prevent user selection of an item.
      *
      * @param {Selector} item
-     * @param {boolean}  [disable]          If **false**, enable.
-     * @param {boolean}  [indeterminate]
+     * @param {boolean}  [disable]          If *false*, enable.
+     * @param {boolean}  [indeterminate]    If *true*, make indeterminate.
      *
      * @returns {boolean}                   If selectability changed.
      */
     function disableItemSelect(item, disable, indeterminate) {
         OUT.debug("disableItemSelect:", item, disable, indeterminate);
         const enable = (disable === false);
-        return enableItemSelect(item, enable, indeterminate);
+        const ind    = (indeterminate === true);
+        return enableItemSelect(item, enable, ind);
     }
 
     /**
@@ -1307,13 +1359,12 @@ appSetup(MODULE, function() {
      * Update the state of the group select checkbox.
      */
     function updateGroupCheckbox() {
-        const func     = "updateGroupCheckbox"; OUT.debug(func);
-        const group_cb = checkbox($group_checkbox);
-        if (!group_cb) { return }
-        const count    = $item_checkboxes.filter((_, cb) => cb.checked).length;
-        const checked  = !!count;
-        group_cb.checked       = checked;
-        group_cb.indeterminate = checked && (count < $item_checkboxes.length);
+        const func          = "updateGroupCheckbox"; OUT.debug(func);
+        const group         = checkbox($group_checkbox); if (!group) { return }
+        const selected      = itemsSelected().length;
+        const all_items     = itemsSelectable().length;
+        group.checked       = (selected > 0);
+        group.indeterminate = (0 < selected) && (selected < all_items);
     }
 
     /**
@@ -1322,17 +1373,18 @@ appSetup(MODULE, function() {
      * @param {CheckboxEvt} event
      */
     function onGroupCheckboxChange(event) {
-        const func          = "onGroupCheckboxChange";
-        const group_cb      = event.currentTarget || event.target;
-        const $all_items    = $item_checkboxes;
-        const checked_items = $all_items.filter((_, cb) => cb.checked).length;
+        const func       = "onGroupCheckboxChange";
+        const group_cb   = event.currentTarget || event.target;
+        const selected   = itemsSelected().length;
+        const $all_items = itemsSelectable();
         OUT.debug(`${func}: event =`, event);
-        if (group_cb.checked && checked_items) {
-            group_cb.indeterminate = (checked_items < $all_items.length);
+        if (group_cb.checked && selected) {
+            group_cb.indeterminate = (selected < $all_items.length);
         } else {
             group_cb.indeterminate = false;
-            $all_items.each((_, cb) => selectItem(cb, group_cb.checked));
+            $all_items.each((_, item) => selectItem(item, group_cb.checked));
         }
+        updateSubmitReady();
     }
 
     /**
@@ -1969,7 +2021,7 @@ appSetup(MODULE, function() {
         OUT.debug("setSubmissionRequest:", values);
         let data = values;
         if (notDefined(data)) {
-            data = itemsChecked().toArray();
+            data = itemsSelected().toArray();
             data = { items: data.map(item => $(item).attr(ITEM_ATTR)) };
         } else if (Array.isArray(data)) {
             data = { items: data };
@@ -2213,10 +2265,11 @@ appSetup(MODULE, function() {
      * @param {InputEvt} event
      */
     function afterLocalFilesSelected(event) {
-        const func  = "afterLocalFilesSelected";
-        const files = event.currentTarget?.files || event.target?.files;
+        const func   = "afterLocalFilesSelected";
+        const target = event.currentTarget || event.target;
+        const files  = target?.files;
         //OUT.debug(`*** ${func}: event =`, event);
-        if (!files) {
+        if (!target || !files) {
             OUT.warn(`${func}: no event target`);
         } else if (isEmpty(files)) {
             OUT.warn(`${func}: no files provided`);
@@ -2233,27 +2286,25 @@ appSetup(MODULE, function() {
      * @param {QueueFile[]|FileList} files
      */
     function queueLocalFiles(files) {
-        OUT.debug(`queueLocalFiles: ${files.length} files =`, files);
+        const func      = "queueLocalFiles";
+        const ignore    = `${func} IGNORING`;
         const remaining = new Set(Object.values(files_remaining.local));
+        const lookup    = invert(file_references.local);
         const count     = files?.length || 0;
-        let lookup      = undefined;
+        OUT.debug(`${func}: ${count} files =`, files);
         for (let i = 0; i < count; i++) {
             /** @type {QueueFile} */
-            const file  = files[i];
-            const name  = file?.name;
-            let item_id = file?.meta?.manifest_item_id;
-            if (name && !item_id) {
-                lookup ||= invert(file_references.local);
-                item_id = lookup[name];
-            }
+            const file    = files[i];
+            const name    = file?.name;
+            const item_id = file?.meta?.manifest_item_id || lookup[name];
             if (!name) {
-                OUT.debug(`IGNORING nameless file[${i}]:`, file);
+                OUT.debug(`${ignore} nameless file[${i}]:`, file);
             } else if (!item_id) {
-                OUT.debug(`IGNORING unrequested file "${name}":`, file);
+                OUT.debug(`${ignore} unrequested file "${name}"`);
             } else if (!isStartable(itemFor(item_id))) {
-                OUT.debug(`IGNORING item-not-ready file "${name}":`, file);
+                OUT.debug(`${ignore} item-not-ready file "${name}":`, file);
             } else if (!remaining.has(name)) {
-                OUT.debug(`IGNORING already handled file "${name}":`, file);
+                OUT.debug(`${ignore} already handled file "${name}":`, file);
             } else {
                 addLocalFile(file, item_id);
             }
@@ -2277,7 +2328,7 @@ appSetup(MODULE, function() {
             const id   = file.meta.manifest_item_id;
             const name = file.name;
             const size = file.size;
-            const line = `${id} : ${name} : ${size} bytes`;
+            const line = `${id}: "${name}" (${size} bytes)`;
             if (remove(files_remaining.local, id)) {
                 pairs[id] = file;
                 OUT.debug(`${func}: ${line}`);
@@ -2291,7 +2342,6 @@ appSetup(MODULE, function() {
         const problematic = bad.length;
 
         if (resolved) {
-            let sel_changed = false;
             const fulfilled = new Set(names);
             const status    = FILE_STATUS;
             itemsStartable().each((_, item) => {
@@ -2302,13 +2352,11 @@ appSetup(MODULE, function() {
                 const name    = needed && $status.find('.name').text();
                 if (name && fulfilled.has(name)) {
                     setStatusFor($item, status, SUCCEEDED);
-                    sel_changed = updateItemSelect($item) || sel_changed;
+                    updateItemSelect($item);
                 }
             });
-            if (sel_changed) {
-                updateItemsSelected();
-            }
             lines.push(resolvedLabel(resolved), ...good, "");
+            updateItemsSelected();
             sendFileSizes(pairs);
         }
 
@@ -2320,7 +2368,6 @@ appSetup(MODULE, function() {
         if (remaining) {
             lines.push(remainingLabel(remaining), ...remaining);
         } else {
-            updateSubmitReady();
             lines.push(allResolvedLabel());
         }
 
@@ -2333,6 +2380,7 @@ appSetup(MODULE, function() {
      * @param {Object.<string,File>} pairs
      */
     function sendFileSizes(pairs) {
+        if (isEmpty(pairs)) { return }
         const items = {};
         for (const [id, file] of Object.entries(pairs)) {
             items[id] = { file_data: { name: file.name, size: file.size } };
@@ -2393,35 +2441,22 @@ appSetup(MODULE, function() {
      * @returns {string}
      */
     function allResolvedLabel() {
-        const total  = allItems().length;
+        const total  = itemsToTransmit().length;
         const ready  = itemsReady().length;
-        let resolved = Emma.Terms.submission.all_resolved;
-        let submittable, count;
+        const needed = total - ready;
+        let result   = [];
         if (ready) {
-            if (ready === total) {
-                count = (total > 1) ? Emma.Terms.all : Emma.Terms.the;
-            } else {
-                const selected = itemsSelected().length;
-                if (!selected) {
-                    count = ready.toString();
-                } else if (ready >= selected) {
-                    count = Emma.Terms.submission.all_selected;
-                } else {
-                    count = Emma.Terms.submission.some_selected;
-                }
-            }
+            const count = needed ? ready : Emma.Terms.all;
             const items = pluralize(Emma.Terms.item, ready);
-            const to_go = Emma.Terms.submission.ready_for_upload;
-            submittable = `${count} ${items} ${to_go}`;
-        } else {
-            const items = pluralize(Emma.Terms.item, total);
-            const still = Emma.Terms.still;
-            const need  = pluralize(Emma.Terms.require, (total === 1));
-            const attn  = Emma.Terms.attention;
-            submittable = `${total} ${items} ${still} ${need} ${attn}`;
-            resolved    = `${Emma.Terms.not} ${resolved}`;
+            const good  = Emma.Terms.submission.ready_for_upload;
+            result.push(`${count} ${items} ${good}`);
         }
-        return `${resolved} - ${submittable}`.toUpperCase();
+        if (needed) {
+            const files = pluralize(Emma.Terms.file, needed);
+            const left  = Emma.Terms.submission.still_needed;
+            result.push(`${needed} ${files} ${left}`);
+        }
+        return result.join(" - ").toUpperCase();
     }
 
     // ========================================================================
@@ -2516,10 +2551,11 @@ appSetup(MODULE, function() {
      * @param {ElementEvt} _event
      */
     function afterRemoteFilesSelected(_event) {
-        const func = "afterRemoteFilesSelected";
-        const urls = []; // event.currentTarget?.files || event.target?.files;
+        const func   = "afterRemoteFilesSelected";
+        const target = event.currentTarget || event.target;
+        const urls   = []; // target?.files;
         //OUT.debug(`*** ${func}: event =`, _event);
-        if (!urls) {
+        if (!target || !urls) {
             OUT.warn(`${func}: no event target`);
         } else if (isEmpty(urls)) {
             OUT.warn(`${func}: no URLs provided`);
@@ -2536,26 +2572,24 @@ appSetup(MODULE, function() {
      * @param {string[]} urls
      */
     function queueRemoteFiles(urls) {
-        OUT.debug(`queueRemoteFiles: ${urls.length} URLs =`, urls);
+        const func      = "queueRemoteFiles";
+        const ignore    = `${func} IGNORING`;
         const remaining = new Set(Object.values(files_remaining.remote));
+        const lookup    = invert(file_references.remote);
         const count     = urls?.length || 0;
-        let lookup      = undefined;
+        OUT.debug(`${func}: ${count} URLs =`, urls);
         for (let i = 0; i < count; i++) {
-            const url   = urls[i];
-            const name  = url;       // url?.name;
-            let item_id = undefined; // url?.meta?.manifest_item_id;
-            if (name && !item_id) {
-                lookup ||= invert(file_references.remote);
-                item_id = lookup[name];
-            }
+            const url     = urls[i];
+            const name    = url;       // url?.name;
+            const item_id = undefined; // url?.meta?.manifest_item_id || lookup[name];
             if (!name) {
-                OUT.debug(`IGNORING nameless url[${i}]:`, url);
+                OUT.debug(`${ignore} nameless url[${i}]:`, url);
             } else if (!item_id) {
-                OUT.debug(`IGNORING unrequested URL "${name}":`, url);
+                OUT.debug(`${ignore} unrequested URL "${name}"`);
             } else if (!isStartable(itemFor(item_id))) {
-                OUT.debug(`IGNORING item-not-ready URL "${name}":`, url);
+                OUT.debug(`${ignore} item-not-ready URL "${name}"`);
             } else if (!remaining.has(name)) {
-                OUT.debug(`IGNORING already handled URL "${name}":`, url);
+                OUT.debug(`${ignore} already handled URL "${name}"`);
             } else {
                 addRemoteFile(url, item_id);
             }
@@ -2577,7 +2611,7 @@ appSetup(MODULE, function() {
         urls.forEach(url => {
             const id   = 0;   // url.meta.manifest_item_id;
             const name = url; // url.name;
-            const line = `${id} : ${name}`;
+            const line = `${id}: "${name}"`;
             if (remove(files_remaining.remote, id)) {
                 OUT.debug(`${func}: ${line}`);
             } else {
@@ -2591,7 +2625,6 @@ appSetup(MODULE, function() {
         const problematic = bad.length;
 
         if (resolved) {
-            let sel_changed = false;
             const fulfilled = new Set(names);
             const status    = FILE_STATUS;
             itemsStartable().each((_, item) => {
@@ -2602,26 +2635,25 @@ appSetup(MODULE, function() {
                 const name    = needed && $status.find('.name').text();
                 if (name && (fulfilled.has(name) || name.startsWith("http"))) {
                     setStatusFor($item, status, SUCCEEDED);
-                    sel_changed = updateItemSelect($item) || sel_changed;
+                    updateItemSelect($item);
                 }
             });
-            if (sel_changed) {
-                updateItemsSelected();
-            }
             //lines.push(resolvedLabel(resolved), ...good, "");
+            updateItemsSelected();
         }
 
         if (problematic) {
             lines.push(problematicLabel(problematic), ...bad, "");
         }
 
+/*
         const remaining = files_remaining.remote.length;
         if (remaining) {
             //lines.push(remainingLabel(remaining), ...remaining);
         } else {
-            updateSubmitReady();
             //lines.push(allResolvedLabel());
         }
+*/
 
         if (isPresent(lines)) {
             flashMessage(lines.join("\n"), { refocus: $remote_input });
