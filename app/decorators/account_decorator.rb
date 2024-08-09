@@ -131,7 +131,7 @@ class AccountDecorator < BaseDecorator
     #
     def items_menu(**opt)
       items_menu_role_constraints!(opt)
-      opt[:sort] ||= { id: :asc }
+      opt[:sort] ||= { email: :asc }
       super
     end
 

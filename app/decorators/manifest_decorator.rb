@@ -174,7 +174,7 @@ class ManifestDecorator < BaseDecorator
     def items_menu(**opt)
       trace_attrs!(opt)
       items_menu_role_constraints!(opt)
-      opt[:sort] ||= { id: :desc } if administrator? || manager?
+      opt[:sort] ||= { updated_at: :desc, name: :asc }
       super
     end
 

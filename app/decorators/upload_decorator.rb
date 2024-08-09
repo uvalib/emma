@@ -365,7 +365,7 @@ class UploadDecorator < BaseDecorator
     def items_menu(**opt)
       trace_attrs!(opt)
       items_menu_role_constraints!(opt)
-      opt[:sort] ||= { id: :desc } if administrator? || manager?
+      opt[:sort] ||= { submission_id: :desc }
       super
     end
 

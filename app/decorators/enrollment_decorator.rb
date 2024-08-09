@@ -228,7 +228,7 @@ class EnrollmentDecorator < BaseDecorator
     #
     def items_menu(**opt)
       items_menu_role_constraints!(opt)
-      opt[:sort] ||= { id: :asc }
+      opt[:sort] ||= { long_name: :asc }
       super
     end
 
