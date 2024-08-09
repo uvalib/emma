@@ -10,6 +10,8 @@ __loading_begin(__FILE__)
 #++
 class Org < ApplicationRecord
 
+  include ActiveRecord::AttributeMethods::Dirty
+
   include Model
 
   include Record
@@ -45,6 +47,19 @@ class Org < ApplicationRecord
 
   has_many :uploads,   -> { order(Upload.default_sort) },   through: :users
   has_many :manifests, -> { order(Manifest.default_sort) }, through: :users
+
+  # ===========================================================================
+  # :section: ActiveRecord scopes
+  # ===========================================================================
+
+  scope :active,       -> { where.not(status: :inactive) }
+  scope :inactive,     -> { where(status: :inactive) }
+
+  # ===========================================================================
+  # :section: ActiveRecord callbacks
+  # ===========================================================================
+
+  before_update :update_users
 
   # ===========================================================================
   # :section: ApplicationRecord overrides
@@ -304,6 +319,29 @@ class Org < ApplicationRecord
       when String      then where(short_name: v).or(where(long_name: v)).first
       when Hash        then find_by(v) if (v = v.slice(*field_names)).present?
     end
+  end
+
+  # ===========================================================================
+  # :section: ActiveRecord callbacks
+  # ===========================================================================
+
+  protected
+
+  # If organization status transitions to :active or :inactive, transition all
+  # organization users to the same status.
+  #
+  # @return [void]
+  #
+  # @see ActiveRecord::AttributeMethods::Dirty
+  #
+  def update_users
+    old_status, new_status = status_in_database&.to_sym, status&.to_sym
+    case new_status
+      when :active   then return if old_status != :inactive
+      when :inactive then return if old_status == :inactive
+      else                return
+    end
+    users.each { |user| user.update_column(:status, new_status) }
   end
 
 end

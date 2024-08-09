@@ -11,6 +11,8 @@ module UserConcern
 
   extend ActiveSupport::Concern
 
+  include Emma::Project
+
   include FlashHelper
   include IdentityHelper
 
@@ -27,21 +29,27 @@ module UserConcern
     # @private
     # @see Devise::Controllers::Helpers#define_helpers
     #
-    #--
-    # noinspection RubyUnusedLocalVariable
-    #++
-    def authenticate_user!(opts = {}); end
-
-    # Defined by Devise.
-    #
-    # @return [User, nil]
-    #
-    # @private
-    # @see Devise::Controllers::Helpers#define_helpers
-    #
     def current_user; end
 
     # :nocov:
+  end
+
+  # ===========================================================================
+  # :section: Devise overrides
+  # ===========================================================================
+
+  public
+
+  # Authenticate the current session user, failing if the user is inactive.
+  #
+  # @return [User, nil]
+  #
+  # @see Devise::Controllers::Helpers#define_helpers
+  #
+  def authenticate_user!(opts = {})
+    super&.tap do |user|
+      check_inactive(user) if user
+    end
   end
 
   # ===========================================================================
@@ -49,6 +57,28 @@ module UserConcern
   # ===========================================================================
 
   public
+
+  # Sign out *user* if the account is marked as inactive.
+  #
+  # @param [User] user
+  #
+  def check_inactive(user)
+    return unless user&.status&.to_sym == :inactive
+    cause  = :inactive_user
+    cause  = :inactive_org     if user.org&.status&.to_sym == :inactive
+    cause  = :inactive_manager if user.manager? && (cause == :inactive_org)
+    mail   = nil
+    unless cause == :inactive_manager
+      mans = user.org&.managers&.presence&.map(&:email)&.map(&:inspect)
+      mail = mans&.pop
+      mail = mans.join(', ') << " or #{mail}" if mans
+    end
+    mail ||= HELP_EMAIL.inspect
+    msg    = cause.is_a?(Symbol) ? config_term(:user, cause) : cause.to_s
+    msg    = msg.sub(/[[:punct:]]* *$/, " at: #{mail}.") if mail.present?
+    sign_out
+    authentication_failure(msg: msg)
+  end
 
   # Return account summary information and account preferences.
   #
@@ -112,24 +142,33 @@ module UserConcern
   private
 
   # Cause an insufficient role for an authenticated session to generate an
-  # authentication failure the way Devise does.
+  # authentication failure.
   #
-  # @param [String, Symbol, nil] msg  Default: 'devise.failure.unauthenticated'
+  # @param [String, Symbol, nil] role
+  #
+  def role_failure(role = nil)
+    if role.is_a?(Symbol)
+      msg = config_term(:user, :privileged, role: role).capitalize
+      msg = "#{params[:action]}: #{msg}" if params[:action]
+    else
+      msg = role&.to_s || config_term(:user, :role_failure)
+    end
+    authentication_failure(msg: msg, path: dashboard_path)
+  end
+
+  # Generate an authentication failure the way Devise does.
+  #
+  # @param [String, nil] msg          Default: 'devise.failure.unauthenticated'
+  # @param [String, nil] path         Default: `root_path`
   #
   # === Implementation Notes
   # This method sets `session['app.devise.redirect']` in order to prevent
   # SessionConcern#after_sign_in_path_for from specifying the current (failed)
   # page as the redirect from DeviseController#require_no_authentication.
   #
-  def role_failure(msg = nil)
-    if msg.nil?
-      msg = config_term(:user, :role_failure)
-    elsif msg.is_a?(Symbol)
-      msg = config_term(:user, :privileged, role: msg).capitalize
-      msg = "#{params[:action]}: #{msg}" if params[:action]
-    end
+  def authentication_failure(msg: nil, path: nil)
     session['app.devise.failure.message'] = msg
-    session['app.devise.redirect']        = dashboard_path
+    session['app.devise.redirect']        = path || root_path
     throw(:warden, message: msg)
   end
 

@@ -3,6 +3,8 @@
 module UserConcern
   extend ActiveSupport::Concern
 
+  include Emma::Project
+
   include FlashHelper
 
   include IdentityHelper
@@ -16,16 +18,21 @@ module UserConcern
   # @private
   # @see Devise::Controllers::Helpers#define_helpers
   #
-  def authenticate_user!: (?anyHash opts) -> (User | nil)
+  def current_user: () -> (User | nil)
 
-  # Defined by Devise.
+  # Authenticate the current session user, failing if the user is inactive.
   #
   # @return [User, nil]
   #
-  # @private
   # @see Devise::Controllers::Helpers#define_helpers
   #
-  def current_user: () -> (User | nil)
+  def authenticate_user!: (?anyHash opts) -> (User | nil)
+
+  # Sign out *user* if the account is marked as inactive.
+  #
+  # @param [User] user
+  #
+  def check_inactive: (User user) -> void
 
   # Return account summary information and account preferences.
   #
@@ -67,16 +74,23 @@ module UserConcern
   private
 
   # Cause an insufficient role for an authenticated session to generate an
-  # authentication failure the way Devise does.
+  # authentication failure.
   #
-  # @param [String, Symbol, nil] msg  Default: 'devise.failure.unauthenticated'
+  # @param [String, Symbol, nil] role
+  #
+  def role_failure: (?(String|Symbol|nil) role) -> void
+
+  # Generate an authentication failure the way Devise does.
+  #
+  # @param [String, nil] msg          Default: 'devise.failure.unauthenticated'
+  # @param [String, nil] path         Default: `root_path`
   #
   # === Implementation Notes
   # This method sets `session['app.devise.redirect']` in order to prevent
   # SessionConcern#after_sign_in_path_for from specifying the current (failed)
   # page as the redirect from DeviseController#require_no_authentication.
   #
-  def role_failure: (?(String|Symbol|nil) msg) -> void
+  def authentication_failure: (?msg: String|nil, ?path: String|nil) -> void
 
   THIS_MODULE: Module
 end

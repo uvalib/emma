@@ -1,4 +1,6 @@
 class Org < ApplicationRecord
+  include ActiveRecord::AttributeMethods::Dirty
+
   include Model
 
   include Record
@@ -165,4 +167,13 @@ class Org < ApplicationRecord
   def self.instance_for
     : (Org     v) -> Org
     | (untyped v) -> (Org | nil)
+
+  # If organization status transitions to :active or :inactive, transition all
+  # organization users to the same status.
+  #
+  # @return [void]
+  #
+  # @see ActiveRecord::AttributeMethods::Dirty
+  #
+  def update_users: () -> void
 end

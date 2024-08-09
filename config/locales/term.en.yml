@@ -803,6 +803,19 @@ en:
       user:                   &USER
 
         confirmation:         'Are you sure?'
+        inactive:             'Your account is inactive'
+        inactive_manager:
+          >-
+          Your account is inactive because your organization is inactive.
+          Please contact an EMMA administrator for help.
+        inactive_org:
+          >-
+          Your account is inactive because your organization is inactive.
+          Please contact your organization's EMMA manager for help.
+        inactive_user:
+          >-
+          Your account is inactive.
+          Please contact your organization's EMMA manager for help.
         privileged:           '%{Role}-only feature'
         role_failure:         'Insufficient privilege for this operation'
 
