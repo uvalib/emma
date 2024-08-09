@@ -50,7 +50,7 @@ module Emma::Common::HashMethods
 
   public
 
-  # normalize_hash
+  # Transform *item* into a Hash with Symbol keys.
   #
   # @param [ActionController::Parameters, Hash, nil] item
   # @param [Boolean]                                 debug
@@ -69,7 +69,7 @@ module Emma::Common::HashMethods
     valid ? item.symbolize_keys : {}
   end
 
-  # normalize_hash
+  # Transform *item* in place into a Hash with Symbol keys.
   #
   # @param [ActionController::Parameters, Hash, nil] item
   #

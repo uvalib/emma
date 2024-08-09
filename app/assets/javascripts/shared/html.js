@@ -162,7 +162,7 @@ export function single(target, caller) {
 }
 
 /**
- * Indicate whether *a* specifies the same DOM element(s) as *b*.
+ * Indicate whether **a** specifies the same DOM element(s) as **b**.
  *
  * @param {Selector|null|undefined} a
  * @param {Selector|null|undefined} b
@@ -182,7 +182,7 @@ export function sameElements(a, b) {
 }
 
 /**
- * Indicate whether any descendent of *target* matches.
+ * Indicate whether any descendent of **target** matches.
  *
  * @param {Selector|null|undefined} target
  * @param {Selector|null|undefined} match
@@ -194,7 +194,7 @@ export function contains(target, match) {
 }
 
 /**
- * Indicate whether any ancestor of *target* matches.
+ * Indicate whether any ancestor of **target** matches.
  *
  * @param {Selector|null|undefined} target
  * @param {Selector|null|undefined} match
@@ -257,7 +257,7 @@ export function noScroll(callback) {
  * For a flex container with "row-reverse" or "column-reverse", in order to
  * ensure that tab order advances with the displayed order of the children,
  * reverse the physical order of the children and remove the "-reverse" from
- * the container's *flex-direction*.
+ * the container's `flex-direction`.
  *
  * @param {Selector} container
  *
@@ -333,7 +333,7 @@ export const ID_ATTRIBUTES = [
     "form",                     // @see [input]#form
     "id",                       // @see [input]#id
     "list",                     // @see [input]#list
-  //"name",                     // NOTE: Must *not* be included.
+  //"name",                     // NOTE: Must _not_ be included.
 ];
 
 /**
@@ -396,7 +396,7 @@ export function uniqAttr(value, unique, append_only) {
 }
 
 /**
- * Get a list of all the "data-" attributes for element and its descendents.
+ * Get a list of all the `data-*` attributes for element and its descendents.
  *
  * @param {Selector} root
  *

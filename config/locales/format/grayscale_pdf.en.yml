@@ -23,7 +23,7 @@ en:
           - 'grayscalePdf'                      # TODO: ???
 
         upload:
-          parse:          false
+          parse: false
 
         # =====================================================================
         # FORMAT_FIELDS

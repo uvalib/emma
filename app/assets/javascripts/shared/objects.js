@@ -47,7 +47,7 @@ export function fromJSON(item, caller, reviver) {
  * @template T
  *
  * @param {T}       item
- * @param {boolean} [trim]            If **false**, don't trim white space.
+ * @param {boolean} [trim]            If *false*, don't trim white space.
  *
  * @returns {T}
  */
@@ -80,7 +80,7 @@ export function compact(item, trim) {
  *
  * @param {T} item       Source item (which will be unaffected).
  *
- * @returns {T}          An immutable copy of *item*.
+ * @returns {T}          An immutable copy of **item**.
  */
 export function deepFreeze(item) {
     let new_item;
@@ -116,7 +116,7 @@ export function deepDup(item) {
  * @template T
  *
  * @param {T}       item
- * @param {boolean} [deep]            If **true** make a deep copy.
+ * @param {boolean} [deep]            If *true*, make a deep copy.
  *
  * @returns {T}
  */
@@ -140,7 +140,7 @@ export function dup(item, deep) {
  * Indicate whether the item is an actual object (and not null or an array).
  *
  * @param {*}       item
- * @param {boolean} [or_array]       If **true**, return **true** for an array.
+ * @param {boolean} [or_array]       If *true*, return *true* for an array.
  *
  * @returns {boolean}
  */
@@ -150,7 +150,7 @@ export function isObject(item, or_array) {
 }
 
 /**
- * If *item* is a class instance return the value of its toObject() method
+ * If **item** is a class instance return the value of its toObject() method
  * (if it exists) or the item itself otherwise.
  *
  * @param {*} item
@@ -168,7 +168,7 @@ export function asObject(item) {
  * Make a duplicate of the given object.
  *
  * @param {object|undefined} item
- * @param {boolean}          [shallow]  If **true** make a shallow copy.
+ * @param {boolean}          [shallow]  If *true*, make a shallow copy.
  *
  * @returns {object}
  */
@@ -180,13 +180,14 @@ export function dupObject(item, shallow) {
  * Create an Object from array of key-value pairs, or from an array of keys
  * and a mapper function which returns a value for the given key. <p/>
  *
- * If *arg* is an object or an array of key-value pairs, *map_fn* is optional.
- * By default, *map_fn* is assumed to return a key-value pair;  if *pair_out*
- * is set to **false** then *map_fn* is assumed to emit a value only. <p/>
+ * If **arg** is an object or array of key-value pairs, **map_fn** is optional.
+ * By default, **map_fn** is assumed to return a key-value pair; if
+ * **pair_out** is set to *false* then **map_fn** is assumed to emit a value
+ * only. <p/>
  *
- * If *arg* is an array of single values, *map_fn* is required.  By default,
- * *map_fn* is assumed to emit a value only; if *pair_out* is set to **true**
- * then *map_fn* is assumed to return a key-value pair. <p/>
+ * If **arg** is an array of single values, **map_fn** is required.
+ * By default, **map_fn** is assumed to emit a value only; if **pair_out** is
+ * set to *true* then **map_fn** is assumed to return a key-value pair. <p/>
  *
  * Invalid pairs elements are silently discarded.
  *
@@ -308,7 +309,7 @@ export function hasKey(obj, key) {
 }
 
 /**
- * Remove the *key* entry from *obj* and return its value.
+ * Remove the **key** entry from **obj** and return its value.
  *
  * @param {object} obj
  * @param {*}      key

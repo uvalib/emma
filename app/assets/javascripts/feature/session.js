@@ -69,7 +69,7 @@ appSetup(PATH, function() {
      * Local URLs are assumedly to be relative.
      *
      * @param {Event|Location|string} [arg]    Def.: `window.location.hash`.
-     * @param {boolean}               [bare]   Prefix with `#` unless **true**.
+     * @param {boolean}               [bare]   Prefix with `#` unless *true*.
      *
      * @returns {string}
      */

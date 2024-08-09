@@ -98,7 +98,7 @@ module ApplicationCable::Payload
     store.except!(SubmissionService::REQUEST_OPT)
   end
 
-  # payload_normalize
+  # Transform a response value to a normalized form.
   #
   # @param [any, nil]           value
   # @param [Array, Symbol, nil] except    Default: `#ignored_keys`.

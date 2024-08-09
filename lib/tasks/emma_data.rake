@@ -94,11 +94,11 @@ namespace 'emma:data' do
 
   # noinspection RubyMismatchedArgumentType
   desc ['Re-index completed EMMA submissions',
-         "* Use '-- --time' for run time output",
-         "* Use '-- --debug' to list successful entries",
-         "* Use '-- --atomic' to disallow failures within a batch",
-         "* Use '-- --commit=false' to avoid sending to the Ingest API",
-         "* Use '-- --batch=SIZE' to update the index in batches"]
+        "* Use '-- --time' for run time output",
+        "* Use '-- --debug' to list successful entries",
+        "* Use '-- --atomic' to disallow failures within a batch",
+        "* Use '-- --commit=false' to avoid sending to the Ingest API",
+        "* Use '-- --batch=SIZE' to update the index in batches"]
   task reindex: :prerequisites do |_task, args|
 
     # Set parameters.

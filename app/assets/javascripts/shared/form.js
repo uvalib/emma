@@ -77,7 +77,7 @@ export function turnOffAutocomplete(inputs, filter) {
 }
 
 /**
- * Apply {@link turnOffAutocompleteIn} to all inputs within *container*.
+ * Apply {@link turnOffAutocompleteIn} to all inputs within **container**.
  *
  * @param {Selector} container
  */

@@ -687,8 +687,9 @@
             top:           calc(2 * $gap-y);
             margin-bottom: calc(2 * $gap-y);
             background:    $bg-color;
-            box-shadow:    0 -0.5rem 0      1.0rem $bg-color,
-                           0  0.5rem 0.5rem 0.5rem $bg-color;
+            box-shadow:
+                0 -0.5rem 0      1.0rem $bg-color,
+                0  0.5rem 0.5rem 0.5rem $bg-color;
 
             grid-template-columns: 1fr;
             row-gap:               calc(2 * $gap-y);
@@ -768,6 +769,7 @@
         box-shadow: 0 0 0.5rem 0.25rem $button-accent;
 
         &:focus {
+            // noinspection CssBrowserCompatibilityForProperties
             outline: 1px solid gray;
         }
     }

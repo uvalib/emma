@@ -146,7 +146,8 @@ module BaseDecorator::Grid
   # @param [Array]   cols             Default: `#grid_row_columns`.
   # @param [Symbol]  tag              Potential alternative to :table.
   # @param [String]  css              Default: `#grid_css_class`.
-  # @param [Hash]    opt              Passed to container div except:
+  # @param [Hash]    opt              Passed to container element except for
+  #                                     #MODEL_TABLE_PART_OPT and
   #                                     #ROW_PAGE_PARAMS to #grid_row_page.
   #
   # @return [ActiveSupport::SafeBuffer]

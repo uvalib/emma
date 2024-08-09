@@ -62,7 +62,7 @@ class ApplicationCable::Connection < ActionCable::Connection::Base
     env['warden'].user or reject_unauthorized_connection
   end
 
-  # report_error
+  # Log an error condition.
   #
   # @param [Exception] e
   #

@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# TrueFalse
+# Boolean values as an enumeration.
 #
 # @see "en.emma.type.generic.TrueFalse"
 #

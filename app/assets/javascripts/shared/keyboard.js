@@ -57,7 +57,7 @@ const MODIFIERS = Object.freeze(new Set([
 
 /**
  * Return a string that specifies the key combination pressed, or the empty
- * string if *event* is not valid. <p/>
+ * string if **event** is not valid. <p/>
  *
  * Key combinations include "Shift+" only for key names longer than one
  * character.  (_I.e., "Shift+Space" but not "Shift+A".) <p/>

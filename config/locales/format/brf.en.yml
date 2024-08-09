@@ -22,7 +22,7 @@ en:
           - 'brf'
 
         upload:
-          parse:          false
+          parse: false
 
         # =====================================================================
         # FORMAT_FIELDS

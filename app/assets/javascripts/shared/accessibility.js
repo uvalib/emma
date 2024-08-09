@@ -193,18 +193,18 @@ export function handleClickAndKeypress(element, callback) {
  *                                     elements which must respond to a
  *                                     carriage return like a mouse click. <p/>
  *
- * @param {boolean}        [direct]  If **true** then the target is the nodes
- *                                     indicated by *selector* and not the
+ * @param {boolean}        [direct]  If *true* then the target is the nodes
+ *                                     indicated by **selector** and not the
  *                                     descendents of those nodes. <p/>
  *
- * @param {string|boolean} [match]   If **false** then $(selector) specifies
+ * @param {string|boolean} [match]   If *false* then $(selector) specifies
  *                                     the target elements directly; if
- *                                     **true** or missing then all focusable
+ *                                     *true* or missing then all focusable
  *                                     elements at or below $(selector) are
  *                                     chosen; if a string then it is used
  *                                     instead of FOCUSABLE_ATTRIBUTE. <p/>
  *
- * @param {string|boolean} [except]  If **false** then all matches are chosen;
+ * @param {string|boolean} [except]  If *false* then all matches are chosen;
  *                                     otherwise elements matching
  *                                     FOCUSABLE_ELEMENT are eliminated.  In
  *                                     either case, NON_FOCUSABLE elements are
@@ -217,7 +217,7 @@ function handleActivationAsClick(selector, direct, match, except) {
 
     // noinspection JSCheckFunctionSignatures
     /**
-     * Determine the target(s) based on the *direct* argument.
+     * Determine the target(s) based on the **direct** argument.
      *
      * @type {jQuery}
      */
@@ -395,7 +395,7 @@ export function delegateInputClick(element) {
 // ============================================================================
 
 /**
- * Indicate whether any of the element(s) identified by *item* could have tab
+ * Indicate whether any of the element(s) identified by **item** could have tab
  * focus.
  *
  * @param {Selector} item
@@ -409,7 +409,7 @@ export function isFocusable(item, all) {
 }
 
 /**
- * Indicate whether any of the element(s) identified by *item* have the
+ * Indicate whether any of the element(s) identified by **item** have the
  * potential to receive tab focus.
  *
  * @param {Selector} item
@@ -421,7 +421,7 @@ export function maybeFocusable(item) {
 }
 
 /**
- * Indicate whether any of the element(s) identified by *item* currently can
+ * Indicate whether any of the element(s) identified by **item** currently can
  * receive tab focus.
  *
  * @param {Selector} item
@@ -433,7 +433,7 @@ export function currentlyFocusable(item) {
 }
 
 /**
- * The subset of element(s) identified by *item* that could have tab focus.
+ * The subset of element(s) identified by **item** that could have tab focus.
  *
  * @param {Selector} item
  * @param {boolean}  [all]            Include potentially focusable elements.
@@ -447,7 +447,7 @@ export function getFocusables(item, all) {
 }
 
 /**
- * The subset of element(s) identified by *item* that have the potential to
+ * The subset of element(s) identified by **item** that have the potential to
  * receive tab focus.
  *
  * @param {Selector} item
@@ -459,7 +459,7 @@ export function getMaybeFocusables(item) {
 }
 
 /**
- * The subset of element(s) identified by *item* that currently can receive
+ * The subset of element(s) identified by **item** that currently can receive
  * tab focus.
  *
  * @param {Selector} item
@@ -471,7 +471,7 @@ export function getCurrentFocusables(item) {
 }
 
 /**
- * The subset of element(s) contained within *item* that could receive tab
+ * The subset of element(s) contained within **item** that could receive tab
  * focus.
  *
  * @param {Selector} item
@@ -486,8 +486,8 @@ export function focusablesIn(item, all) {
 }
 
 /**
- * The subset of element(s) contained within *item* that have the potential to
- * receive tab focus.
+ * The subset of element(s) contained within **item** that have the potential
+ * to receive tab focus.
  *
  * @param {Selector} item
  *
@@ -498,8 +498,8 @@ export function maybeFocusablesIn(item) {
 }
 
 /**
- * The subset of element(s) contained within *item* that currently can receive
- * tab focus.
+ * The subset of element(s) contained within **item** that currently can
+ * receive tab focus.
  *
  * @param {Selector} item
  *
@@ -511,7 +511,7 @@ export function currentFocusablesIn(item) {
 
 /**
  * Ensure that the indicated element(s) will be included in the tab order,
- * adding a *tabindex* attribute if necessary.
+ * adding a `tabindex` attribute if necessary.
  *
  * @param {Selector} item
  *
@@ -532,20 +532,20 @@ export function ensureFocusable(item) {
 // ============================================================================
 
 /**
- * Set *tabindex* for the single *element* is in the tab order.
+ * Set `tabindex` for the single **element** is in the tab order.
  *
- * @param {Selector}              elem
- * @param {boolean|0|-1|"0"|"-1"} [value]   Default: **true**.
+ * @param {Selector}              element
+ * @param {boolean|0|-1|"0"|"-1"} [value]   Default: *true*.
  * @param {string}                [caller]  For diagnostics.
- * @param {boolean}               [log]     No debug log entry if **false**.
+ * @param {boolean}               [log]     No debug log entry if *false*.
  *
  * @returns {boolean}
  */
-export function setFocusable(elem, value, caller, log) {
+export function setFocusable(element, value, caller, log) {
     const func      = "setFocusable"; //OUT.debug(`${func}: ${value};`, elem);
     const tag       = caller ? `${caller}: ${func}` : func;
     const enable    = (value !== false) && (String(value) !== "-1");
-    const $elem     = single(elem);
+    const $elem     = single(element);
     const disabled  = $elem.is(`${NON_TOUCHABLE}, ${ORIGINALLY_NONFOCUSABLE}`);
     const focusable = enable && !disabled;
     if (enable && !focusable) {
@@ -562,10 +562,10 @@ export function setFocusable(elem, value, caller, log) {
 }
 
 /**
- * Make all focusable elements within *element* non-focusable.
+ * Make all focusable elements within **element** non-focusable.
  *
- * - If *except* is a Selector, the matching element(s) are skipped.
- * - If *except* is **false**, all interior element(s) are skipped.
+ * - If **except** is a Selector, the matching element(s) are skipped.
+ * - If **except** is *false*, all interior element(s) are skipped.
  *
  * @param {Selector}         element
  * @param {Selector|boolean} [except]
@@ -599,10 +599,10 @@ export function neutralizeFocusables(element, except, depth = 0) {
 }
 
 /**
- * Make all focusable elements within *element* non-focusable.
+ * Make all focusable elements within **element** non-focusable.
  *
- * - If *except* is a Selector, the matching element(s) are skipped.
- * - If *except* is **false**, all interior element(s) are skipped.
+ * - If **except** is a Selector, the matching element(s) are skipped.
+ * - If **except** is *false*, all interior element(s) are skipped.
  *
  * @note Assumes elements were previously "neutralized".
  *
@@ -651,16 +651,16 @@ export function restoreFocusables(element, except, depth = 0) {
 /**
  * Hide/show elements by adding/removing {@link INVISIBLE_MARKER}. <p/>
  *
- * If *setting* is not given then visibility is toggled to the opposite state.
+ * If **setting** not given then visibility is toggled to the opposite state.
  *
  * @note An "invisible" element still takes up space on the display; a "hidden"
- *  element does not.  Both cases result in "aria-hidden" being set to make it
+ *  element does not.  Both cases result in `aria-hidden` being set to make it
  *  unavailable to screen readers.
  *
  * @param {Selector} element
  * @param {boolean}  [setting]
  *
- * @returns {boolean} If **true** then *element* is becoming visible.
+ * @returns {boolean}           If *true* then **element** is becoming visible.
  *
  * @see toggleHidden
  */

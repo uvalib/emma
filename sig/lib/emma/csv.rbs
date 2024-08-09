@@ -36,7 +36,7 @@ module Emma::Csv
     : (nil                         arg, ?no_empty: bool, ?utf8: bool, ?fatal: bool, **untyped opt) -> nil
     | (String|IO|StringIO|IO::Like arg, ?no_empty: bool, ?utf8: bool, ?fatal: bool, **untyped opt) -> Array[anyHash]
 
-  # force_utf8
+  # Force UTF-8 encoding on to the string parts of *item*.
   #
   # @param [any, nil] item            String, Array, Hash
   #

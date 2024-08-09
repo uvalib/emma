@@ -94,7 +94,7 @@ module Emma::Csv
 
   protected
 
-  # force_utf8
+  # Force UTF-8 encoding on to the string parts of *item*.
   #
   # @param [any, nil] item            String, Array, Hash
   #

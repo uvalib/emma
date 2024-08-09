@@ -712,7 +712,7 @@ class ManifestItemDecorator < BaseDecorator
 
     protected
 
-    # submit_status_element
+    # Generate a row of the submission grid.
     #
     # @param [String, nil]          ctrl
     # @param [String, ManifestItem] item
@@ -769,7 +769,7 @@ class ManifestItemDecorator < BaseDecorator
       html_tag(tag, ctrl, item, *values, **opt)
     end
 
-    # submit_status_ctls
+    # Generate the checkbox selection control for a row of the submission grid.
     #
     # @param [String, nil]  ctrl
     # @param [Integer, nil] col
@@ -811,7 +811,7 @@ class ManifestItemDecorator < BaseDecorator
       html_tag(tag, ctrl, **opt)
     end
 
-    # submit_status_item
+    # Generate the item name cell for a row of the submission grid.
     #
     # @param [String, ManifestItem] item
     # @param [Integer, nil]         col
@@ -856,7 +856,7 @@ class ManifestItemDecorator < BaseDecorator
       html_tag(tag, item, **opt)
     end
 
-    # submit_status_value
+    # Generate a status value cell for a row of the submission grid.
     #
     # @param [Symbol]       type
     # @param [Symbol, nil]  status
@@ -1557,7 +1557,7 @@ class ManifestItemDecorator
 
   public
 
-  # Submission status row for a single active submission.
+  # Submission status row for a single manifest item submission.
   #
   # @param [Integer, nil] row
   # @param [Integer]      col

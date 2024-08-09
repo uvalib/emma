@@ -1079,6 +1079,7 @@ table.manifest_item-grid {
                         color: $enum-fg;
 
                         .item {
+                            // noinspection CssBrowserCompatibilityForProperties
                             outline: 1px solid $enum-fg;
                         }
                     }
@@ -1506,6 +1507,7 @@ table.manifest_item-grid {
                                 .single.checkbox {
 
                                     &[aria-selected="true"] {
+                                        // noinspection CssBrowserCompatibilityForProperties
                                         outline: 2px solid $enum-fg;
                                     }
 

@@ -729,7 +729,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     /**
      * Enable commit button(s).
      *
-     * @param {boolean} [enable]      If **false**, disable.
+     * @param {boolean} [enable]      If *false*, disable.
      *
      * @returns {jQuery}              The commit button(s).
      */
@@ -744,7 +744,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     /**
      * Disable commit button(s).
      *
-     * @param {boolean} [disable]     If **false**, enable.
+     * @param {boolean} [disable]     If *false*, enable.
      *
      * @returns {jQuery}              The commit button(s).
      */
@@ -1031,7 +1031,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * (The field is not disabled, so it is still editable by the user.)
      *
      * @param {string|jQuery|HTMLElement} field
-     * @param {boolean}                   [locking] If **false** unlock instead
+     * @param {boolean}                   [locking] If *false*, unlock instead.
      */
     function lockFieldValue(field, locking) {
         OUT.debug("lockFieldValue:", field, locking);
@@ -1055,7 +1055,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * Lock/unlock a field.
      *
      * @param {string|jQuery|HTMLElement} field
-     * @param {boolean}                   [locking] If **false** unlock instead
+     * @param {boolean}                   [locking] If *false*, unlock instead.
      */
     function lockField(field, locking) {
         OUT.debug("lockField:", field, locking);
@@ -1439,7 +1439,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     }
 
     /**
-     * Fill *$entry* data fields from *item*.
+     * Fill **$entry** data fields from **item**.
      *
      * @param {jQuery}             $entry
      * @param {LookupResponseItem} item
@@ -1654,7 +1654,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * Generate an invisible checkbox paired with a visible indicator.
      *
      * @param {string}  field
-     * @param {boolean} [checked]     If **true** start in the locked state.
+     * @param {boolean} [checked]     If *true*, start in the locked state.
      *
      * @returns {[jQuery,jQuery]}
      */
@@ -2096,7 +2096,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
     /**
      * Generate the element containing the loading overlay image.
      *
-     * @param {boolean} [visible]     If **true** do not create hidden.
+     * @param {boolean} [visible]     If *true*, do not create hidden.
      *
      * @returns {jQuery}
      */

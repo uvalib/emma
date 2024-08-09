@@ -245,7 +245,7 @@ export class AppDebug {
      * default if one was given.
      *
      * @param {string}       mod
-     * @param {BooleanValue} [active]   Default: **true**.
+     * @param {BooleanValue} [active]   Default: *true*.
      *
      * @returns {"true"|"false"}
      */

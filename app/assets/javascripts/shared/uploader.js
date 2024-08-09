@@ -942,7 +942,7 @@ class BaseUploader extends BaseClass {
      * @param {UppyFile} file         The file to modify.
      * @param {string}   [charset]
      *
-     * @returns {UppyFile}            The *file* with modified data entry.
+     * @returns {UppyFile}            The **file** with modified data entry.
      *
      * @protected
      *
@@ -1466,7 +1466,7 @@ class BaseUploader extends BaseClass {
     // ========================================================================
 
     /**
-     * The element starts with *aria-hidden="true"* (so that attribute alone
+     * The element starts with `aria-hidden="true"` (so that attribute alone
      * alone isn't sufficient for conditional styling), however the element
      * (and its children) are not invisible.
      *
@@ -1491,8 +1491,8 @@ class BaseUploader extends BaseClass {
     /**
      * Stop displaying the Uppy progress bar. <p/>
      *
-     * Note that the "hideAfterFinish" option for ProgressBar *only* sets
-     * *aria-hidden* -- it doesn't actually hide the control itself.
+     * Note that the "hideAfterFinish" option for ProgressBar _only_ sets
+     * `aria-hidden` -- it doesn't actually hide the control itself.
      */
     hideProgressBar() {
         this._debug("hideProgressBar");
@@ -1675,7 +1675,7 @@ class BaseUploader extends BaseClass {
     /**
      * Hide the selected file name.
      *
-     * @param {boolean} [hide]        If **false**, un-hide.
+     * @param {boolean} [hide]        If *false*, un-hide.
      */
     hideFilename(hide) {
         this._debug("hideFilename: hide =", hide);
@@ -2117,10 +2117,10 @@ export class MultiUploader extends BaseUploader {
     // ========================================================================
 
     /**
-     * If **false** then defer assignment of {@link _display} to
+     * If *false* then defer assignment of {@link _display} to
      * {@link initialize} since it may result in render changes.
      *
-     * @note Currently manifest-edit.js relies upon this being **true**.
+     * @note Currently manifest-edit.js relies upon this being *true*.
      *
      * @type {boolean}
      */

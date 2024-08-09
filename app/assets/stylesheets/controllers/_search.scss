@@ -746,16 +746,16 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
             @media #{$wide-screen} {
                 top:            $sticky-top-wide;
                 box-shadow:
-                     0.50rem -2.00rem  1.00rem  2.00rem  $bg-color,
-                     0        0        0.25rem  0.50rem  $bg-color;
+                    0.50rem -2.00rem  1.00rem  2.00rem  $bg-color,
+                    0        0        0.25rem  0.50rem  $bg-color;
             }
 
             @media #{$medium-width} {
                 top:            $sticky-top-medium;
                 column-gap:     calc(3 * $flex-gap-x);
                 box-shadow:
-                     0       -1.00rem  0        0.50rem  $bg-color,
-                     0        0        0.25rem  0.25rem  $bg-color;
+                    0       -1.00rem  0        0.50rem  $bg-color,
+                    0        0        0.25rem  0.25rem  $bg-color;
             }
 
             @media #{$narrow-screen} {
@@ -767,8 +767,8 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
                     padding-bottom: 0.5rem;
                     border-color:   $fg-color;
                     box-shadow:
-                         0       -0.50rem  0        0.25rem  $bg-color,
-                         0        0.25rem  0.25rem  0        $bg-color;
+                        0       -0.50rem  0        0.25rem  $bg-color,
+                        0        0.25rem  0.25rem  0        $bg-color;
                 }
             }
 

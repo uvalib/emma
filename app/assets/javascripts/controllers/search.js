@@ -149,7 +149,7 @@ appSetup(MODULE, function() {
      *
      * @param {Selector} items
      * @param {string}   controls     ID of the element the button controls.
-     * @param {boolean}  [open]       Initially expanded (default: **false**).
+     * @param {boolean}  [open]       Initially expanded (default: *false*).
      *
      * @returns {jQuery}
      */
@@ -185,7 +185,7 @@ appSetup(MODULE, function() {
      * Mark a collapsible element as open/closed.
      *
      * @param {Selector} element
-     * @param {boolean}  [open]       If **false**, mark as closed.
+     * @param {boolean}  [open]       If *false*, mark as closed.
      */
     function markAsOpen(element, open) {
         /** @type {jQuery} */
@@ -265,7 +265,7 @@ appSetup(MODULE, function() {
      *
      * @param {string}  row           E.g., "row-1".
      * @param {string}  target
-     * @param {boolean} [open]        If **true**, start in the open state.
+     * @param {boolean} [open]        If *true*, start in the open state.
      *
      * @returns {jQuery}
      */
@@ -285,7 +285,7 @@ appSetup(MODULE, function() {
      * (one for "wide" and "medium" screens; the other for "narrow" screens).
      *
      * NOTE: probably the controls should be in the generated HTML, along with
-     *  the setting of *data-row* so that this code only has to attach the
+     *  the setting of `data-row` so that this code only has to attach the
      *  event handlers.
      *
      * @param {Selector} parent
@@ -366,7 +366,7 @@ appSetup(MODULE, function() {
      * Mark previously-hidden element(s) as visible.
      *
      * @param {Selector} element
-     * @param {boolean}  [visible]    If **false**, make hidden.
+     * @param {boolean}  [visible]    If *false*, make hidden.
      */
     function markAsVisible(element, visible) {
         const $element = $(element).not(DISABLED);
@@ -378,7 +378,7 @@ appSetup(MODULE, function() {
      * Mark section elements as visible.
      *
      * @param {Selector} section
-     * @param {boolean}  [visible]    If **false**, make hidden.
+     * @param {boolean}  [visible]    If *false*, make hidden.
      */
     function markSectionVisible(section, visible) {
         const $section  = $(section).not(DISABLED);

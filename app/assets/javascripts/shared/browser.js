@@ -44,7 +44,7 @@ export function pageLoadFromHistory() {
  * Indicate whether the current page load was due to the page being reloaded.
  *
  * @note Once a reload has occurred on a page managed by Turbolinks, this will
- *  return **true** for all subsequent pages.
+ *  return *true* for all subsequent pages.
  *
  * @returns {boolean}
  */

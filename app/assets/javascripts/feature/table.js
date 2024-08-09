@@ -113,7 +113,7 @@ appSetup(MODULE, function() {
     };
 
     /**
-     * Column names ("data-field" values) which indicate columns that are
+     * Column names (`data-field` values) which indicate columns that are
      * not intended to be sortable.
      *
      * @type {string[]}
@@ -532,11 +532,11 @@ appSetup(MODULE, function() {
     /**
      * The URL parameters needed to reconstruct the given table.
      *
-     * If the table does not have a "data-path" attribute then the current URL
+     * If the table does not have a `data-path` attribute then the current URL
      * parameters are assumed.
      *
      * @param {Selector} [target]     Default: {@link urlParameters}.
-     * @param {boolean}  [no_sort]    If *true* then skip sort parameters.
+     * @param {boolean}  [no_sort]    If *true*, skip sort parameters.
      *
      * @returns {object}
      */

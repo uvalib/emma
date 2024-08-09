@@ -1074,6 +1074,7 @@ class ExecReport::Part
     # @return [Array<Hash{Symbol=>String,Array<String>}>, nil]
     #
     def deserialize(src)
+      # noinspection RubyMismatchedReturnType
       message_hash(src).presence
     end
 

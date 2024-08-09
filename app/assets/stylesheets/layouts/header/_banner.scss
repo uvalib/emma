@@ -26,8 +26,9 @@
     margin-bottom:   -($hcm-divider-width);
     padding:         0;
     border-bottom:   $hcm-divider-width solid $rev-bg-color;
-    box-shadow:      0 0 1rem -0.25rem $rev-bg-color,
-                     0 0 0     5rem    white;
+    box-shadow:
+        0 0 1rem -0.25rem $rev-bg-color,
+        0 0 0     5rem    white;
 
     @media #{$medium-width} {
 

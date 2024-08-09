@@ -178,8 +178,8 @@ export class SubmitRequest extends ChannelRequest {
     }
 
     /**
-     * Return an instance of the current class which is *item* or, if possible,
-     * based on the contents of *item*.
+     * Return an instance of the current class which is **item** or,
+     * if possible, based on the contents of **item**.
      *
      * @param {SubmitRequest|SubmitRequestPayload|object} item
      *

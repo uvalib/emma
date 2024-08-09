@@ -66,10 +66,10 @@ module CachingMiddleware
     # @return [Hash]
     attr_reader :store_options
 
-    # @return [Array<String>]
+    # @return [Array<String>, nil]
     attr_reader :cacheable_paths
 
-    # Initialize
+    # Initialize an instance.
     #
     # @param [Faraday::Middleware] app
     # @param [Hash, nil]           opt

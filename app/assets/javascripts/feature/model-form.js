@@ -170,13 +170,13 @@ appSetup(MODULE, function() {
      */
 
     /**
-     * Normally *string[]* but may be received as *string*.
+     * Normally **string[]** but may be received as **string**.
      *
      * @typedef {string[]|string} multiString
      */
 
     /**
-     * Normally *string* but may be received as *string[]*.
+     * Normally **string** but may be received as **string[]**.
      *
      * @typedef {string|string[]} singleString
      */
@@ -494,9 +494,9 @@ appSetup(MODULE, function() {
     /**
      * Interrelated elements.  For example: <p/>
      *
-     * If "rem_complete" is set to **true**, then "rem_coverage" is no longer
+     * If "rem_complete" is set to *true*, then "rem_coverage" is no longer
      * required.  Conversely, if "rem_coverage" is given a value then that
-     * implies that "rem_complete" is **false**.
+     * implies that "rem_complete" is *false*.
      *
      * @readonly
      * @type {Object.<string,Relationship>}
@@ -950,7 +950,7 @@ appSetup(MODULE, function() {
     /**
      * The first database ID to monitor for results, defaulting to "1". <p/>
      *
-     * If *record* is given, the first database ID is set to be the one which
+     * If **record** is given, the first database ID is set to be the one which
      * succeeds it.
      *
      * @param {Selector}                [results]
@@ -977,7 +977,7 @@ appSetup(MODULE, function() {
     /**
      * Time the download was started. <p/>
      *
-     * The first call sets the time.  If *start_time* is provided, it resets
+     * The first call sets the time.  If **start_time** is provided, it resets
      * the start time to the given value.
      *
      * @param {Selector}    [results]
@@ -1334,7 +1334,7 @@ appSetup(MODULE, function() {
      *
      * @param {string|object|string[]|object[]} value
      * @param {string}  [name]        Def: {@link BULK_OP_STORAGE_KEY}.
-     * @param {boolean} [append]      If **true** append to current
+     * @param {boolean} [append]      If *true*, append to current.
      *
      * @returns {string}              New stored value.
      */
@@ -1634,8 +1634,8 @@ appSetup(MODULE, function() {
      *
      * @param {Selector} field
      * @param {*}        [new_value]
-     * @param {boolean}  [trim]       If **false**, don't trim white space.
-     * @param {boolean}  [init]       If **true**, in initialization phase.
+     * @param {boolean}  [trim]       If *false*, don't trim white space.
+     * @param {boolean}  [init]       If *true*, in initialization phase.
      */
     function updateInputField(field, new_value, trim, init) {
         const $field = $(field);
@@ -1666,8 +1666,8 @@ appSetup(MODULE, function() {
      *
      * @param {Selector}             target
      * @param {string|string[]|null} [new_value]
-     * @param {boolean}              [trim]     If **false**, keep white space.
-     * @param {boolean}              [init]     If **true**, initializing.
+     * @param {boolean}              [trim]     If *false*, keep white space.
+     * @param {boolean}              [init]     If *true*, initializing.
      *
      * @returns {undefined}
      *
@@ -1738,7 +1738,7 @@ appSetup(MODULE, function() {
      *
      * @param {Selector}             target
      * @param {string|string[]|null} [setting]
-     * @param {boolean}              [init]     If **true**, in initialization.
+     * @param {boolean}              [init]     If *true*, in initialization.
      *
      * @returns {undefined}
      *
@@ -1791,7 +1791,7 @@ appSetup(MODULE, function() {
      *
      * @param {Selector}       target
      * @param {string|boolean} [setting]
-     * @param {boolean}        [init]       If **true**, initialization phase.
+     * @param {boolean}        [init]       If *true*, initialization phase.
      *
      * @returns {undefined}
      */
@@ -1830,7 +1830,7 @@ appSetup(MODULE, function() {
      *
      * @param {Selector}       target
      * @param {string|null}    [new_value]
-     * @param {boolean}        [init]       If **true**, initialization phase.
+     * @param {boolean}        [init]       If *true*, initialization phase.
      *
      * @returns {undefined}
      *
@@ -1862,8 +1862,8 @@ appSetup(MODULE, function() {
      *
      * @param {Selector}    target
      * @param {string|null} [new_value]
-     * @param {boolean}     [trim]        If **false**, don't trim white space.
-     * @param {boolean}     [init]        If **true**, in initialization phase.
+     * @param {boolean}     [trim]        If *false*, don't trim white space.
+     * @param {boolean}     [init]        If *true*, in initialization phase.
      *
      * @returns {undefined}
      *
@@ -1899,8 +1899,8 @@ appSetup(MODULE, function() {
      *
      * @param {Selector}    target
      * @param {string|null} [new_value]
-     * @param {boolean}     [trim]        If **false**, don't trim white space.
-     * @param {boolean}     [init]        If **true**, in initialization phase.
+     * @param {boolean}     [trim]        If *false*, don't trim white space.
+     * @param {boolean}     [init]        If *true*, in initialization phase.
      *
      * @returns {undefined}
      *
@@ -2177,9 +2177,9 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * The *data-required* attribute is maintained on the top-level element
+     * The `data-required` attribute is maintained on the top-level element
      * associated with an input or group of inputs independent of the
-     * *aria-required* attribute.
+     * `aria-required` attribute.
      *
      * @param {Selector} target
      * @param {boolean}  [setting]
@@ -2198,7 +2198,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * In order to accommodate accessibility concerns, *aria-required* is
+     * In order to accommodate accessibility concerns, `aria-required` is
      * maintained on the top-level element associated with an input or group
      * of input except in the case of {@link MENU_MULTI} where the top-level
      * value entry is actually a wrapper for the element to which the attribute
@@ -2219,7 +2219,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * In order to accommodate accessibility concerns, *aria-invalid* is
+     * In order to accommodate accessibility concerns, `aria-invalid` is
      * maintained on the top-level element associated with an input or group
      * of input except in the case of {@link MENU_MULTI} where the top-level
      * value entry is actually a wrapper for the element to which the attribute
@@ -2254,13 +2254,13 @@ appSetup(MODULE, function() {
     /**
      * If the checkbox state is changing, save the old state. <p/>
      *
-     * If *new_state* is undefined then it is assumed that this invocation is
+     * If **new_state** is undefined then it is assumed that this invocation is
      * in response to a change event, in which case the state change has
      * already happened so the old state is the opposite of the current state.
      *
      * @param {Selector} checkbox
      * @param {boolean}  [new_state]
-     * @param {boolean}  [init]       If **true**, in initialization phase.
+     * @param {boolean}  [init]       If *true*, in initialization phase.
      */
     function setChecked(checkbox, new_state, init) {
         const $checkbox = $(checkbox);
@@ -2275,8 +2275,8 @@ appSetup(MODULE, function() {
      *
      * @param {Selector}    target
      * @param {string|null} new_value
-     * @param {boolean}     [trim]      If **false**, don't trim white space.
-     * @param {boolean}     [init]      If **true**, in initialization phase.
+     * @param {boolean}     [trim]      If *false*, don't trim white space.
+     * @param {boolean}     [init]      If *true*, in initialization phase.
      */
     function setValue(target, new_value, trim, init) {
         const $item = $(target);
@@ -2331,8 +2331,8 @@ appSetup(MODULE, function() {
     /**
      * Save the original value of an element. <p/>
      *
-     * If *value* is present, that is assigned directly as the original value.
-     * If *value* was not provided, and no saved value is present then the
+     * If **value** provided, that is assigned directly as the original value.
+     * If **value** not provided, and no saved value is present then the
      * current value will be saved as the original value.
      *
      * @param {Selector}                 target
@@ -2376,10 +2376,10 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Get the value string associated with *item*. <p/>
+     * Get the value string associated with **item**. <p/>
      *
-     * If *item* is a checkbox element, the state of it's *checked* attribute
-     * is found; if *item* is another type of element, its *value* attribute
+     * If **item** is a checkbox element, the state of it's `checked` attribute
+     * is found; if **item** is another type of element, its `value` attribute
      * is found. <p/>
      *
      * Booleans are converted to either "true" or "false".
@@ -2483,7 +2483,7 @@ appSetup(MODULE, function() {
      * Validate the value(s) for a field.
      *
      * @param {Selector} target
-     * @param {*}        new_value    Current *target* value if not given.
+     * @param {*}        new_value    Current **target** value if not given.
      * @param {function} callback     Required.
      */
     function validate(target, new_value, callback) {
@@ -2731,7 +2731,7 @@ appSetup(MODULE, function() {
     });
 
     /**
-     * Indicate whether *repo* requires the "partner repository workflow".
+     * Indicate whether **repo** requires the "partner repository workflow".
      *
      * @param {string} [repo]
      *
@@ -3186,7 +3186,7 @@ appSetup(MODULE, function() {
      * Seal an element. <p/>
      *
      * To allow {@link MENU_MULTI} (checkboxes) to be scrollable,
-     * *pointer-events* on the content elements can be set to "none" via CSS.
+     * `pointer-events` on the content elements can be set to "none" via CSS.
      * This strategy does not work for {@link MENU_SINGLE} (dropdowns) to be
      * expandable, however, disabling the non-selected `<option>` elements here
      * does work.
@@ -3340,8 +3340,8 @@ appSetup(MODULE, function() {
      * Enable bibliographic lookup.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
-     * @param {boolean}  [enable]     If **false** run {@link disableLookup}.
-     * @param {boolean}  [forbid]     If **false** run {@link disableLookup}.
+     * @param {boolean}  [enable]     If *false*, run {@link disableLookup}.
+     * @param {boolean}  [forbid]     If *false*, run {@link disableLookup}.
      *
      * @returns {jQuery|undefined}    The submit button.
      */
@@ -3365,7 +3365,7 @@ appSetup(MODULE, function() {
      * Disable bibliographic lookup.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
-     * @param {boolean}  [forbid]     If **true** add ".forbidden".
+     * @param {boolean}  [forbid]     If *true*, add ".forbidden".
      *
      * @returns {jQuery|undefined}    The submit button.
      */
@@ -3426,8 +3426,8 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Update the internal condition values for the Lookup button if *field* is
-     * relevant to them, and change the button's enabled/disabled state if
+     * Update the internal condition values for the Lookup button if **field**
+     * is relevant to them, and change the button's enabled/disabled state if
      * appropriate.
      *
      * @param {Selector} form         Default: {@link formElement}.
@@ -3706,7 +3706,7 @@ appSetup(MODULE, function() {
          *
          * @param {ElementEvt}  event
          * @param {string|null} [value] Default: current element value.
-         * @param {boolean}     [trim]  If **false**, don't trim white space.
+         * @param {boolean}     [trim]  If *false*, don't trim white space.
          */
         function validateInputField(event, value, trim) {
             const $field = $(event.target);
@@ -3768,7 +3768,7 @@ appSetup(MODULE, function() {
      * Enable form submission.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
-     * @param {boolean}  [enable]     If **false** run {@link disableSubmit}.
+     * @param {boolean}  [enable]     If *false*, run {@link disableSubmit}.
      *
      * @returns {jQuery}              The submit button.
      */
@@ -4176,7 +4176,7 @@ appSetup(MODULE, function() {
     /**
      * A flag to indicate whether field filtering has occurred yet.
      *
-     * @type {boolean}  **false** on the first invocation; **true** thereafter
+     * @type {boolean}  *false* on the first invocation; *true* thereafter
      */
     function filterInitialized() {
         const initialized  = filter_initialized || false;

@@ -138,7 +138,7 @@ export class CallbackQueue extends Queue {
     // ========================================================================
 
     /**
-     * Indicate whether *arg* is an allowable queue element.
+     * Indicate whether **callback** is an allowable queue element.
      *
      * @param {function|*} callback
      * @param {string}     [from]

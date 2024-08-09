@@ -85,6 +85,7 @@
         // Show focus outline on the image -- not on the enclosing <a> element.
         &:focus {
 
+            // noinspection CssBrowserCompatibilityForProperties
             outline: none;
 
             img {

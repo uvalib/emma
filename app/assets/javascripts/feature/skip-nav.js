@@ -40,7 +40,7 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
-     * Toggle visibility of the skip navigation menu associated with *target*,
+     * Toggle visibility of skip navigation menu associated with **target**,
      * which may reference either the container itself or any of its children.
      *
      * @param {Selector} target

@@ -21,7 +21,7 @@ en:
           - 'daisyAudio'
 
         upload:
-          parse:          true
+          parse: true
 
         # =====================================================================
         # FORMAT_FIELDS

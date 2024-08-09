@@ -48,8 +48,8 @@ export const MINUTES = 1 * MINUTE;
 // ============================================================================
 
 /**
- * Interpret *value* as a time and return milliseconds into the epoch or 0 if
- * *value* does not express a time value.
+ * Interpret **value** as a time and return milliseconds into the epoch or 0 if
+ * **value** does not express a time value.
  *
  * @param {*} value
  *
@@ -70,8 +70,8 @@ export function timestamp(value) {
 }
 
 /**
- * Interpret *value* as a time and return milliseconds into the epoch.  If
- * *value* is missing or invalid, the current time value is returned.
+ * Interpret **value** as a time and return milliseconds into the epoch.  If
+ * **value** is missing or invalid, the current time value is returned.
  *
  * @param {Date|number} [value]
  *
@@ -101,11 +101,11 @@ export function secondsSince(start_time, time_now) {
  * @param {string|number|Date} value
  * @param {object}             [opt]
  *
- * @param {string}  [opt.separator]  Default: " ".
- * @param {boolean} [opt.dateOnly]   If **true** do not show time.
- * @param {boolean} [opt.timeOnly]   If **true** do not show date.
+ * @param {string}  [opt.separator]   Default: " ".
+ * @param {boolean} [opt.dateOnly]    If *true*, do not show time.
+ * @param {boolean} [opt.timeOnly]    If *true*, do not show date.
  *
- * @returns {string}                        Blank if *value* is not a date.
+ * @returns {string}                  Blank if **value** is not a date.
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat
  */

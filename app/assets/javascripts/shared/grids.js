@@ -422,10 +422,10 @@ class GridMoveBy extends GridMoveTo {
     // ========================================================================
 
     /**
-     * If **true** then there is no default move limit and motion beyond the
+     * If *true* then there is no default move limit and motion beyond the
      * bounds of the grid wraps to the neighboring row/column. <p/>
-     * If **false** then motion is limited to {@link row_max} and
-     * {@link col_max} by default.
+     * If *false* then motion is limited to {@link row_max} and {@link col_max}
+     * by default.
      *
      * @type {boolean}
      */
@@ -669,7 +669,7 @@ export function initializeTables() {
  * This is appropriate for tables matching **`[role="table"]`** where only cell
  * navigation is required.
  *
- * If *table* does not have a role it will be set to {@link PASSIVE}, however
+ * If **table** does not have a role it will be set to {@link PASSIVE}, however
  * if it explicitly has the {@link ACTIVE} role it will be skipped.
  *
  * @param {Selector} table
@@ -693,7 +693,7 @@ export function initializeTableNavigation(table) {
  * This is appropriate for tables matching **`[role="grid"]`** where both cell
  * and intra-cell navigation (within control nav groups) are required.
  *
- * If *grid* does not have a role it will be set to {@link ACTIVE}.
+ * If **grid** does not have a role it will be set to {@link ACTIVE}.
  *
  * @param {Selector} grid
  */
@@ -747,7 +747,7 @@ function setupNavigation($grid) {
 
 /**
  * Assign grid location to each visible grid cell, and update $grid
- * *aria-rowcount* and *aria-colcount* if necessary. <p/>
+ * `aria-rowcount` and `aria-colcount` if necessary. <p/>
  *
  * Any new cells (e.g. cells in rows inserted since this function was last run)
  * have additional setup applied to them.
@@ -940,7 +940,7 @@ function analyzeGridEvent(func, event, key, validate) {
  * @param {GridEventProperties} result
  * @param {string}              [caller]
  *
- * @returns {boolean}                 **true** if there were no problems.
+ * @returns {boolean}                 *true* if there were no problems.
  */
 function validateGridEventAnalysis(result, caller) {
     const err = [];
@@ -1475,7 +1475,7 @@ function onGridCellKeydownCapture(event) {
  *
  * @param {jQuery}    $grid
  * @param {GridMover} [motion]
- * @param {boolean}   [focus]         If **false** do not trigger focus.
+ * @param {boolean}   [focus]         If *false*, do not trigger focus.
  *
  * @returns {jQuery|undefined}
  */
@@ -1525,7 +1525,7 @@ function getGridCellFocus($grid) {
  *
  * @param {jQuery}  $grid
  * @param {jQuery}  $cell             If missing, clear focus.
- * @param {boolean} [focus]           If **false** do not trigger focus.
+ * @param {boolean} [focus]           If *false*, do not trigger focus.
  *
  * @returns {jQuery|undefined}
  */
@@ -1562,13 +1562,13 @@ function setGridCellFocus($grid, $cell, focus) {
 /**
  * Update the grid coordinates cursor. <p/>
  *
- * If *motion* is missing, the cursor is not changed and the currently-focused
- * cell is returned.
+ * If **motion** is missing, the cursor is not changed and the currently
+ * focused cell is returned.
  *
  * @param {jQuery}    $grid
  * @param {GridMover} [motion]
  *
- * @returns {jQuery|undefined}        Blank if *motion* is invalid.
+ * @returns {jQuery|undefined}        Blank if **motion** is invalid.
  */
 function moveGridCellCursor($grid, motion) {
     OUT.debug("moveGridCellCursor: motion =", motion);
@@ -1700,11 +1700,11 @@ function setGridBounds($grid, row_min, row_max, col_min, col_max) {
 }
 
 /**
- * If *cell* is at a corner or edge of *grid* then scroll the grid so that
+ * If **cell** is at a corner or edge of **grid** then scroll the grid so that
  * movement to a sticky row or column header happens in an expected way.
  *
  * @param {Selector} cell
- * @param {Selector} [grid]           Derived from *cell* if missing.
+ * @param {Selector} [grid]           Derived from **cell** if missing.
  *
  * @returns {undefined}
  */
@@ -1739,11 +1739,11 @@ function scrollToEdge(cell, grid) {
 }
 
 /**
- * If *cell* partially out of the visible portion of *grid* then scroll the
+ * If **cell** partially out of the visible portion of **grid** then scroll the
  * grid so that the cell is fully visible.
  *
  * @param {Selector} cell
- * @param {Selector} [grid]           Derived from *cell* if missing.
+ * @param {Selector} [grid]           Derived from **cell** if missing.
  *
  * @returns {undefined}
  */
@@ -1776,8 +1776,8 @@ function scrollIntoView(cell, grid) {
 // ============================================================================
 
 /**
- * Neutralize focusables within *$cell* by deactivating its nav group if it has
- * one, or directly if not.
+ * Neutralize focusables within **$cell** by deactivating its nav group if it
+ * has one, or directly if not.
  *
  * @param {jQuery}  $cell
  * @param {boolean} [plus_cell]
@@ -1798,8 +1798,8 @@ function neutralizeCellFocusables($cell, plus_cell = true) {
 }
 
 /**
- * Restore focusables within *$cell* by activating its nav group if it has one,
- * or directly if not.
+ * Restore focusables within **$cell** by activating its nav group if it has
+ * one, or directly if not.
  *
  * @param {jQuery}  $cell
  * @param {boolean} [plus_cell]
@@ -1891,7 +1891,7 @@ function gridCells(row, col_number) {
 }
 
 /**
- * The ordinal element of *$items* (or all elements if *number* is blank).
+ * The ordinal element of **$items** (or all elements if **number** is blank).
  *
  * @param {jQuery} $items
  * @param {number} [number]

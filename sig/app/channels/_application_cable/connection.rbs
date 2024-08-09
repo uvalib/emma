@@ -27,7 +27,7 @@ class ApplicationCable::Connection < ActionCable::Connection::Base
   #
   def get_verified_user: () -> User
 
-  # report_error
+  # Log an error condition.
   #
   # @param [Exception] e
   #

@@ -18,7 +18,7 @@ module Emma::Common::HashMethods
   #
   def partition_hash: ((prmHash|nil) hash, *(Symbol|String|Array[Symbol|String]|nil) keys) -> [symHash, symHash]
 
-  # normalize_hash
+  # Transform *item* into a Hash with Symbol keys.
   #
   # @param [ActionController::Parameters, Hash, nil] item
   # @param [Boolean]                                 debug
@@ -27,7 +27,7 @@ module Emma::Common::HashMethods
   #
   def normalize_hash: ((prmHash|nil) item, ?debug: bool) -> symHash
 
-  # normalize_hash
+  # Transform *item* in place into a Hash with Symbol keys.
   #
   # @param [ActionController::Parameters, Hash, nil] item
   #

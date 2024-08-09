@@ -899,11 +899,12 @@ class ManifestDecorator
     table   = for_html_table?(tag)
     tag     = table && :table || tag || :div
 
+    # Create `<thead>`.
     opt[:thead] =
       ManifestItemDecorator.submission_status_header(tag: tag, row: row)
     row += 1 if opt[:thead]
 
-    # noinspection RubyMismatchedArgumentType
+    # Create `<tbody>`.
     rows =
       submit_items.map.with_index(index) do |item, i|
         decorate(item).submission_status(tag: tag, index: i, row: (row + i))

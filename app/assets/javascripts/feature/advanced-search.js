@@ -433,7 +433,7 @@ appSetup(MODULE, function() {
 
     /**
      * Re-arrange the search controls so that tabbing advances in the way
-     * defined by their *order* attribute defined by CSS styling.
+     * defined by their `order` attribute defined by CSS styling.
      *
      * @see file:app/assets/stylesheets/layouts/header/_search.scss
      */
@@ -456,7 +456,7 @@ appSetup(MODULE, function() {
     /**
      * Initialize operation for immediate action when a filter is selected.
      *
-     * @note Only applicable if {@link IMMEDIATE_SEARCH} is **true**.
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is *true*.
      */
     function initializeImmediateSearch() {
         if (!IMMEDIATE_SEARCH) { return }
@@ -467,10 +467,10 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Add *immediate=true* as a hidden input to the search form and all
-     * filter controls (menu form wrappers).
+     * Add `immediate=true` as a hidden input to the search form and all filter
+     * controls (menu form wrappers).
      *
-     * @note Only applicable if {@link IMMEDIATE_SEARCH} is **true**.
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is *true*.
      */
     function persistImmediateSearch() {
         const $form = getSearchForm();
@@ -484,7 +484,7 @@ appSetup(MODULE, function() {
     /**
      * Actions before a multi-select menu selection is changed.
      *
-     * @note Only applicable if {@link IMMEDIATE_SEARCH} is **true**.
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is *true*.
      *
      * @param {ElementEvt} event
      */
@@ -513,10 +513,10 @@ appSetup(MODULE, function() {
      * Before completing the search request:
      *
      * - Hide fields which are not intended to be part of the search terms by
-     *   blanking their "name" attributes.
+     *   blanking their `name` attributes.
      *
-     * - If multiple instances of the same "name" are present, ensure that it
-     *   is transformed to "name[]" so that they will be present in the form
+     * - If multiple instances of the same `name` are present, ensure that it
+     *   is transformed to `name[]` so that they will be present in the form
      *   submission as multiple values.
      */
     function resolveFormFields() {
@@ -559,8 +559,8 @@ appSetup(MODULE, function() {
          * count otherwise.
          *
          * @param {jQuery}           $input
-         * @param {function|boolean} [skip]     If resolves to **true** the
-         *                                          input should be ignored.
+         * @param {function|boolean} [skip]     If this resolves to *true* then
+         *                                        the input should be ignored.
          */
         function checkInput($input, skip) {
             const name  = $input.attr("name");
@@ -781,7 +781,7 @@ appSetup(MODULE, function() {
     /**
      * Get the search bar input row associated with the target. <p/>
      *
-     * All search bar rows are returned if *target* is not given.
+     * All search bar rows are returned if **target** is not given.
      *
      * @param {SelectorOrEvent} [target]
      * @param {string}          [caller]    For logging.
@@ -971,10 +971,10 @@ appSetup(MODULE, function() {
      * Clear the associated search input.
      *
      * @param {ElementEvt} [event]
-     * @param {boolean} [allow_default]   If **true**, do not mark the event as
-     *                                      handled (**false** by default
-     *                                      because the SEARCH_CLEAR control is
-     *                                      an `<a>` to preserve tab order).
+     * @param {boolean} [allow_default]   If *true*, do not mark the event as
+     *                                      handled (*false* by default because
+     *                                      the SEARCH_CLEAR control is an
+     *                                      `<a>` to preserve tab order).
      */
     function clearSearchTerm(event, allow_default) {
         const func   = "clearSearchTerm";
@@ -1006,8 +1006,8 @@ appSetup(MODULE, function() {
      *
      * @param {Selector} [target]     Default: all rows.
      * @param {string}   [caller]     For logging.
-     * @param {boolean}  [new_only]   If **true** include only non-blank
-     *                                  entries that have been added/modified.
+     * @param {boolean}  [new_only]   If *true* include only non-blank entries
+     *                                  that have been added/modified.
      *
      * @returns {{type: string, query: string|string[]}}
      */
@@ -1155,7 +1155,7 @@ appSetup(MODULE, function() {
     /**
      * Get the search filter control associated with the target. <p/>
      *
-     * All search filter controls are returned if *target* is not given.
+     * All search filter controls are returned if **target** is not given.
      *
      * @param {SelectorOrEvent} [target]
      * @param {string}          [caller]    For logging.
@@ -1185,8 +1185,8 @@ appSetup(MODULE, function() {
      *
      * @param {Selector} [target]     Default: {@link $search_filters}.
      * @param {string}   [caller]     For logging.
-     * @param {boolean}  [new_only]   If **true** include only non-blank
-     *                                  entries that have been added/modified.
+     * @param {boolean}  [new_only]   If *true* include only non-blank entries
+     *                                  that have been added/modified.
      *
      * @returns {{type: string, query: string|string[]}}
      */
@@ -1255,7 +1255,7 @@ appSetup(MODULE, function() {
     /**
      * Set hidden inputs for the search input form.
      *
-     * @note Only applicable if {@link IMMEDIATE_SEARCH} is **true**.
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is *true*.
      */
     function initializeSearchFormParams() {
         setSearchFormParamsFromFilters();
@@ -1264,7 +1264,7 @@ appSetup(MODULE, function() {
     /**
      * Set search input form hidden inputs from search filters.
      *
-     * @note Only applicable if {@link IMMEDIATE_SEARCH} is **true**.
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is *true*.
      *
      * @param {Selector} [src]        Default: {@link $search_filters}.
      */
@@ -1276,7 +1276,7 @@ appSetup(MODULE, function() {
      * Update all hidden inputs in the destination element which track the
      * settings of search filters.
      *
-     * @note Only applicable if {@link IMMEDIATE_SEARCH} is **true**.
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is *true*.
      *
      * @param {Selector} [dst]        Default: {@link $search_bar_container}.
      * @param {Selector} [src]        Default: {@link $search_filters}.
@@ -1291,7 +1291,7 @@ appSetup(MODULE, function() {
      * Create/modify/delete a hidden input from a destination element which
      * tracks tracks the settings of search filters.
      *
-     * @note Only applicable if {@link IMMEDIATE_SEARCH} is **true**.
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is *true*.
      *
      * @param {Selector} dst          Destination with hidden inputs.
      * @param {Selector} src          Source filter control.
@@ -1308,7 +1308,7 @@ appSetup(MODULE, function() {
     /**
      * Set hidden input parameters for each search filter control.
      *
-     * @note Only applicable if {@link IMMEDIATE_SEARCH} is **true**.
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is *true*.
      */
     function initializeSearchFilterParams() {
         setSearchFilterParamsFromInputs();
@@ -1318,7 +1318,7 @@ appSetup(MODULE, function() {
     /**
      * Set search input form hidden inputs from search filters.
      *
-     * @note Only applicable if {@link IMMEDIATE_SEARCH} is **true**.
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is *true*.
      *
      * @param {Selector} [src]        Default: all search inputs.
      */
@@ -1333,7 +1333,7 @@ appSetup(MODULE, function() {
      *
      * @param {Selector} [src]        Default: {@link $search_filters}.
      *
-     * @note Only applicable if {@link IMMEDIATE_SEARCH} is **true**.
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is *true*.
      */
     function setSearchFilterParamsFromFilters(src) {
         const $controls = src ? $(src) : $search_filters;
@@ -1349,7 +1349,7 @@ appSetup(MODULE, function() {
      * Modify the hidden input parameters of each filter control based on the
      * new search type and search terms.
      *
-     * @note Only applicable if {@link IMMEDIATE_SEARCH} is **true**.
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is *true*.
      *
      * @param {object|string} new_type
      * @param {string}        [new_value]
@@ -1368,7 +1368,7 @@ appSetup(MODULE, function() {
      * @param {object|string} new_type
      * @param {string}        [new_value]
      *
-     * @note Only applicable if {@link IMMEDIATE_SEARCH} is **true**.
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is *true*.
      */
     function setSearchFilterHiddenInputs(control, new_type, new_value) {
         const $control = getSearchFilter(control);
@@ -1381,7 +1381,7 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
-     * Create/update/delete hidden input(s) on *dst*.
+     * Create/update/delete hidden input(s) on **dst**.
      *
      * @param {Selector}           dst
      * @param {Selector|undefined} menu
@@ -1442,7 +1442,7 @@ appSetup(MODULE, function() {
      * Create a hidden `<input>` and prepend to the given element. <p/>
      *
      * (Because it is prepended, a control inside the element having the same
-     * *name* attribute will take precedence.)
+     * `name` attribute will take precedence.)
      *
      * @param {Selector} dst          Destination for hidden input.
      * @param {string} [value]

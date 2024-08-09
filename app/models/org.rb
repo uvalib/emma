@@ -174,7 +174,7 @@ class Org < ApplicationRecord
   # @return [String, nil]
   #
   def org_name(org = nil)
-   self.class.send(__method__, (org || self))
+    self.class.send(__method__, (org || self))
   end
 
   # ===========================================================================

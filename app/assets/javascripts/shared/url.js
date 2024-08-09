@@ -33,7 +33,7 @@ export function baseUrl(path) {
 }
 
 /**
- * Extract the URL value associated with *arg*.
+ * Extract the URL value associated with **arg**.
  *
  * @param {string|jQuery.Event|Event|Location|{url: string}} arg
  *
@@ -241,7 +241,7 @@ export function makeUrl(...parts) {
 
 /**
  * Provide an action for a cancel button, redirecting to the value of the
- * *data-path* attribute if present or redirecting back otherwise.
+ * `data-path` attribute if present or redirecting back otherwise.
  *
  * @param {string|Selector} [arg]
  */

@@ -12,7 +12,7 @@ AppDebug.file("shared/events");
 // ============================================================================
 
 /**
- * For event handlers processed by jQuery, a **false** return will result in
+ * For event handlers processed by jQuery, a *false* return will result in
  * `event.stopPropagation()` and `event.preventDefault()`.
  *
  * @typedef {boolean|undefined} EventHandlerReturn
@@ -164,7 +164,7 @@ export function handleHoverAndFocus(element, cbEnter, cbLeave) {
 /**
  * Set an event handler for the capturing phase. <p/>
  *
- * If *options* includes "{listen: false}" then the only action is to remove
+ * If **options** includes "{listen: false}" then the only action is to remove
  * a previous event handler.
  *
  * @param {Selector}                                element
@@ -220,7 +220,7 @@ export function documentEvent(type, callback, options) {
  * [2] due to clicking on a link.
  *
  * @param {EventListener|function():void} callback
- * @param {boolean} [_debug] If **true** show console warnings on events.
+ * @param {boolean} [_debug] If *true* show console warnings on events.
  */
 export function onPageExit(callback, _debug) {
 /*

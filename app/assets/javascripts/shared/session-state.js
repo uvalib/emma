@@ -270,7 +270,7 @@ export class SessionToggle extends SessionState {
     /**
      * Set the state value in sessionStorage.
      *
-     * @param {boolean|ToggleState} new_value   Default: **true**.
+     * @param {boolean|ToggleState} new_value   Default: *true*.
      */
     set enabled(new_value) {
         this.value = notDefined(new_value) || new_value;

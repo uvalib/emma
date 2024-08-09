@@ -31,8 +31,8 @@ export const DEF_HEX_DIGITS = 6;
 // ============================================================================
 
 /**
- * Render a number as a string of hex digits.  If *length* is given, left-fill
- * with zeros if needed.
+ * Render a number as a string of hex digits.
+ * If **length** is given, left-fill with zeros if needed.
  *
  * @param {number|string} value
  * @param {number}        [length]

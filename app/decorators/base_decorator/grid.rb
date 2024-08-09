@@ -222,7 +222,8 @@ module BaseDecorator::Grid
   # @param [Array]   cols             Default: `#grid_row_columns`.
   # @param [Symbol]  tag              Potential alternative to :table.
   # @param [String]  css              Default: `#grid_css_class`.
-  # @param [Hash]    opt              Passed to container div except:
+  # @param [Hash]    opt              Passed to container element except for
+  #                                     #MODEL_TABLE_PART_OPT and
   #                                     #ROW_PAGE_PARAMS to #grid_row_page.
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -242,6 +243,7 @@ module BaseDecorator::Grid
     pg_opt  = opt.extract!(*ROW_PAGE_PARAMS)
     row_opt = t_opt.merge(tag: tag, cols: cols, wrap: false)
 
+    # Create `<thead>` if not provided by the caller.
     parts[:thead] ||=
       begin
         col_count = 1 + cols.size
@@ -250,6 +252,7 @@ module BaseDecorator::Grid
       end
     row += 1
 
+    # Create `<tbody>` if not provided by the caller.
     parts[:tbody] ||=
       begin
         row_count = 1 + grid_row_items_total

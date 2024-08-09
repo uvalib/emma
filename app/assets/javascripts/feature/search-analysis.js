@@ -116,7 +116,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
     /**
      * Reset search analysis data on normal search pages then leave.
      *
-     * NOTE: The database is touched *only* if session settings were found;
+     * NOTE: The database is touched _only_ if session settings were found;
      *  otherwise, on a pristine browser, the database would have to be created
      *  just for the sake of clearing it.
      */
@@ -314,7 +314,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
     /**
      * Current search list display style.
      *
-     * @note Can't rely on *params* because **params["style"]** will have
+     * @note Can't rely on **params** because **params["style"]** will have
      *  already been removed via the server redirect.
      *
      * @returns {string}
@@ -389,7 +389,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
     // ========================================================================
 
     /**
-     * Return the *emma_titleId* value of the given search result item.
+     * Return the **emma_titleId** value of the given search result item.
      *
      * @param {Selector} item
      *
@@ -424,7 +424,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
     }
 
     /**
-     * Return the *emma_recordId* value of the given search result item.
+     * Return the **emma_recordId** value of the given search result item.
      *
      * @param {Selector} item
      *
@@ -452,7 +452,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
     }
 
     /**
-     * Return the *dc_identifier* values of the given search result item.
+     * Return the **dc_identifier** values of the given search result item.
      *
      * @param {Selector} item
      *
@@ -1334,7 +1334,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
         /**
          * Persist current settings to sessionStorage.
          *
-         * @param {boolean|ToggleState} new_value   Default: **true**.
+         * @param {boolean|ToggleState} new_value   Default: *true*.
          */
         update(new_value) {
             this.value = notDefined(new_value) || new_value;

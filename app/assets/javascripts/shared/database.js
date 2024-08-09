@@ -405,8 +405,8 @@ export const DB = (function() {
     }
 
     /**
-     * Return *db_handle* or assign a new *db_handle* and set up generic event
-     * handlers for it.
+     * Return **db_handle** or assign a new **db_handle** and set up generic
+     * event handlers for it.
      *
      * @param {IDBDatabase} [new_db]
      *

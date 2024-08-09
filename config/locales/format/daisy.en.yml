@@ -19,7 +19,7 @@ en:
           - 'daisy'
 
         upload:
-          parse:          true
+          parse: true
 
         # =====================================================================
         # FORMAT_FIELDS

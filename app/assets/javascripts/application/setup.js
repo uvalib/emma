@@ -245,8 +245,8 @@ function runActions(store, caller) {
  * Set an event handler on a global target, including it in the set of event
  * handlers that will be removed on page teardown. <p/>
  *
- * If *options* includes "{listen: false}" then the only action is to remove a
- * previous event handler.
+ * If **options** includes `{listen: false}` then the only action is to remove
+ * a previous event handler.
  *
  * @param {EventTarget|string}                      target
  * @param {string}                                  type
@@ -284,7 +284,7 @@ export function appEventListener(target, type, callback, options) {
  * @param {EventListenerOptionsExt|boolean}         [options]
  * @param {string}                                  [caller]
  *
- * @returns {boolean}       **false** if the entry had to be created.
+ * @returns {boolean}       *false* if the entry had to be created.
  */
 export function appEventTestOrSet(target, type, callback, options, caller) {
     const [ev_key, _]  = appEventTarget(target, caller);

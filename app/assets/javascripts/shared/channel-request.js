@@ -159,7 +159,7 @@ export class ChannelRequest extends BaseClass {
     // ========================================================================
 
     /**
-     * Append the elements from *src* to this._parts.
+     * Append the elements from **src** to `this._parts`.
      *
      * @param {object} src
      *

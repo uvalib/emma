@@ -37,7 +37,7 @@ export function toggleClass(target, cls, setting) {
  *
  * @note A *hidden* element is effectively removed from the display; an
  *  *invisible* element still takes up space on the display.  Both cases result
- *  in "aria-hidden" being set to make it unavailable to screen readers.
+ *  in `aria-hidden` being set to make it unavailable to screen readers.
  *
  * @param {Selector} target
  * @param {boolean}  [hide]       Default: toggle state.

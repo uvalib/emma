@@ -120,7 +120,7 @@ export const Analytics = (function() {
      * - Allowing "[data-path]" elements to be treated as links.  (Matomo's own
      *    code ignores elements unless they have "[href]" element, but many
      *    virtual shelf browse "links" are actually non-anchor elements with
-     *    a "data-path" attribute instead of an "href" attribute.)
+     *    a `data-path` attribute instead of an `href` attribute.)
      *
      * @param {Selector} [root]       Default: {@link defaultRoot}()
      * @param {Selector} [sel]        Default: {@link defaultSelector}()

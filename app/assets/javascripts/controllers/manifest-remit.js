@@ -901,7 +901,7 @@ appSetup(MODULE, function() {
      * Restore the status values of selected items to their original state in
      * preparation for resubmitting.
      *
-     * @param {boolean} [total]       If **true**, allow FILE_NEEDED.
+     * @param {boolean} [total]       If *true*, allow FILE_NEEDED.
      */
     function resetItems(total) {
         OUT.debug("resetItems");
@@ -996,7 +996,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Return the matching submission items.
+     * Return the matching item rows.
      *
      * @param {function(Selector,...) : boolean} has_condition
      * @param {...}                              [args]
@@ -1133,7 +1133,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Indicate whether *all* submission steps for the item match the given
+     * Indicate whether _all_ submission steps for the item match the given
      * criterion.
      *
      * @param {Selector} item
@@ -1167,7 +1167,7 @@ appSetup(MODULE, function() {
     const $item_checkboxes = $item_rows.find(`${CONTROLS} ${CHECKBOX}`);
 
     /**
-     * checkbox
+     * Manage checked state for a tri-state checkbox.
      *
      * @param {Selector} item
      * @param {boolean}  [check]            Check/uncheck
@@ -1204,10 +1204,10 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * selectItem
+     * Select/deselect a manifest item by updating its checkbox.
      *
      * @param {Selector} item
-     * @param {boolean}  [check]            If **false**, uncheck.
+     * @param {boolean}  [check]            If *false*, uncheck.
      * @param {boolean}  [indeterminate]
      */
     function selectItem(item, check, indeterminate) {
@@ -1238,7 +1238,7 @@ appSetup(MODULE, function() {
      * Allow user selection of an item.
      *
      * @param {Selector} item
-     * @param {boolean}  [enable]           If **false**, disable.
+     * @param {boolean}  [enable]           If *false*, disable.
      * @param {boolean}  [indeterminate]
      *
      * @returns {boolean}                   If selectability changed.
@@ -1440,7 +1440,7 @@ appSetup(MODULE, function() {
      *
      * @param {Selector} item
      * @param {string}   status       Status type class or selector.
-     * @param {boolean}  [total]      If **true**, allow FILE_NEEDED.
+     * @param {boolean}  [total]      If *true*, allow FILE_NEEDED.
      */
     function resetStatusFor(item, status, total) {
         //OUT.debug(`resetStatusFor "${status}" for item =`, item);
@@ -1918,7 +1918,7 @@ appSetup(MODULE, function() {
     /**
      * Update buttons after a submission sequence has terminated.
      *
-     * @param {boolean} [preserve_files]    If **true** keep file selections.
+     * @param {boolean} [preserve_files]    If *true*, keep file selections.
      */
     function submissionsEnded(preserve_files) {
         OUT.debug("submissionsEnded: preserve_files =", preserve_files);
@@ -2352,7 +2352,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * resolvedLabel
+     * Generate a line indicating the number of resolved items.
      *
      * @param {number} [count]
      *
@@ -2363,7 +2363,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * problematicLabel
+     * Generate a line indicating the number of problematic items.
      *
      * @param {number} [count]
      *
@@ -2374,7 +2374,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * remainingLabel
+     * Generate a line indicating the number of items still needed.
      *
      * @param {number} [count]
      *
@@ -2387,7 +2387,8 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * allResolvedLabel
+     * Generate a line indicating the number of items ready to submit and/or
+     * the number of items requiring attention.
      *
      * @returns {string}
      */
@@ -2691,7 +2692,7 @@ appSetup(MODULE, function() {
     /**
      * The Manifest ID associated with these manifest rows.
      *
-     * @note Currently this is *only* associated with the $grid element.
+     * @note Currently this is _only_ associated with the $grid element.
      *
      * @returns {string|undefined}
      */

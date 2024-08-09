@@ -78,7 +78,7 @@ export class InlinePopup extends ModalBase {
     /**
      * Open the popup element.
      *
-     * @param {boolean} [no_halt]     If **true**, hooks cannot halt the chain.
+     * @param {boolean} [no_halt]     If *true*, hooks cannot halt the chain.
      *
      * @returns {boolean}
      */
@@ -93,7 +93,7 @@ export class InlinePopup extends ModalBase {
     /**
      * Close the popup element.
      *
-     * @param {boolean}  [no_halt]    If **true**, hooks cannot halt the chain.
+     * @param {boolean}  [no_halt]    If *true*, hooks cannot halt the chain.
      *
      * @returns {boolean}
      */
@@ -217,7 +217,7 @@ export class InlinePopup extends ModalBase {
     /**
      * Set up event handlers on {@link window}.
      *
-     * @param {boolean} [attach]    Default **true**.
+     * @param {boolean} [attach]    Default *true*.
      *
      * @protected
      */

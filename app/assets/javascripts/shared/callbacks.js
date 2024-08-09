@@ -23,8 +23,8 @@ AppDebug.file("shared/callbacks", MODULE, DEBUG);
  *      ): boolean|undefined
  * } CallbackChainFunction
  *
- * If the function returns **false**, subsequent functions in the chain will
- * still execute but will receive *halted* set to **true**.  There is no
+ * If the function returns *false*, subsequent functions in the chain will
+ * still execute but will receive **halted** set to *true*.  There is no
  * provision for a subsequent function to "un-halt" the chain.
  */
 

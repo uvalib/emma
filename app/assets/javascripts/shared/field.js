@@ -372,16 +372,16 @@ export class Value extends BaseClass {
      *  A blank unset Value.
      *
      * @overload _setFrom(arg)
-     *  Determine the type of *arg* dynamically.
+     *  Determine the type of **arg** dynamically.
      *  @param {*}               arg
      *
      * @overload _setFrom(arg, from_type)
-     *  Interpret *arg* as the given type.
+     *  Interpret **arg** as the given type.
      *  @param {*}               arg
      *  @param {string}          as_type
      *
      * @overload _setFrom(arg, prop)
-     *  Determine the type of *arg* based on the given properties.
+     *  Determine the type of **arg** based on the given properties.
      *  @param {*}                          arg
      *  @param {Properties|FieldProperties} as_type
      */
@@ -402,13 +402,13 @@ export class Value extends BaseClass {
             [type, value] = ["string", ""];
         } else {
             switch (type) {
-               case "array":   value = this._asArray(value, arg_type);   break;
-               case "object":  value = this._asObject(value, arg_type);  break;
-               case "string":  value = this._asString(value, arg_type);  break;
-               case "number":  value = this._asNumber(value, arg_type);  break;
-               case "boolean": value = this._asBoolean(value, arg_type); break;
-               default:        type  = arg_type; break;
-           }
+                case "array":   value = this._asArray(value, arg_type);  break;
+                case "object":  value = this._asObject(value, arg_type); break;
+                case "string":  value = this._asString(value, arg_type); break;
+                case "number":  value = this._asNumber(value, arg_type); break;
+                case "boolean": value = this._asBoolean(value, arg_type);break;
+                default:        type  = arg_type;                        break;
+            }
         }
         this._type  = type;
         this._value = value;
@@ -420,7 +420,7 @@ export class Value extends BaseClass {
     // ========================================================================
 
     /**
-     * Give the type of *value*.
+     * Give the type of **value**.
      *
      * @param {*} value
      *
@@ -623,7 +623,7 @@ export class Value extends BaseClass {
      * Indicate whether the instance has the same value.
      *
      * @param {*}       value         A Value or convertible to a Value.
-     * @param {boolean} [ordered]     If **true**, array order matters.
+     * @param {boolean} [ordered]     If *true*, array order matters.
      *
      * @returns {boolean}             They represent the same value.
      */
@@ -635,7 +635,7 @@ export class Value extends BaseClass {
      * Indicate whether the instance has a different value.
      *
      * @param {*}       value         A Value or convertible to a Value.
-     * @param {boolean} [ordered]     If **true**, array order matters.
+     * @param {boolean} [ordered]     If *true*, array order matters.
      *
      * @returns {boolean}             They represent different values.
      */
@@ -713,8 +713,8 @@ export class Value extends BaseClass {
      * Return a representation of the value for display. <p/>
      *
      * The caller must determine how to handle the result.
-     * - For type === "array", the result is always HTML.
-     * - Otherwise the result is not HTML-safe without *encode* === **true**.
+     * - For `type` === "array", the result is always HTML.
+     * - Otherwise the result is not HTML-safe without **encode** === *true*.
      *
      * @param {boolean} [encode]    Ensure the result is HTML.
      *
@@ -802,8 +802,8 @@ export class Value extends BaseClass {
      *
      * @param {*}       value1        A Value or convertible to a Value.
      * @param {*}       value2        A Value or convertible to a Value.
-     * @param {boolean} [ordered]     If **true**, array order matters.
-     * @param {boolean} [value_only]  If **true**, blank strings and undefined
+     * @param {boolean} [ordered]     If *true*, array order matters.
+     * @param {boolean} [value_only]  If *true*, blank strings and undefined
      *                                  are treated as the same (not applied
      *                                  to array elements or object values).
      *
@@ -818,8 +818,8 @@ export class Value extends BaseClass {
      *
      * @param {*}       value1        A Value or convertible to a Value.
      * @param {*}       value2        A Value or convertible to a Value.
-     * @param {boolean} [ordered]     If **true**, array order matters.
-     * @param {boolean} [value_only]  If **true**, blank strings and undefined
+     * @param {boolean} [ordered]     If *true*, array order matters.
+     * @param {boolean} [value_only]  If *true*, blank strings and undefined
      *                                  are treated as the same (not applied
      *                                  to array elements or object values).
      *
@@ -850,7 +850,7 @@ export class Value extends BaseClass {
      *
      * @param {array}   a1
      * @param {array}   a2
-     * @param {boolean} [ordered]     If **true**, array order matters.
+     * @param {boolean} [ordered]     If *true*, array order matters.
      *
      * @returns {boolean}
      * @protected
@@ -866,7 +866,7 @@ export class Value extends BaseClass {
      *
      * @param {object}  o1
      * @param {object}  o2
-     * @param {boolean} [ordered]     If **true**, object keys must be in the
+     * @param {boolean} [ordered]     If *true*, object keys must be in the
      *                                  same order.
      *
      * @returns {boolean}

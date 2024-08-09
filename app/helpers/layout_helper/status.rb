@@ -99,7 +99,7 @@ module LayoutHelper::Status
     EngineStatus.new(service, url, key, nil)
   end
 
-  # engine_status
+  # engine_control
   #
   # @param [EngineStatus] engine
   # @param [String]       css       Characteristic CSS class/selector.

@@ -46,8 +46,8 @@ const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
 // ============================================================================
 
 /**
- * If **false**, the flash container is inline.
- * If **true** it appears above the main page content.
+ * If *false*, the flash container is inline.
+ * If *true*, it appears above the main page content.
  *
  * @type {boolean}
  */
@@ -122,7 +122,7 @@ export function flashContainer(selector) {
  *
  * @param {Selector} [fc]             Default: {@link flashContainer}.
  *
- * @returns {boolean}                 **false** if only inline flash.
+ * @returns {boolean}                 *false* if only inline flash.
  *
  * @see file:app/views/layouts/_flash.html.erb
  */
@@ -205,7 +205,7 @@ export function enableFlash(all) {
 /**
  * Replace all flashes messages with a new one. <p/>
  *
- * If show_flash.messages is not **true** then no actions will be taken.
+ * If `show_flash.messages` is not *true* then no actions will be taken.
  *
  * @param {string|string[]} text
  * @param {FlashOptions}    [opt]
@@ -225,7 +225,7 @@ export function flashMessage(text, opt = {}) {
 /**
  * Replace all flashes messages with a new flash error message. <p/>
  *
- * If show_flash.errors is not **true** then no actions will be taken.
+ * If `show_flash.errors` is not *true* then no actions will be taken.
  *
  * @param {string|string[]} text
  * @param {FlashOptions}    [opt]

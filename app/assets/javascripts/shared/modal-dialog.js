@@ -124,7 +124,7 @@ export class ModalDialog extends ModalBase {
      * operations assume a relationship with a toggle button, and that is set
      * only by opening the modal via {@link toggleModal}.
      *
-     * @param {boolean} [no_halt]     If **true**, hooks cannot halt the chain.
+     * @param {boolean} [no_halt]     If *true*, hooks cannot halt the chain.
      *
      * @returns {boolean}
      */

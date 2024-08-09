@@ -152,7 +152,7 @@ appSetup(MODULE, function() {
      *
      * @param {ElementEvt} event
      *
-     * @returns {boolean}            Always **false** to end event propagation.
+     * @returns {boolean}            Always *false* to end event propagation.
      *
      * @see "SearchDecorator#prev_next_controls"
      */
@@ -167,7 +167,7 @@ appSetup(MODULE, function() {
      *
      * @param {ElementEvt} event
      *
-     * @returns {boolean}            Always **false** to end event propagation.
+     * @returns {boolean}            Always *false* to end event propagation.
      *
      * @see "SearchDecorator#prev_next_controls"
      */
@@ -183,7 +183,7 @@ appSetup(MODULE, function() {
      * @param {ElementEvt} event
      * @param {Selector}   button_selector
      *
-     * @returns {boolean}            Always **false** to end event propagation.
+     * @returns {boolean}            Always *false* to end event propagation.
      *
      * @see "SearchDecorator#prev_next_controls"
      */

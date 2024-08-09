@@ -189,7 +189,7 @@ export function asString(item, limit) {
 }
 
 /**
- * Indicate whether *item* is a String.
+ * Indicate whether **item** is a String.
  *
  * @param {*} item
  *

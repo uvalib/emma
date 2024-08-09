@@ -898,6 +898,7 @@ module BaseDecorator::List
   #
   def model_item_id(**opt)
     obj = object.presence
+    # noinspection RailsParamDefResolve
     id  = obj.try(:submission_id) || obj.try(:identifier) || hex_rand
     html_id(model_type, id, underscore: false, **opt)
   end
@@ -907,6 +908,7 @@ module BaseDecorator::List
   # @return [String,nil]
   #
   def title_id_values
+    # noinspection RailsParamDefResolve
     records = object.presence.try(:records)
     titles  = records&.map(&:emma_titleId)&.compact
     titles.uniq.join(',') if titles.present?
@@ -917,6 +919,7 @@ module BaseDecorator::List
   # @return [Symbol, nil]
   #
   def state_group(...)
+    # noinspection RailsParamDefResolve
     object.presence.try(:state_group)
   end
 

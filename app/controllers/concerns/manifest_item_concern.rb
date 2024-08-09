@@ -116,6 +116,7 @@ module ManifestItemConcern
   def extract_manifest_id(prm)
     item = prm[:manifest_id] || prm[:manifest]
     item = item.id if item.is_a?(Manifest)
+    # noinspection RubyMismatchedReturnType
     item.presence
   end
 

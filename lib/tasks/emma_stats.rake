@@ -59,4 +59,4 @@ EMMA_STATS_DIRECTORIES ||= [
   %w[Configuration      config/locales],
 ].map { |name, dir|
   [name, "#{File.dirname(Rake.application.rakefile_location)}/#{dir}"]
- }.select { |_name, dir| File.directory?(dir) }
+}.select { |_name, dir| File.directory?(dir) }

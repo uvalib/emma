@@ -1,6 +1,6 @@
 # Job table for waiter tasks.
 #
-class ApplicationJob::Table < Concurrent::Hash
+class ApplicationJob::Table < Concurrent::Hash[String, untyped]
   include ApplicationJob::Methods
 
   include Emma::Common

@@ -218,6 +218,7 @@
 ///
 @mixin focus {
     & {
+        // noinspection CssBrowserCompatibilityForProperties
         outline:        2px solid v.$focus-color;
         outline-offset: 2px;
     }
@@ -456,6 +457,7 @@
 /// NOTE: Safari still requires the -webkit prefix.
 ///
 @mixin hyphenation($mode: auto) {
+    // noinspection CssBrowserCompatibilityForProperties
     & {
         -webkit-hyphens: $mode;
         hyphens:         $mode;

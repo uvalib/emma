@@ -49,7 +49,7 @@ AppDebug.file("shared/modal-base", MODULE, DEBUG);
  * The signature of a callback function that can be provided via
  * `.data("ModalShowHooks")` on the modal popup activation toggle control. <p/>
  *
- * If the function returns **false** then {@link _showModal} will not allow the
+ * If the function returns *false* then {@link _showModal} will not allow the
  * popup to open (and will avoid fetching any related deferred content if
  * applicable).
  */
@@ -60,8 +60,8 @@ AppDebug.file("shared/modal-base", MODULE, DEBUG);
  * The signature of a callback function that can be provided via
  * `.data("ModalHideHooks")` on the modal popup activation toggle control. <p/>
  *
- * If then function returns **false** then {@link _hideModal} will not allow
- * the popup to close.
+ * If the function returns *false* then {@link _hideModal} will not allow the
+ * popup to close.
  */
 
 // ============================================================================
@@ -192,7 +192,7 @@ export class ModalBase extends BaseClass {
     /**
      * Open the modal popup element.
      *
-     * @param {boolean} [no_halt]     If **true**, hooks cannot halt the chain.
+     * @param {boolean} [no_halt]     If *true*, hooks cannot halt the chain.
      *
      * @returns {boolean}
      */
@@ -209,7 +209,7 @@ export class ModalBase extends BaseClass {
     /**
      * Close the modal popup element.
      *
-     * @param {boolean}  [no_halt]    If **true**, hooks cannot halt the chain.
+     * @param {boolean}  [no_halt]    If *true*, hooks cannot halt the chain.
      *
      * @returns {boolean}
      */
@@ -417,7 +417,7 @@ export class ModalBase extends BaseClass {
         /**
          * When the modal popup content is loaded replace the placeholder
          * `<iframe>` with the content `<iframe>`.  If an anchor (initial
-         * element ID) was specified by the *data-topic* attribute in the
+         * element ID) was specified by the `data-topic` attribute in the
          * placeholder, scroll the `<iframe>` to bring the element with that ID
          * to the top of the panel display.
          *
@@ -673,7 +673,7 @@ export class ModalBase extends BaseClass {
      * Open the modal popup element.
      *
      * @param {Selector} [target]     Event target causing the action.
-     * @param {boolean}  [no_halt]    If **true**, hooks cannot halt the chain.
+     * @param {boolean}  [no_halt]    If *true*, hooks cannot halt the chain.
      *
      * @returns {boolean}
      * @protected
@@ -697,7 +697,7 @@ export class ModalBase extends BaseClass {
      * Close the modal popup element.
      *
      * @param {Selector} [target]     Event target causing the action.
-     * @param {boolean}  [no_halt]    If **true**, hooks cannot halt the chain.
+     * @param {boolean}  [no_halt]    If *true*, hooks cannot halt the chain.
      *
      * @returns {boolean}
      * @protected
@@ -721,7 +721,7 @@ export class ModalBase extends BaseClass {
     /**
      * Show/hide the modal popup element.
      *
-     * @param {boolean} [hide]        If **false**, un-hide.
+     * @param {boolean} [hide]        If *false*, un-hide.
      *
      * @protected
      */
@@ -737,10 +737,10 @@ export class ModalBase extends BaseClass {
     }
 
     /**
-     * Apply the *inert* attribute to other elements so that the open modal
+     * Apply the `inert` attribute to other elements so that the open modal
      * captures events and focus.
      *
-     * @param {boolean} [trap]       If **false** remove the *inert* attribute.
+     * @param {boolean} [trap]       If *false*, remove the `inert` attribute.
      *
      * @protected
      */
@@ -818,7 +818,7 @@ export class ModalBase extends BaseClass {
      * @param {Selector} [target]     Event target causing the action.
      * @param {boolean}  [check_only]
      *
-     * @returns {boolean|undefined}   Not defined if *data_name* is missing.
+     * @returns {boolean|undefined}   Not defined if **data_name** is missing.
      * @protected
      */
     _invokeModalHooks(data_name, target, check_only) {

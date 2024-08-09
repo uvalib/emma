@@ -180,7 +180,7 @@ export function xmit(method, path, prm, opt, cb) {
         complete: onComplete
     };
     /**
-     * Optional callbacks supplied via *opt*.
+     * Optional callbacks supplied via **opt**.
      * @type {{
      *      success?:  XmitCallback,
      *      error?:    XmitCallback,

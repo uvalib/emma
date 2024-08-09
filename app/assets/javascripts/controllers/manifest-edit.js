@@ -345,7 +345,7 @@ appSetup(MODULE, function() {
          * Indicate whether the instance has a different value.
          *
          * @param {*}       value         A Value or convertible to a Value.
-         * @param {boolean} [ordered]     If **true**, array order matters.
+         * @param {boolean} [ordered]     If *true*, array order matters.
          *
          * @returns {boolean}             They represent different values.
          */
@@ -360,11 +360,11 @@ appSetup(MODULE, function() {
         /**
          * Return a representation of the value for initializing an input.
          *
-         * @param {string} [separator]  Only for {@link type} === "array".
+         * @param {string} [_separator]     Unused for this subclass.
          *
          * @returns {string}
          */
-        forInput(separator = "\n") {
+        forInput(_separator = "\n") {
             return this.file || "";
         }
     }
@@ -375,7 +375,7 @@ appSetup(MODULE, function() {
 
     /**
      * Indicates whether expand/contract controls rotate (via CSS transition)
-     * or whether their state is indicated by different icons (if **false**).
+     * or whether their state is indicated by different icons (if *false*).
      *
      * @type {boolean}
      *
@@ -401,8 +401,8 @@ appSetup(MODULE, function() {
     const EMBED_UPLOADER = false;
 
     /**
-     * Name of the attribute indicating the ManifestItem database table column
-     * associated with a grid cell and its descendents.
+     * The name of the attribute indicating the ManifestItem database table
+     * column associated with a grid cell and its descendents.
      *
      * @type {string}
      */
@@ -939,7 +939,7 @@ appSetup(MODULE, function() {
         const opt  = { caller: func, type: type };
         OUT.debug(`${func}: from "${filename}": type "${type}"; data =`, data);
         sendUpdateRecords(data, opt);
-   }
+    }
 
     // ========================================================================
     // Functions - form - export
@@ -1058,14 +1058,14 @@ appSetup(MODULE, function() {
      * into edit mode. <p/>
      *
      * The maximum number of characters of the placeholder and any data line is
-     * treated as the desired *cols* attribute for that textarea.  The maximum
-     * *cols* attribute (with a fudge factor for non-constant-width fonts) is
-     * used to explicitly set the *cols* attribute on all included textareas.
+     * treated as the desired `cols` attribute for that textarea.  The maximum
+     * `cols` attribute (with a fudge factor for non-constant-width fonts) is
+     * used to explicitly set the `cols` attribute on all included textareas.
      *
      * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea
      *
      * @param {Selector} [cells]      Default: {@link allDataCells}
-     * @param {number}   [min_cols]   Minimum *cols* attribute value.
+     * @param {number}   [min_cols]   Minimum `cols` attribute value.
      * @param {number}   [scale]      Heuristic for variable width fonts.
      */
     function initializeTextareaColumns(cells, min_cols = 20, scale = 1.2) {
@@ -1091,7 +1091,7 @@ appSetup(MODULE, function() {
 
     /**
      * Records that have a non-empty file_data column when rendered on the
-     * server have the contents of that field put into a *data-value* attribute
+     * server have the contents of that field put into a `data-value` attribute
      * which needs to be processed here in order to associate the data with the
      * cell. <p/>
      *
@@ -1381,8 +1381,8 @@ appSetup(MODULE, function() {
     /**
      * Use received data to update cell(s) associated with data values. <p/>
      *
-     * If the row doesn't have a *data-item-id* attribute it will be set here
-     * if data has an *id* value.
+     * If the row doesn't have a `data-item-id` attribute it will be set here
+     * if data has an `id` value.
      *
      * @param {Selector}     target   Row or cell.
      * @param {ManifestItem} data
@@ -1676,8 +1676,8 @@ appSetup(MODULE, function() {
      *
      * @param {Selector} row
      * @param {string}   action
-     * @param {boolean}  [enable]     If **false** then disable.
-     * @param {boolean}  [forbid]     If **true** add ".forbidden" if disabled.
+     * @param {boolean}  [enable]     If *false*, then disable.
+     * @param {boolean}  [forbid]     If *true*, add ".forbidden" if disabled.
      *
      * @returns {jQuery}              The submit button.
      */
@@ -1692,7 +1692,7 @@ appSetup(MODULE, function() {
      * @param {Selector} row
      * @param {string}   action
      * @param {boolean}  [enable]
-     * @param {boolean}  [forbid]     If **true** add ".forbidden" if disabled.
+     * @param {boolean}  [forbid]     If *true*, add ".forbidden" if disabled.
      *
      * @returns {jQuery}              The submit button.
      */
@@ -1936,7 +1936,7 @@ appSetup(MODULE, function() {
      * @param {Selector} target
      * @param {boolean}  [intermediate]     If more row changes coming.
      *
-     * @returns {boolean}                   **false** if not deleted.
+     * @returns {boolean}                   *false* if not deleted.
      */
     function deleteRow(target, intermediate) {
         const func = "deleteRow"; OUT.debug(`${func}: target =`, target);
@@ -1972,7 +1972,7 @@ appSetup(MODULE, function() {
      * records be marked for deletion.
      *
      * @param {number|ManifestItem|jQuery|HTMLElement|array} list
-     * @param {boolean} [preserve_last]     Default: **true**.
+     * @param {boolean} [preserve_last]     Default: *true*.
      * @param {boolean} [intermediate]      If more row changes coming.
      */
     function deleteRows(list, preserve_last, intermediate) {
@@ -2185,8 +2185,8 @@ appSetup(MODULE, function() {
      * Enable the delete button for the given row.
      *
      * @param {Selector} row
-     * @param {boolean}  [enable]     If **false** run {@link disableDelete}.
-     * @param {boolean}  [forbid]     If **true** add ".forbidden" if disabled.
+     * @param {boolean}  [enable]     If *false*, run {@link disableDelete}.
+     * @param {boolean}  [forbid]     If *true*, add ".forbidden" if disabled.
      *
      * @returns {jQuery}              The submit button.
      */
@@ -2198,7 +2198,7 @@ appSetup(MODULE, function() {
      * Disable operation button for the given row.
      *
      * @param {Selector} row
-     * @param {boolean}  [forbid]     If **true** add ".forbidden".
+     * @param {boolean}  [forbid]     If *true*, add ".forbidden".
      *
      * @returns {jQuery}              The submit button.
      */
@@ -2365,8 +2365,8 @@ appSetup(MODULE, function() {
      * Enable bibliographic lookup.
      *
      * @param {Selector} row
-     * @param {boolean}  [enable]     If **false** run {@link disableLookup}.
-     * @param {boolean}  [forbid]     If **true** add ".forbidden" if disabled.
+     * @param {boolean}  [enable]     If *false*, run {@link disableLookup}.
+     * @param {boolean}  [forbid]     If *true*, add ".forbidden" if disabled.
      *
      * @returns {jQuery}              The submit button.
      */
@@ -2378,7 +2378,7 @@ appSetup(MODULE, function() {
      * Disable bibliographic lookup.
      *
      * @param {Selector} row
-     * @param {boolean}  [forbid]     If **true** add ".forbidden".
+     * @param {boolean}  [forbid]     If *true*, add ".forbidden".
      *
      * @returns {jQuery}              The submit button.
      */
@@ -2712,7 +2712,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Indicate whether *repo* requires the "partner repository workflow".
+     * Indicate whether **repo** requires the "partner repository workflow".
      *
      * @param {string} [repo]
      *
@@ -3491,12 +3491,12 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Lookup the label for *value* based on *type*.
+     * Lookup the label for **value** based on **type**.
      *
      * @param {string} type
      * @param {string} value
      *
-     * @returns {string}              Defaults to *value* if *type* not valid.
+     * @returns {string}        Defaults to **value** if **type** not valid.
      */
     function statusLabel(type, value) {
         const entry = STATUS_TYPE_VALUES[type];
@@ -3573,7 +3573,7 @@ appSetup(MODULE, function() {
 
     /**
      * Modify status indicators for a row based on the status values given by
-     * *data*.
+     * **data**.
      *
      * @param {Selector}                          target    Row or cell.
      * @param {ManifestItemData|object|undefined} data
@@ -3722,7 +3722,7 @@ appSetup(MODULE, function() {
      * Set the related data row's changed state.
      *
      * @param {Selector} row
-     * @param {boolean}  [setting]    If **false**, set as unchanged.
+     * @param {boolean}  [setting]    If *false*, set as unchanged.
      *
      * @returns {boolean}
      */
@@ -3817,7 +3817,7 @@ appSetup(MODULE, function() {
      * this is a row unrelated to any ManifestItem record.
      *
      * @param {Selector} [original]         Source data row.
-     * @param {boolean}  [clear_errors]     If **true**, remove error status.
+     * @param {boolean}  [clear_errors]     If *true*, remove error status.
      *
      * @returns {jQuery}
      */
@@ -4008,7 +4008,7 @@ appSetup(MODULE, function() {
      * Prepare all of the data cells within the target data row.
      *
      * @param {Selector} target
-     * @param {boolean}  [clear_errors]     If **true**, remove error status.
+     * @param {boolean}  [clear_errors]     If *true*, remove error status.
      */
     function initializeDataCells(target, clear_errors) {
         OUT.debug("initializeDataCells: target =", target);
@@ -4020,7 +4020,7 @@ appSetup(MODULE, function() {
      * Prepare the single data cell associated with the target.
      *
      * @param {Selector} cell               A cell or element inside a cell.
-     * @param {boolean}  [clear_errors]     If **true**, remove error status.
+     * @param {boolean}  [clear_errors]     If *true*, remove error status.
      *
      * @returns {jQuery}
      */
@@ -4058,7 +4058,7 @@ appSetup(MODULE, function() {
      * Refresh cell display.
      *
      * @param {Selector} cell               A cell or element inside a cell.
-     * @param {boolean}  [clear_errors]     If **true**, remove error status.
+     * @param {boolean}  [clear_errors]     If *true*, remove error status.
      *
      * @returns {jQuery}
      */
@@ -4332,7 +4332,7 @@ appSetup(MODULE, function() {
      * Set the related data cell's changed state.
      *
      * @param {Selector} cell         A cell or element inside a cell.
-     * @param {boolean}  [setting]    Default: **true**.
+     * @param {boolean}  [setting]    Default: *true*.
      *
      * @returns {boolean}
      */
@@ -4421,9 +4421,9 @@ appSetup(MODULE, function() {
      * Set the related data cell's valid state.
      *
      * @param {Selector} cell         A cell or element inside a cell.
-     * @param {boolean}  [setting]    If **false**, make invalid.
+     * @param {boolean}  [setting]    If *false*, make invalid.
      *
-     * @returns {boolean}             **true** if set to valid.
+     * @returns {boolean}             *true* if set to valid.
      */
     function setCellValid(cell, setting) {
         //OUT.debug(`setCellValid: "${setting}"; cell =`, cell);
@@ -4606,7 +4606,7 @@ appSetup(MODULE, function() {
      * Remove content from a data cell display element.
      *
      * @param {Selector} cell               A cell or element inside a cell.
-     * @param {boolean}  [skip_file_data]   If **true**, leave displayed name.
+     * @param {boolean}  [skip_file_data]   If *true*, leave displayed name.
      */
     function cellDisplayClear(cell, skip_file_data) {
         //OUT.debug("cellDisplayClear: cell =", cell);
@@ -4801,7 +4801,7 @@ appSetup(MODULE, function() {
      *
      * @param {Selector} cell         A cell or element inside a cell.
      *
-     * @return {boolean}              **false** if already editing.
+     * @return {boolean}              *false* if already editing.
      */
     function startValueEdit(cell) {
         const func  = "startValueEdit";
@@ -4859,9 +4859,9 @@ appSetup(MODULE, function() {
      * End editing a cell.
      *
      * @param {Selector} cell         A cell or element inside a cell.
-     * @param {*}        [new_value]  If **false** don't update value.
+     * @param {*}        [new_value]  If *false*, don't update value.
      *
-     * @return {boolean}              **false** if not currently editing.
+     * @return {boolean}              *false* if not currently editing.
      */
     function finishValueEdit(cell, new_value) {
         const func  = "finishValueEdit";
@@ -5262,7 +5262,7 @@ appSetup(MODULE, function() {
      * Set whether the data cell is being edited.
      *
      * @param {Selector} cell         A cell or element inside a cell.
-     * @param {boolean}  [setting]    If **false**, unset edit mode.
+     * @param {boolean}  [setting]    If *false*, unset edit mode.
      */
     function setCellEditMode(cell, setting) {
         //OUT.debug(`setCellEditMode: setting = "${setting}"; cell =`, cell);
@@ -5349,7 +5349,7 @@ appSetup(MODULE, function() {
     /**
      * Finalize the control for expanding/contracting the controls column.
      *
-     * ({@link setupRowOperations} is relied upon to update *aria-controls*
+     * ({@link setupRowOperations} is relied upon to update `aria-controls`
      * initially and for rows added subsequently.)
      *
      * @param {Selector} [target]
@@ -5465,7 +5465,7 @@ appSetup(MODULE, function() {
     /**
      * The Manifest ID associated with these manifest rows.
      *
-     * @note Currently this is *only* associated with the $grid element.
+     * @note Currently this is _only_ associated with the $grid element.
      *
      * @returns {string|undefined}
      */
@@ -5810,7 +5810,7 @@ appSetup(MODULE, function() {
      *
      * If target has an equals sign it's assumed to be an attribute/value pair
      * which is used to find the indicated item (e.g. "#data-item-id=18" will
-     * result in the selector *[data-item-id="18"]*.
+     * result in the selector `[data-item-id="18"]`.
      *
      * @params {string} target
      */
@@ -5987,7 +5987,7 @@ appSetup(MODULE, function() {
     /**
      * Change the display to indicate that the EMMA server is offline.
      *
-     * @param {boolean} [setting]     If **false**, indicate not offline.
+     * @param {boolean} [setting]     If *false*, indicate not offline.
      */
     function setOffline(setting) {
         const offline    = (setting !== false);

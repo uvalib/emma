@@ -349,7 +349,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     def submission_status_header: (?row: Integer, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
-    # submit_status_element
+    # Generate a row of the submission grid.
     #
     # @param [String, nil]          ctrl
     # @param [String, ManifestItem] item
@@ -364,7 +364,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     def submit_status_element: ((String|nil) ctrl, (String|ManifestItem) item, Hash[Symbol,(String|Symbol|bool|nil)] statuses, ?row: Integer, ?col: Integer, ?tag: Symbol|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
-    # submit_status_ctls
+    # Generate the checkbox selection control for a row of the submission grid.
     #
     # @param [String, nil]  ctrl
     # @param [Integer, nil] col
@@ -376,7 +376,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     def submit_status_ctls: (?(String|nil) ctrl, ?col: Integer|nil, tag: Symbol|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
-    # submit_status_item
+    # Generate the item name cell for a row of the submission grid.
     #
     # @param [String, ManifestItem] item
     # @param [Integer, nil]         col
@@ -388,7 +388,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     def submit_status_item: ((String|ManifestItem) item, ?col: Integer|nil, tag: Symbol|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
-    # submit_status_value
+    # Generate a status value cell for a row of the submission grid.
     #
     # @param [Symbol]       type
     # @param [Symbol, nil]  status
@@ -763,7 +763,7 @@ class ManifestItemDecorator
   #
   def details_container: (*String before, **untyped opt) ?{ () -> (ActiveSupport::SafeBuffer | nil) } -> ActiveSupport::SafeBuffer
 
-  # Submission status row for a single active submission.
+  # Submission status row for a single manifest item submission.
   #
   # @param [Integer, nil] row
   # @param [Integer]      col

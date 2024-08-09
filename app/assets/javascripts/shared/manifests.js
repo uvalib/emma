@@ -28,7 +28,7 @@ const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
 /**
  * @typedef {ActionProperties} ActionPropertiesExt
  *
- * @property {boolean} [highlight]  If **true** add BEST_CHOICE_MARKER.
+ * @property {boolean} [highlight]  If *true*, add BEST_CHOICE_MARKER.
  */
 
 // ============================================================================
@@ -115,7 +115,7 @@ export function initializeButtonSet(buttons, caller) {
 }
 
 /**
- * Return the button indicated by *type*.
+ * Return the button indicated by **type**.
  *
  * @param {string}                 type
  * @param {Object.<string,jQuery>} buttons
@@ -143,7 +143,7 @@ export function buttonFor(type, buttons, caller) {
  * @param {Selector}                button
  * @param {boolean}                 [enable]
  * @param {string|ActionProperties} [config]
- * @param {ActionPropertiesExt}     [override]  Overrides to *config*.
+ * @param {ActionPropertiesExt}     [override]  Overrides to **config**.
  *
  * @returns {jQuery|undefined}
  */
@@ -177,7 +177,7 @@ export function enableButton(button, enable, config, override) {
 // ============================================================================
 
 /**
- * Configuration values entries for the given *type*.
+ * Configuration values entries for the given **type**.
  *
  * @param {string}  type
  * @param {boolean} [enabled]

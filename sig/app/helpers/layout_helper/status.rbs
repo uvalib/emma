@@ -59,7 +59,7 @@ module LayoutHelper::Status
   #
   def engine_status: (Class service) -> EngineStatus
 
-  # engine_status
+  # engine_control
   #
   # @param [EngineStatus] engine
   # @param [String]       css       Characteristic CSS class/selector.

@@ -126,7 +126,7 @@ module SessionConcern
     user     = user[:uid] || user['uid'] if user.is_a?(Hash)
     user     = user.account              if user.respond_to?(:account)
     user     = user.to_s.presence || config_term(:session, :unknown_user)
-    # noinspection RubyMismatchedReturnType
+    # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
     config_page(:user_sessions, action, status, user: user)
   end
 

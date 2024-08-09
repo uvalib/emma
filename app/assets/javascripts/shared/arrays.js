@@ -18,7 +18,7 @@ AppDebug.file("shared/arrays");
  * Make a duplicate of the given array.
  *
  * @param {*}       item
- * @param {boolean} [shallow]         If **true** make a shallow copy.
+ * @param {boolean} [shallow]         If *true*, make a shallow copy.
  *
  * @returns {array}
  */

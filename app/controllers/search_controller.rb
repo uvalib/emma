@@ -223,7 +223,7 @@ class SearchController < ApplicationController
   #
   def image
     #__log_activity
-    # __debug_route
+    #__debug_route
     response   = Faraday.get(params[:url]) # TODO: caching
     image_data = Base64.encode64(response.body)
     mime_type  = response.headers['content-type']

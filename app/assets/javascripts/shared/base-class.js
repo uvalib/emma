@@ -22,7 +22,7 @@ AppDebug.file("shared/base-class", MODULE, DEBUG);
  * **Usage Notes** <p/>
  * Subclasses are expected to define an explicit static CLASS_NAME in order to
  * make use of the diagnostic methods defined here.  (Relying on `this.name`
- * isn't sufficient because that will yield the *minified* name rather than the
+ * isn't sufficient because that will yield the _minified_ name rather than the
  * expected original class name.)
  */
 export class BaseClass {

@@ -42,7 +42,7 @@ appSetup(MODULE, function() {
 
     /**
      * If the client debug table has an entry for the given key, fill it in
-     * by applying *items_in* to all elements on the page.
+     * by applying **items_in** to all elements on the page.
      *
      * @param {string}                     key
      * @param {function(string): string[]} items_in
@@ -60,7 +60,7 @@ appSetup(MODULE, function() {
     // Actions
     // ========================================================================
 
-    // Show data-* attributes used within the page. (DEBUG_DATA_ATTR)
+    // Show `data-*` attributes used within the page. (DEBUG_DATA_ATTR)
     fillIn("data-*", dataAttributesWithin);
 
     // Show CSS classes used within the page. (DEBUG_CSS_CLASS)

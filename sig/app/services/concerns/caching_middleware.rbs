@@ -35,14 +35,14 @@ module CachingMiddleware
     # @return [Hash]
     attr_reader store_options: symHash
 
-    # @return [Array<String>]
-    attr_reader cacheable_paths: strArray
+    # @return [Array<String>, nil]
+    attr_reader cacheable_paths: strArray | nil
 
     @app:       Faraday::Middleware
     @namespace: String | nil
     @cache_dir: String | nil
 
-    # Initialize
+    # Initialize an instance.
     #
     # @param [Faraday::Middleware] app
     # @param [Hash, nil]           opt

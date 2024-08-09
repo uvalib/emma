@@ -246,7 +246,7 @@ export class NavGroup extends BaseClass {
      *
      * @param {boolean} [no_throw]
      *
-     * @returns {boolean}             **false** if there was an error.
+     * @returns {boolean}             *false* if there was an error.
      * @protected
      */
     _validate(no_throw) {
@@ -265,7 +265,7 @@ export class NavGroup extends BaseClass {
      * @param {array|undefined} parts
      * @param {boolean}         [no_throw]
      *
-     * @returns {boolean}             **true** if there was an error.
+     * @returns {boolean}             *true* if there was an error.
      * @protected
      */
     _validationError(parts, no_throw) {
@@ -814,7 +814,7 @@ export class NavGroup extends BaseClass {
      * @param {NavGroupEventProperties} result
      * @param {string}                  [caller]
      *
-     * @returns {boolean}                 **true** if there were no problems.
+     * @returns {boolean}                 *true* if there were no problems.
      */
     _validateGroupEventAnalysis(result, caller) {
         const err = [];
@@ -906,7 +906,7 @@ export class NavGroup extends BaseClass {
     /**
      * Set an event handler for the capturing phase. <p/>
      *
-     * If *options* includes "{listen: false}" then the only action is to
+     * If **options** includes "{listen: false}" then the only action is to
      * remove a previous event handler.
      *
      * @param {Selector}                           element
@@ -992,7 +992,7 @@ export class NavGroup extends BaseClass {
     // ========================================================================
 
     /**
-     * Indicate whether *item* is a valid group element.
+     * Indicate whether **item** is a valid group element.
      *
      * @param {Selector|undefined} item
      *
@@ -1037,7 +1037,7 @@ export class NavGroup extends BaseClass {
     /**
      * Indicate group navigation is in effect by marking the DOM element.
      *
-     * @param {boolean} [announce]    Silent if **false**.
+     * @param {boolean} [announce]    Silent if *false*.
      */
     _enterNavigation(announce) {
         const func = "_enterNavigation";
@@ -1051,7 +1051,7 @@ export class NavGroup extends BaseClass {
     /**
      * Indicate group navigation is not in effect by unmarking the DOM element.
      *
-     * @param {boolean} [announce]    Silent if **false**.
+     * @param {boolean} [announce]    Silent if *false*.
      */
     _leaveNavigation(announce) {
         const func = "_leaveNavigation";
@@ -1083,7 +1083,7 @@ export class NavGroup extends BaseClass {
     // ========================================================================
 
     /**
-     * Indicate whether *item* is a subclass control.
+     * Indicate whether **item** is a subclass control.
      *
      * @param {Selector|undefined} item
      *
@@ -1094,7 +1094,7 @@ export class NavGroup extends BaseClass {
     }
 
     /**
-     * The single control element associated with *item*.
+     * The single control element associated with **item**.
      *
      * @param {Selector}     item
      * @param {string|false} [caller]           For diagnostic messages.
@@ -1112,7 +1112,7 @@ export class NavGroup extends BaseClass {
     }
 
     /**
-     * The single control element associated with *item*.
+     * The single control element associated with **item**.
      *
      * @param {Selector|undefined} item
      *
@@ -1124,7 +1124,7 @@ export class NavGroup extends BaseClass {
     }
 
     /**
-     * The single focusable control element associated with *item*.
+     * The single focusable control element associated with **item**.
      *
      * @param {Selector|undefined} item
      * @param {string|false}       [caller]     For diagnostic messages.
@@ -1147,8 +1147,8 @@ export class NavGroup extends BaseClass {
     }
 
     /**
-     * Previous focusable relative to *from* that will receive focus if moving
-     * backward, wrapping to the last if *wrap* is **true**.
+     * Previous focusable relative to **from** that will receive focus if
+     * moving backward, wrapping to the last if **wrapping** is *true*.
      *
      * @param {Selector} [from]       Default: {@link currentControl}.
      * @param {boolean}  [wrapping]   Default: {@link WRAP_MOVE}.
@@ -1164,8 +1164,8 @@ export class NavGroup extends BaseClass {
     }
 
     /**
-     * Next focusable relative to *from* that will receive focus if moving
-     * forward, wrapping to the first if *wrap* is **true**.
+     * Next focusable relative to **from** that will receive focus if moving
+     * forward, wrapping to the first if **wrapping** is *true*.
      *
      * @param {Selector} [from]       Default: {@link currentControl}.
      * @param {boolean}  [wrapping]   Default: {@link WRAP_MOVE}.
@@ -1247,7 +1247,7 @@ export class NavGroup extends BaseClass {
     // ========================================================================
 
     /**
-     * The single entry element associated with *item*.
+     * The single entry element associated with **item**.
      *
      * @param {Selector}     item
      * @param {string|false} [caller]           For diagnostic messages.
@@ -1265,7 +1265,7 @@ export class NavGroup extends BaseClass {
     }
 
     /**
-     * The single entry element associated with *item*.
+     * The single entry element associated with **item**.
      *
      * @param {Selector|undefined} item
      *
@@ -1277,8 +1277,8 @@ export class NavGroup extends BaseClass {
     }
 
     /**
-     * The single entry element for *item* which is associated with a focusable
-     * control.
+     * The single entry element for **item** which is associated with a
+     * focusable control.
      *
      * @param {Selector|undefined} item
      * @param {string}             [caller]     For diagnostic messages.
@@ -1292,8 +1292,8 @@ export class NavGroup extends BaseClass {
     }
 
     /**
-     * Previous focusable relative to *from* that will receive focus if moving
-     * backward, wrapping to the last if *wrap* is **true**.
+     * Previous focusable relative to **from** that will receive focus if
+     * moving backward, wrapping to the last if **wrapping** is *true*.
      *
      * @param {Selector} [from]       Default: {@link currentEntry}.
      * @param {boolean}  [wrapping]   Default: {@link WRAP_MOVE}.
@@ -1306,8 +1306,8 @@ export class NavGroup extends BaseClass {
     }
 
     /**
-     * Next focusable relative to *from* that will receive focus if moving
-     * forward, wrapping to the first if *wrap* is **true**.
+     * Next focusable relative to **from** that will receive focus if moving
+     * forward, wrapping to the first if **wrapping** is *true*.
      *
      * @param {Selector} [from]       Default: {@link currentEntry}.
      * @param {boolean}  [wrapping]   Default: {@link WRAP_MOVE}.
@@ -1342,9 +1342,9 @@ export class NavGroup extends BaseClass {
     /**
      * Affect navigation according to the key combination provided. <p/>
      *
-     * If returning **true** then the event should be considered handled
-     * (_i.e._, should not be propagated); if returning **false** then the
-     * event is explicitly expected to be propagated. <p/>
+     * If returning *true* then the event should be considered handled (_i.e._,
+     * should not be propagated); if returning *false* then the event is
+     * explicitly expected to be propagated. <p/>
      *
      * @param {string} key            From {@link keyCombo}.
      * @param {jQuery} [$target]      Actual event target.
@@ -1376,7 +1376,7 @@ export class NavGroup extends BaseClass {
      * @param {string}      [key]
      * @param {...*}        args        Passed to {@link _activateControl}.
      *
-     * @returns {boolean}               If **true** event is considered handled
+     * @returns {boolean}               If *true* event is considered handled.
      */
     activate($target, key, ...args) {
         const func = "activate";
@@ -1393,7 +1393,7 @@ export class NavGroup extends BaseClass {
      * @param {string} cb_type        Related {@link _callbacks} entry.
      * @param {string} [key]
      *
-     * @returns {boolean}             If **true** event is considered handled.
+     * @returns {boolean}             If *true* event is considered handled.
      */
     _activateGroup(cb_type, key) {
         const func       = "_activateGroup";
@@ -1425,7 +1425,7 @@ export class NavGroup extends BaseClass {
      * @param {string}      [key]
      * @param {...*}        args      Passed to {@link _moveTo}
      *
-     * @returns {boolean}             If **true** event is considered handled.
+     * @returns {boolean}             If *true* event is considered handled.
      */
     _activateControl(cb_type, $target, key, ...args) {
         const func       = "_activateControl";
@@ -1486,7 +1486,7 @@ export class NavGroup extends BaseClass {
      * @param {string} [key]
      * @param {...*}   _args          Ignored.
      *
-     * @returns {boolean}             If **true** event is considered handled.
+     * @returns {boolean}             If *true* event is considered handled.
      */
     deactivate($target, key, ..._args) {
         const func         = "deactivate";
@@ -1520,7 +1520,7 @@ export class NavGroup extends BaseClass {
      * @param {string} [key]          Unused.
      * @param {...*}   args           Passed to {@link _moveTo}.
      *
-     * @returns {boolean}             If **true** event is considered handled.
+     * @returns {boolean}             If *true* event is considered handled.
      */
     moveToFirst($target, key, ...args) {
         const func = "moveToFirst";
@@ -1538,7 +1538,7 @@ export class NavGroup extends BaseClass {
      * @param {string} [key]          Unused.
      * @param {...*}   args           Passed to {@link _moveTo}.
      *
-     * @returns {boolean}             If **true** event is considered handled.
+     * @returns {boolean}             If *true* event is considered handled.
      */
     moveToLast($target, key, ...args) {
         const func = "moveToLast";
@@ -1556,7 +1556,7 @@ export class NavGroup extends BaseClass {
      * @param {string} [key]
      * @param {...*}   args           Passed to {@link _moveTo}
      *
-     * @returns {boolean}             If **true** event is considered handled.
+     * @returns {boolean}             If *true* event is considered handled.
      */
     moveBackward($target, key, ...args) {
         const func = "moveBackward";
@@ -1574,7 +1574,7 @@ export class NavGroup extends BaseClass {
      * @param {string} [key]
      * @param {...*}   args           Passed to {@link _moveTo}
      *
-     * @returns {boolean}             If **true** event is considered handled.
+     * @returns {boolean}             If *true* event is considered handled.
      */
     moveForward($target, key, ...args) {
         const func = "moveForward";
@@ -1620,10 +1620,10 @@ export class NavGroup extends BaseClass {
     // ========================================================================
 
     /**
-     * Go to the entry associated with *$item*.
+     * Go to the entry associated with **$item**.
      *
      * @param {jQuery}  $item         A group entry or control.
-     * @param {boolean} [focus]       Set focus on control unless **false**.
+     * @param {boolean} [focus]       Set focus on control unless *false*.
      * @param {...*}    args          Passed to {@link _updateControl}.
      */
     _moveTo($item, focus, ...args) {
@@ -1637,12 +1637,12 @@ export class NavGroup extends BaseClass {
     }
 
     /**
-     * Update information for the entry associated with *$item*.
+     * Update information for the entry associated with **$item**.
      *
      * @param {jQuery}  $item         A group entry or control.
      * @param {...*}    args          Passed to {@link _updateControl}.
      *
-     * @returns {boolean}             **false** if *$item* is empty.
+     * @returns {boolean}             *false* if **$item** is empty.
      */
     _updateItem($item, ...args) {
         this._debug("_updateItem: args =", args, "$item =", $item);
@@ -1653,7 +1653,7 @@ export class NavGroup extends BaseClass {
     }
 
     /**
-     * Update the status of the control associated with *$item*.
+     * Update the status of the control associated with **$item**.
      *
      * @param {jQuery} $item          NOTE: assumed to be valid.
      * @param {...*}   args           Ignored.
@@ -1664,7 +1664,7 @@ export class NavGroup extends BaseClass {
     }
 
     /**
-     * Update the selection state of the entry associated with *$item*.
+     * Update the selection state of the entry associated with **$item**.
      *
      * @param {jQuery} $item          NOTE: assumed to be valid.
      * @param {boolean} [select]
@@ -1683,13 +1683,13 @@ export class NavGroup extends BaseClass {
     }
 
     /**
-     * Execute any callback(s) registered for *types*.
+     * Execute any callback(s) registered for **type**.
      *
      * @param {jQuery|undefined} $control
      * @param {string}           type
      * @param {...string}        [more]
      *
-     * @returns {boolean}           Always **true** if there were no callbacks.
+     * @returns {boolean}           Always *true* if there were no callbacks.
      * @protected
      */
     _runCallbacks($control, type, ...more) {
@@ -1750,7 +1750,7 @@ export class NavGroup extends BaseClass {
     // ========================================================================
 
     /**
-     * Indicate whether *item* is a valid group element.
+     * Indicate whether **item** is a valid group element.
      *
      * @param {Selector|undefined} item
      *
@@ -1763,7 +1763,7 @@ export class NavGroup extends BaseClass {
     }
 
     /**
-     * Return *item* or the group in which it is contained.
+     * Return **item** or the group in which it is contained.
      *
      * @param {Selector} item
      *
@@ -1777,7 +1777,7 @@ export class NavGroup extends BaseClass {
     }
 
     /**
-     * Indicate whether *item* should be within a nav group.
+     * Indicate whether **item** should be within a nav group.
      *
      * @param {Selector|undefined} item
      *
@@ -1790,7 +1790,7 @@ export class NavGroup extends BaseClass {
     /**
      * The selector for filtering entries which are marked as current.
      *
-     * @param {boolean} [setting]     If **false** the selector is negated.
+     * @param {boolean} [setting]     If *false*, the selector is negated.
      *
      * @returns {string}
      */
@@ -1799,7 +1799,7 @@ export class NavGroup extends BaseClass {
     }
 
     /**
-     * The class instance associated with *container* (if any).
+     * The class instance associated with **container** (if any).
      *
      * @param {Selector} container
      *
@@ -1811,7 +1811,7 @@ export class NavGroup extends BaseClass {
     }
 
     /**
-     * Find the group characterized by the subclass at or within *root* and
+     * Find the group characterized by the subclass at or within **root** and
      * create a subclass instance for it which will be attached to the root
      * container element.
      *
@@ -1897,7 +1897,7 @@ export class NavGroup extends BaseClass {
     // ========================================================================
 
     /**
-     * Indicate whether *item* is a subclass control.
+     * Indicate whether **item** is a subclass control.
      *
      * @param {Selector|undefined} item
      *
@@ -1910,7 +1910,7 @@ export class NavGroup extends BaseClass {
     }
 
     /**
-     * The focusable element(s) associated with *item*.
+     * The focusable element(s) associated with **item**.
      *
      * @param {Selector} item
      *
@@ -2019,7 +2019,7 @@ export class ListGroup extends NavGroup {
     // ========================================================================
 
     /**
-     * Update the status of the entry and control associated with *$item*.
+     * Update the status of the entry and control associated with **$item**.
      *
      * @param {jQuery}  $item         NOTE: assumed to be valid.
      * @param {boolean} [check]
@@ -2034,7 +2034,7 @@ export class ListGroup extends NavGroup {
     // ========================================================================
 
     /**
-     * Update the status of the entry and control associated with *$item*.
+     * Update the status of the entry and control associated with **$item**.
      *
      * @param {jQuery}  $item
      * @param {boolean} [check]
@@ -2277,7 +2277,7 @@ export class ControlGroup extends NavGroup {
      *
      * @param {boolean} [no_throw]
      *
-     * @returns {boolean}             **false** if there was an error.
+     * @returns {boolean}             *false* if there was an error.
      * @protected
      */
     _validate(no_throw) {
@@ -2338,7 +2338,7 @@ export class CellControlGroup extends ControlGroup {
      *
      * @param {boolean} [no_throw]
      *
-     * @returns {boolean}             **false** if there was an error.
+     * @returns {boolean}             *false* if there was an error.
      * @protected
      */
     _validate(no_throw) {

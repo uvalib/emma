@@ -127,7 +127,7 @@ const POST_CHANGE_EVENTS =
 // ============================================================================
 
 /**
- * The "data-*" attribute used to save the originally selected menu item(s).
+ * The `data-*` attribute used to save the originally selected menu item(s).
  *
  * @type {string}
  */
@@ -503,7 +503,7 @@ function suppressMenuOpen(event) {
 // ============================================================================
 
 /**
- * Indicate whether *elem* is a menu `<select>` element.
+ * Indicate whether **elem** is a menu `<select>` element.
  *
  * @param {Selector} elem
  *
@@ -514,7 +514,7 @@ function isMenu(elem) {
 }
 
 /**
- * Return the menu `<select>` element associated with *elem*.
+ * Return the menu `<select>` element associated with **elem**.
  *
  * @param {Selector} elem
  *
@@ -545,8 +545,8 @@ function isAdvanced(menu) {
 }
 
 /**
- * Get all menus at or below the element(s) described by *base*, limited to
- * "single" or "multiple" if *type* is given.
+ * Get all menus at or below the element(s) described by **base**, limited to
+ * "single" or "multiple" if **type** is given.
  *
  * @param {Selector} base
  * @param {string}   [type]           Either SINGLE_CLASS or MULTIPLE_CLASS.
