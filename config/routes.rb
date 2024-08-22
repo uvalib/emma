@@ -392,6 +392,8 @@ unless ONLY_FOR_DOCUMENTATION
   def admin_upload_url(...);                       end
   def advanced_search_path(...);                   end
   def advanced_search_url(...);                    end
+  def analytics_sys_path(...);                     end
+  def analytics_sys_url(...);                      end
   def api_migrate_path(...);                       end
   def api_migrate_url(...);                        end
   def bulk_create_manifest_item_path(...);         end
@@ -464,6 +466,8 @@ unless ONLY_FOR_DOCUMENTATION
   def data_submissions_path(...);                  end
   def data_submissions_url(...);                   end
   def data_url(...);                               end
+  def database_sys_path(...);                      end
+  def database_sys_url(...);                       end
   def delete_account_path(...);                    end
   def delete_account_url(...);                     end
   def delete_enrollment_path(...);                 end
@@ -506,6 +510,8 @@ unless ONLY_FOR_DOCUMENTATION
   def destroy_user_registration_url(...);          end
   def destroy_user_session_path(...);              end
   def destroy_user_session_url(...);               end
+  def disk_space_sys_path(...);                    end
+  def disk_space_sys_url(...);                     end
   def edit_account_path(...);                      end
   def edit_account_url(...);                       end
   def edit_current_account_path(...);              end
@@ -546,10 +552,16 @@ unless ONLY_FOR_DOCUMENTATION
   def enroll_url(...);                             end
   def enrollment_index_path(...);                  end
   def enrollment_index_url(...);                   end
+  def environment_sys_path(...);                   end
+  def environment_sys_url(...);                    end
   def file_download_path(...);                     end
   def file_download_url(...);                      end
+  def files_sys_path(...);                         end
+  def files_sys_url(...);                          end
   def finalize_enrollment_path(...);               end
   def finalize_enrollment_url(...);                end
+  def headers_sys_path(...);                       end
+  def headers_sys_url(...);                        end
   def healthcheck_path(...);                       end
   def healthcheck_url(...);                        end
   def help_index_path(...);                        end
@@ -558,6 +570,10 @@ unless ONLY_FOR_DOCUMENTATION
   def help_url(...);                               end
   def home_path(...);                              end
   def home_url(...);                               end
+  def internals_sys_path(...);                     end
+  def internals_sys_url(...);                      end
+  def jobs_sys_path(...);                          end
+  def jobs_sys_url(...);                           end
   def list_all_account_path(...);                  end
   def list_all_account_url(...);                   end
   def list_all_manifest_path(...);                 end
@@ -576,6 +592,10 @@ unless ONLY_FOR_DOCUMENTATION
   def list_own_manifest_url(...);                  end
   def list_own_upload_path(...);                   end
   def list_own_upload_url(...);                    end
+  def loggers_sys_path(...);                       end
+  def loggers_sys_url(...);                        end
+  def mailers_sys_path(...);                       end
+  def mailers_sys_url(...);                        end
   def manifest_index_path(...);                    end
   def manifest_index_url(...);                     end
   def manifest_item_index_path(...);               end
@@ -611,6 +631,8 @@ unless ONLY_FOR_DOCUMENTATION
   def org_index_url(...);                          end
   def password_path(...);                          end
   def password_url(...);                           end
+  def processes_sys_path(...);                     end
+  def processes_sys_url(...);                      end
   def reedit_upload_path(...);                     end
   def reedit_upload_url(...);                      end
   def registration_path(...);                      end
@@ -643,6 +665,8 @@ unless ONLY_FOR_DOCUMENTATION
   def session_url(...);                            end
   def set_run_state_health_path(...);              end
   def set_run_state_health_url(...);               end
+  def settings_sys_path(...);                      end
+  def settings_sys_url(...);                       end
   def show_account_path(...);                      end
   def show_account_url(...);                       end
   def show_current_account_path(...);              end
@@ -703,10 +727,14 @@ unless ONLY_FOR_DOCUMENTATION
   def upload_upload_url(...);                      end
   def user_registration_path(...);                 end
   def user_registration_url(...);                  end
+  def var_sys_path(...);                           end
+  def var_sys_url(...);                            end
   def version_health_path(...);                    end
   def version_health_url(...);                     end
   def version_path(...);                           end
   def version_url(...);                            end
+  def view_sys_path(...);                          end
+  def view_sys_url(...);                           end
   def welcome_path(...);                           end
   def welcome_url(...);                            end
   # :nocov:

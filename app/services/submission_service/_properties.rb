@@ -327,7 +327,6 @@ module SubmissionService::Properties
     arg = arg.merge(opt)          if arg.is_a?(Hash)
     arg = opt                     if arg.nil?
     arg = arg.first               if arg.is_a?(Array)
-    # noinspection RubyMismatchedReturnType
     case arg
       when SubmissionService::Response then arg[:manifest_id]
       when SubmissionService::Request  then arg.manifest_id
@@ -346,9 +345,6 @@ module SubmissionService::Properties
   #
   # @return [Array<String>]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def extract_items(arg = nil, scope: nil, **opt)
     arg = arg.deep_symbolize_keys if arg.is_a?(Hash)
     arg = arg.merge!(opt)         if arg.is_a?(Hash)

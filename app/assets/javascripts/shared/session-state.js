@@ -40,7 +40,6 @@ export function removeByPrefix(name, debug) {
 
         keys.forEach(key => sessionStorage.removeItem(key));
 
-        // noinspection JSUnresolvedFunction
         debug && keys
             .filter( key => (sessionStorage.getItem(key) !== null))
             .forEach(key => console.warn(`${func}: ${key} NOT REMOVED`));

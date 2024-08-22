@@ -823,7 +823,6 @@ appSetup(MODULE, function() {
          */
         function onSuccess(body) {
             OUT.debug(`${func}: body =`, body);
-            // noinspection JSValidateTypes
             /** @type {ManifestItemTable} */
             const data = body?.items || body;
             if (isEmpty(body)) {
@@ -924,6 +923,7 @@ appSetup(MODULE, function() {
         sendCreateRecords(data, opt);
     }
 
+    // noinspection JSUnusedLocalSymbols
     /**
      * Re-import manifest items from CSV row data.
      *
@@ -1263,6 +1263,7 @@ appSetup(MODULE, function() {
     // Functions - grid - changed state
     // ========================================================================
 
+    // noinspection JSUnusedLocalSymbols
     /**
      * Update row changed state to determine whether the grid has changed.
      *
@@ -2170,6 +2171,7 @@ appSetup(MODULE, function() {
         }
     }
 
+    // noinspection JSUnusedLocalSymbols
     /**
      * The delete button for the given row.
      *
@@ -2353,7 +2355,6 @@ appSetup(MODULE, function() {
 */
 
                 // Update the ManifestItem with the updated data.
-                // noinspection JSCheckFunctionSignatures
                 postRowUpdate($row, data);
             }
 
@@ -3788,6 +3789,7 @@ appSetup(MODULE, function() {
         return changed;
     }
 
+    // noinspection JSUnusedLocalSymbols
     /**
      * Remove the original value data item for the associated cell.
      *
@@ -5445,7 +5447,6 @@ appSetup(MODULE, function() {
      */
     function toggleControlsRemove($toggle, elements) {
         //OUT.debug("toggleControlsRemove:", $toggle, elements);
-        // noinspection JSCheckFunctionSignatures
         const ids       = $(elements).toArray().map(el => $(el).attr("id"));
         const id_set    = new Set(compact(ids));
         const start_ids = $toggle.data(CONTROLS_IDS_DATA) || [];

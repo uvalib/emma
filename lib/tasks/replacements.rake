@@ -10,7 +10,6 @@
   Rake::Task["test:#{name}"].clear
 end
 
-# noinspection RubyMismatchedArgumentType
 namespace :test do
 
   desc 'Run all EMMA tests'

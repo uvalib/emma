@@ -27,7 +27,7 @@ module IngestService::Testing
     # === Fault injection types
 
     bit = -1
-    # noinspection RubyUnusedLocalVariable, RubyMismatchedConstantType
+    # noinspection RubyUnusedLocalVariable
     ALL_FAULTS = [
       SINGLETON_FIELDS_BAD  = 1 << (bit += 1),
       STRING_FIELDS_BAD     = 1 << (bit += 1),
@@ -237,7 +237,6 @@ module IngestService::Testing
       end
       return unless ex.present?
       __debug_banner("#{self.class}.#{meth} #{ex.class}")
-      # noinspection RubyMismatchedArgumentType
       set_error(ex)
     end
 

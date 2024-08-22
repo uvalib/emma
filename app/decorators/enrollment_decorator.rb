@@ -107,7 +107,7 @@ class EnrollmentDecorator < BaseDecorator
     end
 
     # =========================================================================
-    # :section: BaseDecorator::Field overrides
+    # :section: BaseDecorator::Fields overrides
     # =========================================================================
 
     protected

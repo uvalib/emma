@@ -118,13 +118,12 @@ module RepositoryHelper
 
   # Produce a link to retrieve an OpenAlex file.
   #
+  # @note OpenAlex only has direct download of PDF files.
+  #
   # @param [String] url
   # @param [Hash]   opt               Passed to #retrieval_link
   #
   # @return [ActiveSupport::SafeBuffer]
-  #
-  # === Implementation Notes
-  # OpenAlex only has direct download of PDF files.
   #
   def oa_retrieval_link: (String url, **untyped opt) -> ActiveSupport::SafeBuffer
 

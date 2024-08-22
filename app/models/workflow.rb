@@ -864,12 +864,10 @@ module Workflow::Base::States
   #
   # @return [Workflow::State]
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def state_object(state = nil)
     state = state.to_sym       if state.is_a?(String)
     state = spec.states[state] if state.is_a?(Symbol)
+    # noinspection RubyMismatchedReturnType
     state || current_state
   end
 

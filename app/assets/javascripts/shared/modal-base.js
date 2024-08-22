@@ -290,7 +290,6 @@ export class ModalBase extends BaseClass {
         // Include the ID of the iframe for logging.
         if (this._debugging) {
             let id = $modal.data("id") || $iframe.attr("id");
-            // noinspection JSUnresolvedVariable
             id ||= decodeObject($placeholder.attr("data-attr")).id;
             id ||= "unknown";
             func += ` ${id}`;

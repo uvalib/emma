@@ -21,7 +21,6 @@ namespace 'emma:data' do
 
   # ===========================================================================
 
-  # noinspection RubyMismatchedArgumentType
   desc ['Migrate EMMA data to the latest API version and re-index.',
         "* Use '-- --quiet=false' to report non-activity",
         "* Use '-- --commit=false' to avoid updating the database",
@@ -57,7 +56,6 @@ namespace 'emma:data' do
 
   # ===========================================================================
 
-  # noinspection RubyMismatchedArgumentType
   desc ["Migrate EMMA data for API #{API_VERSION}",
         "* Use '-- --time' for run time output",
         "* Use '-- --debug' for verbose data migration output",
@@ -92,7 +90,6 @@ namespace 'emma:data' do
 
   # ===========================================================================
 
-  # noinspection RubyMismatchedArgumentType
   desc ['Re-index completed EMMA submissions',
         "* Use '-- --time' for run time output",
         "* Use '-- --debug' to list successful entries",

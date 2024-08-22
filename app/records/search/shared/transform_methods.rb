@@ -23,7 +23,7 @@ module Search::Shared::TransformMethods
 
   # Transform data fields.
   #
-  # @param [Hash, nil] data           Default: *self*.
+  # @param [Search::Api::Record, Hash, nil] data  Default: *self*.
   #
   # @return [void]
   #
@@ -42,8 +42,8 @@ module Search::Shared::TransformMethods
   # Set the URL of the associated work on the web site of the original
   # repository if not already present.
   #
-  # @param [Hash, nil] data           Default: *self*.
-  # @param [Symbol]    field
+  # @param [Search::Api::Record, Hash, nil] data  Default: *self*.
+  # @param [Symbol]                         field
   #
   # @return [void]
   #
@@ -57,8 +57,8 @@ module Search::Shared::TransformMethods
   # For Internet Archive items, the value is replaced with one that will cause
   # a download request to proxy through EMMA.
   #
-  # @param [Hash, nil] data           Default: *self*.
-  # @param [Symbol]    field
+  # @param [Search::Api::Record, Hash, nil] data  Default: *self*.
+  # @param [Symbol]                         field
   #
   # @return [void]
   #

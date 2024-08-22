@@ -459,7 +459,7 @@ module HelpHelper
     help_span(label, **opt)
   end
 
-  # Render a button for use on help pages.
+  # Render an action menu button for use on help pages.
   #
   # @param [BaseDecorator, Class] decorator
   # @param [Symbol]               action
@@ -538,7 +538,6 @@ module HelpHelper
       @field  = cfg[:field]
       @name   = cfg[:label]
       @label  = html_bold(@name)
-      # noinspection RubyMismatchedArgumentType
       @id     = html_id(base, @name, separator: '_')
       @text   = text && html_span(text, class: 'text')
       @text   = text_value(cfg, :help, :tooltip)

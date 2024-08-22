@@ -97,6 +97,7 @@ module Field::Property
     prop = prop.to_s.titleize            if prop.is_a?(Symbol)
     prop = { label: prop }               if prop.is_a?(String)
     prop = {}                            unless prop.is_a?(Hash)
+    # noinspection RubyMismatchedArgumentType
     prop = { field: field }.merge!(prop) if field && !prop.key?(:field)
     prop = prop.merge(field: field)      if field && (prop[:field] != field)
     prop.map { |item, value|
@@ -228,7 +229,6 @@ module Field::Property
   def value_class(value)
     return TrueFalse if value.to_s.strip.casecmp?('boolean')
     value = value.to_s.safe_constantize if value.is_a?(Symbol)
-    # noinspection RubyMismatchedReturnType
     value if value.is_a?(Class) && [EnumType, Model].any? { |t| value < t }
   end
 

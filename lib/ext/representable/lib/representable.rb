@@ -36,7 +36,6 @@ module Representable
 
     private
 
-    # noinspection RubyMismatchedArgumentType
     if not DEBUG_REPRESENTABLE
 
       def __debug_show(*);   end

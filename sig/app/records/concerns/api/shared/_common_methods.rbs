@@ -222,29 +222,29 @@ module Api::Shared::CommonMethods
 
   # Get the target field value.
   #
-  # @param [Hash, nil] data           Default: *self*.
-  # @param [Symbol]    field
+  # @param [Api::Record, Hash, nil] data    Default: *self*.
+  # @param [Symbol]                 field
   #
   # @return [any, nil]
   #
-  def get_field_value: ((symHash|nil) data, Symbol field) -> untyped
+  def get_field_value: ((Api::Record|symHash|nil) data, Symbol field) -> untyped
 
   # Set the target field value.
   #
-  # @param [Hash, nil] data           Default: *self*.
-  # @param [Symbol]    field
-  # @param [any, nil]  value
+  # @param [Api::Record, Hash, nil] data    Default: *self*.
+  # @param [Symbol]                 field
+  # @param [any, nil]               value
   #
   # @return [void]
   #
-  def set_field_value!: ((symHash|nil) data, Symbol field, untyped value) -> void
+  def set_field_value!: ((Api::Record|symHash|nil) data, Symbol field, untyped value) -> void
 
   # Update the target field.
   #
-  # @param [Hash, nil]    data        Default: *self*.
-  # @param [Symbol]       field
-  # @param [Symbol, nil]  mode        One of #ARRAY_MODES.
-  # @param [Integer, nil] limit       Limit the number of array values.
+  # @param [Api::Record, Hash, nil] data    Default: *self*.
+  # @param [Symbol]                 field
+  # @param [Symbol, nil]            mode    One of #ARRAY_MODES.
+  # @param [Integer, nil]           limit   Limit the number of array values.
   #
   # @return [void]
   #
@@ -252,23 +252,23 @@ module Api::Shared::CommonMethods
   # @yieldparam [Array] values        The current field value.
   # @yieldreturn [any, nil]           The new field value(s).
   #
-  def update_field_value!: ((symHash|nil) data, Symbol field, ?mode: Symbol|nil, ?limit: Integer|nil, **untyped _ignored) { (anyArray values) -> untyped } -> void
+  def update_field_value!: ((Api::Record|symHash|nil) data, Symbol field, ?mode: Symbol|nil, ?limit: Integer|nil, **untyped _ignored) { (anyArray values) -> untyped } -> void
 
   # Get the indicated field values from the indicated target.
   #
-  # @param [Hash, nil]     data       Default: *self*.
-  # @param [Array<Symbol>] fields
+  # @param [Api::Record, Hash, nil] data    Default: *self*.
+  # @param [Array<Symbol>]          fields
   #
   # @return [Array]
   #
-  def get_field_values: ((symHash|nil) data, *Symbol fields) -> anyArray
+  def get_field_values: ((Api::Record|symHash|nil) data, *Symbol fields) -> anyArray
 
   # Update the indicated target with the given values.
   #
-  # @param [Hash, nil] data           Default: *self*.
-  # @param [Hash]      values
+  # @param [Api::Record, Hash, nil] data    Default: *self*.
+  # @param [Hash]                   values
   #
   # @return [void]
   #
-  def set_field_values!: ((symHash|nil) data, symHash values) -> void
+  def set_field_values!: ((Api::Record|symHash|nil) data, symHash values) -> void
 end

@@ -883,7 +883,6 @@ module Record::Submittable
       return if pause.blank?
       return if counter.zero?
       return if (counter % frequency).nonzero?
-      # noinspection RubyMismatchedArgumentType
       sleep(pause)
     end
 

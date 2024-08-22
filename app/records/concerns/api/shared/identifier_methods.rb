@@ -74,11 +74,11 @@ module Api::Shared::IdentifierMethods
 
   # Produce standard identifiers of the form "(prefix):(value)".
   #
-  # @param [Hash, nil] data           Default: *self*
-  # @param [Hash]      opt            Passed to #update_field_value!.
+  # @param [Api::Record, Hash, nil] data    Default: *self*.
+  # @param [Hash]                   opt     Passed to #update_field_value!.
   #
-  # @option opt [Integer] :limit      Default: #MAX_IDENTIFIERS.
-  # @option opt [Symbol]  :mode       Default: `#id_array_mode`.
+  # @option opt [Integer] :limit            Default: #MAX_IDENTIFIERS.
+  # @option opt [Symbol]  :mode             Default: `#id_array_mode`.
   #
   # @return [void]
   #
@@ -120,7 +120,7 @@ module Api::Shared::IdentifierMethods
   # Ensure that "related identifiers" doesn't include values which are already
   # included in the reported identifiers for the item.
   #
-  # @param [Hash, nil] data           Default: *self*.
+  # @param [Api::Record, Hash, nil] data    Default: *self*.
   #
   # @return [void]
   #

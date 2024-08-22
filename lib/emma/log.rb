@@ -284,7 +284,6 @@ module Emma::Log
     opt.reverse_merge!(progname: progname)
     loggers = (src.broadcasts if src.is_a?(ActiveSupport::BroadcastLogger))
 
-    # noinspection RubyMismatchedReturnType
     if loggers&.any? { |log| log.progname == progname }
       # The provided logger already broadcasts to `progname`, so update it.
       # This branch does not invoke `update.(src)` since the provided

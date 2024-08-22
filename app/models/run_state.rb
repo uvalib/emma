@@ -198,7 +198,7 @@ class RunState < Hash
           when :html   then value = value.inspect << '.html_safe'
           else              value = value.inspect
         end
-        # noinspection RubyResolve, RubyInstanceVariableNamingConvention
+        # noinspection RubyInstanceVariableNamingConvention
         eval("@#{attr} = #{value}")
       end
     end
@@ -295,9 +295,6 @@ class RunState < Hash
   #
   # @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Retry-After
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def timestamp_or_duration(v)
     unless (v = v.presence).nil? || digits_only?(v)
       v = v.sub(/^\s*(#{PLUS})\s*/i, 'Time.now + ')

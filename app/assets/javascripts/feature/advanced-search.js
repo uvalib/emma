@@ -1424,7 +1424,6 @@ appSetup(MODULE, function() {
                     const $input = $hidden.filter(selector);
                     if (isPresent($input)) {
                         if (value) {
-                            // noinspection JSCheckFunctionSignatures
                             $input.val(value);
                         } else {
                             $input.remove();

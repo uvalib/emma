@@ -384,8 +384,8 @@ module Api::Shared::CommonMethods
 
   # Get the target field value.
   #
-  # @param [Hash, nil] data           Default: *self*.
-  # @param [Symbol]    field
+  # @param [Api::Record, Hash, nil] data    Default: *self*.
+  # @param [Symbol]                 field
   #
   # @return [any, nil]
   #
@@ -395,9 +395,9 @@ module Api::Shared::CommonMethods
 
   # Set the target field value.
   #
-  # @param [Hash, nil] data           Default: *self*.
-  # @param [Symbol]    field
-  # @param [any, nil]  value
+  # @param [Api::Record, Hash, nil] data    Default: *self*.
+  # @param [Symbol]                 field
+  # @param [any, nil]               value
   #
   # @return [void]
   #
@@ -422,10 +422,10 @@ module Api::Shared::CommonMethods
 
   # Update the target field.
   #
-  # @param [Hash, nil]    data        Default: *self*.
-  # @param [Symbol]       field
-  # @param [Symbol, nil]  mode        One of #ARRAY_MODES.
-  # @param [Integer, nil] limit       Limit the number of array values.
+  # @param [Api::Record, Hash, nil] data    Default: *self*.
+  # @param [Symbol]                 field
+  # @param [Symbol, nil]            mode    One of #ARRAY_MODES.
+  # @param [Integer, nil]           limit   Limit the number of array values.
   #
   # @return [void]
   #
@@ -456,8 +456,8 @@ module Api::Shared::CommonMethods
 
   # Get the indicated field values from the indicated target.
   #
-  # @param [Hash, nil]     data       Default: *self*.
-  # @param [Array<Symbol>] fields
+  # @param [Api::Record, Hash, nil] data    Default: *self*.
+  # @param [Array<Symbol>]          fields
   #
   # @return [Array]
   #
@@ -471,8 +471,8 @@ module Api::Shared::CommonMethods
 
   # Update the indicated target with the given values.
   #
-  # @param [Hash, nil] data           Default: *self*.
-  # @param [Hash]      values
+  # @param [Api::Record, Hash, nil] data    Default: *self*.
+  # @param [Hash]                   values
   #
   # @return [void]
   #

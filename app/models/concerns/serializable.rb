@@ -243,9 +243,6 @@ module Serializable
     #   @param [Symbol] mode
     #   @param [Proc]   blk           Passed to Base#serialize.
     #
-    #--
-    # noinspection RubyMismatchedArgumentType
-    #++
     def serializer(mode = nil, &blk)
       serializer_class.tap do |serializer|
         case (mode &&= mode.to_sym)

@@ -469,7 +469,6 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
     // Constants - page data
     // ========================================================================
 
-    // noinspection JSValidateTypes
     /**
      * Properties for each object store.
      *

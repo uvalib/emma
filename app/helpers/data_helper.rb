@@ -384,11 +384,10 @@ module DataHelper
         when Hash   then :hierarchy
         when Symbol then fields
       end
-    heads  = opt.delete(:heads) || []
-    first  = opt.delete(:first)
-    last   = opt.delete(:last)
-    # noinspection RubyMismatchedArgumentType
-    last ||= first + [(fields.size - 1 if type == :array).to_i, 0].max
+    heads   = opt.delete(:heads) || []
+    first   = opt.delete(:first)
+    last    = opt.delete(:last)
+    last  ||= first + [(fields.size - 1 if type == :array).to_i, 0].max
     classes = []
     classes << "row-#{row}" if row
     classes << 'row-first'  if row && (row == first)

@@ -664,7 +664,6 @@ module SubmissionService::Action::Submit
   # @return [Integer, nil]
   #
   def user_id(user)
-    # noinspection RubyMismatchedReturnType
     user.is_a?(Integer) ? user : User.id_value(user)&.to_i
   end
 
@@ -723,7 +722,6 @@ module SubmissionService::Action::Submit
     success   = opt.dig(:initial, :success) || records
 
     if wait
-      # noinspection RubyMismatchedArgumentType
       while remaining.present? && sleep(wait)
         done = []
         remaining.each_pair do |id, rec|

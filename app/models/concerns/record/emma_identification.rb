@@ -72,8 +72,7 @@ module Record::EmmaIdentification
   #
   def sid_value(item, **opt)
     item = item.is_a?(Hash) ? item.merge(opt) : opt unless item.is_a?(Model)
-    return if item.blank?
-    # noinspection RubyMismatchedReturnType
+    return      if item.blank?
     return item if match_sid?(item)
     sid   = key = opt[:sid_key] || sid_column
     sid &&= get_value(item, [key, :sid])
@@ -284,9 +283,6 @@ module Record::EmmaIdentification
   #
   # @note From UploadWorkflow::External#find_record
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def find_record(item, fatal: true, meth: nil, **opt)
     return item if item.is_a?(record_class)
     meth  ||= __method__

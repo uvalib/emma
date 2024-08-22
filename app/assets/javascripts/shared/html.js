@@ -295,7 +295,6 @@ export function create(element, properties) {
     const prop = (obj ? element     : properties) || {};
     const tag  = (obj ? element.tag : element)    || "div";
 
-    // noinspection HtmlUnknownTag
     const $element = (tag[0] === "<") ? $(tag) : $(`<${tag}>`);
     prop.class   && $element.addClass(cssClassList(prop.class));
     prop.type    && $element.attr("type",  prop.type);

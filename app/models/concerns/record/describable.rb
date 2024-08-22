@@ -87,7 +87,6 @@ module Record::Describable
   #
   def process_note(note = nil, model, **opt)
     opt_note = opt.delete(:note)
-    # noinspection RubyMismatchedArgumentType
     case (note ||= opt_note)
       when nil    then return
       when String then # Use *note* as-is.
@@ -219,7 +218,6 @@ module Record::Describable
     #
     def describe_user(model = nil, **_opt)
       model ||= self_for_instance_method(__method__)
-      # noinspection RailsParamDefResolve
       user = model.try(:user) and User.account_name(user)
     end
 
@@ -234,7 +232,6 @@ module Record::Describable
     #
     def describe_user_id(model = nil, **_opt)
       model ||= self_for_instance_method(__method__)
-      # noinspection RailsParamDefResolve
       user = model.try(:user) and User.id_value(user)
     end
 

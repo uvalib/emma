@@ -233,7 +233,6 @@ module UploadWorkflow::Single::Data
   #
   def reset_record(data = nil)
     id = sid = nil
-    # noinspection RubyMismatchedArgumentType
     case data
       when Upload
         (id = data.id) or (sid = data.submission_id)

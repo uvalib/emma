@@ -66,9 +66,11 @@ class ManifestItemDecorator < BaseDecorator
 
     # Get all configured record fields for the model.
     #
+    # @param [Symbol, nil] type       Passed to super.
+    #
     # @return [ActionConfig]
     #
-    def model_form_fields: (**untyped _ignored) -> ActionConfig
+    def model_form_fields: (?(Symbol|nil) `type`) -> ActionConfig
 
     # Control icon definitions.
     #

@@ -190,7 +190,6 @@ module ManifestConcern
       attr[:user_id] ||= current_user.id
       unless attr[:user_id] == current_user.id
         user = User.find_by(id: attr[:user_id])
-        # noinspection RubyMismatchedArgumentType
         authorized_org_member(user)
       end
     end

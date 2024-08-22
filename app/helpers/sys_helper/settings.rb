@@ -200,7 +200,6 @@ module SysHelper::Settings
       tip << config_term(:sys, :from_constant)
     end
 
-    # noinspection RubyMismatchedArgumentType
     app_entry_display(key, value, class: cls, title: tip)
   end
 

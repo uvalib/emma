@@ -879,7 +879,7 @@ module BaseDecorator::Form
     html_div(*parts, **opt)
   end
 
-  # form_top_button_tray
+  # The form controls appearing above the fields.
   #
   # @param [ActionView::Helpers::FormBuilder, nil] f
   # @param [Array<ActiveSupport::SafeBuffer>]      buttons
@@ -932,7 +932,7 @@ module BaseDecorator::Form
     form_button_tray(f, *buttons, **opt, &blk)
   end
 
-  # form_button_tray
+  # A container including basic form controls.
   #
   # @param [ActionView::Helpers::FormBuilder, nil] f
   # @param [Array<ActiveSupport::SafeBuffer>]      buttons

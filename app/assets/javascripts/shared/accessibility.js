@@ -215,7 +215,6 @@ export function handleClickAndKeypress(element, callback) {
 function handleActivationAsClick(selector, direct, match, except) {
     //OUT.debug("handleActivationAsClick:", selector, direct, match, except);
 
-    // noinspection JSCheckFunctionSignatures
     /**
      * Determine the target(s) based on the **direct** argument.
      *
@@ -485,6 +484,7 @@ export function focusablesIn(item, all) {
     return all ? $focusable : $focusable.not(NON_FOCUSABLE);
 }
 
+// noinspection JSUnusedGlobalSymbols
 /**
  * The subset of element(s) contained within **item** that have the potential
  * to receive tab focus.

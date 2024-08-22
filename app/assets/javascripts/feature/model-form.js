@@ -1357,6 +1357,7 @@ appSetup(MODULE, function() {
     // Functions - Initialization
     // ========================================================================
 
+    // noinspection JSUnusedLocalSymbols
     /**
      * Call the server endpoint to acquire replacement form field values. <p/>
      *
@@ -2429,6 +2430,7 @@ appSetup(MODULE, function() {
         $(field).removeAttr(TO_DELETE_ATTR);
     }
 
+    // noinspection JSUnusedLocalSymbols
     /**
      * Indicate whether a field is marked for deletion.
      *
@@ -4075,7 +4077,6 @@ appSetup(MODULE, function() {
             _debugXhr("ajax:success - arguments", Array.from(arguments));
             const data  = arg.data;
             const event = arg.originalEvent || {};
-            // noinspection JSUnusedLocalSymbols
             const [_resp, _status_text, xhr] = event.detail || [];
             const status = xhr.status;
             onCreateSuccess(data, status, xhr);
@@ -4090,7 +4091,6 @@ appSetup(MODULE, function() {
             _debugXhr("ajax:error - arguments", Array.from(arguments));
             const error = arg.data;
             const event = arg.originalEvent || {};
-            // noinspection JSUnusedLocalSymbols
             const [_resp, _status_text, xhr] = event.detail || [];
             const status = xhr.status;
             OUT.error("ajax:error", status, "error", error, "xhr", xhr);

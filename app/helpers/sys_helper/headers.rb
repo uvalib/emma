@@ -140,7 +140,6 @@ module SysHelper::Headers
   # @return [Array<String>]
   #
   def rails_headers_names
-    # noinspection SpellCheckingInspection
     @rails_headers_names ||=
       header_names { |a|
         a.concat Rails.application.env_config.keys
@@ -199,7 +198,6 @@ module SysHelper::Headers
   # @return [Array<String>]
   #
   def rack_headers_names
-    # noinspection SpellCheckingInspection
     @rack_headers_names ||=
       header_names { |a|
         a.concat string_constants(Rack, 'RACK_')

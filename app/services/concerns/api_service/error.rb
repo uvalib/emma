@@ -130,7 +130,6 @@ class ApiService::Error < Api::Error
         if (data = json_parse(body, symbolize_keys: false, log: false))
           data = data.compact
           data = data.first if data.is_a?(Array) && !data.many?
-          # noinspection RubyMismatchedArgumentType
           extract_json(data).presence
         end
 

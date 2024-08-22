@@ -193,7 +193,6 @@ module ApiHelper
       when Exception
         ex.message
       else
-        # noinspection RubyMismatchedReturnType
         (default == :original) ? arg : default
     end
   end

@@ -76,6 +76,7 @@ export const NAV_INPUT       = CONTROL_INPUT;
 // Classes
 // ============================================================================
 
+// noinspection JSUnusedGlobalSymbols
 /**
  * Base class for groupings of controls for accessibility.
  *
@@ -2123,6 +2124,7 @@ export class CheckboxGroup extends ListGroup {
     }
 }
 
+// noinspection JSUnusedGlobalSymbols
 /**
  * An object to facilitate keyboard navigation within a group of radio buttons.
  *

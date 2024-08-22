@@ -960,10 +960,8 @@ class BaseUploader extends BaseClass {
             const type = meta.type || "application/octet-stream";
             const cset = `charset=${charset}`;
             const data = file.data.slice(0, size, `${type};${cset}`);
-            // noinspection JSUnresolvedReference
             const opts = xhr.getOptions(file);
             const post = new FormData();
-            // noinspection JSUnresolvedReference
             xhr.addMetadata(post, meta, opts);
             if (name) {
                 post.append(opts.fieldName, data, name);
@@ -1104,7 +1102,6 @@ class BaseUploader extends BaseClass {
         this._uppyEvent("upload-success",  onFileUploadSuccess);
 
         if (this.feature.image_preview) {
-            // noinspection JSCheckFunctionSignatures
             this._uppyEvent("thumbnail:generated", onThumbnailGenerated);
         }
     }
@@ -1133,13 +1130,11 @@ class BaseUploader extends BaseClass {
         // noinspection JSValidateTypes
         const params = this.onStart?.(data);
         const upload = this._uppy.getPlugin("XHRUpload");
-        // noinspection JSUnresolvedFunction
         const url    = upload.getOptions({}).endpoint;
         if (isMissing(url)) {
             this._error("_onFileUploadStart: No endpoint for upload");
         } else {
             if (isPresent(params)) {
-                // noinspection JSCheckFunctionSignatures
                 upload.setOptions({ endpoint: makeUrl(url, params) });
             }
             this._uppyInfoClear();
@@ -1201,7 +1196,6 @@ class BaseUploader extends BaseClass {
         this._uppyInfoClear();
         // noinspection JSValidateTypes
         this.onError?.(file, error, response);
-        // noinspection JSUnresolvedReference
         this._uppy.getFiles().forEach(file => this._uppy.removeFile(file.id));
     }
 

@@ -126,7 +126,6 @@ module TestHelper::Utility
   #
   def user_entry(arg)
     arg = arg.sub(/@.*$/, '').presence&.to_sym if arg.is_a?(String)
-    # noinspection RubyMismatchedReturnType
     arg if arg.is_a?(Symbol) && (arg != :anonymous)
   end
 

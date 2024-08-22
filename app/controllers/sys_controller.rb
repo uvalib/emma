@@ -64,7 +64,6 @@ class SysController < ApplicationController
     flags = prm.delete(:flags)
     prm.merge!(flags)       if flags.present? && flags.is_a?(Hash)
     AppSettings.update(prm) if prm.present?
-    # noinspection RubyResolve
     redirect_to settings_sys_path
   end
 

@@ -16,9 +16,6 @@ module Lookup::WorldCat::Api::Record::Associations
 
   include Lookup::RemoteService::Api::Record::Associations
 
-  #--
-  # noinspection LongLine
-  #++
   module ClassMethods
     include Lookup::WorldCat::Api::Schema
     include Lookup::RemoteService::Api::Record::Associations::ClassMethods

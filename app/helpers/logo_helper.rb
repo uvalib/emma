@@ -29,7 +29,7 @@ module LogoHelper
 
   public
 
-  # Make a logo for a repository source.
+  # Generate a logo for a repository source.
   #
   # For accessibility purposes, logos are treated as decorative unless a
   # non-blank `opt[:alt]` is provided.
@@ -62,7 +62,7 @@ module LogoHelper
     end
   end
 
-  # Make a textual logo for a repository source.
+  # Generate a textual logo for a repository source.
   #
   # @param [Model, Hash, String, Symbol, nil] item
   # @param [String] css               Characteristic CSS class/selector.
@@ -92,7 +92,7 @@ module LogoHelper
 
   protected
 
-  # normalize_repository
+  # Return the EmmaRepository key associated with *src*.
   #
   # @param [Model, Hash, String, Symbol, nil] src
   #
@@ -109,7 +109,7 @@ module LogoHelper
     EmmaRepository.pairs.first { |_repo, name| src.casecmp?(name) }&.first
   end
 
-  # repository_name
+  # Return the EmmaRepository value associated with *src*.
   #
   # @param [Model, Hash, String, Symbol, nil] src
   #
@@ -121,7 +121,7 @@ module LogoHelper
     EmmaRepository.pairs[repo] if repo
   end
 
-  # repository_logo
+  # Return the repository logo asset associated with *src*.
   #
   # @param [Model, Hash, String, Symbol, nil] src
   # @param [Symbol, nil]                      type  One of #LOGO_TYPE.
@@ -137,7 +137,7 @@ module LogoHelper
     logo
   end
 
-  # repository_tooltip
+  # Return a description of the repository associated with *item*.
   #
   # @param [Model, Hash, String, Symbol, nil] item
   # @param [String]                           name

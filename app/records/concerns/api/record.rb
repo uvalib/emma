@@ -282,7 +282,6 @@ class Api::Record
   # @return [any, nil]
   #
   def make_hierarchy(value)
-    # noinspection RailsParamDefResolve
     case value
       when Hash  then value.transform_values { |v| make_hierarchy(v) }
       when Array then value.map { |v| make_hierarchy(v) }

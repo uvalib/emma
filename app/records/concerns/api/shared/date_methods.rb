@@ -57,7 +57,7 @@ module Api::Shared::DateMethods
 
   # Back-fill publication date / copyright date.
   #
-  # @param [Hash, nil] data           Default: *self*.
+  # @param [Api::Record, Hash, nil] data    Default: *self*.
   #
   # @return [void]
   #
@@ -76,10 +76,10 @@ module Api::Shared::DateMethods
 
   # Produce day values of the form "YYYY-MM-DD".
   #
-  # @param [Hash, nil] data           Default: *self*
-  # @param [Hash]      opt            Passed to #update_field_value!.
+  # @param [Api::Record, Hash, nil] data    Default: *self*.
+  # @param [Hash]                   opt     Passed to #update_field_value!.
   #
-  # @option opt [Symbol] :mode        Default: `#date_array_mode`.
+  # @option opt [Symbol] :mode              Default: `#date_array_mode`.
   #
   # @return [void]
   #

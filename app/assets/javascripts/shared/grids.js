@@ -83,7 +83,7 @@ const COL_FIRST  = 1;
 const COL_LAST   = -1;
 const COL_LEFT   = -1;
 const COL_RIGHT  = 1;
-const COL_PAGE   = 10; // TODO: dynamic?
+//const COL_PAGE = 10; // TODO: dynamic?
 
 // ============================================================================
 // Type definitions
@@ -901,7 +901,6 @@ function analyzeGridEvent(func, event, key, validate) {
     const in_cell  = !in_modal && to_other && contains($cell, $tgt);
     const active   = group?.active;
 
-    //noinspection JSValidateTypes
     /** @type {GridEventProperties} */
     const result = {
         $tgt,

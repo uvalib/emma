@@ -89,7 +89,6 @@ export function cssClasses(...args) {
         } else if (arg instanceof Element) {
             return [...arg.classList];
         } else if (arg instanceof jQuery) {
-            // noinspection JSUnresolvedReference
             return cssClasses(...arg.get());
         } else if (Array.isArray(arg)) {
             return cssClasses(...arg);

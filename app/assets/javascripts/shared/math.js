@@ -64,7 +64,6 @@ export function asSize(value, full) {
         return "";
     }
     let i = 0;
-    // noinspection OverlyComplexBooleanExpressionJS
     let magnitude =
         ((n < Math.pow(K, ++i)) && i) || // B
         ((n < Math.pow(K, ++i)) && i) || // KB

@@ -9,7 +9,7 @@ module LogoHelper
   #
   LOGO_TYPE: symArray
 
-  # Make a logo for a repository source.
+  # Generate a logo for a repository source.
   #
   # For accessibility purposes, logos are treated as decorative unless a
   # non-blank `opt[:alt]` is provided.
@@ -28,7 +28,7 @@ module LogoHelper
   #
   def repository_source_logo: (?(Model|String|Symbol|symHash|nil) item, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # Make a textual logo for a repository source.
+  # Generate a textual logo for a repository source.
   #
   # @param [Model, Hash, String, Symbol, nil] item
   # @param [String] css               Characteristic CSS class/selector.
@@ -41,7 +41,7 @@ module LogoHelper
   #
   def repository_source: ((Model|String|Symbol|symHash|nil) item, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # normalize_repository
+  # Return the EmmaRepository key associated with *src*.
   #
   # @param [Model, Hash, String, Symbol, nil] src
   #
@@ -50,7 +50,7 @@ module LogoHelper
   #
   def normalize_repository: ((Model|String|Symbol|symHash|nil) src) -> (String | nil)
 
-  # repository_name
+  # Return the EmmaRepository value associated with *src*.
   #
   # @param [Model, Hash, String, Symbol, nil] src
   #
@@ -59,7 +59,7 @@ module LogoHelper
   #
   def repository_name: ((Model|String|Symbol|symHash|nil) src) -> (String | nil)
 
-  # repository_logo
+  # Return the repository logo asset associated with *src*.
   #
   # @param [Model, Hash, String, Symbol, nil] src
   # @param [Symbol, nil]                      type  One of #LOGO_TYPE.
@@ -69,7 +69,7 @@ module LogoHelper
   #
   def repository_logo: ((Model|String|Symbol|symHash|nil) src, ?(Symbol|nil) `type`) -> (String | nil)
 
-  # repository_tooltip
+  # Return a description of the repository associated with *item*.
   #
   # @param [Model, Hash, String, Symbol, nil] item
   # @param [String]                           name

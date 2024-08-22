@@ -73,7 +73,6 @@ class HomeController < ApplicationController
   # dashboard for an authenticated session or the welcome screen otherwise.
   #
   def main
-    # noinspection RubyMismatchedArgumentType
     if current_user
       redirect_to dashboard_path
     else

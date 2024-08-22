@@ -206,9 +206,6 @@ module Api::Serializer::Associations
     # === Implementation Notes
     # Compare with Api::Record::Associations#make_default
     #
-    #--
-    # noinspection RubyMismatchedReturnType
-    #++
     def get_type_class(type, **opt)
       type   = extract_type_option!(opt) || type || String
       type   = type.to_s.classify if type.is_a?(Symbol)
@@ -217,6 +214,8 @@ module Api::Serializer::Associations
       base   = :Boolean if %i[TrueClass FalseClass].include?(base)
       scalar = "Axiom::Types::#{base}"
       record = "#{service_name}::Record::#{name}"
+
+      # noinspection RubyMismatchedReturnType
       (scalar.safe_constantize    if scalar_types.include?(base))      ||
       (base.to_s.safe_constantize if enumeration_types.include?(base)) ||
       (base.to_s.safe_constantize if base.to_s.start_with?('Iso'))     ||

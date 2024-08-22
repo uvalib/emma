@@ -463,7 +463,6 @@ class ManifestController < ApplicationController
     if request_xhr?
       render json: @item.as_json
     else
-      # noinspection RubyMismatchedArgumentType
       redirect_to(params[:redirect] || manifest_index_path)
     end
   rescue CanCan::AccessDenied => error

@@ -87,6 +87,7 @@ class SortOrder < Hash
   # @param [Hash]     opt             Passed to #parse.
   #
   def initialize(value = nil, **opt)
+    # noinspection RubyMismatchedArgumentType
     case (value &&= parse(value, meth: 'SortOrder', fatal: true, **opt))
       when String then @raw_sql = value
       when Hash   then update(value)

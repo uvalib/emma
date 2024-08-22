@@ -364,7 +364,6 @@ module UploadConcern
     opt.reverse_merge!(workflow_parameters)
     item &&= Upload.instance_for(item)
     item ||= Upload.instance_for(opt.slice(:id, :submission_id))
-    # noinspection RubyMismatchedArgumentType
     authorized_self_or_org_manager(item, **opt)
   end
 

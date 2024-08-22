@@ -201,9 +201,6 @@ module Record::Identification
   #
   # @note From UploadWorkflow::External#find_record
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def find_record(item, fatal: true, meth: nil, **opt)
     return item if item.is_a?(record_class)
     meth ||= __method__
@@ -364,7 +361,6 @@ module Record::Identification
       id  = get_value(v, i_key) if i_key
       sid = get_value(v, s_key) if s_key && !id
     end
-    # noinspection RubyMismatchedReturnType
     if sid
       { s_key => sid.to_s }
     else

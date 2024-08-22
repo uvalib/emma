@@ -21,7 +21,6 @@
     set_page_description(title)
   end
 
-  # noinspection RailsParamDefResolve
   waiting   = (user.try(:unconfirmed_email) if devise_mapping.confirmable?)
   waiting &&= config_page(:user_registrations,:edit,:awaiting, email: waiting)
   waiting &&= html_div(waiting)

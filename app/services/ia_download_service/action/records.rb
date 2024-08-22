@@ -7,9 +7,6 @@ __loading_begin(__FILE__)
 
 # IaDownloadService::Action::Records
 #
-#--
-# noinspection RubyParameterNamingConvention
-#++
 module IaDownloadService::Action::Records
 
   include IaDownloadService::Common

@@ -166,9 +166,11 @@ class ManifestItemDecorator < BaseDecorator
 
     # Get all configured record fields for the model.
     #
+    # @param [Symbol, nil] type       Passed to super.
+    #
     # @return [ActionConfig]
     #
-    def model_form_fields(**)
+    def model_form_fields(type = nil)
       json_fields, db_fields = partition_hash(super, *compound_fields)
       emma_data = json_fields[:emma_data]&.slice(*EMMA_DATA_FIELDS)
       db_fields.merge!(emma_data) if emma_data.present?

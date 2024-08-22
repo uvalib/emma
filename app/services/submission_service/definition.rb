@@ -28,7 +28,7 @@ module SubmissionService::Definition
   # @return [SubmissionService::Request]   The value for @request.
   #
   #--
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+  # noinspection RubyMismatchedReturnType
   #++
   def pre_flight(meth, arg = nil, items = nil, **opt)
     meth, arg, items = [nil, meth, arg] unless meth.nil? || meth.is_a?(Symbol)

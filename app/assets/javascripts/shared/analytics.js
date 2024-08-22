@@ -226,6 +226,7 @@ export const Analytics = (function() {
         return trackEvent("click", $root, selector, cat, act, condition);
     }
 
+    // noinspection JSUnusedLocalSymbols
     /**
      * Track hover events on a specific item.
      *

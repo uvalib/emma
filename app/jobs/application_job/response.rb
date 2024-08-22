@@ -68,7 +68,6 @@ class ApplicationJob::Response
       diagnostic ||= values.diagnostic
       values       = values.table
     end
-    # noinspection RubyMismatchedArgumentType
     @table      = set_payload(values, **opt)
     @error      = error
     @diagnostic = diagnostic

@@ -27,7 +27,7 @@ module SearchService::Testing
     # === Fault injection types
 
     bit = -1
-    # noinspection RubyUnusedLocalVariable, RubyMismatchedConstantType
+    # noinspection RubyUnusedLocalVariable
     ALL_FAULTS = [
       BAD_PARAM   = 1 << (bit += 1),
       BAD_REPO    = 1 << (bit += 1),
@@ -168,7 +168,6 @@ module SearchService::Testing
       end
       return unless ex.present?
       __debug_banner("#{self.class}.#{meth} #{ex.class}")
-      # noinspection RubyMismatchedArgumentType
       set_error(ex)
     end
 

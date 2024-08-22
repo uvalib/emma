@@ -82,7 +82,6 @@ class Field::Type
   def initialize(src, field = nil, prop: nil, model: nil, value: nil, **opt)
     @base  = src
     @range = nil
-    # noinspection RailsParamDefResolve, RubyMismatchedArgumentType
     if (@field = field&.to_sym) && src.is_a?(Model)
       prop   ||= Field.configuration_for(field, model)
       @base    = prop[:type]
@@ -257,7 +256,6 @@ class Field::Range < Field::Type
     if mode == :multiple
       @value = [*@value, *new_value].uniq # TODO: is this right?
     else
-      # noinspection RubyMismatchedReturnType
       @value = Array.wrap(new_value).first
     end
   end

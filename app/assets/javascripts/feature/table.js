@@ -561,7 +561,6 @@ appSetup(MODULE, function() {
         let keys;
         if (typeof sort === "string") {
             // @note This works around apparent over-encoding by #url_for.
-            // noinspection JSCheckFunctionSignatures
             keys = decodeURIComponent(sort);
             keys = keys.trim().split(/\s*,\s*/);
         } else {

@@ -349,7 +349,6 @@ class IsoDate < ScalarType
       # something like "2021-12" but will correctly interpret "2021/12" as
       # "December 2021", '/' is used as the date separator.
       result = []
-      # noinspection RubyResolve
       value.sub!(ASN_1_DATETIME) do
         result << [$1, $3, $5 ].compact_blank!.join('/') # Date parts
         result << [$7, $9, $10].compact_blank!.join(':') # Time parts

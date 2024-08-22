@@ -186,7 +186,6 @@ module HeadHelper::MetaTags
     nl_opt = opt.extract!(:list_separator, :pair_separator, :sanitize, :quote)
     opt[:content] =
       normalized_list(value, **nl_opt).join(separator).tap do |content|
-        # noinspection RubyMismatchedArgumentType
         if (prefix = META_TAG_PREFIX[key]) && !content.start_with?(prefix)
           prefix = "#{prefix} - " unless prefix.end_with?(' ')
           content.prepend(prefix)

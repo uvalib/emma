@@ -58,7 +58,6 @@ module User::Identification
   def find_record(item, **opt)
     item = item.to_s if item.is_a?(Symbol)
     opt.reverse_merge!(fatal: false)
-    # noinspection RubyMismatchedReturnType
     super || super(self_class.instance_for(item), **opt)
   end
 

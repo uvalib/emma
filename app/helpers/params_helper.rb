@@ -70,9 +70,6 @@ module ParamsHelper
   #
   # @type [String]
   #
-  #--
-  # noinspection RubyQuotedStringsInspection
-  #++
   COMPRESSION_MARKER = "\u0007"
 
   # ===========================================================================
@@ -294,7 +291,6 @@ module ParamsHelper
     if v.is_a?(String) || v.is_a?(Symbol)
       v.to_s.strip.underscore.delete_suffix('_controller')
     else
-      # noinspection RailsParamDefResolve
       v.try(:controller_name)
     end
   end
@@ -313,7 +309,6 @@ module ParamsHelper
     if v.is_a?(String) || v.is_a?(Symbol)
       v.to_s.strip.underscore
     else
-      # noinspection RailsParamDefResolve
       v.try(:action_name)
     end
   end
@@ -356,7 +351,6 @@ module ParamsHelper
   def ctrlr_action_to_names(ctrlr = nil, action = nil)
     ctrlr  = request_parameters unless ctrlr || action
     result = []
-    # noinspection RubyMismatchedArgumentType
     if action
       result << controller_to_name(ctrlr)
       result << action_to_name(action)

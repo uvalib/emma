@@ -907,7 +907,7 @@ export class MathDetectiveApi extends Api {
                     `${NO_ITEM} ${this.handle}`;
                 break;
 
-            case HTTP.payload_too_large:    // NOTE: only for _submitImage
+            case HTTP.content_too_large:    // NOTE: only for _submitImage
             case HTTP.bad_gateway:          // NOTE: only for _submitImage
                 this.md_status    = this.result.error  || ERROR;
                 warn = this.error = SIZE_LIMIT;

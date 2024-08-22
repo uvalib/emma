@@ -7,9 +7,6 @@ __loading_begin(__FILE__)
 
 # Unicode utilities.
 #
-#--
-# noinspection RubyQuotedStringsInspection
-#++
 module Emma::Unicode
 
   extend self

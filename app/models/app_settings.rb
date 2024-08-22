@@ -72,9 +72,6 @@ class AppSettings < AppGlobal
   #
   # @type [Array<Symbol,nil>]
   #
-  #--
-  # noinspection SpellCheckingInspection
-  #++
   VALUES = [
 
     :RAILS_ENV,

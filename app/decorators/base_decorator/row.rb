@@ -135,7 +135,6 @@ module BaseDecorator::Row
     limit  = limit ? positive(limit) : row_page_size
     offset = positive(paginator.page_offset)
     if rows.is_a?(Array)
-      # noinspection RubyMismatchedArgumentType
       if offset && limit
         rows = rows[offset..(offset + limit)]
       elsif offset

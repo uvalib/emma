@@ -56,7 +56,7 @@ module Record::Assignable
   # @return [Hash]
   #
   #--
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+  # noinspection RubyMismatchedArgumentType
   #++
   def normalize_attributes(attr, **opt)
     opt  = opt[:attr_opt].merge(opt.except(:attr_opt)) if opt[:attr_opt]
@@ -383,7 +383,6 @@ module Record::Assignable
   #
   def normalize_number(v, **)
     v = v.to_i if v.is_a?(String)
-    # noinspection RubyMismatchedReturnType
     v if v.is_a?(Numeric)
   end
 
@@ -418,7 +417,6 @@ module Record::Assignable
   # @return [ApplicationRecord, EnumType, nil]
   #
   def normalize_class(v, type, **opt)
-    # noinspection RubyMismatchedReturnType
     if type < ApplicationRecord
       normalize_record(v, type, **opt) || v
     elsif type < EnumType
@@ -468,7 +466,6 @@ module Record::Assignable
   # @return [String, any, nil]
   #
   def normalize_text(v, **)
-    # noinspection RubyMismatchedReturnType
     case v
       when Array  then v.compact.map! { |s| normalize_text(s) }.join(LINE_JOIN)
       when String then v.strip
@@ -486,7 +483,6 @@ module Record::Assignable
   def normalize_copyright(v, **)
     v = normalize_date(v)
     v = v.year.to_s if v.is_a?(Date)
-    # noinspection RubyMismatchedReturnType
     v if v.is_a?(String)
   end
 

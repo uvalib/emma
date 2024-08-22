@@ -33,9 +33,6 @@ class MailerJob < ApplicationJob
   #
   # @return [void]
   #
-  #--
-  # noinspection RubyArgCount
-  #++
   def perform(mailer, mail_method, delivery_method, *args, **opt)
     no_raise = nil
     record   = JobResult.create(active_job_id: job_id)
@@ -45,8 +42,8 @@ class MailerJob < ApplicationJob
     kwargs   = opt[:kwargs]
     params   = opt[:params]
 
-    mailer   = mailer.constantize  if mailer.is_a?(String)
-    mailer   = mailer.with(params) if params
+    mailer   = mailer.constantize    if mailer.is_a?(String)
+    mailer   = mailer.with(**params) if params
     if kwargs
       message = mailer.public_send(mail_method, *args, **kwargs)
     else

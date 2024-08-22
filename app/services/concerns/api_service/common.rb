@@ -88,9 +88,6 @@ module ApiService::Common
   #   Return whether *http_method* is an update.
   #   @param [Symbol, String] http_method
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def update_request?(http_method = nil)
     http_method = http_method.downcase.to_sym if http_method.is_a?(String)
     %i[put post patch].include?(http_method || @verb)
@@ -301,7 +298,6 @@ module ApiService::Common
   #
   def api_body(obj)
     obj = obj.as_json unless obj.is_a?(String)
-    # noinspection RubyMismatchedArgumentType
     obj.is_a?(Hash) ? reject_blanks(obj) : obj
   end
 
@@ -599,7 +595,7 @@ module ApiService::Common
   # @return [void]
   #
   #--
-  # noinspection RubyMismatchedArgumentType, RailsParamDefResolve
+  # noinspection RailsParamDefResolve
   #++
   def __debug_api_response(
     response: @response,
@@ -628,6 +624,7 @@ module ApiService::Common
     end
 
     __debug_impl(leader: '<<<', separator: DEBUG_SEPARATOR, max: nil) do
+      # noinspection RubyMismatchedArgumentType
       [service_name] << action.inspect << status << "DATA: #{data}"
     end
   end

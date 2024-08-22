@@ -517,7 +517,6 @@ class Upload < ApplicationRecord
           when Date, Time then %Q("#{value.to_s(:inspect)}")
           else                 value.inspect
         end
-      # noinspection RubyMismatchedReturnType
       inspection_filter.filter_param(name, inspected_value)
     end
   end
@@ -743,6 +742,7 @@ class Upload < ApplicationRecord
     #
     def sid_counter
       @sid_counter &&= (@sid_counter + 1) % 100
+      # noinspection RubyMismatchedReturnType
       @sid_counter ||= rand(100) % 100
     end
 

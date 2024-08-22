@@ -221,6 +221,7 @@ module TestHelper::SystemTests::Common
       else                selector = "select##{from}"
     end
     menu = find(selector, **opt)
+    # noinspection RubyMismatchedArgumentType
     if menu[:class]&.split(' ')&.include?('select2-hidden-accessible')
       select2(value, css: "#{selector} + .select2-container", **opt)
     else

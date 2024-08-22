@@ -192,7 +192,6 @@ class ApplicationRecord < ActiveRecord::Base
       else           recs = all
     end
     recs.order(sort).map(&blk).to_h.tap { |pairs|
-      # noinspection RubyMismatchedArgumentType
       pairs.merge!(append)          if append.present?
       pairs.reverse_merge!(prepend) if prepend.present?
     }.stringify_keys!

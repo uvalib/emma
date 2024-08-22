@@ -135,10 +135,8 @@ module Emma::Debug
     # @return [Hash]
     # @return [nil]                   If *value* is invalid or indeterminate.
     #
-    #--
-    # noinspection RailsParamDefResolve
-    #++
     def __debug_env_hash(value = nil)
+      # noinspection RailsParamDefResolve
       value ||= try(:request)
       value = value.env if value.respond_to?(:env)
       value&.to_hash&.sort&.to_h
@@ -151,10 +149,8 @@ module Emma::Debug
     # @return [Hash]
     # @return [nil]                   If *value* is invalid or indeterminate.
     #
-    #--
-    # noinspection RailsParamDefResolve
-    #++
     def __debug_header_hash(value = nil)
+      # noinspection RailsParamDefResolve
       value ||= try(:request)
       value = value.headers if value.respond_to?(:headers)
       if value.respond_to?(:to_hash)

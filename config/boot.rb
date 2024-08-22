@@ -131,7 +131,6 @@ def js(arg)
   result.gsub!(/\n/,     '\n')
   result.gsub!(/'/,      '%27')
   result.gsub!(/\\"/,    '%5C%22')
-  # noinspection RubyMismatchedReturnType
   result
 end
 

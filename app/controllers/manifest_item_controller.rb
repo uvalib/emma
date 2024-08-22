@@ -176,7 +176,7 @@ class ManifestItemController < ApplicationController
         format.json { render json: @item, status: :created }
       else
         format.html { error_response(@item || errors) }
-        format.json { render json: errors, status: :unprocessable_entity }
+        format.json { render json: errors, status: :unprocessable_content }
       end
     end
   rescue CanCan::AccessDenied => error

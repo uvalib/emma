@@ -16,9 +16,6 @@ module Lookup::Crossref::Api::Serializer::Associations
 
   include Lookup::RemoteService::Api::Serializer::Associations
 
-  #--
-  # noinspection LongLine
-  #++
   module ClassMethods
     include Lookup::Crossref::Api::Serializer::Schema
     include Lookup::RemoteService::Api::Serializer::Associations::ClassMethods

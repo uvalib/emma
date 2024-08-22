@@ -206,7 +206,6 @@ module Emma::Common::HashMethods
   def _remove_blanks(item, squeeze: false, dup: false, **)
     case item
       when nil, true, false, Method, Module, Numeric, Proc, Symbol
-        # noinspection RubyMismatchedReturnType
         item
       when Hash
         opt = { squeeze: squeeze, dup: dup }
@@ -239,7 +238,6 @@ module Emma::Common::HashMethods
   def _remove_blanks!(item, squeeze: false, nil_hash: false, **)
     case item
       when nil, true, false, Method, Module, Numeric, Proc, Symbol
-        # noinspection RubyMismatchedReturnType
         item
       when Hash
         opt = { squeeze: squeeze, nil_hash: true }

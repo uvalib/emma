@@ -46,7 +46,7 @@ export function urlFrom(arg) {
     } else if (!arg || (typeof arg !== "object")) {
         // Skipping invalid argument.
     } else if (isDefined(arg.target)) { // Event or jQuery.Event
-        // noinspection JSValidateTypes
+        // noinspection JSUnresolvedReference, JSValidateTypes
         /** @type {HashChangeEvent|AnchorEvt} */
         const event = arg.originalEvent || arg;
         result = event.newURL || event.target.href;

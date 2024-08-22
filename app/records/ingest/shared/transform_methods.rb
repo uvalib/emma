@@ -35,7 +35,7 @@ module Ingest::Shared::TransformMethods
 
   # Transform data fields.
   #
-  # @param [Hash, nil] data           Default: *self*.
+  # @param [Ingest::Api::Record, Hash, nil] data  Default: *self*.
   #
   # @return [void]
   #
@@ -56,7 +56,7 @@ module Ingest::Shared::TransformMethods
 
   # Produce a retrieval link for an item.
   #
-  # @param [Hash, nil] data           Default: *self*.
+  # @param [Ingest::Api::Record, Hash, nil] data  Default: *self*.
   #
   # @return [void]
   #

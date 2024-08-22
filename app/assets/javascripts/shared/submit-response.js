@@ -207,7 +207,6 @@ export class SubmitResponseBase extends ChannelResponse {
      * @returns {SubmitResponseSubclass}
      */
     static wrap(item) {
-        // noinspection OverlyComplexBooleanExpressionJS
         return ((item instanceof this) && item)   ||
             SubmitControlResponse.candidate(item) ||
             SubmitFinalResponse.candidate(item)   ||

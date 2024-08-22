@@ -37,7 +37,7 @@ class OrgDecorator < BaseDecorator
     include BaseDecorator::SharedGenericMethods
 
     # =========================================================================
-    # :section: BaseDecorator::Field overrides
+    # :section: BaseDecorator::Fields overrides
     # =========================================================================
 
     protected

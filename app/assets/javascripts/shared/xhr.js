@@ -297,7 +297,6 @@ export function transientError(code) {
  * @returns {object}
  */
 export function response(xhr) {
-    // noinspection JSUnresolvedVariable
     const json = xhr?.responseJSON;
     const text = xhr?.responseText;
     switch (true) {

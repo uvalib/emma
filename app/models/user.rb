@@ -199,7 +199,6 @@ class User < ApplicationRecord
     return                   if user.blank?
     user = user.to_s         if user.is_a?(Symbol)
     user = uid(user) || user if user.is_a?(String)
-    # noinspection RubyMismatchedReturnType
     user.is_a?(String) ? user : instance_for(user)&.email&.presence
   end
 

@@ -686,7 +686,6 @@ class UploadController < ApplicationController
     __debug_route
     @item = wf_single(event: :cancel)
     if request.get?
-      # noinspection RubyMismatchedArgumentType
       redirect_to(params[:redirect] || upload_index_path)
     else
       post_response(:ok)

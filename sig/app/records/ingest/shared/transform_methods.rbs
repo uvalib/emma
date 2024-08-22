@@ -15,20 +15,20 @@ module Ingest::Shared::TransformMethods
 
   # Transform data fields.
   #
-  # @param [Hash, nil] data           Default: *self*.
+  # @param [Ingest::Api::Record, Hash, nil] data  Default: *self*.
   #
   # @return [void]
   #
-  def normalize_data_fields!: (?(symHash|nil) data) -> void
+  def normalize_data_fields!: (?(Ingest::Api::Record|symHash|nil) data) -> void
 
   # @private
   RETRIEVAL_FIELDS: symArray
 
   # Produce a retrieval link for an item.
   #
-  # @param [Hash, nil] data           Default: *self*.
+  # @param [Ingest::Api::Record, Hash, nil] data  Default: *self*.
   #
   # @return [void]
   #
-  def make_retrieval_link!: (?(symHash|nil) data) -> void
+  def make_retrieval_link!: (?(Ingest::Api::Record|symHash|nil) data) -> void
 end

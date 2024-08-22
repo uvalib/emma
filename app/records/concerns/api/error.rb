@@ -57,7 +57,6 @@ class Api::Error < ExecError
     end
     args.flatten!
     args.compact!
-    # noinspection RailsParamDefResolve
     case @cause
       when nil
         # Ignore

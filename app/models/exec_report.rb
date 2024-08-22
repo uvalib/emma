@@ -243,7 +243,6 @@ class ExecReport
     # @return [Array<Hash{Symbol=>String,Array<String>}>, nil]
     #
     def deserialize(src)
-      # noinspection RubyMismatchedArgumentType
       message_hashes(src).presence
     end
 
@@ -362,7 +361,6 @@ class ExecReport
     def extract_status(src)
       return if src.nil?
       src = src.exception if src.is_a?(ExecReport)
-      # noinspection RailsParamDefResolve
       src.try(:http_status) || src.try(:status) || src.try(:code) ||
         src.try(:dig, :status) || src.try(:response).try(:dig, :status)
     end
@@ -406,7 +404,6 @@ class ExecReport
           when ActiveModel::Errors then src.full_messages
           when ApplicationRecord   then src.errors.full_messages
         end
-      # noinspection RubyMismatchedArgumentType
       if parts.nil?
         make_message_hash(src, meth)
       elsif !parts.is_a?(Array)
@@ -432,7 +429,6 @@ class ExecReport
       case src
         when ExecReport::Part
           result = { TOPIC_KEY => src.topic, DETAILS_KEY => src.details }
-          # noinspection RubyMismatchedArgumentType
           result = result.merge!(src.info).deep_dup
           result[HTML_KEY] = src.html_safe? unless result.key?(HTML_KEY)
 
@@ -1540,7 +1536,6 @@ class ExecReport::FlashPart < ExecReport::Part
   # @return [FlashPart]
   #
   def self.[](other)
-    # noinspection RubyMismatchedReturnType
     other.is_a?(self) ? other : new(other)
   end
 

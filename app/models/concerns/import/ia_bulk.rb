@@ -43,9 +43,6 @@ module Import::IaBulk
   # - [4] Fields which pertain to upload into IA can be ignored because they
   #       are not relevant to EMMA metadata.
   #
-  #--
-  # noinspection SpellCheckingInspection
-  #++
   SCHEMA = {
     #-------------------- --------------------------- -------------------------
     # Underscored name    Translator method or field  Value translator method

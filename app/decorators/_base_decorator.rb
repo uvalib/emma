@@ -107,14 +107,12 @@ class BaseDecorator < Draper::Decorator
     #
     # @return [String, Model, Hash, nil]
     #
-    #--
-    # noinspection RailsParamDefResolve, RubyMismatchedReturnType
-    #++
     def id_for(item = nil, **opt)
       id   = opt[:id]
       id ||= (item if item.is_a?(Array))
       id ||= object_class.try_key(item, :id)
       id ||= try(:object).try(:id)
+      # noinspection RubyMismatchedReturnType
       id.is_a?(Array) ? id.join(',') : id
     end
 
@@ -587,6 +585,7 @@ class BaseDecorator < Draper::Decorator
     #
     def page_value(value, default: true, **opt)
       action = opt.delete(:action) || context[:action]
+      # noinspection RubyMismatchedArgumentType
       value  = action_config(action)&.dig(value) if value.is_a?(Symbol)
       if value
         interpolate(value, object, **opt)
@@ -828,9 +827,6 @@ class BaseDecorator
   #
   # @return [void]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def self.decorator_for(*args)
     other = []
     if args.first.is_a?(Hash)
@@ -845,6 +841,7 @@ class BaseDecorator
       mod, obj = args
     end
 
+    # noinspection RubyMismatchedArgumentType
     set_model_type(mod)
     set_object_class(obj, *other)&.include(Draper::Decoratable)
 

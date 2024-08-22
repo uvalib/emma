@@ -508,9 +508,6 @@ module FlashHelper
   #   @param [Symbol, nil]             topic
   #   @param [Hash]                    opt
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def flash_format(*args, topic: nil, **opt)
     args.compact!
     prop = opt.extract!(:meth, :status, :inspect, :log, :trace)

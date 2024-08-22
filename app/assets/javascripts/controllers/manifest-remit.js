@@ -301,6 +301,7 @@ appSetup(MODULE, function() {
         // Class methods
         // ====================================================================
 
+        // noinspection JSUnusedGlobalSymbols
         static clearAll() { this._all.forEach(instance => instance.clear()) }
         static resetAll() { this._all.forEach(instance => instance.reset()) }
     }
@@ -944,6 +945,7 @@ appSetup(MODULE, function() {
         return presence(itemsSelected()) || itemsSelectable();
     }
 
+    // noinspection JSUnusedLocalSymbols
     /**
      * Return all items which have been previously submitted.
      *
@@ -1999,6 +2001,7 @@ appSetup(MODULE, function() {
         return submission_monitor ||= SubmitModal.instanceFor($monitor);
     }
 
+    // noinspection JSUnusedLocalSymbols
     /**
      * Get the current submission request, creating it if necessary.
      *
@@ -2575,7 +2578,7 @@ appSetup(MODULE, function() {
         const func      = "queueRemoteFiles";
         const ignore    = `${func} IGNORING`;
         const remaining = new Set(Object.values(files_remaining.remote));
-        const lookup    = invert(file_references.remote);
+      //const lookup    = invert(file_references.remote);
         const count     = urls?.length || 0;
         OUT.debug(`${func}: ${count} URLs =`, urls);
         for (let i = 0; i < count; i++) {

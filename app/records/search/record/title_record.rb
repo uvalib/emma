@@ -152,7 +152,6 @@ class Search::Record::TitleRecord < Search::Api::Record
     def number_value(item)
       return item.number_value if item.respond_to?(:number_value)
       factor = nil
-      # noinspection RailsParamDefResolve
       levels = item.try(:level) || item || {}
       levels.reduce(0.0) do |result, type_entry|
         _type, entry = type_entry
@@ -171,7 +170,6 @@ class Search::Record::TitleRecord < Search::Api::Record
       return item.number_range if item.respond_to?(:number_range)
       r_min = r_max = 0.0
       factor  = nil
-      # noinspection RailsParamDefResolve
       entries = item.try(:level) || item
       entries = entries.is_a?(Hash) ? entries.values : Array.wrap(entries)
       entries.each do |entry|
@@ -802,7 +800,6 @@ class Search::Record::TitleRecord < Search::Api::Record
       if item.nil? || (item == self)
         @number_value ||= super(@level)
       else
-        # noinspection RailsParamDefResolve, RubyMismatchedArgumentType
         item.try(__method__) || super(item.try(:level) || item)
       end
     end
@@ -817,7 +814,6 @@ class Search::Record::TitleRecord < Search::Api::Record
       if item.nil? || (item == self)
         @number_range ||= super(@level)
       else
-        # noinspection RailsParamDefResolve, RubyMismatchedArgumentType
         item.try(__method__) || super(item.try(:level) || item)
       end
     end
@@ -1094,7 +1090,6 @@ class Search::Record::TitleRecord < Search::Api::Record
     return [] unless recs.many?
     EXCLUSIVE_FIELDS.select do |field|
       first = nil
-      # noinspection RubyMismatchedReturnType
       recs.find do |rec|
         next if (value = field_value(rec, field)).blank?
         next if first.nil? && (first = make_comparable(value, field))

@@ -238,7 +238,7 @@ module HelpHelper
   #
   def help_button: (String label, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # Render a button for use on help pages.
+  # Render an action menu button for use on help pages.
   #
   # @param [BaseDecorator, Class] decorator
   # @param [Symbol]               action

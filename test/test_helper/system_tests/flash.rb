@@ -39,8 +39,8 @@ module TestHelper::SystemTests::Flash
     **opt
   )
     terms = [content, alert, notice, text].compact
-    # noinspection RubyMismatchedArgumentType
     if without.is_a?(String)
+      # noinspection RubyMismatchedArgumentType
       terms << without
       text ||= without
     end

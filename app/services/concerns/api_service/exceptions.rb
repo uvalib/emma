@@ -135,7 +135,6 @@ module ApiService::Exceptions
   # @return [ApiService::AuthError]
   #
   def auth_error(...)
-    # noinspection RubyMismatchedReturnType
     error_classes[:auth].new(...)
   end
 
@@ -144,7 +143,6 @@ module ApiService::Exceptions
   # @return [ApiService::CommError]
   #
   def comm_error(...)
-    # noinspection RubyMismatchedReturnType
     error_classes[:comm].new(...)
   end
 
@@ -153,7 +151,6 @@ module ApiService::Exceptions
   # @return [ApiService::SessionError]
   #
   def session_error(...)
-    # noinspection RubyMismatchedReturnType
     error_classes[:session].new(...)
   end
 
@@ -162,7 +159,6 @@ module ApiService::Exceptions
   # @return [ApiService::ConnectError]
   #
   def connect_error(...)
-    # noinspection RubyMismatchedReturnType
     error_classes[:connect].new(...)
   end
 
@@ -171,7 +167,6 @@ module ApiService::Exceptions
   # @return [ApiService::TimeoutError]
   #
   def timeout_error(...)
-    # noinspection RubyMismatchedReturnType
     error_classes[:timeout].new(...)
   end
 
@@ -180,7 +175,6 @@ module ApiService::Exceptions
   # @return [ApiService::XmitError]
   #
   def xmit_error(...)
-    # noinspection RubyMismatchedReturnType
     error_classes[:xmit].new(...)
   end
 
@@ -189,7 +183,6 @@ module ApiService::Exceptions
   # @return [ApiService::RecvError]
   #
   def recv_error(...)
-    # noinspection RubyMismatchedReturnType
     error_classes[:recv].new(...)
   end
 
@@ -198,7 +191,6 @@ module ApiService::Exceptions
   # @return [ApiService::ParseError]
   #
   def parse_error(...)
-    # noinspection RubyMismatchedReturnType
     error_classes[:parse].new(...)
   end
 
@@ -213,7 +205,6 @@ module ApiService::Exceptions
   # @return [ApiService::RequestError]
   #
   def request_error(...)
-    # noinspection RubyMismatchedReturnType
     error_classes[:request].new(...)
   end
 
@@ -222,7 +213,6 @@ module ApiService::Exceptions
   # @return [ApiService::NoInputError]
   #
   def no_input_error(...)
-    # noinspection RubyMismatchedReturnType
     error_classes[:no_input].new(...)
   end
 
@@ -237,7 +227,6 @@ module ApiService::Exceptions
   # @return [ApiService::ResponseError]
   #
   def response_error(...)
-    # noinspection RubyMismatchedReturnType
     error_classes[:response].new(...)
   end
 
@@ -246,7 +235,6 @@ module ApiService::Exceptions
   # @return [ApiService::EmptyResultError]
   #
   def empty_result_error(...)
-    # noinspection RubyMismatchedReturnType
     error_classes[:empty_result].new(...)
   end
 
@@ -255,7 +243,6 @@ module ApiService::Exceptions
   # @return [ApiService::HtmlResultError]
   #
   def html_result_error(...)
-    # noinspection RubyMismatchedReturnType
     error_classes[:html_result].new(...)
   end
 
@@ -264,7 +251,6 @@ module ApiService::Exceptions
   # @return [ApiService::RedirectionError]
   #
   def redirect_error(...)
-    # noinspection RubyMismatchedReturnType
     error_classes[:redirection].new(...)
   end
 
@@ -273,7 +259,6 @@ module ApiService::Exceptions
   # @return [ApiService::RedirectLimitError]
   #
   def redirect_limit_error(...)
-    # noinspection RubyMismatchedReturnType
     error_classes[:redirect_limit].new(...)
   end
 

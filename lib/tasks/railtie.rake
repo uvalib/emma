@@ -39,7 +39,6 @@ EMMA_RAILTIE_RAKE ||= begin
 
     ERB_ASSETS = %w[javascripts/shared/assets.js.erb].freeze
 
-    # noinspection RubyMismatchedArgumentType
     desc ['Pre-process .js.erb files', *ERB_ASSETS.map { |f| "- #{f}" }]
     task erb: [:environment] do
       ERB_ASSETS.each { |erb_file| preprocess_erb(erb_file) }

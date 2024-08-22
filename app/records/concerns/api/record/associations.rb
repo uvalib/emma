@@ -218,7 +218,6 @@ module Api::Record::Associations
         elsif type.is_a?(Class) || (type = name.constantize)
           !name.start_with?("#{service_name}::")
         end
-      # noinspection RubyMismatchedArgumentType
       no_arg ? ->(*, **) { type.new } : ->(*a, **o) { type.new(nil, *a, **o) }
     end
 

@@ -815,7 +815,8 @@ class UploadDecorator
     end
   end
 
-  # form_top_button_tray
+  # The form controls appearing above the fields, including file selection and
+  # bibliographic lookup controls.
   #
   # @param [ActionView::Helpers::FormBuilder] f
   # @param [Array<ActiveSupport::SafeBuffer>] buttons
@@ -878,8 +879,8 @@ class UploadDecorator
   protected
 
   # Element for prompting for the EMMA index entry of the partner repository
-  # item which was the basis for the remediated item which is being submitted
-  # via the "partner repository workflow".
+  # item which was the basis for the remediated item being submitted via the
+  # "partner repository workflow".
   #
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               Passed to #html_div for outer *div*.

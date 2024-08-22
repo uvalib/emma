@@ -80,7 +80,6 @@ class ExecError < RuntimeError
     @messages << default_message if @messages.empty?
     @messages.uniq!
     @messages.map! { |m| to_utf8(m).tap { |v| (m == v) ? v.dup : v } }
-    # noinspection RubyMismatchedArgumentType
     super(@messages.first)
   rescue => error
     Log.error { "ExecError#initialize: #{error.class}: #{error.message}" }

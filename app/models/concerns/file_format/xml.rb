@@ -175,8 +175,8 @@ module FileFormat::Xml
   #
   def get_attributes(elem)
     return {} unless elem.respond_to?(:attribute_nodes)
-    # noinspection RubyResolve
     elem.attribute_nodes.map { |node|
+      # noinspection RubyResolve
       k = node.node_name.to_sym
       v = node.try(:value)&.to_s&.strip
       [k, v] if v.present?

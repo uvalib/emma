@@ -211,7 +211,6 @@ class Org < ApplicationRecord
     return                if org.blank?
     org = org.to_s        if org.is_a?(Symbol)
     org = oid(org) || org if org.is_a?(String)
-    # noinspection RubyMismatchedReturnType
     org.is_a?(String) ? org : instance_for(org)&.abbrev
   end
 
@@ -249,6 +248,7 @@ class Org < ApplicationRecord
 
     error %= { field: 'organization name' } # TODO: I18n
     Log.info { "#{__method__} #{error}" }
+    # noinspection RubyMismatchedArgumentType
     raise (fatal.is_a?(Class) ? fatal : RuntimeError), error if fatal
   end
 
@@ -277,6 +277,7 @@ class Org < ApplicationRecord
 
     error %= { field: 'abbreviation' } # TODO: I18n
     Log.info { "#{__method__} #{error}" }
+    # noinspection RubyMismatchedArgumentType
     raise (fatal.is_a?(Class) ? fatal : RuntimeError), error if fatal
   end
 

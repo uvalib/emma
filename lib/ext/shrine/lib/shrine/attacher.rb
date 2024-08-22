@@ -121,7 +121,6 @@ class Shrine
       #
       def promote_cached(**options)
         __ext_debug { options }
-        # noinspection RubyMismatchedReturnType
         super
       end
 
@@ -134,7 +133,6 @@ class Shrine
       #
       def promote(storage: store_key, **options)
         __ext_debug { { storage: storage, options: options } }
-        # noinspection RubyMismatchedReturnType
         super
       end
 

@@ -22,7 +22,7 @@ module Api::Shared::TransformMethods
 
   # Transform data fields.
   #
-  # @param [Hash, nil] data           Default: *self*.
+  # @param [Api::Record, Hash, nil] data    Default: *self*.
   #
   # @return [void]
   #
@@ -50,7 +50,7 @@ module Api::Shared::TransformMethods
 
   # Back-fill "deprecated" fields.
   #
-  # @param [Hash, nil] data           Default: *self*.
+  # @param [Api::Record, Hash, nil] data    Default: *self*.
   #
   # @return [void]
   #

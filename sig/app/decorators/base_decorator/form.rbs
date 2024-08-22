@@ -395,7 +395,7 @@ module BaseDecorator::Form
   #
   def form_top_controls: (?(ActionView::Helpers::FormBuilder|nil) f, *ActiveSupport::SafeBuffer buttons, ?css: String|nil, **untyped opt) ?{ (Array[ActiveSupport::SafeBuffer]) -> strArray? } -> ActiveSupport::SafeBuffer
 
-  # form_top_button_tray
+  # The form controls appearing above the fields.
   #
   # @param [ActionView::Helpers::FormBuilder, nil] f
   # @param [Array<ActiveSupport::SafeBuffer>]      buttons
@@ -434,7 +434,7 @@ module BaseDecorator::Form
   #
   def form_bottom_button_tray: (?(ActionView::Helpers::FormBuilder|nil) f, *ActiveSupport::SafeBuffer buttons, **untyped opt) ?{ (Array[ActiveSupport::SafeBuffer]) -> strArray? } -> ActiveSupport::SafeBuffer
 
-  # form_button_tray
+  # A container including basic form controls.
   #
   # @param [ActionView::Helpers::FormBuilder, nil] f
   # @param [Array<ActiveSupport::SafeBuffer>]      buttons

@@ -20,6 +20,10 @@ class Object
 
   def advanced_search_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
+  def analytics_sys_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def analytics_sys_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
   def api_migrate_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def api_migrate_url: (*untyped _ignored) ?{ () -> untyped } -> String
@@ -164,6 +168,10 @@ class Object
 
   def data_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
+  def database_sys_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def database_sys_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
   def delete_account_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def delete_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
@@ -248,6 +256,10 @@ class Object
 
   def destroy_user_session_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
+  def disk_space_sys_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def disk_space_sys_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
   def edit_account_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def edit_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
@@ -328,13 +340,25 @@ class Object
 
   def enrollment_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
+  def environment_sys_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def environment_sys_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
   def file_download_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def file_download_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
+  def files_sys_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def files_sys_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
   def finalize_enrollment_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def finalize_enrollment_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def headers_sys_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def headers_sys_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def healthcheck_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
@@ -351,6 +375,14 @@ class Object
   def home_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def home_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def internals_sys_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def internals_sys_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def jobs_sys_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def jobs_sys_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def list_all_account_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
@@ -387,6 +419,14 @@ class Object
   def list_own_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def list_own_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def loggers_sys_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def loggers_sys_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def mailers_sys_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def mailers_sys_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def manifest_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
@@ -458,6 +498,10 @@ class Object
 
   def password_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
+  def processes_sys_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def processes_sys_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
   def reedit_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def reedit_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
@@ -521,6 +565,10 @@ class Object
   def set_run_state_health_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def set_run_state_health_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def settings_sys_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def settings_sys_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def show_account_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
@@ -642,6 +690,10 @@ class Object
 
   def user_registration_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
+  def var_sys_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def var_sys_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
   def version_health_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def version_health_url: (*untyped _ignored) ?{ () -> untyped } -> String
@@ -649,6 +701,10 @@ class Object
   def version_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def version_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def view_sys_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def view_sys_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def welcome_path: (*untyped _ignored) ?{ () -> untyped } -> String
 

@@ -456,7 +456,6 @@ module ManifestItemConcern
       attr[:attr_opt] = { overwrite: false }
       update_record(rec, **attr, **opt)
     else
-      # noinspection RubyMismatchedReturnType
       create_record(attr, **opt)
     end
   end
@@ -619,7 +618,6 @@ module ManifestItemConcern
   #
   def bulk_create_manifest_items(returning: ManifestItem.field_names)
     result = ManifestItem.insert_all(bulk_item_data, returning: returning)
-    # noinspection RubyMismatchedArgumentType
     bulk_returning(result)
   rescue ActiveRecord::ActiveRecordError => error
     raise_failure(error)
@@ -649,7 +647,6 @@ module ManifestItemConcern
   #
   def bulk_update_manifest_items(returning: ManifestItem.field_names)
     result = ManifestItem.upsert_all(bulk_item_data, returning: returning)
-    # noinspection RubyMismatchedArgumentType
     bulk_returning(result)
   rescue ActiveRecord::ActiveRecordError => error
     raise_failure(error)
@@ -851,7 +848,6 @@ module ManifestItemConcern
   #
   def show_values(item = @item, **opt)
     if item.is_a?(Model) || item.is_a?(Hash)
-      # noinspection RailsParamDefResolve
       item = item.try(:fields) || item.dup
       file = item.delete(:file_data)
       item[:file_data] = safe_json_parse(file) if file

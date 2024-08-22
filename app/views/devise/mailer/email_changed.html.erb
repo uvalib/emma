@@ -6,7 +6,6 @@
   user ||= @resource
   name ||= @email || user.email
 
-  # noinspection RailsParamDefResolve
   unconfirmed_email = user.try(:unconfirmed_email) || user.email
 
   set_page_robots(:noindex, :nofollow) unless modal?
