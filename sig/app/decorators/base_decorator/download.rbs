@@ -73,9 +73,6 @@ module BaseDecorator::Download
   #
   THIS_FORMAT: String
 
-  # NOTE: Temporary until the IA API handles all formats.
-  API_FORMATS: strArray
-
   # Produce a link-like control for the retrieval of an Internet Archive file
   # that utilizes the "Printdisabled Unencrypted Ebook API".
   #

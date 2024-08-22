@@ -94,9 +94,6 @@ module BaseDecorator::Download
 
   public
 
-  # NOTE: Temporary until the IA API handles all formats.
-  API_FORMATS = %w[daisy epub].freeze
-
   # Produce a link-like control for the retrieval of an Internet Archive file
   # that utilizes the "Printdisabled Unencrypted Ebook API".
   #
@@ -106,13 +103,8 @@ module BaseDecorator::Download
   # @return [ActiveSupport::SafeBuffer]
   #
   def ia_retrieval_link(url, **opt)
-    id, type = extract_url_query(url).values_at('identifier', 'type')
-    if API_FORMATS.include?(type)
-      # noinspection RubyMismatchedReturnType
-      download_control(url: url, **opt)
-    else
-      super("https://archive.org/download/#{id}/#{id}.#{type}", **opt)
-    end
+    # noinspection RubyMismatchedReturnType
+    download_control(url: url, **opt)
   end
 
   # Produce a link to retrieve an ACE file that utilizes the Internet Archive

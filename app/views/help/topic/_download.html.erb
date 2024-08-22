@@ -24,6 +24,9 @@
   signed_in           = help_jump('signed in', :sign_in)
   search              = help_jump('search',    :search)
 
+  # noinspection RubyMismatchedArgumentType
+  download            = help_button(config_page(:download, :label))
+
   # Page anchors
 
   ace_help            = 'download_ace_help'
@@ -83,12 +86,23 @@
 
   <p>
     If on-the-fly generation is required,
-    Expect a delay of several minutes before the item has been prepared for
-    download.
-    (Requests for DAISY format may result in substantially longer delays than
-    requests for EPUB format.)
-    When it is ready, a DOWNLOAD button will appear.
-    Click this to perform the actual file download via your browser.
+    expect a significant delay before the item has been prepared for download.
+    (Internet Archive is actively working to make this process faster for their
+    web site, which will benefit downloads of IA items through EMMA as well.)
+  </p>
+
+  <p>
+    When it is ready, a <%= download -%> button will appear.
+    Click this to perform the actual file retrieval via your browser.
+  </p>
+
+  <p>
+    Due to the way that EMMA interacts with Internet Archive to retrieve
+    protected content,
+    it may seem as though nothing is happening after you click the button but
+    the content is actually on its way to your browser via the EMMA server.
+    (This behaviour should be addressed in the near future to make the download
+    act like you would expect in your browser.)
   </p>
 
 </section>
