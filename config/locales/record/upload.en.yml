@@ -342,6 +342,7 @@ en:
               Select "EMMA" if the file was not based on content from any of
               the other listed repositories.
             type:         !ruby/symbol EmmaRepository
+           #origin:       system # @see Model::configured_fields_for
 
           emma_collection:
             # FMM5: *missing*

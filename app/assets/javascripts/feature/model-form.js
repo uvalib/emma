@@ -578,6 +578,22 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
+     * If *true*, display the "Source Repository" menu for selecting the
+     * destination repository for the submission, and for a partner repository,
+     * engage the mini-form for selecting the original EMMA entry for which
+     * this submission is a variant.
+     *
+     * If *false*, the emma_repository of the submission is always "emma", the
+     * "Source Repository" menu is not shown, and the mini-form is never
+     * engaged.
+     *
+     * @type {boolean}
+     *
+     * @see "Upload::SELECT_REPO"
+     */
+    const SELECT_REPO = Emma.Upload.Option["SELECT_REPO"];
+
+    /**
      * Selector for the mini dialog used to find a parent EMMA entry.
      *
      * @readonly
@@ -2733,6 +2749,23 @@ appSetup(MODULE, function() {
     });
 
     /**
+     * Indicate whether the submission is to a partner repository.
+     *
+     * If {@link SELECT_REPO} is *false* then this returns *false* because the
+     * submission is always bound for the default repository.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     *
+     * @returns {boolean}
+     */
+    function partnerSubmission(form) {
+        if (!SELECT_REPO) { return false }
+        const $menu = sourceRepositoryMenu(form);
+        const repo  = $menu.val();
+        return partnerRepository(repo);
+    }
+
+    /**
      * Indicate whether **repo** requires the "partner repository workflow".
      *
      * @param {string} [repo]
@@ -2746,9 +2779,14 @@ appSetup(MODULE, function() {
     /**
      * Monitor attempts to change to the "Source Repository" menu selection.
      *
+     * If {@link SELECT_REPO} is *false* then this function does nothing.
+     * (The default repository should have already been set as part of the form
+     * data provided by the server.)
+     *
      * @param {Selector} [form]       Default: {@link formElement}.
      */
     function monitorSourceRepository(form) {
+        if (!SELECT_REPO) { return }
         const func  = "monitorSourceRepository";
         const $form = formElement(form);
         const $menu = sourceRepositoryMenu($form);
@@ -2981,6 +3019,8 @@ appSetup(MODULE, function() {
      * @param {object}                        params
      * @param {function(SearchResultEntry[])} callback
      * @param {function}                      [error_callback]
+     *
+     * @see SELECT_REPO
      */
     function fetchIndexEntries(params, callback, error_callback) {
         const func = "fetchIndexEntries";
@@ -3085,6 +3125,8 @@ appSetup(MODULE, function() {
      * @param {Selector} [form]
      *
      * @returns {jQuery}
+     *
+     * @see SELECT_REPO
      */
     function parentEntrySelect(form) {
         const $element = form && $(form);
@@ -3101,6 +3143,8 @@ appSetup(MODULE, function() {
      * @param {Selector} [form]
      *
      * @returns {jQuery}
+     *
+     * @see SELECT_REPO
      */
     function showParentEntrySelect(form) {
         const $popup_form = parentEntrySelect(form);
@@ -3114,6 +3158,8 @@ appSetup(MODULE, function() {
      * @param {Selector} [form]
      *
      * @returns {jQuery}
+     *
+     * @see SELECT_REPO
      */
     function hideParentEntrySelect(form) {
         const $popup_form = parentEntrySelect(form);
@@ -3127,6 +3173,8 @@ appSetup(MODULE, function() {
      * @param {Selector} [form]
      *
      * @returns {jQuery}
+     *
+     * @see SELECT_REPO
      */
     function parentEntrySearchInput(form) {
         return parentEntrySelect(form).find(PARENT_SEARCH_INPUT);
@@ -3139,6 +3187,8 @@ appSetup(MODULE, function() {
      * @param {string}   [caller]     For logging.
      *
      * @returns {object}
+     *
+     * @see SELECT_REPO
      */
     function parentEntrySearchTerms(form, caller) {
         let error, result = {};
@@ -3168,6 +3218,8 @@ appSetup(MODULE, function() {
      * @param {Selector} [form]
      *
      * @returns {jQuery}
+     *
+     * @see SELECT_REPO
      */
     function parentEntrySubmit(form) {
         return parentEntrySelect(form).find(PARENT_SEARCH_SUBMIT);
@@ -3179,6 +3231,8 @@ appSetup(MODULE, function() {
      * @param {Selector} [form]
      *
      * @returns {jQuery}
+     *
+     * @see SELECT_REPO
      */
     function parentEntryCancel(form) {
         return parentEntrySelect(form).find(PARENT_SEARCH_CANCEL);
@@ -3197,6 +3251,8 @@ appSetup(MODULE, function() {
      * @param {boolean}  [disabled]
      *
      * @returns {jQuery}
+     *
+     * @see SELECT_REPO
      */
     function seal(item, disabled) {
         const $item = $(item);
@@ -3212,6 +3268,8 @@ appSetup(MODULE, function() {
      * @param {Selector} item
      *
      * @returns {jQuery}
+     *
+     * @see SELECT_REPO
      */
     function unseal(item) {
         const $item = $(item);
@@ -3450,8 +3508,7 @@ appSetup(MODULE, function() {
                 return !found; // break loop if type found.
             });
             let enable   = false;
-            const repo   = sourceRepositoryMenu($form).val();
-            const forbid = partnerRepository(repo);
+            const forbid = partnerSubmission($form);
             if (found && !forbid) {
                 enable ||= Object.values(condition.or).some(v => v);
                 enable ||= Object.values(condition.and).every(v => v);
@@ -3482,8 +3539,7 @@ appSetup(MODULE, function() {
             if (isDefined(permit)) {
                 forbid = !permit;
             } else {
-                const repo = sourceRepositoryMenu($form).val();
-                forbid = partnerRepository(repo);
+                forbid = partnerSubmission($form);
             }
             if (!forbid) {
                 const $fields   = inputFields($form);

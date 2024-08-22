@@ -110,11 +110,11 @@ module Model
 
   # Combine configuration settings for a given model/controller.
   #
-  # @param [Symbol, String] type
+  # @param [Symbol] type
   #
   # @return [ModelConfig]
   #
-  def self.configured_fields_for: (Symbol|String `type`) -> ModelConfig
+  def self.configured_fields_for: (Symbol `type`) -> ModelConfig
 
   # For pages that specify their own :display_fields section, *fields* may
   # define the order of fields or simply modify the properties of the fields.

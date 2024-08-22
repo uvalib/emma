@@ -404,13 +404,16 @@ class UploadDecorator
   #
   def render_form_menu_single: (String name, anyArray value, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # Control elements always visible at the top of the input form.
+  # Control elements always visible at the top of the input form, including
+  # the initially-hidden #parent_entry_select if Upload#SELECT_REPO is *true*.
   #
   # @param [ActionView::Helpers::FormBuilder, nil] f
   # @param [Array<ActiveSupport::SafeBuffer>]      buttons
   # @param [Hash]                                  opt
   #
   # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see Upload#SELECT_REPO
   #
   def form_top_controls: (ActionView::Helpers::FormBuilder|nil f, *ActiveSupport::SafeBuffer buttons, **untyped opt) -> ActiveSupport::SafeBuffer
 
@@ -450,6 +453,7 @@ class UploadDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @see Upload#SELECT_REPO
   # @see LayoutHelper::SearchBar#search_input
   # @see LayoutHelper::SearchBar#search_button_label
   # @see file:javascripts/feature/model-form.js *monitorSourceRepository()*

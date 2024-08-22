@@ -799,7 +799,8 @@ class UploadDecorator
     super(name, value, **opt)
   end
 
-  # Control elements always visible at the top of the input form.
+  # Control elements always visible at the top of the input form, including
+  # the initially-hidden #parent_entry_select if Upload#SELECT_REPO is *true*.
   #
   # @param [ActionView::Helpers::FormBuilder, nil] f
   # @param [Array<ActiveSupport::SafeBuffer>]      buttons
@@ -807,13 +808,15 @@ class UploadDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @see Upload#SELECT_REPO
+  #
   def form_top_controls(f, *buttons, **opt)
     trace_attrs!(opt)
     t_opt = trace_attrs_from(opt)
     super do |parts|
       parts << parent_entry_select(**t_opt)
     end
-  end
+  end if Upload::SELECT_REPO
 
   # The form controls appearing above the fields, including file selection and
   # bibliographic lookup controls.
@@ -887,6 +890,7 @@ class UploadDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @see Upload#SELECT_REPO
   # @see LayoutHelper::SearchBar#search_input
   # @see LayoutHelper::SearchBar#search_button_label
   # @see file:javascripts/feature/model-form.js *monitorSourceRepository()*
@@ -919,7 +923,7 @@ class UploadDecorator
     html_div(**opt) do
       title << input << submit << cancel
     end
-  end
+  end if Upload::SELECT_REPO
 
   # ===========================================================================
   # :section: BaseDecorator overrides
@@ -948,7 +952,10 @@ class UploadDecorator
       bulk_delete:  bulk_delete_path,
       bulk_destroy: bulk_destroy_path,
     }
-    super.deep_merge!(Path: path_properties)
+    super.deep_merge!(
+      Path:   path_properties,
+      Option: { SELECT_REPO: Upload::SELECT_REPO }
+    )
   end
 
 end

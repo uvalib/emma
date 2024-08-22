@@ -186,7 +186,9 @@ module UploadWorkflow::Single::Data
   #
   def record_data(data)
     data = data.attributes if data.is_a?(Upload)
-    data.symbolize_keys.except!(*IGNORED_UPLOAD_FIELDS)
+    data.symbolize_keys.except!(*IGNORED_UPLOAD_FIELDS).tap do |result|
+      result[:repository] ||= EmmaRepository.default unless Upload::SELECT_REPO
+    end
   end
 
   # Prepare record data for use in the update of a record prior to creating a

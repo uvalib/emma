@@ -18,6 +18,7 @@ class Upload < ApplicationRecord
 
   include Model
 
+  include Upload::Config
   include Upload::BulkMethods
   include Upload::EmmaDataMethods
   include Upload::FileMethods

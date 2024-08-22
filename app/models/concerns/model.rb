@@ -192,7 +192,7 @@ module Model
 
   # Combine configuration settings for a given model/controller.
   #
-  # @param [Symbol, String] type
+  # @param [Symbol] type
   #
   # @return [ModelConfig]
   #
@@ -211,6 +211,12 @@ module Model
       invalid = invalid.keys.join(', ')
       "#{__method__}(#{type}): unexpected directive: #{invalid}"
     end if invalid.present?
+
+    # Special handling to eliminate "Source Repository" submission menu.
+    if (type == :upload) && !Upload::SELECT_REPO
+      repo = all_fields.dig(:emma_data, :emma_repository)
+      repo&.merge!(readonly: true, origin: 'system')
+    end
 
     # Special handling so that "en.emma.record.search" entries are initialized
     # with the equivalent values from the submission record configuration.

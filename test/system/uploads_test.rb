@@ -206,7 +206,6 @@ class UploadsTest < ApplicationSystemTestCase
       assert_selector '.uploaded-filename.complete', wait: 5
 
       # Add field data.
-      menu_select 'EMMA',            from: 'value-Repository'
       menu_select 'Moving Image',    from: 'value-Type'
       menu_select 'RTF',             from: 'value-Format'
       menu_select 'True',            from: 'value-Complete'
