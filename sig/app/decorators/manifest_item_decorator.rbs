@@ -5,14 +5,6 @@
 #   @return [ManifestItem]
 #
 class ManifestItemDecorator < BaseDecorator
-  # Indicates whether cells in the 'file_data' column include the ability to
-  # upload a file associated with the manifest item.
-  #
-  # @type [Boolean]
-  #
-  # @see file:assets/javascripts/controllers/manifest-edit.js *saveUpdates()*
-  #
-  EMBED_UPLOADER: bool
 
   module SharedPathMethods
     include BaseDecorator::SharedPathMethods
@@ -147,7 +139,7 @@ class ManifestItemDecorator < BaseDecorator
     def generate_form_actions: (?symArray actions) -> Hash[Symbol,symHash]
 
     # Render a single label/value pair, modifying the treatment of :file_data
-    # depending on the value of #EMBED_UPLOADER.
+    # depending on the value of ManifestItem#EMBED_UPLOADER.
     #
     # @param [String, Symbol] label
     # @param [any, nil]       value
@@ -684,21 +676,21 @@ class ManifestItemDecorator
   #
   def grid_data_cell_edit: (Symbol field, untyped value, (FieldConfig|nil) prop, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
-  # @see EMBED_UPLOADER
+  # @see ManifestItem::EMBED_UPLOADER
   # @type [Hash{Symbol=>Hash}]
   FILE_TYPE_CFG: Hash[Symbol,symHash]
 
-  # @see EMBED_UPLOADER
+  # @see ManifestItem::EMBED_UPLOADER
   # @type [Array<Symbol>]
   FILE_TYPES: symArray
 
-  # @see EMBED_UPLOADER
+  # @see ManifestItem::EMBED_UPLOADER
   FILE_INPUT_TYPES: symArray
 
-  # @see EMBED_UPLOADER
+  # @see ManifestItem::EMBED_UPLOADER
   PREPEND_CONTROLS_CLASS: String
 
-  # @see EMBED_UPLOADER
+  # @see ManifestItem::EMBED_UPLOADER
   APPEND_CONTROLS_CLASS: String
 
   # For the :file_data column, display the path to the file if present or an
@@ -714,7 +706,7 @@ class ManifestItemDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see EMBED_UPLOADER
+  # @see ManifestItem::EMBED_UPLOADER
   # @see file:controllers/manifest-edit.js  *initializeAddedControls*
   #
   def render_grid_file_input: (String _name, untyped _value, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
@@ -727,7 +719,7 @@ class ManifestItemDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see EMBED_UPLOADER
+  # @see ManifestItem::EMBED_UPLOADER
   #
   def file_input_popup: (src: Symbol, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
@@ -739,7 +731,7 @@ class ManifestItemDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see EMBED_UPLOADER
+  # @see ManifestItem::EMBED_UPLOADER
   #
   def file_input_ctrl: (src: Symbol, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
@@ -752,7 +744,7 @@ class ManifestItemDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see EMBED_UPLOADER
+  # @see ManifestItem::EMBED_UPLOADER
   #
   def file_input_panel: (id: String, src: Symbol, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 

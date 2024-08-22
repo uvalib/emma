@@ -13,15 +13,6 @@ __loading_begin(__FILE__)
 #
 class ManifestItemDecorator < BaseDecorator
 
-  # Indicates whether cells in the 'file_data' column include the ability to
-  # upload a file associated with the manifest item.
-  #
-  # @type [Boolean]
-  #
-  # @see file:assets/javascripts/controllers/manifest-edit.js *saveUpdates()*
-  #
-  EMBED_UPLOADER = false
-
   # ===========================================================================
   # :section: Draper
   # ===========================================================================
@@ -321,7 +312,7 @@ class ManifestItemDecorator < BaseDecorator
     end
 
     # Render a single label/value pair, modifying the treatment of :file_data
-    # depending on the value of #EMBED_UPLOADER.
+    # depending on the value of ManifestItem#EMBED_UPLOADER.
     #
     # @param [String, Symbol] label
     # @param [any, nil]       value
@@ -330,7 +321,7 @@ class ManifestItemDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer, nil]
     #
     def render_form_pair(label, value, **opt)
-      opt[:embed_uploader] = EMBED_UPLOADER
+      opt[:embed_uploader] = ManifestItem::EMBED_UPLOADER
       super
     end
 
@@ -1363,7 +1354,7 @@ class ManifestItemDecorator
     if field == :file_data
       value = json_parse(value)
       opt[:'data-value'] = value.to_json if value
-      if EMBED_UPLOADER
+      if ManifestItem::EMBED_UPLOADER
         name, type = value && ManifestItem.file_name_type(value)
         entries =
           FILE_TYPES.map do |t|
@@ -1395,8 +1386,11 @@ class ManifestItemDecorator
   #
   def grid_data_cell_edit(field, value, prop, **opt)
     if field == :file_data
-      opt[:render] ||=
-        EMBED_UPLOADER ? :render_grid_file_input : :render_grid_input
+      if ManifestItem::EMBED_UPLOADER
+        opt[:render] ||= :render_grid_file_input
+      else
+        opt[:render] ||= :render_grid_input
+      end
     end
     super
   end
@@ -1407,22 +1401,22 @@ class ManifestItemDecorator
 
   protected
 
-  # @see EMBED_UPLOADER
+  # @see ManifestItem::EMBED_UPLOADER
   # @type [Hash{Symbol=>Hash}]
   FILE_TYPE_CFG = BULK_GRID_CFG[:file]
 
-  # @see EMBED_UPLOADER
+  # @see ManifestItem::EMBED_UPLOADER
   # @type [Array<Symbol>]
   FILE_TYPES = FILE_TYPE_CFG.keys.freeze
 
-  # @see EMBED_UPLOADER
+  # @see ManifestItem::EMBED_UPLOADER
   FILE_INPUT_TYPES =
     FILE_TYPE_CFG.select { |_, v| v[:panel] && v[:enabled] }.keys.freeze
 
-  # @see EMBED_UPLOADER
+  # @see ManifestItem::EMBED_UPLOADER
   PREPEND_CONTROLS_CLASS = 'uppy-FileInput-container-prepend'
 
-  # @see EMBED_UPLOADER
+  # @see ManifestItem::EMBED_UPLOADER
   APPEND_CONTROLS_CLASS  = 'uppy-FileInput-container-append'
 
   # For the :file_data column, display the path to the file if present or an
@@ -1438,7 +1432,7 @@ class ManifestItemDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see EMBED_UPLOADER
+  # @see ManifestItem::EMBED_UPLOADER
   # @see file:controllers/manifest-edit.js  *initializeAddedControls*
   #
   def render_grid_file_input(_name, _value, css: UPLOADER_DISPLAY_CLASS, **opt)
@@ -1447,7 +1441,7 @@ class ManifestItemDecorator
     controls = FILE_INPUT_TYPES.map { |type| file_input_popup(src: type) }
     controls = html_div(*controls, class: "#{APPEND_CONTROLS_CLASS} hidden")
     controls << display
-  end if EMBED_UPLOADER
+  end if ManifestItem::EMBED_UPLOADER
 
   # Generate an alternate file input control as a button with a hidden popup.
   #
@@ -1457,7 +1451,7 @@ class ManifestItemDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see EMBED_UPLOADER
+  # @see ManifestItem::EMBED_UPLOADER
   #
   def file_input_popup(src:, css: '.inline-popup', **opt)
     prop     = FILE_TYPE_CFG[src] || {}
@@ -1473,7 +1467,7 @@ class ManifestItemDecorator
     html_div(**opt) do
       button << panel
     end
-  end if EMBED_UPLOADER
+  end if ManifestItem::EMBED_UPLOADER
 
   # Generate a visible button of an alternate file input control.
   #
@@ -1483,14 +1477,14 @@ class ManifestItemDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see EMBED_UPLOADER
+  # @see ManifestItem::EMBED_UPLOADER
   #
   def file_input_ctrl(src:, css: PopupHelper::POPUP_TOGGLE_CLASS, **opt)
     prop  = FILE_TYPE_CFG[src] || {}
     label = prop[:label]
     prepend_css!(opt, css)
     html_button(label, **opt)
-  end if EMBED_UPLOADER
+  end if ManifestItem::EMBED_UPLOADER
 
   # Generate a hidden panel to prompt for a file name.
   #
@@ -1501,7 +1495,7 @@ class ManifestItemDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see EMBED_UPLOADER
+  # @see ManifestItem::EMBED_UPLOADER
   #
   def file_input_panel(id:, src:, css: PopupHelper::POPUP_PANEL_CLASS, **opt)
     prop        = FILE_TYPE_CFG[src] || {}
@@ -1534,7 +1528,7 @@ class ManifestItemDecorator
     html_div(**opt) do
       description << input_label << input_field << input_submit << input_cancel
     end
-  end if EMBED_UPLOADER
+  end if ManifestItem::EMBED_UPLOADER
 
   # ===========================================================================
   # :section: BaseDecorator::List overrides
@@ -1614,7 +1608,11 @@ class ManifestItemDecorator
     path_properties = {
       upload: upload_path,
     }
-    super.deep_merge!(Path: path_properties, Label: ManifestItem::STATUS)
+    super.deep_merge!(
+      Path:   path_properties,
+      Label:  ManifestItem::STATUS,
+      Option: { EMBED_UPLOADER: ManifestItem::EMBED_UPLOADER }
+    )
   end
 
 end

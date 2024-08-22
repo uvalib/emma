@@ -13,6 +13,15 @@ module ManifestItem::Config
 
   public
 
+  # Indicates whether cells in the 'file_data' column include the ability to
+  # upload a file associated with the manifest item.
+  #
+  # @type [Boolean]
+  #
+  # @see file:assets/javascripts/controllers/manifest-edit.js *EMBED_UPLOADER*
+  #
+  EMBED_UPLOADER = false
+
   # To avoid complications for the initial release of bulk submissions, there
   # is no selection of destination repository -- it is implicitly 'EMMA'.
   #

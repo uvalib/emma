@@ -396,9 +396,9 @@ appSetup(MODULE, function() {
      *
      * @type {boolean}
      *
-     * @see "ManifestItemDecorator::EMBED_UPLOADER"
+     * @see "ManifestItem::EMBED_UPLOADER"
      */
-    const EMBED_UPLOADER = false;
+    const EMBED_UPLOADER = Emma.ManifestItem.Option["EMBED_UPLOADER"];
 
     /**
      * The name of the attribute indicating the ManifestItem database table
