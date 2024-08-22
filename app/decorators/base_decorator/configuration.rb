@@ -164,8 +164,7 @@ module BaseDecorator::Configuration
   # @return [ActionConfig]            Frozen result.
   #
   def model_form_fields(type = nil)
-    type ||= model_config_key
-    Model.form_fields(type)
+    model_database_fields(type)
   end
 
   # Get all fields for a model instance table entry.

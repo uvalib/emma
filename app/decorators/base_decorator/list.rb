@@ -202,6 +202,7 @@ module BaseDecorator::List
     # Setup options for creating related HTML identifiers.
     base    = opt.delete(:base) || model_html_id(field || label)
     classes = %W[field-#{base}]
+    base    = "Emma#{base}" if field == :emma_repository
     id_opt  = { base: base, index: index, group: opt.delete(:group) }.compact
     l_id    = opt.delete(:label_id)
     v_id    = opt.delete(:value_id) || field_html_id(value_css, **id_opt)
@@ -596,7 +597,7 @@ module BaseDecorator::List
     parts = []
     parts << list_item_number(level: l, **opt) unless skip.include?(:number)
     parts << thumbnail(link: true, **opt)      unless skip.include?(:thumbnail)
-    parts << list_item(limited: true, **opt)
+    parts << list_item(**opt)
     safe_join(parts)
   end
 

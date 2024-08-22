@@ -450,17 +450,6 @@ module Model
     config[:database] || config[:all] || ActionConfig::EMPTY
   end
 
-  # Get all configured record fields relevant to a create/update form for the
-  # indicated model.
-  #
-  # @param [any, nil] item            Symbol, String, Class, Model
-  #
-  # @return [ActionConfig]            Frozen result.
-  #
-  def self.form_fields(item)
-    database_fields(item)
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -573,17 +562,6 @@ module Model
     #
     def database_fields(item = nil)
       Model.database_fields(item || self)
-    end
-
-    # Get all configured record fields relevant to a create/update form for the
-    # model.
-    #
-    # @param [any, nil] item          Symbol,String,Class,Model; def.: `self`.
-    #
-    # @return [ActionConfig]          Frozen result.
-    #
-    def form_fields(item = nil)
-      Model.form_fields(item || self)
     end
 
   end

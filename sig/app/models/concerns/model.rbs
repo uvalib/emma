@@ -217,15 +217,6 @@ module Model
   #
   def self.database_fields: (untyped? item) -> ActionConfig
 
-  # Get all configured record fields relevant to a create/update form for the
-  # indicated model.
-  #
-  # @param [any, nil] item            Symbol, String, Class, Model
-  #
-  # @return [ActionConfig]            Frozen result.
-  #
-  def self.form_fields: (untyped? item) -> ActionConfig
-
   # Methods for the including class or its instances.
   #
   module Methods
@@ -299,15 +290,6 @@ module Model
     # @return [ActionConfig]          Frozen result.
     #
     def database_fields: (?untyped? item) -> ActionConfig
-
-    # Get all configured record fields relevant to a create/update form for the
-    # model.
-    #
-    # @param [any, nil] item          Symbol,String,Class,Model; def.: `self`.
-    #
-    # @return [ActionConfig]          Frozen result.
-    #
-    def form_fields: (?untyped? item) -> ActionConfig
   end
 
   # Methods which extend the including class.

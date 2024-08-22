@@ -61,11 +61,11 @@ class LookupChannel::StatusResponse < LookupChannel::Response
   protected
 
   def payload_normalize(value, except: nil)
-    value     = super
-    service   = value.delete(:services) || value[:service]
-    service &&= Array.wrap(service).map { |v| v.to_s.demodulize }
-    # noinspection RubyMismatchedReturnType
-    service ? value.merge!(service: service) : value
+    super.tap do |result|
+      if (service = result.delete(:services) || result[:service])
+        result[:service] = Array.wrap(service).map { |v| v.to_s.demodulize }
+      end
+    end
   end
 
 end

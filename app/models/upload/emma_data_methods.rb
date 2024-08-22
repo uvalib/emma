@@ -211,6 +211,16 @@ module Upload::EmmaDataMethods
     end
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  def self.included(base)
+    base.extend(self)
+  end
+
 end
 
 __loading_end(__FILE__)

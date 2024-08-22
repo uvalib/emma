@@ -191,6 +191,7 @@ module BaseDecorator::Form
     base    = opt.delete(:base) || model_html_id(field || label)
     name    = field&.to_s || base
     type    = "field-#{base}"
+    base    = "Emma#{base}" if field == :emma_repository
     id_opt  = { base: base, index: index }.compact
     l_id    = opt.delete(:label_id)
     v_id    = opt.delete(:value_id) || field_html_id(value_css, **id_opt)

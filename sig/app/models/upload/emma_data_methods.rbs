@@ -125,5 +125,9 @@ module Upload::EmmaDataMethods
   #
   # @return [String, nil]
   #
-  def modify_active_emma_data: (symHash data, ?bool allow_blank) -> (String | nil)
+  def modify_active_emma_data: (symHash data, ?blanks: bool) -> (String | nil)
+
+  private
+
+  def self.included: (Module base) -> void
 end
