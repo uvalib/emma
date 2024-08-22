@@ -1650,8 +1650,10 @@ en:
                 and Canada?
               </p>
               <p>
-                %{enroll_link} to become a part of the EMMA community.
+                %{enroll_link} to become a part of the EMMA community of
+                %{orgs_count} institutions and growing:
               </p>
+              %{orgs_list}
             enroll_production_html:
               >-
               <p>

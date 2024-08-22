@@ -1,0 +1,29 @@
+# Support methods for /home pages.
+#
+module HomeHelper
+  include CssHelper
+
+  include HtmlHelper
+
+  # Generate a display of the number of active EMMA member organizations.
+  #
+  # @param [String] css               Characteristic CSS class/selector
+  # @param [Hash]   opt               Passed to #html_span.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def orgs_count: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Generate a display list of active EMMA member organizations.
+  #
+  # @param [String] css               Characteristic CSS class/selector
+  # @param [Hash]   opt               Passed to #html_ul.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def orgs_list: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  private
+
+  def self.included: (Module base) -> void
+end

@@ -40,4 +40,21 @@ body.home-dashboard {
             margin-top: calc(2 * $page-padding-y);
         }
     }
+
+    .orgs-count {
+        font-weight: bold;
+    }
+
+    .orgs-list {
+
+        line-height: 1.375;
+
+        @media #{$not-narrow-screen} {
+            column-count: 2;
+        }
+
+        li {
+            &::marker { color: $uva-accent-blue; }
+        }
+    }
 }
