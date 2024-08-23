@@ -144,11 +144,12 @@ module BaseDecorator::Download
     id        = item.emma_repositoryRecordId
     repo      = item.emma_repository || EmmaRepository.default
     fmt       = (format || item.dc_format).to_sym
+    file      = (fmt == :daisy) ? "#{id}.#{fmt}.zip" : "#{id}.#{fmt}"
     fmt_name  = config_item(:repository,repo,:download_fmt,fmt) || item.label
     repo_name = EmmaRepository.pairs[repo]
 
     # Initialize link options.
-    opt[:label] ||= (fmt == :daisy) ? "#{id}.#{fmt}.zip" : "#{id}.#{fmt}"
+    opt[:label] ||= file
     opt[:path]    = url
 
     # Set up the tooltip to be shown before the item has been requested.
@@ -176,7 +177,7 @@ module BaseDecorator::Download
     # Auxiliary control elements which are initially hidden.
     h_opt = { class: 'hidden' }
     parts << download_progress(**h_opt)
-    parts << download_button(fmt: fmt_name, href: url, **h_opt)
+    parts << download_button(fmt: fmt_name, file: file, href: url, **h_opt)
     parts << download_failure(**h_opt)
 
     # Emit the link and control elements.
@@ -238,19 +239,27 @@ module BaseDecorator::Download
   # An element for direct download of an artifact.
   #
   # @param [String, nil]         label
+  # @param [String, nil]         file   File name.
   # @param [String, Symbol, nil] fmt
   # @param [String]              css    Characteristic CSS class/selector.
   # @param [Hash]                opt    Passed to LinkHelper#make_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def download_button(label: nil, fmt: nil, css: DOWNLOAD_BUTTON_CLASS, **opt)
-    label       ||= DOWNLOAD_BUTTON_LABEL
-    fmt           = download_format(fmt)
-    opt[:title] ||= config_page(:download, :button, :tooltip, fmt: fmt)
-    opt[:role]  ||= 'button'
+  def download_button(
+    label:  nil,
+    file:   nil,
+    fmt:    nil,
+    css:    DOWNLOAD_BUTTON_CLASS,
+    **opt
+  )
+    label          ||= DOWNLOAD_BUTTON_LABEL
+    fmt              = download_format(fmt)
+    opt[:role]     ||= 'button'
+    opt[:title]    ||= config_page(:download, :button, :tooltip, fmt: fmt)
+    opt[:download] ||= file if file
     prepend_css!(opt, css)
-    make_link('#', label, **opt, download: true)
+    make_link('#', label, **opt)
   end
 
   # Prepare a format name for use in a tooltip or label.
@@ -260,7 +269,7 @@ module BaseDecorator::Download
   # @return [String]
   #
   def download_format(fmt)
-    name = fmt&.to_s || THIS_FORMAT
+    return THIS_FORMAT unless (name = fmt&.to_s)
     name.match?(/\s/) ? quote(name) : name
   end
 
