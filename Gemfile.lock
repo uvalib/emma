@@ -168,10 +168,10 @@ GEM
     erubi (1.13.0)
     et-orbi (1.2.11)
       tzinfo
-    faraday (2.10.1)
-      faraday-net_http (>= 2.0, < 3.2)
+    faraday (2.11.0)
+      faraday-net_http (>= 2.0, < 3.4)
       logger
-    faraday-net_http (3.1.1)
+    faraday-net_http (3.3.0)
       net-http
     faraday-retry (2.2.1)
       faraday (~> 2.0)
@@ -312,7 +312,7 @@ GEM
     rb-fsevent (0.11.2)
     rb-inotify (0.11.1)
       ffi (~> 1.0)
-    rbs (3.5.2)
+    rbs (3.5.3)
       logger
     rdoc (6.7.0)
       psych (>= 4.0.0)
