@@ -96,10 +96,10 @@ class Ability
     list_all:       [],
     list_org:       [],
     list_own:       [],
-    view:           %i[show retrieval],
+    view:           %i[show retrieval probe_retrieval],
     modify:         %i[edit update],
     remove:         %i[delete destroy],
-    retrieve:       %i[download retrieval],
+    retrieve:       %i[download retrieval probe_retrieval],
 
   }.deep_freeze
 
