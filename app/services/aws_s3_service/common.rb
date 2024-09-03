@@ -13,6 +13,8 @@ module AwsS3Service::Common
 
   include AwsS3Service::Properties
 
+  include AwsS3::Shared::AwsMethods
+
   # ===========================================================================
   # :section: ApiService::Common overrides
   # ===========================================================================
@@ -147,18 +149,10 @@ module AwsS3Service::Common
   end
 
   # ===========================================================================
-  # :section:
+  # :section: AwsS3::Shared::AwsMethods overrides
   # ===========================================================================
 
   public
-
-  # Allowable AWS S3 Client initializer parameters.
-  #
-  # @return [Array<Symbol>]
-  #
-  def client_params
-    @client_params ||= Aws::S3::Client.new.config.to_h.keys
-  end
 
   # Get an S3 client instance.
   #
@@ -167,38 +161,12 @@ module AwsS3Service::Common
   # @return [Aws::S3::Client]
   #
   def s3_client(**opt)
-    opt.slice!(*client_params) if opt.present?
-    Aws::S3::Client.new(S3_OPTIONS.merge(opt))
-  end
-
-  # Get an S3 resource instance.
-  #
-  # @param [Hash] opt                       Passed to #s3_client except for:
-  #
-  # @option opt [Aws::S3::Client] :client   Used rather than creating a new one
-  #
-  # @return [Aws::S3::Resource]
-  #
-  def s3_resource(**opt)
-    client = opt[:client] || s3_client(**opt)
-    Aws::S3::Resource.new(client: client)
-  end
-
-  # Get an S3 bucket instance.
-  #
-  # @param [String] bucket                  Bucket name.
-  # @param [Hash]   opt                     Passed to #s3_resource except for:
-  #
-  # @option opt [Aws::S3::Client] :client   Used rather than creating a new one
-  #
-  # @return [Aws::S3::Bucket]
-  #
-  def s3_bucket(bucket, **opt)
-    s3_resource(**opt).bucket(bucket)
+    opt.reverse_merge!(S3_OPTIONS)
+    super
   end
 
   # ===========================================================================
-  # :section:
+  # :section: AwsS3::Shared::AwsMethods overrides
   # ===========================================================================
 
   protected
@@ -217,27 +185,11 @@ module AwsS3Service::Common
   # @return [nil]                     If the operation failed.
   #
   def aws_put_file(bucket, key, content, **opt)
-    meth     = opt.delete(:meth) || calling_method
-    client   = opt.delete(:client)
-    client ||= (bucket.client if bucket.is_a?(Aws::S3::Bucket))
-    client ||= s3_client(**opt)
-    params   = { bucket: bucket, key: key }
-    # @type [Types::CopyObjectOutput, Types::PutObjectOutput] response
-    response =
-      if content.is_a?(Aws::S3::Object)
-        params[:copy_source] = "#{content.bucket_name}/#{content.key}"
-        client.copy_object(params, opt)
-      else
-        # noinspection RubyMismatchedArgumentType
-        params[:body] = content.is_a?(String) ? StringIO.new(content) : content
-        client.put_object(params, opt)
-      end
-    Log.debug { "#{meth}: AWS S3 response: #{response.inspect} " }
-    key
+    opt[:meth] ||= calling_method
+    super
   rescue => error
+    # noinspection RubyMismatchedReturnType
     set_error(error)
-    # noinspection RubyScope
-    Log.warn { "#{meth}: AWS S3 failure: #{error.class}: #{error.message}" }
   end
 
   # Download a single file from an AWS S3 bucket.
@@ -253,19 +205,11 @@ module AwsS3Service::Common
   # @return [nil]                     If the operation failed.
   #
   def aws_get_file(bucket, key, **opt)
-    meth     = opt.delete(:meth) || calling_method
-    client   = opt.delete(:client)
-    client ||= (bucket.client if bucket.is_a?(Aws::S3::Bucket))
-    client ||= s3_client(**opt)
-    params   = { bucket: bucket, key: key }
-    # @type [Aws::S3::Types::GetObjectOutput] response
-    response = client.get_object(params, opt)
-    Log.debug { "#{meth}: AWS S3 response: #{response.inspect}" }
-    response.body.read
+    opt[:meth] ||= calling_method
+    super
   rescue => error
+    # noinspection RubyMismatchedReturnType
     set_error(error)
-    # noinspection RubyScope
-    Log.warn { "#{meth}: AWS S3 failure: #{error.class}: #{error.message}" }
   end
 
   # Remove a single file from an AWS S3 bucket.
@@ -281,23 +225,15 @@ module AwsS3Service::Common
   # @return [nil]                     If the operation failed.
   #
   def aws_delete_file(bucket, key, **opt)
-    meth     = opt.delete(:meth) || calling_method
-    client   = opt.delete(:client)
-    client ||= (bucket.client if bucket.is_a?(Aws::S3::Bucket))
-    client ||= s3_client(**opt)
-    params   = { bucket: bucket, key: key }
-    # @type [Aws::S3::Types::DeleteObjectOutput] response
-    response = client.delete_object(params, opt)
-    Log.debug { "#{meth}: AWS S3 response: #{response.inspect}" }
-    key
+    opt[:meth] ||= calling_method
+    super
   rescue => error
+    # noinspection RubyMismatchedReturnType
     set_error(error)
-    # noinspection RubyScope
-    Log.warn { "#{meth}: AWS S3 failure: #{error.class}: #{error.message}" }
   end
 
   # ===========================================================================
-  # :section:
+  # :section: AwsS3::Shared::AwsMethods overrides
   # ===========================================================================
 
   public
@@ -316,48 +252,11 @@ module AwsS3Service::Common
   #
   def aws_list_objects(bucket, filter = nil, **opt)
     __debug_items(binding)
-    meth     = opt.delete(:meth) || calling_method
-    client   = opt.delete(:client)
-    client ||= (bucket.client if bucket.is_a?(Aws::S3::Bucket))
-    client ||= s3_client(**opt)
-    params   = { bucket: bucket }
-    filter   =
-      case filter.presence
-        when nil     then nil # No filter means list all objects in the bucket.
-        when '*'     then nil # An explicit request for all objects.
-        when /\.$/   then filter
-        when /\.\*$/ then filter.delete_suffix('*')
-        else              "#{filter}."
-      end
-    # @type [Aws::S3::Types::ListObjectsV2Output] response
-    response = client.list_objects_v2(params, **opt)
-    result = Array.wrap(response.contents)
-    filter ? result.select { |obj| obj.key.start_with?(filter) } : result
+    opt[:meth] ||= calling_method
+    super
   rescue => error
+    # noinspection RubyMismatchedReturnType
     set_error(error)
-    # noinspection RubyScope
-    Log.warn { "#{meth}: AWS S3 failure: #{error.class}: #{error.message}" }
-  end
-
-  # Lookup matching AWS S3 object keys if "filter" appears to be a pattern and
-  # not a specific filename and extension.
-  #
-  # @param [String, Aws::S3::Bucket] bucket
-  # @param [String, nil]             filter
-  # @param [Hash]                    opt      Passed to #aws_list_objects.
-  #
-  # @return [Array<String>]
-  #
-  # === Usage Notes
-  # This should only be used when transforming a list of key name patterns into
-  # actual key names -- use #aws_list_objects directly when checking on the
-  # presence of the files themselves.
-  #
-  def aws_list_object_keys(bucket, filter = nil, **opt)
-    unless filter.blank? || (filter == '*') || filter.match?(/\.\*?$/)
-      return [filter] if filter.remove(%r{^.*/}).include?('.')
-    end
-    aws_list_objects(bucket, filter, **opt)&.map(&:key) || []
   end
 
   # ===========================================================================

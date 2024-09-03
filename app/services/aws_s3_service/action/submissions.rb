@@ -210,7 +210,7 @@ module AwsS3Service::Action::Submissions
   #
   def aws_create(*records, bucket: nil, atomic: true, **opt)
     opt[:meth]   ||= calling_method
-    opt[:client] ||= s3_client(**opt.except(:meth))
+    opt[:client] ||= s3_client(**opt)
     result = []
     records.map do |record|
       bkt = bucket || bucket_for(record)
@@ -248,7 +248,7 @@ module AwsS3Service::Action::Submissions
   #
   def aws_get(*sids, bucket:, atomic: true, **opt)
     opt[:meth]   ||= calling_method
-    opt[:client] ||= s3_client(**opt.except(:meth))
+    opt[:client] ||= s3_client(**opt)
     sids.flat_map { |sid|
       aws_list_object_keys(bucket, sid, **opt).map do |key|
         content = aws_get_file(bucket, key, **opt)
@@ -274,7 +274,7 @@ module AwsS3Service::Action::Submissions
   #
   def aws_delete(*sids, bucket:, atomic: true, **opt)
     opt[:meth]   ||= calling_method
-    opt[:client] ||= s3_client(**opt.except(:meth))
+    opt[:client] ||= s3_client(**opt)
     sids.flat_map { |sid|
       aws_list_object_keys(bucket, sid, **opt).map do |key|
         aws_delete_file(bucket, key, **opt).tap do |result|
@@ -301,7 +301,7 @@ module AwsS3Service::Action::Submissions
     __debug_items(binding)
     opt.delete(:atomic) # Not used in this method.
     opt[:meth]   ||= calling_method
-    opt[:client] ||= s3_client(**opt.except(:meth))
+    opt[:client] ||= s3_client(**opt)
     sids.map { |sid|
       objects = aws_list_objects(bucket, sid, **opt)&.map(&:key) || []
       [sid, objects]

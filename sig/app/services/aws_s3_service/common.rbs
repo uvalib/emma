@@ -5,6 +5,8 @@ module AwsS3Service::Common
 
   include AwsS3Service::Properties
 
+  include AwsS3::Shared::AwsMethods
+
   # Get data from the API.
   #
   # @param [Symbol] operation         API method
@@ -68,14 +70,6 @@ module AwsS3Service::Common
   #
   def submission_id: ((AwsS3::Message::SubmissionRequest | Model | symHash | String) item) -> (String | nil)
 
-  # Allowable AWS S3 Client initializer parameters.
-  #
-  # @return [Array<Symbol>]
-  #
-  def client_params: () -> symArray
-
-  @client_params: symArray
-
   # Get an S3 client instance.
   #
   # @param [Hash] opt                 Passed to Aws::S3::Client#initialize
@@ -83,27 +77,6 @@ module AwsS3Service::Common
   # @return [Aws::S3::Client]
   #
   def s3_client: (**untyped opt) -> Aws::S3::Client
-
-  # Get an S3 resource instance.
-  #
-  # @param [Hash] opt                       Passed to #s3_client except for:
-  #
-  # @option opt [Aws::S3::Client] :client   Used rather than creating a new one
-  #
-  # @return [Aws::S3::Resource]
-  #
-  def s3_resource: (**untyped opt) -> Aws::S3::Resource
-
-  # Get an S3 bucket instance.
-  #
-  # @param [String] bucket                  Bucket name.
-  # @param [Hash]   opt                     Passed to #s3_resource except for:
-  #
-  # @option opt [Aws::S3::Client] :client   Used rather than creating a new one
-  #
-  # @return [Aws::S3::Bucket]
-  #
-  def s3_bucket: (String bucket, **untyped opt) -> Aws::S3::Bucket
 
   # Upload an individual file to an AWS S3 bucket.
   #
@@ -161,22 +134,6 @@ module AwsS3Service::Common
   # @return [nil]                     If the operation failed.
   #
   def aws_list_objects: ((String | Aws::S3::Bucket) bucket, ?(String|nil) filter, **untyped opt) -> (Array[Aws::S3::Object] | nil)
-
-  # Lookup matching AWS S3 object keys if "filter" appears to be a pattern and
-  # not a specific filename and extension.
-  #
-  # @param [String, Aws::S3::Bucket] bucket
-  # @param [String, nil]             filter
-  # @param [Hash]                    opt      Passed to #aws_list_objects.
-  #
-  # @return [Array<String>]
-  #
-  # === Usage Notes
-  # This should only be used when transforming a list of key name patterns into
-  # actual key names -- use #aws_list_objects directly when checking on the
-  # presence of the files themselves.
-  #
-  def aws_list_object_keys: ((String | Aws::S3::Bucket) bucket, ?(String|nil) filter, **untyped opt) -> strArray
 
   private
 

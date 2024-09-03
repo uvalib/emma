@@ -1,0 +1,128 @@
+# Methods supporting communication with AWS S3.
+#
+module AwsS3::Shared::AwsMethods
+  include AwsS3::Shared::CommonMethods
+
+  # Allowable AWS S3 Client initializer parameters.
+  #
+  # @return [Array<Symbol>]
+  #
+  def client_params: () -> symArray
+
+  @client_params: symArray
+
+  # Get an S3 client instance.
+  #
+  # @param [Hash] opt                 Passed to Aws::S3::Client#initialize
+  #
+  # @return [Aws::S3::Client]
+  #
+  # === Usage Notes
+  # The including module is expected to override this method in order to
+  # supply the appropriate AWS credentials.
+  #
+  def s3_client: (**untyped opt) -> Aws::S3::Client
+
+  # Get an S3 resource instance.
+  #
+  # @param [Hash] opt                 Passed to #extract_client!.
+  #
+  # @return [Aws::S3::Resource]
+  #
+  def s3_resource: (**untyped opt) -> Aws::S3::Resource
+
+  # Get an S3 bucket instance.
+  #
+  # @param [String] name              Bucket name.
+  # @param [Hash]   opt               Passed to #s3_resource.
+  #
+  # @return [Aws::S3::Bucket]
+  #
+  def s3_bucket: (untyped name, **untyped opt) -> Aws::S3::Bucket
+
+  # Download a single file from an AWS S3 bucket.
+  #
+  # @param [String, Aws::S3::Bucket] bucket
+  # @param [String]  key
+  # @param [Boolean] fatal            If *false*, only log exceptions.
+  # @param [Hash]    opt              Passed to #get_object except for:
+  #
+  # @option opt [Symbol]          :meth     Calling method for logging
+  # @option opt [Aws::S3::Client] :client
+  #
+  # @return [String]                  Content of requested file.
+  # @return [nil]                     If the operation failed.
+  #
+  def aws_get_file: ((String | Aws::S3::Bucket) bucket, String key, ?fatal: bool, **untyped opt) -> (String | nil)
+
+  # Upload an individual file to an AWS S3 bucket.
+  #
+  # @param [String, Aws::S3::Bucket]                 bucket
+  # @param [String]                                  key
+  # @param [Aws::S3::Object, String, StringIO, File] content
+  # @param [Boolean]                                 fatal
+  # @param [Hash]                                    opt
+  #
+  # @option opt [Symbol]          :meth     Calling method for logging
+  # @option opt [Aws::S3::Client] :client
+  #
+  # @return [String]                  Uploaded object key.
+  # @return [nil]                     If the operation failed.
+  #
+  def aws_put_file: (String|Aws::S3::Bucket bucket, String key, (Aws::S3::Object | String | StringIO | File) content, ?fatal: bool, **untyped opt) -> (String | nil)
+
+  # Remove a single file from an AWS S3 bucket.
+  #
+  # @param [String, Aws::S3::Bucket] bucket
+  # @param [String]  key
+  # @param [Boolean] fatal            If *false*, only log exceptions.
+  # @param [Hash]    opt              Passed to #get_object except for:
+  #
+  # @option opt [Symbol]          :meth     Calling method for logging
+  # @option opt [Aws::S3::Client] :client
+  #
+  # @return [String]                  Removed object key.
+  # @return [nil]                     If the operation failed.
+  #
+  def aws_delete_file: ((String | Aws::S3::Bucket) bucket, String key, ?fatal: bool, **untyped opt) -> (String | nil)
+
+  # List files (object keys) in an AWS S3 bucket.
+  #
+  # @param [String, Aws::S3::Bucket] bucket
+  # @param [String, nil] filter       All objects if blank, missing, or '*'.
+  # @param [Boolean]     fatal        If *false*, only log exceptions.
+  # @param [Hash]        opt          Passed to #list_objects_v2 except for:
+  #
+  # @option opt [Symbol]          :meth     Calling method for logging
+  # @option opt [Aws::S3::Client] :client
+  #
+  # @return [Array<Aws::S3::Object>]
+  # @return [nil]                     If the operation failed.
+  #
+  def aws_list_objects: ((String | Aws::S3::Bucket) bucket, ?(String|nil) filter, ?fatal: bool, **untyped opt) -> (Array[Aws::S3::Object] | nil)
+
+  # Lookup matching AWS S3 object keys if "filter" appears to be a pattern and
+  # not a specific filename and extension.
+  #
+  # @param [String, Aws::S3::Bucket] bucket
+  # @param [String, nil]             filter
+  # @param [Hash]                    opt      Passed to #aws_list_objects.
+  #
+  # @return [Array<String>]
+  #
+  # === Usage Notes
+  # This should only be used when transforming a list of key name patterns into
+  # actual key names -- use #aws_list_objects directly when checking on the
+  # presence of the files themselves.
+  #
+  def aws_list_object_keys: ((String | Aws::S3::Bucket) bucket, ?(String|nil) filter, **untyped opt) -> strArray
+
+  # Extract :client from *opt*, or from *bucket*, or create a new client.
+  #
+  # @param [Hash] opt
+  # @param [any, nil] bucket
+  #
+  # @return [Aws::S3::Client]
+  #
+  def extract_client!: (symHash opt, ?untyped bucket) -> Aws::S3::Client
+end
