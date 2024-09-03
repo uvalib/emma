@@ -9,8 +9,10 @@
   inline = !page
 
   cfg           = config_page_section(:user_sessions, :sign_in)
-  label_opt     = { class: 'label' }
-  value_opt     = { class: 'value' }
+  ns            = __FILE__.split('/').last.split('.').first.delete_prefix('_')
+  opt           = { namespace: ns }
+  label_opt     = { **opt, class: 'label' }
+  value_opt     = { **opt, class: 'value' }
 
   usr_label     = cfg[:username]
   usr_label    += ':' unless page || usr_label.end_with?(':')
@@ -43,16 +45,18 @@
   form_html     = { class: 'sign-in-form' }
   if inline
     fl_css      = 'form-label'
-    fl_id       = css_randomize(fl_css)
-    fl_opt      = { class: fl_css, id: fl_id, 'aria-hidden': true }
-    form_label  = html_span(cfg[:label], **fl_opt)
+    fl_id       = "#{ns}-#{fl_css}"
+    fl_next     = "#{ns}_user_email" # ID of email_field
+    fl_opt      = { class: fl_css, id: fl_id, 'data-next': fl_next }
+    form_label  = html_button(cfg[:label], **fl_opt)
     form_html[:'aria-labelledby'] = fl_id
     append_css!(form_html, 'inline', 'obscured')
   end
   form_opt = {
     as:   resource_name,
     url:  session_path(resource_name),
-    html: form_html
+    html: form_html,
+    **opt
   }
 -%>
 

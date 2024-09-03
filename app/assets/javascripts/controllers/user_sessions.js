@@ -52,12 +52,19 @@ appSetup(PATH, function() {
     /**
      * Toggle visibility of inline sign-in form fields.
      *
+     * When the form fields are made visible, focus is moved to the first form
+     * field.
+     *
      * @param {ElementEvt} [event]
      */
     function toggleInlineForm(event) {
         const $control = $(event.currentTarget || event.target);
         const $form    = $control.parent();
         $form.toggleClass(INVISIBLE_MARKER);
+        if (!$form.hasClass(INVISIBLE_MARKER)) {
+            const next = $control.attr('data-next') || $form.attr('data-next');
+            $(`#${next}`).trigger("focus");
+        }
     }
 
     // ========================================================================
