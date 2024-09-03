@@ -169,11 +169,17 @@ class Field::Type
   # @return [any, nil]
   #
   def clean(v)
-    v = v[:value]            if v.is_a?(FieldConfig)
-    v = v.value              if v.is_a?(Field::Type) || v.is_a?(EnumType)
-    v = v.split(/[,;|\t\n]/) if v.is_a?(String)
-    v = Array.wrap(v).excluding(nil, EMPTY_VALUE)
-    v = v.first unless mode == :multiple
+    v = v[:value] if v.is_a?(FieldConfig)
+    v = v.value   if v.is_a?(Field::Type) || v.is_a?(EnumType)
+    v = v.strip   if v.is_a?(String)
+    if mode == :multiple
+      v = v.split(/[,;|\t\n]/) if v.is_a?(String)
+      v = Array.wrap(v).excluding(nil, EMPTY_VALUE)
+    elsif v.is_a?(String)
+      v = v.gsub(/[ \t]*\n[ \t]*/, "\n").gsub(/[ \t]+/, ' ')
+    elsif v.is_a?(Array)
+      v = v.first
+    end
     v.presence
   end
 

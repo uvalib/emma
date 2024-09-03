@@ -276,7 +276,7 @@ $item-padding:      0.5rem;
 
     $value-separation:  2px;
     $max-columns:       20;
-    $template:          minmax(max-content, 1fr);
+    $template:          1fr;
 
     @extend .model-list-item;
 
