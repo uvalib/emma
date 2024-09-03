@@ -16,9 +16,6 @@ module Emma::Common::FormatMethods
   #
   # @return [ActiveSupport::SafeBuffer, String]
   #
-  # @see #INFLECT_SINGULAR
-  # @see #INFLECT_PLURAL
-  #
   def inflection
     : (ActiveSupport::SafeBuffer text, ?(Integer|nil) count, ?(Symbol|nil) inflect) -> ActiveSupport::SafeBuffer
     | (String text,                    ?(Integer|nil) count, ?(Symbol|nil) inflect) -> String
@@ -296,8 +293,6 @@ module Emma::Common::FormatMethods
   #
   # @return [String]                  A modified copy of *text*.
   # @return [nil]                     If no interpolations could be made.
-  #
-  # @see #interpolate
   #
   def interpolate!
     : (ActiveSupport::SafeBuffer text, *untyped src, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)

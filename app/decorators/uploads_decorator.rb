@@ -60,7 +60,6 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #STATE_GROUP
   # @see LinkHelper#make_link
   # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
@@ -136,7 +135,6 @@ class UploadsDecorator < BaseCollectionDecorator
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                       If #LIST_FILTERING is *false*.
   #
-  # @see #STATE_GROUP
   # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
   def list_filter(counts: nil, outer: nil, css: LIST_FILTER_CLASS, **opt)
@@ -527,8 +525,6 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #bulk_option
-  #
   def bulk_op_option(f, param, value = nil, **opt)
     opt[:labels] ||= BULK_OPTIONS
     bulk_option(f, param, value, **opt)
@@ -669,8 +665,6 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #bulk_option
-  #
   def bulk_delete_option(f, param, value = nil, **opt)
     opt[:labels] ||= BULK_DELETE_LABEL
     bulk_option(f, param, value, **opt)
@@ -684,8 +678,6 @@ class UploadsDecorator < BaseCollectionDecorator
   # @param [Hash]                             opt
   #
   # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #bulk_input
   #
   def bulk_delete_input(f, param, value = nil, **opt)
     opt[:labels] ||= BULK_DELETE_LABEL

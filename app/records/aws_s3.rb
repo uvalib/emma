@@ -5,7 +5,8 @@
 
 __loading_begin(__FILE__)
 
-# Namespace for objects serialized into an AWS S3 bucket.
+# Namespace for objects serialized into an AWS S3 bucket related to EMMA
+# submissions.
 #
 module AwsS3
   module Api;     end

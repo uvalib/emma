@@ -195,8 +195,6 @@ module BaseDecorator::Pagination
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #pagination_control
-  #
   def pagination_first: (?(String|symHash|nil) path, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # pagination_prev
@@ -206,8 +204,6 @@ module BaseDecorator::Pagination
   # @param [Hash]              opt
   #
   # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #pagination_control
   #
   def pagination_prev: (?(String|symHash|nil) path, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
@@ -219,8 +215,6 @@ module BaseDecorator::Pagination
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #pagination_control
-  #
   def pagination_next: (?(String|symHash|nil) path, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # pagination_last
@@ -230,8 +224,6 @@ module BaseDecorator::Pagination
   # @param [Hash]              opt
   #
   # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #pagination_control
   #
   # @note Currently unused.
   #
@@ -258,8 +250,6 @@ module BaseDecorator::Pagination
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #pagination_icon
-  #
   def pagination_first_icon: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # pagination_prev_icon
@@ -269,7 +259,6 @@ module BaseDecorator::Pagination
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #pagination_icon
   # @see file:app/assets/stylesheets/layouts/controls/_shapes.scss
   #
   def pagination_prev_icon: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
@@ -281,7 +270,6 @@ module BaseDecorator::Pagination
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #pagination_icon
   # @see file:app/assets/stylesheets/layouts/controls/_shapes.scss
   #
   def pagination_next_icon: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
@@ -293,7 +281,6 @@ module BaseDecorator::Pagination
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #pagination_icon
   # @see file:app/assets/stylesheets/layouts/controls/_shapes.scss
   #
   def pagination_last_icon: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer

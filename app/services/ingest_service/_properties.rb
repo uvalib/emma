@@ -47,8 +47,6 @@ module IngestService::Properties
   #
   # @return [String, nil]
   #
-  # @see #INGEST_API_KEY
-  #
   def api_key
     INGEST_API_KEY || super
   end

@@ -185,8 +185,6 @@ module Emma::Debug
     # @yield To supply additional items.
     # @yieldreturn [any, Array<any>]
     #
-    # @see #__debug_inspect_item
-    #
     def __debug_inspect_items(*args, **opt)
       args.concat(Array.wrap(yield)) if block_given?
       args.flat_map { |arg| __debug_inspect_item(arg, **opt) }

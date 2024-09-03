@@ -22,7 +22,7 @@ module IaDownloadConcern
 
   public
 
-  # ia_download_api
+  # Access the Internet Archive download service.
   #
   # @return [IaDownloadService]
   #

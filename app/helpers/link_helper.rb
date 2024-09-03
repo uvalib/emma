@@ -206,8 +206,6 @@ module LinkHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #external_link
-  #
   def source_code_link(path, label = nil, **opt, &blk)
     if path.start_with?(SOURCE_CODE_ROOT)
       label ||= path.sub(%r{^#{SOURCE_CODE_ROOT}/}, '')
@@ -244,8 +242,6 @@ module LinkHelper
   # @param [Hash]        opt
   #
   # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #external_link
   #
   def terraform_link(path, label = nil, **opt, &blk)
     if path.start_with?(TERRAFORM_EMMA)

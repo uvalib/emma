@@ -49,8 +49,6 @@ module Representable
     #   @param [String]      separator
     #   @param [Hash]        opt
     #
-    # @see #__output_impl
-    #
     def __debug_show
       : ((:input|:output|nil) mode, *untyped args, ?leader: String|nil, ?separator: String|nil, **untyped opt) ?{ () -> untyped } -> nil
       | (                           *untyped args, ?leader: String|nil, ?separator: String|nil, **untyped opt) ?{ () -> untyped } -> nil
@@ -76,8 +74,6 @@ module Representable
     #
     # @overload __debug_lambda(*constants)
     #   @param [Array<Symbol>] constants
-    #
-    # @see #__debug_show
     #
     def __debug_lambda
       : ((:input|:output|nil) mode, *Symbol constants) -> nil
@@ -107,8 +103,6 @@ module Representable
     # @overload __debug_method(label, *methods)
     #   @param [String]        label
     #   @param [Array<Symbol>] methods
-    #
-    # @see #__debug_show
     #
     def __debug_method
       : ((:input|:output|nil) mode, String label, *Symbol methods) -> nil

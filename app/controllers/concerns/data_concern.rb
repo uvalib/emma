@@ -155,12 +155,6 @@ module DataConcern
     end
   end
 
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Generate a list of counts for each EMMA data field found across all
   # submissions.
   #

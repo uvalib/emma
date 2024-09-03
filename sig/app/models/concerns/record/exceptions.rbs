@@ -14,8 +14,6 @@ module Record::Exceptions
   # @raise [Record::SubmitError]
   # @raise [ExecError]
   #
-  # @see ExceptionHelper#raise_failure
-  #
   # @note From UploadWorkflow::Errors#raise_failure
   #
   def raise_failure: ((Symbol|String|strArray|Exception|ExecReport|nil) problem, ?untyped value, ?log: bool|String, **untyped _ignored) -> void

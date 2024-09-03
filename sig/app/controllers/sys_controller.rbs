@@ -57,8 +57,6 @@ class SysController < ApplicationController
   #
   # @type [Array<Symbol>]
   #
-  # @see SysConcern#SYS_PAGES
-  #
   PAGES: symArray
 
   def disk_space:   () -> void

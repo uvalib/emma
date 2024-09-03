@@ -28,8 +28,6 @@ module BaseDecorator::Fields
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #render_json_data
-  #
   def render_emma_data: (?(String|anyHash|nil) value, ?field: Symbol, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render the contents of the :file_data field.
@@ -39,8 +37,6 @@ module BaseDecorator::Fields
   # @param [Hash]              opt
   #
   # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #render_json_data
   #
   def render_file_data: (?(String|anyHash|nil) value, ?field: Symbol, **untyped opt) -> ActiveSupport::SafeBuffer
 

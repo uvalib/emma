@@ -69,7 +69,6 @@ class EnrollmentController < ApplicationController
   # List EMMA enrollment requests.
   #
   # @see #enrollment_index_path               Route helper
-  # @see ModelConcern#find_or_match_records
   #
   def index
     __log_activity
@@ -89,7 +88,6 @@ class EnrollmentController < ApplicationController
   # Display details of a EMMA enrollment request.
   #
   # @see #show_enrollment_path        Route helper
-  # @see ModelConcern#find_record
   #
   def show
     __log_activity
@@ -115,7 +113,6 @@ class EnrollmentController < ApplicationController
   # form parameter.
   #
   # @see #new_enrollment_path             Route helper
-  # @see EnrollmentConcern#new_record
   # @see EnrollmentDecorator#form_hidden
   #
   def new
@@ -139,8 +136,6 @@ class EnrollmentController < ApplicationController
   # the form parameters.
   #
   # @see #create_enrollment_path                  Route helper
-  # @see EnrollmentConcern#create_record
-  # @see MailConcern#generate_enrollment_ticket
   #
   def create(back: welcome_path)
     __log_activity
@@ -167,7 +162,6 @@ class EnrollmentController < ApplicationController
   # Redirects to #edit_select if :id is not given.
   #
   # @see #edit_enrollment_path          Route helper
-  # @see EnrollmentConcern#edit_record
   #
   def edit
     __log_activity
@@ -186,7 +180,6 @@ class EnrollmentController < ApplicationController
   # === PATCH /enrollment/update/:id
   #
   # @see #update_enrollment_path          Route helper
-  # @see EnrollmentConcern#update_record
   #
   def update
     __log_activity
@@ -211,7 +204,6 @@ class EnrollmentController < ApplicationController
   # Redirects to #delete_select if :id is not given.
   #
   # @see #delete_enrollment_path            Route helper
-  # @see EnrollmentConcern#delete_records
   #
   def delete
     __log_activity
@@ -230,7 +222,6 @@ class EnrollmentController < ApplicationController
   # === DELETE /enrollment/destroy/:id
   #
   # @see #destroy_enrollment_path           Route helper
-  # @see EnrollmentConcern#destroy_records
   #
   def destroy(back: delete_select_enrollment_path)
     __log_activity
@@ -293,9 +284,7 @@ class EnrollmentController < ApplicationController
   # Finalize an EMMA enrollment request by creating a new Org and User, and
   # removing the Enrollment record.
   #
-  # @see #finalize_enrollment_path                    Route helper
-  # @see EnrollmentConcern#finalize_enrollment
-  # @see EnrollmentConcern#generate_new_users_emails
+  # @see #finalize_enrollment_path        Route helper
   #
   def finalize
     __log_activity

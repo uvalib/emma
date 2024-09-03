@@ -82,7 +82,6 @@ class SearchController < ApplicationController
   # Perform a search through the EMMA Unified Search API.
   #
   # @see #search_index_path           Route helper
-  # @see SearchConcern#index_search
   #
   def index
     __log_activity(anonymous: true)
@@ -122,7 +121,6 @@ class SearchController < ApplicationController
   # Display details of an existing catalog title.
   #
   # @see #search_path                 Route helper
-  # @see SearchConcern#index_record
   #
   # @note This endpoint is not actually functional because it depends on an
   #   EMMA Unified Search API endpoint which does not exist.
@@ -173,7 +171,6 @@ class SearchController < ApplicationController
   #
   # @see #search_api_path             Route helper
   # @see #search_direct_path          Route helper
-  # @see SearchConcern#index_search
   #
   def direct
     __log_activity(anonymous: true)

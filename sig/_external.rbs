@@ -564,6 +564,14 @@ class Hash[unchecked out K, unchecked out V] < Object
 
   def has_value?: (untyped) -> bool
 
+  def transform_keys
+    : ()                    -> Enumerator[K, self]
+    | () { (K) -> untyped } -> Hash[untyped, V]
+
+  def transform_values
+    : ()                    -> Enumerator[V, self]
+    | () { (V) -> untyped } -> Hash[K, untyped]
+
   def transform_keys!
     : ()                    -> Enumerator[K, self]
     | () { (K) -> untyped } -> Hash[untyped, V]

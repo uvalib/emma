@@ -56,8 +56,6 @@ module BaseDecorator::Controls
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  # @see #icon_definitions
-  #
   def control_icons: (?authorized: bool) -> Hash[Symbol, symHash]
 
   # Generate an element with icon controls for the operation(s) the user is
@@ -69,8 +67,6 @@ module BaseDecorator::Controls
   #
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If no operations are authorized.
-  #
-  # @see #control_icons
   #
   def control_icon_buttons: (?except: symArray|Symbol|nil, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 

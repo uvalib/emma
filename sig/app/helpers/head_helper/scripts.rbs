@@ -83,8 +83,6 @@ module HeadHelper::Scripts
   #
   # @return [Hash]
   #
-  # @see #SCRIPT_SETTINGS_OVERRIDES
-  #
   def script_settings: () -> symHash
 
   # Add override(s) to JavaScript client settings.
@@ -92,8 +90,6 @@ module HeadHelper::Scripts
   # @param [Hash] opt                 Settings override values.
   #
   # @return [Hash]
-  #
-  # @see #script_settings
   #
   def script_setting: (**untyped opt) -> symHash
 
@@ -111,7 +107,6 @@ module HeadHelper::Scripts
   #
   # @return [ActiveSupport::SafeBuffer, nil]
   #
-  # @see #script_settings
   # @see file:app/assets/javascripts/shared/assets.js.erb
   #
   def page_script_settings: (**untyped opt) -> (ActiveSupport::SafeBuffer | nil)

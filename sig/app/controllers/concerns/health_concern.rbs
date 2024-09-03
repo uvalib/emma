@@ -121,8 +121,6 @@ module HealthConcern
   #
   # @return [Hash{Symbol=>HealthStatus}]
   #
-  # @see #HEALTH_CHECK
-  #
   def get_health_status: (*(Symbol|String) subsystem) -> Hash[Symbol,HealthStatus]
 
   private

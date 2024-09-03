@@ -28,9 +28,6 @@ module EncodingHelper
   # @return [ActiveSupport::SafeBuffer]   If *value* was HTML-safe.
   # @return [String]                      Otherwise.
   #
-  # @see #to_utf8
-  # @see #xhr_encode
-  #
   def to_utf(value, xhr: nil, **)
     xhr ? xhr_encode(value) : to_utf8(value.to_s)
   end

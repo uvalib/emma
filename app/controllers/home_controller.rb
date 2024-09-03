@@ -96,7 +96,6 @@ class HomeController < ApplicationController
   # The main application page for authenticated users.
   #
   # @see #dashboard_path              Route helper
-  # @see UserConcern#get_account_details
   #
   def dashboard
     __log_activity

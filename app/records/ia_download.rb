@@ -5,7 +5,8 @@
 
 __loading_begin(__FILE__)
 
-# Namespace for objects ...
+# Namespace for objects related to the Internet Archive
+# "Printdisabled Unencrypted Ebook API".
 #
 module IaDownload
   module Api;     end

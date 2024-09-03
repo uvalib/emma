@@ -26,8 +26,6 @@ class Object
   #
   # @return [void]
   #
-  # @see #require_files
-  #
   def require_subdirs: (String relative_to, *String patterns) -> void
 
   # Require the submodules for a file which are stored in the subdirectory with
@@ -37,8 +35,6 @@ class Object
   #
   # @return [void]
   #
-  # @see #require_files
-  #
   def require_submodules: (String filename) -> void
 
   # Require subclasses of the class defined by the current file which are in the
@@ -47,8 +43,6 @@ class Object
   # @param [String] filename            Normally supplied as __FILE__
   #
   # @return [void]
-  #
-  # @see #require_submodules
   #
   def require_subclasses: (String filename) -> void
 
@@ -71,13 +65,9 @@ class Object
   # @yieldparam [Module] mod
   # @yieldreturn [bool] if *false* the module will not be included.
   #
-  # @see #require_submodules
-  #
   def include_submodules: (Module base, ?(String|nil) filename, ?and_extend: bool) ?{ (Symbol, Module) -> bool } -> Array[Module]
 
   # Include and extend submodules.
-  #
-  # @see #include_submodules
   #
   def include_and_extend_submodules: (Module base, ?(String|nil) filename) ?{ (Symbol, Module) -> bool } -> Array[Module]
 

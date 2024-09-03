@@ -80,7 +80,9 @@ module UserConcern
     authentication_failure(msg: msg)
   end
 
-  # Return account summary information and account preferences.
+  # Return Bookshare account summary information and account preferences.
+  #
+  # @note Defunct
   #
   # @param [String]         id        If *nil*, assumes the current user.
   # @param [Boolean]        fast      If *true*, don't get history/preferences.

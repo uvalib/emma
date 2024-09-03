@@ -59,7 +59,6 @@ class HelpController < ApplicationController
   # The main help page.
   #
   # @see #help_index_path             Route helper
-  # @see HelpHelper#help_topics
   #
   def index
     return redirect_to help_path(id: @topic) if @topic.present?

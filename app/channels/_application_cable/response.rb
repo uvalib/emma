@@ -92,7 +92,6 @@ class ApplicationCable::Response < Hash
   #
   # @return [void]
   #
-  # @see #data_url_base_path
   # @see file:app/assets/javascripts/channels/lookup-channel.js  *response()*
   #
   def convert_to_data_url!(data_path: nil, **opt)

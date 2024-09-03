@@ -888,8 +888,6 @@ module BaseDecorator::Form
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #form_button_tray
-  #
   def form_top_button_tray(f = nil, *buttons, **opt, &blk)
     trace_attrs!(opt)
     form_button_tray(f, *buttons, **opt, &blk)
@@ -925,8 +923,6 @@ module BaseDecorator::Form
   # @param [Hash]                                  opt
   #
   # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #form_button_tray
   #
   def form_bottom_button_tray(f = nil, *buttons, **opt, &blk)
     trace_attrs!(opt)
@@ -1191,7 +1187,6 @@ module BaseDecorator::Form
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #FIELD_GROUP
   # @see file:javascripts/feature/model-form.js *fieldDisplayFilterSelect()*
   # @see file:app/assets/stylesheets/layouts/_root.scss *.wide-screen*, etc.
   #

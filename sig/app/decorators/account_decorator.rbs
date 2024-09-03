@@ -41,8 +41,6 @@ class AccountDecorator < BaseDecorator
     #
     # @return [Hash{Symbol=>Hash}]
     #
-    # @see #icon_definitions
-    #
     def control_icons: (?authorized: bool) -> Hash[Symbol, symHash]
 
     # Render a single label/value pair, ensuring :email is fixed if editing

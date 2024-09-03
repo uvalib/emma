@@ -176,9 +176,6 @@ module ParamsConcern
   # the page header performs the intended operation on the SearchController and
   # not the current controller.
   #
-  # @see #SEARCH_CONTROLLERS
-  # @see #DEFAULT_SEARCH_CONTROLLER
-  #
   def search_redirect
     return if SEARCH_CONTROLLERS.include?(params[:controller]&.to_sym)
     query = request_parameters

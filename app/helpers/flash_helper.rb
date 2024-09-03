@@ -378,8 +378,6 @@ module FlashHelper
   #
   # @return [String]
   #
-  # @see #flash_format
-  #
   def flash_xhr(*args, **opt)
     prepend_flash_caller!(args, opt)
     flash_format(*args, topic: nil, **opt, xhr: true)

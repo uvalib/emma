@@ -103,9 +103,6 @@ module ParamsHelper
   #
   # @return [Hash]
   #
-  # @see #request_parameters
-  # @see #IGNORED_PARAMS
-  #
   def url_parameters: (?(prmHash|nil) prm) -> symHash
 
   # Request parameters without :id.

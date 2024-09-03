@@ -11,6 +11,6 @@ item_id = columns.delete(:id)
 
 xml.enrollment(id: item_id) do
   columns.each_pair do |name, value|
-    xml.tag!(name, value)
+    xml.tag! name, value
   end
 end

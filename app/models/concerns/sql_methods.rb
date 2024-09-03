@@ -58,8 +58,6 @@ module SqlMethods
   #
   # @return [String]
   #
-  # @see #sql_terms
-  #
   def sql_and(*terms, **other)
     if other.key?(:join)
       Log.warn { "#{__method__}: join #{other[:join].inspect} ignored" }
@@ -73,8 +71,6 @@ module SqlMethods
   # @param [Hash]                     other   Additional terms.
   #
   # @return [String]
-  #
-  # @see #sql_terms
   #
   def sql_or(*terms, **other)
     if other.key?(:join)

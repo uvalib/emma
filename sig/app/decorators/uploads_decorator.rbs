@@ -31,7 +31,6 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #STATE_GROUP
   # @see LinkHelper#make_link
   # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
@@ -49,7 +48,6 @@ class UploadsDecorator < BaseCollectionDecorator
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                       If #LIST_FILTERING is *false*.
   #
-  # @see #STATE_GROUP
   # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
   def list_filter: (?counts:  Hash[Symbol,Integer]|nil, ?outer: symHash|nil, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
@@ -192,8 +190,6 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #bulk_option
-  #
   def bulk_op_option: (ActionView::Helpers::FormBuilder f, Symbol param, ?untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # An input element for a bulk new/edit form.
@@ -250,8 +246,6 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #bulk_option
-  #
   def bulk_delete_option: (ActionView::Helpers::FormBuilder f, Symbol param, ?untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # An input element for a bulk delete form.
@@ -262,8 +256,6 @@ class UploadsDecorator < BaseCollectionDecorator
   # @param [Hash]                             opt
   #
   # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #bulk_input
   #
   def bulk_delete_input: (ActionView::Helpers::FormBuilder f, Symbol param, ?untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
 end

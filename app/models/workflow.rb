@@ -217,8 +217,6 @@ module Workflow::Base::Roles
   #
   # @return [Array<Symbol>]
   #
-  # @see #WF_ROLE
-  #
   def wf_roles(u = nil)
     primary = get_wf_role(u) || wf_role
     WF_ROLE[primary] || Array.wrap(primary)

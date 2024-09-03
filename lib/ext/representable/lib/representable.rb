@@ -86,8 +86,6 @@ module Representable
       #   @param [String]      separator
       #   @param [Hash]        opt
       #
-      # @see #__output_impl
-      #
       def __debug_show(mode, *args, leader: nil, separator: nil, **opt)
         mode =
           case mode
@@ -156,8 +154,6 @@ module Representable
       # @overload __debug_lambda(*constants)
       #   @param [Array<Symbol>] constants
       #
-      # @see #__debug_show
-      #
       def __debug_lambda(mode, *constants)
         case mode
           when :input  then return unless DEBUG_INPUT
@@ -217,8 +213,6 @@ module Representable
       # @overload __debug_method(label, *methods)
       #   @param [String]        label
       #   @param [Array<Symbol>] methods
-      #
-      # @see #__debug_show
       #
       #--
       # noinspection RubyMismatchedArgumentType

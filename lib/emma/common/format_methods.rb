@@ -32,9 +32,6 @@ module Emma::Common::FormatMethods
   #
   # @return [ActiveSupport::SafeBuffer, String]
   #
-  # @see #INFLECT_SINGULAR
-  # @see #INFLECT_PLURAL
-  #
   def inflection(text, count = nil, inflect: nil)
     if (count == 1) || INFLECT_SINGULAR.include?(inflect)
       text.to_s.singularize
@@ -443,8 +440,6 @@ module Emma::Common::FormatMethods
   #
   # @return [String]                  A modified copy of *text*.
   # @return [nil]                     If no interpolations could be made.
-  #
-  # @see #interpolate
   #
   def interpolate!(text, *src, **opt)
     return if text.blank? || src.push(opt).compact_blank!.empty?

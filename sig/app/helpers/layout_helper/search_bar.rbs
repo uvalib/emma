@@ -116,8 +116,6 @@ module LayoutHelper::SearchBar
   # @return [ActiveSupport::SafeBuffer]     An HTML input element.
   # @return [nil]                           Search unavailable for target.
   #
-  # @see #search_input
-  #
   def search_bar: ((Symbol|String|nil) field, ?(String|nil) value, ?css: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # search_bar_label

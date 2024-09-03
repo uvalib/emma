@@ -259,17 +259,17 @@ module AwsConcern
 
   # get_s3_bucket
   #
-  # @param [String] bucket
+  # @param [String] name
   # @param [Hash]   opt                       Passed to #s3_bucket except for:
   #
   # @option opt [AwsS3Service, nil] :service  Default: `AwsS3Service.instance`
   #
   # @return [Aws::S3::Bucket]
   #
-  def get_s3_bucket(bucket, **opt)
+  def get_s3_bucket(name, **opt)
     opt    = aws_params(opt)
     aws_s3 = opt.delete(:service)
-    aws_s3.s3_bucket(bucket, **opt)
+    aws_s3.s3_bucket(name, **opt)
   end
 
   # get_s3_objects

@@ -341,8 +341,6 @@ class ManifestItemDecorator < BaseDecorator
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    # @see #submit_status_element
-    #
     def submission_status_header: (?row: Integer, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
     # Generate a row of the submission grid.
@@ -767,8 +765,6 @@ class ManifestItemDecorator
   # @param [Hash]         opt
   #
   # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #submit_status_element
   #
   def submission_status: (?row: Integer|nil, ?col: Integer, ?index: Integer|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 

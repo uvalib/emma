@@ -109,8 +109,6 @@ module LinkHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #external_link
-  #
   def source_code_link: (String path, ?(String|nil) label, **untyped opt) ?{ () -> String } -> ActiveSupport::SafeBuffer
 
   # Base URL for references to the UVALIB configuration repository.
@@ -133,8 +131,6 @@ module LinkHelper
   # @param [Hash]        opt
   #
   # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #external_link
   #
   def terraform_link: (String path, ?(String|nil) label, **untyped opt) ?{ () -> String } -> ActiveSupport::SafeBuffer
 

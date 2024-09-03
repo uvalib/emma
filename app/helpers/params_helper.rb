@@ -158,9 +158,6 @@ module ParamsHelper
   #
   # @return [Hash]
   #
-  # @see #request_parameters
-  # @see #IGNORED_PARAMS
-  #
   def url_parameters(prm = nil)
     request_parameters(prm).except!(*IGNORED_PARAMS)
   end

@@ -45,8 +45,6 @@ class SearchCallController < ApplicationController
   # List searches.
   #
   # @see #search_call_index_path      Route helper
-  # @see SearchCallConcern#get_search_calls
-  # @see SearchCall#extended_table
   #
   def index: () -> void
 
@@ -55,7 +53,6 @@ class SearchCallController < ApplicationController
   # Display details of a search.
   #
   # @see #search_call_path            Route helper
-  # @see SearchCall#find
   #
   def show: () -> void
 end

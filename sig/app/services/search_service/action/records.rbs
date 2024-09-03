@@ -1,4 +1,4 @@
-# SearchService::Action::Records
+# Methods which acquire record(s) from EMMA Unified Search API endpoints.
 #
 module SearchService::Action::Records
   include SearchService::Common

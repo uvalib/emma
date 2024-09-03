@@ -88,8 +88,6 @@ module BaseDecorator::Controls
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  # @see #icon_definitions
-  #
   def control_icons(authorized: false)
     icon_definitions.map { |action, prop|
       allowed = authorized || true?(prop[:auto]) || can?(action, object)
@@ -108,8 +106,6 @@ module BaseDecorator::Controls
   #
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If no operations are authorized.
-  #
-  # @see #control_icons
   #
   def control_icon_buttons(except: nil, css: '.icon-tray', **opt)
     return if blank?

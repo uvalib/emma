@@ -36,8 +36,6 @@ module SqlMethods
   #
   # @return [String]
   #
-  # @see #sql_terms
-  #
   def sql_and: (*(anyHash|strArray|String|nil) terms, **untyped other) -> String
 
   # Translate hash keys/values into SQL conditions combined by OR.
@@ -46,8 +44,6 @@ module SqlMethods
   # @param [Hash]                     other   Additional terms.
   #
   # @return [String]
-  #
-  # @see #sql_terms
   #
   def sql_or: (*(anyHash|strArray|String|nil) terms, **untyped other) -> String
 

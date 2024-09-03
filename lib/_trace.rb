@@ -162,8 +162,6 @@ end
 #
 # @return [nil]
 #
-# @see #__output_impl
-#
 # === Usage Notes
 # The method is only functional if #CONSOLE_OUTPUT is true.
 #
@@ -198,8 +196,6 @@ DEBUG_MAX = 2048
 #
 # @return [nil]
 #
-# @see #__output_impl
-#
 def __debug_impl(*args, **opt, &blk)
   opt.reverse_merge!(
     debug:    true,
@@ -217,8 +213,6 @@ end
 # @param [Proc]     blk
 #
 # @return [nil]
-#
-# @see #__debug_impl
 #
 def __debug(*args, **opt, &blk)
   __debug_impl(*args, **opt, &blk)
@@ -239,8 +233,6 @@ public
 #
 # @return [nil]
 #
-# @see #__output_impl
-#
 def __trace_impl(*args, **opt, &blk)
   opt[:no_log] = true unless opt.key?(:no_log)
   __output_impl(*args, **opt, &blk)
@@ -253,8 +245,6 @@ end
 # @param [Proc]     blk
 #
 # @return [nil]
-#
-# @see #__trace_impl
 #
 def __trace(*args, **opt, &blk)
   __trace_impl(*args, **opt, &blk)

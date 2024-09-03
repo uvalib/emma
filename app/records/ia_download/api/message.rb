@@ -5,7 +5,8 @@
 
 __loading_begin(__FILE__)
 
-# The base class for inbound messages from the EMMA Unified IaDownload API.
+# The base class for inbound messages from the Internet Archive
+# "Printdisabled Unencrypted Ebook API".
 #
 class IaDownload::Api::Message < IaDownload::Api::Record
 

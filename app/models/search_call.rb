@@ -381,8 +381,6 @@ class SearchCall < ApplicationRecord
   #
   # @return [Hash]
   #
-  # @see #map_parameters
-  #
   def normalize_attributes(attr, **opt)
     return {}    if attr.blank?
     return super if attr.is_a?(ApplicationRecord)

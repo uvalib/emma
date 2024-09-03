@@ -282,8 +282,6 @@ module LayoutHelper::SearchBar
   # @return [ActiveSupport::SafeBuffer]     An HTML input element.
   # @return [nil]                           Search unavailable for target.
   #
-  # @see #search_input
-  #
   def search_bar(field, value = nil, css: '.search-bar', **opt)
     id_opt = opt.extract!(:target, :unique, :index)
     target = id_opt[:target] ||= search_input_target

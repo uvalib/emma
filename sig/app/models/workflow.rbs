@@ -154,8 +154,6 @@ module Workflow::Base::Roles
   #
   # @return [Array<Symbol>]
   #
-  # @see #WF_ROLE
-  #
   def wf_roles: (?(User|String|Symbol|nil) u) -> symArray
 end
 

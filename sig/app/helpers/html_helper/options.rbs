@@ -32,8 +32,6 @@ module HtmlHelper::Options
   #
   # @return [Hash]                      A new hash.
   #
-  # @see #merge_html_options!
-  #
   def merge_html_options: ((symHash|nil) html_opt, *(symHash|nil) args) -> symHash
 
   # Merge values from one or more hashes into an options hash.
@@ -42,8 +40,6 @@ module HtmlHelper::Options
   # @param [Array<Hash,nil>] args       Options hash(es) to merge into *opt*.
   #
   # @return [Hash]                      The modified *opt* hash.
-  #
-  # @see #append_css!
   #
   def merge_html_options!: (symHash html_opt, *(symHash|nil) args) -> symHash
 

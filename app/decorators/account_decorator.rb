@@ -80,8 +80,6 @@ class AccountDecorator < BaseDecorator
     #
     # @return [Hash{Symbol=>Hash}]
     #
-    # @see #icon_definitions
-    #
     def control_icons(authorized: false)
       icon_definitions.map { |action, prop|
         allowed = authorized || true?(prop[:auto]) || can?(action, object)

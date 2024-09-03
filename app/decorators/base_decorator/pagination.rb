@@ -336,8 +336,6 @@ module BaseDecorator::Pagination
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #pagination_control
-  #
   def pagination_first(path = nil, css: '.first', **opt)
     path         ||= paginator.first_page
     opt[:prefix] ||= pagination_first_icon
@@ -352,8 +350,6 @@ module BaseDecorator::Pagination
   # @param [Hash]              opt
   #
   # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #pagination_control
   #
   def pagination_prev(path = nil, css: '.prev', **opt)
     path         ||= paginator.prev_page
@@ -371,8 +367,6 @@ module BaseDecorator::Pagination
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #pagination_control
-  #
   def pagination_next(path = nil, css: '.next', **opt)
     path         ||= paginator.next_page
     opt[:suffix] ||= pagination_next_icon
@@ -388,8 +382,6 @@ module BaseDecorator::Pagination
   # @param [Hash]              opt
   #
   # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #pagination_control
   #
   # @note Currently unused.
   #
@@ -445,8 +437,6 @@ module BaseDecorator::Pagination
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #pagination_icon
-  #
   def pagination_first_icon(css: '.square-icon', **opt)
     pagination_icon(**opt, css: css)
   end
@@ -458,7 +448,6 @@ module BaseDecorator::Pagination
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #pagination_icon
   # @see file:app/assets/stylesheets/layouts/controls/_shapes.scss
   #
   def pagination_prev_icon(css: '.left-triangle-icon', **opt)
@@ -472,7 +461,6 @@ module BaseDecorator::Pagination
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #pagination_icon
   # @see file:app/assets/stylesheets/layouts/controls/_shapes.scss
   #
   def pagination_next_icon(css: '.right-triangle-icon', **opt)
@@ -486,7 +474,6 @@ module BaseDecorator::Pagination
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #pagination_icon
   # @see file:app/assets/stylesheets/layouts/controls/_shapes.scss
   #
   def pagination_last_icon(css: '.square-icon', **opt)

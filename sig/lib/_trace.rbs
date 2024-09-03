@@ -142,8 +142,6 @@ class Object
   #
   # @return [nil]
   #
-  # @see #__output_impl
-  #
   # === Usage Notes
   # The method is only functional if #CONSOLE_OUTPUT is true.
   #
@@ -161,8 +159,6 @@ class Object
   #
   # @return [nil]
   #
-  # @see #__output_impl
-  #
   def __debug_impl
     : (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil
     | (               **untyped opt)  { () -> (untyped|anyArray) } -> nil
@@ -174,8 +170,6 @@ class Object
   # @param [Proc]     blk
   #
   # @return [nil]
-  #
-  # @see #__debug_impl
   #
   def __debug
     : (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil
@@ -189,8 +183,6 @@ class Object
   #
   # @return [nil]
   #
-  # @see #__output_impl
-  #
   def __trace_impl
     : (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil
     | (               **untyped opt)  { () -> (untyped|anyArray) } -> nil
@@ -202,8 +194,6 @@ class Object
   # @param [Proc]     blk
   #
   # @return [nil]
-  #
-  # @see #__trace_impl
   #
   def __trace
     : (*untyped args, **untyped opt) ?{ () -> (untyped|anyArray) } -> nil

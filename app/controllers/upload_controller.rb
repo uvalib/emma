@@ -121,7 +121,6 @@ class UploadController < ApplicationController
   # NOTE: Currently this is not limited only to the current user's uploads.
   #
   # @see #upload_index_path           Route helper
-  # @see UploadController#list_items
   #
   def index
     __log_activity
@@ -159,7 +158,6 @@ class UploadController < ApplicationController
   # Redirects to #show_select if :id is missing.
   #
   # @see #show_upload_path            Route helper
-  # @see ModelConcern#find_record
   #
   def show
     __log_activity(anonymous: true)
@@ -192,7 +190,6 @@ class UploadController < ApplicationController
   # included in order to reuse the Upload record that was created at that time.
   #
   # @see #new_upload_path                                   Route helper
-  # @see UploadConcern#new_record
   # @see file:app/assets/javascripts/feature/model-form.js
   # @see UploadController#create
   #
@@ -214,7 +211,6 @@ class UploadController < ApplicationController
   # the creation of a new EMMA entry.
   #
   # @see #create_upload_path          Route helper
-  # @see UploadConcern#create_record
   # @see UploadController#new
   #
   def create
@@ -238,7 +234,6 @@ class UploadController < ApplicationController
   # Redirects to #edit_select if :id is missing.
   #
   # @see #edit_upload_path            Route helper
-  # @see UploadConcern#edit_record
   # @see UploadController#update
   #
   def edit
@@ -258,7 +253,6 @@ class UploadController < ApplicationController
   # Finalize modification of an existing EMMA entry.
   #
   # @see #update_upload_path          Route helper
-  # @see UploadConcern#update_record
   # @see UploadController#edit
   #
   def update
@@ -287,7 +281,6 @@ class UploadController < ApplicationController
   # a database record was not found.
   #
   # @see #delete_upload_path          Route helper
-  # @see UploadConcern#delete_records
   # @see UploadController#destroy
   #
   def delete
@@ -308,7 +301,6 @@ class UploadController < ApplicationController
   # Finalize removal of an existing EMMA entry.
   #
   # @see #destroy_upload_path         Route helper
-  # @see UploadConcern#destroy_records
   # @see UploadController#delete
   #
   def destroy(back: delete_select_upload_path)
@@ -335,8 +327,6 @@ class UploadController < ApplicationController
   #
   # List all submissions and entries.
   #
-  # @see UploadController#list_items
-  #
   def list_all
     __log_activity
     __debug_route
@@ -359,8 +349,6 @@ class UploadController < ApplicationController
   # List all submissions and entries associated with users in the same
   # organization as the current user.
   #
-  # @see UploadController#list_items
-  #
   def list_org
     __log_activity
     __debug_route
@@ -382,8 +370,6 @@ class UploadController < ApplicationController
   # === GET /upload/list_own
   #
   # List all submissions and entries associated with the current user.
-  #
-  # @see UploadController#list_items
   #
   def list_own
     __log_activity
@@ -496,7 +482,6 @@ class UploadController < ApplicationController
   # containing an row/element for each entry to submit.
   #
   # @see #bulk_new_upload_path        Route helper
-  # @see UploadConcern#wf_bulk
   # @see UploadWorkflow::Bulk::Create::States#on_creating_entry
   # @see UploadController#bulk_create
   #
@@ -514,7 +499,6 @@ class UploadController < ApplicationController
   # files, and post the new entries to the EMMA Unified Ingest API.
   #
   # @see #bulk_create_upload_path     Route helper
-  # @see UploadConcern#wf_bulk
   # @see UploadWorkflow::Bulk::Create::States#on_submitting_entry
   # @see UploadController#bulk_new
   #
@@ -537,7 +521,6 @@ class UploadController < ApplicationController
   # containing an row/element for each entry to change.
   #
   # @see #bulk_edit_upload_path       Route helper
-  # @see UploadConcern#wf_bulk
   # @see UploadWorkflow::Bulk::Edit::States#on_editing_entry
   # @see UploadController#bulk_update
   #
@@ -557,7 +540,6 @@ class UploadController < ApplicationController
   # EMMA Unified Ingest API.
   #
   # @see #bulk_update_upload_path     Route helper
-  # @see UploadConcern#wf_bulk
   # @see UploadWorkflow::Bulk::Edit::States#on_modifying_entry
   # @see UploadController#bulk_edit
   #
@@ -579,7 +561,6 @@ class UploadController < ApplicationController
   # Specify entries to delete by :id, SID, or RANGE_LIST.
   #
   # @see #bulk_delete_upload_path     Route helper
-  # @see UploadConcern#wf_bulk
   # @see UploadWorkflow::Bulk::Remove::States#on_removing_entry
   # @see UploadController#bulk_destroy
   #
@@ -594,7 +575,6 @@ class UploadController < ApplicationController
   # === DELETE /upload/bulk[?force=true]
   #
   # @see #bulk_destroy_upload_path    Route helper
-  # @see UploadConcern#wf_bulk
   # @see UploadWorkflow::Bulk::Remove::States#on_removed_entry
   # @see UploadController#bulk_delete
   #
@@ -623,7 +603,6 @@ class UploadController < ApplicationController
   # Invoked to re-create a database entry that had been canceled.
   #
   # @see #renew_upload_path                                 Route helper
-  # @see UploadConcern#renew_record
   # @see file:app/assets/javascripts/feature/model-form.js  *refreshRecord()*
   #
   def renew
@@ -646,7 +625,6 @@ class UploadController < ApplicationController
   # Invoked to re-start editing a database entry.
   #
   # @see #reedit_upload_path                                Route helper
-  # @see UploadConcern#reedit_record
   # @see file:app/assets/javascripts/feature/model-form.js  *refreshRecord()*
   #
   def reedit
@@ -676,7 +654,6 @@ class UploadController < ApplicationController
   # :create phase.  If it was in the :edit phase, its fields are reset
   #
   # @see #cancel_upload_path                                Route helper
-  # @see UploadConcern#wf_single
   # @see UploadWorkflow::Single::States#on_canceled_entry
   # @see UploadWorkflow::Bulk::States#on_canceled_entry
   # @see file:app/assets/javascripts/feature/model-form.js  *cancelForm()*
@@ -705,7 +682,6 @@ class UploadController < ApplicationController
   # be advanced.
   #
   # @see #check_upload_path           Route helper
-  # @see UploadConcern#wf_single_check
   #
   def check
     __log_activity
@@ -732,7 +708,6 @@ class UploadController < ApplicationController
   # Invoked from 'Uppy.XHRUpload'.
   #
   # @see #upload_upload_path          Route helper
-  # @see UploadConcern#wf_single
   # @see UploadWorkflow::Single::Create::States#on_validating_entry
   # @see UploadWorkflow::Single::Edit::States#on_replacing_entry
   # @see UploadWorkflow::External#upload_file
@@ -765,7 +740,6 @@ class UploadController < ApplicationController
   # Download the file associated with an EMMA submission.
   #
   # @see #file_download_path          Route helper
-  # @see Upload#download_url
   #
   def download
     __log_activity
@@ -826,7 +800,6 @@ class UploadController < ApplicationController
   # Upload submission administration.
   #
   # @see #admin_upload_path               Route helper
-  # @see AwsConcern#get_s3_object_table
   #
   def admin
     __log_activity
@@ -875,7 +848,6 @@ class UploadController < ApplicationController
   # Modify :emma_data fields and content.
   #
   # @see #api_migrate_path            Route helper
-  # @see ApiConcern#api_data_migration
   #
   def api_migrate
     __log_activity

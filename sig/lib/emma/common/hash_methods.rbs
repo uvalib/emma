@@ -81,8 +81,6 @@ module Emma::Common::HashMethods
   #
   # @return [Hash]                    A copy of *item*, possibly modified.
   #
-  # @see #_remove_blanks
-  #
   def reject_blanks
     : (symHash item, ?squeeze: bool, ?dup: bool, **untyped _ignored) -> symHash
     | (anyHash item, ?squeeze: bool, ?dup: bool, **untyped _ignored) -> anyHash
@@ -95,8 +93,6 @@ module Emma::Common::HashMethods
   #                                     element into scalars.
   #
   # @return [Hash]                    *item*, possibly modified.
-  #
-  # @see #_remove_blanks!
   #
   def reject_blanks!
     : (symHash item, ?squeeze: bool, **untyped _ignored) -> symHash

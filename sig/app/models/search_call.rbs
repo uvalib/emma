@@ -97,8 +97,6 @@ class SearchCall < ApplicationRecord
   #
   # @return [Hash]
   #
-  # @see #map_parameters
-  #
   def normalize_attributes: ((SearchCall|prmHash|nil) attr, **untyped opt) -> symHash
 
   # For now a no-op that just returns *attr*.

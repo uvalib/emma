@@ -85,8 +85,6 @@ module Emma::Debug
     # @yield To supply additional items.
     # @yieldreturn [any, Array<any>]
     #
-    # @see #__debug_inspect_item
-    #
     def __debug_inspect_items: (*untyped args, **untyped opt) ?{ () -> untyped } -> strArray
 
     # Generate one or more inspections.

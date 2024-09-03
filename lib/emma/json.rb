@@ -124,8 +124,6 @@ module Emma::Json
   #
   # @return [String]
   #
-  # @see #pretty_json
-  #
   def json_render(
     arg,
     align_values: false,
@@ -156,8 +154,6 @@ module Emma::Json
   # @raise [RuntimeError]
   #
   # @return [String]
-  #
-  # @see #json_parse
   #
   # === Usage Notes
   # An HTML element can show the lines as they are generated if it has style
@@ -243,8 +239,6 @@ module Emma::Json
   # @raise [RuntimeError]
   #
   # @return [String]
-  #
-  # @see #json_render
   #
   def hash_render(arg, fatal: false, **opt)
     opt[:ruby_keys] = true unless opt.key?(:ruby_keys)

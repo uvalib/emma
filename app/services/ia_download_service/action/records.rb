@@ -5,7 +5,8 @@
 
 __loading_begin(__FILE__)
 
-# IaDownloadService::Action::Records
+# Methods which support acquiring a record from Internet Archive
+# "Printdisabled Unencrypted Ebook API" endpoints.
 #
 module IaDownloadService::Action::Records
 

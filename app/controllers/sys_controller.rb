@@ -106,8 +106,6 @@ class SysController < ApplicationController
   #
   # @type [Array<Symbol>]
   #
-  # @see SysConcern#SYS_PAGES
-  #
   PAGES = SYS_PAGES
   PAGES.excluding(*instance_methods(false)).each do |page|
     define_method(page) do

@@ -48,7 +48,6 @@ class SearchesDecorator < BaseCollectionDecorator
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
   #
-  # @see #STYLE_BUTTONS
   # @see SearchModesHelper#permitted_by?
   # @see file:javascripts/feature/search-analysis.js *AdvancedFeature*
   #
@@ -75,7 +74,6 @@ class SearchesDecorator < BaseCollectionDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #RESULT_TYPES
   # @see SearchModesHelper#results_type
   # @see SearchModesHelper#permitted_by?
   # @see file:app/assets/javascripts/controllers/search.js *$mode_menu*

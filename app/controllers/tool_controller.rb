@@ -120,8 +120,6 @@ class ToolController < ApplicationController
   # Return a value from the 'job_results' table, where :job_id is the value for
   # the matching :active_job_id.
   #
-  # @see ApplicationJob::Methods#job_result
-  #
   def get_job_result
     render json: LookupJob.job_result(**normalize_hash(params))
   end

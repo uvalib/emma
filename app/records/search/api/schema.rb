@@ -7,8 +7,6 @@ __loading_begin(__FILE__)
 
 # Values related to the details of serialization/de-serialization.
 #
-# @see Api::Schema
-#
 module Search::Api::Schema
 
   include Search::Api::Common

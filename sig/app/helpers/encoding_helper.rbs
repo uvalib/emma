@@ -14,9 +14,6 @@ module EncodingHelper
   # @return [ActiveSupport::SafeBuffer]   If *value* was HTML-safe.
   # @return [String]                      Otherwise.
   #
-  # @see #to_utf8
-  # @see #xhr_encode
-  #
   def to_utf
     : (ActiveSupport::SafeBuffer value, ?xhr: bool|nil) -> ActiveSupport::SafeBuffer
     | ((String|nil)              value, ?xhr: bool|nil) -> String

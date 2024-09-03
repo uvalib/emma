@@ -74,7 +74,7 @@ class Field::Type
   # @param [FieldConfig, nil]    prop
   # @param [Symbol, String, nil] model  (Only used if *prop* is missing.)
   # @param [any, nil]            value
-  # @param [Hash]                opt    To #options if present.
+  # @param [Hash]                opt    To #option if present.
   #
   #--
   # noinspection RubyMismatchedVariableType

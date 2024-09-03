@@ -7,8 +7,6 @@ __loading_begin(__FILE__)
 
 # Values related to the details of serialization/de-serialization.
 #
-# @see Api::Schema
-#
 module Lookup::RemoteService::Api::Schema
 
   include Lookup::RemoteService::Api::Common

@@ -86,8 +86,6 @@ module LayoutHelper::SearchFilters
     #
     # @return [Hash]
     #
-    # @see #search_menu_map
-    #
     def current_menu_config(menu_name, target: nil, **)
       target = target&.to_sym
       config = target && search_menu_map[target] || search_menu_base
@@ -963,8 +961,6 @@ module LayoutHelper::SearchFilters
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #SEARCH_RESET_CONTROL
-  # @see #reset_parameters
   # @see GridHelper#grid_cell_classes
   #
   def reset_button(css: '.menu-button.reset.preserve-width', **opt)

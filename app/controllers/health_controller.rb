@@ -60,7 +60,6 @@ class HealthController < ApplicationController
   # @see #healthcheck_path            Route helper
   # @see #check_health_path           Route helper
   # @see #check_subsystem_health_path Route helper
-  # @see HealthConcern#render_check
   #
   def check
     logging = params[:logging]
@@ -73,7 +72,6 @@ class HealthController < ApplicationController
   #
   # @see #run_state_health_path       Route helper
   # @see #system_unavailable_path     Route helper
-  # @see HealthConcern#show_run_state
   #
   def run_state
     @state = show_run_state
@@ -82,7 +80,6 @@ class HealthController < ApplicationController
   # === PUT /health/run_state
   #
   # @see #set_run_state_health_path   Route helper
-  # @see HealthConcern#update_run_state
   #
   # === Usage Notes
   # Does nothing unless RunState::CLEARABLE or RunState::DYNAMIC.

@@ -95,8 +95,6 @@ module LookupService::RemoteService::Properties
   #
   # @type [Integer]
   #
-  # @see LookupService::RemoteService::Properties#DEFAULT_PRIORITY
-  #
   def priority
     configuration[:priority] || DEFAULT_PRIORITY
   end
@@ -104,8 +102,6 @@ module LookupService::RemoteService::Properties
   # How long to wait for a response from the external service.
   #
   # @return [Float]
-  #
-  # @see LookupService::RemoteService::Properties#DEFAULT_TIMEOUT
   #
   def timeout
     configuration[:timeout] || DEFAULT_TIMEOUT

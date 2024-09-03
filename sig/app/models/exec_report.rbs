@@ -251,9 +251,6 @@ class ExecReport
     #
     # @return [String, ActiveSupport::SafeBuffer]
     #
-    # @see #message_topic
-    # @see #message_details
-    #
     def message_line: (*(String|nil) args, ?separator: String, **untyped opt) -> (ActiveSupport::SafeBuffer | String)
 
     # message_topic
@@ -265,8 +262,6 @@ class ExecReport
     # @option opt [String, nil] :t_sep      Default: #TOPIC_SEP.
     #
     # @return [String, ActiveSupport::SafeBuffer, nil]
-    #
-    # @see #message_portion
     #
     def message_topic: ((String|strArray|nil) src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
 
@@ -280,8 +275,6 @@ class ExecReport
     #
     # @return [String, ActiveSupport::SafeBuffer, nil]
     #
-    # @see #message_portion
-    #
     def message_details: ((String|strArray|nil) src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
 
     # message_portion
@@ -290,8 +283,6 @@ class ExecReport
     # @param [Hash]                       opt
     #
     # @return [String, ActiveSupport::SafeBuffer, nil]
-    #
-    # @see #message_part
     #
     def message_portion: ((String|strArray|nil) src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
 
@@ -628,9 +619,6 @@ class ExecReport::Part
     #
     # @return [String, ActiveSupport::SafeBuffer, nil]
     #
-    # @see #render_topic
-    # @see #render_details
-    #
     def render_line: (untyped src, ?separator: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
 
     # Render the leading topic portion of the report part.
@@ -642,8 +630,6 @@ class ExecReport::Part
     # @option opt [String, nil] :t_sep      Default: #TOPIC_SEP.
     #
     # @return [ActiveSupport::SafeBuffer, String, nil]
-    #
-    # @see #render_portion
     #
     def render_topic: (untyped src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
 
@@ -657,8 +643,6 @@ class ExecReport::Part
     #
     # @return [String, ActiveSupport::SafeBuffer, nil]
     #
-    # @see #render_portion
-    #
     def render_details: (untyped src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
 
     # Render either the topic or details portion of the report part.
@@ -667,8 +651,6 @@ class ExecReport::Part
     # @param [Hash]                  opt
     #
     # @return [String, ActiveSupport::SafeBuffer, nil]
-    #
-    # @see #render_part
     #
     def render_portion: ((String|strArray) src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
 
@@ -837,8 +819,6 @@ class ExecReport::FlashPart < ExecReport::Part
   # @param [Hash]     opt
   #
   # @return [String, ActiveSupport::SafeBuffer, nil]
-  #
-  # @see #render_part
   #
   def render: (?untyped src, **untyped opt) -> (ActiveSupport::SafeBuffer | String | nil)
 

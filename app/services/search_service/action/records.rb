@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# SearchService::Action::Records
+# Methods which acquire record(s) from EMMA Unified Search API endpoints.
 #
 module SearchService::Action::Records
 

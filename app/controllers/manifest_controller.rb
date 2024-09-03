@@ -85,7 +85,6 @@ class ManifestController < ApplicationController
   # List bulk operation manifests.
   #
   # @see #manifest_index_path           Route helper
-  # @see ManifestController#list_items
   #
   def index
     __log_activity
@@ -116,7 +115,6 @@ class ManifestController < ApplicationController
   # Redirects to #show_select if :id is missing.
   #
   # @see #show_manifest_path          Route helper
-  # @see ManifestConcern#find_record
   #
   def show
     __log_activity
@@ -137,7 +135,6 @@ class ManifestController < ApplicationController
   # === GET /manifest/new
   #
   # @see #new_manifest_path           Route helper
-  # @see ManifestConcern#new_record
   #
   def new
     __log_activity
@@ -154,7 +151,6 @@ class ManifestController < ApplicationController
   # === PATCH /manifest/create
   #
   # @see #create_manifest_path        Route helper
-  # @see ManifestConcern#create_record
   #
   def create
     __log_activity
@@ -178,7 +174,6 @@ class ManifestController < ApplicationController
   # Redirects to #edit_select if :id is not given.
   #
   # @see #edit_manifest_path          Route helper
-  # @see ManifestConcern#edit_record
   #
   def edit
     __log_activity
@@ -199,7 +194,6 @@ class ManifestController < ApplicationController
   # === PATCH /manifest/update/:id
   #
   # @see #update_manifest_path        Route helper
-  # @see ManifestConcern#update_record
   #
   def update
     __log_activity
@@ -224,7 +218,6 @@ class ManifestController < ApplicationController
   # Redirects to #delete_select if :id is not given.
   #
   # @see #delete_manifest_path          Route helper
-  # @see ManifestConcern#delete_records
   #
   def delete
     __log_activity
@@ -240,7 +233,6 @@ class ManifestController < ApplicationController
   # === DELETE /manifest/destroy/:id
   #
   # @see #destroy_manifest_path           Route helper
-  # @see ManifestConcern#destroy_records
   #
   def destroy(back: delete_select_manifest_path)
     __log_activity
@@ -288,8 +280,6 @@ class ManifestController < ApplicationController
   #
   # List all bulk operation manifests associated with users in the same
   # organization as the current user.
-  #
-  # @see ManifestController#list_items
   #
   def list_org
     __log_activity
@@ -433,7 +423,6 @@ class ManifestController < ApplicationController
   #
   # @see #save_manifest_path                                  Route helper
   # @see file:assets/javascripts/controllers/manifest-edit.js *updateDataRow()*
-  # @see ManifestConcern#save_changes
   #
   def save
     __log_activity
@@ -501,8 +490,6 @@ class ManifestController < ApplicationController
   #
   # Return a value from the 'job_results' table, where :job_id is the value for
   # the matching :active_job_id.
-  #
-  # @see ApplicationJob::Methods#job_result
   #
   def get_job_result
     render json: SubmitJob.job_result(**normalize_hash(params))

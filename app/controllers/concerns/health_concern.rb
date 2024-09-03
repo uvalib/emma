@@ -207,8 +207,6 @@ module HealthConcern
   #
   # @return [Hash{Symbol=>HealthStatus}]
   #
-  # @see #HEALTH_CHECK
-  #
   def get_health_status(*subsystem)
     subsystem = subsystem.flatten.compact_blank!.map!(&:to_sym).presence
     entries   = subsystem&.map! { |ss| [ss, nil] }&.to_h || HEALTH_CHECK

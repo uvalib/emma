@@ -479,9 +479,6 @@ class ExecReport
     #
     # @return [String, ActiveSupport::SafeBuffer]
     #
-    # @see #message_topic
-    # @see #message_details
-    #
     def message_line(*args, separator: TOPIC_SEP, **opt)
       k = message_topic(args.shift, **opt)
       v = message_details(args, **opt)
@@ -499,8 +496,6 @@ class ExecReport
     #
     # @return [String, ActiveSupport::SafeBuffer, nil]
     #
-    # @see #message_portion
-    #
     def message_topic(src, **opt)
       opt[:separator] ||= opt[:t_sep] || TOPIC_SEP
       message_portion(src, **opt)
@@ -515,8 +510,6 @@ class ExecReport
     # @option opt [String, nil] :d_sep      Default: #DETAILS_SEP.
     #
     # @return [String, ActiveSupport::SafeBuffer, nil]
-    #
-    # @see #message_portion
     #
     def message_details(src, **opt)
       opt[:separator] ||= opt[:d_sep] || DETAILS_SEP
@@ -535,8 +528,6 @@ class ExecReport
     # @param [Hash]                       opt
     #
     # @return [String, ActiveSupport::SafeBuffer, nil]
-    #
-    # @see #message_part
     #
     def message_portion(src, **opt)
       src = src && Array.wrap(src).compact_blank.uniq.presence or return
@@ -635,8 +626,6 @@ class ExecReport
     # @param [Hash]         opt
     #
     # @return [Array<String>]
-    #
-    # @see #error_table_hash
     #
     def error_messages(src, html: nil, **opt)
       src  = src.exec_report      if src.respond_to?(:exec_report)
@@ -1158,9 +1147,6 @@ class ExecReport::Part
     #
     # @return [String, ActiveSupport::SafeBuffer, nil]
     #
-    # @see #render_topic
-    # @see #render_details
-    #
     def render_line(src, separator: TOPIC_SEP, **opt)
       src   = Array.wrap(src)
       label = render_topic(src.first, **opt)
@@ -1179,8 +1165,6 @@ class ExecReport::Part
     #
     # @return [ActiveSupport::SafeBuffer, String, nil]
     #
-    # @see #render_portion
-    #
     def render_topic(src, **opt)
       opt[:separator] ||= opt[:t_sep] || TOPIC_SEP
       src = extract_topic(src)   unless src.is_a?(String)
@@ -1198,8 +1182,6 @@ class ExecReport::Part
     #
     # @return [String, ActiveSupport::SafeBuffer, nil]
     #
-    # @see #render_portion
-    #
     def render_details(src, **opt)
       opt[:separator] ||= opt[:d_sep] || DETAILS_SEP
       src = [src]                if src.is_a?(String)
@@ -1214,8 +1196,6 @@ class ExecReport::Part
     # @param [Hash]                       opt
     #
     # @return [String, ActiveSupport::SafeBuffer, nil]
-    #
-    # @see #render_part
     #
     def render_portion(src, **opt)
       src = src && Array.wrap(src).compact_blank.uniq.presence or return
@@ -1515,8 +1495,6 @@ class ExecReport::FlashPart < ExecReport::Part
   # @param [Hash]     opt
   #
   # @return [String, ActiveSupport::SafeBuffer, nil]
-  #
-  # @see #render_part
   #
   def render(src = nil, **opt)
     src ||= self

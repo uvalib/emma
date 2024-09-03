@@ -9,6 +9,6 @@ state ||= @state || RunState.current
 
 xml.run_state do
   state.each_pair do |k, v|
-    xml.tag!(k, v)
+    xml.tag! k, v
   end
 end

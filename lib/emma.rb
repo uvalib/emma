@@ -47,8 +47,6 @@ end
 #
 # @return [void]
 #
-# @see #require_files
-#
 def require_subdirs(relative_to, *patterns)
   return if relative_to.blank?
   subdirs = patterns.flatten.compact_blank!.uniq
@@ -64,8 +62,6 @@ end
 #
 # @return [void]
 #
-# @see #require_files
-#
 def require_submodules(filename)
   return if filename.blank?
   directory = File.basename(filename, '.*')
@@ -79,8 +75,6 @@ end
 # @param [String] filename            Normally supplied as __FILE__
 #
 # @return [void]
-#
-# @see #require_submodules
 #
 def require_subclasses(filename)
   require_submodules(filename)
@@ -103,8 +97,6 @@ end
 # @yieldparam [Module] mod
 # @yieldreturn [bool] if *false* the module will not be included.
 #
-# @see #require_submodules
-#
 def include_submodules(base, filename = nil, and_extend: false)
   curr_constants = constants(false)
   if filename.present?
@@ -123,8 +115,6 @@ def include_submodules(base, filename = nil, and_extend: false)
 end
 
 # Include and extend submodules.
-#
-# @see #include_submodules
 #
 def include_and_extend_submodules(base, filename = nil, &blk)
   include_submodules(base, filename, and_extend: true, &blk)

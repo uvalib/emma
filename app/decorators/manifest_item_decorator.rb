@@ -691,8 +691,6 @@ class ManifestItemDecorator < BaseDecorator
     #
     # @return [ActiveSupport::SafeBuffer]
     #
-    # @see #submit_status_element
-    #
     def submission_status_header(row: HEADER_ROW, css: '.head', **opt)
       trace_attrs!(opt)
       prepend_css!(opt, css)
@@ -1565,8 +1563,6 @@ class ManifestItemDecorator
   # @param [Hash]         opt
   #
   # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #submit_status_element
   #
   def submission_status(row: nil, col: 1, index: nil, **opt)
     submitted = object.submitted?

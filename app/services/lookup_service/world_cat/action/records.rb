@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# LookupService::WorldCat::Action::Records
+# Methods which acquire record(s) from WorldCat catalog API endpoints.
 #
 module LookupService::WorldCat::Action::Records
 

@@ -100,7 +100,8 @@ IA_DOWNLOAD_API_URL: String
 
 # Amazon AWS region.
 #
-# This should be supplied by the UVA cloud infrastructure on startup.
+# This should be supplied by the UVA cloud infrastructure on startup or from
+# `Rails.application.credentials.s3`.
 #
 # @type [String]
 #
@@ -118,7 +119,8 @@ AWS_BUCKET: String
 
 # Amazon identity access key.
 #
-# This should be supplied by the UVA cloud infrastructure on startup.
+# This should be supplied by the UVA cloud infrastructure on startup or from
+# `Rails.application.credentials.s3`.
 #
 # @type [String, nil]
 #
@@ -126,7 +128,8 @@ AWS_ACCESS_KEY_ID: String | nil
 
 # Amazon identity secret.
 #
-# This should be supplied by the UVA cloud infrastructure on startup.
+# This should be supplied by the UVA cloud infrastructure on startup or from
+# `Rails.application.credentials.s3`.
 #
 # @type [String, nil]
 #

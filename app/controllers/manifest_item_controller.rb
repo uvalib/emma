@@ -84,7 +84,6 @@ class ManifestItemController < ApplicationController
   # Display the items for the given Manifest.
   #
   # @see #manifest_item_index_path                 Route helper
-  # @see ManifestItemConcern#find_or_match_records
   #
   def index
     __log_activity
@@ -114,7 +113,6 @@ class ManifestItemController < ApplicationController
   # Display the values of a single manifest item.
   #
   # @see #show_manifest_item_path                  Route helper
-  # @see ManifestItemConcern#find_record
   #
   def show
     __log_activity
@@ -143,7 +141,6 @@ class ManifestItemController < ApplicationController
   # prompts to upload a file and collects metadata for the new item.
   #
   # @see #new_manifest_item_path                   Route helper
-  # @see ManifestItemConcern#new_record
   # @see ManifestItemController#create
   # @see file:app/assets/javascripts/feature/model-form.js
   #
@@ -161,7 +158,6 @@ class ManifestItemController < ApplicationController
   # === PATCH /manifest_item/create/:manifest
   #
   # @see #create_manifest_item_path                Route helper
-  # @see ManifestItemConcern#create_record
   # @see ManifestItemController#new
   #
   def create
@@ -191,7 +187,6 @@ class ManifestItemController < ApplicationController
   # changes and/or upload of a replacement file.
   #
   # @see #edit_manifest_item_path                  Route helper
-  # @see ManifestItemConcern#edit_record
   # @see ManifestItemController#update
   # @see file:app/assets/javascripts/feature/model-form.js
   #
@@ -210,7 +205,6 @@ class ManifestItemController < ApplicationController
   # Finalize modification of an existing item.
   #
   # @see #update_manifest_item_path                Route helper
-  # @see ManifestItemConcern#update_record
   # @see ManifestItemController#edit
   #
   def update
@@ -230,7 +224,6 @@ class ManifestItemController < ApplicationController
   # Initiate removal of an existing item along with its associated file.
   #
   # @see #delete_manifest_item_path                Route helper
-  # @see ManifestItemConcern#delete_records
   # @see ManifestItemController#destroy
   #
   def delete
@@ -248,7 +241,6 @@ class ManifestItemController < ApplicationController
   # Finalize removal of an existing item.
   #
   # @see #destroy_manifest_item_path               Route helper
-  # @see ManifestItemConcern#destroy_records
   # @see ManifestItemController#delete
   #
   def destroy
@@ -272,7 +264,6 @@ class ManifestItemController < ApplicationController
   # Set :editing state and backup fields.
   #
   # @see #start_editing_manifest_item_path               Route helper
-  # @see ManifestItemConcern#start_editing
   #
   def start_edit
     __debug_route
@@ -302,8 +293,6 @@ class ManifestItemController < ApplicationController
   # === POST /manifest_item/row_update/:id
   #
   # Clear :editing state and respond with item and validity information.
-  #
-  # @see ManifestItemConcern#editing_update
   #
   def row_update
     __debug_route
@@ -355,7 +344,6 @@ class ManifestItemController < ApplicationController
   # containing a row/element for each item to add.
   #
   # @see #bulk_new_manifest_item_path                   Route helper
-  # @see ManifestItemConcern#bulk_new_manifest_items
   # @see ManifestItemController#bulk_create
   #
   def bulk_new
@@ -373,7 +361,6 @@ class ManifestItemController < ApplicationController
   # associated files.
   #
   # @see #bulk_create_manifest_item_path                Route helper
-  # @see ManifestItemConcern#bulk_create_manifest_items
   # @see file:javascripts/controllers/manifest-edit.js  *sendUpsertRecords*
   # @see ManifestItemController#bulk_new
   #
@@ -394,7 +381,6 @@ class ManifestItemController < ApplicationController
   # containing a row/element for each item to change.
   #
   # @see #bulk_edit_manifest_item_path                  Route helper
-  # @see ManifestItemConcern#bulk_edit_manifest_items
   # @see ManifestItemController#bulk_update
   #
   def bulk_edit
@@ -413,7 +399,6 @@ class ManifestItemController < ApplicationController
   # associated files (if changed).
   #
   # @see #bulk_update_manifest_item_path                Route helper
-  # @see ManifestItemConcern#bulk_update_manifest_items
   # @see file:javascripts/controllers/manifest-edit.js  *sendUpsertRecords*
   # @see ManifestItemController#bulk_edit
   #
@@ -433,7 +418,6 @@ class ManifestItemController < ApplicationController
   # Specify items to delete by :id or RANGE_LIST.
   #
   # @see #bulk_delete_manifest_item_path                Route helper
-  # @see ManifestItemConcern#bulk_delete_manifest_items
   # @see ManifestItemController#bulk_destroy
   #
   def bulk_delete
@@ -448,7 +432,6 @@ class ManifestItemController < ApplicationController
   # === DELETE /manifest_item/bulk/destroy/:manifest
   #
   # @see #bulk_destroy_manifest_item_path               Route helper
-  # @see ManifestItemConcern#bulk_destroy_manifest_items
   # @see ManifestItemController#bulk_delete
   #
   def bulk_destroy
@@ -468,7 +451,6 @@ class ManifestItemController < ApplicationController
   # Modify selected ManifestItem fields of one or more items.
   #
   # @see #bulk_fields_manifest_item_path                Route helper
-  # @see ManifestItemConcern#bulk_fields_manifest_items
   # @see file:javascripts/controllers/manifest-edit.js  *sendFieldUpdates*
   #
   def bulk_fields

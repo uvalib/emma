@@ -22,7 +22,6 @@ class HelpController < ApplicationController
   # The main help page.
   #
   # @see #help_index_path             Route helper
-  # @see HelpHelper#help_topics
   #
   def index: () -> void
 

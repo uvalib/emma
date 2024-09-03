@@ -75,8 +75,6 @@ module Emma::TimeMethods
   #
   # @return [String]
   #
-  # @see #timestamp
-  #
   def time_span(start_time, end_time = nil)
     end_time ||= timestamp
     start_time = end_time unless start_time.is_a?(Numeric)

@@ -28,8 +28,6 @@ module Record::Exceptions
   # @raise [Record::SubmitError]
   # @raise [ExecError]
   #
-  # @see ExceptionHelper#raise_failure
-  #
   # @note From UploadWorkflow::Errors#raise_failure
   #
   def raise_failure(problem, value = nil, log: true, **)

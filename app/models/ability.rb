@@ -847,11 +847,9 @@ class Ability
 
   public
 
-  # Models which are managed by CanCan
+  # Models which are managed by CanCan.
   #
   # @return [Array<Class>]
-  #
-  # @see #MODEL_NAMES
   #
   def self.models
     MODEL_NAMES.map { |model| to_class(model) }.compact

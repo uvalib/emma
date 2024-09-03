@@ -73,7 +73,6 @@ class OrgController < ApplicationController
   # List all organizations.
   #
   # @see #org_index_path          Route helper
-  # @see OrgController#list_items
   #
   def index
     __log_activity
@@ -112,7 +111,6 @@ class OrgController < ApplicationController
   # Redirects to #show_current if :id is #CURRENT_ID.
   #
   # @see #show_org_path          Route helper
-  # @see OrgConcern#find_record
   #
   def show
     __log_activity
@@ -130,7 +128,6 @@ class OrgController < ApplicationController
   # === GET /org/new
   #
   # @see #new_org_path           Route helper
-  # @see OrgConcern#new_record
   #
   def new
     __log_activity
@@ -147,8 +144,6 @@ class OrgController < ApplicationController
   # === PATCH /org/create
   #
   # @see #create_org_path                     Route helper
-  # @see OrgConcern#create_record
-  # @see MailConcern#generate_new_org_emails
   #
   def create
     __log_activity
@@ -176,7 +171,6 @@ class OrgController < ApplicationController
   # Redirects to #edit_current if :id is #CURRENT_ID.
   #
   # @see #edit_org_path          Route helper
-  # @see OrgConcern#edit_record
   #
   def edit
     __log_activity
@@ -196,8 +190,6 @@ class OrgController < ApplicationController
   # === PATCH /org/update/:id
   #
   # @see #update_org_path                     Route helper
-  # @see OrgConcern#update_record
-  # @see MailConcern#generate_new_org_emails
   #
   def update
     __log_activity
@@ -223,7 +215,6 @@ class OrgController < ApplicationController
   # Redirects to #delete_select if :id is not given.
   #
   # @see #delete_org_path           Route helper
-  # @see OrgConcern#delete_records
   #
   def delete
     __log_activity
@@ -243,7 +234,6 @@ class OrgController < ApplicationController
   # === DELETE /org/destroy/:id
   #
   # @see #destroy_org_path            Route helper
-  # @see OrgConcern#destroy_records
   #
   def destroy(back: delete_select_org_path)
     __log_activity
@@ -300,8 +290,6 @@ class OrgController < ApplicationController
   #
   # @return [Hash]
   #
-  # @see ModelConcern#find_or_match_records
-  #
   def list_items(prm = nil)
     prm ||= paginator.initial_parameters
     items = find_or_match_records(**prm)
@@ -321,7 +309,6 @@ class OrgController < ApplicationController
   # Display details of the current EMMA member organization.
   #
   # @see #show_current_org_path       Route helper
-  # @see IdentityHelper#current_org
   #
   def show_current
     __log_activity
@@ -348,7 +335,6 @@ class OrgController < ApplicationController
   # organization.
   #
   # @see #edit_current_org_path       Route helper
-  # @see IdentityHelper#current_org
   #
   def edit_current
     __log_activity

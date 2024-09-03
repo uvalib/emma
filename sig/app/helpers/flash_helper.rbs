@@ -236,8 +236,6 @@ module FlashHelper
   #
   # @return [String]
   #
-  # @see #flash_format
-  #
   def flash_xhr: (*flashArg args, **untyped opt) -> String
 
   # @type [Array<Symbol>]

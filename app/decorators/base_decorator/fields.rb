@@ -45,8 +45,6 @@ module BaseDecorator::Fields
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #render_json_data
-  #
   def render_emma_data(value = nil, field: :emma_data, **opt)
     value ||= object.try(field) || object.try(:[], field)
     pairs   = json_parse(value).presence
@@ -66,8 +64,6 @@ module BaseDecorator::Fields
   # @param [Hash]              opt
   #
   # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #render_json_data
   #
   def render_file_data(value = nil, field: :file_data, **opt)
     value ||= object.try(field) || object.try(:[], field)

@@ -152,8 +152,6 @@ module Emma::Common::HashMethods
   #
   # @return [Hash]                    A copy of *item*, possibly modified.
   #
-  # @see #_remove_blanks
-  #
   def reject_blanks(item, squeeze: false, dup: false, **)
     item.is_a?(Hash) && _remove_blanks(item, squeeze: squeeze, dup: dup) || {}
   end
@@ -165,8 +163,6 @@ module Emma::Common::HashMethods
   #                                     element into scalars.
   #
   # @return [Hash]                    *item*, possibly modified.
-  #
-  # @see #_remove_blanks!
   #
   def reject_blanks!(item, squeeze: false, **)
     item.is_a?(Hash) ? _remove_blanks!(item, squeeze: squeeze) : {}

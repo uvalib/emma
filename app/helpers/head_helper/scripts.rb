@@ -148,8 +148,6 @@ module HeadHelper::Scripts
   #
   # @return [Hash]
   #
-  # @see #SCRIPT_SETTINGS_OVERRIDES
-  #
   def script_settings
     @script_settings ||= SCRIPT_SETTINGS_OVERRIDES.deep_dup
   end
@@ -159,8 +157,6 @@ module HeadHelper::Scripts
   # @param [Hash] opt                 Settings override values.
   #
   # @return [Hash]
-  #
-  # @see #script_settings
   #
   def script_setting(**opt)
     script_settings.merge!(opt)
@@ -180,7 +176,6 @@ module HeadHelper::Scripts
   #
   # @return [ActiveSupport::SafeBuffer, nil]
   #
-  # @see #script_settings
   # @see file:app/assets/javascripts/shared/assets.js.erb
   #
   def page_script_settings(**opt)

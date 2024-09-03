@@ -445,11 +445,9 @@ class Ability
 
   def all_actions_remove: (?(Symbol|String|Array[Symbol|String]|nil) action, untyped subject) -> void
 
-  # Models which are managed by CanCan
+  # Models which are managed by CanCan.
   #
   # @return [Array<Class>]
-  #
-  # @see #MODEL_NAMES
   #
   def self.models: () -> Array[Class]
 

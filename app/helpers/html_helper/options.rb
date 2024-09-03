@@ -53,8 +53,6 @@ module HtmlHelper::Options
   #
   # @return [Hash]                      A new hash.
   #
-  # @see #merge_html_options!
-  #
   def merge_html_options(html_opt, *args)
     html_opt = html_opt&.dup || {}
     # noinspection RubyMismatchedArgumentType
@@ -67,8 +65,6 @@ module HtmlHelper::Options
   # @param [Array<Hash,nil>] args       Options hash(es) to merge into *opt*.
   #
   # @return [Hash]                      The modified *opt* hash.
-  #
-  # @see #append_css!
   #
   def merge_html_options!(html_opt, *args)
     args    = args.map { |a| a[:class] ? a.dup : a if a.is_a?(Hash) }.compact
