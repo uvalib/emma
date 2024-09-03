@@ -12,8 +12,6 @@ module IaDownloadConcern
 
   extend ActiveSupport::Concern
 
-  include ActionController::DataStreaming
-
   include ApiConcern
 
   # ===========================================================================
@@ -65,23 +63,15 @@ module IaDownloadConcern
   #
   # @param [String]         identifier  IA item identifier.
   # @param [Symbol, String] type        Requested file type.
-  # @param [Boolean, nil]   new_tab     If *true* show in a new browser tab.
-  # @param [Hash]           opt         To IaDownloadService#download, except
-  #                                       #SEND_DATA_OPT to #send_data.
-  #
-  # @raise [ExecError]                @see IaDownloadService#download
+  # @param [Hash]           opt         Passed to #api_download.
   #
   # @return [void]
   #
-  def ia_download_retrieval(identifier:, type:, new_tab: false, **opt)
-    send_opt = opt.extract!(*SEND_DATA_OPT)
+  def ia_download_retrieval(identifier:, type:, **opt)
+    opt.slice!(*SEND_DATA_OPT, *IaDownloadService::API_DOWNLOAD_OPT)
     opt.merge!(identifier: identifier, type: type)
-    name, mime, data = ia_download_api.download(**opt)
-    return if data.blank?
-    send_opt[:type]        ||= mime
-    send_opt[:filename]    ||= name
-    send_opt[:disposition] ||= new_tab ? 'attachment' : 'inline'
-    send_data(data, send_opt)
+    opt[:meth] ||= __method__
+    ia_download_api.api_download(response, **opt)
   end
 
   # ===========================================================================

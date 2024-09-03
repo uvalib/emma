@@ -197,6 +197,102 @@ module ApiService::Common
     type.new(response, *args, **opt)
   end
 
+  # Retrieve a copy of a file and download it to the browser.
+  #
+  # @param [ActionDispatch::Response] response  Client response object.
+  # @param [String, nil]              url       Default: `#base_url`.
+  # @param [Hash]                     headers   Header additions/overrides.
+  # @param [Boolean, nil]             new_tab   If *true* open new browser tab.
+  # @param [Symbol, nil]              meth      Unused unless DEBUG_DOWNLOAD.
+  # @param [Hash]                     opt       Passed to #make_path.
+  #
+  # @return [void]
+  #
+  # @see ActionDispatch::Response
+  #
+  # === Implementation Notes
+  # This is essentially a placeholder that will require work to actually cause
+  # the results to be sent in chunks to the browser as they are received from
+  # the remote system.
+  #
+  #--
+  # noinspection RubyUnusedLocalVariable
+  #++
+  def api_download(response, url: nil, headers: {}, new_tab: false, meth: nil, **opt)
+    total_size = group_size = chunks = start_time = total_duration = 0
+    show_value = show_line = show_chunks = debug_chunks = nil
+    if DEBUG_DOWNLOAD
+      meth      ||= __method__
+      show_line   = ->(line) { $stderr.puts "=== #{meth} #{line}" }
+      show_value  = ->(k, v) { show_line.("#{k} = #{v}") }
+      show_chunks = ->(*parts) {
+        old_total = total_duration
+        total_sec = 'total %.2f sec' % (total_duration = Time.now - start_time)
+        chunk_sec = '%.2f sec'       % (total_duration - old_total)
+        parts     = ["#{group_size} bytes", chunk_sec, total_sec, *parts]
+        show_line.("chunks to #{chunks}: %s" % parts.join('; '))
+        total_size += group_size
+        group_size = 0
+      }
+      debug_chunks = ->(chunk) {
+        group_size += chunk.size
+        show_chunks.() if ((chunks += 1) % 100).zero?
+      }
+    end
+    _, hdrs, _ = api_headers({})
+    options = api_options({}).transform_values { |v| url_escape(v) }
+    headers = hdrs.merge(headers) if hdrs.present?
+    opt = options.merge(opt)      if options.present?
+    uri = url ? URI.parse(url) : base_uri
+    Net::HTTP.start(uri.hostname) do |http|
+      url = make_path((url || base_url), **opt)
+      req = Net::HTTP::Get.new(url, headers)
+      if DEBUG_DOWNLOAD
+        {
+          url:          url,
+          req:          req,
+          'req.method': req.method,
+          'req.path':   req.path,
+          'req.uri':    req.uri,
+          'req.header': req.to_hash,
+        }.each_pair { |k, v| show_value.(k, v) }
+        start_time = Time.current
+      end
+      http.request(req) do |remote_response|
+        if DEBUG_DOWNLOAD
+          { remote: remote_response, client: response }.each do |k, v|
+            show_line.("#{k} = #{v.inspect} = #{v.header.inspect}")
+          end
+        end
+        header_defaults = {
+          'Content-Disposition' => (new_tab ? 'attachment' : 'inline'),
+          'Content-Type'        => 'application/octet-stream',
+        }.each_pair do |h, default|
+          response[h] = remote_response[h] || default
+        end
+        if DEBUG_DOWNLOAD
+          msgs = { remote: remote_response, client: response }
+          header_defaults.each_key do |h|
+            msgs.each_pair { |k, v| show_value.("#{k}[#{h}]", k[h]) }
+          end
+        end
+        remote_response.read_body do |chunk|
+          debug_chunks&.(chunk)
+          response.write(chunk)
+        end
+      end
+    end
+  ensure
+    show_chunks&.("#{total_size + group_size} bytes")
+    response.close
+  end
+
+  # Local options for #api_download.
+  #
+  # @type [Array<Symbol>]
+  #
+  API_DOWNLOAD_OPT = method_key_params(:api_download).freeze
+
   # ===========================================================================
   # :section:
   # ===========================================================================

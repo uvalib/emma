@@ -15,6 +15,12 @@ module ApiService::Properties
 
   public
 
+  # Control generation of extra debugging output for browser downloads.
+  #
+  # @type [Boolean]
+  #
+  DEBUG_DOWNLOAD = true?(ENV['DEBUG_DOWNLOAD']) || true
+
   # Control whether information requests are ever cached. # TODO: ???
   #
   # @type [Boolean]

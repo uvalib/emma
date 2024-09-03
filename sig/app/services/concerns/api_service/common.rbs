@@ -123,6 +123,32 @@ module ApiService::Common
   #
   def api_return: (Class `type`, *untyped args, **untyped opt) -> untyped # Api::Record
 
+  # Retrieve a copy of a file and download it to the browser.
+  #
+  # @param [ActionDispatch::Response] response  Client response object.
+  # @param [String, nil]              url       Default: `#base_url`.
+  # @param [Hash]                     headers   Header additions/overrides.
+  # @param [Boolean, nil]             new_tab   If *true* open new browser tab.
+  # @param [Symbol, nil]              meth      Unused unless DEBUG_DOWNLOAD.
+  # @param [Hash]                     opt       Passed to #make_path.
+  #
+  # @return [void]
+  #
+  # @see ActionDispatch::Response
+  #
+  # === Implementation Notes
+  # This is essentially a placeholder that will require work to actually cause
+  # the results to be sent in chunks to the browser as they are received from
+  # the remote system.
+  #
+  def api_download: (ActionDispatch::Response response, url: String|nil, headers: symHash, new_tab: bool, meth: Symbol|nil, **untyped opt) -> void
+
+  # Local options for #api_download.
+  #
+  # @type [Array<Symbol>]
+  #
+  API_DOWNLOAD_OPT: symArray
+
   # HTTP ports which do not need to be explicitly included when generating an
   # absolute path.
   #

@@ -1,6 +1,12 @@
 # ApiService::Properties
 #
 module ApiService::Properties
+  # Control generation of extra debugging output for browser downloads.
+  #
+  # @type [Boolean]
+  #
+  DEBUG_DOWNLOAD: bool
+
   # Control whether information requests are ever cached. # TODO: ???
   #
   # @type [Boolean]

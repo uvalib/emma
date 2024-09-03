@@ -4,8 +4,6 @@
 module IaDownloadConcern
   extend ActiveSupport::Concern
 
-  include ActionController::DataStreaming
-
   include ApiConcern
 
   # Access the Internet Archive download service.
@@ -38,15 +36,11 @@ module IaDownloadConcern
   #
   # @param [String]         identifier  IA item identifier.
   # @param [Symbol, String] type        Requested file type.
-  # @param [Boolean, nil]   new_tab     If *true* show in a new browser tab.
-  # @param [Hash]           opt         To IaDownloadService#download, except
-  #                                       #SEND_DATA_OPT to #send_data.
-  #
-  # @raise [ExecError]                @see IaDownloadService#download
+  # @param [Hash]           opt         Passed to #api_download.
   #
   # @return [void]
   #
-  def ia_download_retrieval: (identifier: String, type: Symbol|String, ?new_tab: bool|nil, **untyped opt) -> symHash
+  def ia_download_retrieval: (identifier: String, type: Symbol|String, **untyped opt) -> symHash
 
   private
 
