@@ -1,0 +1,135 @@
+# View helper methods for rendering application information.
+#
+module AboutHelper
+  include EmmaHelper
+
+  # An element containing useful project-related links.
+  #
+  # @param [Boolean] heading          If *false*, do not include `<h2>` heading
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to the container element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def project_links_section: (heading: bool, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # An element containing links to project-related reference material.
+  #
+  # @param [Boolean] heading          If *false*, do not include `<h2>` heading
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to the container element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def project_references_section: (heading: bool, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # An element containing a list of EMMA member organizations.
+  #
+  # @param [Boolean] heading          If *false*, do not include `<h2>` heading
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to the container element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def project_members_section: (heading: bool, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # A page section for recent EMMA submissions, if any.
+  #
+  # @param [Boolean] heading          If *false*, do not include `<h2>` heading
+  # @param [Hash]    opt              Passed to #project_submissions.
+  #
+  # @option opt [ActiveSupport::Duration, Date, Integer] :since   Default:
+  #                                                               #recent_date
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def recent_submissions_section: (heading: bool, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # A page section for all EMMA submissions.
+  #
+  # @param [Boolean] heading          If *false*, do not include `<h2>` heading
+  # @param [Hash]    opt              Passed to #project_submissions.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def total_submissions_section: (heading: bool, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Generate a table of useful project-related links.
+  #
+  # @param [Hash] opt                 Passed to #project_table.
+  #
+  # @return [Hash]
+  #
+  def project_links: (**untyped opt) -> Hash[String,String]
+
+  # Generate a table of links to project-related reference material.
+  #
+  # @param [Hash] opt                 Passed to #project_table.
+  #
+  # @return [Hash]
+  #
+  def project_refs: (**untyped opt) -> Hash[String,String]
+
+  # An element containing a list of EMMA submissions.
+  #
+  # @param [ActiveSupport::Duration, Date, Integer, nil] since
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to the container element.
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def project_submissions: (?since: ActiveSupport::Duration|Date|Integer|nil, ?css: String, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Generate a list of EMMA member organizations
+  #
+  # @param [Hash] opt                 Passed to 'orgs' #where clause.
+  #
+  # @return [Array<String>]
+  #
+  def org_names: (**untyped opt) -> strArray
+
+  # Generate a table of organizations and their submission counts in descending
+  # order.
+  #
+  # @param [ActiveSupport::Duration, Date, Integer, nil] since
+  # @param [Hash] opt                 Passed to 'uploads' #where clause.
+  #
+  # @return [Hash]
+  #
+  def org_submission_counts: (?since: ActiveSupport::Duration|Date|Integer|nil, **untyped opt) -> symHash
+
+  # The past date indicated by the argument.
+  #
+  # @param [ActiveSupport::Duration, Date, Integer, nil] since
+  #
+  # @return [Date, nil]
+  #
+  def recent_date: (?(ActiveSupport::Duration|Date|Integer|nil) since) -> (Date | nil)
+
+  # Generate a table of values with keys modified according to the *format*.
+  #
+  # @param [Hash]        data
+  # @param [Symbol, nil] format       One of :json, :xml, or :html (default).
+  #
+  # @return [Hash]
+  #
+  def project_table: (anyHash data, format: Symbol|nil, **untyped _ignored) -> Hash[String,String]
+
+  # An element containing a table of project-related information.
+  #
+  # @param [Hash, nil]   content
+  # @param [String, nil] heading
+  # @param [Hash]        opt          Passed to the container element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def project_table_section: ((symHash|nil) content, ?(String|nil) heading, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # A fallback element indicating "NONE".
+  #
+  # @param [Hash] opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def none_placeholder: (**untyped opt) -> ActiveSupport::SafeBuffer
+end

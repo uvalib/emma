@@ -323,6 +323,16 @@ Rails.application.routes.draw do
   resources :search_call, only: %i[index show]
 
   # ===========================================================================
+  # Application information
+  # ===========================================================================
+
+  get '/about',             to: 'about#index',    as: 'about_index'
+
+  AboutController::PAGES.excluding(:index).each do |page|
+    get "/about/#{page}",   to: "about##{page}",  as: "#{page}_about"
+  end
+
+  # ===========================================================================
   # System information
   # ===========================================================================
 

@@ -97,9 +97,10 @@ module LayoutHelper::PageControls
     cfg_opt = { ctrlr: ctrlr, action: action, mode: false }
     entries = config_lookup('page_controls.actions', **cfg_opt)
     return if entries.blank?
-    model   = model_class(ctrlr)
-    user    = (@user || current_user)
-    subject = (user if model == User)
+    about   = (ctrlr == :about)
+    model   = (model_class(ctrlr)     unless about)
+    user    = (@user || current_user  if model)
+    subject = (user                   if model == User)
     log     = (->(m) { Log.debug("#{__method__}: #{m}") } if Log.debug?)
     entries.map { |ent|
       next if ent.blank?
@@ -118,6 +119,8 @@ module LayoutHelper::PageControls
       next log&.("no action for entry #{ent.inspect}") unless act.present?
 
       ctl = ent[:ctrlr] = ent.delete(:controller) || ent[:ctrlr] || ctrlr
+      next ent if ctl&.to_sym == :about
+
       sub = subject || model_class(ctl)
       next log&.("[#{ctl}, #{act}] skipped for #{sub}") unless can?(act, sub)
 

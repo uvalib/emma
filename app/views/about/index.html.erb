@@ -1,0 +1,20 @@
+<%# app/views/about/index.html.erb -%>
+<%-
+  # Main About page.
+
+  view_debug(__FILE__)
+
+  cfg   ||= current_config_page_section
+  help  ||= nil # %i[about]
+  title ||= cfg[:title]
+-%>
+
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+<%= scroll_to_top_target %>
+<%= project_links_section %>
+<%= project_references_section %>
+
+<%= page_notes_section %>

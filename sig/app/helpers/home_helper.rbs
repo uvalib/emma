@@ -5,6 +5,8 @@ module HomeHelper
 
   include HtmlHelper
 
+  include AboutHelper
+
   # Generate a display of the number of active EMMA member organizations.
   #
   # @param [String] css               Characteristic CSS class/selector

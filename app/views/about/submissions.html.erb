@@ -1,0 +1,20 @@
+<%# app/views/about/submissions.html.erb -%>
+<%-
+  # Leaderboard of EMMA submissions.
+
+  view_debug(__FILE__)
+
+  cfg   ||= current_config_page_section
+  help  ||= nil # %i[about submissions]
+  title ||= cfg[:title]
+-%>
+
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+<%= scroll_to_top_target %>
+<%= recent_submissions_section %>
+<%= total_submissions_section %>
+
+<%= page_notes_section %>

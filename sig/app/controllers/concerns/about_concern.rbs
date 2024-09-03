@@ -1,0 +1,19 @@
+# Controller support methods for application information.
+#
+module AboutConcern
+  extend ActiveSupport::Concern
+
+  include ApplicationHelper
+
+  # System information pages (except for :index).
+  #
+  # @type [Array<Symbol>]
+  #
+  # @see "en.emma.page.about.action"
+  #
+  ABOUT_PAGES: symArray
+
+  private
+
+  THIS_MODULE: Module
+end

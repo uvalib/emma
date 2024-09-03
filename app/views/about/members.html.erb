@@ -1,0 +1,19 @@
+<%# app/views/about/members.html.erb -%>
+<%-
+  # EMMA member organization listing.
+
+  view_debug(__FILE__)
+
+  cfg   ||= current_config_page_section
+  help  ||= nil # %i[about members]
+  title ||= cfg[:title]
+-%>
+
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+<%= scroll_to_top_target %>
+<%= project_members_section(title: false) %>
+
+<%= page_notes_section %>

@@ -11,6 +11,7 @@ module HomeHelper
 
   include CssHelper
   include HtmlHelper
+  include AboutHelper
 
   # ===========================================================================
   # :section:
@@ -42,7 +43,7 @@ module HomeHelper
   def orgs_list(css: '.orgs-list', **opt)
     prepend_css!(opt, css)
     html_ul(**opt) do
-      Org.active.pluck(:long_name).sort.map { |org| html_li(org) }
+      org_names.map { |org| html_li(org) }
     end
   end
 

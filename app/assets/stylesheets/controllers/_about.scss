@@ -1,0 +1,32 @@
+// app/assets/stylesheets/controllers/_about.scss
+
+@use "shared/variables"         as *;
+@use "shared/controls/tables"   as table;
+
+//=============================================================================
+// Page elements
+//=============================================================================
+
+.project-links,
+.project-refs {
+    display:                grid;
+    grid-template-columns:  auto 1fr;
+    row-gap:                0.375rem;
+    font-size:              large;
+}
+
+.project-members {
+    display:                flex;
+    flex-direction:         column;
+    row-gap:                0.375rem;
+    font-size:              large;
+}
+
+.project-submissions {
+
+    @include table.grid-table(2);
+
+    & {
+        justify-items: start;
+    }
+}

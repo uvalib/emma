@@ -37,6 +37,7 @@ en:
         invalid:              'invalid'
         item:                 'item'
         match:                'match'
+        none:                 'none'
         not:                  'not'
         one:                  'one'
         or:                   'or'

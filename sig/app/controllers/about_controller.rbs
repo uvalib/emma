@@ -1,0 +1,28 @@
+class AboutController < ApplicationController
+  include ParamsConcern
+
+  include SessionConcern
+
+  include RunStateConcern
+
+  include AboutConcern
+
+  # === GET /about
+  #
+  # Application information main page.
+  #
+  # @see #about_index_path            Route helper
+  #
+  def index: () -> void
+
+  # An endpoint is defined for each configured page that hasn't already been
+  # defined here.  Pages that are not just redirects should have a template in
+  # "/app/views/about".
+  #
+  # @type [Array<Symbol>]
+  #
+  PAGES: symArray
+
+  def members:      () -> void
+  def submissions:  () -> void
+end

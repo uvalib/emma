@@ -145,6 +145,7 @@ en:
             - 'enrollment'
             - 'org'
             - 'home'
+            - 'about'
             - 'data'
 
           primary:
@@ -165,6 +166,7 @@ en:
             - 'enrollment'
             - 'org'
             - 'home'
+            - 'about'
 
           unreleased:
 
@@ -733,6 +735,71 @@ en:
 
           layout:
             - [sort, size,  ~]
+
+      # =======================================================================
+      # CONTROLLER: About page definitions
+      # =======================================================================
+
+      about:
+
+        <<:                 *GENERIC
+        label:              'About'
+        title:              'EMMA and the EMMA project [main]'
+        tooltip:            'About EMMA and the EMMA project [main]'
+
+        page_controls:
+          label:            'About:'
+          actions:
+            - index
+            - members
+            - submissions
+
+        # =====================================================================
+        # Action pages
+        # =====================================================================
+
+        action:
+
+          _generic:         &ABOUT_GENERIC_ACTION
+            <<:             *GENERIC_ACTION
+
+          # ===================================================================
+
+          index:
+            <<:             *ABOUT_GENERIC_ACTION
+            <<:             *INDEX_ACTION
+            label:          'EMMA'
+            title:          'EMMA and the EMMA project'
+            tooltip:        'Information about the application and project'
+            section:
+              links:        'Project Links'
+              refs:         'Reference Material'
+
+          # ===================================================================
+
+          members:
+            <<:             *ABOUT_GENERIC_ACTION
+            label:          'Members'
+            title:          'EMMA Member Organizations'
+            tooltip:        'EMMA Member Organizations'
+            section:
+              list:         'EMMA Member Organizations'
+
+          # ===================================================================
+
+          submissions:
+            <<:             *ABOUT_GENERIC_ACTION
+            label:          'Submissions'
+            title:          'EMMA Submissions'
+            tooltip:        'EMMA submissions by organization'
+            section:
+              recent:       'Recent EMMA Submissions'
+              total:        'All EMMA Submissions'
+            columns:
+              - 'Organization'
+              - 'Submissions'
+
+          # ===================================================================
 
       # =======================================================================
       # CONTROLLER: Account page definitions
