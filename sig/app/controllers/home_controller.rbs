@@ -16,14 +16,10 @@ class HomeController < ApplicationController
 
   include RunStateConcern
 
-  include SerializationConcern
+  include HomeConcern
 
   # :nocov:
   #include AbstractController::Callbacks
-
-  @item:         untyped | nil
-  @preferences:  untyped | nil
-  @history:      untyped | nil
 
   # === GET /home
   #
@@ -53,13 +49,4 @@ class HomeController < ApplicationController
   # @see #dashboard_path              Route helper
   #
   def dashboard: () -> void
-
-  # Response values for de-serializing the show page to JSON or XML.
-  #
-  # @param [Hash, nil] entry
-  # @param [Hash]      opt
-  #
-  # @return [Hash{Symbol=>Hash,Array}]
-  #
-  def show_values: (?(anyHash|nil) entry, **untyped opt) -> symHash
 end

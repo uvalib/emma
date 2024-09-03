@@ -54,8 +54,4 @@ class ToolController < ApplicationController
   # the matching :active_job_id.
   #
   def get_job_result: () -> void
-
-  def md_auth: () -> void
-
-  def lookup_auth: () -> void
 end

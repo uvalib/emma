@@ -346,6 +346,25 @@ module UploadConcern
     wf_single(event: :edit)
   end
 
+  # A record representation including URL of the remediated content file.
+  #
+  # @param [Upload] rec
+  #
+  # @return [Hash]
+  #
+  def record_value(rec)
+    {
+      submission_id: rec.submission_id,
+      created_at:    rec.created_at,
+      updated_at:    rec.updated_at,
+      user_id:       rec.uid,
+      user:          User.account_name(rec),
+      file_url:      get_s3_public_url(rec),
+      file_data:     safe_json_parse(rec.file_data),
+      emma_data:     rec.emma_metadata,
+    }
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -665,6 +684,39 @@ module UploadConcern
     data = (safe_json_parse(item[:file_data]) || {} if item[:file_data])
     item = item.merge(file_data: data) if data
     super
+  end
+
+  # ===========================================================================
+  # :section: Callbacks
+  # ===========================================================================
+
+  protected
+
+  # If the :show endpoint is given an :id which is actually a specification for
+  # multiple items then there is a redirect to :index.
+  #
+  # @return [void]
+  #
+  def index_redirect
+    return unless identifier&.to_s&.match?(/[^[:alnum:]]/)
+    # noinspection RailsParamDefResolve
+    redirect_to action: :index, selected: identifier
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Response values for de-serializing download information to JSON or XML.
+  #
+  # @param [String,nil] url
+  #
+  # @return [Hash{Symbol=>String,nil}]
+  #
+  def download_values(url)
+    { url: url }
   end
 
   # ===========================================================================

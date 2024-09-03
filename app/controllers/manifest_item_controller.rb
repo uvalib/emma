@@ -464,36 +464,6 @@ class ManifestItemController < ApplicationController
     post_response(error)
   end
 
-  # ===========================================================================
-  # :section: Routes - Workflow - Bulk
-  # ===========================================================================
-
-  protected
-
-  # A list of ManifestItems plus validity information.
-  #
-  # @param [any, nil] list
-  # @param [Hash]     opt             Passed to #index_values.
-  #
-  # @return [Hash{Symbol=>Hash}]
-  #
-  # @see file:javascripts/controllers/manifest-edit.js *processReceivedItems*
-  #
-  def bulk_update_response(list = @list, **opt)
-    index_values(list, **opt)
-  end
-
-  # A list of ManifestItem IDs.
-  #
-  # @param [any, nil] list
-  #
-  # @return [Hash{Symbol=>Hash}]
-  #
-  def bulk_id_response(list = @list, **)
-    list = Array.wrap(list).compact_blank.map! { |v| (v.try(:id) || v).to_i }
-    { RESPONSE_OUTER => { list: list } }
-  end
-
 end
 
 __loading_end(__FILE__)

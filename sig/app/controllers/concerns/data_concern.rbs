@@ -46,6 +46,16 @@ module DataConcern
   #
   def array_param: ((String|anyArray|nil) value) -> (strArray | nil)
 
+  # Because DataHelper is biased toward assuming that non-HTML is expected,
+  # defaulting to HTML format requires setting `params[:format]` to make it
+  # appear as though a format has been explicitly requested.
+  #
+  # @param [Symbol, String] fmt
+  #
+  # @return [void]
+  #
+  def default_format: ((Symbol|String) fmt) -> void
+
   # Generate a hash of results for each table name.
   #
   # @param [Array<String,Symbol>] names   Default: `DataHelper#table_names`.

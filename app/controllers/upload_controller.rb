@@ -883,63 +883,6 @@ class UploadController < ApplicationController
     failure_status(error)
   end
 
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # A record representation including URL of the remediated content file.
-  #
-  # @param [Upload] rec
-  #
-  # @return [Hash]
-  #
-  def record_value(rec)
-    {
-      submission_id: rec.submission_id,
-      created_at:    rec.created_at,
-      updated_at:    rec.updated_at,
-      user_id:       rec.uid,
-      user:          User.account_name(rec),
-      file_url:      get_s3_public_url(rec),
-      file_data:     safe_json_parse(rec.file_data),
-      emma_data:     rec.emma_metadata,
-    }
-  end
-
-  # ===========================================================================
-  # :section: Callbacks
-  # ===========================================================================
-
-  protected
-
-  # If the :show endpoint is given an :id which is actually a specification for
-  # multiple items then there is a redirect to :index.
-  #
-  # @return [void]
-  #
-  def index_redirect
-    return unless identifier&.to_s&.match?(/[^[:alnum:]]/)
-    redirect_to action: :index, selected: identifier
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # Response values for de-serializing download information to JSON or XML.
-  #
-  # @param [String,nil] url
-  #
-  # @return [Hash{Symbol=>String,nil}]
-  #
-  def download_values(url)
-    { url: url }
-  end
-
 end
 
 __loading_end(__FILE__)

@@ -124,15 +124,6 @@ class ToolController < ApplicationController
     render json: LookupJob.job_result(**normalize_hash(params))
   end
 
-  # ===========================================================================
-  # :section: Callbacks
-  # ===========================================================================
-
-  protected
-
-  def md_auth = tool_authorized?(:md)
-  def lookup_auth = tool_authorized?(:lookup)
-
 end
 
 __loading_end(__FILE__)

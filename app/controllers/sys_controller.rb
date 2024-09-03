@@ -114,22 +114,6 @@ class SysController < ApplicationController
     end
   end
 
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # Get the path for a redirection from configuration.
-  #
-  # @param [Symbol] meth
-  #
-  # @return [String]
-  #
-  def sys_path_for(meth)
-    CONTROLLER_CONFIGURATION.dig(:sys, :action, meth, :redirect)
-  end
-
 end
 
 __loading_end(__FILE__)

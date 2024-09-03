@@ -1,17 +1,17 @@
-# app/controllers/concerns/sys_concern.rb
+# app/controllers/concerns/home_concern.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-# Controller support methods for system information.
+# Controller support methods for "/home" pages.
 #
-module SysConcern
+module HomeConcern
 
   extend ActiveSupport::Concern
 
-  include ApplicationHelper
+  include SerializationConcern
 
   # ===========================================================================
   # :section:
@@ -19,31 +19,35 @@ module SysConcern
 
   public
 
-  # System information pages (except for :index).
+  # Bookshare account details (defunct).
   #
-  # @type [Array<Symbol>]
+  attr_reader :details
+
+  # Bookshare account preferences (defunct).
   #
-  # @see "en.emma.page.sys.action"
+  attr_reader :preferences
+
+  # Bookshare download history (defunct).
   #
-  SYS_PAGES =
-    CONTROLLER_CONFIGURATION.dig(:sys, :action).keys.excluding(
-      :index, :view
-    ).freeze
+  attr_reader :history
 
   # ===========================================================================
-  # :section:
+  # :section: SerializationConcern overrides
   # ===========================================================================
 
   public
 
-  # Get the path for a redirection from configuration.
+  # Response values for de-serializing the show page to JSON or XML.
   #
-  # @param [Symbol] meth
+  # @param [Hash, nil] entry
+  # @param [Hash]      opt
   #
-  # @return [String]
+  # @return [Hash{Symbol=>Hash,Array}]
   #
-  def sys_path_for(meth)
-    CONTROLLER_CONFIGURATION.dig(:sys, :action, meth, :redirect)
+  def show_values(entry = nil, **opt)
+    entry ||= { details: details, preferences: preferences, history: history }
+    opt.reverse_merge!(name: :account)
+    super
   end
 
   # ===========================================================================

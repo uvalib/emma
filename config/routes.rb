@@ -330,7 +330,7 @@ Rails.application.routes.draw do
   match '/sys',             to: 'sys#update',   as: 'update_sys', **VIA_CREATE
   get   '/sys/view',        to: 'sys#view'
 
-  SysController::PAGES.each do |page|
+  SysController::PAGES.excluding(:index).each do |page|
     get "/sys/#{page}",     to: "sys##{page}",  as: "#{page}_sys"
   end
 

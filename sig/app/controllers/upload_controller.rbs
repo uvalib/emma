@@ -422,27 +422,4 @@ class UploadController < ApplicationController
   # @see #bulk_reindex_upload_path    Route helper
   #
   def bulk_reindex: () -> void
-
-  # A record representation including URL of the remediated content file.
-  #
-  # @param [Upload] rec
-  #
-  # @return [Hash]
-  #
-  def record_value: (Upload rec) -> symHash
-
-  # If the :show endpoint is given an :id which is actually a specification for
-  # multiple items then there is a redirect to :index.
-  #
-  # @return [void]
-  #
-  def index_redirect: () -> void
-
-  # Response values for de-serializing download information to JSON or XML.
-  #
-  # @param [String,nil] url
-  #
-  # @return [Hash{Symbol=>String,nil}]
-  #
-  def download_values: ((String|nil) url) -> Hash[Symbol,(String|nil)]
 end

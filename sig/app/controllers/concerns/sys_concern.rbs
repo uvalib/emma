@@ -13,6 +13,14 @@ module SysConcern
   #
   SYS_PAGES: symArray
 
+  # Get the path for a redirection from configuration.
+  #
+  # @param [Symbol] meth
+  #
+  # @return [String]
+  #
+  def sys_path_for: (Symbol meth) -> String
+
   private
 
   THIS_MODULE: Module

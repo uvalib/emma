@@ -1,0 +1,32 @@
+# Controller support methods for "/home" pages.
+#
+module HomeConcern
+  extend ActiveSupport::Concern
+
+  include SerializationConcern
+
+  # Bookshare account details (defunct).
+  #
+  attr_reader details: untyped | nil
+
+  # Bookshare account preferences (defunct).
+  #
+  attr_reader preferences: untyped | nil
+
+  # Bookshare download history (defunct).
+  #
+  attr_reader history: untyped | nil
+
+  # Response values for de-serializing the show page to JSON or XML.
+  #
+  # @param [Hash, nil] entry
+  # @param [Hash]      opt
+  #
+  # @return [Hash{Symbol=>Hash,Array}]
+  #
+  def show_values: (?(anyHash|nil) entry, **untyped opt) -> symHash
+
+  private
+
+  THIS_MODULE: Module
+end

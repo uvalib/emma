@@ -20,7 +20,7 @@ class HomeController < ApplicationController
   include ParamsConcern
   include SessionConcern
   include RunStateConcern
-  include SerializationConcern
+  include HomeConcern
 
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
@@ -102,7 +102,7 @@ class HomeController < ApplicationController
     __debug_route
     opt  = url_parameters
     fast = opt.key?(:fast) ? true?(opt[:fast]) : Rails.env.test?
-    @item, @preferences, @history = get_account_details(fast: fast)
+    @details, @preferences, @history = get_account_details(fast: fast)
     response.status =
       case flash.now[:alert]
         when '', nil             then 200 # OK
@@ -114,25 +114,6 @@ class HomeController < ApplicationController
       format.json { render_json show_values }
       format.xml  { render_xml  show_values(nil, as: :array) }
     end
-  end
-
-  # ===========================================================================
-  # :section: SerializationConcern overrides
-  # ===========================================================================
-
-  protected
-
-  # Response values for de-serializing the show page to JSON or XML.
-  #
-  # @param [Hash, nil] entry
-  # @param [Hash]      opt
-  #
-  # @return [Hash{Symbol=>Hash,Array}]
-  #
-  def show_values(entry = nil, **opt)
-    entry ||= { details: @item, preferences: @preferences, history: @history }
-    opt.reverse_merge!(name: :account)
-    super
   end
 
 end

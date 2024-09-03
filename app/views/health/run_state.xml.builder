@@ -7,6 +7,7 @@
 
 state ||= @state || RunState.current
 
+xml.instruct!
 xml.run_state do
   state.each_pair do |k, v|
     xml.tag! k, v

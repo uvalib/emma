@@ -842,8 +842,6 @@ en:
 
           _generic:         &ACCOUNT_GENERIC_ACTION
             <<:             *GENERIC_ACTION
-            label:          'Accounts' # TODO: ??? remove after comparison
-            title:          'Accounts' # TODO: ??? remove after comparison
 
           # ===================================================================
 

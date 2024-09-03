@@ -7,6 +7,10 @@ module ToolConcern
 
   include SerializationConcern
 
+  def md_auth: () -> void
+
+  def lookup_auth: () -> void
+
   private
 
   THIS_MODULE: Module

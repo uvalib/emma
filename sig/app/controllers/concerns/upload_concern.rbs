@@ -192,6 +192,14 @@ module UploadConcern
   #
   def reedit_record: () -> void
 
+  # A record representation including URL of the remediated content file.
+  #
+  # @param [Upload] rec
+  #
+  # @return [Hash]
+  #
+  def record_value: (Upload rec) -> symHash
+
   # Refine authorization based on the specific item data.
   #
   # @param [Upload, Hash, nil] item
@@ -327,6 +335,21 @@ module UploadConcern
   # @return [Hash]
   #
   def show_values: (?(Upload|anyHash) item, **untyped opt) -> symHash
+
+  # If the :show endpoint is given an :id which is actually a specification for
+  # multiple items then there is a redirect to :index.
+  #
+  # @return [void]
+  #
+  def index_redirect: () -> void
+
+  # Response values for de-serializing download information to JSON or XML.
+  #
+  # @param [String,nil] url
+  #
+  # @return [Hash{Symbol=>String,nil}]
+  #
+  def download_values: ((String|nil) url) -> Hash[Symbol,(String|nil)]
 
   private
 

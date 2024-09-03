@@ -66,12 +66,4 @@ class SysController < ApplicationController
   def loggers:      () -> void
   def processes:    () -> void
   def settings:     () -> void
-
-  # Get the path for a redirection from configuration.
-  #
-  # @param [Symbol] meth
-  #
-  # @return [String]
-  #
-  def sys_path_for: (Symbol meth) -> String
 end

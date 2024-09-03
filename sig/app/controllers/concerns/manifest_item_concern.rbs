@@ -404,6 +404,25 @@ module ManifestItemConcern
   #
   def bulk_returning: (ActiveRecord::Result result) -> Array[symHash]
 
+  # A list of ManifestItems plus validity information.
+  #
+  # @param [any, nil] list
+  # @param [Hash]    opt              Passed to #index_values.
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  # @see file:javascripts/controllers/manifest-edit.js *processReceivedItems*
+  #
+  def bulk_update_response: (?untyped list, **untyped opt) -> Hash[Symbol,symHash]
+
+  # A list of ManifestItem IDs.
+  #
+  # @param [any, nil] list
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def bulk_id_response: (?untyped list, **untyped _ignored) -> Hash[Symbol,symHash]
+
   # Generate a response to a POST.
   #
   # @param [Symbol, Integer, Exception, nil] status

@@ -95,10 +95,10 @@ module UserConcern
   # )>]
   # @return [Array(nil,nil,nil)]
   #
+  #--
+  # noinspection RubyUnusedLocalVariable
+  #++
   def get_account_details(id: nil, fast: nil, meth: nil)
-    Log.debug do
-      "#{meth || __method__}: id = #{id.inspect}, fast = #{fast.inspect}"
-    end
     return nil, nil, nil # TODO: get_account_details ???
   end
 

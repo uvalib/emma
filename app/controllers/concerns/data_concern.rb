@@ -91,6 +91,21 @@ module DataConcern
     value.map { |s| s.to_s.strip }.compact_blank! if value.is_a?(Array)
   end
 
+  # Because DataHelper is biased toward assuming that non-HTML is expected,
+  # defaulting to HTML format requires setting `params[:format]` to make it
+  # appear as though a format has been explicitly requested.
+  #
+  # @param [Symbol, String] fmt
+  #
+  # @return [void]
+  #
+  def default_format(fmt)
+    unless params[:format]
+      params[:format] = fmt.to_s
+      request.format  = fmt.to_sym
+    end
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
