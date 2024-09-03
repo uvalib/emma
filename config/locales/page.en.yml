@@ -1621,36 +1621,53 @@ en:
             label:          'Welcome'
             title:          'Welcome to EMMA'
             tooltip:        'Return to the home page'
-            notice_html:    'You must %{sign_in} to upload or download files.'
             text_html:
               >-
               <p>
-                The purpose of this project and the infrastructure we are
-                creating is to reduce the duplication of effort in disability
-                service offices at colleges and universities across the United
-                States, and thereby to enable faster, better service for those
-                needing accessible learning materials.
+                <b>EMMA:</b>
+                The purpose of EMMA is to reduce the duplication of effort in
+                disability service offices at colleges and universities across
+                the United States, and thereby to enable faster, better service
+                for those needing accessible learning materials.
+
+                EMMA users are staff working on behalf of students with
+                qualifying disabilities, and those people can download texts
+                for higher education in a range of accessible formats,
+                searchable by their accessibility characteristics.
+
+                You must sign in to upload or download files, but you can
+                search EMMA (and read EMMA's help documentation) without
+                signing in, so have a look at what we have to offer!
+                More information at %{project_site} .
               </p>
               <p>
-                Support for this work comes from the Andrew W. Mellon
-                Foundation.
-                The university partners on this project are
-                %{academic_partners}.
-                The repository partners are %{commercial_partners}.
-                If you would like to be notified when EMMA is ready for broader
-                participation, please email %{project_email}.
+                <b>Libraries:</b>
+                EMMA depends on sharing, because the greatest value to be found
+                in EMMA will always be the made-accessible texts that are
+                contributed by its members.
+
+                Sharing takes time, so EMMA encourages libraries to partner
+                with disability services by periodically uploading the
+                remediated texts that have been created on their campuses.
+              </p>
+              <p>
+                <b>Legal:</b>
+                Have questions about the legality of sharing copyrighted
+                content for the benefit of users with print disabilities?
+
+                Please see our white paper %{white_paper} published by the
+                Association of Research Libraries.
               </p>
             enroll_html:
               >-
               <p>
                 Interested in the opportunity to share your remediation work
-                with the academic community and get access to remediations
-                created by your peers at institutions across the United States
-                and Canada?
+                with the academic community and get access to accessible texts
+                created by your peers at colleges and universities?
               </p>
-              <p>
-                %{enroll_link} to become a part of the EMMA community of
-                %{orgs_count} institutions and growing:
+              <p class="call-to-action">
+                %{enroll_link} to become a part of the EMMA's growing
+                community, currently %{orgs_count} institutions:
               </p>
               %{orgs_list}
             enroll_production_html:

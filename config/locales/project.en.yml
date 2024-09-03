@@ -19,3 +19,8 @@ en:
 
     enroll:
       email:            'emmahelp@virginia.edu'
+
+    reference:
+      white_paper:
+        title:          'The Law and Accessible Texts: Reconciling Civil Rights and Copyrights'
+        url:            'https://www.arl.org/resources/the-law-and-accessible-texts-reconciling-civil-rights-and-copyrights'

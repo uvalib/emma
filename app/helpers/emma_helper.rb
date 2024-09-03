@@ -51,6 +51,8 @@ module EmmaHelper
   #
   # @return [String]
   #
+  # @note Currently unused.
+  #
   def academic_partners(**opt)
     emma_partner_list(**opt, type: :academic)
   end
@@ -60,6 +62,8 @@ module EmmaHelper
   # @param [Hash] opt                 To #emma_partner_list.
   #
   # @return [String]
+  #
+  # @note Currently unused.
   #
   def commercial_partners(**opt)
     emma_partner_list(**opt, type: :commercial)
@@ -116,11 +120,25 @@ module EmmaHelper
 
   public
 
+  # A link to the project WordPress site.
+  #
+  # @param [String, nil] label        Link text instead of the URL.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def project_site(label = nil)
+    url     = PROJECT_SITE
+    label ||= url
+    link_to(label, url)
+  end
+
   # A simple "mailto:" link for project email contact.
   #
   # @param [String, nil] label        Link text instead of the email address.
   #
   # @return [ActiveSupport::SafeBuffer]
+  #
+  # @note Currently unused.
   #
   def project_email(label = nil)
     mail_to(PROJECT_EMAIL, label)
@@ -176,6 +194,20 @@ module EmmaHelper
   def mailing_list_site(label = nil)
     url     = MAILING_LIST_SITE
     label ||= url
+    link_to(label, url)
+  end
+
+  # A link to the EMMA white paper
+  # "The Law and Accessible Texts: Reconciling Civil Rights and Copyrights".
+  #
+  # @param [String, nil] label        Link text instead of the title.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def white_paper(label = nil)
+    config  = config_section(:reference, :white_paper)
+    url     = config[:url]
+    label ||= config[:title] ? quote(config[:title]) : url
     link_to(label, url)
   end
 
