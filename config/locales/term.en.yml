@@ -690,6 +690,7 @@ en:
         popup:
           placeholder:        'Loading record...'
           tooltip:            'View this repository record'
+          collection:         'View collection item details'
 
         record:
           first_tooltip:      'This is the first record on the page'

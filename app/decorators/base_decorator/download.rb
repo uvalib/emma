@@ -131,6 +131,20 @@ module BaseDecorator::Download
     ia_retrieval_link(url, **opt)
   end
 
+  # Produce a link to retrieve a file from a BiblioVault collection.
+  #
+  # @param [String] url
+  # @param [Hash]   opt               Passed to #retrieval_link
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def bv_retrieval_link(url, **opt)
+    file = url.split('/').last
+    url  = '/retrieval?url=%s' % url_escape(url)
+    # noinspection RubyMismatchedReturnType
+    download_control(url: url, file: file, plain: true, **opt)
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================

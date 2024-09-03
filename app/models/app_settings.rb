@@ -110,12 +110,20 @@ class AppSettings < AppGlobal
     :SMTP_PORT,
     nil,
 
-    # === Amazon Web Services
+    # === Amazon Web Services for EMMA storage.
     :AWS_BUCKET,
     :AWS_REGION,
     :AWS_DEFAULT_REGION,
     :AWS_ACCESS_KEY_ID,
     :AWS_SECRET_KEY,
+    nil,
+
+    # === Amazon Web Services for BiblioVault collections.
+    :BV_BUCKET,
+    :BV_REGION,
+    :BV_DEFAULT_REGION,
+    :BV_ACCESS_KEY_ID,
+    :BV_SECRET_KEY,
     nil,
 
     # === EMMA Unified Search API

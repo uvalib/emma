@@ -13,6 +13,13 @@ en:
       aws_s3:
         name:           'AWS S3 interface'
 
+      bv_download:
+        name:           'BiblioVault download service'
+        endpoint:       # @see BvDownloadService::Properties#engines
+          production:   'https://bibliovault-transfer-production.s3.amazonaws.com'
+          staging:      'https://bibliovault-transfer-staging.s3.amazonaws.com'
+          test:         'https://bibliovault-transfer-staging.s3.amazonaws.com'
+
       ia_download:
         name:           'Internet Archive download service'
         endpoint:       ENV[IA_DOWNLOAD_API_URL]

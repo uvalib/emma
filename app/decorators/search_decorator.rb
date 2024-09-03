@@ -476,7 +476,8 @@ class SearchDecorator
   def source_record_link(label: nil, url: nil, **opt)
     url   ||= object.record_title_url
     repo    = repository_for(url, object)
-    return record_popup(**opt) if EmmaRepository.default?(repo)
+    return record_popup(**opt)     if EmmaRepository.default?(repo)
+    return collection_popup(**opt) if EmmaRepository.collection.include?(repo)
     label ||= CGI.unescape(object.emma_repositoryRecordId)
     return ERB::Util.h(label) unless url
     opt[:title] ||=
@@ -493,6 +494,7 @@ class SearchDecorator
   # @return [nil]                       If no *url* was provided or found.
   #
   # @see RepositoryHelper#emma_retrieval_link
+  # @see BaseDecorator::Download#bv_retrieval_link
   # @see BaseDecorator::Download#ia_retrieval_link
   # @see file:javascripts/feature/download.js *notAuthorizedMessage()*
   #
@@ -533,11 +535,12 @@ class SearchDecorator
     opt[:'data-forbid'] ||= tooltip unless allowed
     opt[:title]         ||= tooltip
 
-    case repo
-      when :emma            then emma_retrieval_link(url, **opt)
-      when :ace             then ace_retrieval_link( url, **opt)
-      when :internetArchive then ia_retrieval_link(  url, **opt)
-      when :openAlex        then oa_retrieval_link(  url, **opt)
+    case repo&.to_s
+      when 'emma'             then emma_retrieval_link(url, **opt)
+      when 'ace'              then ace_retrieval_link( url, **opt)
+      when 'internetArchive'  then ia_retrieval_link(  url, **opt)
+      when 'openAlex'         then oa_retrieval_link(  url, **opt)
+      when /^bibliovault/i    then bv_retrieval_link(  url, **opt)
       else Log.error { "#{__method__}: #{repo.inspect}: unexpected" } if repo
     end
   end
@@ -601,12 +604,52 @@ class SearchDecorator
     prepend_css!(opt, css)
     inline_popup(**opt) do
       p_opt = prepend_css(p_opt, 'iframe', POPUP_DEFERRED_CLASS)
-      p_opt[:'data-path'] = UploadDecorator.show_path(id: rid, modal: true)
-      p_opt[:'data-attr'] = attr.to_json
-      p_txt   = p_opt.delete(:text)
-      p_txt ||= config_term(:search, :popup, :placeholder)
+      p_opt[:'data-attr'] ||= attr.to_json
+      p_opt[:'data-path'] ||= record_popup_path(id: rid)
+      p_txt = p_opt.delete(:text) || config_term(:search, :popup, :placeholder)
       html_div(p_txt, **p_opt)
     end
+  end
+
+  # Create a popup for displaying the details of a collection item.
+  #
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #record_popup.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def collection_popup(css: '.collection', **opt)
+    p_opt = opt[:placeholder]&.except!(:text) || {}
+    p_opt[:'data-path'] ||= record_popup_path(record: collection_popup_data)
+    opt[:placeholder] = p_opt
+    opt[:title] ||= config_term(:search, :popup, :collection)
+    prepend_css!(opt, css)
+    record_popup(**opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # The endpoint path for generating content to display within #record_popup.
+  #
+  # @param [Hash] opt                 Passed to UploadDecorator#show_path.
+  #
+  # @return [String]
+  #
+  def record_popup_path(**opt)
+    opt[:id] ||= object.emma_repositoryRecordId
+    UploadDecorator.show_path(**opt, modal: true)
+  end
+
+  # Produce data fields for use with #collection_popup.
+  #
+  # @param [Hash]
+  #
+  def collection_popup_data(**opt)
+    object.to_h.merge(opt).compact_blank!
   end
 
   # ===========================================================================

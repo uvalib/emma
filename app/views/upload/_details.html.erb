@@ -12,6 +12,8 @@
   level ||= 1
   skip  ||= nil
 
+  opt   ||= {}
+
 -%>
 
-<%= dec.details_container(level: level, skip: skip) %>
+<%= dec.details_container(level: level, skip: skip, **opt) %>

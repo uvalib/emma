@@ -72,6 +72,12 @@ class EmmaRepository < EnumType
   #
   S3_QUEUE = ACTIVE.select { |_, c| c[:s3] unless c[:default] }.keys.freeze
 
+  # The repositories that represent BiblioVault collections.
+  #
+  # @type [Array<Symbol>]
+  #
+  COLLECTION = ACTIVE.select { |_, config| config[:collection] }.keys.freeze
+
   # ===========================================================================
   # :section: Class methods
   # ===========================================================================
@@ -96,6 +102,14 @@ class EmmaRepository < EnumType
   #
   def self.s3_queue
     S3_QUEUE
+  end
+
+  # The repositories that represent BiblioVault collections.
+  #
+  # @type [Array<Symbol>]
+  #
+  def self.collection
+    COLLECTION
   end
 
   # ===========================================================================

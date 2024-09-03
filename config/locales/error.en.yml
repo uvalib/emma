@@ -49,6 +49,12 @@ en:
 
         _name:          'AWS S3 interface'
 
+      bv_download:
+
+        # @see BvDownloadService::Error.error_classes
+
+        _name:          'BiblioVault download service'
+
       ia_download:
 
         # @see IaDownloadService::Error.error_classes

@@ -9,16 +9,22 @@
   ace                 = topic[:ace]
   ia                  = topic[:ia]
   oa                  = topic[:oa]
+  ump                 = topic[:ump]
+  bv                  = topic[:bv]
   emma                = topic[:emma]
 
   ace_title           = ace[:title]
   ia_title            = ia[:title]
   oa_title            = oa[:title]
+  ump_title           = ump[:title]
+  bv_title            = bv[:title]
   emma_title          = emma[:title]
 
   ace_logo            = repository_source_logo(:ace)
   ia_logo             = repository_source_logo(:internetArchive)
   oa_logo             = repository_source_logo(:openAlex)
+  ump_logo            = repository_source_logo(:bibliovault_ump)
+  bv_logo             = repository_source_logo(:bibliovault_ump)
   emma_logo           = repository_source_logo(:emma)
 
   signed_in           = help_jump('signed in', :sign_in)
@@ -27,11 +33,16 @@
   # noinspection RubyMismatchedArgumentType
   download            = help_button(config_page(:download, :label))
 
+  bibliovault         = 'https://www.bibliovault.org'
+  bibliovault         = external_link(bibliovault, 'Bibliovault')
+
   # Page anchors
 
   ace_help            = 'download_ace_help'
   ia_help             = 'download_internetArchive_help'
   oa_help             = 'download_openAlex_help'
+  ump_help            = 'download_bibliovault_ump_help'
+  bv_help             = 'download_biblioVault_help'
   emma_help           = 'download_emma_help'
 
 -%>
@@ -52,6 +63,8 @@
     <li><a href="#<%= ace_help  -%>"><%= ace_title  -%></a></li>
     <li><a href="#<%= ia_help   -%>"><%= ia_title   -%></a></li>
     <li><a href="#<%= oa_help   -%>"><%= oa_title   -%></a></li>
+    <li><a href="#<%= ump_help  -%>"><%= ump_title  -%></a></li>
+    <li><a href="#<%= bv_help   -%>"><%= bv_title  -%></a></li>
     <li><a href="#<%= emma_help -%>"><%= emma_title -%></a></li>
   </ul>
 </nav>
@@ -117,6 +130,38 @@
   <p>
     Any download link for an index entry associated with OpenAlex is actually
     a link to the original source of the file.
+  </p>
+
+</section>
+
+<section role="region" data-part="download" aria-labelledby="<%= ump_help -%>">
+
+  <h2 class="section" id="<%= ump_help -%>">
+    <span class="text"><%= ump_title -%></span>
+    <%= ump_logo %>
+  </h2>
+
+  <p>
+    The University of Michigan Press collection is comes to us courtesy of
+    <%= bibliovault -%>.
+    These items are delivered directly to the signed-in user from an internal
+    EMMA collection server.
+  </p>
+
+</section>
+
+<section role="region" data-part="download" aria-labelledby="<%= bv_help -%>">
+
+  <h2 class="section" id="<%= bv_help -%>">
+    <span class="text"><%= bv_title -%></span>
+    <%= bv_logo %>
+  </h2>
+
+  <p>
+    The University of Michigan Press collection is comes to us courtesy of
+    <%= bibliovault -%>.
+    These items are delivered directly to the signed-in user from an internal
+    EMMA collection server.
   </p>
 
 </section>

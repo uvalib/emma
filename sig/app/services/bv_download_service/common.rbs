@@ -1,0 +1,36 @@
+# Service implementation methods.
+#
+module BvDownloadService::Common
+  include ApiService::Common
+
+  include BvDownloadService::Properties
+
+  include AwsS3::Shared::AwsMethods
+
+  # Retrieve a copy of a file and download it to the browser.
+  #
+  # @param [ActionDispatch::Response] response  Client response object.
+  # @param [String, nil]              url       Default: `#base_url`.
+  # @param [Hash]                     opt       Passed to #stream_item.
+  #
+  # @return [void]
+  #
+  def api_download: (ActionDispatch::Response response, url: String|nil, **untyped opt) -> void
+
+  # Get an S3 client instance.
+  #
+  # @param [Hash] opt                 Passed to Aws::S3::Client#initialize
+  #
+  # @return [Aws::S3::Client]
+  #
+  def s3_client: (**untyped opt) -> Aws::S3::Client
+
+  private
+
+  # Include the shared data structure which holds the definition of the API
+  # requests and parameters.
+  #
+  # @param [Module] base
+  #
+  def self.included: (Module base) -> void
+end

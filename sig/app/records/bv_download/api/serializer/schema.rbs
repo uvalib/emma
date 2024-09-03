@@ -1,0 +1,7 @@
+# Common definitions for serialization.
+#
+module BvDownload::Api::Serializer::Schema
+  include BvDownload::Api::Schema
+
+  include Api::Serializer::Schema
+end

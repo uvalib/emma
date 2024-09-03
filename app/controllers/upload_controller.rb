@@ -24,6 +24,7 @@ class UploadController < ApplicationController
   include PaginationConcern
   include ApiConcern
   include AwsConcern
+  include BvDownloadConcern
   include IngestConcern
   include IaDownloadConcern
   include UploadConcern
@@ -153,7 +154,7 @@ class UploadController < ApplicationController
     error_response(error, root_path)
   end
 
-  # === GET /upload/show/(:id|SID)
+  # === GET /upload/show/(:id|SID)[?record=...]
   #
   # Display a single upload.
   #
@@ -164,8 +165,9 @@ class UploadController < ApplicationController
   def show
     __log_activity(anonymous: true)
     __debug_route
-    return redirect_to action: :show_select if identifier.blank?
-    @item = find_record
+    fields = url_parameters[:record]
+    return redirect_to action: :show_select if !fields && identifier.blank?
+    @item = fields ? temporary_record(fields) : find_record
     respond_to do |format|
       format.html
       format.json { render_json show_values }
@@ -771,7 +773,11 @@ class UploadController < ApplicationController
   def retrieval
     __log_activity
     __debug_route
-    ia_download_retrieval(**url_parameters)
+    if params[:url]
+      bv_download_retrieval(**url_parameters)
+    else
+      ia_download_retrieval(**url_parameters)
+    end
   end
 
   # === GET /probe_retrieval?identifier=IA_ITEM_ID&type=FORMAT

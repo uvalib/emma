@@ -192,6 +192,15 @@ module UploadConcern
   #
   def reedit_record: () -> void
 
+  # Create a temporary record from provided data.
+  #
+  # @param [Hash, String, nil] fields
+  # @param [Hash]              opt    Additional/replacement field values.
+  #
+  # @return [Upload]                  An un-persisted Upload record.
+  #
+  def temporary_record: (?(anyHash|String|nil) fields, **untyped opt) -> Upload
+
   # A record representation including URL of the remediated content file.
   #
   # @param [Upload] rec

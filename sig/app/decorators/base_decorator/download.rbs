@@ -105,6 +105,15 @@ module BaseDecorator::Download
   #
   def ace_retrieval_link: (String url, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  # Produce a link to retrieve a file from a BiblioVault collection.
+  #
+  # @param [String] url
+  # @param [Hash]   opt               Passed to #retrieval_link
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def bv_retrieval_link: (String url, **untyped opt) -> ActiveSupport::SafeBuffer
+
   # Create an element containing a link-like control to probe for availability
   # of an item for download along with (hidden) elements used during the
   # probing process and to actually download the requested item.

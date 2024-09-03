@@ -1,0 +1,8 @@
+# The base class for serialization/de-serialization of objects derived from
+# BvDownload::Api::Record.
+#
+class BvDownload::Api::Serializer < Api::Serializer
+  include BvDownload::Api::Serializer::Schema
+
+  include BvDownload::Api::Serializer::Associations
+end

@@ -265,6 +265,7 @@ $title-focus: darker( $uva-accent-teal, 27.5%);
 
         max-width:      100%;
         background:     white;
+        aspect-ratio:   3 / 1;
 
         @media #{$wide-screen} {
             height:     4.5rem;

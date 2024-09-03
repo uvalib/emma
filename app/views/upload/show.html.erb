@@ -11,9 +11,18 @@
 
   host  ||= @host
 
+  # Special support for using this endpoint for the display of BiblioVault
+  # collection items.  @see UploadDecorator#value_pairs
+  url     = item.emma_metadata[:emma_retrievalLink]
+  fake    = url&.match?(/bibliovault/i)
+  file    = fake && File.basename(url)
+  ext     = fake && File.extname(file).delete_prefix('.')
+  mime    = fake && Emma::Mime.ext_to_mime(ext)
+  fake  &&= { id: file, metadata: { filename: file, mime_type: mime } }
+
   help  ||= nil # dec.help_topic
   title ||= nil
-  name  ||= item&.filename.inspect
+  name  ||= (file || item&.filename).inspect
   title   = dec.page_title(title, name: name)
   title   = "#{host} - #{title}" if host.present?
 
@@ -23,7 +32,7 @@
     set_page_description(title)
   end
 
-  opt = { dec: dec }
+  opt = { dec: dec, opt: { fake_upload_file: fake } }
 
 -%>
 

@@ -135,6 +135,39 @@ AWS_ACCESS_KEY_ID: String | nil
 #
 AWS_SECRET_KEY: String | nil
 
+# Amazon AWS region for BiblioVault collections.
+#
+# This should be supplied by the UVA cloud infrastructure on startup or from
+# `Rails.application.credentials.bibliovault`.
+#
+# @type [String]
+#
+BV_REGION: String
+
+# Amazon S3 storage for BiblioVault collections.
+#
+# @type [String]
+#
+BV_BUCKET: String
+
+# Amazon identity access key for BiblioVault collections.
+#
+# This should be supplied by the UVA cloud infrastructure on startup or from
+# `Rails.application.credentials.bibliovault`.
+#
+# @type [String, nil]
+#
+BV_ACCESS_KEY_ID: String | nil
+
+# Amazon identity secret for BiblioVault collections.
+#
+# This should be supplied by the UVA cloud infrastructure on startup or from
+# `Rails.application.credentials.bibliovault`.
+#
+# @type [String, nil]
+#
+BV_SECRET_KEY: String | nil
+
 # Indicate whether the 'silencer' gem is enabled.
 #
 # Currently, attempting to replace system loggers (via Log#replace) ends up

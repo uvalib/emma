@@ -127,6 +127,12 @@ en:
           oa:
             title:      'Downloading an OpenAlex item'
 
+          ump:
+            title:      'Downloading a University of Michigan Press item'
+
+          bv:
+            title:      'Downloading an item from a BiblioVault collection'
+
           emma:
             title:      'Downloading an EMMA item'
 

@@ -3,6 +3,8 @@
 # @see file:config/initializers/mime_types.rb
 #
 module Emma::Mime
+  extend ::Emma::Mime
+
   # Indicate whether the given string matches a known file extension.
   #
   # @param [String, Symbol] ext

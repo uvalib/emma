@@ -1,0 +1,19 @@
+# Namespace for objects related to UVALIB-hosted BiblioVault collections.
+#
+module BvDownload
+  module Api
+  end
+
+  module Message
+  end
+
+  module Record
+  end
+
+  module Shared
+  end
+end
+
+module BvDownload
+  include BvDownload::Api::Common
+end

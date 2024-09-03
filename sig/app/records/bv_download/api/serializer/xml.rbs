@@ -1,0 +1,7 @@
+# Base class for object-specific serializers that process XML data.
+#
+class BvDownload::Api::Serializer::Xml < Api::Serializer::Xml
+  include BvDownload::Api::Serializer::Xml::Schema
+
+  include BvDownload::Api::Serializer::Xml::Associations
+end

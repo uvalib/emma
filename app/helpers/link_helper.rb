@@ -169,15 +169,20 @@ module LinkHelper
 
   # Produce a link to download an item to the client's browser.
   #
-  # @param [String] path
-  # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to #external_link.
+  # @param [String]      path
+  # @param [String, nil] file         Name of the file to download.
+  # @param [String]      css          Characteristic CSS class/selector.
+  # @param [Hash]        opt          Passed to #external_link.
+  #
+  # @option opt [String] :download    Name of the file to create on the client.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def download_link(path, css: '.download', **opt, &blk)
+  def download_link(path, file: nil, css: '.download', **opt, &blk)
+    file ||= opt[:download] if opt[:download]
+    opt[:download] ||= file if file
     prepend_css!(opt, css)
-    external_link(path, **opt, &blk)
+    external_link(path, file, **opt, &blk)
   end
 
   # ===========================================================================

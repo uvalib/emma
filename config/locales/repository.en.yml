@@ -20,7 +20,7 @@ en:
         s3:             true  # @see AwsS3Service::Properties::S3_BUCKET
         partner:        false # Submitted via the normal EMMA-native workflow.
         metadata:       true  # Source site contributes to the Unified Index.
-        file_store:     true  # Source site serves its own files.
+        collection:     false # EMMA collection pseudo repository.
         logo:           # Logo image (@see LogoHelper::LOGO_TYPES)
           default:      ~  # ... for generic usage.
           wide:         ~  # ... transformed for wide fixed width.
@@ -45,15 +45,26 @@ en:
           rtf:          'rtf'
         active:         true
 
-      _template_ia:     &IA_TEMPLATE
+      _proxy:           &PROXY_TEMPLATE
+        download_path:  'retrieval' # @see retrieval_path
+        download_url:   '%{download_path}?identifier=%{id}&type=%{fmt}'
+
+      _internetArchive: &IA_TEMPLATE
         title_path:     'https://archive.org/details'
         record_src:     'Internet Archive'
         download_src:   'Internet Archive'
         download_path:  'retrieval' # @see retrieval_path
         download_url:   '%{download_path}?identifier=%{id}&type=%{fmt}'
 
-      _template_remote: &PARTNER_TEMPLATE
+      _remote:          &PARTNER_TEMPLATE
         partner:        true  # Submitted via the "partner repository workflow"
+
+      _collection:      &COLLECTION_TEMPLATE
+        <<:             *PROXY_TEMPLATE
+        collection:     true
+        s3:             false
+        download_path:  'retrieval' # @see retrieval_path
+        download_url:   '%{download_path}?url=%{url}'
 
       # =======================================================================
       # Repositories
@@ -141,10 +152,28 @@ en:
         name:           'OpenAlex'
         symbol:         'oa'
         s3:             false
-        file_store:     false
         logo:
           default:      'OpenAlex-300x100.png'
           wide:         'OpenAlex-300x100.png'
           thumb:        'thumb-OpenAlex-logo.jpg'
           base:         'thumb-OpenAlex-logo.jpg'
         title_path:     'https://openalex.org/works'
+
+      # =======================================================================
+      # EMMA collection "pseudo repository"
+      # =======================================================================
+
+      bibliovault_ump:  &UNIVERSITY_MICHIGAN_PRESS
+        <<:             *REPOSITORY_TEMPLATE
+        <<:             *COLLECTION_TEMPLATE
+        name:           'University of Michigan Press'
+        symbol:         'ump'
+        logo:
+          default:      'UniversityMichiganPress.png'
+          wide:         'UniversityMichiganPress.png'
+          thumb:        ~
+          base:         'UniversityMichiganPress.png'
+
+      biblioVault:
+        # For now, generic BiblioVault items are assumed to be UMP items.
+        <<:             *UNIVERSITY_MICHIGAN_PRESS

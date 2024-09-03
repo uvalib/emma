@@ -24,6 +24,12 @@ module RepositoryHelper
   #
   def oa_link?: ((String|nil) url) -> bool
 
+  # Indicate whether the given URL is BiblioVault collection link.
+  #
+  # @param [String, nil] url
+  #
+  def bv_link?: ((String|nil) url) -> bool
+
   # Report the partner repository associated with the given URL.
   #
   # @param [String, nil] url
@@ -126,6 +132,15 @@ module RepositoryHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def oa_retrieval_link: (String url, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Produce a link to retrieve a file from a BiblioVault collection.
+  #
+  # @param [String] url
+  # @param [Hash]   opt               Passed to #retrieval_link
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def bv_retrieval_link: (String url, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Produce a link to retrieve a content file.
   #

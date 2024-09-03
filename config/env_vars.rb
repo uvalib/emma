@@ -296,6 +296,40 @@ AWS_ACCESS_KEY_ID = ENV.fetch('AWS_ACCESS_KEY_ID', nil).freeze
 #
 AWS_SECRET_KEY = ENV.fetch('AWS_SECRET_KEY', nil).freeze
 
+# Amazon AWS region for BiblioVault collections.
+#
+# This should be supplied by the UVA cloud infrastructure on startup or from
+# `Rails.application.credentials.bibliovault`.
+#
+# @type [String]
+#
+BV_REGION = ENV.fetch('BV_REGION', 'us-east-1').freeze
+
+# Amazon S3 storage for BiblioVault collections.
+#
+# @type [String]
+#
+BV_BUCKET =
+  ENV.fetch('BV_BUCKET') { "bibliovault-transfer-#{aws_deployment}" }.freeze
+
+# Amazon identity access key for BiblioVault collections.
+#
+# This should be supplied by the UVA cloud infrastructure on startup or from
+# `Rails.application.credentials.bibliovault`.
+#
+# @type [String, nil]
+#
+BV_ACCESS_KEY_ID = ENV.fetch('BV_ACCESS_KEY_ID', nil).freeze
+
+# Amazon identity secret for BiblioVault collections.
+#
+# This should be supplied by the UVA cloud infrastructure on startup or from
+# `Rails.application.credentials.bibliovault`.
+#
+# @type [String, nil]
+#
+BV_SECRET_KEY = ENV.fetch('BV_SECRET_KEY', nil).freeze
+
 # =============================================================================
 # Job scheduler properties
 # =============================================================================

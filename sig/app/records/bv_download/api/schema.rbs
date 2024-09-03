@@ -1,0 +1,13 @@
+# Values related to the details of serialization/de-serialization.
+#
+module BvDownload::Api::Schema
+  include BvDownload::Api::Common
+
+  include Api::Schema
+
+  # service_name
+  #
+  # @return [String]
+  #
+  def service_name: () -> String
+end

@@ -1,0 +1,12 @@
+# The base class for objects relating to the UVALIB-hosted AWS S3 BiblioVault
+# collections.
+#
+class BvDownload::Api::Record < Api::Record
+  include BvDownload::Api::Common
+
+  include BvDownload::Api::Schema
+
+  include BvDownload::Api::Record::Schema
+
+  include BvDownload::Api::Record::Associations
+end

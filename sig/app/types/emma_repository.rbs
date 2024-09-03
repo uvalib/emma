@@ -54,6 +54,12 @@ class EmmaRepository < EnumType
   #
   S3_QUEUE: symArray
 
+  # The repositories that represent BiblioVault collections.
+  #
+  # @type [Array<Symbol>]
+  #
+  COLLECTION: symArray
+
   # The repositories that require the "partner repository workflow".
   #
   # @type [Array<Symbol>]
@@ -69,4 +75,10 @@ class EmmaRepository < EnumType
   # @type [Array<Symbol>]
   #
   def self.s3_queue: () -> symArray
+
+  # The repositories that represent BiblioVault collections.
+  #
+  # @type [Array<Symbol>]
+  #
+  def self.collection: () -> symArray
 end

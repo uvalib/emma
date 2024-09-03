@@ -1,0 +1,40 @@
+# BvDownloadService::Properties
+#
+module BvDownloadService::Properties
+  include ApiService::Properties
+
+  # Configuration values from config/locales/service.en.yml
+  #
+  # @type [Hash]
+  #
+  CONFIGURATION: symHash
+
+  # Default engine selection.
+  #
+  # @type [Symbol]
+  #
+  DEFAULT_ENGINE: Symbol
+
+  # S3 options are kept in encrypted credentials but can be overridden by
+  # environment variables.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  S3_OPTIONS: Hash[Symbol,String]
+
+  # Configuration for the API service.
+  #
+  # @return [Hash]
+  #
+  def configuration: () -> symHash
+
+  # The default BiblioVault collections engine API key.
+  #
+  # @return [Symbol]
+  #
+  def default_engine_key: () -> Symbol
+
+  private
+
+  def self.included: (Module base) -> void
+end

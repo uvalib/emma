@@ -276,6 +276,7 @@ class SearchDecorator
   # @return [nil]                       If no *url* was provided or found.
   #
   # @see RepositoryHelper#emma_retrieval_link
+  # @see BaseDecorator::Download#bv_retrieval_link
   # @see BaseDecorator::Download#ia_retrieval_link
   # @see file:javascripts/feature/download.js *notAuthorizedMessage()*
   #
@@ -314,6 +315,29 @@ class SearchDecorator
   # @see file:javascripts/shared/modal-base.js *ModalBase.toggleModal()*
   #
   def record_popup: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Create a popup for displaying the details of a collection item.
+  #
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to #record_popup.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def collection_popup: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # The endpoint path for generating content to display within #record_popup.
+  #
+  # @param [Hash] opt                 Passed to UploadDecorator#show_path.
+  #
+  # @return [String]
+  #
+  def record_popup_path: (**untyped opt) -> String
+
+  # Produce data fields for use with #collection_popup.
+  #
+  # @param [Hash]
+  #
+  def collection_popup_data: (**untyped opt) -> symHash
 
   # Render a single entry for use within a list of items.
   #

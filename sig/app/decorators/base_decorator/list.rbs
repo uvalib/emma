@@ -35,6 +35,11 @@ module BaseDecorator::List
   # @option opt [Integer] :index      Offset to make unique element IDs passed
   #                                     to #render_pair.
   #
+  # @option opt [Hash] :fake_upload_file  Special data only for Uploads passed
+  #                                         through #list_field_values to
+  #                                         #property_pairs and on to
+  #                                         UploadDecorator#value_pairs.
+  #
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_field_values: (?separator: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer

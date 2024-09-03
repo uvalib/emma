@@ -122,6 +122,22 @@ class UploadDecorator < BaseDecorator
     #
     def compound_fields: () -> symArray
 
+    # Field/value pairs with support for generating fake file data for display.
+    #
+    # @param [Model, Hash, nil]  item     Default: *pairs*.
+    # @param [Model, Hash, nil]  pairs    Default: `#object`.
+    # @param [Hash, nil]         before   Additional leading label/value pairs.
+    # @param [Hash, nil]         after    Additional trailing label/value pairs.
+    # @param [ActionConfig, nil] config
+    # @param [Hash]              opt      Internal options.
+    #
+    # @option opt [Hash] :fake_upload_file  Data used to display a fake file
+    #                                         by setting the :file_data field.
+    #
+    # @return [Hash]
+    #
+    def value_pairs: (?(Model|anyHash|nil) item, ?pairs: Model|anyHash|nil, ?before: anyHash|nil, ?after: anyHash|nil, ?config: ActionConfig|nil, **untyped opt) -> anyHash
+
     # Indicate whether the state group described by *properties* should be an
     # active state group selection.
     #

@@ -346,6 +346,19 @@ module UploadConcern
     wf_single(event: :edit)
   end
 
+  # Create a temporary record from provided data.
+  #
+  # @param [Hash, String, nil] fields
+  # @param [Hash]              opt    Additional/replacement field values.
+  #
+  # @return [Upload]                  An un-persisted Upload record.
+  #
+  def temporary_record(fields = nil, **opt)
+    fields = json_parse(fields)&.compact_blank
+    opt.reverse_merge!(fields) if fields.present?
+    Upload.new(opt)
+  end
+
   # A record representation including URL of the remediated content file.
   #
   # @param [Upload] rec

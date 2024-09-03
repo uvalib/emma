@@ -257,6 +257,46 @@ class UploadDecorator < BaseDecorator
       (columns = super) + columns.map { |col| :"edit_#{col}" }
     end
 
+    # Field/value pairs with support for generating fake file data for display.
+    #
+    # @param [Model, Hash, nil]  item     Default: *pairs*.
+    # @param [Model, Hash, nil]  pairs    Default: `#object`.
+    # @param [Hash, nil]         before   Additional leading label/value pairs.
+    # @param [Hash, nil]         after    Additional trailing label/value pairs.
+    # @param [ActionConfig, nil] config
+    # @param [Hash]              opt      Internal options.
+    #
+    # @option opt [Hash] :fake_upload_file  Data used to display a fake file
+    #                                         by setting the :file_data field.
+    #
+    # @return [Hash]
+    #
+    def value_pairs(
+      item =  nil,
+      pairs:  nil,
+      before: nil,
+      after:  nil,
+      config: nil,
+      **opt
+    )
+      super.tap do |result|
+        if (fake = opt[:fake_upload_file]).is_a?(Hash)
+          if fake.key?(:file_data)
+            fake.each_pair do |k, v|
+              if result[k].is_a?(Hash)
+                result[k].merge!(json_parse(v))
+              else
+                result[k] = v
+              end
+            end
+          else
+            result[:file_data] = fake
+            result[:submission_id] = result[:state] = result[:id] = EMPTY_VALUE
+          end
+        end
+      end
+    end
+
     # =========================================================================
     # :section:
     # =========================================================================

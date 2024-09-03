@@ -1,0 +1,15 @@
+# The base class for inbound messages from the UVALIB-hosted AWS S3 BiblioVault
+# collections.
+#
+class BvDownload::Api::Message < BvDownload::Api::Record
+  include Api::Message
+
+  include BvDownload::Shared::ResponseMethods
+
+  # Initialize a new instance.
+  #
+  # @param [Faraday::Response, Hash, nil] src
+  # @param [Hash, nil]                    opt
+  #
+  def initialize: ((Faraday::Response|symHash|nil) src, ?(symHash|nil) opt) -> void
+end

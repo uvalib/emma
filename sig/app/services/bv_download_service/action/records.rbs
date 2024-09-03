@@ -1,0 +1,15 @@
+# Methods which support acquiring a record from the UVALIB-hosted AWS S3
+# BiblioVault collections.
+#
+module BvDownloadService::Action::Records
+  include BvDownloadService::Common
+
+  # Get the contents of an item from a BiblioVault collection.
+  #
+  # @param [String] item
+  # @param [Hash]   opt               Passed to #aws_get_file.
+  #
+  # @return [String, nil]
+  #
+  def stream_item: (String item, **untyped opt) -> (String | nil)
+end

@@ -44,6 +44,14 @@ module RepositoryHelper
     url.to_s.strip.match?(%r{^https?://([^./]+\.)*openalex\.org/}i)
   end
 
+  # Indicate whether the given URL is BiblioVault collection link.
+  #
+  # @param [String, nil] url
+  #
+  def bv_link?(url)
+    url.to_s.strip.match?(%r{^https?://[^/]*bibliovault[^/]*/}i)
+  end
+
   # Report the partner repository associated with the given URL.
   #
   # @param [String, nil] url
@@ -58,6 +66,7 @@ module RepositoryHelper
       when emma_link?(url) then :emma
       when oa_link?(url)   then :openAlex
       when ia_link?(url)   then :internetArchive
+      when bv_link?(url)   then :bibliovault_ump
       when warn            then Log.warn { "#{__method__}: #{url.inspect}" }
     end
   end
@@ -183,6 +192,19 @@ module RepositoryHelper
   #
   def oa_retrieval_link(url, **opt)
     retrieval_link(url, **opt)
+  end
+
+  # Produce a link to retrieve a file from a BiblioVault collection.
+  #
+  # @param [String] url
+  # @param [Hash]   opt               Passed to #retrieval_link
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def bv_retrieval_link(url, **opt)
+    file = url.split('/').last
+    url  = '/retrieval?url=%s' % url_escape(url)
+    retrieval_link(url, file: file, **opt)
   end
 
   # ===========================================================================

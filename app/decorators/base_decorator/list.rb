@@ -65,6 +65,11 @@ module BaseDecorator::List
   # @option opt [Integer] :index      Offset to make unique element IDs passed
   #                                     to #render_pair.
   #
+  # @option opt [Hash] :fake_upload_file  Special data only for Uploads passed
+  #                                         through #list_field_values to
+  #                                         #property_pairs and on to
+  #                                         UploadDecorator#value_pairs.
+  #
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_field_values(separator: nil, **opt)
@@ -75,7 +80,7 @@ module BaseDecorator::List
     trace_attrs!(opt)
     t_opt  = trace_attrs_from(opt)
     fv_opt = opt.slice(:index, :no_fmt)
-    pp_opt = opt.extract!(*PROPERTY_PAIRS_OPT)
+    pp_opt = opt.extract!(*PROPERTY_PAIRS_OPT, :fake_upload_file)
     separator ||= DEFAULT_ELEMENT_SEPARATOR
 
     pairs  = list_field_values(**vp_opt, **pp_opt, **fv_opt, **t_opt)
