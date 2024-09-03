@@ -86,6 +86,7 @@ details {
 }
 
 // Indicate that a link is not active because the user is not authorized.
+.role-failure,
 .sign-in-required {
     &:hover { text-decoration: none; }
 }

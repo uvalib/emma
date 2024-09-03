@@ -59,6 +59,12 @@ module UserConcern
   #
   def update_user: () -> void
 
+  # Authenticate then ensure that the user does not have the :staff role.
+  #
+  # @param [Hash] opt                 Passed to #authenticate_user!
+  #
+  def authenticate_download!: (**untyped opt) -> void
+
   # Authenticate then ensure that the user has the :administrator role.
   #
   # @param [Hash] opt                 Passed to #authenticate_user!

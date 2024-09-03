@@ -43,10 +43,12 @@ class UploadController < ApplicationController
 
   ADMIN_OPS = %i[admin api_migrate bulk_reindex].freeze
   ANON_OPS  = %i[show records].freeze
+  DL_OPS    = %i[download retrieval probe_retrieval].freeze
 
   before_action :update_user
-  before_action :authenticate_admin!, only:   ADMIN_OPS
-  before_action :authenticate_user!,  except: ADMIN_OPS + ANON_OPS
+  before_action :authenticate_user!,     except: ADMIN_OPS + ANON_OPS + DL_OPS
+  before_action :authenticate_admin!,    only:   ADMIN_OPS
+  before_action :authenticate_download!, only:   DL_OPS
 
   # ===========================================================================
   # :section: Authorization

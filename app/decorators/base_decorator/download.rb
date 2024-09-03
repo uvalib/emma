@@ -70,6 +70,18 @@ module BaseDecorator::Download
   #
   DOWNLOAD_FAILURE_CLASS = 'failure'
 
+  # Artifact probe control CSS class.
+  #
+  # @type [String]
+  #
+  DOWNLOAD_PROBE_CLASS = 'probe'
+
+  # Artifact download link element CSS class.
+  #
+  # @type [String]
+  #
+  DOWNLOAD_LINK_CLASS = 'download'
+
   # Artifact download button element CSS class.
   #
   # @type [String]
@@ -131,57 +143,73 @@ module BaseDecorator::Download
   #
   # @param [Model, nil]          item     Default: `object`.
   # @param [String, nil]         url      Def: derived from *item*.
+  # @param [String, nil]         file     Name of the file to download.
   # @param [String, Symbol, nil] format   Def: derived from *item*.
+  # @param [Boolean]             plain    If *true*, just the download link.
   # @param [String]              css      Characteristic CSS class.
-  # @param [Hash]                opt      Passed to #model_link.
+  # @param [Hash]                opt      Passed to the visible element.
   #
   # @return [ActiveSupport::SafeBuffer]   The HTML link element.
   # @return [nil]                         No link URL was provided or found.
   #
-  def download_control(item: nil, url: nil, format: nil, css: '.retrieval.inline-popup', **opt)
+  def download_control(
+    item:   nil,
+    url:    nil,
+    file:   nil,
+    format: nil,
+    plain:  false,
+    css:    '.retrieval',
+    **opt
+  )
     item    ||= object
     url     ||= item.record_download_url or return
     id        = item.emma_repositoryRecordId
     repo      = item.emma_repository || EmmaRepository.default
     fmt       = (format || item.dc_format).to_sym
-    file      = (fmt == :daisy) ? "#{id}.#{fmt}.zip" : "#{id}.#{fmt}"
+    file    ||= (fmt == :daisy) ? "#{id}.#{fmt}.zip" : "#{id}.#{fmt}"
     fmt_name  = config_item(:repository,repo,:download_fmt,fmt) || item.label
     repo_name = EmmaRepository.pairs[repo]
 
-    # Initialize link options.
-    opt[:label] ||= file
-    opt[:path]    = url
-
     # Set up the tooltip to be shown before the item has been requested.
-    tip_opt  = { repo: repo_name, fmt: download_format(fmt_name) }
-    tip_path = %i[download link]
-    if !has_class?(opt, 'disabled', 'sign-in-required')
-      tip_path << :tooltip
-    elsif !h.signed_in?
-      tip_path << :sign_in << :tooltip
-    else
-      tip_path << :disallowed << :tooltip
-    end
-    opt[:title] = config_page(*tip_path, **tip_opt) || DOWNLOAD_TOOLTIP
+    tip_opt = { repo: repo_name, fmt: download_format(fmt_name) }
+    tooltip =
+      if !has_class?(opt, 'disabled', 'sign-in-required', 'role-failure')
+        config_page(:download, :link, :tooltip, **tip_opt)
+      elsif !h.signed_in?
+        config_page(:download, :link, :sign_in, :tooltip, **tip_opt)
+      else
+        tip_opt[:role] = current_user&.role&.capitalize
+        config_page(:download, :link, :role_failure, :tooltip, **tip_opt)
+      end
+    opt[:title] = tooltip || DOWNLOAD_TOOLTIP
 
     # The tooltip to be shown when the item is actually available for download.
-    tip_path = %i[download link complete tooltip]
-    tip_opt  = { button: DOWNLOAD_BUTTON_LABEL }
-    opt[:'data-complete-tooltip'] =
-      config_page(*tip_path, **tip_opt) || DOWNLOAD_COMPLETE_TIP
-
-    # The link surrogate itself.
-    # noinspection RubyMismatchedArgumentType
-    parts = [download_probe(url, **opt)]
-
-    # Auxiliary control elements which are initially hidden.
-    h_opt = { class: 'hidden' }
-    parts << download_progress(**h_opt)
-    parts << download_button(fmt: fmt_name, file: file, href: url, **h_opt)
-    parts << download_failure(**h_opt)
+    tip_opt = { button: DOWNLOAD_BUTTON_LABEL }
+    tooltip = config_page(:download, :link, :complete, :tooltip, **tip_opt)
+    opt[:'data-complete-tooltip'] = tooltip || DOWNLOAD_COMPLETE_TIP
 
     # Emit the link and control elements.
-    html_div(*parts, class: css_classes(css))
+    cls = Array.wrap(css)
+    cls << 'inline-popup' unless plain
+    html_div(class: css_classes(cls)) do
+      parts = []
+      if plain
+        # The link itself.
+        l_opt = append_css(opt, 'download').merge!(label: file, plain: true)
+        parts << download_button(fmt: fmt_name, file: file, href: url, **l_opt)
+
+      else
+        # The link surrogate.
+        # noinspection RubyMismatchedArgumentType
+        parts << download_probe(url, label: file, path: url, **opt)
+
+        # Auxiliary control elements which are initially hidden.
+        l_opt = { class: 'hidden' }
+        parts << download_progress(class: 'hidden')
+        parts << download_button(fmt: fmt_name, file: file, href: url, **l_opt)
+      end
+      parts << download_failure(class: 'hidden')
+    end
   end
 
   # ===========================================================================
@@ -241,6 +269,7 @@ module BaseDecorator::Download
   # @param [String, nil]         label
   # @param [String, nil]         file   File name.
   # @param [String, Symbol, nil] fmt
+  # @param [Boolean]             plain  If *true*, no #DOWNLOAD_BUTTON_CLASS.
   # @param [String]              css    Characteristic CSS class/selector.
   # @param [Hash]                opt    Passed to LinkHelper#make_link.
   #
@@ -250,15 +279,17 @@ module BaseDecorator::Download
     label:  nil,
     file:   nil,
     fmt:    nil,
-    css:    DOWNLOAD_BUTTON_CLASS,
+    plain:  false,
+    css:    DOWNLOAD_LINK_CLASS,
     **opt
   )
-    label          ||= DOWNLOAD_BUTTON_LABEL
     fmt              = download_format(fmt)
+    label          ||= DOWNLOAD_BUTTON_LABEL
     opt[:role]     ||= 'button'
     opt[:title]    ||= config_page(:download, :button, :tooltip, fmt: fmt)
     opt[:download] ||= file if file
     prepend_css!(opt, css)
+    prepend_css!(opt, DOWNLOAD_BUTTON_CLASS) unless plain
     make_link('#', label, **opt)
   end
 

@@ -339,14 +339,14 @@ en:
 
           link:
             tooltip:      'Download this item in %{fmt} format'
-            sign_in:
-              tooltip:    'You must sign in to EMMA for this item'
-            disallowed:
-              tooltip:
-                >-
-                %{repo} does not allow your account to download this item
             complete:
               tooltip:    'Click on the "%{button}" button to retrieve the file'
+            disallowed:
+              tooltip:    '%{repo} does not allow your account to download this item'
+            role_failure:
+              tooltip:    'Accounts with the %{role} role are not authorized to download'
+            sign_in:
+              tooltip:    'You must sign in to EMMA for this item'
 
           progress:
             tooltip:      'Click here to cancel the download'
@@ -357,6 +357,7 @@ en:
           failure:
             prefix:       'Failed'
             canceled:     'Canceled'
+            role_failure: 'Accounts with the %{role} role are not authorized to download'
             sign_in:      'You must sign in to EMMA for this item'
             unknown:      'unknown error'
 

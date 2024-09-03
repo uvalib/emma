@@ -73,6 +73,7 @@ module ToolHelper
   # @see file:app/assets/javascripts/feature/search.js
   #
   def tool_list_item(action, config, user: nil, css: '.tool-item', **opt)
+    user ||= current_user
     allow  = tool_authorized?(action, user: user, config: config, check: true)
 
     label  = (config[:label] || config[:title] || action).to_s
@@ -80,13 +81,14 @@ module ToolHelper
     path   = try(path) if path.is_a?(Symbol)
     path ||= url_for(controller: :tool, action: action, only_path: true)
     l_css  = %w[action]
-    l_css << 'sign-in-required' unless allow
+    l_css << (user ? 'role-failure' : 'sign-in-required') unless allow
     # noinspection RubyMismatchedArgumentType
     link   = make_link(path, label, **append_css(l_css))
 
     n_css  = %w[notice]
     n_css << 'hidden' if allow
-    notice = html_span(**append_css(n_css)) { config_term(:tool, :sign_in) }
+    notice = config_term(:tool, (user ? :role_failure : :sign_in))
+    notice = html_span(notice, **append_css(n_css))
 
     prepend_css!(opt, css)
     html_li(**opt) do

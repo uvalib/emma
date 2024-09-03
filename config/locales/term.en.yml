@@ -726,6 +726,8 @@ en:
 
       tool:
 
+        disallowed:           '(disallowed for current user)'
+        role_failure:         '(disallowed for %{role} user)'
         sign_in:              '(sign-in required)'
 
       # =======================================================================

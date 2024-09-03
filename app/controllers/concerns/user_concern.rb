@@ -117,6 +117,15 @@ module UserConcern
       warden.user || warden.set_user(user_from_session, run_callbacks: false)
   end
 
+  # Authenticate then ensure that the user does not have the :staff role.
+  #
+  # @param [Hash] opt                 Passed to #authenticate_user!
+  #
+  def authenticate_download!(**opt)
+    authenticate_user!(**opt)
+    role_failure if current_user.role_prototype == :staff
+  end
+
   # Authenticate then ensure that the user has the :administrator role.
   #
   # @param [Hash] opt                 Passed to #authenticate_user!
@@ -150,11 +159,12 @@ module UserConcern
   #
   def role_failure(role = nil)
     if role.is_a?(Symbol)
-      msg = config_term(:user, :privileged, role: role).capitalize
-      msg = "#{params[:action]}: #{msg}" if params[:action]
+      msg = config_term(:user, :privileged, role: role)&.capitalize
     else
-      msg = role&.to_s || config_term(:user, :role_failure)
+      msg = role&.to_s
     end
+    msg ||= config_term(:user, :role_failure)
+    msg   = "#{params[:action]}: #{msg}" if params[:action]
     authentication_failure(msg: msg, path: dashboard_path)
   end
 

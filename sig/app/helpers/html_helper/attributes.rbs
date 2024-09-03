@@ -56,12 +56,6 @@ module HtmlHelper::Attributes
   #
   def remove_non_attributes!: (symHash html_opt) -> symHash
 
-  # A line added to tooltips to indicate a .sign-in-required link.
-  #
-  # @type [String]
-  #
-  SIGN_IN: String
-
   # Augment with attributes that should be set/unset according to the context
   # (e.g. CSS classes present).
   #

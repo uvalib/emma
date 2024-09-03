@@ -143,12 +143,12 @@ module LinkHelper
     hidden   = opt[:'aria-hidden']
     disabled = opt[:'aria-disabled']
     new_tab  = (opt[:target] == '_blank')
-    sign_in  = has_class?(opt, 'sign-in-required')
+    disallow = has_class?(opt, 'sign-in-required', 'role-failure')
 
     opt[:'aria-label'] = title      if title   && !named
     opt[:tabindex]     = -1         if hidden  && !opt.key?(:tabindex)
     opt[:rel]          = 'noopener' if http    && !opt.key?(:rel)
-    append_tooltip!(opt, NEW_TAB)   if new_tab && !disabled && !sign_in
+    append_tooltip!(opt, NEW_TAB)   if new_tab && !disabled && !disallow
     html_options!(opt)
 
     link_to(label, path, opt, &blk)

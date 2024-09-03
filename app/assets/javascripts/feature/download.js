@@ -23,11 +23,14 @@ AppDebug.file("feature/download", MODULE, DEBUG);
 
 appSetup(MODULE, function() {
 
+    const PROBE    = selector(Emma.Download.probe.class);
+    const DOWNLOAD = selector(Emma.Download.download.class);
+
     /** @type {jQuery} */
-    const $download_links = $('.retrieval').children('.probe, .download');
+    const $download_ctls = $('.retrieval').children(`${PROBE}, ${DOWNLOAD}`);
 
     // Only perform these actions on the appropriate pages.
-    if (isMissing($download_links)) { return }
+    if (isMissing($download_ctls)) { return }
 
     /**
      * Console output functions for this module.
@@ -114,22 +117,52 @@ appSetup(MODULE, function() {
     const BUTTON = selector(Emma.Download.button.class);
 
     /**
+     * Selector for links which require authentication.
+     *
+     * @type {string}
+     */
+    const AUTH_FAILURE = selector("sign-in-required");
+
+    /**
+     * Selector for links which require authorization.
+     *
+     * @type {string}
+     */
+    const ROLE_FAILURE = selector("role-failure");
+
+    /**
      * Selector for links which are not currently enabled.
      *
      * @type {string}
      */
-    const UNAUTHORIZED = ".sign-in-required";
+    const UNAUTHORIZED = `${AUTH_FAILURE}, ${ROLE_FAILURE}`;
 
     // ========================================================================
     // Variables
     // ========================================================================
 
-    const $no_auth_links  = $download_links.filter(UNAUTHORIZED);
-    const $probe_controls = $download_links.not(`.download, ${UNAUTHORIZED}`);
+    const $no_auth_links  = $download_ctls.filter(UNAUTHORIZED);
+    const $live_controls  = $download_ctls.not(UNAUTHORIZED);
+    const $probe_controls = $live_controls.filter(PROBE);
+    const $download_links = $live_controls.filter(DOWNLOAD);
 
     // ========================================================================
     // Functions
     // ========================================================================
+
+    /**
+     * Respond to a live download link being clicked.
+     *
+     * @param {ElementEvt} event
+     */
+    function beforeDownload(event) {
+        const func    = "beforeDownload";
+        const $button = $(event.currentTarget || event.target);
+        //OUT.debug(`${func}: event =`, event, "; $button=", $button);
+        $button.attr("title", Emma.Download.download.text);
+        $button.attr("disabled", true);
+        $button.attr("aria-disabled", true);
+    }
 
     /**
      * Generate a download button when an item is ready for download.
@@ -349,6 +382,25 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
+     * Retrieve the failure message for an unauthorized link.
+     *
+     * @param {jQuery} $link
+     * @param {string} attribute
+     *
+     * @returns {string}
+     */
+    function notAuthorizedMessage($link, attribute = 'data-forbid') {
+        const message = $link.attr(attribute);
+        if (message) {
+            return message;
+        } else if ($link.is(ROLE_FAILURE)) {
+            return Emma.Download.failure.role_failure;
+        } else {
+            return Emma.Download.failure.sign_in;
+        }
+    }
+
+    /**
      * Display a failure message for an unauthorized link.
      *
      * @param {ElementEvt} event
@@ -356,8 +408,9 @@ appSetup(MODULE, function() {
     function showNotAuthorized(event) {
         //OUT.debug("showNotAuthorized: event =", event);
         event.preventDefault();
-        const $link = $(event.currentTarget || event.target);
-        showFailureMessage($link, Emma.Download.failure.sign_in);
+        const $link   = $(event.currentTarget || event.target);
+        const message = notAuthorizedMessage($link);
+        showFailureMessage($link, message);
     }
 
     /**
@@ -501,5 +554,8 @@ appSetup(MODULE, function() {
 
     // Override probe links in order to get the item asynchronously.
     handleClickAndKeypress($probe_controls, initiateDownload);
+
+    // Prevent re-downloads (due to repeated clicking).
+    handleClickAndKeypress($download_links, beforeDownload);
 
 });

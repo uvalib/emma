@@ -277,6 +277,7 @@ class SearchDecorator
   #
   # @see RepositoryHelper#emma_retrieval_link
   # @see BaseDecorator::Download#ia_retrieval_link
+  # @see file:javascripts/feature/download.js *notAuthorizedMessage()*
   #
   def source_retrieval_link: (?url: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 

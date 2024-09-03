@@ -102,12 +102,6 @@ module HtmlHelper::Attributes
 
   public
 
-  # A line added to tooltips to indicate a .sign-in-required link.
-  #
-  # @type [String]
-  #
-  SIGN_IN = config_page(:download, :failure, :sign_in).freeze
-
   # Augment with attributes that should be set/unset according to the context
   # (e.g. CSS classes present).
   #
@@ -131,30 +125,40 @@ module HtmlHelper::Attributes
   # @return [Hash]          The possibly-modified *opt*.
   #
   def add_inferred_attributes!(tag, opt)
-    default     = {} # Attribute defaults which may be overridden in *opt*.
-    replacement = {} # Attribute replacements which will override *opt*.
+    cls      = css_class_array(opt[:class])
+    default  = {} # Attribute defaults which may be overridden in *opt*.
+    new_attr = {} # Attribute replacements which will override *opt*.
 
-    css_class_array(opt[:class]).each do |css_class|
-      case css_class
-        when 'disabled', 'forbidden'
-          default[:'aria-disabled'] = true
-        when 'hidden'
-          default[:'aria-hidden'] = true
-        when 'sign-in-required'
-          if (tip = opt[:title].to_s).blank?
-            replacement[:title] = SIGN_IN
-          elsif !tip.include?(SIGN_IN)
-            replacement[:title] = tooltip_text(tip, "(#{SIGN_IN})")
-          end
+    # Establish default attribute values.
+    default[:'aria-disabled'] = true if cls.intersect?(%w[disabled forbidden])
+    default[:'aria-hidden']   = true if cls.include?('hidden')
+
+    # Mark up tooltip with a condition message if needed.
+    if (forbid = opt[:'data-forbid'])
+      # Already includes a custom failure condition message.
+    elsif cls.include?('role-failure')
+      forbid = config_page(:download, :failure, :role_failure)
+    elsif cls.include?('sign-in-required')
+      forbid = config_page(:download, :failure, :sign_in)
+    end
+    if forbid
+      if (tip = opt[:title].to_s).blank?
+        new_attr[:title] = forbid
+      elsif !tip.include?(forbid)
+        new_attr[:title] = tooltip_text(tip, "(#{forbid})")
+      end
+      new_attr[:'data-forbid'] = forbid unless opt.key?(:'data-forbid')
+    end
+
+    default.merge!(opt, new_attr)
+    opt.reverse_merge!(default).merge!(new_attr).tap do |result|
+      if %w[a button].include?(tag.to_s) && result[:'aria-disabled']
+        result[:disabled] = true unless result.key?(:disabled)
+      end
+      if result[:disabled]
+        result[:'aria-disabled'] = true unless result.key?(:'aria-disabled')
       end
     end
-    opt.reverse_merge!(default).merge!(replacement)
-
-    if %w[a button].include?(tag.to_s)
-      opt.reverse_merge!(disabled: true) if opt[:'aria-disabled']
-    end
-
-    opt[:disabled] ? opt.reverse_merge!('aria-disabled': true) : opt
   end
 
   # Attributes that are expected for a given HTML tag and can be added

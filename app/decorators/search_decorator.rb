@@ -494,6 +494,7 @@ class SearchDecorator
   #
   # @see RepositoryHelper#emma_retrieval_link
   # @see BaseDecorator::Download#ia_retrieval_link
+  # @see file:javascripts/feature/download.js *notAuthorizedMessage()*
   #
   def source_retrieval_link(url: nil, **opt)
     url   ||= object.record_download_url.presence or return
@@ -504,21 +505,33 @@ class SearchDecorator
     # Adjust the link depending on whether the current session is permitted to
     # perform the download.
     allowed = can?(:download, Upload)
-    append_css!(opt, 'sign-in-required') unless allowed
+    is_user = !allowed && h.signed_in?
+    failure = !allowed && (is_user ? 'role-failure' : 'sign-in-required')
+    append_css!(opt, failure) if failure
 
     # Set up the tooltip to be shown before the item has been requested.
-    opt[:title] ||=
+    tooltip =
       if allowed
         fmt = format.to_s.underscore.upcase.tr('_', ' ')
         rep = download_src(repo)
-        config_term(:search, :source, :retrieval_tip, fmt: fmt, repo: rep)
+        cpo = { fmt: fmt, repo: rep }
+        config_term(:search, :source, :retrieval_tip, **cpo)
+
+      elsif is_user
+        fmt = object.label
+        rep = repo || EmmaRepository.default
+        rol = current_user&.role&.capitalize
+        cpo = { fmt: fmt, repo: rep, role: rol }
+        config_page(:download, :link, :role_failure, :tooltip, **cpo)
+
       else
         fmt = object.label
         rep = repo || EmmaRepository.default
-        key = h.signed_in? ? :disallowed : :sign_in
-        cpo = { fmt: fmt, repo: rep, default: %i[download tooltip] }
-        config_page(:download, :link, key, :tooltip, **cpo)
+        cpo = { fmt: fmt, repo: rep }
+        config_page(:download, :link, :sign_in, :tooltip, **cpo)
       end
+    opt[:'data-forbid'] ||= tooltip unless allowed
+    opt[:title]         ||= tooltip
 
     case repo
       when :emma            then emma_retrieval_link(url, **opt)

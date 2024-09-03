@@ -55,6 +55,18 @@ module BaseDecorator::Download
   #
   DOWNLOAD_FAILURE_CLASS: String
 
+  # Artifact probe control CSS class.
+  #
+  # @type [String]
+  #
+  DOWNLOAD_PROBE_CLASS: String
+
+  # Artifact download link element CSS class.
+  #
+  # @type [String]
+  #
+  DOWNLOAD_LINK_CLASS: String
+
   # Artifact download button element CSS class.
   #
   # @type [String]
@@ -99,14 +111,16 @@ module BaseDecorator::Download
   #
   # @param [Model, nil]          item     Default: `object`.
   # @param [String, nil]         url      Def: derived from *item*.
+  # @param [String, nil]         file     Name of the file to download.
   # @param [String, Symbol, nil] format   Def: derived from *item*.
+  # @param [Boolean]             plain    If *true*, just the download link.
   # @param [String]              css      Characteristic CSS class.
   # @param [Hash]                opt      Passed to #model_link.
   #
   # @return [ActiveSupport::SafeBuffer]   The HTML link element.
   # @return [nil]                         No link URL was provided or found.
   #
-  def download_control: (?item: Model|nil, ?url: String|nil, ?format: String|Symbol|nil, ?css: String, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def download_control: (?item: Model|nil, ?url: String|nil, ?file: String|nil, ?format: String|Symbol|nil, ?plain: bool, ?css: String, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
   # The link-like download probe control.
   #
@@ -145,12 +159,13 @@ module BaseDecorator::Download
   # @param [String, nil]         label
   # @param [String, nil]         file   File name.
   # @param [String, Symbol, nil] fmt
+  # @param [Boolean]             plain  If *true* do not use *css*.
   # @param [String]              css    Characteristic CSS class/selector.
   # @param [Hash]                opt    Passed to LinkHelper#make_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def download_button: (?label: String|nil, ?file: String|nil, ?fmt: String|Symbol|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+  def download_button: (?label: String|nil, ?file: String|nil, ?fmt: String|Symbol|nil, ?plain: bool, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Prepare a format name for use in a tooltip or label.
   #

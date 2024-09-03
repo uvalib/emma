@@ -331,15 +331,18 @@ AppDebug.file("shared/assets.js.erb");
  * @typedef {object} DownloadFailureMsg
  *
  * @property {string} class
- * @property {string} prefix    Prefix for download failure message labels.
- * @property {string} canceled  Failure message for a user-canceled download.
- * @property {string} sign_in   Message for authentication failure.
- * @property {string} unknown   Unknown download failure.
+ * @property {string} prefix        Prefix for download failure message labels.
+ * @property {string} canceled      Failure message for user-canceled download.
+ * @property {string} role_failure  Message for authorization failure.
+ * @property {string} sign_in       Message for authentication failure.
+ * @property {string} unknown       Unknown download failure.
  */
 
 /**
  * @typedef {object} DownloadProperties
  *
+ * @property {ElementProperties}  probe
+ * @property {ElementProperties}  download
  * @property {ElementProperties}  button    Artifact download button.
  * @property {ElementProperties}  progress  Artifact download progress.
  * @property {DownloadFailureMsg} failure   Artifact download failure message.
@@ -657,19 +660,27 @@ export const Emma = (function() {
 
     /** @type {DownloadProperties} */
     const Download = {
+        probe: {
+            class:          '<%= js SearchDecorator::DOWNLOAD_PROBE_CLASS %>',
+        },
+        download: {
+            class:          '<%= js SearchDecorator::DOWNLOAD_LINK_CLASS %>',
+            text:           "Currently downloading or already downloaded", // TODO: I18n
+        },
         button: {
-            class:          "button",
+            class:          '<%= js SearchDecorator::DOWNLOAD_BUTTON_CLASS %>',
         },
         progress: {
-            class:          "progress",
+            class:          '<%= js SearchDecorator::DOWNLOAD_PROGRESS_CLASS %>',
             image: {
                 alt:        '<%= js config_page(:download, :progress, :image, :alt) %>',
             }
         },
         failure: {
-            class:          "failure",
+            class:          '<%= js SearchDecorator::DOWNLOAD_FAILURE_CLASS %>',
             prefix:         '<%= js config_page(:download, :failure, :prefix) %>',
             canceled:       '<%= js config_page(:download, :failure, :canceled) %>',
+            role_failure:   '<%= js config_page(:download, :failure, :role_failure) %>',
             sign_in:        '<%= js config_page(:download, :failure, :sign_in) %>',
             unknown:        '<%= js config_page(:download, :failure, :unknown) %>',
         },
