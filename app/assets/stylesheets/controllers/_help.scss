@@ -367,6 +367,10 @@
 // Special information box.
 .help-intro {
 
+    // Hide bottom of skip nav menu.
+    background: white;
+    box-shadow: 0 0 0 0.25rem white;
+
     @media print {
         break-inside: avoid;
     }
@@ -431,6 +435,7 @@
 
     & {
         margin-top: model.$list-item-gap-y;
+        grid-template-columns: 1fr;
     }
 
     //=========================================================================

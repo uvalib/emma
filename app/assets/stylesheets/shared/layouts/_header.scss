@@ -39,16 +39,16 @@ $enclosure-pad-narrow:  0.75rem;
     }
 }
 
-@mixin control-panel($pad-y: v.$gap-y, $pad-x: v.$gap-x) {
+@mixin control-panel {
 
     & {
-        padding:        $pad-y $pad-x;
+        padding:        v.$gap-y v.$gap-x;
         border:         0.125rem dotted v.$rev-fg-color;
         border-radius:  0.75rem;
     }
 
     @media #{v.$not-wide-screen} {
-        padding:        calc(2 * $pad-y) calc(4 * $pad-x);
+        padding:        v.$flex-gap-y v.$flex-gap-x;
     }
 }
 

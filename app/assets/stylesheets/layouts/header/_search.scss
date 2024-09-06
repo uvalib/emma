@@ -53,7 +53,7 @@ $control-height:         2.25rem;
 .layout-section:not(.enclosure) {
     display:    block;
     margin:     0;
-    padding:    0 calc(2 * $page-padding-x);
+    padding:    0 $page-padding-x;
     overflow-y: hidden;
 }
 
@@ -263,19 +263,26 @@ $control-height:         2.25rem;
         & {
             border:        2px solid whitesmoke;
             border-radius: 1rem;
+        }
 
-            $offset: 6px;
-            $x:      $offset;
-            $y:      $offset;
-            $blur:   18px;
-            $spread: 8px;
+        @mixin scaled-shadow($offset, $blur, $spread, $unit: 2px) {
+            $offset: $unit * $offset;
+            $blur:   $unit * $blur;
+            $spread: $unit * $spread;
             $color:  rgba($uva-accent-teal, 0.35);
-
             box-shadow:
-                 #{$x}  #{$y} $blur $spread $color,
-                -#{$x}  #{$y} $blur $spread $color,
-                 #{$x} -#{$y} $blur $spread $color,
-                -#{$x} -#{$y} $blur $spread $color;
+                 #{$offset}  #{$offset} $blur $spread $color,
+                 #{$offset} -#{$offset} $blur $spread $color,
+                -#{$offset}  #{$offset} $blur $spread $color,
+                -#{$offset} -#{$offset} $blur $spread $color;
+        }
+
+        @media #{$wide-screen} {
+            @include scaled-shadow($offset: 3, $blur: 9, $spread: 4);
+        }
+
+        @media #{$not-wide-screen} {
+            @include scaled-shadow($offset: 2, $blur: 6, $spread: 3);
         }
 
         &.top,
@@ -298,18 +305,18 @@ $control-height:         2.25rem;
             // Set margin-top to keep shadow from being clipped above.
 
             @media #{$wide-screen} {
-                margin-top:     calc($page-padding-y * 1.5);
+                margin-top:     calc($page-padding-y * 2);
                 padding-top:    calc(#{header.$enclosure-pad-wide} + 0.5rem);
             }
 
             @media #{$medium-width} {
-                margin-top:     calc($page-padding-y * 3);
+                margin-top:     calc($page-padding-y * 2);
                 padding-top:    calc(#{header.$enclosure-pad-medium} + 0.5rem);
                 padding-bottom: 0.5rem;
             }
 
             @media #{$narrow-screen} {
-                margin-top:     calc($page-padding-y * 4);
+                margin-top:     calc($page-padding-y * 3);
                 padding-top:    calc(#{header.$enclosure-pad-narrow} + 0.5rem);
             }
         }
@@ -324,11 +331,11 @@ $control-height:         2.25rem;
             }
 
             @media #{$medium-width} {
-                margin-bottom:  calc($page-padding-y * 3);
+                margin-bottom:  calc($page-padding-y * 2);
             }
 
             @media #{$narrow-screen} {
-                margin-bottom:  calc($page-padding-y * 4);
+                margin-bottom:  calc($page-padding-y * 3);
             }
         }
 
@@ -842,10 +849,10 @@ $control-height:         2.25rem;
         .search-filter-container {
             border:        none;
             box-shadow:    inset 0 0 8px 1px $uva-accent-teal;
-            @media #{$wide-screen}   { padding: 1.25rem; }
-            @media #{$medium-width}  { padding: 0.75rem; }
-            @media #{$narrow-screen} { padding: 1rem;    }
-            &                        { padding-right: 0.25rem; }
+            @media #{$wide-screen}   { padding:       1.25rem; }
+            @media #{$medium-width}  { padding:       0.75rem; }
+            @media #{$narrow-screen} { padding:       0.5rem;  }
+            @media #{$wide-screen}   { padding-right: 0.25rem; }
         }
 
         .search-controls {

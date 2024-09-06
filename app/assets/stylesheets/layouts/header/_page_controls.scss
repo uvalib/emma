@@ -12,7 +12,9 @@
 // Controller- and action-specific sections.
 .layout-section.page {
 
-    padding: 0 $page-padding-x;
+    @media #{$wide-screen} {
+        padding: 0 $page-padding-x;
+    }
 
     //=========================================================================
     // Elements
@@ -66,13 +68,13 @@
         }
 
         @media #{$medium-width} {
-            gap:                calc(2 * $gap-y) calc(4 * $gap-x);
+            gap:                calc(1 * $flex-gap-y) calc(2 * $flex-gap-x);
             max-width:          98%;
             margin-bottom:      1vh;
         }
 
         @media #{$narrow-screen} {
-            gap:                calc(4 * $gap-y) calc(8 * $gap-x);
+            gap:                calc(2 * $flex-gap-y) calc(4 * $flex-gap-x);
             max-width:          95%;
         }
 

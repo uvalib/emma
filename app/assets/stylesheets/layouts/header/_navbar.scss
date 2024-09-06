@@ -19,7 +19,6 @@
     @media #{$narrow-screen} {
         flex-direction: column;
         padding-right:  calc($page-padding-x + $scroll-easement-x);
-        padding-left:   calc($page-padding-x * 2);
     }
 
     &:last-child {
@@ -96,10 +95,6 @@
             top:                -0.5rem;
             margin-bottom:      -1.5rem;
             max-width:          100%;
-        }
-
-        @media #{$not-wide-screen} {
-            margin-top:         calc(2 * $gap-y);
         }
 
         //=====================================================================

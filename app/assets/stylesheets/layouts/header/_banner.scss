@@ -32,10 +32,6 @@
 
     @media #{$medium-width} {
 
-        > :first-child {
-            padding-top:    $page-padding-y;
-        }
-
         > :last-child {
             padding-bottom: $page-padding-y;
         }
