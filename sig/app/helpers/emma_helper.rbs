@@ -3,6 +3,8 @@
 module EmmaHelper
   include Emma::Project
 
+  include LinkHelper
+
   # EMMA grant partner configurations.
   #
   # @type [Hash{Symbol=>any}]

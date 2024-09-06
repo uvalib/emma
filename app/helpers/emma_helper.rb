@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 module EmmaHelper
 
   include Emma::Project
+  include LinkHelper
 
   # ===========================================================================
   # :section:
@@ -127,9 +128,7 @@ module EmmaHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def project_site(label = nil)
-    url     = PROJECT_SITE
-    label ||= url
-    link_to(label, url)
+    external_link(PROJECT_SITE, label)
   end
 
   # A simple "mailto:" link for project email contact.
@@ -192,9 +191,7 @@ module EmmaHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def mailing_list_site(label = nil)
-    url     = MAILING_LIST_SITE
-    label ||= url
-    link_to(label, url)
+    external_link(MAILING_LIST_SITE, label)
   end
 
   # A link to the EMMA white paper
@@ -208,7 +205,7 @@ module EmmaHelper
     config  = config_section(:reference, :white_paper)
     url     = config[:url]
     label ||= config[:title] ? quote(config[:title]) : url
-    link_to(label, url)
+    external_link(url, label)
   end
 
   # ===========================================================================
