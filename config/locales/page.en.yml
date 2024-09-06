@@ -140,11 +140,11 @@ en:
             - 'upload'
             - 'manifest'
             - 'tool'
-            - 'help'
             - 'sys'
             - 'enrollment'
             - 'org'
             - 'home'
+            - 'help'
             - 'about'
             - 'data'
 
@@ -161,11 +161,11 @@ en:
             - 'upload'
             - 'manifest'
             - 'tool'
-            - 'help'
             - 'sys'
             - 'enrollment'
             - 'org'
             - 'home'
+            - 'help'
             - 'about'
 
           unreleased:
@@ -828,9 +828,9 @@ en:
             - edit_current
             - list_org
             - list_all
-           #- new
-           #- edit_select
-           #- delete_select
+            - new
+            - edit_select
+            - delete_select
 
         search_type:
           <<:               *DB_SEARCH_TYPE
@@ -1764,9 +1764,9 @@ en:
                 - [account, edit_current]
                 - [account, list_org]
                 - [account, list_all]
-               #- [account, new]
-               #- [account, edit_select]
-               #- [account, delete_select]
+                - [account, new]
+                - [account, edit_select]
+                - [account, delete_select]
 
             display_fields: # @see "en.emma.record.account"
              #- !ruby/symbol all
