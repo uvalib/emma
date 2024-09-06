@@ -3,6 +3,25 @@
 module AboutHelper
   include EmmaHelper
 
+  # Default source for #external_content_section.
+  #
+  # @type [String]
+  #
+  EXTERNAL_CONTENT_URL: String
+
+  # An element containing content acquired from an external source.
+  #
+  # By default, a section heading is prepended only if the content does not
+  # have a heading element.
+  #
+  # @param [Boolean,nil] heading      If *false*, do not include `<h2>` heading
+  # @param [String]      css          Characteristic CSS class/selector.
+  # @param [Hash]        opt          Passed to the container element.
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def external_content_section: (heading: bool|nil, ?css: String, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
   # An element containing useful project-related links.
   #
   # @param [Boolean] heading          If *false*, do not include `<h2>` heading
@@ -105,6 +124,20 @@ module AboutHelper
   # @return [Date, nil]
   #
   def recent_date: (?(ActiveSupport::Duration|Date|Integer|nil) previous) -> (Date | nil)
+
+  # A scrubber for ensuring that the content does not have `<h1>`.
+  #
+  # @type [Loofah::Scrubber]
+  #
+  SCRUB_H1: Loofah::Scrubber
+
+  # Remove undesirable HTML from received content.
+  #
+  # @param [String] body
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def scrub_content: (String body) -> ActiveSupport::SafeBuffer
 
   # Generate a table of values with keys modified according to the *format*.
   #

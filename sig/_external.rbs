@@ -653,11 +653,72 @@ class Logger
   end
 end
 
+module Loofah
+  class Scrubber
+    CONTINUE: Object
+    STOP:     Object
+    attr_reader direction: Symbol
+    attr_reader block:     untyped # block passed to initialize
+    def initialize: (?symHash options) ?{ (Nokogiri::XML::Node) -> Object } -> void # block returns CONTINUE or STOP
+  end
+
+  module ScrubBehavior
+    module Node
+      def scrub!: (Symbol|Loofah::Scrubber scrubber) -> self
+    end
+  end
+
+  module TextBehavior
+  end
+
+  module DocumentDecorator
+  end
+
+  module HtmlDocumentBehavior
+  end
+
+  module HtmlFragmentBehavior
+    def self.parse: (String tags, ?(String|nil) encoding) -> Loofah::HTML5::DocumentFragment
+  end
+
+  module HTML5
+    class Document < Nokogiri::HTML5::Document
+      include Loofah::ScrubBehavior::Node
+      include Loofah::DocumentDecorator
+      include Loofah::TextBehavior
+      include Loofah::HtmlDocumentBehavior
+    end
+    class DocumentFragment < Nokogiri::HTML5::DocumentFragment
+      include Loofah::TextBehavior
+      include Loofah::HtmlFragmentBehavior
+    end
+  end
+
+  def self.html5_fragment: (String tags, ?(String|nil) encoding) ?{ (Nokogiri::XML::Node) -> Object } -> Loofah::HTML5::DocumentFragment
+
+end
+
 # NOTE: overrides gems/rbs-*/core/module.rbs
 class Module < Object
 
   def self.constants: () -> Array[Symbol]
 
+end
+
+module Nokogiri
+  module HTML4
+    class Document < Nokogiri::XML::Document
+    end
+    class DocumentFragment < Nokogiri::XML::DocumentFragment
+    end
+  end
+
+  module HTML5
+    class Document < Nokogiri::HTML4::Document
+    end
+    class DocumentFragment < Nokogiri::HTML4::DocumentFragment
+    end
+  end
 end
 
 module OAuth2

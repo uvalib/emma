@@ -5,6 +5,8 @@
 
 __loading_begin(__FILE__)
 
+require 'loofah'
+
 # View helper methods for rendering application information.
 #
 module AboutHelper
@@ -18,6 +20,43 @@ module AboutHelper
   # ===========================================================================
 
   public
+
+  # Default source for #external_content_section.
+  #
+  # @type [String]
+  #
+  EXTERNAL_CONTENT_URL = config_page(:about, :content_url).freeze
+
+  # An element containing content acquired from an external source.
+  #
+  # By default, a section heading is prepended only if the content does not
+  # have a heading element.
+  #
+  # @param [Boolean,nil] heading      If *false*, do not include `<h2>` heading
+  # @param [String]      css          Characteristic CSS class/selector.
+  # @param [Hash]        opt          Passed to the container element.
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def external_content_section(heading: nil, css: '.project-external', **opt)
+    url   = opt.extract!(:url, :src).values.first || EXTERNAL_CONTENT_URL
+    resp  = Faraday.get(url)
+    error =
+      if (stat = resp.status) != 200
+        "status #{stat}"
+      elsif (body = resp.body.strip).blank?
+        'missing/blank content'
+      elsif (content = scrub_content(body)).blank?
+        "invalid content: #{body.inspect}"
+      end
+    return Log.warn { "#{__method__}: #{url.inspect}: #{error}" } if error
+
+    content   = html_div(content, **prepend_css!(opt, css))
+    heading   = true if heading.nil? && !content.match?(/<h[1-6]/)
+    heading &&= config_page(:about, :index, :section, :content)
+    heading &&= html_h2(heading)
+    safe_join([heading, content].compact_blank)
+  end
 
   # An element containing useful project-related links.
   #
@@ -225,6 +264,27 @@ module AboutHelper
   # ===========================================================================
 
   protected
+
+  # A scrubber for ensuring that the content does not have `<h1>`.
+  #
+  # @type [Loofah::Scrubber]
+  #
+  SCRUB_H1 = Loofah::Scrubber.new { |n| n.name = 'h2' if n.name == 'h1' }
+
+  # Remove undesirable HTML from received content.
+  #
+  # @param [String] body
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def scrub_content(body)
+    fragment = Loofah.html5_fragment(body)
+    fragment.scrub!(:prune)
+    fragment.scrub!(:unprintable)
+    fragment.scrub!(:targetblank)
+    fragment.scrub!(SCRUB_H1)
+    fragment.to_s.html_safe
+  end
 
   # Generate a table of values with keys modified according to the *format*.
   #

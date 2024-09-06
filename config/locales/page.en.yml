@@ -746,6 +746,7 @@ en:
         label:              'About'
         title:              'EMMA and the EMMA project [main]'
         tooltip:            'About EMMA and the EMMA project [main]'
+        content_url:        'https://emma.uvacreate.virginia.edu/jmu2m/about.html'
 
         page_controls:
           label:            'About:'
@@ -774,6 +775,7 @@ en:
             section:
               links:        'Project Links'
               refs:         'Reference Material'
+              content:      'Latest Information'
 
           # ===================================================================
 
