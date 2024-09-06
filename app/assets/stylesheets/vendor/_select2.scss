@@ -12,13 +12,17 @@
 
 .select2-container {
 
+    // Prevent menus from extended beyond the edge of small screens.
+    max-width: calc(100vw - (2 * $page-padding-x) - $scroll-easement-x);
+
     // Although it's not present in select2.min.css, this wrapper is generated
     // by Select2 and needs to be adjusted so that .select2-selection--multiple
     // is sized according to the containing element.
     .selection {
-        display: block;
-        height:  inherit;
-        width:   inherit;
+        display:    block;
+        height:     inherit;
+        width:      inherit;
+        max-width:  inherit;
     }
 }
 

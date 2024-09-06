@@ -165,7 +165,9 @@
         }
 
         @media #{$narrow-screen} {
-            margin-bottom: $flex-gap-y;
+            flex-direction: column-reverse;
+            align-items:    end;
+            margin-bottom:  $flex-gap-y;
         }
 
         > * {

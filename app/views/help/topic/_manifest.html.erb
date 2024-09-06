@@ -14,8 +14,8 @@
   overview          =  topic[:overview]
   grid              =  topic[:grid]
   submission        =  topic[:submission]
-  list_all          = (topic[:list_all]   if administrator)
-  list_org          = (topic[:list_org]   if manager)
+  list_all          = (topic[:list_all] if administrator)
+  list_org          = (topic[:list_org] unless administrator)
   list_own          =  topic[:list_own]
   new               =  topic[:new]
   edit              =  topic[:edit]

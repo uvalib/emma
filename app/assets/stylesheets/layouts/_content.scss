@@ -123,6 +123,15 @@
     }
 }
 
+// A standalone scroll-to-top-target.
+span.scroll-to-top-target {
+    display:        block;
+    margin:         0;
+    padding:        0;
+    height:         0;
+    line-height:    0;
+}
+
 //=============================================================================
 // Main content area - table pages
 //=============================================================================
