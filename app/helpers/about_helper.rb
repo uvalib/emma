@@ -206,17 +206,17 @@ module AboutHelper
 
   # The past date indicated by the argument.
   #
-  # @param [ActiveSupport::Duration, Date, Integer, nil] since
+  # @param [ActiveSupport::Duration, Date, Integer, nil] previous
   #
   # @return [Date, nil]
   #
-  def recent_date(since = 30.days)
+  def recent_date(previous = 30.days)
     # noinspection RubyMismatchedReturnType
-    case since
-      when ActiveSupport::Duration then Date.today - since.in_days
-      when Integer                 then Date.today - since.days
-      when Date, nil               then since
-      else Log.error("#{__method__}: unexpected: #{since.inspect}")
+    case previous
+      when ActiveSupport::Duration then Date.today - previous.in_days
+      when Integer                 then Date.today - previous.days
+      when Date, nil               then previous
+      else Log.error("#{__method__}: unexpected: #{previous.inspect}")
     end
   end
 

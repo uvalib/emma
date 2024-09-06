@@ -100,11 +100,11 @@ module AboutHelper
 
   # The past date indicated by the argument.
   #
-  # @param [ActiveSupport::Duration, Date, Integer, nil] since
+  # @param [ActiveSupport::Duration, Date, Integer, nil] previous
   #
   # @return [Date, nil]
   #
-  def recent_date: (?(ActiveSupport::Duration|Date|Integer|nil) since) -> (Date | nil)
+  def recent_date: (?(ActiveSupport::Duration|Date|Integer|nil) previous) -> (Date | nil)
 
   # Generate a table of values with keys modified according to the *format*.
   #
