@@ -7,6 +7,8 @@ __loading_begin(__FILE__)
 
 # A response from the UVALIB service which hosts the BiblioVault collections.
 #
+# @note This is unused and may go away.
+#
 class BvDownload::Record::ResponseRecord < Ingest::Api::Record
 
   include BvDownload::Shared::CommonMethods
@@ -16,8 +18,7 @@ class BvDownload::Record::ResponseRecord < Ingest::Api::Record
   # ===========================================================================
 
   schema do
-    has_one :status, Integer
-    has_one :message
+    # No fields yet
   end
 
 end

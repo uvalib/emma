@@ -11,6 +11,8 @@ __loading_begin(__FILE__)
 # Currently there are no data fields associated with the received message; the
 # body of the response is the content of the file being downloaded.
 #
+# @note This is unused and may go away.
+#
 class BvDownload::Message::FetchResponse < BvDownload::Api::Message
 
   include BvDownload::Shared::ResponseMethods

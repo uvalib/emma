@@ -66,7 +66,7 @@ module RepositoryHelper
       when emma_link?(url) then :emma
       when oa_link?(url)   then :openAlex
       when ia_link?(url)   then :internetArchive
-      when bv_link?(url)   then :bibliovault_ump
+      when bv_link?(url)   then :biblioVault # :bibliovault_ump
       when warn            then Log.warn { "#{__method__}: #{url.inspect}" }
     end
   end

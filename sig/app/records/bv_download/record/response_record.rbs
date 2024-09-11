@@ -1,0 +1,7 @@
+# A response from the UVALIB service which hosts the BiblioVault collections.
+#
+# @note This is unused and may go away.
+#
+class BvDownload::Record::ResponseRecord < Ingest::Api::Record
+  include BvDownload::Shared::CommonMethods
+end
