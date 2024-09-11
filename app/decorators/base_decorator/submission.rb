@@ -188,7 +188,7 @@ module BaseDecorator::Submission
     trace_attrs!(opt)
     html_div(**opt) do
       t_opt = trace_attrs_from(opt)
-      MONITOR_PARTS.map { |meth| send(meth, unique: unique, **t_opt) }
+      MONITOR_PARTS.map { send(_1, unique: unique, **t_opt) }
     end
   end
 

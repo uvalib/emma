@@ -109,7 +109,7 @@ class Model::WorkflowJob < ApplicationJob
     if model && meth
       __debug_job('START') do
         { model: model, meth: meth, callback: cb, from: opt[:from] }
-          .transform_values { |v| item_inspect(v) }
+          .transform_values { item_inspect(_1) }
       end
       __output "..................... perform | BEFORE #{model.class}.#{meth}(#{opt.inspect}) | callback = #{cb.inspect}"
       result = model.send(meth, **opt)
@@ -138,7 +138,7 @@ class Model::WorkflowJob < ApplicationJob
     Log.error { "#{job_tag}: error: #{error.message} [#{error.class}]" }
     raise error
   end
-    .tap { |meth| ruby2_keywords(meth) }
+    .tap { ruby2_keywords(_1) }
 
   # ===========================================================================
   # :section:

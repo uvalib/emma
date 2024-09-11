@@ -342,7 +342,7 @@ module OAuth2
       #
       def authorize_url(params = {})
         super
-          .tap { |result| __ext_debug("--> #{result.inspect}") }
+          .tap { __ext_debug("--> #{_1.inspect}") }
       end
 
       # The token endpoint URL of the OAuth2 provider
@@ -353,7 +353,7 @@ module OAuth2
       #
       def token_url(params = nil)
         super
-          .tap { |result| __ext_debug("--> #{result.inspect}") }
+          .tap { __ext_debug("--> #{_1.inspect}") }
       end
 
       # Initializes an AccessToken by making a request to the token endpoint.
@@ -372,7 +372,7 @@ module OAuth2
       )
         __ext_debug(binding)
         super
-          .tap { |result| __ext_debug("--> #{result.inspect}") }
+          .tap { __ext_debug("--> #{_1.inspect}") }
       end
 
       # The Authorization Code strategy
@@ -381,7 +381,7 @@ module OAuth2
       #
       def auth_code
         super
-          .tap { |result| __ext_debug("--> #{result.inspect}") }
+          .tap { __ext_debug("--> #{_1.inspect}") }
       end
 
       # The Implicit strategy
@@ -390,7 +390,7 @@ module OAuth2
       #
       def implicit
         super
-          .tap { |result| __ext_debug("--> #{result.inspect}") }
+          .tap { __ext_debug("--> #{_1.inspect}") }
       end
 
       # The Resource Owner Password Credentials strategy
@@ -401,7 +401,7 @@ module OAuth2
       #
       def password
         super
-          .tap { |result| __ext_debug("--> #{result.inspect}") }
+          .tap { __ext_debug("--> #{_1.inspect}") }
       end
 
       # The Client Credentials strategy
@@ -412,7 +412,7 @@ module OAuth2
       #
       def client_credentials
         super
-          .tap { |result| __ext_debug("--> #{result.inspect}") }
+          .tap { __ext_debug("--> #{_1.inspect}") }
       end
 
       # The Client Assertion Strategy
@@ -421,7 +421,7 @@ module OAuth2
       #
       def assertion
         super
-          .tap { |result| __ext_debug("--> #{result.inspect}") }
+          .tap { __ext_debug("--> #{_1.inspect}") }
       end
 
       # =======================================================================
@@ -441,7 +441,7 @@ module OAuth2
       #
       def revoke_token(token, params = nil, opts = nil)
         super
-          .tap { |result| __ext_debug("--> #{result.inspect}") }
+          .tap { __ext_debug("--> #{_1.inspect}") }
       end
 
     end

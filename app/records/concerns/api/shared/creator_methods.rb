@@ -96,7 +96,7 @@ module Api::Shared::CreatorMethods
   # @return [Array<String>]
   #
   def contributor_list(field: :dc_creator, **opt)
-    get_values(field, **opt).map { |v| clean_name(v) }.uniq
+    get_values(field, **opt).map { clean_name(_1) }.uniq
   end
 
 end

@@ -68,7 +68,7 @@ module LayoutHelper::SearchFilters
             values    = values.pairs
           when Array
             default   = default.to_s unless default.is_a?(String)
-            values    = values.map(&:to_s).map { |v| [v, v] }.to_h
+            values    = values.map(&:to_s).map { [_1, _1] }.to_h
           when Hash
             # Already present as label/value pairs.
           else
@@ -152,7 +152,7 @@ module LayoutHelper::SearchFilters
         pairs = pairs.transform_values(&:to_s).to_a
       else
         pairs = Array.wrap(pairs).compact.uniq
-        pairs.map! { |v| [make_menu_label(menu_name, v, **opt), v.to_s] }
+        pairs.map! { [make_menu_label(menu_name, _1, **opt), _1.to_s] }
       end
 
       # Dynamically create reverse selections for the :sort menu if needed.
@@ -746,7 +746,7 @@ module LayoutHelper::SearchFilters
       added  = selected.excluding(*values)
       if added.present?
         sorted = entries_sorted?(pairs)
-        pairs += added.map { |sel| [make_menu_label(menu_name, sel), sel] }
+        pairs += added.map { [make_menu_label(menu_name, _1), _1] }
         sort_entries!(pairs) if sorted
       end
     end

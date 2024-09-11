@@ -410,7 +410,7 @@ module OmniAuth
         # noinspection RubyResolve
         opts = deep_symbolize(options.auth_token_params)
         client.auth_code.get_token(code, prms, opts)
-          .tap { |result| __ext_debug("--> #{result.inspect}") }
+          .tap { __ext_debug("--> #{_1.inspect}") }
       end
 
       # =======================================================================
@@ -693,7 +693,7 @@ module OmniAuth
         #
         def authorize_params
           super
-            .tap { |result| __ext_debug("--> #{result.inspect}") }
+            .tap { __ext_debug("--> #{_1.inspect}") }
         end
 
         # token_params
@@ -702,7 +702,7 @@ module OmniAuth
         #
         def token_params
           super
-            .tap { |result| __ext_debug("--> #{result.inspect}") }
+            .tap { __ext_debug("--> #{_1.inspect}") }
         end
 
       end

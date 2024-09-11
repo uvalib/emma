@@ -912,14 +912,12 @@ module Workflow::Base::States
     trans =
       state.events.map { |evt, entry|
         event_label(evt, number: false) << '->' <<
-          entry.map { |e|
-            state_label(e.transitions_to, number: false)
-          }.join(',')
+          entry.map { state_label(_1.transitions_to, number: false) }.join(',')
       }.join('; ')
     state = state_label(state)
     __debug_wf(">>>>> ENTER #{state} => [#{trans}]")
   end
-    .tap { |meth| neutralize(meth) unless DEBUG_WORKFLOW }
+    .tap { neutralize(_1) unless DEBUG_WORKFLOW }
 
   # __debug_exit
   #
@@ -931,7 +929,7 @@ module Workflow::Base::States
     state = state_label(state)
     __debug_wf("<<<<< LEAVE #{state}")
   end
-    .tap { |meth| neutralize(meth) unless DEBUG_WORKFLOW }
+    .tap { neutralize(_1) unless DEBUG_WORKFLOW }
 
   # __debug_wf
   #
@@ -942,7 +940,7 @@ module Workflow::Base::States
   def __debug_wf(*args, **opt, &blk)
     __debug_line(*args, leader: 'UPLOAD WF', **opt, &blk)
   end
-    .tap { |meth| neutralize(meth) unless DEBUG_WORKFLOW }
+    .tap { neutralize(_1) unless DEBUG_WORKFLOW }
 
 end
 

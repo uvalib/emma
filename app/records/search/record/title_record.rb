@@ -342,7 +342,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     # @return [Array]
     #
     def sort_values(rec, **opt)
-      sort_fields(rec).values.map { |v| sort_key_value(v, **opt) }
+      sort_fields(rec).values.map { sort_key_value(_1, **opt) }
     end
 
     # field_values
@@ -354,7 +354,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     def field_values(rec, *fields)
       return {} if rec.blank?
-      fields.flatten.compact.map! { |f| [f.to_sym, field_value(rec, f)] }.to_h
+      fields.flatten.compact.map! { [_1.to_sym, field_value(rec, _1)] }.to_h
     end
 
     # Fields with values normalized for comparison.
@@ -402,9 +402,9 @@ class Search::Record::TitleRecord < Search::Api::Record
           }.compact_blank!.sort_by! { |kv| kv&.first || '' }.to_h
         when Array
           if id_field?(field)
-            value.compact_blank.sort_by! { |v| identifier_sort_key(v) }
+            value.compact_blank.sort_by! { identifier_sort_key(_1) }
           else
-            value.map { |v| make_comparable(v) }.compact_blank!.sort!
+            value.map { make_comparable(_1) }.compact_blank!.sort!
           end
         else
           # noinspection RubyMismatchedReturnType
@@ -448,7 +448,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     def sort_key_value(item, **opt)
       if item.is_a?(Array)
-        item.map { |v| sort_key_value(v, **opt) }.join(' ')
+        item.map { sort_key_value(_1, **opt) }.join(' ')
       elsif item.is_a?(String)
         item.strip
       elsif item.respond_to?(:to_datetime)
@@ -496,8 +496,8 @@ class Search::Record::TitleRecord < Search::Api::Record
     # @return [Hash{Symbol=>any}]
     #
     def field_union(recs, fields)
-      array  = fields.map { |k| [k, false] }.to_h
-      result = fields.map { |k| [k, []] }.to_h
+      array  = fields.map { [_1, false] }.to_h
+      result = fields.map { [_1, []] }.to_h
       recs.each do |rec|
         fields.each do |field|
           next unless (value = field_value(rec, field))
@@ -509,10 +509,10 @@ class Search::Record::TitleRecord < Search::Api::Record
         next if value.blank?
         if value.many?
           if id_field?(field)
-            value.sort_by! { |v| identifier_sort_key(v) }.uniq!
+            value.sort_by! { identifier_sort_key(_1) }.uniq!
           else
-            value.sort_by! { |v| make_comparable(v, field) }
-            value.uniq!    { |v| make_comparable(v, field) }
+            value.sort_by! { make_comparable(_1, field) }
+            value.uniq!    { make_comparable(_1, field) }
           end
         end
         value = value.join(' / ') unless array[field]
@@ -932,7 +932,7 @@ class Search::Record::TitleRecord < Search::Api::Record
       elsif (mismatches = problems(rec)).present?
         Log.warn { "#{self.class}: %s" % mismatches.join('; ') }
       else
-        copy_record(rec).tap { |r| @exemplar ||= r }
+        copy_record(rec).tap { @exemplar ||= _1 }
       end
     }.compact.tap { |recs| sort_records!(recs) if recs.many? }
   end
@@ -947,9 +947,9 @@ class Search::Record::TitleRecord < Search::Api::Record
   # @return [Array<Search::Record::MetadataRecord>]
   #
   def sort_records!(recs)
-    recs.sort_by! { |rec| sort_values(rec) }
+    recs.sort_by! { sort_values(_1) }
   rescue
-    recs.sort_by! { |rec| sort_values(rec, lax: true) }
+    recs.sort_by! { sort_values(_1, lax: true) }
   end
 
   # Copy the record, adding an item_number if appropriate.
@@ -991,7 +991,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   def copy_identifier(rec, field)
     value = rec.try(field)
     return unless value.try(:many?)
-    value = value.sort_by { |id| identifier_sort_key(id) }
+    value = value.sort_by { identifier_sort_key(_1) }
     rec.try("#{field}=", value)
   end
 
@@ -1036,7 +1036,7 @@ class Search::Record::TitleRecord < Search::Api::Record
       file_only_fields  = title_field_exclusive(recs)
       title_only_fields = EXCLUSIVE_FIELDS - file_only_fields
       file_only_fields.each { |f| result.try("#{f}=", nil) }
-      title_only_fields.each { |f| recs.each { |r| r.try("#{f}=", nil) } }
+      title_only_fields.each { |f| recs.each { _1.try("#{f}=", nil) } }
     end
     result
   end
@@ -1125,8 +1125,8 @@ class Search::Record::TitleRecord < Search::Api::Record
   def self.symbolize_values(item)
     # noinspection RubyMismatchedReturnType
     case item
-      when Hash   then item.transform_values { |v| symbolize_values(v) }
-      when Array  then item.map { |v| symbolize_values(v) }
+      when Hash   then item.transform_values { symbolize_values(_1) }
+      when Array  then item.map { symbolize_values(_1) }
       when String then item.to_sym
       else             item
     end
@@ -1211,7 +1211,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   def get_format_counts
     result  = {}
-    formats = field_hierarchy[:parts]&.flat_map { |part| part[:formats] } || []
+    formats = field_hierarchy[:parts]&.flat_map { _1[:formats] } || []
     formats.each do |format|
       next unless (fmt = format.dig(:bibliographic, :dc_format))
       result[fmt] ||= 0
@@ -1253,10 +1253,10 @@ class Search::Record::TitleRecord < Search::Api::Record
   # @return [Array<Hash>]
   #
   def get_part_fields(recs = records.to_a)
-    recs.group_by { |rec| item_number(rec) }.map do |part, recs1|
+    recs.group_by { item_number(_1) }.map do |part, recs1|
       part = { bib_seriesPosition: part.to_s }
       fmts =
-        recs1.group_by { |rec| format(rec) }.map do |format, recs2|
+        recs1.group_by { format(_1) }.map do |format, recs2|
           format = { dc_format: format }
           files  = get_file_fields(:parts, :formats, :files, recs2)
           { bibliographic: format, files: files }
@@ -1276,7 +1276,7 @@ class Search::Record::TitleRecord < Search::Api::Record
       when Search::Record::MetadataRecord then Array.wrap(group.pop)
       when Array                          then group.pop
       else                                     records
-    end.map { |rec| get_fields(rec, *group) }
+    end.map { get_fields(_1, *group) }
   end
 
   # get_fields
@@ -1325,7 +1325,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   def wrap_array!(value, *keys)
     return value unless value.is_a?(Hash)
     keys.map!(&:to_sym)
-    item_key = keys.map { |k| [k, k.to_s.singularize.to_sym] }.to_h
+    item_key = keys.map { [_1, _1.to_s.singularize.to_sym] }.to_h
     value.map { |k, v|
       if keys.include?(k)
         v = Array.wrap(v).map { |i| { item_key[k] => wrap_array!(i, *keys) } }
@@ -1333,7 +1333,7 @@ class Search::Record::TitleRecord < Search::Api::Record
         v = wrap_array!(v, *keys)
       end
       [k, v]
-    }.to_h.tap { |result| value.replace(result) }
+    }.to_h.tap { value.replace(_1) }
   end
 
   # ===========================================================================
@@ -1383,7 +1383,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   # @return [String]                      If *separator* is a plain string.
   #
   def all_item_numbers(separator = nil)
-    numbers = records.map { |rec| item_number(rec) }.compact
+    numbers = records.map { item_number(_1) }.compact
     numbers = numbers.sort_by(&:number_value).uniq(&:number_range).map!(&:to_s)
     case separator
       when ActiveSupport::SafeBuffer then html_join(numbers, separator)

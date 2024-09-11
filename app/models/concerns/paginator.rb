@@ -120,7 +120,7 @@ class Paginator
 
     def initialize(values = nil)
       replace(TEMPLATE)
-      POSITION.each { |k| store(k, {}) }
+      POSITION.each { store(_1, {}) }
       update(values) if values
     end
 
@@ -164,7 +164,7 @@ class Paginator
     raise 'no request given'    if @context[:request].blank?
 
     # Strip off index cursor initialization values.
-    Properties::INDEX.each { |k| property[k] = opt.delete(k)&.to_i }
+    Properties::INDEX.each { property[_1] = opt.delete(_1)&.to_i }
 
     # Pagination values.
     page = offset = limit = nil
@@ -277,7 +277,7 @@ class Paginator
     items = items&.join(' / ') || 'empty'
     vars  = instance_variables
     vars  = vars.excluding(:@page_source, :@page_items, :@_url_options).sort
-    vars  = vars.map { |k| "#{k}=%s" % instance_variable_get(k).inspect }
+    vars  = vars.map { "#{_1}=%s" % instance_variable_get(_1).inspect }
     vars << "@page_source=#{@page_source.class}"
     vars << "@page_items=(#{items})"
     "#<#{self.class.name}:#{object_id} %s>" % vars.join(' ')
@@ -600,7 +600,7 @@ class Paginator
   # @return [Hash]
   #
   def current_properties
-    Properties.keys.map { |prop| [prop, send(prop)] }.to_h
+    Properties.keys.map { [_1, send(_1)] }.to_h
   end
 
   # ===========================================================================
@@ -1078,7 +1078,7 @@ class Paginator
   # @return [any, nil]
   #
   def method_missing(name, *args, &blk)
-    var = [@page_items, @page_source].find { |v| v&.respond_to?(name) }
+    var = [@page_items, @page_source].find { _1&.respond_to?(name) }
     var ? var.send(name, *args, &blk) : super
   end
 

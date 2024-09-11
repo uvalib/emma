@@ -150,7 +150,7 @@ class Options
   # @return [Hash]                    Updated option values.
   #
   def all(clean: false, **opt)
-    keys = option_keys.each { |key| get(key, **opt) }
+    keys = option_keys.each { get(_1, **opt) }
     @params.except!(*keys) if clean
     @value
   end
@@ -299,11 +299,11 @@ class Options
   def inspect
     all # Force @value to be updated with all option settings.
     props = %i[model_key model_id_key]
-    props = props.map { |k| [k, send(k)] }.to_h
-    props = props.map { |k, v| "#{k}=#{v.inspect}" }.join(' ')
+    props = props.map { [_1, send(_1)] }.to_h
+    props = props.map { "#{_1}=#{_2.inspect}" }.join(' ')
     vars  = %i[@value @model_params @params]
-    vars  = vars.map { |var| [var, instance_variable_get(var)] }.to_h
-    vars  = vars.map { |k, v| "#{k}=#{v.inspect}" }.join(' ')
+    vars  = vars.map { [_1, instance_variable_get(_1)] }.to_h
+    vars  = vars.map { "#{_1}=#{_2.inspect}" }.join(' ')
     "#<#{self.class.name}:#{object_id} #{props} #{vars}>"
   end
 

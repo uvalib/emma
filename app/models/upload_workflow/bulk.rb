@@ -229,7 +229,7 @@ module UploadWorkflow::Bulk::External
   def bulk_db_insert(records, **opt)
     succeeded, failed = bulk_db_operation(:insert_all, records, **opt)
     if succeeded.present?
-      ids_sids  = succeeded.map { |r| identifiers(r).presence || r }
+      ids_sids  = succeeded.map { identifiers(_1).presence || _1 }
       succeeded = collect_records(*ids_sids).first
     end
     if failed.present?
@@ -413,9 +413,9 @@ module UploadWorkflow::Bulk::External
       __debug_line(dbg) { 'QUALIFIED SUCCESS' }
       return records, []
     else
-      updated = result.to_a.flat_map { |hash| identifiers(hash) }.compact
+      updated = result.to_a.flat_map { identifiers(_1) }.compact
       __debug_line(dbg) { "UPDATED #{updated}" }
-      records.partition { |record| updated.include?(identifier(record)) }
+      records.partition { updated.include?(identifier(_1)) }
     end
   end
 

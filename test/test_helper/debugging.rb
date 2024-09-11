@@ -209,12 +209,12 @@ module TestHelper::Debugging
       prefix = "#{prefix} " if prefix && !prefix.end_with?(' ', "\t", "\n")
       finish = "\n\n"       if finish == "\n"
       lines.flatten!
-      lines.map! { |v| "#{prefix}#{v}" }  if prefix
-      lines.map! { |v| "#{v}#{suffix}" }  if suffix
+      lines.map! { "#{prefix}#{_1}" }     if prefix
+      lines.map! { "#{_1}#{suffix}" }     if suffix
       lines[0]  = "#{start}#{lines[0]}"   if start
       lines[-1] = "#{lines[-1]}#{finish}" if finish
     end
-    lines.each { |line| $stderr.puts line }
+    lines.each { $stderr.puts _1 }
     $stderr.flush
   end
 
@@ -292,7 +292,7 @@ module TestHelper::Debugging
     pairs  = block_given? && yield || {}
     width  = pairs.keys.map(&:to_s).sort_by(&:size).last&.size
     format = "*** %-#{width}s = %s"
-    show_item(**opt) { pairs.map { |k, v| sprintf(format, k, v) } }
+    show_item(**opt) { pairs.map { sprintf(format, _1, _2) } }
   end
 
   # Execute the provided block with tracing turned off to allow for executions
@@ -317,7 +317,7 @@ module TestHelper::Debugging
   public
 
   # Neutralize debugging methods when not debugging.
-  instance_methods(false).each { |m| neutralize(m) } unless DEBUG_TESTS
+  neutralize(*instance_methods(false)) unless DEBUG_TESTS
 
 end
 

@@ -186,7 +186,7 @@ class Ability
   # @return [Array<RoleCapability>]
   #
   def capabilities
-    @capabilities ||= CAPABILITIES[role.to_sym].map { |v| RoleCapability(v) }
+    @capabilities ||= CAPABILITIES[role.to_sym].map { RoleCapability(_1) }
   end
 
   alias :role_prototype    :role
@@ -675,7 +675,7 @@ class Ability
     return false if action.blank?
     action = action.to_sym
     if subject.is_a?(Array)
-      subject = subject.first unless subject.any? { |v| v.is_a?(Class) }
+      subject = subject.first unless subject.any? { _1.is_a?(Class) }
     end
     super
   end
@@ -692,7 +692,7 @@ class Ability
     return true if action.blank?
     action = action.to_sym
     if subject.is_a?(Array)
-      subject = subject.first unless subject.any? { |v| v.is_a?(Class) }
+      subject = subject.first unless subject.any? { _1.is_a?(Class) }
     end
     super
   end
@@ -771,8 +771,8 @@ class Ability
   def prep_conditions(action, subject, conditions)
     action = action.compact.map!(&:to_sym) if action.is_a?(Array)
     action = action.to_sym                 if action.is_a?(String)
-    conditions.map! { |arg| arg.except(:meth, :no_bulk) }.compact_blank!
-    conditions.map! { |arg| normalize_id_keys(arg, subject) }
+    conditions.map! { _1.except(:meth, :no_bulk) }.compact_blank!
+    conditions.map! { normalize_id_keys(_1, subject) }
     return action, subject, conditions
   end
 
@@ -787,7 +787,7 @@ class Ability
 
   def all_actions_inspect
     all_actions_sort.transform_values { |list|
-      list.map { |v| v.is_a?(Class) && v.try(:model_type) || v.inspect }.sort
+      list.map { _1.is_a?(Class) && _1.try(:model_type) || _1.inspect }.sort
     }.to_h.pretty_inspect
   end
 
@@ -852,7 +852,7 @@ class Ability
   # @return [Array<Class>]
   #
   def self.models
-    MODEL_NAMES.map { |model| to_class(model) }.compact
+    MODEL_NAMES.map { to_class(_1) }.compact
   end
 
   # ===========================================================================

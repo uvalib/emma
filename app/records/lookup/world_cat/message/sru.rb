@@ -82,7 +82,7 @@ class Lookup::WorldCat::Message::Sru < Lookup::WorldCat::Api::Message
   # @return [Array<Lookup::WorldCat::Record::OclcDcs>]
   #
   def api_records
-    Array.wrap(records).map { |rec| rec.recordData&.oclcdcs }.compact
+    Array.wrap(records).map { _1.recordData&.oclcdcs }.compact
   end
 
 end

@@ -453,13 +453,13 @@ module FileFormat
       config_section(:format, section).deep_dup.tap do |hash|
         %i[mimes exts].each do |key|
           hash[key] ||= []
-          hash[key].map! { |s| s.to_s.strip.downcase }.compact_blank!
+          hash[key].map! { _1.to_s.strip.downcase }.compact_blank!
         end
         %i[fields map].each do |key|
           hash[key] ||= {}
           hash[key].transform_values! { |value|
             array = value.is_a?(Array)
-            value = Array.wrap(value).map! { |s| s.to_s.strip.to_sym }
+            value = Array.wrap(value).map! { _1.to_s.strip.to_sym }
             array ? value.compact_blank!.presence : value.first
           }.compact!
         end

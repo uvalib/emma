@@ -53,7 +53,7 @@ module UploadConcern
   def current_get_params
     super do |prm|
       @db_id ||=
-        prm.values_at(:submission_id, :id).find { |v| digits_only?(v) }&.to_i
+        prm.values_at(:submission_id, :id).find { digits_only?(_1) }&.to_i
     end
   end
 
@@ -66,7 +66,7 @@ module UploadConcern
     super do |prm|
       prm[:base_url] = request.base_url
       @db_id ||=
-        prm.values_at(:submission_id, :id).find { |v| digits_only?(v) }&.to_i
+        prm.values_at(:submission_id, :id).find { digits_only?(_1) }&.to_i
     end
   end
 
@@ -591,14 +591,14 @@ module UploadConcern
     failures  = []
     bad       = []
     list      = Array.wrap(list)
-    sids      = list.map { |item| Upload.sid_value(item) }
+    sids      = list.map { Upload.sid_value(_1) }
 
     unless dryrun
       result = ingest_api.put_records(*list)
       errors = result.exec_report.error_table
       Log.debug { "#{meth}: put_records result: #{result.inspect}" }
       Log.info  { "#{meth}: result.errors: #{errors.inspect}" }
-      if (by_index = errors.select { |k| k.is_a?(Integer) }).present?
+      if (by_index = errors.select { _1.is_a?(Integer) }).present?
         by_index.transform_keys! { |idx| sids[idx-1] }
         failures.concat by_index.map { |sid, msg| FlashPart.new(sid, msg) }
         bad.concat      by_index.keys
@@ -618,7 +618,7 @@ module UploadConcern
       # === General failure -- nothing to retry
       successes = []
 
-    elsif (list = list.reject { |i| bad.include?(i.submission_id) }).present?
+    elsif (list = list.reject { bad.include?(_1.submission_id) }).present?
       # === Retry with the batch of non-failed items
       successes, new_failures = reindex_record(list, meth: meth)
       failures << new_failures

@@ -223,7 +223,7 @@ class SearchDecorator < BaseDecorator
       styles << :dev if search_debug?
       styles.remove(*ApiService::RESET_KEYS)
       styles.compact_blank!
-      styles.map! { |v| v.end_with?(suffix) ? v.to_s : "#{v}#{suffix}" }
+      styles.map! { _1.end_with?(suffix) ? _1.to_s : "#{_1}#{suffix}" }
     end
 
     # CSS classes for the current results mode.
@@ -238,7 +238,7 @@ class SearchDecorator < BaseDecorator
       results = [results_type]
       results.remove(*ApiService::RESET_KEYS)
       results.compact_blank!
-      results.map! { |v| v.end_with?(suffix) ? v.to_s : "#{v}#{suffix}" }
+      results.map! { _1.end_with?(suffix) ? _1.to_s : "#{_1}#{suffix}" }
     end
 
   end
@@ -734,7 +734,7 @@ class SearchDecorator
   def relevancy_scores
     scores = object.try(:get_scores).presence or return
     scores.compact!
-    types = scores.keys.map { |type| type.to_s.delete_suffix('_score') }
+    types = scores.keys.map { _1.to_s.delete_suffix('_score') }
     types = [types[...-1].join(', '), types[-1]].compact_blank!.join(' and ')
     tip   = +'This is a guess at the relevancy "score" for this item'
     tip  << " based on its #{types} metadata" if types.present?

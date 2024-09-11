@@ -184,7 +184,7 @@ module CachingMiddleware
       result = false
       if (url = request_url(env)).blank?
         log("NO URI for request #{env.inspect}")
-      elsif cacheable_paths&.none? { |path| url.include?(path) }
+      elsif cacheable_paths&.none? { url.include?(_1) }
         log("NON-CACHEABLE URI: #{url}")
       else
         result = true

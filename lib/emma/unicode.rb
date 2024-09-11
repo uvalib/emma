@@ -24,7 +24,7 @@ module Emma::Unicode
   SYMBOLS = %w[
     \u2000-\u{FFFF}
     \u{1F000}-\u{1FFFF}
-  ].join.then { |char_ranges| Regexp.new("[#{char_ranges}]+") }.freeze
+  ].join.then { Regexp.new("[#{_1}]+") }.freeze
 
   # Indicate whether the string contains only characters that fall outside the
   # normal text range.  Always `false` if *text* is not a string.
@@ -65,7 +65,7 @@ module Emma::Unicode
   def pad_char(v, pad: nil, left: nil, right: nil)
     left  ||= pad || THIN_SPACE
     right ||= pad || left
-    [left, v, right].map { |c| char(c) }.join
+    [left, v, right].map { char(_1) }.join
   end
 
   # ===========================================================================

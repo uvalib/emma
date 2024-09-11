@@ -22,8 +22,7 @@ module Emma::Log
     unknown: UNKNOWN,
   }.freeze
 
-  LEVEL_NAME =
-    LOG_LEVEL.invert.transform_values { |v| v.to_s.upcase }.freeze
+  LEVEL_NAME = LOG_LEVEL.invert.transform_values { _1.to_s.upcase }.freeze
 
   # ===========================================================================
   # :section: Module methods
@@ -284,7 +283,7 @@ module Emma::Log
     opt.reverse_merge!(progname: progname)
     loggers = (src.broadcasts if src.is_a?(ActiveSupport::BroadcastLogger))
 
-    if loggers&.any? { |log| log.progname == progname }
+    if loggers&.any? { _1.progname == progname }
       # The provided logger already broadcasts to `progname`, so update it.
       # This branch does not invoke `update.(src)` since the provided
       # BroadcastLogger is just updated in-place.
@@ -314,7 +313,7 @@ module Emma::Log
       warn { "#{self}.#{__method__}: unexpected src: #{src.inspect}" }
     end
   end
-    .tap { |meth| neutralize(meth) if LOG_SILENCER }
+    .tap { neutralize(_1) if LOG_SILENCER }
 
 end
 

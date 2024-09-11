@@ -169,7 +169,7 @@ class Model::AsyncCallback
     end
 
     def deserialize(hash)
-      fields = hash.map { |k, v| [k.to_sym, deserialize(v)] }.to_h
+      fields = hash.map { [_1.to_sym, deserialize(_2)] }.to_h
       klass.new(**fields)
     end
 

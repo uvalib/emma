@@ -17,7 +17,7 @@ __loading_begin(__FILE__)
 class RolePrototype < EnumType
 
   define_enumeration do
-    Ability::PROTOTYPE_CONFIG.transform_values { |entry| entry[:label] }
+    Ability::PROTOTYPE_CONFIG.transform_values { _1[:label] }
   end
 
 end

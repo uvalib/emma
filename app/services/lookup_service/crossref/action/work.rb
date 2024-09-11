@@ -166,10 +166,10 @@ module LookupService::Crossref::Action::Work
       req = (query || other) ? terms.dup : terms
     else
       req = LookupService::Request.new
-      Array.wrap(terms).each { |term| req.add_term(term, **OPT) }
+      Array.wrap(terms).each { req.add_term(_1, **OPT) }
     end
-    query&.each { |term| req.add_term(term, **OPT) }
-    other&.each { |prm, value| req.add_term(prm, value, **OPT) }
+    query&.each { req.add_term(_1, **OPT) }
+    other&.each { req.add_term(_1, _2, **OPT) }
     result = {}
     req.terms.each do |term|
       prefix, value = term.split(':', 2)

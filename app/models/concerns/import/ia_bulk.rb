@@ -290,7 +290,7 @@ module Import::IaBulk
       else
         Log.warn do
           path.select! { |_, v| v.nil? }
-          keys = [:download, *path.keys].map! { |key| "'#{key}'" }
+          keys = [:download, *path.keys].map! { "'#{_1}'" }
           last = keys.pop
           keys = keys.join(', ') << " and #{last}"
           "Import::IaBulk: missing #{keys}"
@@ -327,9 +327,9 @@ module Import::IaBulk
       fields[:dc_identifier] = ids
     else
       ids_old    = ids
-      isbns, ids = ids.partition { |id| id.start_with?('isbn:') }
-      issns, ids = ids.partition { |id| id.start_with?('issn:') }
-      dois,  ids = ids.partition { |id| id.start_with?('doi:')  }
+      isbns, ids = ids.partition { _1.start_with?('isbn:') }
+      issns, ids = ids.partition { _1.start_with?('issn:') }
+      dois,  ids = ids.partition { _1.start_with?('doi:')  }
 
       # Look for an ISBN that is paired with the lead ISBN.  (E.g. if the lead
       # ISBN was an ISBN-10, look for the ISBN-13 version of that number).
@@ -339,9 +339,9 @@ module Import::IaBulk
           lead_value = Isbn.remove_prefix(lead_isbn)
           alt_index =
             if Isbn.isbn13?(lead_value)
-              isbns.index { |id| lead_value == Isbn.to_isbn13(id, log: false) }
+              isbns.index { lead_value == Isbn.to_isbn13(_1, log: false) }
             else
-              isbns.index { |id| lead_value == Isbn.to_isbn10(id, log: false) }
+              isbns.index { lead_value == Isbn.to_isbn10(_1, log: false) }
             end
           isbns.delete_at(alt_index) if alt_index
         end

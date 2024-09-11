@@ -83,7 +83,7 @@ module Emma::Json
     # noinspection RubyMismatchedReturnType
     case res
       when Hash  then str ? res.deep_stringify_keys : res
-      when Array then res.map { |v| str && v.try(:deep_stringify_keys) || v }
+      when Array then res.map { str && _1.try(:deep_stringify_keys) || _1 }
       when log   then Log.info { "#{__method__}: non-JSON: #{arg.inspect}" }
     end
   rescue => error
@@ -170,7 +170,7 @@ module Emma::Json
     result = MultiJson.dump(source, pretty: true)
     if align_values || ruby_keys
       keys    = (result.split("\n") if align_values)
-      keys  &&= keys.map! { |v| v.sub!(/^\s*"(\w+)": .*$/, '\1')&.size || 0 }
+      keys  &&= keys.map! { _1.sub!(/^\s*"(\w+)": .*$/, '\1')&.size || 0 }
       key_max = keys&.max
       result.gsub!(/^(\s*)"([^"]+?)":\s*(.*)$/) do
         space = $1

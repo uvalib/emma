@@ -311,7 +311,7 @@ class AccountDecorator
     trace_attrs!(opt)
     fields = AccountConcern::PASSWORD_KEYS
     fields = fields.excluding(:current_password) if manager? || administrator?
-    fields = fields.map { |k| [k, nil] }.to_h
+    fields = fields.map { [_1, nil] }.to_h
     opt[:after] = opt[:after]&.merge(fields) || fields
     super
   end

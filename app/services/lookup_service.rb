@@ -201,7 +201,7 @@ class LookupService
       all_ids.map(&:to_s).group_by(&:itself).keep_if { |_,ids| ids.many? }.keys
     result =
       if matching.present?
-        entries.keep_if { |e| e&.dig(:dc_identifier)&.intersect?(matching) }
+        entries.keep_if { _1&.dig(:dc_identifier)&.intersect?(matching) }
         blend_data(*entries) if entries.present?
       end
     { blend: (result || {}) }
@@ -217,12 +217,12 @@ class LookupService
   #
   def self.blend_data(*entries)
     LookupService::Data::Item::FIELDS.map { |field|
-      next if (values = entries.flat_map { |e| e[field] }.compact).blank?
+      next if (values = entries.flat_map { _1[field] }.compact).blank?
       values = fix_names(values) if field == :dc_creator
       [field, eliminate_substrings(values)]
     }.compact.to_h.tap do |result|
       normalize_dates!(result)
-      result[:dc_subject]&.sort_by! { |v| [v, v.size] }
+      result[:dc_subject]&.sort_by! { [_1, _1.size] }
     end
   end
 
@@ -290,10 +290,10 @@ class LookupService
   #
   def self.normalize_dates!(result)
     pub_dates = Array.wrap(result[:emma_publicationDate])
-    pub_years, pub_days = pub_dates.partition { |d| d.end_with?('-01-01') }
+    pub_years, pub_days = pub_dates.partition { _1.end_with?('-01-01') }
     cpr_years = Array.wrap(result[:dcterms_dateCopyright])
-    cpr_years.concat pub_years.map { |d| d.first(4) }
-    cpr_years.remove pub_days.map  { |d| d.first(4) }
+    cpr_years.concat pub_years.map { _1.first(4) }
+    cpr_years.remove pub_days.map  { _1.first(4) }
     cpr_years.uniq!
     case cpr_years.size
       when 0 then result.delete(:dcterms_dateCopyright)

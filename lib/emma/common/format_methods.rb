@@ -80,7 +80,7 @@ module Emma::Common::FormatMethods
         .flat_map { |s|
           next if s.blank?
           s = s.upcase_first.gsub(/[A-Z]+[^A-Z]+/, '\0 ').rstrip
-          s.split(' ').map { |word| (word == 'Id') ? word.upcase : word }
+          s.split(' ').map { (_1 == 'Id') ? _1.upcase : _1 }
         }.compact.join(' ')
     result = inflection(result, count) if count
     result = non_breaking(result)      unless breakable
@@ -97,7 +97,7 @@ module Emma::Common::FormatMethods
   QUOTE_MARKS = %w[ ' " ].freeze
 
   # @type [Array<ActiveSupport::SafeBuffer>]
-  HTML_QUOTES = QUOTE_MARKS.map { |q| ERB::Util.h(q) }.deep_freeze
+  HTML_QUOTES = QUOTE_MARKS.map { ERB::Util.h(_1) }.deep_freeze
 
   # Add surrounding quotation marks to a term.
   #
@@ -140,7 +140,7 @@ module Emma::Common::FormatMethods
   def quote(term, quote: '"', separator: ', ')
     # noinspection RubyMismatchedReturnType
     if term.is_a?(Array)
-      terms = term.map { |t| quote(t, quote: quote, separator: separator) }
+      terms = term.map { quote(_1, quote: quote, separator: separator) }
       html  = terms.all?(&:html_safe?)
       html ? html_join(terms, separator) : terms.join(separator)
 
@@ -150,13 +150,13 @@ module Emma::Common::FormatMethods
     elsif term.html_safe?
       quote  = ERB::Util.h(quote)
       quotes = [*HTML_QUOTES, quote].uniq
-      quoted = quotes.any? { |q| term.start_with?(q) && term.end_with?(q) }
+      quoted = quotes.any? { term.start_with?(_1) && term.end_with?(_1) }
       quoted ? term : "#{quote}#{term}#{quote}".html_safe
 
     else
       term   = term.strip
       quotes = [*QUOTE_MARKS, quote].uniq
-      quoted = quotes.any? { |q| term.start_with?(q) && term.end_with?(q) }
+      quoted = quotes.any? { term.start_with?(_1) && term.end_with?(_1) }
       quoted ? term : "#{quote}#{term}#{quote}"
     end
   end
@@ -195,17 +195,17 @@ module Emma::Common::FormatMethods
   def strip_quotes(term, separator: ', ')
     # noinspection RubyMismatchedReturnType
     if term.is_a?(Array)
-      terms = term.map { |t| strip_quotes(t, separator: separator) }
+      terms = term.map { strip_quotes(_1, separator: separator) }
       html  = terms.all?(&:html_safe?)
       html ? html_join(terms, separator) : terms.join(separator)
     elsif !term.is_a?(String)
       term.to_s
     elsif term.html_safe?
-      quote = HTML_QUOTES.find { |q| term.start_with?(q) && term.end_with?(q) }
+      quote = HTML_QUOTES.find { term.start_with?(_1) && term.end_with?(_1) }
       quote ? term.delete_prefix(quote).delete_suffix(quote).html_safe : term
     else
       term  = term.to_s.strip
-      quote = QUOTE_MARKS.find { |q| term.start_with?(q) && term.end_with?(q) }
+      quote = QUOTE_MARKS.find { term.start_with?(_1) && term.end_with?(_1) }
       quote ? term.delete_prefix(quote).delete_suffix(quote) : term
     end
   end
@@ -248,7 +248,7 @@ module Emma::Common::FormatMethods
   def named_references(text, match: nil)
     return [] unless (text = text.to_s).match?(/%[{<]/)
     match  = match ? Array.wrap(match) : NAMED_REFERENCES
-    result = match.flat_map { |pat| text.scan(pat).map(&:shift) }
+    result = match.flat_map { text.scan(_1).map(&:shift) }
     result.compact_blank!.map!(&:to_sym).uniq
   end
 
@@ -399,8 +399,8 @@ module Emma::Common::FormatMethods
   #
   def deep_interpolate(item, **opt)
     case item
-      when Hash   then item.transform_values { |v| send(__method__, v, **opt) }
-      when Array  then item.map { |v| send(__method__, v, **opt) }
+      when Hash   then item.transform_values { deep_interpolate(_1, **opt) }
+      when Array  then item.map { deep_interpolate(_1, **opt) }
       when String then interpolate(item, **opt)
       else             item
     end
@@ -478,7 +478,7 @@ module Emma::Common::FormatMethods
 
     html ||= text.html_safe?
     text   = text.gsub(/(?<!%)(%[^{<])/,  '%\1')  # Preserve %s specifiers
-    text  %= html ? values.transform_values! { |v| ERB::Util.h(v) } : values
+    text  %= html ? values.transform_values! { ERB::Util.h(_1) } : values
     text   = text.gsub(/(?<!%)%(%[^{<])/, '\1')   # Restore %s specifiers
     html ? text.html_safe : text
   end

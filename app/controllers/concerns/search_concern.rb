@@ -162,7 +162,7 @@ module SearchConcern
         [k, v]
       }.to_h
     elsif value.is_a?(Array) && (value.size > 1)
-      value.map { |v| sanitize_keys(v) }
+      value.map { sanitize_keys(_1) }
     elsif value.is_a?(Array)
       sanitize_keys(value.first)
     elsif value.is_a?(String) && value.include?(FileFormat::FILE_FORMAT_SEP)
@@ -186,7 +186,7 @@ module SearchConcern
   #
   def valid_identifiers?(value)
     ids = PublicationIdentifier.objects(value)
-    ids.present? && ids.all? { |id| id&.valid? }
+    ids.present? && ids.all? { _1&.valid? }
   end
 
   # Indicate whether the argument contains only valid identifiers and provide

@@ -129,7 +129,7 @@ module Field::Property
     sub = prop.except(:cond).select { |_, v| v.is_a?(Hash) }
     set = (sub.present? ? %i[field] : [*SYNTHETIC_KEYS, :type]) - prop.keys
     set = set.excluding(:field) if field.blank?
-    set = set.map { |k| [k, true] }.to_h
+    set = set.map { [_1, true] }.to_h
     org = prop[:origin].to_s
     min = prop[:min].to_i
     max = prop[:max].to_i
@@ -156,7 +156,7 @@ module Field::Property
   def unused?(prop, action = nil)
     action   = action&.to_sym
     cond     = prop&.dig(:cond) || prop || {}
-    o, e     = cond.values_at(:only, :except).map { |v| Array.wrap(v) if v }
+    o, e     = cond.values_at(:only, :except).map { Array.wrap(_1) if _1 }
     unused   = (o == [])
     unused ||= o && (o.include?(:none) || (action && !o.include?(action)))
     unused ||= e && (e.include?(:all)  || (action &&  e.include?(action)))
@@ -189,10 +189,10 @@ module Field::Property
   def reorder(prop)
     src = prop.dup
     dst = {}
-    %i[field label type].each { |k| dst[k] = src.delete(k) if src.key?(k) }
-    src.keys.each    { |k| dst[k] = src.delete(k) unless src[k].is_a?(Hash) }
-    %i[actions].each { |k| dst[k] = src.delete(k) if src.key?(k) }
-    src.keys.each    { |k| dst[k] = reorder(src[k]) }
+    %i[field label type].each { dst[_1] = src.delete(_1) if src.key?(_1) }
+    src.keys.each    { dst[_1] = src.delete(_1) unless src[_1].is_a?(Hash) }
+    %i[actions].each { dst[_1] = src.delete(_1) if src.key?(_1) }
+    src.keys.each    { dst[_1] = reorder(src[_1]) }
     dst
   end
 
@@ -229,7 +229,7 @@ module Field::Property
   def value_class(value)
     return TrueFalse if value.to_s.strip.casecmp?('boolean')
     value = value.to_s.safe_constantize if value.is_a?(Symbol)
-    value if value.is_a?(Class) && [EnumType, Model].any? { |t| value < t }
+    value if value.is_a?(Class) && [EnumType, Model].any? { value < _1 }
   end
 
   # ===========================================================================

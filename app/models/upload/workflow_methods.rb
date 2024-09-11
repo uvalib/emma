@@ -77,7 +77,7 @@ module Upload::WorkflowMethods
   #
   REVERSE_WORKFLOW_GROUP =
     WORKFLOW_GROUP.flat_map { |group, states|
-      states.map { |state| [state, group] }
+      states.map { [_1, group] }
     }.sort.to_h.deep_freeze
 
   # Each workflow state should be associated with exactly one #WORKFLOW_GROUP
@@ -126,7 +126,7 @@ module Upload::WorkflowMethods
   #
   REVERSE_STATE_GROUP =
     STATE_GROUP.flat_map { |group, entry|
-      entry[:states].map { |state| [state,  group] }
+      entry[:states].map { [_1,  group] }
     }.sort.to_h.deep_freeze
 
   # Each workflow state should be associated with exactly one #STATE_GROUP
@@ -398,7 +398,7 @@ module Upload::WorkflowMethods
   #
   def set_fields_direct(values)
     if new_record?
-      values.each_pair { |column, value| self[column] = value }
+      values.each_pair { self[_1] = _2 }
     else
       update_columns(values)
     end

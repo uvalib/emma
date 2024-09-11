@@ -43,9 +43,7 @@ module AwsS3Service::Properties
       next if false?(property[:s3])
       key  = property[:symbol]
       name = key ? "#{key}-queue" : 'storage'
-      %i[production staging].map { |deployment|
-        [deployment, "emma-#{name}-#{deployment}"]
-      }.to_h
+      %i[production staging].map { [_1, "emma-#{name}-#{_1}"] }.to_h
     }.compact.deep_freeze
 
   # S3 options are kept in encrypted credentials but can be overridden by

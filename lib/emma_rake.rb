@@ -55,7 +55,7 @@ module EmmaRake
     hash =
       case args
         when Hash  then args
-        when Array then args.map { |a| a.split('=', 2) }.to_h.symbolize_keys
+        when Array then args.map { _1.split('=', 2) }.to_h.symbolize_keys
         else            args&.to_hash || {}
       end
     hash.transform_values!(&:to_s).compact_blank!
@@ -84,8 +84,8 @@ module EmmaRake
   # @return [Array<String,nil>]
   #
   def task_options(*flags)
-    flags, args = flags.partition { |f| f.is_a?(String) || f.is_a?(Symbol) }
-    flags.map { |flag| task_option(flag, args) }
+    flags, args = flags.partition { _1.is_a?(String) || _1.is_a?(Symbol) }
+    flags.map { task_option(_1, args) }
   end
 
   # Indicate whether the option flag was provided via task arguments or on the

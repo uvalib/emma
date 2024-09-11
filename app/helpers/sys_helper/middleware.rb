@@ -33,7 +33,7 @@ module SysHelper::Middleware
         id    = obj.object_id
         args  = obj.args&.inspect&.sub(/^\[(.*)\]$/, '\1')&.presence
         block = obj.block
-        entry = [id, args, block].map! { |v| v || EMPTY_VALUE }
+        entry = [id, args, block].map! { _1 || EMPTY_VALUE }
         [key, entry]
       end
     prepend_css!(opt, css)

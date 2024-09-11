@@ -830,7 +830,7 @@ class UploadController < ApplicationController
     prm  = current_params
     opt  = { repository: EmmaRepository.default, state: :completed }.merge(prm)
     log  = true?(opt.delete(:logging))
-    recs = ->(*) { Upload.get_relation(**opt).map { |rec| record_value(rec) } }
+    recs = ->(*) { Upload.get_relation(**opt).map { record_value(_1) } }
     @list = log ? recs.() : Log.silence(&recs)
     respond_to do |format|
       format.html { redirect_to prm.merge!(format: :json) }

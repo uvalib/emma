@@ -267,9 +267,9 @@ class SubmissionService < ApiService
     requests = request.requests
     # noinspection RubyMismatchedReturnType
     case
-      when opt[:no_job]   then requests.map { |r| process_all(r, **opt) }
-      when opt[:no_async] then requests.map { |r| schedule_sync(r, **opt) }
-      else                     requests.map { |r| schedule_async(r, **opt) }
+      when opt[:no_job]   then requests.map { process_all(_1, **opt) }
+      when opt[:no_async] then requests.map { schedule_sync(_1, **opt) }
+      else                     requests.map { schedule_async(_1, **opt) }
     end
   end
 

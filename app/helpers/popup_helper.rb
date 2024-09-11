@@ -180,7 +180,7 @@ module PopupHelper
       end
     end
     controls = [] unless controls.is_a?(Array)
-    if controls.none? { |ctl| ctl.include?(closer_css) }
+    if controls.none? { _1.include?(closer_css) }
       b_opt = prepend_css(close, closer_css, 'text')
       label = b_opt.delete(:label) || config_term(:popup, :close, :label)
       b_opt[:title]        ||= closer_opt[:title]

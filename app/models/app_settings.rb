@@ -357,7 +357,7 @@ class AppSettings < AppGlobal
       if keys.is_a?(Hash)
         super
       else
-        keys.each { |k| acquire_value(k) }
+        keys.each { acquire_value(_1) }
       end
     end
 
@@ -403,7 +403,7 @@ class AppSettings < AppGlobal
         WORLDCAT_REGISTRY_ID:         LookupService::WorldCat::Common,
         WORLDCAT_WSKEY:               LookupService::WorldCat::Common,
       }
-      [mods[k], Object].compact.find { |mod| mod.const_defined?(k) }
+      [mods[k], Object].compact.find { _1.const_defined?(k) }
     end
 
     protected
@@ -562,7 +562,7 @@ class AppSettings < AppGlobal
     #
     def prepare_all(values, **opt)
       return if values.blank?
-      values = values.transform_values { |v| prepare(v) }
+      values = values.transform_values { prepare(_1) }
       opt[:only] = FLAGS + VALUES if opt.slice(:only, :type).blank?
       # noinspection RubyMismatchedArgumentType
       filter_all(values, **opt)
@@ -576,16 +576,11 @@ class AppSettings < AppGlobal
     #
     def prepare(item)
       case item
-        when nil, :nil, :null
-          :null
-        when Hash
-          item.map { |k, v| [k.to_sym, prepare(v)] }.to_h.compact
-        when Array
-          item.map { |v| prepare(v) }.compact
-        when String
-          true?(item) || (false?(item) ? false : item)
-        else
-          item
+        when nil, :nil then :null
+        when Hash      then item.map { [_1.to_sym, prepare(_2)] }.to_h.compact
+        when Array     then item.map { prepare(_1) }.compact
+        when String    then true?(item) || (false?(item) ? false : item)
+        else                item
       end
     end
 
@@ -629,8 +624,8 @@ class AppSettings < AppGlobal
     def encode_symbols(item)
       # noinspection RubyMismatchedArgumentType
       case item
-        when Hash   then item.transform_values { |v| encode_symbols(v) }
-        when Array  then item.map { |v| encode_symbols(v) }
+        when Hash   then item.transform_values { encode_symbols(_1) }
+        when Array  then item.map { encode_symbols(_1) }
         when Symbol then encode_symbol(item)
         else             item
       end

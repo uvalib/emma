@@ -334,7 +334,7 @@ class User < ApplicationRecord
       begin
         test_names = %w[test\\_%@%]
         email_like = test_names.map { 'email LIKE ?' }.join(' OR ')
-        where(email_like, *test_names).map { |u| [u.email, u.role] }.to_h
+        where(email_like, *test_names).map { [_1.email, _1.role] }.to_h
       end
   end
 
@@ -364,7 +364,7 @@ class User < ApplicationRecord
         attr.delete(:email)
         attr.delete(:first_name) if user.first_name.present?
         attr.delete(:last_name)  if user.last_name.present?
-        user.update(attr) if attr.delete_if { |k, v| user[k] == v }.present?
+        user.update(attr) if attr.delete_if { user[_1] == _2 }.present?
       end
     end
   end

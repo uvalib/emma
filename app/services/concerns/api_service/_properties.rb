@@ -56,8 +56,7 @@ module ApiService::Properties
   # @type [Array<Symbol>]
   #
   HTTP_METHODS =
-    %w[GET PUT POST DELETE]
-      .map { |w| [w.to_sym, w.downcase.to_sym] }.flatten.deep_freeze
+    %i[GET PUT POST DELETE].map { [_1, _1.downcase] }.flatten.freeze
 
   # Engine key values which indicate that the engine should be returned to
   # normal.

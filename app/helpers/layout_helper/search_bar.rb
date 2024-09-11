@@ -139,9 +139,9 @@ module LayoutHelper::SearchBar
     # will be determined by the data supplied.
     values = values&.symbolize_keys || url_parameters
     values.except!(*Paginator::NON_SEARCH_KEYS)
-    values.transform_keys! { |k| prm_map[k] }
+    values.transform_keys! { prm_map[_1] }
     values.slice!(*fields)
-    values.transform_values! { |v| (v == SearchTerm::NULL_SEARCH) ? '' : v }
+    values.transform_values! { (_1 == SearchTerm::NULL_SEARCH) ? '' : _1 }
 
     # This is a major section of the page so it should be present in the
     # skip menu.
@@ -152,7 +152,7 @@ module LayoutHelper::SearchBar
 
     # Search input row elements.
     blank = fields - values.keys
-    rows  = values.merge!(blank.map { |field| [field, ''] }.to_h).to_a
+    rows  = values.merge!(blank.map { [_1, ''] }.to_h).to_a
     if maximum && (rows.size > maximum)
       rows = rows.take(maximum)
     elsif minimum

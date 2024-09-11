@@ -78,7 +78,7 @@ module LayoutHelper::PageClasses
   #
   def emit_page_classes
     items   = @page_classes&.flatten&.compact_blank!
-    items &&= items.map! { |c| c.to_s.gsub(/[^a-z_0-9-]/i, '_') }.uniq
+    items &&= items.map! { _1.to_s.gsub(/[^a-z_0-9-]/i, '_') }.uniq
     items ||= default_page_classes
     items.join(' ')
   end

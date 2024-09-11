@@ -49,11 +49,11 @@ module Lookup::WorldCat::Shared::IdentifierMethods
         (key = id&.type) ? result.merge!(key => [*result[key], id]) : result
       }.tap { |result|
         oclc = find_record_items(:oclcterms_recordIdentifier).compact_blank
-        ids  = oclc.presence&.map! { |id| Oclc.new(id) }
+        ids  = oclc.presence&.map! { Oclc.new(_1) }
         type = :oclc
         result.merge!(type => [*result[type], *ids]) if ids
       }.transform_values! { |ids|
-        ids.sort_by! { |id| -id.to_s.size }
+        ids.sort_by! { -_1.to_s.size }
       }
   end
 

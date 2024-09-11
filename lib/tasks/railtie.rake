@@ -39,9 +39,9 @@ EMMA_RAILTIE_RAKE ||= begin
 
     ERB_ASSETS = %w[javascripts/shared/assets.js.erb].freeze
 
-    desc ['Pre-process .js.erb files', *ERB_ASSETS.map { |f| "- #{f}" }]
+    desc ['Pre-process .js.erb files', *ERB_ASSETS.map { "- #{_1}" }]
     task erb: [:environment] do
-      ERB_ASSETS.each { |erb_file| preprocess_erb(erb_file) }
+      ERB_ASSETS.each { preprocess_erb(_1) }
     end
 
     # =========================================================================
@@ -74,7 +74,7 @@ EMMA_RAILTIE_RAKE ||= begin
       src   = "#{ASSETS_ROOT}/#{src}.erb"
 
       file  = File.read(src)
-      erb   = ERB.new(file, trim_mode: '<>').tap { |erb| erb.filename = src }
+      erb   = ERB.new(file, trim_mode: '<>').tap { _1.filename = src }
       data  = erb.result
       File.write(dst, data)
     end

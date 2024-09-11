@@ -37,7 +37,7 @@ class LookupService::Crossref < LookupService::RemoteService
   # The items are assumed to be in the proper form.
   #
   def fetch(req = self.request)
-    dois, other = req.values.partition { |id| id.is_a?(Doi) }
+    dois, other = req.values.partition { _1.is_a?(Doi) }
     # noinspection RubyMismatchedArgumentType
     if (dois.size == 1) && other.blank?
       get_work(dois.first)

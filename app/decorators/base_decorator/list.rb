@@ -238,8 +238,8 @@ module BaseDecorator::List
       array  = value.is_a?(Array)
       value  = value.split(/[,;|\t\n]/) if value.is_a?(String)
       value  = Array.wrap(value).compact_blank
-      value.map! { |v| type.cast(v, warn: false) || v } if enum
-      value.map! { |v| type.instance_for(v)      || v } if model
+      value.map! { type.cast(_1, warn: false) || _1 } if enum
+      value.map! { type.instance_for(_1)      || _1 } if model
       v_dv ||= value.join('|')
       value  = value.first unless array || value.many?
     end
@@ -249,7 +249,7 @@ module BaseDecorator::List
       value = render_format(field, value, code: !no_code) || value
       array = value.is_a?(Array)
       if enum || model
-        value = Array.wrap(value).map! { |v| v.try(:label) || v }
+        value = Array.wrap(value).map! { _1.try(:label) || _1 }
         value = value.first unless array
       elsif TEXTAREA_FIELDS.include?(field)
         prop = prop.merge(type: 'textarea') if array && value.many?
@@ -258,7 +258,7 @@ module BaseDecorator::List
 
     # Special for ManifestItem
     error   = opt.delete(:field_error)&.dig(field.to_s)&.presence
-    err_val = error&.keys&.then { |err| err.many? ? err : err.first }
+    err_val = error&.keys&.then { _1.many? ? _1 : _1.first }
 
     # Pre-process value(s), wrapping each array element in a `<div>`.
     if prop[:array] && !no_fmt
@@ -382,7 +382,7 @@ module BaseDecorator::List
       when :rem_comments             then :format_multiline
       when :rem_remediationComments  then :format_multiline
       when :s_accessibilitySummary   then :format_multiline
-    end.then { |meth| send(meth, value, **opt) if meth }
+    end.then { send(_1, value, **opt) if _1 }
   end
 
   # Generate a help icon relevant to *field*.
@@ -778,8 +778,8 @@ module BaseDecorator::List
     append_css!(row_opt, 'empty')            if blank?
 
     html_tag(tag, **row_opt) do
-      before &&= Array.wrap(before).compact_blank.map! { |v| ERB::Util.h(v) }
-      after  &&= Array.wrap(after).compact_blank.map!  { |v| ERB::Util.h(v) }
+      before &&= Array.wrap(before).compact_blank.map! { ERB::Util.h(_1) }
+      after  &&= Array.wrap(after).compact_blank.map!  { ERB::Util.h(_1) }
       render = :render_empty_value  if blank?
       render = :render_field_values if render.nil?
       pairs  = send(render, pairs: pairs, **opt, level: level&.next)
@@ -797,9 +797,7 @@ module BaseDecorator::List
     item = object          if item.nil?
     item = item.attributes if item.is_a?(Model)
     item = item.keys       if item.is_a?(Hash)
-    Array.wrap(item).reject { |v|
-      v.is_a?(FieldConfig) && v[:ignored]
-    }.size
+    Array.wrap(item).reject { _1.is_a?(FieldConfig) && _1[:ignored] }.size
   end
 
   # Thumbnail element for the given catalog title.

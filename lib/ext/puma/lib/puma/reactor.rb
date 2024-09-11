@@ -32,7 +32,7 @@ module Puma
 
       def add(client)
         super
-          .tap { |result| __ext_log(result) }
+          .tap { __ext_log(_1) }
       end
 
       def shutdown

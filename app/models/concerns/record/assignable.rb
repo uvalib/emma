@@ -96,8 +96,8 @@ module Record::Assignable
     opt.merge!(options: options) if options.present?
     attr.reverse_merge!(from)    if from.present?
 
-    attr.transform_keys! { |k| k.to_s.delete_suffix('[]').to_sym }
-    attr.transform_keys! { |k| normalize_key(k) } if true?(opt[:key_norm])
+    attr.transform_keys! { _1.to_s.delete_suffix('[]').to_sym }
+    attr.transform_keys! { normalize_key(_1) } if true?(opt[:key_norm])
 
     attr.merge!(user_id: user)   if (user &&= User.id_value(user))
     attr.slice!(*(only + force)) if only.present?
@@ -135,7 +135,7 @@ module Record::Assignable
   # which are being intentionally nullified are not removed.
   #
   def deleted_fields!(attr)
-    attr.transform_values! { |v| v unless v == DELETED_FIELD }
+    attr.transform_values! { _1 unless _1 == DELETED_FIELD }
   end
 
   # The fields that will be accepted by #normalize_attributes.
@@ -227,7 +227,7 @@ module Record::Assignable
           when String then v = v.strip.split(LINE_SPLIT)
           else             Log.warn "#{meth}: #{k}: type #{v.class} unexpected"
         end
-        v = Array.wrap(v).map! { |item| normalize_field(k, item, type, err) }
+        v = Array.wrap(v).map! { normalize_field(k, _1, type, err) }
         v.compact!
         v.uniq! if type.is_a?(Class)
         v = v.join(LINE_JOIN) unless array
@@ -326,7 +326,7 @@ module Record::Assignable
     errors.each_pair do |fld, err|
       case err
         when Hash  then err = err.stringify_keys
-        when Array then err = err.map { |k| [k.to_s, nil] }.to_h
+        when Array then err = err.map { [_1.to_s, nil] }.to_h
         else            err = { err.to_s => nil }
       end
       err.each_pair { |k, v| err[k] = INVALID_FIELD if v.nil? }
@@ -456,7 +456,7 @@ module Record::Assignable
   # @return [Array<Hash>, Hash, nil]
   #
   def normalize_json(v, **)
-    v.is_a?(Array) ? v.flat_map { |h| json_parse(h) }.compact : json_parse(v)
+    v.is_a?(Array) ? v.flat_map { json_parse(_1) }.compact : json_parse(v)
   end
 
   # normalize_text
@@ -467,7 +467,7 @@ module Record::Assignable
   #
   def normalize_text(v, **)
     case v
-      when Array  then v.compact.map! { |s| normalize_text(s) }.join(LINE_JOIN)
+      when Array  then v.compact.map! { normalize_text(_1) }.join(LINE_JOIN)
       when String then v.strip
       when Symbol then v.to_s
       else Log.warn { "#{__method__}: type #{v.class} unexpected" } or v

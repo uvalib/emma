@@ -72,7 +72,7 @@ class ISO_639
     jargon
     language
     pidgin
-  ].map { |term| Regexp.new(term) }.deep_freeze
+  ].map { Regexp.new(_1) }.deep_freeze
 =end
 
 end

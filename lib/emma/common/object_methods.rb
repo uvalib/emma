@@ -28,7 +28,7 @@ module Emma::Common::ObjectMethods
     values = hash.values_at(*keys)
     values.map! do |v|
       case v
-        when Array then arrays ? v.map { |elem| struct(elem, arrays) } : v
+        when Array then arrays ? v.map { struct(_1, arrays) } : v
         when Hash  then struct(v, arrays)
         else            v
       end
@@ -51,7 +51,7 @@ module Emma::Common::ObjectMethods
   def to_class(item)
     return if item.blank?
     name = item
-    name = name.class unless [Symbol, String, Class].any? { |t| name.is_a?(t) }
+    name = name.class unless [Symbol, String, Class].any? { name.is_a?(_1) }
     name = name.to_s.underscore.delete_suffix('_controller').classify
     name.safe_constantize or
       Log.warn { "#{__method__}: invalid: #{item.inspect}" }

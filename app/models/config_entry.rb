@@ -27,7 +27,7 @@ class ConfigEntry < Hash
     if src.is_a?(self.class)
       update(src.deep_dup)
     elsif src.is_a?(Hash) && !src.is_a?(ConfigEntry)
-      src.each_pair { |k, v| self[k.to_sym] = config_value(v) }
+      src.each_pair { self[_1.to_sym] = config_value(_2) }
     elsif !src.nil?
       raise "Not a Hash or subclass of #{self.class}: #{src.inspect}"
     end
@@ -198,7 +198,7 @@ class ModelConfig < ConfigEntry
 
     # Entries for the third and subsequent action-specific field configurations
     if opt.present?
-      update(opt.symbolize_keys!.transform_values! { |v| config_value(v) })
+      update(opt.symbolize_keys!.transform_values! { config_value(_1) })
     end
   end
 

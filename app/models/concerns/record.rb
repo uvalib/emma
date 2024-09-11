@@ -60,7 +60,7 @@ module Record
     tag &&= "[#{tag}]"
     super
   end
-    .tap { |meth| neutralize(meth) unless TRACE_CONCERNS }
+    .tap { neutralize(_1) unless TRACE_CONCERNS }
 
   # Ensure that *mod* is only included in a record class.
   #
@@ -78,7 +78,7 @@ module Record
     return true if base.ancestors.include?(mod) || record_class?(base)
     raise "#{mod}: should not be included by #{base}"
   end
-    .tap { |meth| neutralize(meth) if application_deployed? }
+    .tap { neutralize(_1) if application_deployed? }
 
   # ===========================================================================
   # :section:
@@ -95,7 +95,7 @@ module Record
   #
   def added_modules(context, original)
     current = context.constants(false)
-    (current - original).map { |name| context.safe_const_get(name) }.compact
+    (current - original).map { context.safe_const_get(_1) }.compact
   end
 
   # ===========================================================================
@@ -145,7 +145,7 @@ module Record
       # * The second is only seen from the desktop via "rails runner" for a
       #   single file.
       #
-      return true if rake_task? && $*.any? { |arg| arg.include?('assets:') }
+      return true if rake_task? && $*.any? { _1.include?('assets:') }
       return true if $*.include?('runner')
       raise error
     end

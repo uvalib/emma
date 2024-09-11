@@ -81,7 +81,7 @@ module Emma::Common::HashMethods
     # noinspection RubyMismatchedReturnType
     if item.class != ::Hash
       normalize_hash(item, debug: DEBUG_HASH)
-    elsif !item.keys.all? { |k| k.is_a?(Symbol) }
+    elsif !item.keys.all? { _1.is_a?(Symbol) }
       item.replace(item.symbolize_keys)
     else
       item
@@ -205,10 +205,10 @@ module Emma::Common::HashMethods
         item
       when Hash
         opt = { squeeze: squeeze, dup: dup }
-        item.transform_values { |v| _remove_blanks(v, **opt) }.compact.presence
+        item.transform_values { _remove_blanks(_1, **opt) }.compact.presence
       when Array
         opt  = { squeeze: squeeze, dup: dup }
-        item = item.map { |v| _remove_blanks(v, **opt) }.compact
+        item = item.map { _remove_blanks(_1, **opt) }.compact
         (squeeze && (item.size == 1)) ? item.first.presence : item.presence
       else
         item = item.presence
@@ -237,11 +237,11 @@ module Emma::Common::HashMethods
         item
       when Hash
         opt = { squeeze: squeeze, nil_hash: true }
-        item.transform_values! { |v| _remove_blanks!(v, **opt) }.compact!
+        item.transform_values! { _remove_blanks!(_1, **opt) }.compact!
         nil_hash ? item.presence : item
       when Array
         opt = { squeeze: squeeze, nil_hash: true }
-        item.map! { |v| _remove_blanks!(v, **opt) }.compact!
+        item.map! { _remove_blanks!(_1, **opt) }.compact!
         (squeeze && (item.size == 1)) ? item.first.presence : item.presence
       else
         item.presence

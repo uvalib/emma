@@ -33,7 +33,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     __debug_request
     super
   end
-    .tap { |meth| disallow(meth) if AUTH_PROVIDERS.blank? }
+    .tap { disallow(_1) if AUTH_PROVIDERS.blank? }
 
   # === GET  /users/auth/shibboleth/callback
   # === POST /users/auth/shibboleth/callback
@@ -55,7 +55,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   rescue => error
     auth_failure_redirect(message: error)
   end
-    .tap { |meth| disallow(meth) unless SHIBBOLETH }
+    .tap { disallow(_1) unless SHIBBOLETH }
 
   # === GET /users/auth/PROVIDER/failure
   #
@@ -80,7 +80,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     end
 
   end
-    .tap { |meth| disallow(meth) if AUTH_PROVIDERS.blank? }
+    .tap { disallow(_1) if AUTH_PROVIDERS.blank? }
 
 end
 

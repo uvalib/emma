@@ -14,7 +14,7 @@ __loading_begin(__FILE__)
 class AuthProvider < EnumType
 
   define_enumeration do
-    AUTH_PROVIDERS.map { |auth| [auth, auth.to_s.titleize] }.to_h
+    AUTH_PROVIDERS.map { [_1, _1.to_s.titleize] }.to_h
   end
 
 end

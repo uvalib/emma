@@ -63,7 +63,7 @@ class LookupChannel::StatusResponse < LookupChannel::Response
   def payload_normalize(value, except: nil)
     super.tap do |result|
       if (service = result.delete(:services) || result[:service])
-        result[:service] = Array.wrap(service).map { |v| v.to_s.demodulize }
+        result[:service] = Array.wrap(service).map { _1.to_s.demodulize }
       end
     end
   end

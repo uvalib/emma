@@ -106,7 +106,7 @@ module EmmaHelper
   def emma_partners(type: :all, active: true, **)
     cfg = active ? EMMA_PARTNER : EMMA_PARTNER_ENTRY
     if cfg.is_a?(FalseClass)
-      cfg = cfg.transform_values { |s| s.reject { |_, e| e[:active] } }
+      cfg = cfg.transform_values { _1.reject { |_, e| e[:active] } }
     end
     case type
       when :all      then {}.merge!(*cfg.values)

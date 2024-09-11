@@ -36,10 +36,10 @@ module TestHelper::CommandLine
   # @return [Array<Symbol>, nil]
   #
   def cli_env_value(value = nil, var:, default:)
-    val = value || $*.find { |arg| arg.dup.sub!(/#{var}=/i, '') } || ENV[var]
+    val = value || $*.find { _1.dup.sub!(/#{var}=/i, '') } || ENV[var]
     return default unless val
     val = val.to_s.gsub(/\W/, ' ').squish.split(' ') unless val.is_a?(Array)
-    val.compact_blank.map! { |v| v.to_s.downcase.to_sym }
+    val.compact_blank.map! { _1.to_s.downcase.to_sym }
   end
 
   # ===========================================================================

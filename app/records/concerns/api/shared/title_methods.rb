@@ -203,8 +203,8 @@ module Api::Shared::TitleMethods
   # @return [String, nil]
   #
   def series_position
-    volume = series_volume&.then { |v| "vol. #{v}" }
-    issue  = series_issue&.then  { |n| "no. #{n}"  }
+    volume = series_volume&.then { "vol. #{_1}" }
+    issue  = series_issue&.then  { "no. #{_1}"  }
     [volume, issue].compact.join(', ') if volume || issue
   end
 

@@ -75,7 +75,7 @@ module BaseDecorator::Menu
     sort  = { sort => :asc } unless sort.is_a?(Hash)
     sort.merge!(created_at: :desc)
     cons  = constraints || {}
-    pairs = model.pairs(sort: sort, **cons) { |r| [items_menu_label(r), r.id] }
+    pairs = model.pairs(sort: sort, **cons) { [items_menu_label(_1), _1.id] }
     pairs = h.options_for_select(pairs)
 
     ujs   = { onchange: ujs } unless ujs.is_a?(Hash)

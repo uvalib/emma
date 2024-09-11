@@ -89,15 +89,13 @@ module SysHelper::Settings
   # @param [Hash]   opt               To #form_tag
   #
   def app_engines(css: '.field-container.list', **opt)
-    services = ApiService.services.map { |s| [s.service_name, s.engines] }
-    services = services.sort_by { |name, _| name }.to_h
+    services = ApiService.services.map { [_1.service_name, _1.engines] }
+    services = services.sort_by { _1 }.to_h
     engines  = services.extract!('search', 'ingest').merge(services)
     prepend_css!(opt, css)
     html_div(**opt) do
       html_div(class: 'fields') do
-        engines.map do |service, urls|
-          app_entry_display(service, urls)
-        end
+        engines.map { app_entry_display(_1, _2) }
       end
     end
   end

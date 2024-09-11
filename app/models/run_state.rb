@@ -174,8 +174,8 @@ class RunState < Hash
   #
   def merge!(*others)
     super.tap do
-      if (rs = others.reverse.find { |other| other.is_a?(RunState) })
-        attr_values = ATTR_METHODS.map { |attr| [attr, rs.send(attr)] }.to_h
+      if (rs = others.reverse.find { _1.is_a?(RunState) })
+        attr_values = ATTR_METHODS.map { [_1, rs.send(_1)] }.to_h
       else
         others.map! { |other|
           v = {}
@@ -278,13 +278,13 @@ class RunState < Hash
   #
   # @type [String]
   #
-  UNITS = ABBREV_UNIT.values.map { |u| "#{u}s?" }.join('|').freeze
+  UNITS = ABBREV_UNIT.values.map { "#{_1}s?" }.join('|').freeze
 
   # A regular expression pattern fragment for time unit abbreviations.
   #
   # @type [String]
   #
-  ABBREVS = ABBREV_UNIT.keys.map { |u| "#{u}s?" }.join('|').freeze
+  ABBREVS = ABBREV_UNIT.keys.map { "#{_1}s?" }.join('|').freeze
 
   # Transform a value into either a duration (as an integral number of seconds)
   # or a fixed timestamp.

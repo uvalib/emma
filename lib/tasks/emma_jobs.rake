@@ -69,7 +69,7 @@ namespace 'emma:jobs' do
 
     desc 'List counts of records unchanged since the last reboot'
     task counts: :prerequisites do
-      WARNING.each { |line| $stderr.puts line }
+      WARNING.each { $stderr.puts _1 }
       record_classes.each do |table|
         list_count(table, table.outdated_count)
       end
@@ -77,7 +77,7 @@ namespace 'emma:jobs' do
 
     desc 'List tables unchanged since the last reboot'
     task tables: :prerequisites do
-      WARNING.each { |line| $stderr.puts line }
+      WARNING.each { $stderr.puts _1 }
       record_classes.each do |table|
         (count = positive(table.outdated_count)) and list_count(table, count)
       end
@@ -85,7 +85,7 @@ namespace 'emma:jobs' do
 
     desc 'List records unchanged since the last reboot'
     task records: :prerequisites do
-      WARNING.each { |line| $stderr.puts line }
+      WARNING.each { $stderr.puts _1 }
       record_classes.each do |table|
         list_records(table, table.outdated_list)
       end
@@ -93,7 +93,7 @@ namespace 'emma:jobs' do
 
     desc 'Remove records from select databases unchanged since the last reboot'
     task clean: :prerequisites do
-      WARNING.each { |line| $stderr.puts line }
+      WARNING.each { $stderr.puts _1 }
       record_classes.each do |table|
         delete_records(table, table.outdated_count, :outdated_delete)
       end
@@ -120,7 +120,7 @@ namespace 'emma:jobs' do
     # noinspection SpellCheckingInspection
     return []  if c.name.nil? || c.name.start_with?('HABTM_')
     return [c] if c.ancestors.include?(JobMethods)
-    c.subclasses.flat_map { |sc| record_classes(sc) }.compact
+    c.subclasses.flat_map { record_classes(_1) }.compact
   end
 
   # list_count
@@ -140,9 +140,9 @@ namespace 'emma:jobs' do
   #
   def list_records(table, list, &blk)
     list   = (blk ? list&.map(&blk) : list&.dup).presence
-    list &&= list.map! { |rec| Array.wrap(rec.try(:fields) || rec).join("\t") }
+    list &&= list.map! { Array.wrap(_1.try(:fields) || _1).join("\t") }
     list ||= %w[NONE]
-    $stdout.puts list.map! { |item| "#{table.name} - #{item}" }
+    $stdout.puts list.map! { "#{table.name} - #{_1}" }
   end
 
   # delete_records

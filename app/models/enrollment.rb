@@ -109,8 +109,8 @@ class Enrollment < ApplicationRecord
   #
   def prepare_user_list(users)
     users = Array.wrap(users).compact_blank.presence or return [{}]
-    users.map! { |u| json_parse(u, log: false).reverse_merge!(role: 'member') }
-    users.first[:role] = 'manager' if users.none? { |u| u[:role] == 'manager' }
+    users.map! { json_parse(_1, log: false).reverse_merge!(role: 'member') }
+    users.first[:role] = 'manager' if users.none? { _1[:role] == 'manager' }
     # noinspection RubyMismatchedReturnType
     users
   end
@@ -149,8 +149,8 @@ class Enrollment < ApplicationRecord
 
     Org.transaction do
       org = Org.create(org_attr)
-      usr = user_list.map { |u| u.merge(usr_attr, org_id: org.id) }
-      User.transaction(requires_new: true) { usr.map! { |u| User.create(u) } }
+      usr = user_list.map { _1.merge(usr_attr, org_id: org.id) }
+      User.transaction(requires_new: true) { usr.map! { User.create(_1) } }
       org.update_columns(contact: usr.select(&:manager?).map(&:id))
     end
     return org, usr
@@ -165,7 +165,7 @@ class Enrollment < ApplicationRecord
     conn = ActiveRecord::Base.connection
     conn.reset_pk_sequence!(Org.table_name)
     conn.reset_pk_sequence!(User.table_name)
-    send(__method__, **opt, retry_opt => true)
+    complete_enrollment(**opt, retry_opt => true)
   end
 
 end

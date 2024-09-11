@@ -58,12 +58,13 @@ module BaseDecorator::Hierarchy
 
     # Create a decorator for each file-level record.
     records = object.records
-    opt[:record_map] = records.map { |r| [r.emma_recordId, decorate(r)] }.to_h
+    opt[:record_map] = records.map { [_1.emma_recordId, decorate(_1)] }.to_h
 
     # Get a line for each metadata field/pair and plus interstitial content.
     lines = item_lines(hierarchy, opt)
     trace_attrs!(opt)
-    lines.map! { |v| v.is_a?(Hash) ? render_field(v, opt) : ERB::Util.h(v) }
+    # noinspection RubyMismatchedArgumentType
+    lines.map! { _1.is_a?(Hash) ? render_field(_1, opt) : ERB::Util.h(_1) }
     lines.unshift(nil).join(separator).html_safe
   end
 
@@ -459,8 +460,8 @@ module BaseDecorator::Hierarchy
     elsif except
       ok.transform_values! { except }
     end
-    ok.transform_values! { |v| Array.wrap(v).compact }
-    ok.transform_values! { |v| v.include?('*') ? [key] : v.map!(&:to_sym) }
+    ok.transform_values! { Array.wrap(_1).compact }
+    ok.transform_values! { _1.include?('*') ? [key] : _1.map!(&:to_sym) }
     if value.is_a?(Hash)
       return false if ok[:hash].include?(key)
     elsif value.is_a?(Array)
@@ -495,8 +496,8 @@ module BaseDecorator::Hierarchy
   # @return [String]
   #
   def count_unique(lines, type, term: nil)
-    lines = lines.select { |line| line.is_a?(Hash) }
-    count = lines.map { |line| line[:"data-#{type}"] }.compact.uniq.size
+    lines = lines.select { _1.is_a?(Hash) }
+    count = lines.map { _1[:"data-#{type}"] }.compact.uniq.size
     "(#{count} %s)" % (term || type).to_s.downcase.pluralize(count)
   end
 

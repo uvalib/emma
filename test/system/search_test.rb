@@ -85,7 +85,7 @@ class SearchTest < ApplicationSystemTestCase
     while links.compact.blank? && (max -= 1).positive?
       next unless wait_for_page(expected_url, fatal: false)
       links = { PREV: PREV_LABEL, NEXT: NEXT_LABEL }
-      links.transform_values! { |label| first(:link, label, minimum: 0) }
+      links.transform_values! { first(:link, _1, minimum: 0) }
     end
 
     current = url_without_port(current_url)

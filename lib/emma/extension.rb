@@ -84,7 +84,7 @@ module Emma::Extension
         part << meth
         args.each do |a|
           case a
-            when Hash      then part += a.map { |k, v| "#{k} = #{v.inspect}" }
+            when Hash      then part += a.map { "#{_1} = #{_2.inspect}" }
             when Exception then part << "#{a.class} - #{a.message.inspect}"
             when Float     then part << time_span(a)
             else                part << a

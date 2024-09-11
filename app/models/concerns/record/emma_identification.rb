@@ -32,7 +32,7 @@ module Record::EmmaIdentification
 
   # @type [Integer]
   # noinspection RubyMismatchedArgumentType
-  SID_LETTER_SPAN = SID_LETTERS.then { |pr| pr.last - pr.first + 1 }
+  SID_LETTER_SPAN = SID_LETTERS.then { _1.last - _1.first + 1 }
 
   # @type [String]
   SID_LETTER_MATCH = ('[%c-%c]' % SID_LETTERS).freeze

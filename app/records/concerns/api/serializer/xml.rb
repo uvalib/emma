@@ -93,7 +93,7 @@ class Api::Serializer::Xml < Api::Serializer
   #
   def add_xml_namespaces(xml, additional: nil)
     pairs = xml_namespaces.merge(additional || {})
-    attrs = pairs.map { |ns, path| %Q(#{ns}="#{path}") }
+    attrs = pairs.map {  %Q(#{_1}="#{_2}") }
     xml.sub(/^<([^?>\n][^>\n]*)>/) { '<%s>' % [$1, *attrs].join(' ').squish }
   end
 

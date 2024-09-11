@@ -91,7 +91,7 @@ module ParamsConcern
     cid = current_id.presence
     ids = params.values_at(*id_param_keys) if ids.blank?
     super.tap do |result|
-      result.map! { |v| CURRENT_ID.casecmp?(v) ? cid : v } if cid
+      result.map! { CURRENT_ID.casecmp?(_1) ? cid : _1 } if cid
     end
   end
 
@@ -293,7 +293,7 @@ module ParamsConcern
   def set_dev_controls
     session_key = 'app.dev_controls'
     url_keys    = %i[dev_controls app.dev_controls]
-    parameters  = url_keys.map { |k| [k, params.delete(k)] }.to_h.compact
+    parameters  = url_keys.map { [_1, params.delete(_1)] }.to_h.compact
     value       = parameters.values.first
     if true?(value)
       session.delete(session_key)
@@ -361,8 +361,8 @@ module ParamsConcern
     original_count = params.keys.size
 
     # Eliminate "noise" parameters.
-    params.delete_if { |k, v| k.blank? || v.blank? }
-    %w[utf8 commit].each { |k| params.delete(k) }
+    params.delete_if { _1.blank? || _2.blank? }
+    %w[utf8 commit].each { params.delete(_1) }
 
     # If parameters were removed, redirect to the corrected URL.
     will_redirect unless params.keys.size == original_count

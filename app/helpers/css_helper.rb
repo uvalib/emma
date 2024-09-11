@@ -225,8 +225,8 @@ module CssHelper
     case item
       when *NO_DUP then item
       when String  then item.dup
-      when Array   then item.map { |v| deep_dup_options(v) }
-      when Hash    then item.transform_values { |v| deep_dup_options(v) }
+      when Array   then item.map { deep_dup_options(_1) }
+      when Hash    then item.transform_values { deep_dup_options(_1) }
       else              duplicable_option?(item) ? item.dup : item
     end
   end

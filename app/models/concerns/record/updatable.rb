@@ -197,14 +197,11 @@ module Record::Updatable
     #
     def set_fields_direct(pairs)
       # noinspection RailsParamDefResolve
-      if readonly?
-        send(:_raise_readonly_record_error)
-      elsif destroyed?
-        nil
-      elsif new_record?
-        pairs.each_pair { |column, value| self[column] = value }.present?
-      else
-        update_columns(pairs)
+      case
+        when readonly?   then send(:_raise_readonly_record_error)
+        when destroyed?  then nil
+        when new_record? then pairs.each_pair { self[_1] = _2 }.present?
+        else                  update_columns(pairs)
       end
     end
 

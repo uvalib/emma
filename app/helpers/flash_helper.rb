@@ -512,8 +512,8 @@ module FlashHelper
     meth = args.first.is_a?(Symbol) && args.shift || prop[:meth] || __method__
     item = args.shift
     rpt  = ExecReport[item]
-    args = args.flat_map { |arg| arg.is_a?(ExecReport) ? arg.parts : arg }
-    args.map! { |arg| ExecReport::Part[arg] }
+    args = args.flat_map { _1.is_a?(ExecReport) ? _1.parts : _1 }
+    args.map! { ExecReport::Part[_1] }
 
     if (xhr = opt[:xhr])
       opt[:html] = false
@@ -580,7 +580,7 @@ module FlashHelper
       if args.present?
         max -= msg.sum(&:bytesize)
         max -= (args.size + 1) * flash_item_size(arg_sep, **fi_opt)
-        args.each { |arg| arg.render_html = true } if html
+        args.each { _1.render_html = true } if html
         args = flash_item(args, max: max, inspect: inspect, **fi_opt)
         msg << nil if (xhr || html) && msg.present?
         msg << (html ? html_join(args, arg_sep) : args.join(arg_sep))
@@ -671,7 +671,7 @@ module FlashHelper
   def flash_item_size(item, html: false, **)
     items   = Array.wrap(item)
     result  = items.sum(&:bytesize)
-    result += items.sum { |v| v.count("\n") + v.count('"') } if html
+    result += items.sum { _1.count("\n") + _1.count('"') } if html
     result
   end
 

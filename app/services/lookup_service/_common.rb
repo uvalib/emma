@@ -49,7 +49,7 @@ module LookupService::Common
   # @return [Array<PublicationIdentifier>]
   #
   def id_list(item, **opt)
-    id_split(item).map! { |v| id_obj(v, **opt) }.compact
+    id_split(item).map! { id_obj(_1, **opt) }.compact
   end
 
   # Analyze a string into individual items.
@@ -60,7 +60,7 @@ module LookupService::Common
   #
   def id_split(item)
     case item
-      when Array                 then item = item.flat_map { |v| id_split(v) }
+      when Array                 then item = item.flat_map { id_split(_1) }
       when String                then item = item.split(/[ \t]*[,;\n]+[ \t]*/)
       when PublicationIdentifier then item = item.presence
       else                            item = item&.to_s

@@ -97,9 +97,7 @@ module FileNaming
           mime_types.each_pair do |type, mimes|
             mimes.each { |mime| (hash[mime] ||= []) << type }
           end
-        }.transform_values! { |types|
-          Array.wrap(types).compact.sort.uniq
-        }
+        }.transform_values! { Array.wrap(_1).compact.sort.uniq }
     end
 
     # ext_to_fmt
@@ -112,9 +110,7 @@ module FileNaming
           file_extensions.each_pair do |type, exts|
             exts.each { |ext| (hash[ext] ||= []) << type }
           end
-        }.transform_values! { |types|
-          Array.wrap(types).compact.sort.uniq
-        }
+        }.transform_values! { Array.wrap(_1).compact.sort.uniq }
     end
 
   end

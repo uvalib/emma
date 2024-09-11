@@ -115,8 +115,8 @@ module Emma::Config
   #
   def config_key(*path)
     key = path.compact.map!(&:to_s)
-    key.map! { |k| k.split('.') }.flatten! if key.join.include?('.')
-    key.map! { |k| config_key_fix(k) }
+    key.map! { _1.split('.') }.flatten! if key.join.include?('.')
+    key.map! { config_key_fix(_1) }
     key.join('.').to_sym
   end
 
@@ -258,7 +258,7 @@ module Emma::Config
     c_opt = opt.extract!(*CONFIG_ITEM_OPT)
     i_opt = opt.extract!(*I18N_OPT)
     if key.is_a?(Array)
-      key = key.map { |k| config_path_fix(k.to_sym, **c_opt) }
+      key = key.map { config_path_fix(_1.to_sym, **c_opt) }
       key, default = key.first, [*key[1..-1], *default].compact.presence
     else
       key = config_path_fix(key, **c_opt)
@@ -440,8 +440,8 @@ module Emma::Config
   def config_term_section(*base, item, **opt)
     base, item = [[item], nil] if base.empty?
     keys = config_term_keys(*base, item).reverse
-    vals = keys.map { |k| config_section(k, **opt) }.compact_blank!
-    vals.select { |v| v.is_a?(Hash) }.prepend({}).reduce(&:rmerge!)
+    vals = keys.map { config_section(_1, **opt) }.compact_blank!
+    vals.select { _1.is_a?(Hash) }.prepend({}).reduce(&:rmerge!)
   end
 
   # ===========================================================================
@@ -478,8 +478,8 @@ module Emma::Config
   #
   def config_page_section(*base, item, **opt)
     keys = config_page_keys(*base, item).reverse
-    vals = keys.map { |k| config_section(k, **opt) }.compact_blank!
-    vals.select { |v| v.is_a?(Hash) }.prepend({}).reduce(&:rmerge!)
+    vals = keys.map { config_section(_1, **opt) }.compact_blank!
+    vals.select { _1.is_a?(Hash) }.prepend({}).reduce(&:rmerge!)
   end
 
   # ===========================================================================
@@ -535,7 +535,7 @@ module Emma::Config
         nil # Only differ by white space.
 
       elsif !v1.respond_to?(:each)
-        v1, v2 = [v1, v2].map { |v| cfg_inspect(v) }
+        v1, v2 = [v1, v2].map { cfg_inspect(_1) }
         ["#{n1} == #{v1}   ....but....   #{n2} == #{v2}"]
 
       elsif (s1, s2 = v1.size, v2.size) && s1.zero? && s2.zero?
@@ -589,10 +589,10 @@ module Emma::Config
   def cfg_inspect(value, limit: 64_000) # TODO: was 64
     case value
       when Hash
-        value = value.map { |k, v| "#{k}: #{cfg_inspect(v, limit: limit)}" }
+        value = value.map { "#{_1}: #{cfg_inspect(_2, limit: limit)}" }
         '{ %s }' % value.join(', ').truncate(limit * 2)
       when Array
-        value = value.map { |v| cfg_inspect(v, limit: limit) }
+        value = value.map { cfg_inspect(_1, limit: limit) }
         '[%s]' % value.join(', ').truncate(limit * 2)
       when String
         value = value.inspect
@@ -637,7 +637,7 @@ module Emma::Config
 
     def message
       other = options[:default]
-      keys  = [key, *other].map! { |k| normalized_option(k).to_sym.inspect }
+      keys  = [key, *other].map! { normalized_option(_1).to_sym.inspect }
       msg   = 'missing key'.pluralize(keys.size)
       keys  = keys.many? ? ('[%s]' % keys.join(', ')) : keys.first
       "Translation missing: #{msg} #{keys}"

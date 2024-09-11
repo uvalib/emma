@@ -112,7 +112,7 @@ module TestHelper::SystemTests::Common
   #
   def url_without_port(url)
     # noinspection RubyMismatchedArgumentType
-    URI(url).tap { |uri| uri.port = nil }.to_s if url
+    URI(url).tap { _1.port = nil }.to_s if url
   end
 
   # Block until the browser can report its 'window.location'.
@@ -261,6 +261,6 @@ module TestHelper::SystemTests::Common
   rescue Selenium::WebDriver::Error::UnknownError => error
     show_item("[Screenshot Image]: #{error.class} - #{error.message}")
   end
-    .tap { |meth| neutralize(meth) unless DEBUG_TESTS && TESTING_JAVASCRIPT }
+    .tap { neutralize(_1) unless DEBUG_TESTS && TESTING_JAVASCRIPT }
 
 end

@@ -7,7 +7,7 @@
 
 user    ||= @item
 columns ||= user&.extended_field_names
-columns &&= columns.reject { |col| col.to_s.include?('password') }
+columns &&= columns.reject { _1.to_s.include?('password') }
 
 json.extract! user, *columns
 json.url show_account_url(user, format: :json)

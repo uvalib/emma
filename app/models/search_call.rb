@@ -102,7 +102,7 @@ class SearchCall < ApplicationRecord
 
     }.tap { |json_columns|
       reserved = json_columns.keys
-      reserved.concat json_columns.values.flat_map { |cfg| cfg[:keys]&.keys }
+      reserved.concat json_columns.values.flat_map { _1[:keys]&.keys }
 
       # Extract keys from "en.emma.page._index_search.search_type" but
       # transformed based on the translations defined in the :params element.
@@ -110,7 +110,7 @@ class SearchCall < ApplicationRecord
         SearchTermsHelper::QUERY_PARAMETERS[:search].map { |type|
           key = json_columns.dig(:query, :params, type) || type
           [key, { type: :string }] unless reserved.include?(key)
-        }.compact.to_h.tap { |hash| reserved.concat(hash.keys) }
+        }.compact.to_h.tap { reserved.concat(_1.keys) }
 
       # Extract keys from "en.emma.search_filters".
       f_keys   = json_columns[:filter][:keys]
@@ -118,7 +118,7 @@ class SearchCall < ApplicationRecord
       LayoutHelper::SearchFilters.search_menu_base.each_pair do |key, config|
         next if reserved.include?((key = f_params[key] || key))
         f_keys[key] = { type: (config[:multiple] ? :array : :string) }
-        config[:url_param]&.then { |param| f_params[param.to_sym] = key }
+        config[:url_param]&.then { f_params[_1.to_sym] = key }
       end
 
       # For convenience, each of the :params elements is back-filled so that
@@ -247,7 +247,7 @@ class SearchCall < ApplicationRecord
   # @type [Hash{Symbol=>Array<Symbol>}]
   #
   JSON_COLUMN_FIELDS =
-    JSON_COLUMN_CONFIG.transform_values { |cfg| cfg[:keys].keys }.freeze
+    JSON_COLUMN_CONFIG.transform_values { _1[:keys].keys }.freeze
 
   # JSON sub-field parameters for each JSON column.
   #
@@ -333,7 +333,7 @@ class SearchCall < ApplicationRecord
   # @return [Hash]
   #
   def as_search_parameters
-    h = JSON_COLUMNS.map { |c| [c, (self[c] || {})] }.to_h
+    h = JSON_COLUMNS.map { [_1, (self[_1] || {})] }.to_h
     {
       identifier:           h.dig(:query,  :identifier),
       title:                h.dig(:query,  :title),

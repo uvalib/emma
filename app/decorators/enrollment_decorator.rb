@@ -185,7 +185,7 @@ class EnrollmentDecorator < BaseDecorator
 
       cls   = css_class_array(opt[:class])
       stat  = cls.map(&:to_sym).intersection(status_markers.keys)
-      opt[:class] = cls.reject { |c| (c == v_css) || c.start_with?('row-') }
+      opt[:class] = cls.reject { (_1 == v_css) || _1.start_with?('row-') }
 
       unless (v_id = opt.delete(:id))
         base = base&.delete_prefix('form-field-') || model_html_id(name)

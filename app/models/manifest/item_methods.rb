@@ -52,7 +52,7 @@ module Manifest::ItemMethods
   def invalid_items_hash(manifest = nil, columns: PENDING_ITEM_COLS, **)
     items    = items_related_to(manifest) or return {}
     edited   = items.pending
-    complete = columns.map { |c| [c, ITEM_STATUS_VALID[c]] }.to_h.compact
+    complete = columns.map { [_1, ITEM_STATUS_VALID[_1]] }.to_h.compact
     invalid  = edited.where.not(**complete)
     items_hash(invalid, columns: columns)
   end
@@ -68,7 +68,7 @@ module Manifest::ItemMethods
     rows = items_related_to(manifest) or return {}
     cols = Array.wrap(columns)
     if cols.empty?
-      rows.map { |row| [row.id, row.fields] }.to_h
+      rows.map { [_1.id, _1.fields] }.to_h
     else
       # noinspection RailsParamDefResolve
       rows.pluck(:id, *cols).map { |id, *vals|

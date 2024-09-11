@@ -23,8 +23,8 @@ BOOT_TIME = Time.now.freeze
 # @type [String]
 #
 BUILD_VERSION =
-  Dir['buildtag.*'].map { |name| name.to_s.sub(/^.*buildtag\./, '') }.join(',')
-    .tap { |result| result.replace('unknown') if result.empty? }.freeze
+  Dir['buildtag.*'].map { _1.to_s.sub(/^.*buildtag\./, '') }.join(',')
+    .tap { _1.replace('unknown') if _1.empty? }.freeze
 
 # For use by the application in desktop (non-deployed) testing.
 #
@@ -271,7 +271,7 @@ module GlobalProperty
     v   = (ENV['RUBYMINE_CONFIG'] == 'rake') # desktop only
     v ||= $0.to_s.end_with?('rake')
     v ||= $0.to_s.end_with?('rails') && !rails_application? &&
-          !$*.reject { |arg| arg.match(/^(-.*|new|console|generate)$/) }.empty?
+          !$*.reject { _1.match(/^(-.*|new|console|generate)$/) }.empty?
     v &&= !$*.intersect?(INFO_ARGS)
     @in_rake = v
   end

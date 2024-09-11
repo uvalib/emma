@@ -92,12 +92,12 @@ module SerializationConcern
     prop[:item_type] = items.first.class.name if debug
 
     if (elements = list.try(:elements))
-      items = elements.map { |v| v.to_h(item: item_name) }
+      items = elements.map { _1.to_h(item: item_name) }
     elsif list.is_a?(Model)
       items = list.to_h(item: item_name)
       items = items[:titles] || items[:records] || items if items.size == 1
     elsif list.is_a?(Array)
-      items = list.map { |v| show_values(v, as: nil) }
+      items = list.map { show_values(_1, as: nil) }
     elsif list.is_a?(Hash)
       items = list
     else

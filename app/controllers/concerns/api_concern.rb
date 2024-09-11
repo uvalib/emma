@@ -113,7 +113,7 @@ module ApiConcern
   def api_active_table(*only, **opt)
     opt[:user] = current_user unless opt.key?(:user)
     ApiService.table(**opt).compact.tap do |result|
-      only.each { |key| result.delete(key) }
+      only.each { result.delete(_1) }
     end
   end
 

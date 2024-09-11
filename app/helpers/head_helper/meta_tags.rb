@@ -176,8 +176,8 @@ module HeadHelper::MetaTags
     # variant like :googlebot); if the tag is determined to be non-functional
     # then the result will be *nil*.
     value = Array.wrap(value)
-    if value.any? { |v| v.is_a?(Symbol) }
-      value = value.map { |v| v.to_s.downcase }.sort.uniq
+    if value.any? { _1.is_a?(Symbol) }
+      value = value.map { _1.to_s.downcase }.sort.uniq
       return if (value == %w[index]) || (value == %w[follow index])
       separator = ','
     end

@@ -57,7 +57,7 @@ module IngestService::Action::Submissions
   #
   def put_records(*records, **opt)
     opt[:meth] ||= __method__
-    records = records.flat_map { |record| record_list(record) }
+    records = records.flat_map { record_list(_1) }
     api_send(:put, 'records', records, **opt)
     api_return(Ingest::Message::Response)
   end
@@ -103,7 +103,7 @@ module IngestService::Action::Submissions
   #
   def delete_records(*items, **opt)
     opt[:meth] ||= __method__
-    id_list = items.flat_map { |item| identifier_list(item) }
+    id_list = items.flat_map { identifier_list(_1) }
     api_send(:post, 'recordDeletes', id_list, **opt)
     api_return(Ingest::Message::Response)
   end
@@ -148,7 +148,7 @@ module IngestService::Action::Submissions
   #
   def get_records(*items, **opt)
     opt[:meth] ||= __method__
-    id_list = items.flat_map { |item| identifier_list(item) }
+    id_list = items.flat_map { identifier_list(_1) }
     api_send(:post, 'recordGets', id_list, **opt)
     api_return(Search::Message::SearchRecordList)
   end
@@ -324,7 +324,7 @@ module IngestService::Action::Submissions
         format ||= attr[:dc_format]
         format &&= ([format] unless format == '*')
         format ||= DublinCoreFormat.values
-        result = format.map { |fmt| attr.merge(dc_format: fmt) }
+        result = format.map { attr.merge(dc_format: _1) }
       end
     end
     Array.wrap(result).map { |v|

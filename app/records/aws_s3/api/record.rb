@@ -35,9 +35,9 @@ class AwsS3::Api::Record < Api::Record
       when TrueClass, FalseClass
         item
       when Hash
-        item.map { |k, v| [k, send(__method__, v)] }.to_h.compact.presence
+        item.map { [_1, remove_empty_values(_2)] }.to_h.compact.presence
       when Array
-        item.map { |v| send(__method__, v) }.compact.presence
+        item.map { remove_empty_values(_1) }.compact.presence
       else
         item.presence
     end

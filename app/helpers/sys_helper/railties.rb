@@ -32,7 +32,7 @@ module SysHelper::Railties
         key   = obj.name.to_s.presence || "anonymous #{anon += 1}"
         obj   = obj.instance_variable_get(:@instance)
         id    = obj&.object_id
-        entry = [id].map! { |v| v || EMPTY_VALUE }
+        entry = [id].map! { _1 || EMPTY_VALUE }
         [key, entry]
       end
     prepend_css!(opt, css)

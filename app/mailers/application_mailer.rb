@@ -174,7 +174,7 @@ class ApplicationMailer < ActionMailer::Base
 
     # Look for `<meta>` overrides of mail options.
     doc.search('//head/meta[@name]').each do |node|
-      attrs = node.attributes.map { |k, v| [k.to_s.to_sym, v.to_s] }.to_h
+      attrs = node.attributes.map { [_1.to_s.to_sym, _2.to_s] }.to_h
       name, value = attrs.values_at(:name, :content)
       next unless name.match?(META_PREFIX) && value.present?
       name = name.sub(META_PREFIX, '').to_sym
@@ -187,7 +187,7 @@ class ApplicationMailer < ActionMailer::Base
     result[:heading] = '' if body.elements.first.name.match?(/^h\d$/)
 
     # Prepare message content for the current format.
-    body = body.children.map { |v| v.to_html.strip.html_safe }
+    body = body.children.map { _1.to_html.strip.html_safe }
     body = format_body(body, format: :html).join("\n").html_safe
     result.merge!(body: body)
   end
@@ -253,7 +253,7 @@ class ApplicationMailer < ActionMailer::Base
         if v.is_a?(ActiveSupport::SafeBuffer)
           v.split(paragraph).map!(&:html_safe)
         else
-          v.split(paragraph).map! { |p| html_paragraph(p) }
+          v.split(paragraph).map! { html_paragraph(_1) }
         end
       end
     else
@@ -261,7 +261,7 @@ class ApplicationMailer < ActionMailer::Base
       src.flat_map { |v|
         v = sanitize(v) if v.is_a?(ActiveSupport::SafeBuffer)
         v.split(paragraph)
-      }.tap { |parts| parts.map! { |v| wrap_lines(v, width: width) } if width }
+      }.tap { |parts| parts.map! { wrap_lines(_1, width: width) } if width }
     end
   end
 
@@ -296,7 +296,7 @@ class ApplicationMailer < ActionMailer::Base
       lines.last << word
       chars += word.size + 1
     end
-    lines.map! { |line| line.join(' ').rstrip }.join("\n")
+    lines.map! { _1.join(' ').rstrip }.join("\n")
   end
 
   # ===========================================================================
@@ -322,7 +322,7 @@ class ApplicationMailer < ActionMailer::Base
   def join_addresses(*values)
     values = values.flatten.compact_blank!
     if values.many?
-      values.uniq { |v| v.to_s.downcase }.join('; ')
+      values.uniq { _1.to_s.downcase }.join('; ')
     else
       values.first
     end
@@ -371,7 +371,7 @@ class ApplicationMailer < ActionMailer::Base
 
     if (test_body = test[:body].presence)
       test_body = format_body(test_body, **opt)
-      test_body.map! { |v| content_tag(:strong, v) }.prepend(nil) if html
+      test_body.map! { content_tag(:strong, _1) }.prepend(nil) if html
       test_body = test_body.join(PARAGRAPH)
       test_body = html ? test_body.html_safe : test_body.lstrip
       msg[:testing][:body] = test_body
@@ -385,10 +385,10 @@ class ApplicationMailer < ActionMailer::Base
       vals = interpolation_values(**opt)
       safe = body.is_a?(ActiveSupport::SafeBuffer)
       body = body.is_a?(Array) ? body.dup : body.split(PARAGRAPH)
-      body.map! { |paragraph| interpolate(paragraph, **vals) } if vals.present?
+      body.map! { interpolate(_1, **vals) } if vals.present?
       case
         when !html then body.prepend(msg[:heading]) if msg[:heading].present?
-        when !safe then body.map! { |paragraph| html_paragraph(paragraph) }
+        when !safe then body.map! { html_paragraph(_1) }
         else            body.map!(&:html_safe)
       end
       body << test_body if test_body
@@ -428,9 +428,7 @@ class ApplicationMailer < ActionMailer::Base
   def as_text(body)
     return if body.blank?
     body = sanitize(body) if html?(body)
-    body.split(PARAGRAPH).flat_map { |v|
-      format_body(v)
-    }.join(PARAGRAPH).strip
+    body.split(PARAGRAPH).flat_map { format_body(_1) }.join(PARAGRAPH).strip
   end
 
   # Takes the same arguments as RenderingHelper#render but converts the

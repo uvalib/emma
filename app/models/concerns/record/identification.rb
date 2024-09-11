@@ -147,7 +147,7 @@ module Record::Identification
   #
   def get_value(item, key, default: nil, **)
     if key.is_a?(Array)
-      key.find { |k| (v = get_value(item, k)) and (break v) }
+      key.find { (v = get_value(item, _1)) and (break v) }
     elsif (key = key&.to_sym).blank?
       nil
     elsif item.is_a?(Hash)
@@ -306,7 +306,7 @@ module Record::Identification
         items.flat_map { |item|
           item.is_a?(type) ? item : expand_ids(item) if item.present?
         }.compact
-      identifiers = items.reject { |item| item.is_a?(type) }
+      identifiers = items.reject { _1.is_a?(type) }
       if identifiers.present?
         found   = {}
         id_key  = id_column.to_s
@@ -316,7 +316,7 @@ module Record::Identification
           sid = record.try(sid_key) and found.merge!(sid.to_s => record)
         end
         items.map! { |item| !item.is_a?(type) && found[item] || item }
-        items, failed = items.partition { |i| i.is_a?(type) } unless force
+        items, failed = items.partition { _1.is_a?(type) } unless force
       end
     elsif all
       # Searching for non-identifier criteria (e.g. { user: @user }).
@@ -380,7 +380,7 @@ module Record::Identification
   # @return [Array<String>]
   #
   def compact_ids(*items, **opt)
-    ids, non_ids = expand_ids(*items, **opt).partition { |v| valid_id?(v) }
+    ids, non_ids = expand_ids(*items, **opt).partition { valid_id?(_1) }
     group_ids(*ids, **opt) + non_ids.sort.uniq
   end
 
@@ -438,7 +438,7 @@ module Record::Identification
     opt[:max_id] ||= maximum_id
     ids.flatten.flat_map { |id|
       id.is_a?(String) ? id.strip.split(/\s*,\s*/) : id
-    }.compact_blank!.flat_map { |id| expand_id_range(id, **opt) }.uniq
+    }.compact_blank!.flat_map { expand_id_range(_1, **opt) }.uniq
   end
 
   # Condense an array of identifiers by replacing runs of contiguous number
@@ -455,7 +455,7 @@ module Record::Identification
   def group_ids(*ids, min_id: nil, max_id: nil, **)
     min = (min_id ||= minimum_id).to_s
     max = (max_id ||  maximum_id).to_s
-    ids.map! { |id| [id.to_i, min_id].max }.sort!.uniq!
+    ids.map! { [_1.to_i, min_id].max }.sort!.uniq!
     # noinspection RubyMismatchedArgumentType
     ids =
       ids.chunk_while { |prev, this| (prev + 1) == this }.map do |range|

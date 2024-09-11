@@ -180,7 +180,7 @@ module ResponseConcern
 
     if (msg = report).blank?
       msg = (item.is_a?(Array) ? item.flatten : [item]).compact.presence
-      msg&.map! { |v| make_label(v) || v.to_s }
+      msg&.map! { make_label(_1) || _1.to_s }
     end
     if msg.present?
       f_opt = { meth: meth, status: status }

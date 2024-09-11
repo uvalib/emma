@@ -164,7 +164,7 @@ class ApiService::Error < Api::Error
       # noinspection RailsParamDefResolve
       headers = src.try(:response_headers) || src.try(:headers) || src
       headers = (headers.presence if headers.is_a?(Hash))
-      headers&.transform_keys { |k| k.to_s.downcase } || {}
+      headers&.transform_keys { _1.to_s.downcase } || {}
     end
 
     # Get the message body from the source object.
@@ -255,7 +255,7 @@ class ApiService::Error < Api::Error
           msg.remove(/\\"/)
         }.compact_blank!.presence
       result ||= src['message'].presence
-      result ||= src.values.flat_map { |v| v if v.is_a?(Array) }
+      result ||= src.values.flat_map { _1 if _1.is_a?(Array) }
       Array.wrap(result || src).compact
     end
 

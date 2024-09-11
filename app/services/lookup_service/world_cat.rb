@@ -80,7 +80,7 @@ class LookupService::WorldCat < LookupService::RemoteService
     if rec.is_a?(Lookup::WorldCat::Record::OclcDcs)
       rec.identifier_table.flat_map { |type, ids|
         (type == :isbn) ? ids.partition(&:isbn13?) : [ids]
-      }.each { |type| return if type.many? }
+      }.each { return if _1.many? }
     end
     super
   end

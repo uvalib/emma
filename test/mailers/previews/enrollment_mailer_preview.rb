@@ -47,8 +47,8 @@ class EnrollmentMailerPreview < ActionMailer::Preview
       long_name:      'Fake Organization Name',
       ip_domain:      '127.0.0.1',
       org_users:      [user],
-      request_notes:  (1..3).map { |n| "Request #{n}" }.join("\n"),
-      admin_notes:    (1..3).map { |n| "Admin #{n}"   }.join("\n"),
+      request_notes:  (1..3).map { "Request #{_1}" }.join("\n"),
+      admin_notes:    (1..3).map { "Admin #{_1}"   }.join("\n"),
       created_at:     (now = DateTime.now),
       updated_at:     now,
     )

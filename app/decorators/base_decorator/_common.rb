@@ -64,7 +64,7 @@ module BaseDecorator::Common
     case value
       when nil    then default
       when Hash   then Log.debug { "#{__method__}: ignored #{value.inspect}" }
-      when Array  then value.presence&.all? { |v| check_setting(v) }
+      when Array  then value.presence&.all? { check_setting(_1) }
       when Symbol then respond_to?(value) ? send(value) : object.try(value)
       when Proc   then value.call(object)
       else             true?(value)
@@ -90,7 +90,7 @@ module BaseDecorator::Common
     # noinspection RubyMismatchedArgumentType
     trace_attrs!(opt, meth)
   end
-    .tap { |m| define_method(m) { |opt,*| opt&.dup || {} } unless DEBUG_ATTRS }
+    .tap { define_method(_1) { |opt, *| opt&.dup || {} } unless DEBUG_ATTRS }
 
   # Inject 'data-trace-*' attributes into *opt*.
   #
@@ -111,7 +111,7 @@ module BaseDecorator::Common
     opt[:'data-trace-method']  = meth
     opt
   end
-    .tap { |meth| define_method(meth) { |opt, *, **| opt } unless DEBUG_ATTRS }
+    .tap { define_method(_1) { |opt, *, **| opt } unless DEBUG_ATTRS }
 
   # Extract 'data-trace-*' attributes from *opt*.
   #
@@ -123,7 +123,7 @@ module BaseDecorator::Common
   def trace_attrs_from(opt, skip: %i[data-trace-method])
     opt.except(*skip).select { |k, _| k.start_with?('data-trace-') }
   end
-    .tap { |meth| define_method(meth) { |*, **| Hash.new } unless DEBUG_ATTRS }
+    .tap { define_method(_1) { |*, **| Hash.new } unless DEBUG_ATTRS }
 
 end
 

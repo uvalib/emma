@@ -119,8 +119,7 @@ module SubmissionService::Action::Submit
         end
       end
     items.compact!
-    # noinspection RubyMismatchedReturnType
-    items.sort_by! { |item| manifest_item_id(item) }
+    items.sort_by! { manifest_item_id(_1) }
 
     # Claim submission IDs for the items that will persist through the point
     # that the item becomes associated with an EMMA entry.
@@ -203,7 +202,7 @@ module SubmissionService::Action::Submit
       result = submission_step(recs, **opt, step: step)
       s = result.success.presence and success.merge!(s)
       f = result.failure.presence and failure.merge!(f)
-      recs.reject! { |rec| f.key?(manifest_item_id(rec)) } if f
+      recs.reject! { f.key?(manifest_item_id(_1)) } if f
     end
   rescue => error
     update_failures!(failure, error, recs)
@@ -242,7 +241,7 @@ module SubmissionService::Action::Submit
         result = submit_manifest_items(recs, **opt, step: step)
         s = result.success.presence and success.merge!(s)
         f = result.failure.presence and failure.merge!(f)
-        recs.reject! { |rec| f.key?(manifest_item_id(rec)) } if f
+        recs.reject! { f.key?(manifest_item_id(_1)) } if f
       end
     end
     success.except!(*failure.keys)
@@ -324,7 +323,7 @@ module SubmissionService::Action::Submit
   #
   def update_failures!(failure, error, recs = nil)
     msg = error.to_s
-    ids = recs&.map { |rec| manifest_item_id(rec) } || failure.keys
+    ids = recs&.map { manifest_item_id(_1) } || failure.keys
     ids.each do |id|
       if !failure[id]
         failure[id] = { error: msg }
@@ -391,17 +390,17 @@ module SubmissionService::Action::Submit
   rescue => error
     # NOTE: *success* is assumed to be *nil* in this case.
     notice = error.to_s
-    result = recs.map { |rec| [manifest_item_id(rec), notice] }.to_h
+    result = recs.map { [manifest_item_id(_1), notice] }.to_h
     raise error if fatal
 
   ensure
     if result.is_a?(StepResult)
       # === Result of any submission step except the final one.
-      result.failure.transform_values! { |v| v.is_a?(Hash) ? v : { error: v } }
-      result.success.transform_values! { |v| v.is_a?(Hash) ? v : {} }
+      result.failure.transform_values! { _1.is_a?(Hash) ? _1 : { error: _1 } }
+      result.success.transform_values! { _1.is_a?(Hash) ? _1 : {} }
     else
       # === Result of the final submission step or a rescued exception.
-      result.transform_values! { |v| v.is_a?(Hash) ? v : { error: v } }
+      result.transform_values! { _1.is_a?(Hash) ? _1 : { error: _1 } }
       failure = result.select { |_, v| v[:error] }
       success = result.except(*failure.keys)
       result  = StepResult.new(success: success, failure: failure)
@@ -439,7 +438,7 @@ module SubmissionService::Action::Submit
   # @return [StepResult]
   #
   def await_upload(records, wait: 1, **opt)
-    $stderr.puts "=== STEP #{__method__} | #{Emma::ThreadMethods.thread_name} | #{records.size} recs = #{records.map { |r| manifest_item_id(r) }} = #{records.inspect.truncate(1024)}" # TODO: testing - remove
+    $stderr.puts "=== STEP #{__method__} | #{Emma::ThreadMethods.thread_name} | #{records.size} recs = #{records.map { manifest_item_id(_1) }} = #{records.inspect.truncate(1024)}" # TODO: testing - remove
     opt[:meth]    = __method__
     opt[:success] = config_term(:submission, :service, :uploaded)
     run_step(records, wait: wait, **opt) do |_id, rec|
@@ -455,7 +454,7 @@ module SubmissionService::Action::Submit
   # @return [StepResult]
   #
   def promote_file(records, **opt)
-    $stderr.puts "=== STEP #{__method__} | #{Emma::ThreadMethods.thread_name} | #{records.size} recs = #{records.map { |r| manifest_item_id(r) }} = #{records.inspect.truncate(1024)}" # TODO: testing - remove
+    $stderr.puts "=== STEP #{__method__} | #{Emma::ThreadMethods.thread_name} | #{records.size} recs = #{records.map { manifest_item_id(_1) }} = #{records.inspect.truncate(1024)}" # TODO: testing - remove
     opt[:meth]    = __method__
     opt[:success] = config_term(:submission, :service, :stored)
     run_step(records, **opt) do |_id, rec|
@@ -483,7 +482,7 @@ module SubmissionService::Action::Submit
   #
   def add_to_index(records, **opt)
     fields = records.map(&:emma_metadata)
-    $stderr.puts "=== STEP #{__method__} | #{Emma::ThreadMethods.thread_name} | #{records.size} recs = #{records.map { |r| manifest_item_id(r) }} | #{fields.size} fields = #{fields.inspect.truncate(1024)}" # TODO: testing - remove
+    $stderr.puts "=== STEP #{__method__} | #{Emma::ThreadMethods.thread_name} | #{records.size} recs = #{records.map { manifest_item_id(_1) }} | #{fields.size} fields = #{fields.inspect.truncate(1024)}" # TODO: testing - remove
     result = IngestService.instance.put_records(*fields)
     remaining, failure = process_ingest_errors(result, *records)
 
@@ -528,16 +527,16 @@ module SubmissionService::Action::Submit
     if by_index.present?
       errors.except!(*by_index.keys)
       by_index.transform_keys!   { |idx| manifest_item_id(records[idx-1]) }
-      by_index.transform_values! { |msg| Array.wrap(msg) }
+      by_index.transform_values! { Array.wrap(_1) }
       failed.rmerge!(by_index)
     end
 
     # Errors associated with item submission ID.
     by_sid = errors.extract!(*records.map(&:submission_id))
     if by_sid.present?
-      sid_id = records.map { |rec| [rec.submission_id, rec] }.to_h
-      by_sid.transform_keys!   { |sid| manifest_item_id(sid_id[sid]) }
-      by_sid.transform_values! { |msg| Array.wrap(msg) }
+      sid_id = records.map { [_1.submission_id, _1] }.to_h
+      by_sid.transform_keys!   { manifest_item_id(sid_id[_1]) }
+      by_sid.transform_values! { Array.wrap(_1) }
       failed.rmerge!(by_sid)
     end
 
@@ -546,7 +545,7 @@ module SubmissionService::Action::Submit
     if errors.present?
       general   = errors.values.compact_blank.presence
       general ||= [config_term(:submission, :service, :unknown)]
-      general   = records.map { |rec| [manifest_item_id(rec), general] }.to_h
+      general   = records.map { [manifest_item_id(_1), general] }.to_h
       failed.rmerge!(general)
     end
 
@@ -579,9 +578,9 @@ module SubmissionService::Action::Submit
     # Create matching EMMA entries from the values extracted/derived from each
     # item record.
     user    = user_id(user) unless user.is_a?(Integer)
-    sid_rec = records.map { |rec| [rec.submission_id, rec] }.to_h
-    fields  = records.map { |rec| entry_fields(rec, user: user) }
-    $stderr.puts "=== STEP #{__method__} | #{Emma::ThreadMethods.thread_name} | #{records.size} recs = #{records.map { |r| manifest_item_id(r) }} | #{fields.size} fields = #{fields.inspect.truncate(1024)}" # TODO: testing - remove
+    sid_rec = records.map { [_1.submission_id, _1] }.to_h
+    fields  = records.map { entry_fields(_1, user: user) }
+    $stderr.puts "=== STEP #{__method__} | #{Emma::ThreadMethods.thread_name} | #{records.size} recs = #{records.map { manifest_item_id(_1) }} | #{fields.size} fields = #{fields.inspect.truncate(1024)}" # TODO: testing - remove
     rows    = Upload.insert_all(fields, returning: ENTRY_COLUMNS).rows
 
     # Add successful submissions to the method result, and update and persist
@@ -607,7 +606,7 @@ module SubmissionService::Action::Submit
     if sid_rec.present?
       error  = config_term(:submission, :service, :db_error)
       error  = "#{__method__}: #{error}"
-      failed = sid_rec.values.map { |rec| [rec.id, { error: error }] }.to_h
+      failed = sid_rec.values.map { [_1.id, { error: error }] }.to_h
       result.merge!(failed)
     end
 
@@ -616,7 +615,7 @@ module SubmissionService::Action::Submit
   rescue => error
     notice = error.to_s
     Log.warn { "#{__method__}: #{notice}" }
-    records.map { |rec| [rec.id.to_s, { error: notice }] }.to_h
+    records.map { [_1.id.to_s, { error: notice }] }.to_h
   end
 
   # Required if the target records are in the 'uploads' table because that
@@ -708,15 +707,15 @@ module SubmissionService::Action::Submit
     deadline =
       unless in_debugger?
         time  = (opt[:max_time] || DEFAULT_TIMEOUT) * records.size
-        time += records.map { |r| r.file_size.to_i / 1.megabyte }.sum if wait
+        time += records.map { _1.file_size.to_i / 1.megabyte }.sum if wait
         time + timestamp
       end
 
     meth      = opt[:meth] || __method__
     msg       = opt.slice(*DEF_MSG.keys).reverse_merge!(DEF_MSG)
-    msg.transform_values! { |v| interpolate(v, meth: meth) }
+    msg.transform_values! { interpolate(_1, meth: meth) }
 
-    records   = records.map { |rec| [manifest_item_id(rec), rec] }.to_h
+    records   = records.map { [manifest_item_id(_1), _1] }.to_h
     remaining = records.dup
     failure   = opt.dig(:initial, :failure) || {}
     success   = opt.dig(:initial, :success) || records
@@ -805,11 +804,11 @@ module SubmissionService::Action::Submit
           when Array
             case val.first
               when nil  then next
-              when Hash then val = val.sort_by { |v| v.keys.first.to_s }
+              when Hash then val = val.sort_by { _1.keys.first.to_s }
               else           val = val.sort_by(&:to_s).uniq
             end
           when Hash
-            val = val.sort_by { |k, _| k.to_s }.to_h
+            val = val.sort_by { _1.to_s }.to_h
           else
             val = Array.wrap(val) unless key == :count
         end
@@ -929,7 +928,7 @@ module SubmissionService::Action::Submit
       err ||= entry[:err] || entry[:sim_err]
       msg &&= "TODO: #{msg}"
       err &&= ("SIMULATED #{err} FAILURE".upcase if min_max.include?(value))
-      item  = Array.wrap(item).map { |v| manifest_item_id(v) }
+      item  = Array.wrap(item).map { manifest_item_id(_1) }
       line  = Array.wrap(tag).tap { |parts|
         parts << "step = #{step}" if step
         parts << "tid = #{tid}"

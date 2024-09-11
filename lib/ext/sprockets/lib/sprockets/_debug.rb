@@ -46,7 +46,7 @@ if DEBUG_SPROCKETS
     end
 
     def self.now
-      timestamp.tap { |t| @start ||= t }
+      timestamp.tap { @start ||= _1 }
     end
 
     def self.offset(time = nil)

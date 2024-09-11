@@ -4,7 +4,7 @@
 # warn_indent:           true
 
 source 'https://rubygems.org'
-git_source(:github) { |repo| "https://github.com/#{repo}.git" }
+git_source(:github) { "https://github.com/#{_1}.git" }
 
 ruby '3.3.0'
 

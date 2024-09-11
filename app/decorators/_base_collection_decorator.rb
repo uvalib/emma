@@ -59,7 +59,7 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
         instance_variables.excluding(:@object).map { |var|
           [var, instance_variable_get(var).inspect.truncate(max)]
         }.to_h
-      vars  = vars.merge!('@object': "(#{items})").map { |k, v| "#{k}=#{v}" }
+      vars  = vars.merge!('@object': "(#{items})").map { "#{_1}=#{_2}" }
       "#<#{self.class.name}:#{object_id} %s>" % vars.join(' ')
     end
 

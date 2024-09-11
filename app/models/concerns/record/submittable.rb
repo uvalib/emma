@@ -280,7 +280,7 @@ module Record::Submittable
           if removed.present?
             sids = removed.map(&:submission_id)
             Log.info { "#{__method__}: removed: #{sids}" }
-            rollback.reject! { |item| sids.include?(sid_value(item)) }
+            rollback.reject! { sids.include?(sid_value(_1)) }
           end
           failed.concat(kept) if kept.present?
         end
@@ -399,7 +399,7 @@ module Record::Submittable
       succeeded = []
 
       # Errors associated with the position of the item in the request.
-      by_index = errors.select { |k| k.is_a?(Integer) }
+      by_index = errors.select { _1.is_a?(Integer) }
       if by_index.present?
         errors.except!(*by_index.keys)
         by_index.transform_keys! { |idx| sid_value(items[idx-1]) }
@@ -408,7 +408,7 @@ module Record::Submittable
       end
 
       # Errors associated with item submission ID.
-      by_sid = errors.reject { |k| k.start_with?(GENERAL_ERROR_TAG) }
+      by_sid = errors.reject { _1.start_with?(GENERAL_ERROR_TAG) }
       if by_sid.present?
         errors.except!(*by_sid.keys)
         sids.concat   by_sid.keys
@@ -418,11 +418,10 @@ module Record::Submittable
       # Remaining (general) errors indicate that there was a problem with the
       # request and that all items have failed.
       if errors.present?
-        failed = errors.values.map { |msg| FlashPart.new(msg) } + failed
+        failed = errors.values.map { FlashPart.new(_1) } + failed
       elsif sids.present?
-        sids = sids.map! { |v| sid_value(v) }.uniq
-        rollback, succeeded =
-          items.partition { |item| sids.include?(sid_value(item)) }
+        sids = sids.map! { sid_value(_1) }.uniq
+        rollback, succeeded = items.partition { sids.include?(sid_value(_1)) }
       end
 
       return succeeded, failed, rollback
@@ -617,7 +616,7 @@ module Record::Submittable
       if errors.blank?
         return items, []
       else
-        return [], errors.values.map { |msg| FlashPart.new(msg) }
+        return [], errors.values.map { FlashPart.new(_1) }
       end
     end
 
@@ -655,7 +654,7 @@ module Record::Submittable
       succeeded = []
       failed    = []
       repository_requests(items).each_pair do |_repo, repo_items|
-        repo_items.map! { |item| record_id(item) }
+        repo_items.map! { record_id(_1) }
         s, f = repository_remove(*repo_items, **opt)
         succeeded.concat(s)
         failed.concat(f)
@@ -689,7 +688,7 @@ module Record::Submittable
       succeeded = []
       failed    = []
       repository_requests(items).each_pair do |_repo, repo_items|
-        repo_items.map! { |item| record_id(item) }
+        repo_items.map! { record_id(_1) }
         s, f = repository_dequeue(*repo_items, **opt)
         succeeded.concat(s)
         failed.concat(f)
@@ -728,9 +727,9 @@ module Record::Submittable
       case items
         when Array, Model
           items  = (items.is_a?(Array) ? items.flatten : [items]).compact_blank
-          result = items.group_by { |request| repository_value(request) }
+          result = items.group_by { repository_value(_1) }
         when Hash
-          result = items.transform_values { |requests| Array.wrap(requests) }
+          result = items.transform_values { Array.wrap(_1) }
         else
           result = {}
           Log.error { "#{__method__}: expected 'items' type: #{items.class}" }
@@ -1024,9 +1023,8 @@ module Record::Submittable
         # Mark as failed any "partner repository workflow" items that could not
         # be added to a request for removal of partner repository items.
         items, failed =
-          items.partition do |item|
-            emma_item?(item) || incomplete?(item) ||
-              (sid_value(item) if emergency)
+          items.partition do
+            emma_item?(_1) || incomplete?(_1) || (sid_value(_1) if emergency)
           end
         if model_options.repo_remove
           deferred = opt.key?(:requests)
@@ -1045,7 +1043,7 @@ module Record::Submittable
       end
 
       # Dequeue partner repository creation requests.
-      requests = items.select { |item| incomplete?(item) && !emma_item?(item) }
+      requests = items.select { incomplete?(_1) && !emma_item?(_1) }
       repository_dequeues(requests, **opt) if requests.present?
 
       # Remove the records from the database.
@@ -1074,11 +1072,11 @@ module Record::Submittable
           msg = [__method__]
           msg << 'not atomic' if atomic
           msg << 'items retained in the database that will be de-indexed'
-          msg << retained.map { |item| item_label(item) }.join(', ')
+          msg << retained.map { item_label(_1) }.join(', ')
           msg.join(': ')
         end
         not_removed = config_term(:record, :not_removed)
-        retained.map! { |item| FlashPart.new(item, not_removed) }
+        retained.map! { FlashPart.new(_1, not_removed) }
       end
       if model_options.repo_remove && removals.present?
         repository_removals(removals, **opt)

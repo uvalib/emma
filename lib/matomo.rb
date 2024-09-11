@@ -264,7 +264,7 @@ module Matomo
       if result && block_given?
         yield(result)
       elsif result.is_a?(Hash)
-        result.sort_by { |k, _| k.to_s.downcase }.to_h
+        result.sort_by { _1.to_s.downcase }.to_h
       elsif result.is_a?(Array)
         result.flat_map.with_index(1) { |value, i|
           case value
@@ -279,7 +279,7 @@ module Matomo
         Log.error(error)
         { error: error }
       end
-    }.stringify_keys.transform_values { |v| v.nil? ? EMPTY_VALUE : v }
+    }.stringify_keys.transform_values { _1.nil? ? EMPTY_VALUE : _1 }
   rescue => error
     Log.warn { "Matomo.#{__method__}: #{error.class}: #{error.message}" }
     re_raise_if_internal_exception(error)
@@ -601,7 +601,7 @@ module Matomo
       parts << element(:h3, name, class: 'action-name')
     end
     if (doc = value[:documentation]).present?
-      lines = doc.split(%r{<br */>}).map! { |v| element(:p, v) }
+      lines = doc.split(%r{<br */>}).map! { element(:p, _1) }
       lines = lines.join("\n").html_safe
       parts << element(:div, lines, class: 'action-description')
     end
@@ -664,7 +664,7 @@ module Matomo
   def self.element(tag, content = nil, **opt)
     tag_close = tag
     if opt.present?
-      attr = opt.map { |k, v| "#{k}='#{ERB::Util.h(v)}'" }.join(' ')
+      attr = opt.map { "#{_1}='#{ERB::Util.h(_2)}'" }.join(' ')
       tag  = "#{tag} #{attr}"
     end
     if content
@@ -682,7 +682,7 @@ module Matomo
   # @return [String]
   #
   def self.sanitize(text)
-    text = text.to_s.gsub(/<title>/) { |s| ERB::Util.h(s) }
+    text = text.to_s.gsub(/<title>/) { ERB::Util.h(_1) }
     Sanitize.fragment(text, **Sanitize::Config::RESTRICTED)
   end
 

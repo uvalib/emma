@@ -52,7 +52,7 @@ class Search::Message::SearchRecord < Search::Api::Message
     end
     if src.is_a?(Search::Message::SearchRecordList)
       src = src.records
-      src = src.select { |record| record.emma_recordId == rid } if rid.present?
+      src = src.select { _1.emma_recordId == rid } if rid.present?
     end
     src = src.first if src.is_a?(Array)
     super

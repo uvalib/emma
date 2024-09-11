@@ -98,11 +98,11 @@ module LayoutHelper::SkipNav
     html_ul(**opt) do
       skip_nav.flat_map { |entry|
         if entry.is_a?(Hash)
-          entry.map { |label, link| render_skip_nav_link(label, link) }
+          entry.map { render_skip_nav_link(_1, _2) }
         else
           entry.presence
         end
-      }.compact.uniq.map! { |entry| html_li(entry, class: 'skip-nav-entry') }
+      }.compact.uniq.map! { html_li(_1, class: 'skip-nav-entry') }
     end
   end
 

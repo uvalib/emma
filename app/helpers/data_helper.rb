@@ -56,7 +56,7 @@ module DataHelper
     later =
       LATER_TABLES.flat_map { |match|
         if match.is_a?(Regexp)
-          found, names = names.partition { |name| match === name }
+          found, names = names.partition { match === _1 }
           found.sort
         else
           names.delete(match.to_s)
@@ -95,7 +95,7 @@ module DataHelper
   # @return [Array<ActiveRecord::ConnectionAdapters::Column>]
   #
   def table_columns(table_name)
-    db_connection { |db| db_columns(db, table_name) }
+    db_connection { db_columns(_1, table_name) }
   end
 
   # table_column_names
@@ -133,7 +133,7 @@ module DataHelper
   # @return [Integer]
   #
   def table_row_count(table_name)
-    db_connection { |db| db_row_count(db, table_name) }
+    db_connection { db_row_count(_1, table_name) }
   end
 
   # table_records
@@ -166,7 +166,7 @@ module DataHelper
     errors << invalid_table_name(name) unless table_name?(name)
     if cols.present?
       # noinspection RailsParamDefResolve
-      cols.map! { |f| f.is_a?(Symbol) ? f.to_s : (f.try(:name) || f) }
+      cols.map! { _1.is_a?(Symbol) ? _1.to_s : (_1.try(:name) || _1) }
       cols, blanks = cols.partition(&:present?)
       if (error = blank_columns(*blanks)).present?
         if no_blanks
@@ -175,7 +175,7 @@ module DataHelper
           Log.warn { "#{__method__}: #{error} (ignored)" }
         end
       end
-      cols, invalid = cols.partition { |f| f.is_a?(String) }
+      cols, invalid = cols.partition { _1.is_a?(String) }
       if invalid.present?
         errors << invalid_columns(*invalid)
       else
@@ -349,7 +349,7 @@ module DataHelper
     html_div(**tbl_opt) do
       opt[:first] ||= start_row
       opt[:last]  ||= opt[:first] + (positive(records.size - 1) || 0)
-      opt[:heads] ||= headers.map { |k| html_id(k.try(:name) || k) }
+      opt[:heads] ||= headers.map { html_id(_1.try(:name) || _1) }
       records.map.with_index(opt[:first]) do |record, row|
         html_db_record(record, row: row, **opt)
       end
@@ -550,7 +550,7 @@ module DataHelper
       values.map.with_index do |count_item, index|
         count, item = count_item
         classes = %w[value-count value-item]
-        classes.map! { |c| "#{c} total" } if index.zero?
+        classes.map! { "#{_1} total" } if index.zero?
         count = html_div(count, class: classes.first)
         item  = html_div(item,  class: classes.last)
         count << item

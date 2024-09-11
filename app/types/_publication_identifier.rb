@@ -156,7 +156,7 @@ class PublicationIdentifier < ScalarType
       prefix, value = type ? [type, v] : parts(v)
       return                       if value.blank?
       value = "#{prefix}:#{value}" if prefix.present?
-      identifier_classes.find { |c| c.candidate?(value) }&.new(value)
+      identifier_classes.find { _1.candidate?(value) }&.new(value)
     end
 
     # =========================================================================
@@ -313,7 +313,7 @@ class PublicationIdentifier < ScalarType
   #
   def self.subclass_map
     # noinspection RbsMissingTypeSignature
-    @subclass_map ||= identifier_classes.map { |c| [c.type, c] }.to_h
+    @subclass_map ||= identifier_classes.map { [_1.type, _1] }.to_h
   end
 
   # Retrieve the matching identifier subclass.
@@ -355,7 +355,7 @@ class PublicationIdentifier < ScalarType
   # @return [Array<PublicationIdentifier,nil>]          If *invalid* is *true*.
   #
   def self.objects(value, invalid: true)
-    result = split(value).map! { |id| cast(id, invalid: invalid) }
+    result = split(value).map! { cast(_1, invalid: invalid) }
     invalid ? result : result.compact
   end
 
@@ -368,7 +368,7 @@ class PublicationIdentifier < ScalarType
   # @return [Hash{String=>PublicationIdentifier,nil}]   If *invalid* is *true*.
   #
   def self.object_map(value, invalid: true)
-    result = split(value).map! { |id| [id, cast(id, invalid: invalid)] }.to_h
+    result = split(value).map! { [_1, cast(_1, invalid: invalid)] }.to_h
     invalid ? result : result.compact
   end
 

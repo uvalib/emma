@@ -210,7 +210,7 @@ class Shrine
       #
       def get
         super
-          .tap { |result| __ext_debug("--> #{result.inspect}") }
+          .tap { __ext_debug("--> #{_1.inspect}") }
       end
 
       # load_data
@@ -247,7 +247,7 @@ class Shrine
       #
       def file!
         super
-          .tap { |result| __ext_debug("--> #{result.inspect}") }
+          .tap { __ext_debug("--> #{_1.inspect}") }
       end
 
       # uploaded_file

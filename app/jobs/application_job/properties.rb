@@ -52,7 +52,7 @@ module ApplicationJob::Properties
   #
   # @type [Range]
   #
-  PRIORITY_RANGE = QUEUE_PRIORITY.values.sort.then { |v| v.first..v.last }
+  PRIORITY_RANGE = QUEUE_PRIORITY.values.sort.then { _1.first .. _1.last }
 
   DEFAULT_KEY      = :normal
   DEFAULT_QUEUE    = DEFAULT_KEY.to_s.freeze

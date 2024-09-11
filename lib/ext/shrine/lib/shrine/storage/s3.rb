@@ -179,7 +179,7 @@ class Shrine
         #
         def part_size(io)
           super
-            .tap { |res| __ext_debug("--> #{res.inspect}") { { io: io } } }
+            .tap { __ext_debug("--> #{_1.inspect}") { { io: io } } }
         end
 
         # copyable?
@@ -188,7 +188,7 @@ class Shrine
         #
         def copyable?(io)
           super
-            .tap { |res| __ext_debug("--> #{res.inspect}") { { io: io } } }
+            .tap { __ext_debug("--> #{_1.inspect}") { { io: io } } }
         end
 
         # delete_objects

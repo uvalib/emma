@@ -56,7 +56,7 @@ module ToolHelper
     user ||= current_user
     prepend_css!(opt, css)
     html_ul(**opt) do
-      TOOL_ITEMS.map { |act, cfg| tool_list_item(act, cfg, user: user) }
+      TOOL_ITEMS.map { tool_list_item(_1, _2, user: user) }
     end
   end
 

@@ -13,7 +13,7 @@ __loading_begin(__FILE__)
 class MemberStatus < EnumType
 
   define_enumeration do
-    ACCOUNT_TYPES[name.to_sym].transform_values { |entry| entry[:label] }
+    ACCOUNT_TYPES[name.to_sym].transform_values { _1[:label] }
   end
 
 end

@@ -159,7 +159,7 @@ class ApplicationJob::Response
     this_class.class_exec do
 
       serializer :serialize do |instance|
-        keys.map { |k| [k, instance.send(k)] }.to_h.compact
+        keys.map { [_1, instance.send(_1)] }.to_h.compact
       end
 
       serializer :deserialize do |hash|

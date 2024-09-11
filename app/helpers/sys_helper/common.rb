@@ -85,7 +85,7 @@ module SysHelper::Common
   def dt_dd_lines(hdrs)
     unless hdrs.is_a?(Hash)
       hdrs = hdrs.is_a?(Array) ? hdrs.flatten : Array.wrap(hdrs)
-      hdrs = hdrs.map! { |name| [name, request.get_header(name)] }.to_h
+      hdrs = hdrs.map! { [_1, request.get_header(_1)] }.to_h
     end
     # noinspection RubyMismatchedArgumentType
     safe_join(dt_dd_pairs(hdrs), "\n")
@@ -266,10 +266,10 @@ module SysHelper::Common
   #
   def ls_command(root: nil, names: %w[.[^.]* *], ignore: nil, ls_opt: 'hlp')
     names  = Array.wrap(names).compact_blank
-    names.map! { |name| "#{root}/#{name}" } if root
+    names.map! { "#{root}/#{_1}" } if root
     names  = names.join(' ')
     ignore = Array.wrap(ignore).compact_blank.presence
-    ignore.map! { |name| "#{root}/#{name}" } if root
+    ignore.map! { "#{root}/#{_1}" } if root
     ignore = ignore.join("\n")
 
     dirs   = "ls -dv #{names}"
@@ -284,14 +284,14 @@ module SysHelper::Common
     lines  = run_command(cmd)
     blocks = lines.split("\n\n")
 
-    first  = blocks.shift.split("\n").map! { |line| ls_entry(line, root) }
+    first  = blocks.shift.split("\n").map! { ls_entry(_1, root) }
     first  = first.join("\n").html_safe
 
     blocks.map! do |block|
       entries = block.split("\n")
       line_1, line_2 = entries.shift(2)
       base = line_1.delete_suffix(':')
-      entries.map! { |line| ls_entry(line, base) }
+      entries.map! { ls_entry(_1, base) }
       [line_1, line_2, *entries].join("\n").html_safe
     end
     [first, *blocks].join("\n\n").html_safe

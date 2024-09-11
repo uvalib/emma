@@ -106,7 +106,7 @@ module AwsS3Service::Testing
     #
     def inject_fault!(meth, item)
       return unless FAULT_INJECTION
-      return item.each { |i| send(__method__, meth, i) } if item.is_a?(Array)
+      return item.each { inject_fault!(meth, _1) } if item.is_a?(Array)
       return unless (faults = meth ? FAULT_METHOD[meth] : ALL_FAULTS).present?
       unless item.is_a?(AwsS3::Message::SubmissionRequest)
         Log.warn do

@@ -135,7 +135,7 @@ class UploadDecorator < BaseDecorator
               value = false
             elsif value == 'nonzero'
               value = ->(list, group = nil) {
-                list &&= list.select { |r| r.state_group == group } if group
+                list &&= list.select { _1.state_group == group } if group
                 list.present?
               }
             end
@@ -254,7 +254,7 @@ class UploadDecorator < BaseDecorator
     # @return [Array<Symbol>]
     #
     def compound_fields
-      (columns = super) + columns.map { |col| :"edit_#{col}" }
+      (columns = super) + columns.map { :"edit_#{_1}" }
     end
 
     # Field/value pairs with support for generating fake file data for display.

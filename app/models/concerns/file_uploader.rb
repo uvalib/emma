@@ -84,7 +84,7 @@ class FileUploader < Shrine
     if FileNaming::STRICT_FORMATS
       fmt      = FileNaming.mime_to_fmt[file.mime_type]&.first
       exts     = fmt && FileNaming.file_extensions[fmt] || [file.extension]
-      ext_list = exts.map { |e| %Q(".#{e}") }.join(', ')
+      ext_list = exts.map { %Q(".#{_1}") }.join(', ')
       fmt      = fmt&.upcase || ''
       validate_mime_type(FORMATS, message: ERROR[:mime_type]) &&
       validate_extension(exts,    message: ERROR[:extension] % ext_list) &&

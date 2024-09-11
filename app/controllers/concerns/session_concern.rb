@@ -226,13 +226,13 @@ module SessionConcern
     h_chars = 2 # extra characters for JSON hash representation ('{}')
     result  = h.extract!(*LAST_OP_NO_ABBREV).stringify_keys!
     size    = escaped_value(result).size
-    h.transform_keys! { |k| abbreviate_param(k, p_max: (p_max - k_chars)) }
+    h.transform_keys! { abbreviate_param(_1, p_max: (p_max - k_chars)) }
     while (size - h_chars + escaped_value(h).size) > max do
-      h.transform_values! { |v| abbreviate_param(v, p_max: (p_max - v_chars)) }
+      h.transform_values! { abbreviate_param(_1, p_max: (p_max - v_chars)) }
       break unless (p_max /= 2) > v_chars
     end
     h.each_pair do |k, v|
-      size += [k, v].sum { |x| escaped_value(x).size } + k_chars + v_chars
+      size += [k, v].sum { escaped_value(_1).size } + k_chars + v_chars
       return result.merge!('...' => '...') if size > max
       result.merge!(k => v)
     end

@@ -16,7 +16,7 @@ __loading_begin(__FILE__)
 class RoleCapability < EnumType
 
   define_enumeration do
-    Ability::CAPABILITY_CONFIG.transform_values { |entry| entry[:label] }
+    Ability::CAPABILITY_CONFIG.transform_values { _1[:label] }
   end
 
 end

@@ -386,7 +386,7 @@ module ModelConcern
     group.map!(&:downcase).map!(&:to_sym)
     return opt.except!(*state) if group.include?(:all)
 
-    states = group.flat_map { |g| Upload::STATE_GROUP.dig(g, :states) }.compact
+    states = group.flat_map { Upload::STATE_GROUP.dig(_1, :states) }.compact
     return if states.blank?
 
     states.map!(&:to_s)
@@ -573,7 +573,7 @@ module ModelConcern
     __debug_items("WF #{self.class} #{__method__}") {{ opt: opt, item: item }}
     opt   = model_options.all.merge(opt)
     ids   = opt.extract!(:ids, :id).compact.values.first
-    items = [*items, *ids].map! { |item| item.try(:id) || item }.uniq
+    items = [*items, *ids].map! { _1.try(:id) || _1 }.uniq
     done  = []
     fail  = []
     model_class.where(id: items).each do |item|

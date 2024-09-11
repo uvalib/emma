@@ -133,7 +133,7 @@ module ManifestItemConcern
   # @return [Array<Hash>, nil]
   #
   def from_json(data)
-    super&.map! { |item| import_transform!(item) }
+    super&.map! { import_transform!(_1) }
   end
 
   # Interpret data as CSV.
@@ -143,7 +143,7 @@ module ManifestItemConcern
   # @return [Array<Hash>, nil]
   #
   def from_csv(data)
-    super&.map! { |item| import_transform!(item) }
+    super&.map! { import_transform!(_1) }
   end
 
   # ===========================================================================
@@ -198,7 +198,7 @@ module ManifestItemConcern
   # @return [Hash]
   #
   def normalize_import_name!(item)
-    item.transform_keys! { |k| IMPORT_FIELD[k] || k }
+    item.transform_keys! { IMPORT_FIELD[_1] || _1 }
   end
 
   # Transformation of ManifestItem fields on export.
@@ -220,7 +220,7 @@ module ManifestItemConcern
   # @return [Hash]
   #
   def normalize_export_name!(item)
-    item.transform_keys! { |k| EXPORT_FIELD[k] || k }
+    item.transform_keys! { EXPORT_FIELD[_1] || _1 }
   end
 
   # ===========================================================================
@@ -357,7 +357,7 @@ module ManifestItemConcern
       updated_at = record[:updated_at]
     }&.tap { |record|
       if keep_date.nil?
-        keep_date = old_values&.all? { |k, v| record[k].to_s == v.to_s }
+        keep_date = old_values&.all? { record[_1].to_s == _2.to_s }
       end
       record.set_field_direct(:updated_at, updated_at) if keep_date
     }
@@ -778,7 +778,7 @@ module ManifestItemConcern
   # @return [Hash{Symbol=>Hash}]
   #
   def bulk_id_response(list = @list, **)
-    list = Array.wrap(list).compact_blank.map! { |v| (v.try(:id) || v).to_i }
+    list = Array.wrap(list).compact_blank.map! { (_1.try(:id) || _1).to_i }
     { RESPONSE_OUTER => { list: list } }
   end
 

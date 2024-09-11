@@ -305,11 +305,11 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   def records_or_sid_ranges(list)
     return if list.blank?
-    rids    = list.select { |e| e.is_a?(String) && e.match?(/^[^\d]/) }
+    rids    = list.select { _1.is_a?(String) && _1.match?(/^[^\d]/) }
     recs, _ = find_in_index(*rids)
     lookup  = record_map(recs)
-    items   = list.map { |item| lookup[item] || item }
-    items.select { |item| item.is_a?(Model) || item.include?('-') }
+    items   = list.map { lookup[_1] || _1 }
+    items.select { _1.is_a?(Model) || _1.include?('-') }
   end
 
   # find_in_index
@@ -323,7 +323,7 @@ class UploadsDecorator < BaseCollectionDecorator
     result = IngestService.instance.get_records(*items)
     found  = result.records
     sids   = found.map(&:emma_repositoryRecordId)
-    failed = items.reject { |item| sids.include?(Upload.sid_value(item)) }
+    failed = items.reject { sids.include?(Upload.sid_value(_1)) }
     return found, failed
   end
 
@@ -334,7 +334,7 @@ class UploadsDecorator < BaseCollectionDecorator
   # @return [Hash{String=>String}]
   #
   def record_map(records)
-    records.map { |rec| [rec.emma_repositoryRecordId, rec.emma_recordId] }.to_h
+    records.map { [_1.emma_repositoryRecordId, _1.emma_recordId] }.to_h
   end
 
   # ===========================================================================

@@ -31,8 +31,7 @@ module Lookup::RemoteService::Shared::IdentifierMethods
   # @return [Array<String>]
   #
   def identifier_list(field = nil)
-    ids = identifier_table.values.flatten
-    ids.sort_by! { |id| id_sort_key(id) }.map!(&:to_s)
+    identifier_table.values.flatten.sort_by! { id_sort_key(_1) }.map!(&:to_s)
   end
 
   # identifier_table

@@ -138,7 +138,7 @@ module Lookup::RemoteService::Shared::TitleMethods
   #
   def language_list(field = nil)
     return [] unless field
-    find_record_values(field).map { |v| LanguageType.normalize(v) }
+    find_record_values(field).map { LanguageType.normalize(_1) }
   end
 
   # subject_list

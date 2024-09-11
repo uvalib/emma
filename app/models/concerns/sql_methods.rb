@@ -105,7 +105,8 @@ module SqlMethods
   def sql_terms(*terms, join: :and, **other)
     terms = terms.flatten.compact_blank!
     terms << other if other.present?
-    terms.map! { |t| t.is_a?(Hash) ? sql_clauses(t, join: join) : t }
+    # noinspection RubyMismatchedArgumentType
+    terms.map! { _1.is_a?(Hash) ? sql_clauses(_1, join: join) : _1 }
     sql_join(*terms, join)
   end
 
@@ -126,7 +127,7 @@ module SqlMethods
   #   sql_clauses(id: '123', age: '18', join: :or)-> "id = '123' OR age = '18'"
   #
   def sql_clauses(hash, join: :and)
-    clauses = hash.map { |k, v| sql_clause(k, v) }
+    clauses = hash.map { sql_clause(_1, _2) }
     sql_join(*clauses, join)
   end
 
@@ -171,21 +172,21 @@ module SqlMethods
     v = v.uniq
     if v.many? && (v.map(&:class).uniq.size == 1)
       ranges = v.sort.chunk_while { |prev, this| prev.succ == this }.to_a
-      ranges.map! { |r| (r.size >= 5) ? Range.new(r.first, r.last) : r }
-      ranges, singles = ranges.partition { |r| r.is_a?(Range) }
-      ranges.map! { |range| sql_test(k, range) }
+      ranges.map! { (_1.size >= 5) ? Range.new(_1.first, _1.last) : _1 }
+      ranges, singles = ranges.partition { _1.is_a?(Range) }
+      ranges.map! { sql_test(k, _1) }
       singles.flatten!
     else
       ranges  = []
       singles = v
     end
     if singles.present?
-      singles.map! { |s| sql_quote(s) }
+      singles.map! { sql_quote(_1) }
       ranges << "#{k} IS NULL"                     if singles.reject!(&:nil?)
       ranges << "#{k} IN (%s)" % singles.join(',') if singles.present?
     end
     if ranges.many?
-      ranges.map! { |s| "(#{s})" }.join(' OR ')
+      ranges.map! { "(#{_1})" }.join(' OR ')
     else
       ranges.first
     end
@@ -210,7 +211,7 @@ module SqlMethods
     # noinspection RubyMismatchedReturnType
     return terms             if join.nil?
     return terms.first || '' unless terms.many?
-    terms.map! { |t| t.start_with?('(') ? t : "(#{t})" }
+    terms.map! { _1.start_with?('(') ? _1 : "(#{_1})" }
     '(%s)' % terms.join(" #{join} ".upcase)
   end
 
@@ -351,8 +352,8 @@ module SqlMethods
         error << "ignoring invalid field #{field.inspect}" and next
       end
       sql_test(name, value)
-    }.compact.map! { |s| "(#{s})" }.join(' AND ').tap {
-      error.each { |err| Log.warn("#{self.class}.#{__method__}: #{err}") }
+    }.compact.map! { "(#{_1})" }.join(' AND ').tap {
+      error.each { Log.warn("#{self.class}.#{__method__}: #{_1}") }
     }
   end
 
@@ -404,7 +405,7 @@ module SqlMethods
       when Symbol
         term = term.to_s.downcase if %i[nil null NULL * any ANY].include?(term)
       when Range
-        return 'BETWEEN', ('%s AND %s' % term.minmax.map { |v| sql_quote(v) })
+        return 'BETWEEN', ('%s AND %s' % term.minmax.map { sql_quote(_1) })
       when Array
         return 'IN', sql_list(term)
       else
@@ -445,7 +446,7 @@ module SqlMethods
   # @return [nil]                     If *name* was blank.
   #
   def sanitize_sql_name(*name)
-    name.join('_').presence&.gsub(/\d/) { |d| DIGIT_TO_ALPHA[d] || '_' }
+    name.join('_').presence&.gsub(/\d/) { DIGIT_TO_ALPHA[_1] || '_' }
   end
 
   # Make a string safe to use within an SQL LIKE statement.
@@ -492,7 +493,7 @@ module SqlMethods
   # @return [String]
   #
   def sql_list(value, null: 'NULL')
-    '(%s)' % Array.wrap(value).map { |v| sql_quote(v, null: null) }.join(', ')
+    '(%s)' % Array.wrap(value).map { sql_quote(_1, null: null) }.join(', ')
   end
 
   # ===========================================================================
@@ -542,7 +543,7 @@ module SqlMethods
         matches.map do |value|
           json ? sql_match_json(field, value) : sql_match_pattern(field, value)
         end
-      }.then { |result| join ? result.join(" #{join} ".upcase) : result }
+      }.then { join ? _1.join(" #{join} ".upcase) : _1 }
     end
 
     # =========================================================================
@@ -584,11 +585,11 @@ module SqlMethods
         case term
           when nil  then next
           when Hash then term = term.deep_symbolize_keys
-          else           term = columns.map { |col| [col, term] }.to_h
+          else           term = columns.map { [_1, term] }.to_h
         end
         term.transform_values! { |v|
           next if (v = Array.wrap(v).compact_blank).empty?
-          sanitize ? v.map! { |s| sanitize_sql_like(s) } : v.map!(&:to_s)
+          sanitize ? v.map! { sanitize_sql_like(_1) } : v.map!(&:to_s)
         }.compact!
         dst.rmerge!(term) if term.present?
       end

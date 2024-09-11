@@ -66,7 +66,7 @@ module TreeHelper
     opt[:label]   ||= opt[:open] ? TREE_CLOSER_LABEL : TREE_OPENER_LABEL
     opt[:title]   ||= opt[:open] ? TREE_CLOSER_TIP   : TREE_OPENER_TIP
     opt[:context] ||=
-      unless css_class_array(opt[:class]).any? { |c| c.start_with?('for-') }
+      unless css_class_array(opt[:class]).any? { _1.start_with?('for-') }
         'for-tree'
       end
     toggle_button(**opt)

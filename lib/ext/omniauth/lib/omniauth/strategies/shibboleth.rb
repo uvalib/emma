@@ -69,7 +69,7 @@ module OmniAuth
         if (eppn = request.env['HTTP_EPPN'].to_s).include?('@')
           @uid = eppn
         elsif (aff = request.env['HTTP_AFFILIATION'])
-          @uid = parse_affiliation(aff)&.find { |a| a.start_with?('member@') }
+          @uid = parse_affiliation(aff)&.find { _1.start_with?('member@') }
         else
           @uid = ''
         end
@@ -107,7 +107,7 @@ module OmniAuth
         req_env = request_env
         options.fields.map { |field|
           names = [field.upcase, field.underscore.upcase].uniq
-          value = names.map { |name| req_env["HTTP_#{name}"] }.compact.first
+          value = names.map { req_env["HTTP_#{_1}"] }.compact.first
           [field.to_sym, value]
         }.to_h
       end

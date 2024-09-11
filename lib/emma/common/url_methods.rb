@@ -78,8 +78,8 @@ module Emma::Common::UrlMethods
   def url_query(*args, **opt)
     opt.reverse_merge!(args.extract_options!) if args.last.is_a?(Hash)
     opt.reverse_merge!(decorate: true, unescape: false)
-    extract_url_query(*args, **opt).flat_map { |k, value|
-      Array.wrap(value).map { |v| "#{k}=#{v}" }
+    extract_url_query(*args, **opt).flat_map { |key, value|
+      Array.wrap(value).map { "#{key}=#{_1}" }
     }.join('&')
   end
 

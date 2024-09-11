@@ -190,7 +190,7 @@ module AwsS3::Shared::AwsMethods
     # @type [Aws::S3::Types::ListObjectsV2Output]
     resp   = client.list_objects_v2(params, **opt)
     result = Array.wrap(resp.contents)
-    filter ? result.select { |obj| obj.key.start_with?(filter) } : result
+    filter ? result.select { _1.key.start_with?(filter) } : result
   rescue => error
     Log.warn { "#{meth}: AWS S3 failure: #{error.class}: #{error.message}" }
     raise error if fatal

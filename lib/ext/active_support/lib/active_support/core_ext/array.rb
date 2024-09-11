@@ -103,7 +103,7 @@ module ArrayExt
   # @return [self]
   #
   def remove(*elements)
-    elements.flatten.each { |v| delete(v) }
+    elements.flatten.each { delete(_1) }
     self
   end
 
@@ -115,7 +115,7 @@ module ArrayExt
   #
   def remove!(*elements)
     removed = intersection(elements.flatten).presence
-    removed&.each { |v| delete(v) } and self
+    removed&.each { delete(_1) } and self
   end
 
   # Retain only the indicated elements.

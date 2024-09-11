@@ -187,7 +187,7 @@ module Emma::Debug
     #
     def __debug_inspect_items(*args, **opt)
       args.concat(Array.wrap(yield)) if block_given?
-      args.flat_map { |arg| __debug_inspect_item(arg, **opt) }
+      args.flat_map { __debug_inspect_item(_1, **opt) }
     end
 
     # Generate one or more inspections.
@@ -236,7 +236,7 @@ module Emma::Debug
         else             omission += '>'
       end
       type   = value.class
-      common = DEBUG_INSPECT_COMMON.any? { |t| (type == t) || (type < t) }
+      common = DEBUG_INSPECT_COMMON.any? { (type == _1) || (type < _1) }
       output = (value if common)
       output ||=
         case value
@@ -511,7 +511,7 @@ module Emma::Debug
           when Symbol then value = send(value, req)
         end
         lines = __debug_inspect_item(value, **opt)
-        lines.map! { |line| "[#{prefix}] #{line}" } if prefix
+        lines.map! { "[#{prefix}] #{_1}" } if prefix
         item = +"== #{item} "
         item << '=' * (count - item.size)
         __debug_impl(item, *lines, **opt)
@@ -560,7 +560,7 @@ module Emma::Debug
     # @param [Module] base
     #
     def self.included(base)
-      OutputMethods.instance_methods(false).each { |m| base.neutralize(m) }
+      base.neutralize(*OutputMethods.instance_methods(false))
       base
     end
 

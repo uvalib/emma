@@ -116,7 +116,7 @@ module Record::Describable
   #
   def generate_interpolation_table(mod = nil)
     mod ||= self.is_a?(Module) ? self : self.class
-    mod = mod.ancestors.find { |m| m.name&.include?('InterpolationMethods') }
+    mod = mod.ancestors.find { _1.name&.include?('InterpolationMethods') }
     mod.methods.map { |meth|
       (term = meth.to_s.delete_prefix!('describe_')) and [term.to_sym, meth]
     }.compact.to_h.tap { |result|

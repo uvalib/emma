@@ -41,7 +41,7 @@ class SearchTitleDecorator < SearchDecorator
         added[:sort_date] = object.try(:emma_sortDate).presence
         added[:pub_date]  = object.try(:emma_publicationDate).presence
         added[:rem_date]  = object.try(:rem_remediationDate).presence
-        added.transform_values! { |score| score || EMPTY_VALUE }
+        added.transform_values! { _1 || EMPTY_VALUE }
       end
       opt[:after]    = added                   if object.aggregate?
       opt[:render] ||= :render_field_hierarchy if title_results?

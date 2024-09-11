@@ -122,9 +122,9 @@ module ParamsHelper
   # @return [Array<Integer,String>]
   #
   def identifier_list(*ids, separator: /\s*,\s*/, **)
-    ids = ids.flat_map { |v| v.is_a?(String) ? v.strip.split(separator) : v }
-    ids.map! { |v| v.is_a?(ApplicationRecord) ? v.id : v }
-    ids.map! { |v| positive(v) || v }.compact_blank!
+    ids = ids.flat_map { _1.is_a?(String) ? _1.strip.split(separator) : _1 }
+    ids.map! { _1.is_a?(ApplicationRecord) ? _1.id : _1 }
+    ids.map! { positive(_1) || _1 }.compact_blank!
   end
 
   # ===========================================================================

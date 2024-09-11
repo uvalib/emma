@@ -540,7 +540,7 @@ class ManifestItemDecorator < BaseDecorator
         end
       desc ||=
         config_term(:manifest_item, :details, :type_desc, type: type.inspect)
-      desc   = Array.wrap(desc).map { |v| v.html_safe? ? v : html_div(v) }
+      desc   = Array.wrap(desc).map { _1.html_safe? ? _1 : html_div(_1) }
 
       html_details(first, *desc, &blk)
     end
@@ -835,10 +835,10 @@ class ManifestItemDecorator < BaseDecorator
         first = [*part[:title], *part[:author], *part[:identifier]].take(2)
         first = first.join(sep)
         text  = config_term_section(:manifest_item, :submit)
-        part.transform_keys! { |k| text[k] || k.capitalize }
+        part.transform_keys! { text[_1] || _1.capitalize }
         uniq  = hex_rand
         r_opt = { index: uniq, separator: sep, no_fmt: true, no_help: true }
-        lines = part.map { |k, v| render_pair(k, v, **r_opt) }
+        lines = part.map { render_pair(_1, _2, **r_opt) }
         l_id  = 'label-%s' % (base || unique_id(css))
         item  = html_details(first, *lines, class: 'text', id: l_id)
         item  = control_group(l_id) { item }
@@ -1436,7 +1436,7 @@ class ManifestItemDecorator
   def render_grid_file_input(_name, _value, css: UPLOADER_DISPLAY_CLASS, **opt)
     prepend_css!(opt, css)
     display  = html_div(**opt)
-    controls = FILE_INPUT_TYPES.map { |type| file_input_popup(src: type) }
+    controls = FILE_INPUT_TYPES.map { file_input_popup(src: _1) }
     controls = html_div(*controls, class: "#{APPEND_CONTROLS_CLASS} hidden")
     controls << display
   end if ManifestItem::EMBED_UPLOADER

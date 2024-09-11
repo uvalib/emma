@@ -79,13 +79,13 @@ module Lookup::Crossref::Shared::CreatorMethods
     types = types.compact.presence || CREATOR_TYPES
     types.flat_map { |type|
       find_record_items(type)
-        .map { |item| [item.given, item.family].join(' ').squish }
+        .map { [_1.given, _1.family].join(' ').squish }
         .compact_blank!
         .presence&.tap do |names|
           if (role = opt.key?(:role) ? opt[:role] : CREATOR_ROLE[type])
             role  = type if role.is_a?(TrueClass)
             regex = /(^|\W)#{role}(\W|$)/i
-            names.map! { |v| v.match?(regex) ? v : "#{v} (#{role})" }
+            names.map! { _1.match?(regex) ? _1 : "#{_1} (#{role})" }
           end
         end
     }.compact.uniq

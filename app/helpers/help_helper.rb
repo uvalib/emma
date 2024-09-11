@@ -62,7 +62,7 @@ module HelpHelper
         if v.is_a?(String)
           entry[k] = v % names
         elsif v.is_a?(Array) && v.first.is_a?(String)
-          entry[k] = v.map { |line| line % names }
+          entry[k] = v.map { _1 % names }
         end
       end
 
@@ -633,7 +633,7 @@ module HelpHelper
       text = text.html_safe
       text << docs if docs
     elsif (text = cfg[:intro])
-      text = text.split(/%{#{meth}}/).compact.map { |txt| html_paragraph(txt) }
+      text = text.split(/%{#{meth}}/).compact.map { html_paragraph(_1) }
       text = safe_join(text, docs)
     end
     html_div(**opt) do
@@ -672,7 +672,7 @@ module HelpHelper
   def help_offline_items
     dir  = Rails.root.join('public', 'doc')
     base = "#{dir}/"
-    Dir[dir.join('*.pdf')].sort_by { |s| s.delete_prefix(base).to_i }
+    Dir[dir.join('*.pdf')].sort_by { _1.delete_prefix(base).to_i }
   end
 
   # ===========================================================================

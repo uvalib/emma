@@ -67,7 +67,7 @@ module Enrollment::Assignable
   #
   def normalize_users(arg, **opt)
     return [] if arg.nil?
-    return arg.flat_map { |v| normalize_users(v, **opt) } if arg.is_a?(Array)
+    return arg.flat_map { normalize_users(_1, **opt) } if arg.is_a?(Array)
     arg = json_parse(arg, **opt) || arg
     if arg.is_a?(String)
       case arg
@@ -87,7 +87,7 @@ module Enrollment::Assignable
         { email: e, last_name: l, first_name: f }.compact
       }.compact!
     elsif arg.is_a?(Hash)
-      arg = arg.transform_values { |v| v.is_a?(String) ? v.squish : v }
+      arg = arg.transform_values { _1.is_a?(String) ? _1.squish : _1 }
     elsif !arg.is_a?(Array)
       Log.warn { "#{__method__}: bad: #{arg.inspect}" }
     end

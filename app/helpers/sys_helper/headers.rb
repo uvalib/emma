@@ -131,8 +131,8 @@ module SysHelper::Headers
         a << 'SCRIPT_FILENAME'
 
         a.remove ActionDispatch::Request::HTTP_METHODS + %w[LINK UNLINK]
-        a.delete_if { |v| v.start_with?('rack.') }
-      }.partition { |v| v.match?(/[a-z]/) }.flat_map(&:itself).deep_freeze
+        a.delete_if { _1.start_with?('rack.') }
+      }.partition { _1.match?(/[a-z]/) }.flat_map(&:itself).deep_freeze
   end
 
   # Rails header `request.env` names.
@@ -234,7 +234,7 @@ module SysHelper::Headers
       added = yield(array).presence
       array.concat(Array.wrap(added)) if added && !added.equal?(array)
     end
-    array.select { |v| v.is_a?(String) && v.match?(HEADER_NAME) }.sort.uniq
+    array.select { _1.is_a?(String) && _1.match?(HEADER_NAME) }.sort.uniq
   end
 
   # Return the values of the constants defined in the class or module which

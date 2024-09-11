@@ -50,7 +50,7 @@ module TestHelper::SystemTests::Cookies
     if browser.respond_to?(:cookie_jar) # Rack::Test::Session
       browser.cookie_jar.to_hash
     elsif browser.respond_to?(:manage) # Selenium::WebDriver
-      browser.manage.all_cookies.map { |v| [v[:name], v] }.to_h
+      browser.manage.all_cookies.map { [_1[:name], _1] }.to_h
     else
       raise "#{__method__}: failed for browser #{browser.inspect}"
     end

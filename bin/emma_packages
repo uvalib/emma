@@ -38,7 +38,7 @@ URL = {
 # From command line
 #==============================================================================
 
-OPTIONS = $*.select { |arg| arg.start_with?('-') }.freeze
+OPTIONS = $*.select { _1.start_with?('-') }.freeze
 VERBOSE = OPTIONS.include?('--verbose')
 FILES   = ($* - OPTIONS).freeze
 
@@ -48,15 +48,15 @@ FILES   = ($* - OPTIONS).freeze
 
 def output(*lines)
   lines.concat([yield].flatten) if block_given?
-  lines.each { |line| $stdout.puts(line) } and nil
+  lines.each { $stdout.puts(_1) } and nil
 end
 
 def alert(*args, **opt)
   pre = opt[:prefix]
   pre = "#{pre} " if pre && !pre.end_with?(' ')
   args.concat([yield].flatten) if block_given?
-  args.map! { |line| "#{pre}#{line}" } if pre
-  args.each { |line| $stderr.puts line } and nil
+  args.map! { "#{pre}#{_1}" } if pre
+  args.each { $stderr.puts _1 } and nil
 end
 
 def warn(*args, **opt)
@@ -105,7 +105,7 @@ def get_package_versions(packages)
     }&.compact&.to_h
   debug("versions == #{result.pretty_inspect}")
   found = result&.keys || []
-  (packages - found).each { |pkg| warn("No entry for #{pkg.inspect}") }
+  (packages - found).each { warn("No entry for #{_1.inspect}") }
   result if result&.size&.positive?
 end
 
@@ -161,7 +161,7 @@ end
 # Main
 #==============================================================================
 
-if %w[-? --? -help --help].any? { |flag| OPTIONS.include?(flag) }
+if %w[-? --? -help --help].any? { OPTIONS.include?(_1) }
 
   alert(
     "Usage: #{$0} [--verbose] [package.json]",

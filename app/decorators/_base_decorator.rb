@@ -373,7 +373,7 @@ class BaseDecorator < Draper::Decorator
     #
     def context_value(*keys)
       keys = keys.flatten.map!(&:to_s)
-      keys = keys.flat_map { |k| [k.pluralize, k.singularize] }.map!(&:to_sym)
+      keys = keys.flat_map { [_1.pluralize, _1.singularize] }.map!(&:to_sym)
       context.values_at(*keys).compact.first
     end
 
@@ -400,7 +400,7 @@ class BaseDecorator < Draper::Decorator
     def request_values(*keys)
       keys = keys.flatten.presence || %i[referrer url fullpath]
       case (req = context[:request] || request)
-        when Rack::Request::Helpers then keys.map { |k| [k, req.try(k)] }.to_h
+        when Rack::Request::Helpers then keys.map { [_1, req.try(_1)] }.to_h
         when Hash                   then req
         else                             {}
       end
@@ -458,7 +458,7 @@ class BaseDecorator < Draper::Decorator
     def same_request?(opt = nil)
       opt ||= request_values(:referrer, :url, :fullpath)
       (ref = opt[:referrer]).present? &&
-        opt.values_at(:url, :fullpath).any? { |u| u&.sub(/\?.*$/, '') == ref }
+        opt.values_at(:url, :fullpath).any? { _1&.sub(/\?.*$/, '') == ref }
     end
 
     # Return the best :href value to use to the previous page.
@@ -590,7 +590,7 @@ class BaseDecorator < Draper::Decorator
       if value
         interpolate(value, object, **opt)
       elsif default.is_a?(TrueClass)
-        [action, model_type].map { |v| v.to_s.titleize }.join(' ')
+        [action, model_type].map { _1.to_s.titleize }.join(' ')
       elsif default
         default.to_s
       end
@@ -895,8 +895,8 @@ class BaseDecorator
   def self.set_object_class(obj, *other)
     meth          = "BaseDecorator.#{__method__}"
     @object_class = obj = to_class(obj, meth) or raise 'FATAL'
-    @other_class  = other.map! { |c| to_class(c, meth) }.compact_blank!
-    @ar_class     = arc = [obj, *other].find { |c| c < ApplicationRecord }
+    @other_class  = other.map! { to_class(_1, meth) }.compact_blank!
+    @ar_class     = arc = [obj, *other].find { _1 < ApplicationRecord }
     @ar_class   &&=
       (ARClassMap.set(arc,  self) or map_warn(ARClassMap, arc, meth))
     @other_class.each do |oc|
@@ -1165,7 +1165,7 @@ class BaseDecorator
   # @return [Hash]
   #
   def self.fetch_properties(hash)
-    hash.transform_values { |v| fetch_property(v) }.compact
+    hash.transform_values { fetch_property(_1) }.compact
   end
 
 end

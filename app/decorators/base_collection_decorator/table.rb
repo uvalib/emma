@@ -83,7 +83,7 @@ module BaseCollectionDecorator::Table
     # Generate the table, preceded by a link to access the full table if only
     # displaying a partial table here.
     html_tag(tag, **opt, 'data-path': table_path(sort: local[:sort])) {
-      table ? parts.map { |k, part| html_tag(k, part, **t_opt) } : parts.values
+      table ? parts.map { html_tag(_1, _2, **t_opt) } : parts.values
     }.tap { |result|
       result.prepend(render_full_table_link(rows: rows)) if limit && !full
     }

@@ -118,7 +118,7 @@ module ExceptionHelper
 
     # Find or create the exception and raise it.
     err ||= rpt.exception
-    err ||= Array.wrap(value).find { |v| v.is_a?(Exception) }
+    err ||= Array.wrap(value).find { _1.is_a?(Exception) }
     err ||= Record::SubmitError
     err.is_a?(Exception) and raise(err) or raise(err, rpt.render)
   end

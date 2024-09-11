@@ -177,7 +177,7 @@ class SortOrder < Hash
     if sql_only?
       err << 'raw_sql and order/direction pairs are mutually exclusive' if val
     elsif (val &&= val.excluding(*DIRECTIONS).presence)
-      err += val.uniq.map { |v| "#{v}: invalid direction" }
+      err += val.uniq.map { "#{_1}: invalid direction" }
     end
     fail('SortOrder: %s' % err.join('; ')) if err.present?
   end
@@ -235,7 +235,7 @@ class SortOrder < Hash
     e_opt = { fatal: fatal, meth: meth || __method__}
     col &&= col.to_s.strip.downcase
     if dir && !DIRECTIONS.include?(dir)
-      val = DIRECTIONS.find { |d| dir.to_s.match?(/^#{d}/i) }
+      val = DIRECTIONS.find { dir.to_s.match?(/^#{_1}/i) }
       error("invalid sort direction: #{dir.inspect}", **e_opt) unless val
       dir = val
     end

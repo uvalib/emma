@@ -36,7 +36,7 @@ module Puma
 =begin # NOTE: Puma debugging
       def io_ok?
         super
-          .tap { |result| __ext_log(result) }
+          .tap { __ext_log(_1) }
       end
 =end
 
@@ -50,7 +50,7 @@ module Puma
 =begin # NOTE: Puma debugging
       def in_data_phase
         super
-          .tap { |result| __ext_log(result) }
+          .tap { __ext_log(_1) }
       end
 =end
 
@@ -62,7 +62,7 @@ module Puma
 =begin # NOTE: Puma debugging
       def timeout
         super
-          .tap { |res| __ext_log { { '@timeout_at': @timeout_at, res: res } } }
+          .tap { __ext_log { { '@timeout_at': @timeout_at, result: _1 } } }
       end
 =end
 
@@ -111,14 +111,14 @@ module Puma
 =begin # NOTE: Puma debugging
       def peerip
         super
-          .tap { |result| __ext_log(result) }
+          .tap { __ext_log(_1) }
       end
 =end
 
 =begin # NOTE: Puma debugging
       def can_close?
         super
-          .tap { |result| __ext_log(result) }
+          .tap { __ext_log(_1) }
       end
 =end
 

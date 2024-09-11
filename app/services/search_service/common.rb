@@ -85,18 +85,18 @@ module SearchService::Common
 
       # Redistribute identifier search terms and ensure that OCLC terms do not
       # include leading zeros (since the Unified Index handles this badly).
-      terms = %i[q identifier].map { |k| [k, result[k]] }.to_h
+      terms = %i[q identifier].map { [_1, result[_1]] }.to_h
       if terms.any? { |_, v| v.present? }
         terms.transform_values! do |v|
           next [] if v.blank?
           v = v.split(/\s+/) if v.is_a?(String)
           v = Array.wrap(v).compact_blank
-          v.map! { |t| PublicationIdentifier.cast(t, invalid: true) || t }
+          v.map! { PublicationIdentifier.cast(_1, invalid: true) || _1 }
           v.compact_blank!
         end
-        i, q = terms[:q].partition { |t| t.is_a?(PublicationIdentifier) }
+        i, q = terms[:q].partition { _1.is_a?(PublicationIdentifier) }
         i = [*terms[:identifier], *i]
-        i.map! { |t| t.is_a?(Oclc) ? t.to_s.sub(/:0+/, ':') : t.to_s }
+        i.map! { _1.is_a?(Oclc) ? _1.to_s.sub(/:0+/, ':') : _1.to_s }
         { q: q, identifier: i }.each_pair do |k, v|
           if v.present?
             result[k] = v.join(' ')
@@ -134,7 +134,7 @@ module SearchService::Common
         errs << ':prev_id/:prev_value -- invalid for default sort'
         result.except!(:searchAfterId, :searchAfterValue)
       end
-      errs.map { |err| Log.warn { "#{__method__}: #{err}" } }
+      errs.map { Log.warn { "#{__method__}: #{_1}" } }
 
     end
   end

@@ -70,7 +70,7 @@ module AwsS3Service::Common
       raise request_error(config_term(:aws, :no_records)) if items.blank?
     else
       opt[:bucket] ||= bucket_for(repo || items.first)
-      items = items.map { |key| submission_id(key) }.compact
+      items = items.map { submission_id(_1) }.compact
       raise request_error(config_term(:aws, :no_sids)) if items.blank?
     end
     send(operation, *items, **opt)

@@ -70,8 +70,8 @@ module SearchCallConcern
   #
   def get_search_calls(*terms, columns: nil, sort: nil, **hash_terms)
     terms.flatten!
-    terms.map! { |t| t.is_a?(Hash) ? t.deep_symbolize_keys : t if t.present? }
-    terms.compact!
+    terms.compact_blank!
+    terms.map! { _1.is_a?(Hash) ? _1.deep_symbolize_keys : _1 }
     terms << hash_terms if hash_terms.present?
     if terms.blank?
       relation = SearchCall.all

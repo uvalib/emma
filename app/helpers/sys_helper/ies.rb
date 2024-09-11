@@ -28,10 +28,10 @@ module SysHelper::Ies
   def application_ies(sort: true, css: '.ies-table', **opt)
     pairs =
       ActiveSupport::IsolatedExecutionState.send(:state).map do |key, val|
-        key = key.to_s
-        id  = val.object_id
-        val = dd_value(val)
-        entry = [id, val].map! { |v| v || EMPTY_VALUE }
+        key   = key.to_s
+        id    = val.object_id
+        val   = dd_value(val)
+        entry = [id, val].map! { _1 || EMPTY_VALUE }
         [key, entry]
       end
     prepend_css!(opt, css)

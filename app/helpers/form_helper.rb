@@ -57,7 +57,7 @@ module FormHelper
     skip  = [id, *Paginator::NON_SEARCH_KEYS].compact
     pairs = fields.symbolize_keys.except!(*skip).compact_blank!.sort
     before_after = id ? pairs.partition { |k, _| k <= id } : [pairs, []]
-    before_after.each { |a| a.map! { |k, v| hidden_input(k, v, id: id) } }
+    before_after.each { _1.map! { |k, v| hidden_input(k, v, id: id) } }
   end
 
   # ===========================================================================

@@ -61,7 +61,7 @@ module ApplicationCable::Logging
     opt[:separator] = "\n\t"               unless opt.key?(:separator)
     __debug_items(args.join(DEBUG_SEPARATOR), **opt, &blk)
   end
-    .tap { |meth| neutralize(meth) unless DEBUG_CABLE }
+    .tap { neutralize(_1) unless DEBUG_CABLE }
 
   # Send sent/received WebSocket data to the console.
   #
@@ -75,7 +75,7 @@ module ApplicationCable::Logging
       "#{data.class} = #{data.inspect.truncate(512)}"
     end
   end
-    .tap { |meth| neutralize(meth) unless DEBUG_CABLE }
+    .tap { neutralize(_1) unless DEBUG_CABLE }
 
   # ===========================================================================
   # :section:

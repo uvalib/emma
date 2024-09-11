@@ -67,9 +67,9 @@ class LookupService::Request
     end
     @table[:request].each_pair do |k, v|
       if k == :ids
-        v.replace(id_list(v.map! { |term| fix_term(term) }))
+        v.replace(id_list(v.map! { fix_term(_1) }))
       else
-        v.map! { |term| fix_term(term, author: term.start_with?('author:')) }
+        v.map! { fix_term(_1, author: _1.start_with?('author:')) }
       end
     end
   end

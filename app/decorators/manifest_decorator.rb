@@ -702,7 +702,7 @@ class ManifestDecorator
   def submission_button_tray(*added, css: '.submission-controls', **opt)
     prepend_css!(opt, css)
     opt[:'data-manifest'] ||= object.id
-    buttons = SUBMISSION_BUTTONS.map { |type| submission_control(type) }
+    buttons = SUBMISSION_BUTTONS.map { submission_control(_1) }
     form_button_tray(*buttons, *added, submission_counts, **opt)
   end
 

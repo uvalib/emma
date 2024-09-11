@@ -80,7 +80,7 @@ module Emma::Csv
     CSV.parse(arg, **CSV_DEFAULTS, **opt).map { |row|
       row = row.to_h
       next if no_empty && row.values.all?(&:nil?)
-      utf8 ? row.transform_values! { |v| force_utf8(v) } : row
+      utf8 ? row.transform_values! { force_utf8(_1) } : row
     }.compact
   rescue => error
     Log.info { "#{__method__}: #{error.class}: #{error.message}" }

@@ -225,7 +225,7 @@ module AwsHelper
     sort_objects!(objects, local[:sort])
 
     # Render each object as HTML.
-    total = limit ? objects.map { |obj| obj[:prefix] }.tally : {}
+    total = limit ? objects.map { _1[:prefix] }.tally : {}
     prev  = nil
     row   = 0
     objects.map! { |obj|
@@ -401,9 +401,9 @@ module AwsHelper
     if item.is_a?(Hash)
       item.dup
     elsif item.nil?
-      methods.map { |m| [m, m.to_s.titleize] }.to_h
+      methods.map { [_1, _1.to_s.titleize] }.to_h
     else
-      methods.map { |m| [m, item.send(m)] if item.respond_to?(m) }.compact.to_h
+      methods.map { [_1, item.send(_1)] if item.respond_to?(_1) }.compact.to_h
     end.tap do |result|
       key = result[:key] || result[:object_key]
       if key.present? && result[:prefix].blank?
@@ -430,7 +430,7 @@ module AwsHelper
   #
   def value_format(item, hint = nil)
     if item.is_a?(Array)
-      item.map { |v| send(__method__, v, hint) }.join(', ')
+      item.map { value_format(_1, hint) }.join(', ')
     elsif item.is_a?(Integer) && (hint == :size)
       number_to_human_size(item, **NUMBER_OPTIONS)
     elsif item.is_a?(Integer)
@@ -484,7 +484,7 @@ module AwsHelper
   # @return [Hash{Symbol=>Boolean}]
   #
   def transform_sort_keys(sort_keys)
-    SortOrder.wrap(sort_keys).transform_values { |dir| dir == :asc }
+    SortOrder.wrap(sort_keys).transform_values { _1 == :asc }
   end
 
   # ===========================================================================

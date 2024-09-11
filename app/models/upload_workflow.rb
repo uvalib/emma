@@ -692,7 +692,7 @@ module UploadWorkflow::External
     end
 
     # Dequeue "partner repository workflow" creation requests.
-    requests = items.select { |item| incomplete?(item) && !emma_item?(item) }
+    requests = items.select { incomplete?(_1) && !emma_item?(_1) }
     repository_dequeues(requests, **opt) if requests.present?
 
     # Remove the records from the database.
@@ -725,7 +725,7 @@ module UploadWorkflow::External
         msg.join(': ')
       end
       not_removed = config_term(:upload, :record, :not_removed)
-      retained.map! { |item| FlashPart.new(item, not_removed) }
+      retained.map! { FlashPart.new(_1, not_removed) }
     end
     if model_options.repo_remove && removals.present?
       repository_removals(removals, **opt)
@@ -986,7 +986,7 @@ module UploadWorkflow::External
         items.flat_map { |item|
           item.is_a?(Upload) ? item : Upload.expand_ids(item) if item.present?
         }.compact
-      identifiers = items.reject { |item| item.is_a?(Upload) }
+      identifiers = items.reject { _1.is_a?(Upload) }
       if identifiers.present?
         found = {}
         Upload.fetch_records(*identifiers, **opt).each do |record|
@@ -994,7 +994,7 @@ module UploadWorkflow::External
           (sid = record.submission_id).present? and (found[sid] = record)
         end
         items.map! { |item| !item.is_a?(Upload) && found[item] || item }
-        items, failed = items.partition { |i| i.is_a?(Upload) } unless force
+        items, failed = items.partition { _1.is_a?(Upload) } unless force
       end
     elsif all
       # Searching for non-identifier criteria (e.g. { user: @user }).
@@ -1152,7 +1152,7 @@ module UploadWorkflow::External
       if removed.present?
         sids = removed.map(&:submission_id)
         Log.info { "#{__method__}: removed: #{sids}" }
-        rollback.reject! { |item| sids.include?(item.submission_id) }
+        rollback.reject! { sids.include?(_1.submission_id) }
       end
       succeeded = []      if atomic
       # noinspection RubyMismatchedArgumentType
@@ -1258,7 +1258,7 @@ module UploadWorkflow::External
     succeeded = []
 
     # Errors associated with the position of the item in the request.
-    by_index = errors.select { |k| k.is_a?(Integer) }
+    by_index = errors.select { _1.is_a?(Integer) }
     if by_index.present?
       errors.except!(*by_index.keys)
       by_index.transform_keys! { |idx| Upload.sid_value(items[idx-1]) }
@@ -1267,7 +1267,7 @@ module UploadWorkflow::External
     end
 
     # Errors associated with item submission ID.
-    by_sid = errors.reject { |k| k.start_with?(GENERAL_ERROR_TAG) }
+    by_sid = errors.reject { _1.start_with?(GENERAL_ERROR_TAG) }
     if by_sid.present?
       errors.except!(*by_sid.keys)
       sids.concat   by_sid.keys
@@ -1277,11 +1277,10 @@ module UploadWorkflow::External
     # Remaining (general) errors indicate that there was a problem with the
     # request and that all items have failed.
     if errors.present?
-      failed = errors.values.map { |msg| FlashPart.new(msg) } + failed
+      failed = errors.values.map { FlashPart.new(_1) } + failed
     elsif sids.present?
-      sids = sids.map! { |v| Upload.sid_value(v) }.uniq
-      rollback, succeeded =
-        items.partition { |item| sids.include?(item.submission_id) }
+      sids = sids.map! { Upload.sid_value(_1) }.uniq
+      rollback, succeeded = items.partition { sids.include?(_1.submission_id) }
     end
 
     return succeeded, failed, rollback
@@ -1439,7 +1438,7 @@ module UploadWorkflow::External
     if errors.blank?
       return items, []
     else
-      return [], errors.values.map { |msg| FlashPart.new(msg) }
+      return [], errors.values.map { FlashPart.new(_1) }
     end
   end
 
@@ -1475,7 +1474,7 @@ module UploadWorkflow::External
     succeeded = []
     failed    = []
     repository_requests(items).each_pair do |_repo, repo_items|
-      repo_items.map! { |item| Upload.record_id(item) }
+      repo_items.map! { Upload.record_id(_1) }
       s, f = repository_remove(*repo_items, **opt)
       succeeded.concat(s)
       failed.concat(f)
@@ -1509,7 +1508,7 @@ module UploadWorkflow::External
     succeeded = []
     failed    = []
     repository_requests(items).each_pair do |_repo, repo_items|
-      repo_items.map! { |item| Upload.record_id(item) }
+      repo_items.map! { Upload.record_id(_1) }
       s, f = repository_dequeue(*repo_items, **opt)
       succeeded.concat(s)
       failed.concat(f)
@@ -1548,8 +1547,8 @@ module UploadWorkflow::External
     items = items.flatten.compact_blank! if items.is_a?(Array)
     items = [items]                      if items.is_a?(Upload)
     case items
-      when Array then items.group_by { |req| Upload.repository_value(req) }
-      when Hash  then items.transform_values { |reqs| Array.wrap(reqs) }
+      when Array then items.group_by { Upload.repository_value(_1) }
+      when Hash  then items.transform_values { Array.wrap(_1) }
       else Log.error { "#{__method__}: unexpected type: #{items.class}" }
     end.tap do |result|
       result&.reject! { |repo, _| repo.blank? } unless empty_key
@@ -1632,7 +1631,7 @@ module UploadWorkflow::Actions
     force = model_options.force_delete
     items = Upload.expand_ids(*event_args.flatten.compact)
     fatal = !force || !items.many?
-    emma_items, repo_items = items.partition { |item| emma_item?(item) }
+    emma_items, repo_items = items.partition { emma_item?(_1) }
 
     # EMMA items and/or EMMA submission ID's.
     emma_items.each do |item|
@@ -1837,8 +1836,7 @@ class UploadWorkflow < Workflow::Base
       #
       def self.variant_table
         # noinspection RbsMissingTypeSignature
-        @variant_table ||=
-          subclasses.map { |cls| [cls.variant_type, cls] }.sort.to_h
+        @variant_table ||= subclasses.map { [_1.variant_type, _1] }.sort.to_h
       end
 
       # =======================================================================

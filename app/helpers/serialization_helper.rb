@@ -115,7 +115,7 @@ module SerializationHelper
     elsif item.is_a?(Array)
       serializer ||= Search::Api::Serializer::Xml.new
       make_opt     = { separator: separator, serializer: serializer }
-      item.map { |v| make_xml(v, **make_opt) }.compact.join(separator).presence
+      item.map { make_xml(_1, **make_opt) }.compact.join(separator).presence
 
     elsif item.respond_to?(:to_xml)
       serializer ||= item.serializer(:xml)

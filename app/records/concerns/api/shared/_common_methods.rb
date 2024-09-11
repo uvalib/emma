@@ -326,7 +326,7 @@ module Api::Shared::CommonMethods
     elsif !result.is_a?(Array)
       clean(result, **opt)
     else
-      result.map { |v| clean(v, **opt) }
+      result.map { clean(_1, **opt) }
     end
   end
 
@@ -343,7 +343,7 @@ module Api::Shared::CommonMethods
   def find_items(*path, field, target: nil, clean: false, **opt)
     clean  = true if opt.present?
     result = Array.wrap(find_item(*path, field, target: target))
-    result = result.map { |v| clean(v, **opt) } if clean
+    result = result.map { clean(_1, **opt) } if clean
     result
   end
 
@@ -465,7 +465,7 @@ module Api::Shared::CommonMethods
     if data.is_a?(Hash)
       data.values_at(*fields).map!(&:presence)
     else
-      fields.map { |field| try(field)&.presence }
+      fields.map { try(_1).presence }
     end
   end
 

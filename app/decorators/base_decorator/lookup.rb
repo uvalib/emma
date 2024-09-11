@@ -198,7 +198,7 @@ module BaseDecorator::Lookup
     trace_attrs!(opt)
     html_div(**opt) do
       t_opt = trace_attrs_from(opt)
-      LOOKUP_PARTS.map { |meth| send(meth, unique: unique, **t_opt) }
+      LOOKUP_PARTS.map { send(_1, unique: unique, **t_opt) }
     end
   end
 

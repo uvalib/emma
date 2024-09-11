@@ -25,14 +25,14 @@ module DataConcern
   # @type [Array<Symbol>]
   #
   DATA_TABLE_PARAMETERS = %i[table]
-    .flat_map { |v| [v.to_s.pluralize.to_sym, v] }.freeze
+    .flat_map { [_1.to_s.pluralize.to_sym, _1] }.freeze
 
   # Variations on the :columns parameter.
   #
   # @type [Array<Symbol>]
   #
   DATA_COLUMN_PARAMETERS = %i[column field col]
-    .flat_map { |v| [v.to_s.pluralize.to_sym, v] }.freeze
+    .flat_map { [_1.to_s.pluralize.to_sym, _1] }.freeze
 
   # The normalized parameters.
   #
@@ -87,8 +87,8 @@ module DataConcern
   # @return [Array<String>, nil]      *nil* if *value* is *nil*.
   #
   def array_param(value)
-    value = value.split(',')                      if value.is_a?(String)
-    value.map { |s| s.to_s.strip }.compact_blank! if value.is_a?(Array)
+    value = value.split(',')                   if value.is_a?(String)
+    value.map { _1.to_s.strip }.compact_blank! if value.is_a?(Array)
   end
 
   # Because DataHelper is biased toward assuming that non-HTML is expected,
@@ -127,7 +127,7 @@ module DataConcern
     tbls = table_names if tbls.nil? || tbls.include?('all')
     names.concat(tbls)
     names = sorted_table_names(names) if sort
-    names.map! { |name| [name, table_records(name, *cols, **opt)] }.to_h
+    names.map! { [_1, table_records(_1, *cols, **opt)] }.to_h
   end
 
   # Generate results for the indicated table.
@@ -325,8 +325,8 @@ module DataConcern
     title = data[:dc_title].to_s
     note  = data[:rem_comments].to_s
     title.blank? ||
-      BOGUS_TITLE_PREFIXES.any? { |s| title.start_with?(s) } ||
-      BOGUS_NOTE_WORDS.any? { |s| note.include?(s) }
+      BOGUS_TITLE_PREFIXES.any? { title.start_with?(_1) } ||
+      BOGUS_NOTE_WORDS.any? { note.include?(_1) }
   end
 
   # ===========================================================================

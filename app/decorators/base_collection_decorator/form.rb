@@ -142,7 +142,7 @@ module BaseCollectionDecorator::Form
   #
   def item_ids(items = nil, **)
     items   = Array.wrap(items).presence
-    items &&= items.map { |i| positive(i) || i.try(:id) || i.try(:[], :id) }
+    items &&= items.map { positive(_1) || _1.try(:id) || _1.try(:[], :id) }
     items ||= object.map(&:id)
     items.compact.map(&:to_s).uniq
   end

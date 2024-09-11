@@ -18,7 +18,7 @@ require 'active_support/core_ext'
 # 'bool', respectively, this is not intended for use with type documentation.
 #
 module BoolType
-  [TrueClass, FalseClass].each { |c| c.include(self) }
+  [TrueClass, FalseClass].each { _1.include(self) }
 end
 
 require_subdirs(__FILE__)

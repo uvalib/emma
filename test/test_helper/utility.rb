@@ -76,7 +76,7 @@ module TestHelper::Utility
   # @return [void]
   #
   def prime_tests
-    meth = %i[visit get].find { |m| respond_to?(m) } or return
+    meth = %i[visit get].find { respond_to?(_1) } or return
     without_tracing do
       # Since the option causes a redirect, it's a little faster to avoid it
       # for subsequent executions.
@@ -158,19 +158,19 @@ module TestHelper::Utility
     if list.present?
       list      = list.flatten
       original  = list.dup
-      anonymous = list.reject! { |u| u.nil? || (u == :anonymous) }
-      records   = list.reject! { |u| u.is_a?(User) }
+      anonymous = list.reject! { _1.nil? || (_1 == :anonymous) }
+      records   = list.reject! { _1.is_a?(User) }
       if list.present?
-        list.map! { |u| user_entry(u) || u }
+        list.map! { user_entry(_1) || _1 }
       elsif matching.blank?
-        return original.map! { |u| u if u.is_a?(User) }
+        return original.map! { _1 if _1.is_a?(User) }
       end
     elsif matching.blank?
       return users
     end
     rec_ids = records&.map(&:id)
     added   = Array.wrap(users(*list))
-    added   = added.reject { |u| rec_ids.include?(u.id) } if rec_ids.present?
+    added   = added.reject { rec_ids.include?(_1.id) } if rec_ids.present?
     records = [*records, *added]
     if matching.present?
       matching = ApplicationRecord.normalize_id_keys(matching)

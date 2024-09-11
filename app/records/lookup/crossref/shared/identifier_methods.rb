@@ -51,8 +51,8 @@ module Lookup::Crossref::Shared::IdentifierMethods
     @identifier_table ||=
       FIELD_TYPE_MAP.map { |field, type|
         next if (values = find_record_values(field)).blank?
-        values.sort_by! { |v| -v.size }
-        values.map!     { |v| type.new(v) }
+        values.sort_by! { -_1.size }
+        values.map!     { type.new(_1) }
         [field, values]
       }.compact.to_h
   end
@@ -70,7 +70,7 @@ module Lookup::Crossref::Shared::IdentifierMethods
   # @return [Hash{Symbol=>Array<String>}]
   #
   def identifier_related
-    all = identifier_table.transform_values! { |ids| ids.map(&:to_s) }
+    all = identifier_table.transform_values! { _1.map(&:to_s) }
     result = {}
     if (item = all.extract!(:doi, :isbn)).present?
       result[:dc_identifier] = item.values.flatten

@@ -47,7 +47,7 @@ module Model
     if is_a?(ApplicationRecord)
       attribute_names.map(&:to_sym).sort
     else
-      instance_variables.map { |v| v.to_s.delete_prefix('@').to_sym }.sort
+      instance_variables.map { _1.to_s.delete_prefix('@').to_sym }.sort
     end
   end
 
@@ -81,11 +81,11 @@ module Model
   def fields(*only)
     only = only.compact.presence&.map(&:to_sym)
     if is_a?(ApplicationRecord)
-      attributes.symbolize_keys.tap { |hash| hash.slice!(*only) if only }
+      attributes.symbolize_keys.tap { _1.slice!(*only) if only }
     else
       names = field_names
       names = names.intersection(only) if only
-      names.map { |meth| [meth, send(meth)] if respond_to?(meth) }.compact.to_h
+      names.map { [_1, send(_1)] if respond_to?(_1) }.compact.to_h
     end
   end
 
@@ -99,7 +99,7 @@ module Model
     only  = only.compact.presence&.map(&:to_sym)
     meths = synthetic_field_names
     meths = meths.intersection(only) if only.present?
-    meths.map { |meth| [meth, send(meth)] if respond_to?(meth) }.compact.to_h
+    meths.map { [_1, send(_1)] if respond_to?(_1) }.compact.to_h
   end
 
   # The data and synthetic fields/values for this model instance.
@@ -205,7 +205,7 @@ module Model
     directives = rec_config.select { |field, _| field.start_with?('_') }
     all_fields = rec_config.except(*directives.keys)
     all_fields = all_fields.map { |k, v| [k, Field.normalize(v, k)] }.to_h
-    directives.transform_keys! { |name| name.to_s.delete_prefix('_').to_sym }
+    directives.transform_keys! { _1.to_s.delete_prefix('_').to_sym }
     directives, invalid = partition_hash(directives, *DIRECTIVES)
     Log.warn do
       invalid = invalid.keys.join(', ')
@@ -238,7 +238,7 @@ module Model
     # Apply adjustments from config/locales/controllers/*.yml then finalize
     # the generic entries.
     display_config!(all_fields, model_config[:display_fields])
-    all_fields.transform_values! { |prop| Field.finalize!(prop) }
+    all_fields.transform_values! { Field.finalize!(_1) }
 
     # Add entries for each page with its own :display_fields section.
     action_configs = model_config[:action] || {}
@@ -246,7 +246,7 @@ module Model
     action_configs.transform_values! { |entry|
       display_fields = entry[:display_fields]
       action_fields  = display_config!(all_fields.deep_dup, display_fields)
-      action_fields.transform_values! { |prop| Field.finalize!(prop) }
+      action_fields.transform_values! { Field.finalize!(_1) }
     }.compact!
 
     # Return with the generic field configurations followed by entries for

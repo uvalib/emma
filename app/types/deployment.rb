@@ -12,7 +12,7 @@ __loading_begin(__FILE__)
 class Deployment < EnumType
 
   define_enumeration do
-    config_section(:application, :deployment).transform_values { |v| v[:name] }
+    config_section(:application, :deployment).transform_values { _1[:name] }
   end
 
 end

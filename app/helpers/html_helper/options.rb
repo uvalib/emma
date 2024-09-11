@@ -41,7 +41,7 @@ module HtmlHelper::Options
   def html_options!(html_opt)
     meth = html_opt.delete(:method).presence
     data = html_opt.delete(:data).presence
-    html_opt.reverse_merge!(data.transform_keys { |k| :"data-#{k}" }) if data
+    html_opt.reverse_merge!(data.transform_keys { :"data-#{_1}" }) if data
     html_opt[:'data-method'] ||= meth if meth
     remove_non_attributes!(html_opt)
   end
@@ -67,8 +67,8 @@ module HtmlHelper::Options
   # @return [Hash]                      The modified *opt* hash.
   #
   def merge_html_options!(html_opt, *args)
-    args    = args.map { |a| a[:class] ? a.dup : a if a.is_a?(Hash) }.compact
-    classes = args.map { |a| a.delete(:class) }.compact
+    args    = args.map { _1[:class] ? _1.dup : _1 if _1.is_a?(Hash) }.compact
+    classes = args.map { _1.delete(:class) }.compact
     append_css!(html_opt, *classes).merge!(*args)
   end
 
@@ -105,7 +105,7 @@ module HtmlHelper::Options
     if text.present? && rest.present?
       norm = ->(v) { v.gsub(/[[:punct:]]/, ' ').squish.downcase }
       last = norm.(text.last)
-      rest.delete_if { |v| norm.(v) == last }
+      rest.delete_if { norm.(_1) == last }
     end
     text.concat(rest).join("\n")
   end

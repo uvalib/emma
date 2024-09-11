@@ -281,7 +281,7 @@ class Upload < ApplicationRecord
         when edit_phase    then reset = EDIT_COLUMNS
         else                    reset = DATA_COLUMNS
       end
-      attr = reset.map { |col| [col, fields.delete(col)] }.to_h
+      attr = reset.map { [_1, fields.delete(_1)] }.to_h
       attr[:updated_at] = self[:created_at] if being_created?
       log_ignored('reset: ignored options', fields) if fields.present?
       delete_file unless under_review?
@@ -492,7 +492,7 @@ class Upload < ApplicationRecord
       edit_file:          edit_file.presence,
       edit_file_attacher: edit_file_attacher.class,
     }
-    attr = attr.transform_values { |v| v.is_a?(String) ? v.truncate(1024) : v }
+    attr = attr.transform_values { _1.is_a?(String) ? _1.truncate(1024) : _1 }
     pretty_json(attr)
   end
 
@@ -540,7 +540,7 @@ class Upload < ApplicationRecord
       p = workflow_phase || '-'
       s = active_state   || '-'
       "#{c}: [#{p}/#{s}] #{label}: #{values.inspect}"
-        .tap { |m| __output "!!! #{m}" }
+        .tap { __output "!!! #{_1}" }
     end
   end
 

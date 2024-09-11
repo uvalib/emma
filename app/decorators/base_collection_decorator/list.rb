@@ -125,7 +125,7 @@ module BaseCollectionDecorator::List
   #
   def list_controls(**opt)
     trace_attrs!(opt)
-    list_control_methods.map { |meth| send(meth, **opt) }.compact
+    list_control_methods.map { send(_1, **opt) }.compact
   end
 
   # Optional list style controls in line with the top pagination control.

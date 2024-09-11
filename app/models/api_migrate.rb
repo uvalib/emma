@@ -79,7 +79,7 @@ class ApiMigrate
     # @return [Array<Symbol>]
     #
     def data_columns
-      record_class.field_names.select { |f| f.match?('emma_data') }
+      record_class.field_names.select { _1.match?('emma_data') }
     end
 
     # get_relation
@@ -165,7 +165,7 @@ class ApiMigrate
       was_hash  = emma_data.is_a?(Hash)
       emma_data = parse_data(emma_data)
       original  = (emma_data.deep_dup if opt.present?)
-      emma_data.transform_values! { |value| remove_blank(value) }
+      emma_data.transform_values! { remove_blank(_1) }
       emma_data.compact_blank!
 
       # Apply transformations for each field listed in the configuration.
@@ -327,7 +327,7 @@ class ApiMigrate
     #
     def from_array(value, separator = "\n")
       return value unless value.is_a?(Array)
-      value.all? { |v| v.is_a?(String) } ? value.join(separator) : value.first
+      value.all? { _1.is_a?(String) } ? value.join(separator) : value.first
     end
 
     # Transform a single-item value into an array of items.
@@ -434,8 +434,8 @@ class ApiMigrate
     # @return [Array, String, any, nil]   Nil for an empty array.
     #
     def remove_blank(value)
-      value = value.map { |v| remove_blank(v) }.compact if value.is_a?(Array)
-      value = CGI.unescapeHTML(value.strip).scrub       if value.is_a?(String)
+      value = value.map { remove_blank(_1) }.compact if value.is_a?(Array)
+      value = CGI.unescapeHTML(value.strip).scrub    if value.is_a?(String)
       value unless value.blank? || (value == EMPTY_VALUE)
     end
 
@@ -468,7 +468,7 @@ class ApiMigrate
     #
     def normalize_creator(value)
       if value.is_a?(Array)
-        value.flat_map { |v| normalize_creator(v) }.compact.uniq
+        value.flat_map { normalize_creator(_1) }.compact.uniq
       else
         # noinspection RubyMismatchedReturnType
         BOGUS_CREATOR.find do |match|
@@ -495,7 +495,7 @@ class ApiMigrate
     #
     def normalize_day(value)
       if value.is_a?(Array)
-        value.flat_map { |v| normalize_day(v) }.compact
+        value.flat_map { normalize_day(_1) }.compact
       else
         value.to_s if (value = IsoDay.new(value)).valid?
       end
@@ -509,7 +509,7 @@ class ApiMigrate
     #
     def normalize_datetime(value)
       if value.is_a?(Array)
-        value.flat_map { |v| normalize_datetime(v) }.compact
+        value.flat_map { normalize_datetime(_1) }.compact
       else
         value.to_s if (value = IsoDate.new(value)).valid?
       end
@@ -523,11 +523,11 @@ class ApiMigrate
     #
     def normalize_metadata_source(value)
       if value.is_a?(Array)
-        value.flat_map { |v| normalize_metadata_source(v) }.uniq
+        value.flat_map { normalize_metadata_source(_1) }.uniq
       else
         values = normalize_text_list(value)
         # noinspection SpellCheckingInspection
-        values.map { |v| v.gsub('Vanderbitl', 'Vanderbilt') }
+        values.map { _1.gsub('Vanderbitl', 'Vanderbilt') }
       end
     end
 
@@ -564,7 +564,7 @@ class ApiMigrate
     def normalize_boolean(value)
       return              if value.nil?
       return true?(value) unless value.is_a?(Array)
-      value.flat_map { |v| normalize_boolean(v) }
+      value.flat_map { normalize_boolean(_1) }
     end
 
     # =========================================================================
@@ -589,7 +589,7 @@ class ApiMigrate
     def summarize_quality(value)
       # noinspection RubyMismatchedReturnType
       return value unless value.is_a?(Array)
-      TextQuality.values.reverse.find { |v| value.include?(v) }
+      TextQuality.values.reverse.find { value.include?(_1) }
     end
 
     # EMMA data fields that have, do, or will contain remediation comments.
@@ -801,7 +801,7 @@ class ApiMigrate
     #
     def find_field(emma_data, fields)
       if fields.is_a?(Array)
-        fields.find { |f| emma_data[f] } || fields.last
+        fields.find { emma_data[_1] } || fields.last
       else
         fields&.to_sym
       end
@@ -897,7 +897,7 @@ class ApiMigrate
     opt[:config] = configuration unless opt.key?(:config)
     opt[:report] = @report       unless opt.key?(:report)
     opt[:log]    = @log          unless opt.key?(:log)
-    records = get_relation(range).map { |rec| transform!(rec.fields, **opt) }
+    records = get_relation(range).map { transform!(_1.fields, **opt) }
     record_class.upsert_all(records) if update
     records
   end
@@ -967,10 +967,10 @@ class ApiMigrate
       opt[:report] = rpt = rpt[:record][record[:id]] ||= {}
     end
     __output "\n*** Upload #{record[:id]} ***" if log
-    cols = Array.wrap(column).each { |col| super(record, column: col, **opt) }
+    cols = Array.wrap(column).each { super(record, column: _1, **opt) }
     flds = (record.slice(*cols).compact if rpt || log)
-    flds.each { |fld, dat| __output "\n#{fld.inspect} =\n#{dat}" }   if log
-    rpt[:results] = flds.transform_values { |v| safe_json_parse(v) } if rpt
+    flds.each { __output "\n#{_1.inspect} =\n#{_2}" }             if log
+    rpt[:results] = flds.transform_values { safe_json_parse(_1) } if rpt
     record
   end
 

@@ -478,7 +478,7 @@ module BaseDecorator::Grid
     end
 
     data    = prop&.slice(:pairs, *FIELD_PROPERTIES)&.compact_blank!
-    opt.merge!(data.transform_keys! { |k| :"data-#{k}" }) if data.present?
+    opt.merge!(data.transform_keys! { :"data-#{_1}" }) if data.present?
 
     opt[:role]           = 'columnheader' if table
     opt[:'aria-hidden']  = true           if hidden
@@ -589,7 +589,7 @@ module BaseDecorator::Grid
   #
   def grid_row_control_contents(*added, row: nil, **opt)
     trace_attrs!(opt)
-    opt.transform_keys! { |k| k.to_s.sub(/^data_/, 'data-').to_sym }
+    opt.transform_keys! { _1.to_s.sub(/^data_/, 'data-').to_sym }
     l_id  = opt.delete(:'aria-labelledby')
     label = opt.delete(:label)
     ctrls = control_icon_buttons(**opt)
@@ -779,7 +779,7 @@ module BaseDecorator::Grid
   # @return [Array<Symbol>]
   #
   def visible(fields)
-    Array.wrap(fields).reject { |field| undisplayed?(field) }
+    Array.wrap(fields).reject { undisplayed?(_1) }
   end
 
   # Create an object that can be used to unambiguously indicate whether an

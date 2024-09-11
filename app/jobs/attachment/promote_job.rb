@@ -34,7 +34,7 @@ class Attachment::PromoteJob < ApplicationJob
   def perform(record, name, data)
     __debug_job('START') do
       { name: name, data: data, record: record }
-        .transform_values { |v| item_inspect(v) }
+        .transform_values { item_inspect(_1) }
     end
     attacher =
       FileUploader::Attacher.retrieve(model: record, name: name, file: data)
@@ -42,7 +42,7 @@ class Attachment::PromoteJob < ApplicationJob
     result = attacher.atomic_promote
     __debug_job('END') do
       { attacher: attacher, result: result }
-        .transform_values { |v| item_inspect(v) }
+        .transform_values { item_inspect(_1) }
     end
 
   rescue Shrine::AttachmentChanged => error

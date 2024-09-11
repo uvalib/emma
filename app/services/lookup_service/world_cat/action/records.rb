@@ -60,8 +60,8 @@ module LookupService::WorldCat::Action::Records
           type == 'image'
         end
       elsif isbns || lccns
-        isbns &&= isbns.map { |v| "isbn:#{v}" }
-        lccns &&= lccns.map { |v| "lccn:#{v}" }
+        isbns &&= isbns.map { "isbn:#{_1}" }
+        lccns &&= lccns.map { "lccn:#{_1}" }
         # @type [Lookup::WorldCat::Record::SruRecord] record
         result.records.each do |record|
           ids = record&.recordData&.oclcdcs&.dc_identifier
@@ -266,13 +266,13 @@ module LookupService::WorldCat::Action::Records
 
     if terms.is_a?(LookupService::Request)
       terms.request.each_pair do |type, items|
-        items.each { |item| result[type].add(item) }
+        items.each { result[type].add(_1) }
       end
       terms = nil
     end
 
     [*terms, *opt.delete(:q), *opt.delete(:query)].flatten.each do |term|
-      next if groups.any? { |group| group.add(term) }
+      next if groups.any? { _1.add(term) }
       _, item = term.split(':', 2)
       result[:query].add(:keyword, (item || term))
     end
@@ -374,7 +374,7 @@ module LookupService::WorldCat::Action::Records
     #
     def add_terms(prefix, item, &blk)
       values = item.is_a?(Array) ? item.flatten : Array.wrap(item)
-      values.map! { |v| v.to_s.strip }.compact_blank!
+      values.map! { _1.to_s.strip }.compact_blank!
       values.map!(&blk) if blk
       add(prefix, values)
     end
@@ -407,7 +407,7 @@ module LookupService::WorldCat::Action::Records
     #
     def parts
       map do |code, values|
-        values.uniq.map! { |v| query_part(code, v) }.join(OR)
+        values.uniq.map! { query_part(code, _1) }.join(OR)
       end
     end
 
@@ -451,7 +451,7 @@ module LookupService::WorldCat::Action::Records
         when /^(.+)\s+([^\s]+)$/      then names = [$2, $1]
         else                               names = [value, nil]
       end
-      names.map! { |v| v&.gsub(/[[:punct:]]/, ' ')&.squish }.compact_blank!
+      names.map! { _1&.gsub(/[[:punct:]]/, ' ')&.squish }.compact_blank!
       names.join(', ')
     end
 

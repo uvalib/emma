@@ -61,7 +61,7 @@ class EnumType < ScalarType
     #
     def comparable_map(keys, caller = nil)
       keys = keys.keys if keys.is_a?(Hash)
-      keys.map { |k| [comparable(k), k] }.to_h.tap do |result|
+      keys.map { [comparable(_1), _1] }.to_h.tap do |result|
         unless (rs = result.size) == (ks = keys.size)
           # This is a "can't happen" situation where two original values
           # transform to the same comparable value.
@@ -110,7 +110,7 @@ class EnumType < ScalarType
           else
             default = nil
             values  = Array.wrap(cfg).map(&:to_s)
-            pairs   = values.map { |v| [v, v] }.to_h
+            pairs   = values.map { [_1, _1] }.to_h
           end
           name  = name.to_s.camelize.to_sym
           map   = comparable_map(values, "Enumeration #{name}")

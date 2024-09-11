@@ -27,10 +27,10 @@ module Lookup::RemoteService::Shared::CreatorMethods
   #
   def name_list(*fields, **opt)
     clean = !opt.key?(:clean) || opt.delete(:clean)
-    fields.flat_map { |field| find_record_items(field, **opt) }.tap do |result|
+    fields.flat_map { find_record_items(_1, **opt) }.tap do |result|
       result.compact_blank!
       result.uniq!
-      result.map! { |item| clean_name(item, **opt) } if clean
+      result.map! { clean_name(_1, **opt) } if clean
     end
   end
 

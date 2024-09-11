@@ -95,7 +95,7 @@ class Api::Error < ExecError
       http_status:   @http_status.inspect,
       http_response: @http_response.inspect,
       cause:         ApiHelper.format_api_result(@cause, html: false),
-    }.map { |k, v| "@#{k}=#{v}" }.join(', ')
+    }.map { "@#{_1}=#{_2}" }.join(', ')
     '#<%s: %s %s>' % [self.class, message, items]
   end
 
@@ -204,7 +204,7 @@ class Api::Error < ExecError
     # @return [Array<Symbol>]
     #
     def error_types
-      @error_types ||= error_config.keys.reject { |k| k.start_with?('_') }
+      @error_types ||= error_config.keys.reject { _1.start_with?('_') }
     end
 
     # =========================================================================

@@ -126,7 +126,7 @@ module Representable
           end
         items.concat(args)
         items.sort_by!(&:size)
-        items.map! { |item| item.truncate(1024) }
+        items.map! { _1.truncate(1024) }
 
         lead = [*lead, SEPARATOR].compact.join(' ')
         __output_impl(leader: lead, separator: sep) { items }

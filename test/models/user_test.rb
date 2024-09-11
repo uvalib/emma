@@ -28,7 +28,7 @@ class UserTest < ActiveSupport::TestCase
   test 'model - user must have a valid email address' do
     run_test(__method__) do
       item = users(:example)
-      data = item.attributes.tap { |u| u['email'].sub!(/@.*/, '') }
+      data = item.attributes.tap { _1['email'].sub!(/@.*/, '') }
       item = User.new(data)
       show_item(item)
       refute item.valid?

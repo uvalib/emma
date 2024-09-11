@@ -65,8 +65,8 @@ module LookupService::GoogleBooks::Action::Volumes
   #
   def get_volumes(terms, **opt)
     query = query_terms(terms, opt)
-    lccns = query.select { |v| v.start_with?('lccn:') }.presence
-    ids   = query.map { |v| v.split(':', 2).first }.intersect?(ID_TYPES)
+    lccns = query.select { _1.start_with?('lccn:') }.presence
+    ids   = query.map { _1.split(':', 2).first }.intersect?(ID_TYPES)
     opt[:foreign] = false unless ids
     opt[:q] = make_query(query)
 
@@ -80,7 +80,7 @@ module LookupService::GoogleBooks::Action::Volumes
           ids = item&.volumeInfo&.industryIdentifiers&.map(&:to_s) || []
           next if lccns.include?(ids.first.to_s)
           missing = lccns - ids
-          missing.map! { |id| Lookup::GoogleBooks::Record::Identifier.new(id) }
+          missing.map! { Lookup::GoogleBooks::Record::Identifier.new(_1) }
           item.volumeInfo.industryIdentifiers.insert(0, *missing)
         end
       end
@@ -141,10 +141,10 @@ module LookupService::GoogleBooks::Action::Volumes
       req = (query || other) ? terms.dup : terms
     else
       req = LookupService::Request.new
-      Array.wrap(terms).each { |term| req.add_term(term, **OPT) }
+      Array.wrap(terms).each { req.add_term(_1, **OPT) }
     end
-    query&.each { |term| req.add_term(term, **OPT) }
-    other&.each { |prm, value| req.add_term(prm, value, **OPT) }
+    query&.each { req.add_term(_1, **OPT) }
+    other&.each { req.add_term(_1, _2, **OPT) }
     req.terms.map do |term|
       prefix, value = term.split(':', 2)
       prefix = value.present? && QUERY_PREFIX[prefix.to_sym]

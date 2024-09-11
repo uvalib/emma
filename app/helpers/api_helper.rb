@@ -61,7 +61,7 @@ module ApiHelper
         value.gsub!(/\\"([^"\\]+?)\\":/, '\1: ')
         value = ERB::Util.h(value) if html
         value.gsub!(/,([^ ])/, (',' + space + '\1'))
-        value.gsub!(/^( +)/) { |s| s.gsub(/ /, (space * 2)) } if html
+        value.gsub!(/^( +)/) { _1.gsub(/ /, (space * 2)) } if html
         value.gsub!(/^([^:]+:) /, ('\1' + space))
         value = make_links(value) if html
         value.split(/\n/).map do |line|

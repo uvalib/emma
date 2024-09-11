@@ -41,7 +41,7 @@ module HashExt
   # Indicate whether the Hash and all of its constituent parts are frozen.
   #
   def deep_frozen?
-    frozen? && all? { |k, v| k.deep_frozen? && v.deep_frozen? }
+    frozen? && all? { _1.deep_frozen? && _2.deep_frozen? }
   end
 
   # Recursive duplication.
@@ -59,7 +59,7 @@ module HashExt
   # like Array are also duplicated, not just copied by reference.
   #
   def rdup
-    self.class[map { |k, v| [k, v.rdup] }]
+    self.class[map { [_1, _2.rdup] }]
   end
 
   # Recursive merge.
@@ -107,7 +107,7 @@ module HashExt
   # @return [self]
   #
   def remove(*elements)
-    elements.flatten.each { |key| delete(key) }
+    elements.flatten.each { delete(_1) }
     self
   end
 
@@ -119,7 +119,7 @@ module HashExt
   #
   def remove!(*elements)
     removed = keys.intersection(elements.flatten).presence
-    removed&.each { |v| delete(v) } and self
+    removed&.each { delete(_1) } and self
   end
 
   # Retain only the indicated elements.

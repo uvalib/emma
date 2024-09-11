@@ -27,7 +27,7 @@ module SysHelper::Config
   #
   def application_config(sort: true, css: '.config-table', **opt)
     pairs = rails_config_entries
-    pairs.transform_values! { |val| [rails_config_entry(val)] }
+    pairs.transform_values! { [rails_config_entry(_1)] }
     prepend_css!(opt, css)
     sys_table(pairs, __method__, sort: sort, **opt)
   end
@@ -82,8 +82,8 @@ module SysHelper::Config
     case val
       when nil     then EMPTY_VALUE
       when *DIRECT then opt[:inspect] ? val.inspect : val
-      when Hash    then val.transform_values { |v| app_config_entry(v, **opt) }
-      when Array   then val.map { |v| app_config_entry(v, **opt) }
+      when Hash    then val.transform_values { app_config_entry(_1, **opt) }
+      when Array   then val.map { app_config_entry(_1, **opt) }
       else              val.class
     end
   end
@@ -107,8 +107,8 @@ module SysHelper::Config
   def rails_config_entries
     cfg   = Rails.configuration
     meths = cfg.public_methods(false)
-    names = meths.map { |v| v.to_s.delete_suffix!('=') }.compact
-    names.sort.map { |v| [v, cfg.instance_variable_get(:"@#{v}")] }.to_h
+    names = meths.map { _1.to_s.delete_suffix!('=') }.compact
+    names.sort.map { [_1, cfg.instance_variable_get(:"@#{_1}")] }.to_h
   end
 
   # ===========================================================================

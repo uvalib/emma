@@ -115,16 +115,16 @@ def __output_impl(*args, **opt)
     args =
       args.flat_map do |arg|
         case arg
-          when Hash   then arg.map { |k, v| "#{k} = #{v}" }
+          when Hash   then arg.map { "#{_1} = #{_2}" }
           when Array  then arg.map(&:to_s)
           when String then arg
           else             arg.inspect
         end
       end
     if max && omit
-      args.map! { |arg| arg.truncate_bytes(max, omission: omit) rescue nil }
+      args.map! { _1.truncate_bytes(max, omission: omit) rescue nil }
     elsif max
-      args.map! { |arg| arg.truncate_bytes(max) rescue nil }
+      args.map! { _1.truncate_bytes(max) rescue nil }
     end
   end
   lines = leader + args.compact.join(sep).gsub(/\n/, "\n#{leader}").strip
@@ -168,7 +168,7 @@ end
 def __output(*args, **opt, &blk)
   __output_impl(*args, **opt, &blk)
 end
-  .tap { |meth| neutralize(meth) unless CONSOLE_OUTPUT }
+  .tap { neutralize(_1) unless CONSOLE_OUTPUT }
 
 # =============================================================================
 # Debugging - console debugging
@@ -217,7 +217,7 @@ end
 def __debug(*args, **opt, &blk)
   __debug_impl(*args, **opt, &blk)
 end
-  .tap { |meth| neutralize(meth) unless CONSOLE_DEBUGGING }
+  .tap { neutralize(_1) unless CONSOLE_DEBUGGING }
 
 # =============================================================================
 # Debugging - trace output
@@ -293,7 +293,7 @@ end
 def __loading(file)
   __trace { "====== #{__loading_level}#{file}" }
 end
-  .tap { |meth| neutralize(meth) unless TRACE_LOADING }
+  .tap { neutralize(_1) unless TRACE_LOADING }
 
 # Display console output to indicate that a file is being loaded.
 #
@@ -314,7 +314,7 @@ def __loading_begin(file)
   @load_table[file] = [@load_level, true]
   __trace { "====-> #{__loading_level}#{file}#{warning}" }
 end
-  .tap { |meth| neutralize(meth) unless TRACE_LOADING }
+  .tap { neutralize(_1) unless TRACE_LOADING }
 
 # Display console output to indicate the end of a file that is being loaded.
 #
@@ -338,7 +338,7 @@ def __loading_end(file)
   @load_table.clear if @load_level.zero?
   nil
 end
-  .tap { |meth| neutralize(meth) unless TRACE_LOADING }
+  .tap { neutralize(_1) unless TRACE_LOADING }
 
 # =============================================================================
 # Debugging - Concerns
@@ -357,7 +357,7 @@ __trace { "TRACE_CONCERNS = #{TRACE_CONCERNS.inspect}" } if TRACE_CONCERNS
 def __included(base, mod, tag = nil)
   __trace { "... including #{tag || mod.try(:name) || mod} in #{base}" }
 end
-  .tap { |meth| neutralize(meth) unless TRACE_CONCERNS }
+  .tap { neutralize(_1) unless TRACE_CONCERNS }
 
 # =============================================================================
 # Debugging - Rails notifications
@@ -420,7 +420,7 @@ if TRACE_NOTIFICATIONS
     evt = ActiveSupport::Notifications::Event.new(*args)
     tid = @notifiers[evt.transaction_id] ||= @notifiers.size + 1
     args.shift(4)
-    args.map! { |arg| arg.inspect.truncate(MAX_NOTIFICATION_SIZE) }
+    args.map! { _1.inspect.truncate(MAX_NOTIFICATION_SIZE) }
     line = "@@@ NOTIFIER [#{tid}] %-35s (%.2f ms)" % [evt.name, evt.duration]
     __output_impl { line << ' ' << args.join(', ') }
   end

@@ -138,7 +138,7 @@ class ApiService
   def self.services(root = ApiService)
     return []     unless root.is_a?(Class) && (root <= ApiService)
     return [root] unless root.subclasses.present?
-    root.subclasses.flat_map { |c| services(c) }
+    root.subclasses.flat_map { services(_1) }
   end
 
   # ===========================================================================
@@ -257,7 +257,7 @@ class ApiService
       # noinspection RbsMissingTypeSignature
       #++
       def self.add_api(prop, topic = nil)
-        prop = prop.transform_values { |v| v.merge(topic: topic) } if topic
+        prop = prop.transform_values { _1.merge(topic: topic) } if topic
         (@all_methods  ||= {}).merge!(prop)
         (@true_methods ||= {}).merge!(prop.reject { |_, v| v[:synthetic] })
       end

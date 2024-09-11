@@ -39,7 +39,7 @@ module RunStateConcern
   # @type [Array<String>]
   #
   RUN_STATE_EXEMPT_CONTROLLER =
-    NO_RUN_STATE_REDIRECT.select { |item| item.is_a?(String) }.deep_freeze
+    NO_RUN_STATE_REDIRECT.select { _1.is_a?(String) }.deep_freeze
 
   # Per-controller endpoints which are exempt from redirection due to
   # unavailable run state.

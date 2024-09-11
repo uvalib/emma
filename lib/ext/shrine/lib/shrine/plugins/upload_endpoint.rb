@@ -73,7 +73,7 @@ class Shrine
       def call(env)
         start = timestamp
         super
-          .tap { |result| __ext_debug(start, "-> #{result.inspect}") }
+          .tap { __ext_debug(start, "-> #{_1.inspect}") }
       end
 
       # =======================================================================
@@ -105,7 +105,7 @@ class Shrine
       def get_io(request)
         start = timestamp
         super
-          .tap { |result| __ext_debug(start, "-> #{result.inspect}") }
+          .tap { __ext_debug(start, "-> #{_1.inspect}") }
       end
 
       # get_multipart_upload
@@ -117,7 +117,7 @@ class Shrine
       def get_multipart_upload(request)
         start = timestamp
         super
-          .tap { |result| __ext_debug(start, "-> #{result.inspect}") }
+          .tap { __ext_debug(start, "-> #{_1.inspect}") }
       end
 
       # get_context
@@ -129,7 +129,7 @@ class Shrine
       def get_context(request)
         start = timestamp
         super
-          .tap { |result| __ext_debug(start, "-> #{result.inspect}") }
+          .tap { __ext_debug(start, "-> #{_1.inspect}") }
       end
 
       # upload

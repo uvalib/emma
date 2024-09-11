@@ -63,7 +63,7 @@ module UploadWorkflow::Single::Remove::Actions
   def wf_validate_submission(*event_args)
     __debug_items(binding)
     wf_list_items(*event_args)
-    first = results.find { |rec| rec.is_a?(Upload) }
+    first = results.find { _1.is_a?(Upload) }
     set_record(first, reset: false)
   end
 

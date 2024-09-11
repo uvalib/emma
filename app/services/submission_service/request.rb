@@ -363,7 +363,7 @@ class SubmissionService::ControlRequest < SubmissionService::Request
       when :resume then :batch_resume
       else              raise "#{__method__}: #{switch}: invalid"
     end
-    .tap { |meth| raise "#{__method__}: #{switch}: #{meth}: not implemented" }
+    .tap { raise "#{__method__}: #{switch}: #{_1}: not implemented" }
   end
 
   # ===========================================================================

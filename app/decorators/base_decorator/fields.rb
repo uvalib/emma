@@ -276,8 +276,8 @@ module BaseDecorator::Fields
   #
   RENDER_FIELD_TYPE =
     RENDER_FIELD_TYPE_TABLE.flat_map { |field, types|
-      types.map { |type| [type, field] }
-    }.sort_by { |pair| pair.first.to_s }.to_h.freeze
+      types.map { [_1, field] }
+    }.sort_by { _1.to_s }.to_h.freeze
 
   # Convert certain field types.
   #
@@ -329,7 +329,7 @@ module BaseDecorator::Fields
         when :date     then value.first.to_s
         when :time     then value.first.to_s.sub(/^([^ ]+).*$/, '\1')
         when :year     then value.first.to_s.sub(/\s.*$/, '')
-        else value.map { |v| v.to_s.strip }.compact_blank!.join('; ')
+        else                value.map {_1.to_s.strip }.compact_blank.join('; ')
       end
     case type
       when :check    then render_check_box(name, value, **opt)
@@ -399,7 +399,7 @@ module BaseDecorator::Fields
   # @raise [RuntimeError]             If not valid and *fatal* is *true*.
   #
   def valid_range?(range, fatal: false)
-    valid = range.is_a?(Class) && [EnumType, Model].any? { |t| range < t }
+    valid = range.is_a?(Class) && [EnumType, Model].any? { range < _1 }
     fatal &&= !valid
     raise "range: #{range.inspect}: not a subclass of EnumType" if fatal
     valid
@@ -468,9 +468,8 @@ module BaseDecorator::Fields
   #
   def field_scopes(value)
     levels = value.is_a?(Array) ? value : field_levels[value&.to_sym]
-    # noinspection RubyArgCount
-    levels = levels&.select { |s| s.is_a?(Symbol) || s.is_a?(String) } || []
-    levels.map! { |s| "scope-#{s}" }
+    levels = levels&.select { _1.is_a?(Symbol) || _1.is_a?(String) } || []
+    levels.map! { "scope-#{_1}" }
   end
 
   # ===========================================================================
@@ -490,7 +489,7 @@ module BaseDecorator::Fields
   # @type [Array<String>]
   #
   FIELD_PREFIX =
-    EMMA_DATA_FIELDS.map { |f| f.to_s.sub(/_.*$/, '_') }.uniq.deep_freeze
+    EMMA_DATA_FIELDS.map { _1.to_s.sub(/_.*$/, '_') }.uniq.deep_freeze
 
   # Suffixes indicating field names to be preserved in #model_html_id.
   #
@@ -507,7 +506,7 @@ module BaseDecorator::Fields
   def model_html_id(base)
     name = base.to_s.strip
     unless name.end_with?(*RESERVED_SUFFIX)
-      FIELD_PREFIX.find { |prefix| name.delete_prefix!(prefix) }
+      FIELD_PREFIX.find { name.delete_prefix!(_1) }
     end
     name = 'None' if name.blank?
     html_id(name, camelize: true)
@@ -620,7 +619,7 @@ module BaseDecorator::Fields
   #
   def format_description(text, separator: / *; */, **)
     if text.is_a?(Array)
-      return value.flat_map { |v| send(__method__, v, separator: separator) }
+      return value.flat_map { format_description(_1, separator: separator) }
     end
     # Look for signs of structure, otherwise just treat as unstructured.
     # noinspection RubyMismatchedArgumentType
@@ -662,7 +661,7 @@ module BaseDecorator::Fields
               section = nil
               "#{BLACK_CIRCLE}#{EN_SPACE}#{line}"
             end
-          }.tap { |toc| toc << "\n" unless toc.last == "\n" }
+          }.tap { _1 << "\n" unless _1.last == "\n" }
 
         when /[[:punct:]] *--/
           # === Blurbs/quotes with attribution
@@ -680,7 +679,7 @@ module BaseDecorator::Fields
           part = "#{part}." unless part.match?(/[[:punct:]]$/)
           [part, "\n"]
       end
-    }.compact.map! { |line| line.gsub(/---/, EM_DASH).gsub(/--/, EN_DASH) }
+    }.compact.map! { _1.gsub(/---/, EM_DASH).gsub(/--/, EN_DASH) }
   end
 
   # Seen in some IA records.
@@ -714,7 +713,7 @@ module BaseDecorator::Fields
   # @return [Array<String>]
   #
   def format_multiline(text, separator: / *[;\n] */, **)
-    Array.wrap(text).flat_map { |s| s.to_s.split(separator) }.compact_blank!
+    Array.wrap(text).flat_map { _1.to_s.split(separator) }.compact_blank!
   end
 
   # ===========================================================================
@@ -750,7 +749,7 @@ module BaseDecorator::Fields
   #
   def mark_invalid_languages(value, code: false, **)
     if value.is_a?(Array)
-      value.map { |v| send(__method__, v, code: code) }
+      value.map { mark_invalid_languages(_1, code: code) }
     elsif !(lang = LanguageType.cast(value, warn: false, invalid: true))
       value
     elsif !lang.valid?
@@ -783,7 +782,7 @@ module BaseDecorator::Fields
   #   @return [Array<String, ActiveSupport::SafeBuffer>]
   #
   def mark_invalid_identifiers(value, **)
-    return value.map { |v| send(__method__, v) } if value.is_a?(Array)
+    return value.map { mark_invalid_identifiers(_1) } if value.is_a?(Array)
     type, id_part = value.to_s.split(':', 2)
     if id_part.nil? # No type prefix.
       value

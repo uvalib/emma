@@ -59,7 +59,7 @@ module BaseDecorator::Form
     # @type [Hash{Symbol=>Hash}]
     #
     def generate_form_actions(actions = %i[new edit delete])
-      actions.map { |action| [action, config_button_values(action)] }.to_h
+      actions.map { [_1, config_button_values(_1)] }.to_h
     end
 
   end
@@ -1135,7 +1135,7 @@ module BaseDecorator::Form
   # @return [Array<ActiveSupport::SafeBuffer>]
   #
   def form_hidden_fields(f, **opt)
-    form_hidden(**opt).map { |k, v| f.hidden_field(k, v) }
+    form_hidden(**opt).map { f.hidden_field(_1, _2) }
   end
 
   # Form fields are wrapped in an element for easier grid manipulation.

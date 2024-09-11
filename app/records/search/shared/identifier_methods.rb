@@ -57,8 +57,8 @@ module Search::Shared::IdentifierMethods
   #
   def extract_isbns(*fields)
     fields
-      .flat_map { |field| get_values(field) }
-      .map! { |v| v.to_s.remove(/\s/).sub!(/^isbn[^\d]*/, '') }
+      .flat_map { get_values(_1) }
+      .map! { _1.to_s.remove(/\s/).sub!(/^isbn[^\d]*/, '') }
       .compact_blank!
       .uniq
   end
@@ -75,7 +75,7 @@ class PublicationIdentifierSet < Set
 
   def initialize(ids)
     ids = Array.wrap(ids).compact
-    ids.map! { |v| PublicationIdentifier.cast(v, invalid: true) }
+    ids.map! { PublicationIdentifier.cast(_1, invalid: true) }
     ids.compact!
     ids.sort!
     super

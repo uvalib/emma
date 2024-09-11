@@ -117,7 +117,7 @@ class EmmaRepository < EnumType
   # ===========================================================================
 
   define_enumeration do
-    ACTIVE.transform_values { |cfg| cfg[:name] }.merge!(_default: DEFAULT)
+    ACTIVE.transform_values { _1[:name] }.merge!(_default: DEFAULT)
   end
 
 end

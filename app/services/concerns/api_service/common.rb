@@ -240,7 +240,7 @@ module ApiService::Common
       }
     end
     _, hdrs, _ = api_headers({})
-    options = api_options({}).transform_values { |v| url_escape(v) }
+    options = api_options({}).transform_values { url_escape(_1) }
     headers = hdrs.merge(headers) if hdrs.present?
     opt = options.merge(opt)      if options.present?
     uri = url ? URI.parse(url) : base_uri
@@ -255,7 +255,7 @@ module ApiService::Common
           'req.path':   req.path,
           'req.uri':    req.uri,
           'req.header': req.to_hash,
-        }.each_pair { |k, v| show_value.(k, v) }
+        }.each_pair(&show_value)
         start_time = Time.current
       end
       http.request(req) do |remote_response|
@@ -379,7 +379,7 @@ module ApiService::Common
       params  = {}
     end
     if body
-      body = body.is_a?(Array) ? body.map { |v| api_body(v) } : api_body(body)
+      body = body.is_a?(Array) ? body.map { api_body(_1) } : api_body(body)
       body = body.to_json
       headers = headers.merge('Content-Type' => 'application/json')
     end
@@ -590,7 +590,7 @@ module ApiService::Common
   # @return [Hash]                    The original *prm* now modified.
   #
   def encode_parameters!(prm)
-    prm.transform_keys! { |k| encode_parameter(k) }
+    prm.transform_keys! { encode_parameter(_1) }
   end
 
   # Reverse the transform of #encode_parameter.
@@ -620,7 +620,7 @@ module ApiService::Common
   # @return [Hash]                    The original *prm* now modified.
   #
   def decode_parameters!(prm)
-    prm.transform_keys! { |k| decode_parameter(k) }
+    prm.transform_keys! { decode_parameter(_1) }
   end
 
   # ===========================================================================
@@ -641,7 +641,7 @@ module ApiService::Common
   #
   def invalid_params(meth, *errors, fatal: RAISE_ON_INVALID_PARAMS)
     return if errors.blank?
-    errors.each { |problem| Log.warn("#{meth}: #{problem}") }
+    errors.each { Log.warn("#{meth}: #{_1}") }
     raise RuntimeError, ("#{meth}: " + errors.join("\nAND ")) if fatal
   end
 
@@ -671,7 +671,7 @@ module ApiService::Common
     full:   DEBUG_TRANSMISSION
   )
     opts_hdrs = { options: options, headers: headers }
-    opts_hdrs.transform_values! { |v| v&.inspect || '(none)' }
+    opts_hdrs.transform_values! { _1&.inspect || '(none)' }
     body = "BODY:\n#{body.presence&.pretty_inspect}"
     opt  = full ? { max: nil } : {}
     # noinspection RubyMismatchedArgumentType
@@ -705,8 +705,8 @@ module ApiService::Common
     status = ExecReport.http_status(error) || ExecReport.http_status(response)
     status = { status: status, error: error }
     status[:'@exception'] = @exception unless error == @exception
-    status.transform_values! { |v| v&.inspect || '(none)' }
-    status.transform_values! { |v| v.truncate(256) } unless full
+    status.transform_values! { _1&.inspect || '(none)' }
+    status.transform_values! { _1.truncate(256) } unless full
 
     if (data = ApiService::Error.oauth2_error_header(response))
       data = "(www-authenticate) #{data}"

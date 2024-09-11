@@ -30,7 +30,7 @@ class FileHandle
   # @param [FileHandle,IO,StringIO,Tempfile,IO::Like,Down::ChunkedIO,*] value
   #
   def self.compatible?(value)
-    value.is_a?(FileHandle) || VALID_BASE_TYPE.any? { |t| value.is_a?(t) }
+    value.is_a?(FileHandle) || VALID_BASE_TYPE.any? { value.is_a?(_1) }
   end
 
   # ===========================================================================

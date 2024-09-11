@@ -342,7 +342,7 @@ class Org < ApplicationRecord
       when :inactive then return if old_status == :inactive
       else                return
     end
-    users.each { |user| user.update_column(:status, new_status) }
+    users.each { _1.update_column(:status, new_status) }
   end
 
 end

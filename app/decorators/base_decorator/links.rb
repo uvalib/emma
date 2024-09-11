@@ -163,11 +163,11 @@ module BaseDecorator::Links
 
     l_opt = { current: current, table: table, **t_opt }
     l_opt.merge!(tag: tag) if tag.nil?
-    links = table.keys.map { |action| action_link(action, **l_opt) }.compact
+    links = table.keys.map { action_link(_1, **l_opt) }.compact
 
     # Move the link referencing the current action to the top of the list.
     # E.g.: On an :edit page, the "Edit another..." link is moved to the top.
-    first   = links.index { |link| link.include?(ANOTHER) }
+    first   = links.index { _1.include?(ANOTHER) }
     first &&= links.delete_at(first)
     links.prepend(first) if first && !menu_action?(current)
 

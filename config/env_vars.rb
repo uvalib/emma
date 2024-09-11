@@ -28,13 +28,13 @@ config =
     # If running from the desktop, load a project-specific script to provide
     # the environment variables that would have been set up from Terraform.
 
-    './.idea/environment.rb'.then { |f| f if File.exist?(f) } ||
+    './.idea/environment.rb'.then { _1 if File.exist?(_1) } ||
 
     # To acquire desktop environment values, the RubyMine Docker configuration
     # needs a "Bind Mount" with "/home/rwl/Work/emma/.idea:/mnt:ro"; i.e.:
     # "docker run --mount type=bind,src=/home/rwl/Work/.idea,dst=/mnt,readonly"
 
-    '/mnt/environment.rb'.then { |f| f if File.exist?(f) && in_local_docker? }
+    '/mnt/environment.rb'.then { _1 if File.exist?(_1) && in_local_docker? }
   end
 
 if config && require(config)
@@ -46,7 +46,7 @@ end
 # =============================================================================
 
 db_needed   = rails_application?
-db_needed ||= rake_task? && $*.any? { |arg| arg =~ /^(db|emma|emma_data):/ }
+db_needed ||= rake_task? && $*.any? { _1 =~ /^(db|emma|emma_data):/ }
 
 if db_needed
 
@@ -377,7 +377,7 @@ LOG_SILENCER_ENDPOINTS =
   if (endpoints = ENV['LOG_SILENCER_ENDPOINTS'])
     endpoints = endpoints.join("\n") if endpoints.is_a?(Array)
     endpoints = endpoints.to_s.split(/[|\t\n]/).map!(&:strip).compact_blank!
-    endpoints.map! { |v| v.start_with?('/') ? v : "/#{v}" }
+    endpoints.map! { _1.start_with?('/') ? _1 : "/#{_1}" }
   else
     endpoints = %w[/healthcheck /health/check]
     endpoints << %r{^/artifact}

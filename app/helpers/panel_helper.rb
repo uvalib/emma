@@ -87,7 +87,7 @@ module PanelHelper
     opt[:'aria-expanded'] = !!open
     if context
       context = "for-#{context}" unless context.start_with?('for-')
-    elsif css_class_array(opt[:class]).none? { |c| c.start_with?('for-') }
+    elsif css_class_array(opt[:class]).none? { _1.start_with?('for-') }
       context = 'for-panel'
     end
     if selector.present?

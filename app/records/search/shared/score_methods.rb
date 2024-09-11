@@ -227,7 +227,7 @@ module Search::Shared::ScoreMethods
     field = scoring_words(field, **opt)
     terms = scoring_words(terms, **opt)
     return 0.0 if field.blank? || terms.blank?
-    hits  = terms.sum { |term| field.count(term) }
+    hits  = terms.sum { field.count(_1) }
     100.0 * hits / field.size
   end
 
@@ -250,13 +250,13 @@ module Search::Shared::ScoreMethods
     # noinspection RubyMismatchedArgumentType
     value = send(value) if value.is_a?(Symbol)
     words = Array.wrap(value).map(&:to_s)
-    words.map! { |w| w.gsub(/'s(\W|$)/i, '\1') }                  # NOTE: [1]
-    words.map! { |w| w.tr(original, substitute) }                 if no_break
-    words.map! { |w| break_words(w, !keep_words) }.flatten!
-    words.map! { |w| keep_words.include?(w) ? "#{KEEP}#{w}" : w } if keep_words
+    words.map! { _1.gsub(/'s(\W|$)/i, '\1') }                     # NOTE: [1]
+    words.map! { _1.tr(original, substitute) }                    if no_break
+    words.map! { break_words(_1, !keep_words) }.flatten!
+    words.map! { keep_words.include?(_1) ? "#{KEEP}#{_1}" : _1 }  if keep_words
     words -= stop_words                                           if stop_words
-    words.map! { |w| w.delete(KEEP).downcase }                    if keep_words
-    words.map! { |w| normalized(w.tr(substitute, original)) }     if no_break
+    words.map! { _1.delete(KEEP).downcase }                       if keep_words
+    words.map! { normalized(_1.tr(substitute, original)) }        if no_break
     words.compact_blank!
 
     # NOTE: [1] Eliminate possessives before *no_break* makes them invisible.

@@ -170,7 +170,7 @@ module SearchModesHelper
     return true  if true?(guard)
     return false if (guards = Array.wrap(guard).compact.map!(&:to_sym)).blank?
     # noinspection RubyMismatchedArgumentType
-    guards.all? { |g| (m = CONFIG_CONDITION[g]).is_a?(Proc) ? m.call : try(m) }
+    guards.all? { (m = CONFIG_CONDITION[_1]).is_a?(Proc) ? m.call : try(m) }
   end
 
   # Normalize :enabled property values for use by #permitted_by?.
@@ -181,8 +181,8 @@ module SearchModesHelper
   #
   def self.guard_values(val)
     guards = Array.wrap(val).compact
-    return false if guards.blank? || guards.any? { |item| false?(item) }
-    return true  if guards.any? { |item| true?(item) }
+    return false if guards.blank? || guards.any? { false?(_1) }
+    return true  if guards.any? { true?(_1) }
     guards.map!(&:to_sym).uniq!
     if (invalid = guards - CONFIG_CONDITION.keys).present?
       invalid = invalid.first unless invalid.many?

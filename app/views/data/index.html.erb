@@ -30,14 +30,14 @@
 
   if list.present?
     suffix = hex_rand
-    anchor = list.keys.map { |k| [k, url_escape("#{k}_#{suffix}")] }.to_h
-    paths  = anchor.transform_values { |id| "##{id}" }
+    anchor = list.keys.map { [_1, url_escape("#{_1}_#{suffix}")] }.to_h
+    paths  = anchor.transform_values { "##{_1}" }
   else
     anchor = nil
-    paths  = names.map { |name| [name, data_path(id: name)] }.to_h
+    paths  = names.map { [_1, data_path(id: _1)] }.to_h
   end
 
-  counts = names.map { |name| [name, table_row_count(name)] }.to_h
+  counts = names.map { [_1, table_row_count(_1)] }.to_h
 
 -%>
 

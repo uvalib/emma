@@ -118,10 +118,10 @@ class IngestService::Error < ApiService::Error
         val = Array.wrap(val)
 
         # Turn " : 'FIELD_NAME' is a required property" into "FIELD_NAME".
-        prop, val = val.partition { |v| v.match?(/required\s+property/i) }
+        prop, val = val.partition { _1.match?(/required\s+property/i) }
         if prop.present?
           tag  = config_term(:ingest, :missing_field).pluralize(prop.size)
-          list = prop.map! { |v| v.sub(/^\W*([\w_]+)\W*.*$/, '\1') }.join(', ')
+          list = prop.map! { _1.sub(/^\W*([\w_]+)\W*.*$/, '\1') }.join(', ')
           issues << "#{tag}: #{list}"
         end
 

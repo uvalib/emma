@@ -137,7 +137,7 @@ class ExecError < RuntimeError
   def inspect
     items = {
       cause: ApiHelper.format_api_result(@cause, html: false),
-    }.map { |k, v| "@#{k}=#{v}" }.join(', ')
+    }.map { "@#{_1}=#{_2}" }.join(', ')
     '#<%s: %s %s>' % [self.class, message, items]
   end
 

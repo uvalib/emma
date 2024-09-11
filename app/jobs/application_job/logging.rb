@@ -136,7 +136,7 @@ module ApplicationJob::Logging
 
   def arguments_inspect(job = nil)
     # noinspection RailsParamDefResolve
-    (job || self).try(:arguments)&.map { |v| item_inspect(v) }&.join(' | ')
+    (job || self).try(:arguments)&.map { item_inspect(_1) }&.join(' | ')
   end
 
   # ===========================================================================
@@ -150,11 +150,11 @@ module ApplicationJob::Logging
   end
 
   def hash_inspect(h)
-    h.to_h.map { |k, v| "#{k}: #{item_inspect(v)}" }.join(', ')
+    h.to_h.map { "#{_1}: #{item_inspect(_2)}" }.join(', ')
   end
 
   def array_inspect(a)
-    '[%s]' % Array.wrap(a).map { |v| item_inspect(v) }.join(',')
+    '[%s]' % Array.wrap(a).map { item_inspect(_1) }.join(',')
   end
 
   def item_inspect(v)
@@ -193,7 +193,7 @@ module ApplicationJob::Logging
     opt[:separator] = "\n\t"             unless opt.key?(:separator)
     __debug_items(args.join(DEBUG_SEPARATOR), **opt, &blk)
   end
-    .tap { |meth| neutralize(meth) unless DEBUG_JOB }
+    .tap { neutralize(_1) unless DEBUG_JOB }
 
   # ===========================================================================
   # :section:

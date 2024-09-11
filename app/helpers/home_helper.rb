@@ -43,7 +43,7 @@ module HomeHelper
   def orgs_list(css: '.orgs-list', **opt)
     prepend_css!(opt, css)
     html_ul(**opt) do
-      org_names.map { |org| html_li(org) }
+      org_names.map { html_li(_1) }
     end
   end
 

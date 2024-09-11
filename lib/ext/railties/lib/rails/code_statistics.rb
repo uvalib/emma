@@ -30,7 +30,7 @@ module CodeStatisticsExt
 
   def calculate_code
     @statistics.sum do |label, stats|
-      NON_CODE.any? { |pattern| label.match?(pattern) } ? 0 : stats.code_lines
+      NON_CODE.any? { label.match?(_1) } ? 0 : stats.code_lines
     end
   end
 

@@ -23,7 +23,7 @@ module TestHelper::SystemTests::Ingest
   #
   def reindex(*entries)
     _, failures = UploadConcernShim.instance.reindex_submissions(*entries)
-    failures.each { |msg| show_item(msg) }.blank?
+    failures.each { show_item(_1) }.blank?
   end
 
   # ===========================================================================

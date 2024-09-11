@@ -91,7 +91,7 @@ class ApplicationRecord < ActiveRecord::Base
   # @return [Hash{Symbol=>Symbol}]
   #
   def self.model_id_key_map
-    ApplicationRecord.subclasses.map { |c| [c.model_key, c.model_id_key] }.to_h
+    ApplicationRecord.subclasses.map { [_1.model_key, _1.model_id_key] }.to_h
   end
 
   # ===========================================================================

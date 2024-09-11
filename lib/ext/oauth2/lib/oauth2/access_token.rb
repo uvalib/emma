@@ -126,7 +126,7 @@ module OAuth2
       #
       def refresh!(params = {})
         super
-          .tap { |result| __ext_debug("--> #{result.inspect}") }
+          .tap { __ext_debug("--> #{_1.inspect}") }
       end
 
       # Make a request using the Access Token.

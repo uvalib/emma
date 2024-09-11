@@ -182,9 +182,9 @@ module BaseDecorator::Helpers
   # @yieldreturn ActiveSupport::SafeBuffer
   #
   def form_with(model: nil, scope: nil, url: nil, format: nil, **opt, &blk)
-    if (data_opt = opt.select { |k, _| k.start_with?('data-') }).present?
+    if (data_opt = opt.select { _1.start_with?('data-') }).present?
       opt.except!(*data_opt.keys)
-      data_opt.transform_keys! { |k| k.to_s.delete_prefix('data-').to_sym }
+      data_opt.transform_keys! { _1.to_s.delete_prefix('data-').to_sym }
       opt[:data] = opt[:data]&.merge(data_opt) || data_opt
     end
     if (html_opt = opt.slice!(*FORM_WITH_OPT)).present?

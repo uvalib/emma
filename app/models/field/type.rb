@@ -90,8 +90,8 @@ class Field::Type
       @range ||= (data.try(:[], field) if data.try(:key?, field))
       @range ||= src.try(field)
       @range ||= src.try(:[], field)
-      @range   = Array.wrap(@range).compact_blank       unless @range.nil?
-      @range&.map! { |v| v.to_s.strip }&.compact_blank! unless @base == 'json'
+      @range   = Array.wrap(@range).compact_blank    unless @range.nil?
+      @range&.map! { _1.to_s.strip }&.compact_blank! unless @base == 'json'
     end
     @base   = @base.to_s.safe_constantize if @base.is_a?(Symbol)
     @base   = self.class.base             unless @base.is_a?(Class)
@@ -117,7 +117,7 @@ class Field::Type
     res = value.presence || range
     res = Array.wrap(res)
     # noinspection RailsParamDefResolve
-    res = res.map { |v| labels[v] || v } if labels &&= base.try(:pairs)
+    res = res.map { labels[_1] || _1 } if labels &&= base.try(:pairs)
     (mode == :single) ? res.first : res
   end
 

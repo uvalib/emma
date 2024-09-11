@@ -99,11 +99,8 @@ module AboutHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def project_members_section(heading: true, css: '.project-members', **opt)
-    orgs = org_names.presence
-    orgs &&=
-      html_div(**prepend_css!(opt, css)) do
-        orgs.map { |org| html_div(org) }
-      end
+    orgs   = org_names.presence
+    orgs &&= html_div(**prepend_css!(opt, css)) { orgs.map { html_div(_1) } }
     orgs ||= none_placeholder
     heading &&= config_page(:about, :members, :section, :list)
     heading &&= html_h2(heading)
@@ -198,7 +195,7 @@ module AboutHelper
     thead =
       html_thead do
         html_tr do
-          cols.map { |column| html_th(column) }
+          cols.map { html_th(_1) }
         end
       end
     tbody =
@@ -269,7 +266,7 @@ module AboutHelper
   #
   # @type [Loofah::Scrubber]
   #
-  SCRUB_H1 = Loofah::Scrubber.new { |n| n.name = 'h2' if n.name == 'h1' }
+  SCRUB_H1 = Loofah::Scrubber.new { _1.name = 'h2' if _1.name == 'h1' }
 
   # Remove undesirable HTML from received content.
   #
@@ -296,7 +293,7 @@ module AboutHelper
   def project_table(data, format: nil, **)
     data = data.compact.stringify_keys!
     html = format.nil? || (format.to_sym == :html)
-    html ? data : data.transform_keys! { |name| name.tr(' ', '_').underscore }
+    html ? data : data.transform_keys! { _1.tr(' ', '_').underscore }
   end
 
   # An element containing a table of project-related information.
@@ -312,7 +309,7 @@ module AboutHelper
     content   = content.presence
     content &&=
       html_div(**opt) do
-        content.map { |k, v| html_dt(k.to_s) << html_dd(v) }
+        content.map { html_dt(_1.to_s) << html_dd(_2) }
       end
     content ||= none_placeholder
     safe_join([heading, content].compact)

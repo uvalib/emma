@@ -41,7 +41,7 @@ class AwsS3::Message::Response < AwsS3::Api::Message
       super(nil, opt)
       self.succeeded = sids_for(sent)
       self.failed    = sids_for(src) - succeeded
-      self.messages.concat(failed.map { |sid| "#{sid} failed" })
+      self.messages.concat(failed.map { "#{_1} failed" })
       initialize_exec_report(messages, exception)
     end
   end
@@ -59,7 +59,7 @@ class AwsS3::Message::Response < AwsS3::Api::Message
   # @return [Array<String>]
   #
   def sids_for(src)
-    Array.wrap(src).compact_blank.map! { |v| v.try(:submission_id) || v.to_s }
+    Array.wrap(src).compact_blank.map! { _1.try(:submission_id) || _1.to_s }
   end
 
   # ===========================================================================

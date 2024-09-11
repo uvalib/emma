@@ -98,7 +98,7 @@ class EnrollmentMailer < ApplicationMailer
       list  = link_to(list, list, l_opt)
       org   = ERB::Util.h(org)
       name  = ERB::Util.h(name)
-      com   = com.split(PARAGRAPH).map { |v| html_paragraph(v) }
+      com   = com.split(PARAGRAPH).map { html_paragraph(_1) }
       com   = safe_join(com, "\n")
     end
 

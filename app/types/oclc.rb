@@ -49,7 +49,7 @@ class Oclc < PublicationIdentifier
     # @type [Range]
     #
     OCLC_DIGITS =
-      OCLC_FORMAT.values.flatten.compact.then { |a| (a.min..a.max) }.freeze
+      OCLC_FORMAT.values.flatten.compact.then { _1.min .. _1.max }.freeze
 
     # If a value has a number of digits within this range it could be either a
     # valid OCLC or intended as an OCLC but with too few or one too many

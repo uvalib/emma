@@ -31,7 +31,7 @@ module SysHelper::Loggers
     # Find loggers; skip Broadcast loggers that will have been already listed.
     loggers = ObjectSpace.each_object(::Logger).map(&:itself)
     ls_logs = ObjectSpace.each_object(ActiveSupport::LogSubscriber)
-    ls_logs = ls_logs.map { |log| log.try(:logger) }.compact - loggers
+    ls_logs = ls_logs.map { _1.try(:logger) }.compact - loggers
 
     # Create a hash of loggers whose keys are a unique string based on the
     # logger's progname.

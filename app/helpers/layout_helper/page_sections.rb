@@ -95,7 +95,7 @@ module LayoutHelper::PageSections
     type   = type&.to_s&.delete_suffix('_html')&.to_sym || :text
     text ||= page_text(controller: controller, action: action, type: type)
     return if text.blank?
-    refs   = Array.wrap(text).map { |t| named_references(t) }
+    refs   = Array.wrap(text).map { named_references(_1) }
     if (all_refs = refs.flatten).present?
       vals = opt.extract!(*all_refs)
       (all_refs - vals.keys).each do |ref|
@@ -142,7 +142,7 @@ module LayoutHelper::PageSections
         end
       elsif (text = entry[t.to_sym]).present?
         case text
-          when Array then return text.map { |v| v.to_s.strip }
+          when Array then return text.map { _1.to_s.strip }
           else            return text.strip
         end
       end

@@ -86,7 +86,7 @@ module Api::Shared::DateMethods
   def normalize_day_fields!(data = nil, **opt)
     opt[:mode] ||= date_array_mode
     day_fields.each do |field|
-      update_field_value!(data, field, **opt) { |v| normalize_dates(v) }
+      update_field_value!(data, field, **opt) { normalize_dates(_1) }
     end
   end
 
@@ -98,7 +98,7 @@ module Api::Shared::DateMethods
   #
   def normalize_dates(values)
     values = values.split(date_separator) if values.is_a?(String)
-    Array.wrap(values).map { |value| normalize_date(value) }.compact
+    Array.wrap(values).map { normalize_date(_1) }.compact
   end
 
   # Produce a date of the form "YYYY-MM-DD".

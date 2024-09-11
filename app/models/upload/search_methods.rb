@@ -98,7 +98,7 @@ module Upload::SearchMethods
         created = "(#{phase} != 'edit') OR (#{edit_state} IN #{aborted})"
         parts << "((#{created}) AND (#{state} IN %s))" % sql_list(c_states)
       end
-      terms << '(%s)' % parts.map { |term| "(#{term})" }.join(' OR ').squish
+      terms << '(%s)' % parts.map { "(#{_1})" }.join(' OR ').squish
     end
 
     # === Update time lower bound
@@ -130,8 +130,8 @@ module Upload::SearchMethods
     offset = positive(opt.delete(:offset))
 
     # === Filter by association
-    inner = opt.keys.map(&:to_s).select { |k| k.include?('.') }.presence
-    inner&.map! { |k| k.split('.').first.singularize.to_sym }
+    inner = opt.keys.map(&:to_s).select { _1.include?('.') }.presence
+    inner&.map! { _1.split('.').first.singularize.to_sym }
 
     # === Generate the SQL query
     if opt[:columns]
@@ -178,7 +178,7 @@ module Upload::SearchMethods
   #
   def group_counts(relation)
     relation.pluck(WORKFLOW_PHASE_COLUMN, *STATE_COLUMNS).map { |array|
-      phase, state, edit = array.map { |v| v.to_sym if v.present? }
+      phase, state, edit = array.map { _1.to_sym if _1.present? }
       state = edit if (phase == :edit) && edit && (edit != :canceled)
       Upload.state_group(state) if state
     }.compact.group_by(&:itself).transform_values(&:size).tap do |group_count|

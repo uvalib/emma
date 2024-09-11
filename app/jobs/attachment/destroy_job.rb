@@ -35,7 +35,7 @@ class Attachment::DestroyJob < ApplicationJob
     result   = attacher.destroy
     __debug_job('END') do
       { attacher: attacher, result: result }
-        .transform_values { |v| item_inspect(v) }
+        .transform_values { item_inspect(_1) }
     end
 
   rescue ActiveRecord::RecordNotFound => error

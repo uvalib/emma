@@ -105,7 +105,7 @@ module Emma::Common::HtmlMethods
     array = items.is_a?(Array) ? items.flatten : Array.wrap(items)
     added = (yield(array) if block_given?)
     array.concat(Array.wrap(added)) unless added.nil? || added.equal?(array)
-    array.map! { |v| ERB::Util.unwrapped_html_escape(v) }.join(sep).html_safe
+    array.map! { ERB::Util.unwrapped_html_escape(_1) }.join(sep).html_safe
   end
 
 end

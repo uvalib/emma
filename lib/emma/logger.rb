@@ -27,11 +27,11 @@ module Emma
 
     FILTERING =
       ENV['EMMA_LOG_FILTERING']
-        .then { |v| LOG_TO_STDOUT ? !false?(v) : true?(v) }
+        .then { LOG_TO_STDOUT ? !false?(_1) : true?(_1) }
 
     AWS_FORMATTING =
       ENV['EMMA_LOG_AWS_FORMATTING']
-        .then { |v| LOG_TO_STDOUT ? !false?(v) : true?(v) }
+        .then { LOG_TO_STDOUT ? !false?(_1) : true?(_1) }
 
     # =========================================================================
     # :section: ActiveSupport::Logger overrides
@@ -174,9 +174,9 @@ module Emma
     # @param [any, nil] message
     #
     def filter_out?(message)
-      message.is_a?(String) && FILTER_OUT.any? { |expr| expr.match?(message) }
+      message.is_a?(String) && FILTER_OUT.any? { _1.match?(message) }
     end
-      .tap { |meth| neutralize(meth) unless FILTERING }
+      .tap { neutralize(_1) unless FILTERING }
 
     # =========================================================================
     # :section:
@@ -253,7 +253,7 @@ module Emma
       def call(severity, time, progname, msg)
         ldr = leader(severity, time, progname)
         msg = format_duration(msg) if UVA_AWS_MOD && msg.is_a?(String)
-        msg2str(msg).split("\n").map { |txt| "#{ldr}#{txt}\n" }.join
+        msg2str(msg).split("\n").map { "#{ldr}#{_1}\n" }.join
       end
 
       # =======================================================================

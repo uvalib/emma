@@ -66,7 +66,7 @@ module HelpConcern
   # @return [Hash{Symbol=>Array,Hash}]
   #
   def index_values(list = @list, **opt)
-    topics = Array.wrap(list).map { |topic| show_values(topic) }
+    topics = Array.wrap(list).map { show_values(_1) }
     topics = {}.merge!(*topics)
     super(topics, wrap: :help, **opt)
   end

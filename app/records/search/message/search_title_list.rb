@@ -158,7 +158,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
       id, val = partition_hash(hash, *IDENTIFIER_FIELDS)
       @ids    = [*id.values].compact_blank!.presence
       @ids  &&= PublicationIdentifierSet.new(@ids)
-      @values = val.values.map { |v| LIST_ELEMENT.make_comparable(v) }.presence
+      @values = val.values.map { LIST_ELEMENT.make_comparable(_1) }.presence
     end
 
     # =========================================================================
@@ -202,9 +202,9 @@ class Search::Message::SearchTitleList < Search::Api::Message
     def inspect
       # @type [Hash{Symbol=>Array,String,nil}]
       part = { ids: ids&.to_a, values: values }
-      part.transform_values! { |v| v&.map(&:inspect)&.join(', ') }
+      part.transform_values! { _1&.map(&:inspect)&.join(', ') }
       part[:ids]&.remove!('()')
-      part.transform_values! { |v| v || '---' }
+      part.transform_values! { _1 || '---' }
       '<%{ids} | %{values} | GroupingCriteria>' % part
     end
 
@@ -263,7 +263,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
     result = {}
     recs.each do |rec|
       criteria = group_fields(rec, level)
-      if (related = result.keys.find { |key| key.match?(criteria) })
+      if (related = result.keys.find { _1.match?(criteria) })
         result[related] << rec
       else
         result[criteria] = [rec]

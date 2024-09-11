@@ -359,7 +359,7 @@ module SubmissionService::Properties
     arg = arg.to_a                if arg.is_a?(ActiveRecord::Relation)
     arg = arg.fields              if arg.is_a?(ManifestItem)
 
-    return arg.map { |a| extract_items(a) }.flatten.compact if arg.is_a?(Array)
+    return arg.map { extract_items(_1) }.flatten.compact if arg.is_a?(Array)
 
     case arg
       when SubmissionService::Response then Array.wrap(arg[:manifest_id])

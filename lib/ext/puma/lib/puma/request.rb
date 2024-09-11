@@ -36,7 +36,7 @@ module Puma
 =begin # NOTE: Puma debugging
       def default_server_port(env)
         super
-          .tap { |result| __ext_log(result) }
+          .tap { __ext_log(_1) }
       end
 =end
 
@@ -51,7 +51,7 @@ module Puma
 =begin # NOTE: Puma debugging
       def fetch_status_code(status)
         super
-          .tap { |result| __ext_log(result) }
+          .tap { __ext_log(_1) }
       end
 =end
 

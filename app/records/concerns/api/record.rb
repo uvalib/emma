@@ -283,8 +283,8 @@ class Api::Record
   #
   def make_hierarchy(value)
     case value
-      when Hash  then value.transform_values { |v| make_hierarchy(v) }
-      when Array then value.map { |v| make_hierarchy(v) }
+      when Hash  then value.transform_values { make_hierarchy(_1) }
+      when Array then value.map { make_hierarchy(_1) }
       else            value.try(:field_hierarchy) || value
     end
   end

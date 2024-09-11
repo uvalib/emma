@@ -210,9 +210,9 @@ module Record::Searchable
     ids    = Array.wrap(opt.delete(i_key))
     sids   = Array.wrap(opt.delete(s_key))
     if items.present?
-      recs = expand_ids(*items).map! { |term| id_term(term, **id_opt) }
-      ids  = recs.map { |rec| rec[i_key] }.concat(ids)  if i_key
-      sids = recs.map { |rec| rec[s_key] }.concat(sids) if s_key
+      recs = expand_ids(*items).map! { id_term(_1, **id_opt) }
+      ids  = recs.map { _1[i_key] }.concat(ids)  if i_key
+      sids = recs.map { _1[s_key] }.concat(sids) if s_key
     end
     ids  = ids.compact_blank!.uniq.presence
     sids = sids.compact_blank!.uniq.presence
@@ -286,7 +286,7 @@ module Record::Searchable
     # === Filter by user
     user_opt = opt.extract!(:user, :user_id)
     if user_column && user_opt.present?
-      users = user_opt.values.flatten.map! { |u| User.id_value(u) }.uniq
+      users = user_opt.values.flatten.map! { User.id_value(_1) }.uniq
       users = users.first unless users.many?
       terms << sql_or(user_column => users)
     end
@@ -326,8 +326,8 @@ module Record::Searchable
     offset = positive(opt.delete(:offset))
 
     # === Filter by association
-    inner = opt.keys.map(&:to_s).select { |k| k.include?('.') }.presence
-    inner&.map! { |k| k.split('.').first.singularize.to_sym }
+    inner = opt.keys.map(&:to_s).select { _1.include?('.') }.presence
+    inner&.map! { _1.split('.').first.singularize.to_sym }
 
     # === Generate the SQL query
     if opt[:columns]

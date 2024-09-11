@@ -204,7 +204,7 @@ module Import
   # @return [Array<String>]
   #
   def language_values(v)
-    array_value(v) { |lang| LanguageType.normalize(lang) }
+    array_value(v) { LanguageType.normalize(_1) }
   end
 
   # Transform a data item into one or more DOI identifiers.
@@ -296,7 +296,7 @@ module Import
   # @return [Array<String>]
   #
   def enum_values(v, type)
-    array_value(v) { |item| enum_value(item, type) }
+    array_value(v) { enum_value(_1, type) }
   end
 
   # ===========================================================================

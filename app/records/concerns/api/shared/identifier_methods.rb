@@ -86,7 +86,7 @@ module Api::Shared::IdentifierMethods
     opt[:limit] ||= MAX_IDENTIFIERS
     opt[:mode]  ||= id_array_mode
     identifier_fields.each do |field|
-      update_field_value!(data, field, **opt) { |v| normalize_identifiers(v) }
+      update_field_value!(data, field, **opt) { normalize_identifiers(_1) }
     end
   end
 

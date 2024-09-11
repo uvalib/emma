@@ -111,7 +111,7 @@ module Record::Steppable
   #
   REVERSE_STATE_GROUP =
     STATE_GROUP.flat_map { |group, entry|
-      entry[:states].map { |state| [state,  group] }
+      entry[:states].map { [_1,  group] }
     }.sort.to_h.freeze
 
   # ===========================================================================
@@ -640,7 +640,7 @@ module Record::Steppable
           end
 
           def deserialize(hash)
-            fields = hash.map { |k, v| [k.to_sym, deserialize(v)] }.to_h
+            fields = hash.map { [_1.to_sym, deserialize(-2)] }.to_h
             klass.new(**fields)
           end
 

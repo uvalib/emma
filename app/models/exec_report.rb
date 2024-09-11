@@ -120,7 +120,7 @@ class ExecReport
   #
   def exception
     # noinspection RubyMismatchedReturnType
-    parts.find { |p| ex = p.exception and return ex }
+    parts.find { ex = _1.exception and return ex }
   end
 
   # Produce error report lines.
@@ -264,7 +264,7 @@ class ExecReport
     def serialize_filter(part)
       case part
         when Array
-          part.map { |v| serialize_filter(v) }.compact_blank!
+          part.map { serialize_filter(_1) }.compact_blank!
         when Hash
           part.map { |k, v|
             v = v.class.name if v.is_a?(Exception)
@@ -334,7 +334,7 @@ class ExecReport
     def normalized_value(value)
       case value
         when Array
-          value.map { |s| normalized_value(s) }.compact.presence
+          value.map { normalized_value(_1) }.compact.presence
         when ActiveSupport::SafeBuffer
           to_utf8(value).presence
         when String
@@ -379,7 +379,7 @@ class ExecReport
         when String     then src = safe_json_parse(src, log: false)
       end
       if src.is_a?(Array)
-        src.flatten.flat_map { |v| extract_message_hashes(v, meth) }
+        src.flatten.flat_map { extract_message_hashes(_1, meth) }
       else
         [extract_message_hash(src, meth)]
       end
@@ -407,9 +407,9 @@ class ExecReport
       if parts.nil?
         make_message_hash(src, meth)
       elsif !parts.is_a?(Array)
-        send(__method__, parts, meth)
-      elsif !parts.all? { |part| part.is_a?(String) }
-        parts.map { |part| send(__method__, part, meth) }.reduce(&:rmerge!)
+        extract_message_hash(parts, meth)
+      elsif !parts.all? { _1.is_a?(String) }
+        parts.map { extract_message_hash(_1, meth) }.reduce(&:rmerge!)
       else
         topic   = make_message_hash(parts.shift)
         details = (make_message_hash(DETAILS_KEY => parts) if parts.present?)
@@ -462,7 +462,7 @@ class ExecReport
           Log.info { error }
           result = { TOPIC_KEY => "-[ #{error} ]-" }
       end
-      result.compact_blank!.transform_values! { |v| Array.wrap(v) }
+      result.compact_blank!.transform_values! { Array.wrap(_1) }
     end
 
     # =========================================================================
@@ -533,7 +533,7 @@ class ExecReport
       src = src && Array.wrap(src).compact_blank.uniq.presence or return
       sep = opt[:separator]
       opt[:separators] = [sep, sep.strip]
-      src.map! { |v| message_part(v, **opt) }
+      src.map! { message_part(_1, **opt) }
       html = opt[:html] || src.any?(&:html_safe?)
       html ? html_join(src, sep) : src.join(sep)
     end
@@ -553,8 +553,8 @@ class ExecReport
       return if src.blank?
       val  = to_utf8(src) || src.to_s
       seps = Array.wrap(opt[:separators] || opt[:separator])
-      seps = seps.flat_map { |s| [s, s.strip] } unless seps.many?
-      if (sep = seps.find { |s| val.end_with?(s) })
+      seps = seps.flat_map { [_1, _1.strip] } unless seps.many?
+      if (sep = seps.find { val.end_with?(_1) })
         safe = val.html_safe?
         val  = val.delete_suffix(sep)
         return val.html_safe if safe
@@ -613,7 +613,7 @@ class ExecReport
     # @see #error_table_hash
     #
     def error_table(*entries, html: nil, **opt)
-      html = entries.any? { |v| v.try(:html_safe?) } if html.nil?
+      html = entries.any? { _1.try(:html_safe?) } if html.nil?
       error_table_hash(entries, **opt).transform_values! { |v|
         message_line(nil, *v, html: html)
       }.compact_blank!
@@ -663,7 +663,7 @@ class ExecReport
           items =
             Array.wrap(details).flatten.map { |item|
               msg = item.to_s
-              next if ignore&.any? { |pattern| msg.match?(pattern) }
+              next if ignore&.any? { msg.match?(_1) }
               key, txt = msg.split(/\s*-+\s*/, 2)
               txt = item unless (key = positive(key))
               next if txt.blank?
@@ -695,10 +695,10 @@ class ExecReport
         when Symbol, NilClass
           value.inspect
         when Hash
-          value = value.map { |k, v| "#{k.inspect} => #{inspect_item(v)}" }
+          value = value.map { "#{_1.inspect} => #{inspect_item(_2)}" }
           'Hash(%d)-{%s}' % [value.size, value.join(', ')]
         when Array
-          value = value.map { |v| inspect_item(v) }
+          value = value.map { inspect_item(_1) }
           'Array(%d)-[%s]' % [value.size, value.join(', ')]
         when Exception
           "#<#{value.class.name}:#{value.object_id}>"
@@ -948,7 +948,7 @@ class ExecReport::Part
     @details     = hash.delete(DETAILS_KEY) || []
     html, @info  = partition_hash(hash, *HTML_KEYS)
     @render_html = true?(html.values.first)
-    @exception   = [src, ex].find { |v| v.is_a?(Exception) }
+    @exception   = [src, ex].find { _1.is_a?(Exception) }
   end
 
   # ===========================================================================
@@ -1201,7 +1201,7 @@ class ExecReport::Part
       src = src && Array.wrap(src).compact_blank.uniq.presence or return
       sep = opt[:separator]
       opt[:separators] = [sep, sep.strip]
-      src.map! { |v| render_part(v, **opt) }
+      src.map! { render_part(_1, **opt) }
       opt[:html] ? html_join(src, sep) : src.join(sep)
     end
 

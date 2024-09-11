@@ -88,9 +88,9 @@ module Record::Rendering
   # noinspection RubyMismatchedReturnType
   #++
   def item_identity(item, meths: %i[sid_value id_value])
-    meths.each { |meth| value = item.try(meth)             and return value }
-    meths.each { |meth| value = try(meth, item)            and return value }
-    meths.each { |meth| value = self.class.try(meth, item) and return value }
+    meths.each { value = item.try(_1)             and return value }
+    meths.each { value = try(_1, item)            and return value }
+    meths.each { value = self.class.try(_1, item) and return value }
   end
 
   # ===========================================================================

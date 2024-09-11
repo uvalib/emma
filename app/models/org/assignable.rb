@@ -34,7 +34,7 @@ module Org::Assignable
       if result[:status]
         result[:status_date] ||= (result[:updated_at] ||= DateTime.now)
       end
-      result[:contact]&.map! { |user| user.is_a?(User) ? user.id : user }
+      result[:contact]&.map! { _1.is_a?(User) ? _1.id : _1 }
     end
   end
 
@@ -51,8 +51,8 @@ module Org::Assignable
   # @return [String]
   #
   def abbreviate_org(name)
-    words = name.split(/[^[:alnum:]]+/).reject! { |w| w.start_with?(/\d/) }
-    nouns = words.reject { |w| %w[a an the of].include?(w.downcase) }
+    words = name.split(/[^[:alnum:]]+/).reject! { _1.start_with?(/\d/) }
+    nouns = words.reject { %w[a an the of].include?(_1.downcase) }
     (nouns.presence || words).map(&:first).join
   end
 

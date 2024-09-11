@@ -53,10 +53,10 @@ module BaseCollectionDecorator::Row
     err = []
     if arg.present? && !object.respond_to?(:order)
       obj = "ignored for object #{object.class}"
-      err = arg.map { |k, v| "#{k} #{v.inspect} #{obj}" }
+      err = arg.map { "#{_1} #{_2.inspect} #{obj}" }
     end
     err << "ignored options #{opt.inspect}" if opt.present?
-    err.each { |msg| Log.info { "#{__method__}: #{msg}" } }
+    err.each { Log.info { "#{__method__}: #{_1}" } }
     if arg.blank?
       object
     else

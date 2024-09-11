@@ -40,7 +40,7 @@ class Object
         next if mods.empty?
         type = type.to_s
         gap = ' ' * (positive(10 - type.size) || 1)
-        mods.map { |mod| "#{type}#{gap}#{mod}" }
+        mods.map { "#{type}#{gap}#{_1}" }
       }.compact_blank!
     $stdout.puts(lines.presence&.join("\n") || 'NONE')
     lines.size

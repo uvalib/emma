@@ -74,7 +74,7 @@ module Field::Configuration
       secs = cfg && Array.wrap(action).compact.map!(&:to_sym) << :all
       secs&.find do |section|
         next unless (section_cfg = cfg[section]).is_a?(Hash)
-        ss_cfgs = subs.map { |ss| ss ? section_cfg.dig(*ss) : section_cfg }
+        ss_cfgs = subs.map { _1 ? section_cfg.dig(*_1) : section_cfg }
         ss_cfgs.find do |ss_cfg|
           next unless ss_cfg.is_a?(Hash)
           next unless (fld_cfg = ss_cfg[field]).is_a?(Hash)
@@ -100,7 +100,7 @@ module Field::Configuration
       secs = cfg && Array.wrap(action).compact.map!(&:to_sym) << :all
       secs&.find do |section|
         next unless (section_cfg = cfg[section]).is_a?(Hash)
-        ss_cfgs = subs.map { |ss| ss ? section_cfg.dig(*ss) : section_cfg }
+        ss_cfgs = subs.map { _1 ? section_cfg.dig(*_1) : section_cfg }
         ss_cfgs.find do |ss_cfg|
           next unless ss_cfg.is_a?(Hash)
           ss_cfg.values.find do |fld_cfg|

@@ -48,7 +48,7 @@ module ConfigurationHelper
   # @return [Array(nil,    nil)]
   #
   def config_path(ctrlr, action = nil)
-    [ctrlr, action].map! { |s| s.to_s.underscore.tr('/.', '_').to_sym if s }
+    [ctrlr, action].map! { _1.to_s.underscore.tr('/.', '_').to_sym if _1 }
   end
   protected :config_path
 
@@ -183,7 +183,7 @@ module ConfigurationHelper
   # @return [Array<Array<Symbol>>]
   #
   def config_lookup_paths(ctrlr, action, *path)
-    base_paths = config_lookup_order(ctrlr, action).map! { |v| v.join('.') }
+    base_paths = config_lookup_order(ctrlr, action).map! { _1.join('.') }
     config_flatten_order(base_paths, *path)
   end
 
@@ -200,7 +200,7 @@ module ConfigurationHelper
   #
   def config_flatten_order(*path, depth: 0)
     result = []
-    path.map! { |p| p.is_a?(Array) ? p.compact_blank : p }.compact_blank!
+    path.map! { _1.is_a?(Array) ? _1.compact_blank : _1 }.compact_blank!
     until path.first.is_a?(Array) || path.blank?
       part = path.shift
       unless part.is_a?(Symbol) || (part.is_a?(String) && part.include?('.'))
@@ -215,7 +215,7 @@ module ConfigurationHelper
         remainder = config_flatten_order(*path, depth: down_one).flatten(1)
         branches  = branches.product(remainder)
       end
-      result = branches.map { |branch| [*result, *branch].flatten }
+      result = branches.map { [*result, *_1].flatten }
     else
       result = [result]
     end

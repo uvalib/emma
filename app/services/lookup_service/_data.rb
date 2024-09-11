@@ -48,7 +48,7 @@ class LookupService::Data
   # @return [Hash{Symbol,Hash{Symbol=>Array<Hash>}}]
   #
   def item_values
-    @item_values ||= table.transform_values { |v| v.map(&:item_values) }
+    @item_values ||= table.transform_values { _1.map(&:item_values) }
   end
 
   # Total number of items in this instance.
@@ -56,7 +56,7 @@ class LookupService::Data
   # @return [Integer]
   #
   def item_count
-    item_values.values.compact.sum { |v| v.is_a?(Array) ? v.size : 1 }
+    item_values.values.compact.sum { _1.is_a?(Array) ? _1.size : 1 }
   end
 
   # Out-of-band information related to this set of data.
@@ -64,7 +64,7 @@ class LookupService::Data
   # @return [Hash{Symbol=>Array<Hash>}]
   #
   def diagnostic
-    @diagnostic ||= table.transform_values { |v| v.map(&:diagnostic) }
+    @diagnostic ||= table.transform_values { _1.map(&:diagnostic) }
   end
 
   # ===========================================================================
@@ -109,7 +109,7 @@ class LookupService::Data
   #
   def transform_table_items(&blk)
     raise ArgumentError, 'no block given' unless blk
-    table.transform_values { |items| items.map(&blk) }
+    table.transform_values { _1.map(&blk) }
   end
 
   # ===========================================================================
@@ -165,7 +165,7 @@ class LookupService::Data::Item < Search::Record::MetadataRecord
     dcterms_dateCopyright
   ].freeze
 
-  TEMPLATE = FIELDS.map { |field| [field, nil] }.to_h.freeze
+  TEMPLATE = FIELDS.map { [_1, nil] }.to_h.freeze
 
   # ===========================================================================
   # :section:
