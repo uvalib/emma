@@ -32,17 +32,19 @@ en:
         download_path:  '' # Base URL for content file downloads.
         download_url:   '' # URL template for content file downloads.
         download_fmt:
-          brf:          'brf'
-          daisy:        'daisy'
-          daisyAudio:   'daisyAudio'
           epub:         'epub'
-          braille:      'braille'
           pdf:          'pdf'
 #         grayscalePdf: 'grayscalePdf' # NOTE: deprecated with API 0.0.5
           word:         'word'
-          tactile:      'tactile'
-          kurzweil:     'kurzweil'
           rtf:          'rtf'
+          html:         'html'
+          daisy:        'daisy'
+          daisyAudio:   'daisyAudio'
+          brf:          'brf'
+          braille:      'braille'
+          kurzweil:     'kurzweil'
+          tactile:      'tactile'
+          other:        'other'
         active:         true
 
       _proxy:           &PROXY_TEMPLATE

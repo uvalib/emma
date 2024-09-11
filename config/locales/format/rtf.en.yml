@@ -17,6 +17,7 @@ en:
 
         mimes:
           - 'application/rtf'
+          - 'text/rtf'
 
         exts:
           - 'rtf'

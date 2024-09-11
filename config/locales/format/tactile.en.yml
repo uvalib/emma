@@ -19,7 +19,7 @@ en:
           - 'tactile'
 
         upload:
-          parse:          true
+          parse: false
 
         # =====================================================================
         # FORMAT_FIELDS

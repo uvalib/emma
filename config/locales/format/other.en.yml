@@ -1,6 +1,6 @@
-# config/locales/format/daisy.en.yml
+# config/locales/format/other.en.yml
 #
-# DAISY format
+# Non-specific format
 
 en:
 
@@ -8,30 +8,32 @@ en:
 
     format:
 
-      daisy:
+      other:
 
-        type: 'daisy'
+        type: 'other'
 
         mimes:
-          - 'application/x-dtbook+xml'
-          - 'application/x-daisy' # NOTE: fake MIME type
+          # N/A
 
         exts:
-          - 'dtb'
-          - 'daisy'
+          # N/A
 
         upload:
-          parse: true
+          parse: false
 
         # =====================================================================
         # FORMAT_FIELDS
         # =====================================================================
 
-        # NOTE: @see ocf.en.yml
+        fields:
+
+          # N/A
 
         # =====================================================================
         # A mapping of format field to the equivalent
         # Search::Record::MetadataRecord field.
         # =====================================================================
 
-        # NOTE: @see ocf.en.yml
+        map:
+
+          # N/A

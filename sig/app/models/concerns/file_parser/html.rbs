@@ -1,0 +1,11 @@
+# HTML file format metadata extractor.
+#
+class FileParser::Html < FileParser
+  include FileFormat::Html
+
+  # metadata
+  #
+  # @return [OpenStruct]
+  #
+  def metadata: () -> OpenStruct
+end

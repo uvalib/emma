@@ -1,0 +1,5 @@
+# A file object of a non-specific format.
+#
+class FileObject::Other < FileObject
+  include FileFormat::Other
+end

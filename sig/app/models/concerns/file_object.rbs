@@ -90,7 +90,7 @@ class FileObject
     #
     def mime_types: () -> strArray
 
-    # To be run once per type...
+    # To be run once per type to update Marcel::MimeType.
     #
     # @return [void]
     #

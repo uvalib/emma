@@ -41,17 +41,19 @@ template:
     format:
       multiple: true
       values:   # @see "en.emma.type.search.DublinCoreFormat"
-        - brf
-        - daisy
-        - daisyAudio
         - epub
-        - braille
         - pdf
        #- grayscalePdf    # NOTE: deprecated with API 0.0.5
         - word
-        - tactile
-        - kurzweil
         - rtf
+        - html
+        - daisy
+        - daisyAudio
+        - brf
+        - braille
+        - kurzweil
+        - tactile
+        - other
     feature:
       multiple: true
       values:   # @see "en.emma.type.search.FormatFeature"

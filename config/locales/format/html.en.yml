@@ -1,0 +1,51 @@
+# config/locales/format/html.en.yml
+#
+# HTML format
+#
+# There are many possible variations on HTML as used in the context of
+# remediated documents.
+
+en:
+
+  emma:
+
+    format:
+
+      html:
+
+        type: 'html'
+
+        mimes:
+          - 'application/html'          # HTML
+          - 'application/xhtml+xml'     # XHTML
+          - 'application/x-mimearchive' # MHTML
+          - 'message/rfc822'            # MHTML
+          - 'multipart/related'         # MHTML
+
+        exts:
+          - 'html'                      # HTML
+          - 'htm'                       # HTML
+          - 'xhtml'                     # XHTML
+          - 'xht'                       # XHTML
+          - 'mhtml'                     # MHTML
+          - 'mht'                       # MHTML
+
+        upload:
+          parse: false
+
+        # =====================================================================
+        # FORMAT_FIELDS
+        # =====================================================================
+
+        fields:
+
+          # NONE SO FAR
+
+        # =====================================================================
+        # A mapping of format field to the equivalent
+        # Search::Record::MetadataRecord field.
+        # =====================================================================
+
+        map:
+
+          # NONE SO FAR

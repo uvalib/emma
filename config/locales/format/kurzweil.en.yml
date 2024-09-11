@@ -13,14 +13,14 @@ en:
         type: 'kurzweil'
 
         mimes:
-          - 'application/x-kurzweil' # NOTE: fake MIME type
+          - 'application/kurzweil'
 
         exts:
           - 'kes'
           - 'kurzweil'
 
         upload:
-          parse:          true
+          parse: false
 
         # =====================================================================
         # FORMAT_FIELDS

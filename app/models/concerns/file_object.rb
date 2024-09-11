@@ -141,21 +141,19 @@ class FileObject
       safe_const_get(:MIME_TYPES) || []
     end
 
-    # To be run once per type...
+    # To be run once per type to update Marcel::MimeType.
     #
     # @return [void]
     #
     def register_mime_types
       types = mime_types.map(&:to_s)
-      exts  = file_extensions.map(&:to_sym)
-      type  = types.shift
-      ext   = exts.shift
+      type  = types.shift or return
       __debug_mime(binding) do
+        exts = file_extensions.map(&:to_sym)
+        ext  = exts.shift
         { type: type, ext: ext, types: types, exts: exts }
       end
-      return unless type && ext
-      Mime::Type.register(type, ext, types, exts) # TODO: needed?
-      Marcel::MimeType.extend(type, extensions: file_extensions.map(&:to_s))
+      Marcel::MimeType.extend(type, extensions: file_extensions)
     end
 
     # =========================================================================

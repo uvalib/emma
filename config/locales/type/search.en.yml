@@ -60,17 +60,19 @@ en:
           volunteer:                'Volunteer'
 
         DublinCoreFormat:
-          brf:                      'BRF'
-          daisy:                    'DAISY'
-          daisyAudio:               'DAISY Audio'
           epub:                     'EPUB'
-          braille:                  'Braille'
           pdf:                      'PDF'
 #         grayscalePdf:             'Grayscale PDF' # NOTE: deprecated with API 0.0.5
           word:                     'Microsoft Word'
-          tactile:                  'Tactile'
-          kurzweil:                 'Kurzweil'
           rtf:                      'RTF'
+          html:                     'HTML'
+          daisy:                    'DAISY'
+          daisyAudio:               'DAISY Audio'
+          brf:                      'BRF'
+          braille:                  'Braille'
+          kurzweil:                 'Kurzweil'
+          tactile:                  'Tactile'
+          other:                    'Other'
 
         DcmiType:
           text:                     'Text'

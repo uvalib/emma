@@ -17,6 +17,10 @@ en:
 
         mimes:
           - 'application/pdf'
+          - 'application/vnd.pdf'
+          - 'application/x-pdf'
+          - 'text/pdf'
+          - 'text/x-pdf'
 
         exts:
           - 'pdf'

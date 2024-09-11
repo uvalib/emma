@@ -1,0 +1,11 @@
+# Metadata extractor for a non-specific format.
+#
+class FileParser::Other < FileParser
+  include FileFormat::Other
+
+  # metadata
+  #
+  # @return [OpenStruct]
+  #
+  def metadata: () -> OpenStruct
+end

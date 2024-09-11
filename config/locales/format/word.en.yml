@@ -17,6 +17,7 @@ en:
 
         mimes:
           - 'application/msword'
+          - 'application/vnd.ms-word'
           - 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
           # == Also (maybe):
           #- 'application/vnd.ms-word.document.macroEnabled.12'
