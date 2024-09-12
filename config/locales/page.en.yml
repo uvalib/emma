@@ -1735,10 +1735,8 @@ en:
                 created by your peers at colleges and universities?
               </p>
               <p class="call-to-action">
-                %{enroll_link} to become a part of the EMMA's growing
-                community, currently %{orgs_count} institutions:
+                %{enroll_link} to become a part of the EMMA community.
               </p>
-              %{orgs_list}
             enroll_production_html:
               >-
               <p>

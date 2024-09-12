@@ -26,6 +26,8 @@ module HomeHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @note Currently unused
+  #
   def orgs_count(css: '.orgs-count', **opt)
     prepend_css!(opt, css)
     html_span(**opt) do
@@ -39,6 +41,8 @@ module HomeHelper
   # @param [Hash]   opt               Passed to #html_ul.
   #
   # @return [ActiveSupport::SafeBuffer]
+  #
+  # @note Currently unused
   #
   def orgs_list(css: '.orgs-list', **opt)
     prepend_css!(opt, css)

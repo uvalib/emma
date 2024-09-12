@@ -14,6 +14,8 @@ module HomeHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @note Currently unused
+  #
   def orgs_count: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Generate a display list of active EMMA member organizations.
@@ -22,6 +24,8 @@ module HomeHelper
   # @param [Hash]   opt               Passed to #html_ul.
   #
   # @return [ActiveSupport::SafeBuffer]
+  #
+  # @note Currently unused
   #
   def orgs_list: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
