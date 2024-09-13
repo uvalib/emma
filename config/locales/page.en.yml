@@ -1611,6 +1611,10 @@ en:
             intro_html:
               >-
               <p>
+                Training videos are available on these topics:
+              </p>
+              %{help_videos}
+              <p>
                 Documentation is also available as downloadable PDFs covering
                 these topics:
               </p>
@@ -1618,19 +1622,6 @@ en:
               <p>
                 The PDF documentation has been updated for the beta release of
                 EMMA as of April 22, 2024.
-              </p>
-            intro_html_bak:
-              >-
-              <p>
-                Documentation is also available as downloadable PDFs covering
-                these topics:
-              </p>
-              %{help_offline}
-              <p>
-                <strong>NOTE:</strong>
-                Online help evolves along with system development, so the
-                information found here may be more up-to-date than the PDF
-                documentation.
               </p>
 
           # ===================================================================

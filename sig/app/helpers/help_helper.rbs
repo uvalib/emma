@@ -317,13 +317,23 @@ module HelpHelper
   #
   def help_field: (Symbol fld, fields: Hash[Symbol,FieldEntry], ?css: String, **untyped opt) { (FieldEntry entry) -> untyped } -> ActiveSupport::SafeBuffer
 
-  # The introductory panel at the top of the Help index page.
+  # The introductory panel at the top of the Help index page, replacing
+  # "%{...}" with the results of the method named between the braces.
   #
   # @param [Hash]   opt             Passed to the container.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def help_main_intro: (**untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Render a numbered list container with entries from "emma.help.video".
+  #
+  # @param [String] css             Characteristic CSS class/selector.
+  # @param [Hash]   opt             Passed to the outer list container.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def help_videos: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render a numbered list container with links to each item in "/public/doc".
   #

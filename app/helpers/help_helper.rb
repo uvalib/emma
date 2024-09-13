@@ -618,26 +618,43 @@ module HelpHelper
 
   public
 
-  # The introductory panel at the top of the Help index page.
+  # The introductory panel at the top of the Help index page, replacing
+  # "%{...}" with the results of the method named between the braces.
   #
   # @param [Hash]   opt             Passed to the container.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def help_main_intro(**opt)
-    meth = :help_offline
-    docs = send(meth)
     cfg  = config_page_section(:help, :index)
-    if (text = cfg[:intro_html]&.dup)
-      docs = nil if text.sub!(%r{<p>%{#{meth}}</p>|%{#{meth}}}, docs)
-      text = text.html_safe
-      text << docs if docs
-    elsif (text = cfg[:intro])
-      text = text.split(/%{#{meth}}/).compact.map { html_paragraph(_1) }
-      text = safe_join(text, docs)
-    end
+    pat  = /(%{[^}]+})/
+    meth = ->(term) { try(term.delete_prefix('%{').delete_suffix('}')) }
+    content =
+      cfg[:intro_html]&.gsub(pat) { meth.($1) || $1 }&.html_safe ||
+      cfg[:intro]&.split(pat)&.map { _1.match?(pat) && meth.(_1) || _1 }
     html_div(**opt) do
-      help_paragraphs(text || docs)
+      help_paragraphs(*content)
+    end
+  end
+
+  # Render a numbered list container with entries from "emma.help.video".
+  #
+  # @param [String] css             Characteristic CSS class/selector.
+  # @param [Hash]   opt             Passed to the outer list container.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def help_videos(css: '.help-videos', **opt)
+    prepend_css!(opt, css)
+    html_ul(**opt) do
+      config_section(:help, :video).map { |_, cfg|
+        label, path, desc = cfg.values_at(:label, :link, :description)
+        link = external_link(path, label, class: 'link')
+        desc = html_div(desc, class: 'description')
+        html_li do
+          link << desc
+        end
+      }
     end
   end
 

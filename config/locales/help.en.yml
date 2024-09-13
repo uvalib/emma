@@ -607,3 +607,28 @@ en:
             "Change", "Remove", "Add User", "Edit User", "Remove User") with
             "List All" highlighted, indicating that the current page is a
             listing of all EMMA member organizations.
+
+      # =======================================================================
+      # Video walkthroughs
+      # =======================================================================
+
+      video:
+
+        # NOTE: entries are displayed in this order.
+
+        single_upload:
+          label:        'Single upload'
+          link:         'https://avalon.lib.virginia.edu/media_objects/cf95jb894'
+          description:
+            >-
+            A guide to creating an EMMA submission by supplying a file to
+            upload and the information needed to make it findable and useful to
+            other EMMA users.
+
+        bulk_upload:
+          label:        'Bulk upload'
+          link:         'https://avalon.lib.virginia.edu/media_objects/3j333266z'
+          description:
+            >-
+            An introduction to creating and submitting bulk upload manifests,
+            which allow you to upload multiple EMMA submissions at once.

@@ -379,6 +379,29 @@
         @include help-panel;
     }
 
+    .help-videos {
+
+        > * {
+            display:        flex;
+            flex-direction: row;
+            column-gap:     1rem;
+        }
+
+        > * + * {
+            margin-top:     1rem;
+        }
+
+        .link {
+            margin-top: -0.125rem;
+            font-size:  large;
+            flex:       1 0 max-content;
+        }
+
+        .description {
+            flex:       1 1 auto;
+        }
+    }
+
     .help-offline {
         font-size: large;
     }
