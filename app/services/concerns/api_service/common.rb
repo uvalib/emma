@@ -255,7 +255,7 @@ module ApiService::Common
           'req.path':   req.path,
           'req.uri':    req.uri,
           'req.header': req.to_hash,
-        }.each_pair(&show_value)
+        }.each_pair { show_value.(_1, _2) }
         start_time = Time.current
       end
       http.request(req) do |remote_response|
