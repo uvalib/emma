@@ -113,7 +113,7 @@ end
 # Cache directory for the current execution environment.
 #
 # @note Currently this does not affect precompiled assets (tmp/cache/assets)
-#   because extra work would be need in lib/tasks to support selectively
+#   because extra work would be needed in lib/tasks to support selectively
 #   updating public/assets according to the current execution environment.
 #
 # @type [String]

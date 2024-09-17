@@ -42,7 +42,11 @@ module LookupService::Crossref::Action::Work
   def get_work_list: ((LookupService::Request|strArray|String) terms, **untyped opt) -> Lookup::Crossref::Message::WorkResults
 
   # Options for LookupService::Request#add_term.
+  #
+  # @type [Hash{Symbol=>any}]
+  #
   # @private
+  #
   OPT: symHash
 
   # Aggregate terms into groups of similar search behavior.

@@ -37,7 +37,11 @@ module LookupService::GoogleBooks::Action::Volumes
   def get_volumes: ((LookupService::Request|strArray|String) terms, **untyped opt) -> Lookup::GoogleBooks::Message::List
 
   # Options for LookupService::Request#add_term.
+  #
+  # @type [Hash{Symbol=>any}]
+  #
   # @private
+  #
   OPT: symHash
 
   # Aggregate terms into groups of similar search behavior.

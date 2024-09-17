@@ -62,7 +62,7 @@ en:
         DublinCoreFormat:
           epub:                     'EPUB'
           pdf:                      'PDF'
-#         grayscalePdf:             'Grayscale PDF' # NOTE: deprecated with API 0.0.5
+         #grayscalePdf:             'Grayscale PDF' # NOTE: deprecated with API 0.0.5
           word:                     'Microsoft Word'
           rtf:                      'RTF'
           html:                     'HTML'

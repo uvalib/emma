@@ -418,7 +418,6 @@ en:
             The InCommon login form with a dropdown menu to select your
             institution.
 
-
         # =====================================================================
         # Single submission
         # =====================================================================
@@ -474,7 +473,6 @@ en:
             show that selecting the "parent" EMMA source entry has pre-filled
             bibliographic fields for the submission derived from an original
             item from Internet Archive.
-
 
         # =====================================================================
         # Bulk submission
@@ -563,8 +561,6 @@ en:
             The OK status marker, which indicates a submission step that has
             been successfully completed for the given item.
 
-
-
         # =====================================================================
         # Accounts
         # =====================================================================
@@ -584,7 +580,6 @@ en:
             Account action button panel ("Details", "Modify", "List All") with
             "List All" highlighted, indicating that the current page is a
             listing of all EMMA accounts.
-
 
         # =====================================================================
         # Organizations

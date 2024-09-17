@@ -147,7 +147,11 @@ module LookupService::Crossref::Action::Work
   protected
 
   # Options for LookupService::Request#add_term.
+  #
+  # @type [Hash{Symbol=>any}]
+  #
   # @private
+  #
   OPT = { author: QUERY_PREFIX.slice(*AUTHOR_TYPES).values }.deep_freeze
 
   # Aggregate terms into groups of similar search behavior.

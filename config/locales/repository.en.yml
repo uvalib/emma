@@ -34,7 +34,7 @@ en:
         download_fmt:
           epub:         'epub'
           pdf:          'pdf'
-#         grayscalePdf: 'grayscalePdf' # NOTE: deprecated with API 0.0.5
+         #grayscalePdf: 'grayscalePdf' # NOTE: deprecated with API 0.0.5
           word:         'word'
           rtf:          'rtf'
           html:         'html'
