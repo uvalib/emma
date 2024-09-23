@@ -221,7 +221,7 @@ module Record::Uploadable
   # @note From Upload::FileMethods#download_url
   #
   def download_url(**opt)
-    opt[:expires_in] ||= ONE_TIME_USE_EXPIRATION
+    opt[:expires_in] ||= DOWNLOAD_EXPIRATION
     attached_file&.url(**opt)
   end
 

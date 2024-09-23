@@ -280,7 +280,7 @@ module Upload::FileMethods
   # @return [nil]                     If :file_data is blank.
   #
   def download_url(**opt)
-    opt[:expires_in] ||= ONE_TIME_USE_EXPIRATION
+    opt[:expires_in] ||= DOWNLOAD_EXPIRATION
     attached_file&.url(**opt)
   end
 
