@@ -36,17 +36,6 @@ module Record::Uploadable
 
   public
 
-  # The maximum age (in seconds) allowed for download links which are meant to
-  # be valid only for a single time.
-  #
-  # This should be generous to allow for network delays.
-  #
-  # @type [Integer]
-  #
-  # @note From Upload::FileMethods#ONE_TIME_USE_EXPIRATION
-  #
-  ONE_TIME_USE_EXPIRATION = 10
-
   # The maximum age (in seconds) allowed for download links.
   #
   # This allows the link to be reused for a while, but not long enough to allow
@@ -56,7 +45,7 @@ module Record::Uploadable
   #
   # @note From Upload::FileMethods#DOWNLOAD_EXPIRATION
   #
-  DOWNLOAD_EXPIRATION = 1800
+  DOWNLOAD_EXPIRATION = ENV_VAR['DOWNLOAD_EXPIRATION'].to_i
 
   # ===========================================================================
   # :section: Fields

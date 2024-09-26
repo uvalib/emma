@@ -25,11 +25,11 @@ module AwsHelper
   public
 
   S3_EMPTY_BUCKET  = config_term(:aws, :bucket, :empty).freeze
-  S3_PREFIX_LIMIT  = 10
+  S3_PREFIX_LIMIT  = ENV_VAR['S3_PREFIX_LIMIT'].to_i
   S3_OBJECT_VALUES = %i[key size last_modified].freeze
 
-  AWS_CONSOLE_URL  = 'https://console.aws.amazon.com'
-  AWS_BUCKET_URL   = "#{AWS_CONSOLE_URL}/s3/buckets"
+  AWS_CONSOLE_URL  = ENV_VAR['AWS_CONSOLE_URL']
+  AWS_BUCKET_URL   = make_path(AWS_CONSOLE_URL, 's3/buckets')
 
   AWS_SORT_OPT     = %i[sort].freeze
   AWS_FILTER_OPT   = %i[after before prefix prefix_limit].freeze

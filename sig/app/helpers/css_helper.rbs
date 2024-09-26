@@ -166,11 +166,11 @@ module CssHelper
   #
   # @type [Integer]
   #
-  HEX_RAND_DEFAULT_DIGITS: Integer
+  HEX_RAND_DIGITS: Integer
 
   # Generate a string of random hex digits.
   #
-  # @param [Integer] digits           Default: `#HEX_RAND_DEFAULT_DIGITS`
+  # @param [Integer] digits           Default: `#HEX_RAND_DIGITS`
   # @param [Boolean] upper            If *false* show lowercase hex digits.
   #
   # @return [String]

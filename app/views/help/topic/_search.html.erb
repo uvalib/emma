@@ -651,7 +651,8 @@
 
     <p>
       The URLs for the symbolic names are provided by environment variables
-      which are set in Terraform configuration files
+      which have default values set in "config/locales/env_var.en.yml",
+      but may be overridden from Terraform configuration files
       <%= terraform_link(url_params_prod) %> for production EMMA and
       <%= terraform_link(url_params_stag) %> for any other EMMA deployment:
     </p>

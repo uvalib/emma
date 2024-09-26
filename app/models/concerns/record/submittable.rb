@@ -242,7 +242,7 @@ module Record::Submittable
     #
     # @note From UploadWorkflow::External#DISABLE_UPLOAD_INDEX_UPDATE
     #
-    DISABLE_UPLOAD_INDEX_UPDATE = true?(ENV['DISABLE_UPLOAD_INDEX_UPDATE'])
+    DISABLE_UPLOAD_INDEX_UPDATE = true?(ENV_VAR['DISABLE_UPLOAD_INDEX_UPDATE'])
 
     # Patterns indicating errors that should not be reported as indicating a
     # problem that would abort a removal workflow.
@@ -869,20 +869,17 @@ module Record::Submittable
 
     # Release the current thread to the scheduler.
     #
-    # @param [Integer]       counter    Iteration counter.
-    # @param [Integer]       frequency  E.g., '3' means every third iteration.
-    # @param [Float,Boolean] pause      Default: `#THROTTLE_PAUSE`.
+    # @param [Integer]           counter    Iteration counter.
+    # @param [Integer]           frequency  E.g., '3' => every third iteration.
+    # @param [Float,Boolean,nil] pause      Default: `#BULK_THROTTLE_PAUSE`.
     #
     # @return [void]
     #
     # @note From UploadWorkflow::External#throttle
     #
     def throttle(counter, frequency: 1, pause: true)
-      pause = THROTTLE_PAUSE if pause.is_a?(TrueClass)
-      return if pause.blank?
-      return if counter.zero?
-      return if (counter % frequency).nonzero?
-      sleep(pause)
+      pause = BULK_THROTTLE_PAUSE if pause.is_a?(TrueClass)
+      sleep(pause) if pause && counter.nonzero? && (counter % frequency).zero?
     end
 
   end

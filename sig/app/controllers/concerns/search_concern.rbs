@@ -34,7 +34,8 @@ module SearchConcern
   #
   # @type [Boolean]
   # @private
-  GENERATE_SCORES: bool
+  #
+  SEARCH_GENERATE_SCORES: bool
 
   # index_search
   #
@@ -69,7 +70,7 @@ module SearchConcern
   #
   # @type [Boolean]
   #
-  SAVE_SEARCHES: bool
+  SEARCH_SAVE_SEARCHES: bool
 
   # Indicate whether the current search should be recorded.
   #

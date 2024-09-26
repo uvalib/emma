@@ -324,7 +324,7 @@ class BaseDecorator < Draper::Decorator
   #
   # @type [Boolean]
   #
-  # @see BaseCollectionDecorator#DEBUG_COLLECTION_INHERITANCE
+  # @see BaseCollectionDecorator#DEBUG_DECORATOR_COLLECTION
   #
   DEBUG_DECORATOR_INHERITANCE: bool
 

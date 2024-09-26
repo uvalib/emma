@@ -26,11 +26,11 @@ module Emma
     public
 
     FILTERING =
-      ENV['EMMA_LOG_FILTERING']
+      ENV_VAR['EMMA_LOG_FILTERING']
         .then { LOG_TO_STDOUT ? !false?(_1) : true?(_1) }
 
     AWS_FORMATTING =
-      ENV['EMMA_LOG_AWS_FORMATTING']
+      ENV_VAR['EMMA_LOG_AWS_FORMATTING']
         .then { LOG_TO_STDOUT ? !false?(_1) : true?(_1) }
 
     # =========================================================================

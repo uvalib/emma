@@ -19,13 +19,6 @@ class Workflow::Base
 
   include Workflow
 
-  # Even if workflow debugging is enabled, displaying transition hooks may be
-  # too noisy.
-  #
-  # @type [Boolean]
-  #
-  DEBUG_TRANSITION = DEBUG_WORKFLOW && false
-
   # Root workflow configuration.
   #
   # @type [Hash{Symbol=>Hash}]

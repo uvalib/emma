@@ -101,11 +101,11 @@ module SessionDebugHelper
 
   # Show data-* attributes used within the page.
   # @private
-  DEBUG_DATA_ATTR = true
+  SESSION_DEBUG_DATA_ATTR = true?(ENV_VAR['SESSION_DEBUG_DATA_ATTR'])
 
   # Show CSS classes used within the page.
   # @private
-  DEBUG_CSS_CLASS = false
+  SESSION_DEBUG_CSS_CLASS = true?(ENV_VAR['SESSION_DEBUG_CSS_CLASS'])
 
   # Footer debug values which may be filled by client-side logic.
   #
@@ -119,8 +119,8 @@ module SessionDebugHelper
   #
   def client_debug_table(css: '.client-debug', **opt)
     table = {}
-    table.merge!('data-*': nil) if DEBUG_DATA_ATTR
-    table.merge!(class:    nil) if DEBUG_CSS_CLASS
+    table.merge!('data-*': nil) if SESSION_DEBUG_DATA_ATTR
+    table.merge!(class:    nil) if SESSION_DEBUG_CSS_CLASS
     return if table.empty?
     table.reverse_merge!(CLIENT: :VALUE)
     prepend_css!(opt, css)

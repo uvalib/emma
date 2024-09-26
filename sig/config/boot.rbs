@@ -17,13 +17,13 @@ BUILD_VERSION: String
 #
 # @type [String]
 #
-PRODUCTION_BASE_URL: String
+PRODUCTION_URL: String
 
 # The base URL for the staging system deployment.
 #
 # @type [String]
 #
-STAGING_BASE_URL: String
+STAGING_URL: String
 
 # This constant is defined to mark sections of code that are present only to
 # give context information to RubyMine -- for example, "include" statements
@@ -115,7 +115,7 @@ module ExecutionProperty
   attr_writer in_local_docker: bool?
   attr_writer in_rails: bool?
   attr_writer in_rake: bool?
-  attr_writer live_rails: bool?
+  attr_writer non_test_rails: bool?
   attr_writer sanity_check: bool?
 
   public
@@ -176,7 +176,7 @@ module ExecutionProperty
 
   # Indicate whether this is the Rails application not under test.
   #
-  def live_rails_application?: () -> bool
+  def non_test_rails?: () -> bool
 
   # Indicate whether desktop-only validations are appropriate.
   #

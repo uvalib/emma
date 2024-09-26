@@ -168,7 +168,7 @@ class BaseCollectionDecorator
   #
   # @see BaseDecorator#DEBUG_DECORATOR_INHERITANCE
   #
-  DEBUG_COLLECTION_INHERITANCE = false
+  DEBUG_DECORATOR_COLLECTION = true?(ENV_VAR['DEBUG_DECORATOR_COLLECTION'])
 
   # Define the association between a collection decorator and the decorator for
   # its elements.
@@ -192,7 +192,7 @@ class BaseCollectionDecorator
     @ctrlr_type      = @decorator_class.ctrlr_type
     definitions      = "#{base}::SharedDefinitions".safe_constantize
     include(definitions) if definitions.is_a?(Module)
-    debug_inheritance    if DEBUG_COLLECTION_INHERITANCE
+    debug_inheritance    if DEBUG_DECORATOR_COLLECTION
   end
 
 end

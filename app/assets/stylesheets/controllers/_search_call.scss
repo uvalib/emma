@@ -27,7 +27,7 @@
         scroll-padding-bottom: 5px;
     }
 
-    &.dark-head {
+    &.head-dark {
 
         thead {
 
@@ -57,7 +57,7 @@
             min-height: 3rem;
         }
 
-        &.dark-head {
+        &.head-dark {
             thead {
                 tr.spanner {
                     height: 4.25rem;
@@ -65,7 +65,7 @@
             }
         }
 
-        &.sticky-head.dark-head {
+        &.head-sticky.head-dark {
             thead {
                 th {
 

@@ -116,7 +116,7 @@ class BaseCollectionDecorator
   #
   # @see BaseDecorator#DEBUG_DECORATOR_INHERITANCE
   #
-  DEBUG_COLLECTION_INHERITANCE: bool
+  DEBUG_DECORATOR_COLLECTION: bool
 
   # Define the association between a collection decorator and the decorator for
   # its elements.

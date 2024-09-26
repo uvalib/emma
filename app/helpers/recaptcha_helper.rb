@@ -27,7 +27,7 @@ module RecaptchaHelper
   #
   # @type [Integer]
   #
-  RECAPTCHA_VERSION = 2
+  RECAPTCHA_VERSION = ENV_VAR['RECAPTCHA_VERSION'].to_i
 
   # So-called "invisible" reCAPTCHA involves display of reCAPTCHA branding but
   # is easier for cases where validation needs to work alongside existing logic

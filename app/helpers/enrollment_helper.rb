@@ -47,7 +47,7 @@ module EnrollmentHelper
   #
   def production_enroll_link(label = nil, css: '.production', **opt)
     label      ||= config_term(:enrollment, :enroll, :production, :link)
-    opt[:path] ||= PRODUCTION_BASE_URL + enroll_path
+    opt[:path] ||= make_path(PRODUCTION_URL, enroll_path)
     append_css!(opt, css)
     enroll_link(label, **opt)
   end

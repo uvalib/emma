@@ -26,8 +26,8 @@ module LookupService::Common
   CONFIGURATION =
     config_section(:service, :lookup).transform_values { |service_config|
       service_config.dup.tap do |cfg|
-        api_key        = cfg[:api_key].to_s
-        cfg[:api_key]  = ENV[api_key] if api_key.match?(/^[A-Z][A-Z0-9_]+$/)
+        key            = cfg[:api_key].to_s
+        cfg[:api_key]  = ENV_VAR[key] if key.match?(/^[A-Z][A-Z0-9_]+$/)
         cfg[:types]    = Array.wrap(cfg[:types]).map(&:to_sym)
         cfg[:timeout]  = positive_float(cfg[:timeout]).to_f * SECONDS
         cfg[:priority] = positive(cfg[:priority])

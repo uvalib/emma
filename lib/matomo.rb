@@ -3,10 +3,15 @@
 # frozen_string_literal: true
 # warn_indent:           true
 
+__loading_begin(__FILE__)
+
 # Matomo analytics.
 #
 # @see https://analytics.lib.virginia.edu
 #
+#--
+# noinspection RubyTooManyMethodsInspection
+#++
 module Matomo
 
   include Emma::Common
@@ -22,19 +27,25 @@ module Matomo
   PROD_SITE = 52
   DEV_SITE  = 53
 
-  SITE    = production_deployment? ? PROD_SITE : DEV_SITE
+  def self.id_site = production_deployment? ? PROD_SITE : DEV_SITE
 
-  HOST    = 'analytics.lib.virginia.edu'
-  ROOT    = "https://#{HOST}"
-  SCRIPT  = "#{ROOT}/matomo.js"
-  TRACKER = "#{ROOT}/matomo.php"
-  OPT_OUT = "#{ROOT}/index.php?module=CoreAdminHome&action=optOut&language=en"
+  SITE    = ENV_VAR['ANALYTICS_SITE'] || id_site
+  TOKEN   = ENV_VAR['ANALYTICS_TOKEN']
+  HOST    = ENV_VAR['ANALYTICS_HOST']
+  ROOT    = HOST.start_with?('http') ? HOST : "https://#{HOST}"
 
-  TOKEN   = ENV['ANALYTICS_TOKEN']
+  def self.analytics_path(*args, **opt) = make_path(ROOT, *args, **opt)
+
+  SCRIPT  = analytics_path('matomo.js')
+  TRACKER = analytics_path('matomo.php')
+=begin # TODO: Matomo opt-opt
+  OPT_OUT =
+    analytics_path('index.php?module=CoreAdminHome&action=optOut&language=en')
+=end
 
   ENABLED =
-    live_rails_application? &&
-      ENV['ANALYTICS_ENABLED'].then do |setting|
+    non_test_rails? &&
+      ENV_VAR['ANALYTICS_ENABLED'].then do |setting|
         not_deployed? ? true?(setting) : !false?(setting)
       end
 
@@ -90,7 +101,7 @@ module Matomo
     opt[:date] = :today if opt.values_at(:date, :period).blank?
     date_period!(opt)
     id_site!(opt)
-    make_path(ROOT, module: 'CoreHome', action: 'index', **opt)
+    analytics_path(module: 'CoreHome', action: 'index', **opt)
   end
 
   # ===========================================================================
@@ -294,7 +305,7 @@ module Matomo
   #
   def self.api_request_url(**opt)
     opt = api_request_parameters(**opt) unless opt[:token_auth].present?
-    make_path(ROOT, **opt)
+    analytics_path(**opt)
   end
 
   # Normalize Matomo request URL parameters.
@@ -398,8 +409,7 @@ module Matomo
   # @return [Hash]
   #
   def self.id_site!(opt)
-    opt[:idSite]   = opt.delete(:site) if opt.key?(:site)
-    opt[:idSite] ||= staging_deployment? ? DEV_SITE : PROD_SITE
+    opt[:idSite] = opt.key?(:site) && opt.delete(:site) || site
     opt
   end
 
@@ -563,7 +573,7 @@ module Matomo
 
       # One entry pair for the basic summary graph.
       graph1 = value[:imageGraphUrl]
-      graph1 = make_path(ROOT, graph1)               if graph1
+      graph1 = analytics_path(graph1)                if graph1
       graph1 = image(src: graph1, decoding: 'async') if graph1 && html_out
 
       # A second entry pair for the evolution graph (which is not provided for
@@ -571,7 +581,7 @@ module Matomo
       graph2 = value[:imageGraphEvolutionUrl]
       graph2 = nil if NO_EVOLUTION.include?(m)
       graph2 = nil if (a == :get) && NO_GET_EVOLUTION.include?(m)
-      graph2 = make_path(ROOT, graph2)               if graph2
+      graph2 = analytics_path(graph2)                if graph2
       graph2 = image(src: graph2, decoding: 'async') if graph2 && html_out
 
       # Produce one or two entries for the report.
@@ -687,3 +697,5 @@ module Matomo
   end
 
 end
+
+__loading_end(__FILE__)

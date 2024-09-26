@@ -265,17 +265,17 @@ module CssHelper
   #
   # @type [Integer]
   #
-  HEX_RAND_DEFAULT_DIGITS = 8
+  HEX_RAND_DIGITS = ENV_VAR['HEX_RAND_DIGITS'].to_i
 
   # Generate a string of random hex digits.
   #
-  # @param [Integer] digits           Default: `#HEX_RAND_DEFAULT_DIGITS`
+  # @param [Integer] digits           Default: `#HEX_RAND_DIGITS`
   # @param [Boolean] upper            If *false* show lowercase hex digits.
   #
   # @return [String]
   #
   def hex_rand(digits: nil, upper: nil)
-    digits = positive(digits) || HEX_RAND_DEFAULT_DIGITS
+    digits = positive(digits) || HEX_RAND_DIGITS
     limit  = 16.pow(digits) - 1
     value  = rand(0..limit)
     hex_format(value, digits: digits, upper: upper)

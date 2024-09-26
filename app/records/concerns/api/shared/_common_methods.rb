@@ -47,7 +47,7 @@ module Api::Shared::CommonMethods
   public
 
   # @private
-  PRODUCTION_HOST = URI.parse(PRODUCTION_BASE_URL).host.freeze rescue nil
+  PRODUCTION_HOST = URI.parse(PRODUCTION_URL).host.freeze rescue nil
 
   # Indicate whether this record represents a canonical index entry.
   #

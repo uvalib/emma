@@ -808,9 +808,9 @@ class BaseDecorator
   #
   # @type [Boolean]
   #
-  # @see BaseCollectionDecorator#DEBUG_COLLECTION_INHERITANCE
+  # @see BaseCollectionDecorator#DEBUG_DECORATOR_COLLECTION
   #
-  DEBUG_DECORATOR_INHERITANCE = false
+  DEBUG_DECORATOR_INHERITANCE = true?(ENV_VAR['DEBUG_DECORATOR_INHERITANCE'])
 
   # Takes the place of Draper::Decorator#decorates and is required for any
   # decorator subclass that is not abstract.

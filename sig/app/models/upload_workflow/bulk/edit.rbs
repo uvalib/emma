@@ -42,7 +42,7 @@ module UploadWorkflow::Bulk::Edit::Actions
   #
   # @type [Boolean]
   #
-  DEFER_INDEXING: bool
+  UPLOAD_DEFER_INDEXING: bool
 
   # This action basically runs the bulk edit to completion.
   #

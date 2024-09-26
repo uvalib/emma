@@ -9,8 +9,6 @@
 # System extension support
 # =============================================================================
 
-public
-
 # This is the reference used by SystemExtension#check_extension to determine
 # the original definitions of the class or module being extended.
 #

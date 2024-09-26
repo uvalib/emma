@@ -438,15 +438,15 @@ module Record::Submittable
 
     # Release the current thread to the scheduler.
     #
-    # @param [Integer]       counter    Iteration counter.
-    # @param [Integer]       frequency  E.g., '3' means every third iteration.
-    # @param [Float,Boolean] pause      Default: `#THROTTLE_PAUSE`.
+    # @param [Integer]           counter    Iteration counter.
+    # @param [Integer]           frequency  E.g., '3' => every third iteration.
+    # @param [Float,Boolean,nil] pause      Default: `#BULK_THROTTLE_PAUSE`.
     #
     # @return [void]
     #
     # @note From UploadWorkflow::External#throttle
     #
-    def throttle: (Integer counter, ?frequency: Integer, ?pause: bool|Float) -> Integer
+    def throttle: (Integer counter, ?frequency: Integer, ?pause: Float|bool|nil) -> Integer
   end
 
   module SubmissionMethods

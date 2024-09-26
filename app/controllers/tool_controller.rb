@@ -92,8 +92,8 @@ class ToolController < ApplicationController
     meth     = request.request_method
     meth     = ActionDispatch::Request::HTTP_METHOD_LOOKUP[meth]
     prm      = url_parameters
-    url      = "#{ENV['MD_BASE_PATH']}/#{prm.delete(:path)}"
-    key      = request.headers['X-API-Key'] || ENV['MD_API_KEY']
+    url      = make_path(ENV_VAR['MD_BASE_PATH'], prm.delete(:path))
+    key      = request.headers['X-API-Key'] || ENV_VAR['MD_API_KEY']
     headers  = { 'X-API-Key' => key, 'Content-Type' => 'application/json' }
     response = Faraday.send(meth, url, prm.to_json, headers)
     render json: safe_json_parse(response.body), status: response.status

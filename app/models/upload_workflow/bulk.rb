@@ -321,7 +321,7 @@ module UploadWorkflow::Bulk::External
   #
   # @type [Integer]
   #
-  BULK_DB_BATCH_SIZE = ENV.fetch('BULK_DB_BATCH_SIZE', BATCH_SIZE).to_i
+  BULK_DB_BATCH_SIZE = ENV_VAR['BULK_DB_BATCH_SIZE']&.to_i || BATCH_SIZE
 
   # Bulk database operation.
   #

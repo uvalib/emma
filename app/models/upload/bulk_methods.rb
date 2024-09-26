@@ -21,7 +21,7 @@ module Upload::BulkMethods
   #
   # @type [String]
   #
-  BULK_BASE_URL = PRODUCTION_BASE_URL
+  BULK_BASE_URL = PRODUCTION_URL
 
   # Default user for bulk uploads. # TODO: ?
   #

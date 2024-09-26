@@ -13,19 +13,23 @@ module Matomo
 
   DEV_SITE: Integer
 
+  def self.id_site: () -> Integer
+
   SITE: Integer
+
+  TOKEN: String
 
   HOST: String
 
   ROOT: String
 
+  def self.analytics_path: (*untyped args, **untyped opt) -> String
+
   SCRIPT: String
 
   TRACKER: String
 
-  OPT_OUT: String
-
-  TOKEN: String
+  #OPT_OUT: String
 
   ENABLED: bool
 

@@ -9,7 +9,7 @@
     unless production_deployment?
       title = "#{application_deployment} system".capitalize
       text  = 'This system is for development and deployment staging.'
-      link  = make_link(PRODUCTION_BASE_URL, 'production EMMA system')
+      link  = make_link(PRODUCTION_URL, 'production EMMA system')
       html_div(title, class: 'title') <<
       html_div(text,  class: 'text')  <<
       html_div(class: 'text') { h('Switch to the ') << link << '.' }

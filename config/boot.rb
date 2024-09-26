@@ -30,13 +30,13 @@ BUILD_VERSION =
 #
 # @type [String]
 #
-PRODUCTION_BASE_URL = 'https://emma.lib.virginia.edu'
+PRODUCTION_URL = ENV['PRODUCTION_URL'] ||= 'https://emma.lib.virginia.edu'
 
 # The base URL for the staging system deployment.
 #
 # @type [String]
 #
-STAGING_BASE_URL = 'https://emma-dev.lib.virginia.edu'
+STAGING_URL = ENV['STAGING_URL'] ||= 'https://emma-dev.lib.virginia.edu'
 
 # This constant is defined to mark sections of code that are present only to
 # give context information to RubyMine -- for example, "include" statements
@@ -189,7 +189,7 @@ module ExecutionProperty
   attr_writer :in_local_docker
   attr_writer :in_rails
   attr_writer :in_rake
-  attr_writer :live_rails
+  attr_writer :non_test_rails
   attr_writer :sanity_check
 
   # ===========================================================================
@@ -202,11 +202,8 @@ module ExecutionProperty
   #
   def application_deployed?
     return @application_deployed unless @application_deployed.nil?
-    if ENV['AWS_DEFAULT_REGION']
-      @application_deployed = true
-    else
-      @application_deployed = !ENV['DEPLOYMENT'].to_s.casecmp?('local')
-    end
+    @application_deployed =
+      !!ENV['AWS_DEFAULT_REGION'] || !'local'.casecmp?(ENV['DEPLOYMENT'])
   end
 
   # Indicate whether this is a desktop instance.
@@ -301,16 +298,17 @@ module ExecutionProperty
 
   # Indicate whether this is the Rails application not under test.
   #
-  def live_rails_application?
-    return @live_rails unless @live_rails.nil?
-    @live_rails = rails_application? && (ENV['RAILS_ENV'] != 'test')
+  def non_test_rails?
+    return @non_test_rails unless @non_test_rails.nil?
+    @non_test_rails = rails_application? && (ENV['RAILS_ENV'] != 'test')
   end
 
   # Indicate whether desktop-only validations are appropriate.
   #
   def sanity_check?
     return @sanity_check unless @sanity_check.nil?
-    @sanity_check = live_rails_application? && not_deployed?
+    @sanity_check =
+      non_test_rails? && not_deployed? && !false?(ENV['SANITY_CHECK'])
   end
 
 end

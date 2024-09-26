@@ -519,7 +519,7 @@ class RunState < Hash
   # :section: Establish configured system availability as soon as possible
   # ===========================================================================
 
-  set_current(!true?(ENV['SERVICE_UNAVAILABLE']))
+  set_current(!true?(ENV_VAR['SERVICE_UNAVAILABLE']))
 
 end
 

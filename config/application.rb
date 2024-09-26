@@ -59,8 +59,8 @@ module Emma
     config.action_mailer.show_previews      = true
 
     config.action_mailer.smtp_settings = {
-      port:    ENV.fetch('SMTP_PORT', 587).to_i,
-      address: ENV.fetch('SMTP_DOMAIN', 'example.com'),
+      port:    ENV_VAR['SMTP_PORT'].to_i,
+      address: ENV_VAR['SMTP_DOMAIN'],
     }
 
     config.action_mailer.default_url_options = {

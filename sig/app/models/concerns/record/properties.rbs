@@ -13,7 +13,7 @@ module Record::Properties
   #
   # @type [String]
   #
-  DEV_TITLE_PREFIX: String
+  UPLOAD_DEV_TITLE_PREFIX: String
 
   # A string added to the start of each title.
   #
@@ -31,7 +31,7 @@ module Record::Properties
   #
   # @type [Float, FalseClass, nil]
   #
-  THROTTLE_PAUSE: Float | false | nil
+  BULK_THROTTLE_PAUSE: Float | false | nil
 
   # Force deletions of EMMA Unified Index entries regardless of whether the
   # item is in the "entries" table.
@@ -46,7 +46,7 @@ module Record::Properties
   #
   # @see #force_delete
   #
-  FORCE_DELETE_DEFAULT: bool
+  UPLOAD_FORCE_DELETE: bool
 
   # Force deletions of EMMA Unified Index entries even if the record ID does
   # not begin with "emma-".  (This is to support development during which
@@ -63,7 +63,7 @@ module Record::Properties
   #
   # @see #emergency_delete
   #
-  EMERGENCY_DELETE_DEFAULT: bool
+  UPLOAD_EMERGENCY_DELETE: bool
 
   # For the special case of deleting all records (effectively wiping the
   # database) this controls whether the next available ID should be set to 1.
@@ -77,28 +77,28 @@ module Record::Properties
   #
   # @type [Boolean]
   #
-  TRUNCATE_DELETE_DEFAULT: bool
+  UPLOAD_TRUNCATE_DELETE: bool
 
   # For the "partner repository workflow", permit the **creation** of partner
   # repository items via a request to be queued to a partner repository.
   #
   # @type [Boolean]
   #
-  REPO_CREATE_DEFAULT: bool
+  UPLOAD_REPO_CREATE: bool
 
   # For the "partner repository workflow", permit the **update** of partner
   # repository items via a request to be queued to a partner repository.
   #
   # @type [Boolean]
   #
-  REPO_EDIT_DEFAULT: bool
+  UPLOAD_REPO_EDIT: bool
 
   # For the "partner repository workflow", permit the **removal** of partner
   # repository items via a request to be queued to a partner repository.
   #
   # @type [Boolean]
   #
-  REPO_REMOVE_DEFAULT: bool
+  UPLOAD_REPO_REMOVE: bool
 
   # Default size for batching.
   #
@@ -163,7 +163,7 @@ module Record::Properties
   #
   # @return [Boolean]
   #
-  # @see #FORCE_DELETE_DEFAULT
+  # @see #UPLOAD_FORCE_DELETE
   #
   def force_delete: () -> bool
 
@@ -173,7 +173,7 @@ module Record::Properties
   #
   # @return [Boolean]
   #
-  # @see #EMERGENCY_DELETE_DEFAULT
+  # @see #UPLOAD_EMERGENCY_DELETE
   #
   def emergency_delete: () -> bool
 
@@ -181,7 +181,7 @@ module Record::Properties
   #
   # @return [Boolean]
   #
-  # @see #TRUNCATE_DELETE_DEFAULT
+  # @see #UPLOAD_TRUNCATE_DELETE
   #
   def truncate_delete: () -> bool
 
@@ -190,7 +190,7 @@ module Record::Properties
   #
   # @return [Boolean]
   #
-  # @see #REPO_CREATE_DEFAULT
+  # @see #UPLOAD_REPO_CREATE
   #
   def repo_create: () -> bool
 
@@ -199,7 +199,7 @@ module Record::Properties
   #
   # @return [Boolean]
   #
-  # @see #REPO_EDIT_DEFAULT
+  # @see #UPLOAD_REPO_EDIT
   #
   def repo_edit: () -> bool
 
@@ -208,7 +208,7 @@ module Record::Properties
   #
   # @return [Boolean]
   #
-  # @see #REPO_REMOVE_DEFAULT
+  # @see #UPLOAD_REPO_REMOVE
   #
   def repo_remove: () -> bool
 

@@ -78,8 +78,8 @@ $border-fg:  v.$rev-fg-color;
     //=========================================================================
 
     // Give the heading row a background.
-    // @see BaseCollectionDecorator::Table::DARK_HEAD
-    &.dark-head {
+    // @see BaseCollectionDecorator::Table::TABLE_HEAD_DARK
+    &.head-dark {
 
         // Since "display: contents" makes the `<tr>` un-stylable an additional
         // `<tr>` is required which explicitly positioned so that the `<tr>`
@@ -114,8 +114,8 @@ $border-fg:  v.$rev-fg-color;
     }
 
     // Make the heading row stick to the top of the table when scrolling.
-    // @see BaseCollectionDecorator::Table::STICKY_HEAD
-    &.sticky-head {
+    // @see BaseCollectionDecorator::Table::TABLE_HEAD_STICKY
+    &.head-sticky {
 
         position:   relative;
         max-height: 95vh;
@@ -166,7 +166,7 @@ $border-fg:  v.$rev-fg-color;
         }
     }
 
-    &.sticky-head.dark-head {
+    &.head-sticky.head-dark {
 
         padding-bottom: 0;
         background:     $bg-color;
@@ -297,7 +297,7 @@ $border-fg:  v.$rev-fg-color;
         }
     }
 
-    &.sortable.dark-head {
+    &.sortable.head-dark {
 
         thead {
 
@@ -307,7 +307,7 @@ $border-fg:  v.$rev-fg-color;
         }
     }
 
-    &.sortable.sticky-head {
+    &.sortable.head-sticky {
 
         thead {
 
@@ -344,7 +344,7 @@ $border-fg:  v.$rev-fg-color;
         margin-top: 1.25rem;
     }
 
-    &.sticky-head + ul.page-actions {
+    &.head-sticky + ul.page-actions {
         border: none;
     }
 }

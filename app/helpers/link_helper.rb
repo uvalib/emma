@@ -191,17 +191,11 @@ module LinkHelper
 
   public
 
-  # Base URL for references to the EMMA project repository.
+  # Base URL for references to EMMA source code repository.
   #
   # @type [String]
   #
-  GITHUB_ROOT = 'https://github.com/uvalib/emma'
-
-  # Base URL for references to EMMA source code.
-  #
-  # @type [String]
-  #
-  SOURCE_CODE_ROOT = "#{GITHUB_ROOT}/blob/master"
+  SOURCE_CODE_URL = make_path(ENV_VAR['GITHUB_URL'], '/blob/master')
 
   # Produce a link to EMMA source code for display within the application.
   #
@@ -212,11 +206,12 @@ module LinkHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def source_code_link(path, label = nil, **opt, &blk)
-    if path.start_with?(SOURCE_CODE_ROOT)
-      label ||= path.sub(%r{^#{SOURCE_CODE_ROOT}/}, '')
+    root = SOURCE_CODE_URL.delete_suffix('/')
+    if path.start_with?("#{root}/")
+      label ||= path.delete_prefix("#{root}/")
     else
       label ||= path
-      path    = "#{SOURCE_CODE_ROOT}/#{path}"
+      path  ||= make_path(root, path)
     end
     external_link(path, label, **opt, &blk)
   end
@@ -227,17 +222,12 @@ module LinkHelper
 
   public
 
-  # Base URL for references to the UVALIB configuration repository.
+  # Base URL for references to the EMMA UVALIB configuration.
   #
   # @type [String]
   #
-  TERRAFORM_ROOT = 'https://gitlab.com/uvalib/terraform-infrastructure'
-
-  # Base URL for references to EMMA UVALIB configuration.
-  #
-  # @type [String]
-  #
-  TERRAFORM_EMMA = "#{TERRAFORM_ROOT}/-/blob/master/emma.lib.virginia.edu"
+  CONFIGURATION_URL =
+    make_path(ENV_VAR['TERRAFORM_URL'], '/-/blob/master/emma.lib.virginia.edu')
 
   # Produce a link to EMMA UVALIB configuration for display within the
   # application.
@@ -249,11 +239,12 @@ module LinkHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def terraform_link(path, label = nil, **opt, &blk)
-    if path.start_with?(TERRAFORM_EMMA)
-      label ||= path.sub(%r{^#{TERRAFORM_EMMA}/}, '')
+    root = CONFIGURATION_URL.delete_suffix('/')
+    if path.start_with?("#{root}/")
+      label ||= path.delete_prefix("#{root}/")
     else
       label ||= path
-      path    = "#{TERRAFORM_EMMA}/#{path}"
+      path  ||= make_path(root, path)
     end
     external_link(path, label, **opt, &blk)
   end

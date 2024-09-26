@@ -182,13 +182,13 @@ class AccountDecorator < BaseDecorator
     #
     # @type [Integer, nil]
     #
-    MINIMUM_PASSWORD_LENGTH = 8
+    MINIMUM_PASSWORD_LENGTH = ENV_VAR['MINIMUM_PASSWORD_LENGTH']&.to_i
 
     # If set, the maximum number of characters accepted for passwords.
     #
     # @type [Integer, nil]
     #
-    MAXIMUM_PASSWORD_LENGTH = nil
+    MAXIMUM_PASSWORD_LENGTH = ENV_VAR['MAXIMUM_PASSWORD_LENGTH']&.to_i
 
   end
 

@@ -182,12 +182,12 @@ class SearchDecorator < BaseDecorator
     #
     # @type [Boolean]
     #
-    SHOW_EXTENDED_TITLE = false
+    SEARCH_EXTENDED_TITLE = true?(ENV_VAR['SEARCH_EXTENDED_TITLE'])
 
     # Indicate whether items should get extended titles.
     #
     def extended_title?
-      SHOW_EXTENDED_TITLE && search_debug?
+      SEARCH_EXTENDED_TITLE && search_debug?
     end
 
     # In debug mode, add a display of the (supposed) relevancy score.
@@ -196,12 +196,12 @@ class SearchDecorator < BaseDecorator
     #
     # @type [Boolean]
     #
-    SHOW_RELEVANCY_SCORE = false
+    SEARCH_RELEVANCY_SCORE = true?(ENV_VAR['SEARCH_RELEVANCY_SCORE'])
 
     # Indicate whether items should show relevancy scores.
     #
     def relevancy_scores?
-      SHOW_RELEVANCY_SCORE && search_debug?
+      SEARCH_RELEVANCY_SCORE && search_debug?
     end
 
     # =========================================================================

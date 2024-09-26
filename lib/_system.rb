@@ -11,8 +11,6 @@ __loading_begin(__FILE__)
 # System extension support
 # =============================================================================
 
-public
-
 # Included in modules which extend/override system definitions.
 #
 module SystemExtension

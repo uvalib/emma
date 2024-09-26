@@ -525,7 +525,7 @@ module UploadConcern
   #
   # @type [Integer]
   #
-  DEFAULT_REINDEX_BATCH = 100
+  REINDEX_BATCH_SIZE = ENV_VAR['REINDEX_BATCH_SIZE'].to_i
 
   # reindex_submissions
   #
@@ -534,14 +534,14 @@ module UploadConcern
   #
   # @option opt [Boolean] :atomic           Passed to #reindex_record.
   # @option opt [Boolean] :dryrun           Passed to #reindex_record.
-  # @option opt [Integer] :size             Default: `#DEFAULT_REINDEX_BATCH`.
+  # @option opt [Integer] :size             Default: `#REINDEX_BATCH_SIZE`.
   #
   # @return [Array<(Array<String>, Array<String>)>]  Succeeded/failed
   #
   def reindex_submissions(*entries, **opt)
     opt[:meth] ||= __method__
     local = opt.extract!(:atomic, :dryrun, :size)
-    size  = positive(local[:size]) || DEFAULT_REINDEX_BATCH
+    size  = positive(local[:size]) || REINDEX_BATCH_SIZE
     if entries.blank?
       update_null_state_records unless local[:dryrun]
       opt[:repository] ||= EmmaRepository.default

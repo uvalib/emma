@@ -20,8 +20,8 @@ module BaseCollectionDecorator::Table
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #STICKY_HEAD
-  # @see #DARK_HEAD
+  # @see #TABLE_HEAD_STICKY
+  # @see #TABLE_HEAD_DARK
   #
   def render_table: (?tag: Symbol|nil, ?css: String|nil, **untyped opt) { (symHash, Array[Model], symHash) -> void } -> ActiveSupport::SafeBuffer
 

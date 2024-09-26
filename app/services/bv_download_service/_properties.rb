@@ -34,17 +34,10 @@ module BvDownloadService::Properties
   #
   # @type [Hash{Symbol=>String}]
   #
-  #--
-  # noinspection RubyResolve
-  #++
-  S3_OPTIONS = {
-    region:            BV_REGION,
-    access_key_id:     BV_ACCESS_KEY_ID,
-    secret_access_key: BV_SECRET_KEY,
-  }.compact
-   .reverse_merge(Rails.application.credentials.bibliovault || {})
-   .except(:bucket)
-   .deep_freeze
+  S3_OPTIONS =
+    Configuration::EnvVar::BV_KEY_ENV.except(:bucket).transform_values { |name|
+      ENV_VAR[name]
+    }.deep_freeze
 
   # ===========================================================================
   # :section: ApiService::Properties overrides

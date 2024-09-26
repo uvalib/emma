@@ -5,11 +5,13 @@
 #
 # Additions/modifications that will only be defined on the desktop.
 
+require '_trace'
+
+__loading_begin(__FILE__)
+
 # =============================================================================
 # Inheritance
 # =============================================================================
-
-public
 
 class Object
 
@@ -47,3 +49,5 @@ class Object
   end
 
 end
+
+__loading_end(__FILE__)

@@ -38,7 +38,7 @@ module SysHelper::Environment
   # @return [Hash{String=>String}]
   #
   def environment_variables
-    ENV.to_h.sort.partition { |k,_| k.match?(/[a-z]/) }.flat_map(&:itself).to_h
+    ENV_VAR.from_env.partition { |k, _| k =~ /[a-z]/ }.flat_map(&:itself).to_h
   end
 
   # ===========================================================================

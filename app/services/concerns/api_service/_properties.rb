@@ -19,7 +19,7 @@ module ApiService::Properties
   #
   # @type [Boolean]
   #
-  DEBUG_DOWNLOAD = true?(ENV['DEBUG_DOWNLOAD']) || true
+  DEBUG_DOWNLOAD = true?(ENV_VAR['DEBUG_DOWNLOAD'])
 
   # Control whether information requests are ever cached. # TODO: ???
   #
@@ -193,8 +193,8 @@ module ApiService::Properties
       unless host.start_with?('http')
         var  = host.split(/\s*[\[\]'"]\s*/).compact_blank!.last
         next log.("invalid: #{host.inspect}") if var.blank?
-        host = ENV[var] || Object.safe_const_get(var)
-        next log.("ENV[#{var}]: not present") if host.blank?
+        host = ENV_VAR[var] || Object.safe_const_get(var)
+        next log.("ENV_VAR[#{var}]: not present") if host.blank?
       end
       [engine, host]
     }.compact.to_h.tap { |result|

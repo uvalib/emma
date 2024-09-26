@@ -1,0 +1,8 @@
+# A mapping of environment variable name to `Rails.application.config.good_job`
+# configuration key.
+#
+# @type [Hash{String=>Symbol}]
+#
+# @see "en.emma.env_var._good_job"
+#
+GOOD_JOB_ENV_KEY_MAP: Hash[String,Symbol]

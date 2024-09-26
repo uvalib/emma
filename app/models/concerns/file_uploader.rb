@@ -60,7 +60,7 @@ class FileUploader < Shrine
   #
   # @type [Integer]
   #
-  MIN_SIZE = 100 # bytes
+  MIN_SIZE = ENV_VAR['FILE_UPLOAD_MIN_SIZE'].to_i
 
   FORMATS = FileNaming.mime_to_fmt.keys.deep_freeze
 

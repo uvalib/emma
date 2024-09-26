@@ -92,17 +92,11 @@ module LinkHelper
   #
   def download_link: (String path, ?file: String|nil, ?css: String|nil, **untyped opt) ?{ () -> String } -> ActiveSupport::SafeBuffer
 
-  # Base URL for references to the EMMA project repository.
+  # Base URL for references to EMMA source code repository.
   #
   # @type [String]
   #
-  GITHUB_ROOT: String
-
-  # Base URL for references to EMMA source code.
-  #
-  # @type [String]
-  #
-  SOURCE_CODE_ROOT: String
+  SOURCE_CODE_URL: String
 
   # Produce a link to EMMA source code for display within the application.
   #
@@ -114,17 +108,11 @@ module LinkHelper
   #
   def source_code_link: (String path, ?(String|nil) label, **untyped opt) ?{ () -> String } -> ActiveSupport::SafeBuffer
 
-  # Base URL for references to the UVALIB configuration repository.
+  # Base URL for references to the EMMA UVALIB configuration.
   #
   # @type [String]
   #
-  TERRAFORM_ROOT: String
-
-  # Base URL for references to EMMA UVALIB configuration.
-  #
-  # @type [String]
-  #
-  TERRAFORM_EMMA: String
+  CONFIGURATION_URL: String
 
   # Produce a link to EMMA UVALIB configuration for display within the
   # application.

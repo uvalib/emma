@@ -41,11 +41,11 @@ module SessionDebugHelper
 
   # Show data-* attributes used within the page.
   # @private
-  DEBUG_DATA_ATTR: bool
+  SESSION_DEBUG_DATA_ATTR: bool
 
   # Show CSS classes used within the page.
   # @private
-  DEBUG_CSS_CLASS: bool
+  SESSION_DEBUG_CSS_CLASS: bool
 
   # Footer debug values which may be filled by client-side logic.
   #

@@ -15,7 +15,7 @@ module FileNaming
   #
   # @type [Boolean]
   #
-  STRICT_FORMATS = false
+  STRICT_FORMATS = true?(ENV_VAR['STRICT_FORMATS'])
 
   # ===========================================================================
   # :section: Module methods

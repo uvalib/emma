@@ -60,10 +60,10 @@ appSetup(MODULE, function() {
     // Actions
     // ========================================================================
 
-    // Show `data-*` attributes used within the page. (DEBUG_DATA_ATTR)
+    // Show `data-*` attributes used within the page. (SESSION_DEBUG_DATA_ATTR)
     fillIn("data-*", dataAttributesWithin);
 
-    // Show CSS classes used within the page. (DEBUG_CSS_CLASS)
+    // Show CSS classes used within the page. (SESSION_DEBUG_CSS_CLASS)
     fillIn("class", classesWithin);
 
 });

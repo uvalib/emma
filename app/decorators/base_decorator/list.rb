@@ -479,7 +479,7 @@ module BaseDecorator::List
   #
   # @type [Boolean]
   #
-  DEBUG_DECORATOR_EXECUTE = true?(ENV['DEBUG_DECORATOR_EXECUTE'])
+  DEBUG_DECORATOR_EXECUTE = true?(ENV_VAR['DEBUG_DECORATOR_EXECUTE'])
 
   # Attempt to interpret *method* as an *item* method or as a method defined
   # in the current context.

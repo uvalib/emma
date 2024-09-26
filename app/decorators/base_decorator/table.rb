@@ -23,17 +23,17 @@ module BaseDecorator::Table
   #
   # @type [Boolean]
   #
-  # @see file:stylesheets/layouts/controls/_tables.scss "CSS class .sticky-head"
+  # @see file:stylesheets/layouts/controls/_tables.scss "CSS class head-sticky"
   #
-  STICKY_HEAD = true
+  TABLE_HEAD_STICKY = true?(ENV_VAR['TABLE_HEAD_STICKY'])
 
   # Give the heading row a background.
   #
   # @type [Boolean]
   #
-  # @see file:stylesheets/layouts/controls/_tables.scss "CSS class .dark-head"
+  # @see file:stylesheets/layouts/controls/_tables.scss "CSS class head-dark"
   #
-  DARK_HEAD = true
+  TABLE_HEAD_DARK = true?(ENV_VAR['TABLE_HEAD_DARK'])
 
   # Options used by some or all of the methods involved in rendering items in
   # a tabular form.

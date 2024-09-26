@@ -277,7 +277,7 @@ module UploadConcern
   #
   # @type [Integer]
   #
-  DEFAULT_REINDEX_BATCH: Integer
+  REINDEX_BATCH_SIZE: Integer
 
   # reindex_submissions
   #
@@ -286,7 +286,7 @@ module UploadConcern
   #
   # @option opt [Boolean] :atomic           Passed to #reindex_record.
   # @option opt [Boolean] :dryrun           Passed to #reindex_record.
-  # @option opt [Integer] :size             Default: `#DEFAULT_REINDEX_BATCH`.
+  # @option opt [Integer] :size             Default: `#REINDEX_BATCH_SIZE`.
   #
   # @return [Array<(Array<String>, Array<String>)>]  Succeeded/failed
   #

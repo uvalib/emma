@@ -385,7 +385,6 @@ class AppSettings < AppGlobal
     # @return [Value]
     #
     def acquire_value(k)
-      # noinspection RubyMismatchedArgumentType
       if (k = k&.to_s).nil?
         k = spacer_key
         v = { spacer: true }
@@ -401,23 +400,13 @@ class AppSettings < AppGlobal
 
     # Return the module that defines a constant with the given name.
     #
-    # @param [Symbol, String] k
+    # @param [Symbol, String, nil] const
     #
     # @return [Module, nil]
     #
-    def module_defining(k)
-      k = k&.to_sym or return
-      mods = {
-        BATCH_SIZE:                   Record::Properties,
-        BULK_DB_BATCH_SIZE:           UploadWorkflow::Bulk::External,
-        DEBUG_DECORATOR_EXECUTE:      BaseDecorator::List,
-        DISABLE_UPLOAD_INDEX_UPDATE:  Record::Submittable::IndexIngestMethods,
-        SAVE_SEARCHES:                SearchConcern,
-        WORLDCAT_PRINCIPAL_ID:        LookupService::WorldCat::Common,
-        WORLDCAT_REGISTRY_ID:         LookupService::WorldCat::Common,
-        WORLDCAT_WSKEY:               LookupService::WorldCat::Common,
-      }
-      [mods[k], Object].compact.find { _1.const_defined?(k) }
+    def module_defining(const)
+      return if (const = const&.to_sym).blank?
+      [constant_map[const], Object].compact.find { _1.const_defined?(const) }
     end
 
     # =========================================================================
@@ -432,7 +421,43 @@ class AppSettings < AppGlobal
 
     def self.storage_value(v) = must_be_overridden
 
-    delegate :type_key, :spacer_key, :storage_value, to: :class
+    def self.constant_map
+      # noinspection RbsMissingTypeSignature
+      @constant_map ||= {
+        BATCH_SIZE:                   Record::Properties,
+        BULK_DB_BATCH_SIZE:           UploadWorkflow::Bulk::External,
+        DEBUG_DECORATOR_COLLECTION:   BaseCollectionDecorator,
+        DEBUG_DECORATOR_EXECUTE:      BaseDecorator::List,
+        DEBUG_DECORATOR_INHERITANCE:  BaseDecorator,
+        DISABLE_UPLOAD_INDEX_UPDATE:  Record::Submittable::IndexIngestMethods,
+        DOWNLOAD_EXPIRATION:          Record::Uploadable,
+        HEX_RAND_DIGITS:              CssHelper,
+        MAXIMUM_PASSWORD_LENGTH:      AccountDecorator::SharedGenericMethods,
+        MINIMUM_PASSWORD_LENGTH:      AccountDecorator::SharedGenericMethods,
+        ROW_PAGE_SIZE:                BaseDecorator::Row,
+        S3_PREFIX_LIMIT:              AwsHelper,
+        SEARCH_EXTENDED_TITLE:        SearchDecorator::SharedGenericMethods,
+        SEARCH_GENERATE_SCORES:       SearchConcern,
+        SEARCH_RELEVANCY_SCORE:       SearchDecorator::SharedGenericMethods,
+        SEARCH_SAVE_SEARCHES:         SearchConcern,
+        SESSION_DEBUG_CSS_CLASS:      SessionDebugHelper,
+        SESSION_DEBUG_DATA_ATTR:      SessionDebugHelper,
+        STRICT_FORMATS:               FileNaming,
+        UPLOAD_DEFER_INDEXING:        UploadWorkflow::Bulk::Create::Actions,
+        UPLOAD_DEV_TITLE_PREFIX:      Record::Properties,
+        UPLOAD_EMERGENCY_DELETE:      Record::Properties,
+        UPLOAD_FORCE_DELETE:          Record::Properties,
+        UPLOAD_REPO_CREATE:           Record::Properties,
+        UPLOAD_REPO_EDIT:             Record::Properties,
+        UPLOAD_REPO_REMOVE:           Record::Properties,
+        UPLOAD_TRUNCATE_DELETE:       Record::Properties,
+        WORLDCAT_PRINCIPAL_ID:        LookupService::WorldCat::Common,
+        WORLDCAT_REGISTRY_ID:         LookupService::WorldCat::Common,
+        WORLDCAT_WSKEY:               LookupService::WorldCat::Common,
+      }
+    end
+
+    delegate :type_key, :spacer_key, :storage_value, :constant_map, to: :class
 
   end
 

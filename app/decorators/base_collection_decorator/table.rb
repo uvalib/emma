@@ -33,8 +33,8 @@ module BaseCollectionDecorator::Table
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #STICKY_HEAD
-  # @see #DARK_HEAD
+  # @see #TABLE_HEAD_STICKY
+  # @see #TABLE_HEAD_DARK
   #
   def render_table(tag: nil, css: nil, **opt)
     trace_attrs!(opt)
@@ -45,9 +45,9 @@ module BaseCollectionDecorator::Table
     t_opt = trace_attrs_from(opt)
     local = context.slice(*MODEL_TABLE_DATA_OPT).merge!(local)
 
-    local[:sticky] = STICKY_HEAD unless local.key?(:sticky)
-    local[:dark]   = DARK_HEAD   unless local.key?(:dark)
-    local[:tag]    = tag         unless table
+    local[:sticky] = TABLE_HEAD_STICKY unless local.key?(:sticky)
+    local[:dark]   = TABLE_HEAD_DARK   unless local.key?(:dark)
+    local[:tag]    = tag               unless table
 
     parts = local.extract!(*MODEL_TABLE_PART_OPT).compact
     thead = parts[:thead] || table_heading(**local, **t_opt)
@@ -69,8 +69,8 @@ module BaseCollectionDecorator::Table
 
     prepend_css!(opt, css, model_type)
     append_css!(opt, "columns-#{cols}")       if cols.positive?
-    append_css!(opt, 'sticky-head')           if local[:sticky]
-    append_css!(opt, 'dark-head')             if local[:dark]
+    append_css!(opt, 'head-sticky')           if local[:sticky]
+    append_css!(opt, 'head-dark')             if local[:dark]
     append_css!(opt, 'pageable')              if local[:pageable]
     append_css!(opt, 'sortable')              if local[:sortable]
     append_css!(opt, 'partial')               if local[:partial]
@@ -178,7 +178,7 @@ module BaseCollectionDecorator::Table
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def table_heading(dark: DARK_HEAD, **opt)
+  def table_heading(dark: TABLE_HEAD_DARK, **opt)
     trace_attrs!(opt)
     item  = object.first || object_class.new
     local = opt.extract!(*MODEL_TABLE_DATA_OPT)

@@ -88,7 +88,7 @@ class SearchDecorator < BaseDecorator
     #
     # @type [Boolean]
     #
-    SHOW_EXTENDED_TITLE: bool
+    SEARCH_EXTENDED_TITLE: bool
 
     # Indicate whether items should get extended titles.
     #
@@ -100,7 +100,7 @@ class SearchDecorator < BaseDecorator
     #
     # @type [Boolean]
     #
-    SHOW_RELEVANCY_SCORE: bool
+    SEARCH_RELEVANCY_SCORE: bool
 
     # Indicate whether items should show relevancy scores.
     #

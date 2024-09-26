@@ -51,7 +51,8 @@ module SearchConcern
   #
   # @type [Boolean]
   # @private
-  GENERATE_SCORES = false
+  #
+  SEARCH_GENERATE_SCORES = true?(ENV_VAR['SEARCH_GENERATE_SCORES'])
 
   # index_search
   #
@@ -71,7 +72,7 @@ module SearchConcern
   def index_search(titles: nil, save: true, scores: nil, canonical: nil, **opt)
 
     titles = title_results? if titles.nil?
-    scores = search_debug?  if scores.nil? && GENERATE_SCORES
+    scores = search_debug?  if scores.nil? && SEARCH_GENERATE_SCORES
 
     save_search(**opt)      if save
 
@@ -112,14 +113,14 @@ module SearchConcern
   #
   # @type [Boolean]
   #
-  SAVE_SEARCHES = true?(ENV.fetch('SAVE_SEARCHES', true))
+  SEARCH_SAVE_SEARCHES = true?(ENV_VAR['SEARCH_SAVE_SEARCHES'])
 
   # Indicate whether the current search should be recorded.
   #
   # @param [User, nil] _user          Default: `#current_user`.
   #
   def save_search?(_user = nil)
-    SAVE_SEARCHES # TODO: criteria?
+    SEARCH_SAVE_SEARCHES # TODO: criteria?
   end
 
   # Record a search call.

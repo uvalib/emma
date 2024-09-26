@@ -18,7 +18,7 @@ module TestHelper::Samples
   #
   # @type [String]
   #
-  TITLE_PREFIX = UploadWorkflow::Properties::DEV_TITLE_PREFIX
+  TITLE_PREFIX = UploadWorkflow::Properties::UPLOAD_DEV_TITLE_PREFIX
 
   # File fixture for Uploads.
   #

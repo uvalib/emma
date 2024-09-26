@@ -51,14 +51,10 @@ module AwsS3Service::Properties
   #
   # @type [Hash{Symbol=>String}]
   #
-  S3_OPTIONS = {
-    region:            AWS_REGION,
-    secret_access_key: AWS_SECRET_KEY,
-    access_key_id:     AWS_ACCESS_KEY_ID,
-  }.compact
-    .reverse_merge(Rails.application.credentials.s3 || {})
-    .except(:bucket)
-    .deep_freeze
+  S3_OPTIONS =
+    Configuration::EnvVar::S3_KEY_ENV.except(:bucket).transform_values { |name|
+      ENV_VAR[name]
+    }.deep_freeze
 
   # ===========================================================================
   # :section:

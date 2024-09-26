@@ -22,7 +22,7 @@ public
 # @type [Boolean]
 #
 SHRINE_CLOUD_STORAGE =
-  rails_application? && !false?(ENV['SHRINE_CLOUD_STORAGE'])
+  rails_application? && !false?(ENV_VAR['SHRINE_CLOUD_STORAGE'])
 
 require 'shrine'
 require 'shrine/storage/s3'          if SHRINE_CLOUD_STORAGE
@@ -94,26 +94,20 @@ Shrine.storages = {
 }.tap do |storages|
   if SHRINE_CLOUD_STORAGE
 
+    # S3 options from encrypted credentials or environment variables.
+    opt = Configuration::EnvVar::S3_KEY_ENV.transform_values { ENV_VAR[_1] }
+
     # Prepend a distinguishing prefix for desktop development.
     storages.transform_values! { "rwl_#{_1}" } if not_deployed?
 
-    # S3 options are kept in encrypted credentials but can be overridden by
-    # environment variables.
-    s3_options = {
-      bucket:            AWS_BUCKET,
-      region:            AWS_REGION,
-      secret_access_key: AWS_SECRET_KEY,
-      access_key_id:     AWS_ACCESS_KEY_ID,
-    }.compact.reverse_merge(Rails.application.credentials.s3 || {})
-
     storages.transform_values! do |prefix|
-      Shrine::Storage::S3.new(prefix: prefix, **s3_options)
+      Shrine::Storage::S3.new(prefix: prefix, **opt)
     end
 
   else
 
     # File system location of the storage subdirectories.
-    storage_dir = ENV.fetch('STORAGE_DIR', 'storage')
+    storage_dir = ENV_VAR['SHRINE_STORAGE_DIR'] || 'storage'
 
     storages.transform_values! do |subdir|
       Shrine::Storage::FileSystem.new(File.join(storage_dir, subdir))

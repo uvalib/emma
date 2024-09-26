@@ -20,14 +20,14 @@ module Record::Properties
   #
   # @type [Integer]
   #
-  INGEST_MAX_SIZE = 1000
+  INGEST_MAX_SIZE = ENV_VAR['INGEST_MAX_SIZE'].to_i
 
   # A string added to the start of each title created on a non-production
   # instance to help distinguish it from other index results.
   #
   # @type [String]
   #
-  DEV_TITLE_PREFIX = 'RWL'
+  UPLOAD_DEV_TITLE_PREFIX = ENV_VAR['UPLOAD_DEV_TITLE_PREFIX'] || ''
 
   # A string added to the start of each title.
   #
@@ -37,7 +37,7 @@ module Record::Properties
   #
   # @see #title_prefix
   #
-  TITLE_PREFIX = (DEV_TITLE_PREFIX if not_deployed?)
+  TITLE_PREFIX = (UPLOAD_DEV_TITLE_PREFIX if not_deployed?)
 
   # A fractional number of seconds to pause between iterations.
   #
@@ -45,7 +45,7 @@ module Record::Properties
   #
   # @type [Float, FalseClass, nil]
   #
-  THROTTLE_PAUSE = 0.01
+  BULK_THROTTLE_PAUSE = ENV_VAR['BULK_THROTTLE_PAUSE']&.try(:to_f)
 
   # ===========================================================================
   # :section: Property defaults
@@ -66,7 +66,7 @@ module Record::Properties
   #
   # @see #force_delete
   #
-  FORCE_DELETE_DEFAULT = true
+  UPLOAD_FORCE_DELETE = true?(ENV_VAR['UPLOAD_FORCE_DELETE'])
 
   # Force deletions of EMMA Unified Index entries even if the record ID does
   # not begin with "emma-".  (This is to support development during which
@@ -83,7 +83,7 @@ module Record::Properties
   #
   # @see #emergency_delete
   #
-  EMERGENCY_DELETE_DEFAULT = false
+  UPLOAD_EMERGENCY_DELETE = true?(ENV_VAR['UPLOAD_EMERGENCY_DELETE'])
 
   # For the special case of deleting all records (effectively wiping the
   # database) this controls whether the next available ID should be set to 1.
@@ -97,28 +97,28 @@ module Record::Properties
   #
   # @type [Boolean]
   #
-  TRUNCATE_DELETE_DEFAULT = true
+  UPLOAD_TRUNCATE_DELETE = true?(ENV_VAR['UPLOAD_TRUNCATE_DELETE'])
 
   # For the "partner repository workflow", permit the **creation** of partner
   # repository items via a request to be queued to a partner repository.
   #
   # @type [Boolean]
   #
-  REPO_CREATE_DEFAULT = true
+  UPLOAD_REPO_CREATE = true?(ENV_VAR['UPLOAD_REPO_CREATE'])
 
   # For the "partner repository workflow", permit the **update** of partner
   # repository items via a request to be queued to a partner repository.
   #
   # @type [Boolean]
   #
-  REPO_EDIT_DEFAULT = false
+  UPLOAD_REPO_EDIT = true?(ENV_VAR['UPLOAD_REPO_EDIT'])
 
   # For the "partner repository workflow", permit the **removal** of partner
   # repository items via a request to be queued to a partner repository.
   #
   # @type [Boolean]
   #
-  REPO_REMOVE_DEFAULT = false
+  UPLOAD_REPO_REMOVE = true?(ENV_VAR['UPLOAD_REPO_REMOVE'])
 
   # Default size for batching.
   #
@@ -146,10 +146,10 @@ module Record::Properties
   # @type [Integer]
   #
   BATCH_SIZE = [
-    ENV['BATCH_SIZE']&.to_i,
+    ENV_VAR['BATCH_SIZE']&.to_i,
     BATCH_SIZE_DEFAULT,
-    MAX_BATCH_SIZE,
     BATCH_UPPER_BOUND,
+    MAX_BATCH_SIZE,
   ].compact.min
 
   # URL parameter names and default values.
@@ -159,12 +159,12 @@ module Record::Properties
   OPTION_PARAMETER_DEFAULT = {
     prefix:       TITLE_PREFIX,
     batch:        BATCH_SIZE,
-    force:        FORCE_DELETE_DEFAULT,
-    emergency:    EMERGENCY_DELETE_DEFAULT,
-    truncate:     TRUNCATE_DELETE_DEFAULT,
-    repo_create:  REPO_CREATE_DEFAULT,
-    repo_edit:    REPO_EDIT_DEFAULT,
-    repo_remove:  REPO_REMOVE_DEFAULT,
+    force:        UPLOAD_FORCE_DELETE,
+    emergency:    UPLOAD_EMERGENCY_DELETE,
+    truncate:     UPLOAD_TRUNCATE_DELETE,
+    repo_create:  UPLOAD_REPO_CREATE,
+    repo_edit:    UPLOAD_REPO_EDIT,
+    repo_remove:  UPLOAD_REPO_REMOVE,
   }.freeze
 
   # Module method mapped to URL parameter.
@@ -187,6 +187,20 @@ module Record::Properties
   # @type [Hash{Symbol=>Symbol}]
   #
   OPTION_PARAMETER_MAP = OPTION_METHOD_MAP.invert.freeze
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  if sanity_check?
+    unless (BATCH_SIZE_DEFAULT..1000).include?((v = INGEST_MAX_SIZE))
+      raise "Invalid INGEST_MAX_SIZE: #{v.class} #{v.inspect}"
+    end
+    unless [nil, false].include?((v = BULK_THROTTLE_PAUSE))
+      invalid = !v.is_a?(Numeric) || v.negative?
+      raise "Invalid BULK_THROTTLE_PAUSE: #{v.class} #{v.inspect}" if invalid
+    end
+  end
 
   # ===========================================================================
   # :section: Property values
@@ -218,7 +232,7 @@ module Record::Properties
   #
   # @return [Boolean]
   #
-  # @see #FORCE_DELETE_DEFAULT
+  # @see #UPLOAD_FORCE_DELETE
   #
   def force_delete
     key = OPTION_PARAMETER_MAP[__method__]
@@ -231,7 +245,7 @@ module Record::Properties
   #
   # @return [Boolean]
   #
-  # @see #EMERGENCY_DELETE_DEFAULT
+  # @see #UPLOAD_EMERGENCY_DELETE
   #
   def emergency_delete
     key = OPTION_PARAMETER_MAP[__method__]
@@ -242,7 +256,7 @@ module Record::Properties
   #
   # @return [Boolean]
   #
-  # @see #TRUNCATE_DELETE_DEFAULT
+  # @see #UPLOAD_TRUNCATE_DELETE
   #
   def truncate_delete
     key = OPTION_PARAMETER_MAP[__method__]
@@ -254,7 +268,7 @@ module Record::Properties
   #
   # @return [Boolean]
   #
-  # @see #REPO_CREATE_DEFAULT
+  # @see #UPLOAD_REPO_CREATE
   #
   def repo_create
     key = OPTION_PARAMETER_MAP[__method__]
@@ -267,7 +281,7 @@ module Record::Properties
   #
   # @return [Boolean]
   #
-  # @see #REPO_EDIT_DEFAULT
+  # @see #UPLOAD_REPO_EDIT
   #
   def repo_edit
     key = OPTION_PARAMETER_MAP[__method__]
@@ -280,7 +294,7 @@ module Record::Properties
   #
   # @return [Boolean]
   #
-  # @see #REPO_REMOVE_DEFAULT
+  # @see #UPLOAD_REPO_REMOVE
   #
   def repo_remove
     key = OPTION_PARAMETER_MAP[__method__]

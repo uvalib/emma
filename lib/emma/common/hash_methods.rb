@@ -19,7 +19,7 @@ module Emma::Common::HashMethods
   #
   # @type [Boolean]
   #
-  DEBUG_HASH = true?(ENV['DEBUG_HASH'])
+  DEBUG_HASH = true?(ENV_VAR['DEBUG_HASH'])
 
   # ===========================================================================
   # :section:

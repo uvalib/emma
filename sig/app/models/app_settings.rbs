@@ -114,11 +114,11 @@ class AppSettings < AppGlobal
 
     # Return the module that defines a constant with the given name.
     #
-    # @param [Symbol, String] k
+    # @param [Symbol, String, nil] const
     #
     # @return [Module, nil]
     #
-    def module_defining: (Symbol|String k) -> Module?
+    def module_defining: (Symbol|String|nil const) -> Module?
 
     def type_key: () -> Symbol
 
@@ -131,6 +131,10 @@ class AppSettings < AppGlobal
     def self.spacer_key: () -> Symbol
 
     def self.storage_value: (untyped v) -> untyped
+
+    def self.constant_map: () -> Hash[Symbol,Module]
+
+    self.@constant_map: Hash[Symbol,Module]
   end
 
   # A table of AppSettings flag values.

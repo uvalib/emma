@@ -104,7 +104,7 @@ module BaseDecorator::Row
   #
   # @type [Integer]
   #
-  ROW_PAGE_SIZE = 25
+  ROW_PAGE_SIZE = ENV_VAR['ROW_PAGE_SIZE'].to_i
 
   # The number of rows of associated items per iteration.
   #

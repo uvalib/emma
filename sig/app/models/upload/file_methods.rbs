@@ -63,15 +63,6 @@ module Upload::FileMethods
   #
   attr_reader edit_file_attacher: FileUploader::Attacher
 
-  # The maximum age (in seconds) allowed for download links which are meant to
-  # be valid only for a single time.
-  #
-  # This should be generous to allow for network delays.
-  #
-  # @type [Integer]
-  #
-  ONE_TIME_USE_EXPIRATION: Integer
-
   # The maximum age (in seconds) allowed for download links.
   #
   # This allows the link to be reused for a while, but not long enough to allow

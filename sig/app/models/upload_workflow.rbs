@@ -93,7 +93,7 @@ module UploadWorkflow::Properties
   #
   # @type [String]
   #
-  DEV_TITLE_PREFIX: String
+  UPLOAD_DEV_TITLE_PREFIX: String
 
   # A string added to the start of each title.
   #
@@ -111,7 +111,7 @@ module UploadWorkflow::Properties
   #
   # @type [Float, FalseClass, nil]
   #
-  THROTTLE_PAUSE: Float | false | nil
+  BULK_THROTTLE_PAUSE: Float | false | nil
 
   # Force deletions of EMMA Unified Index entries regardless of whether the
   # item is in the "uploads" table.
@@ -126,7 +126,7 @@ module UploadWorkflow::Properties
   #
   # @see #force_delete
   #
-  FORCE_DELETE_DEFAULT: bool
+  UPLOAD_FORCE_DELETE: bool
 
   # Force deletions of EMMA Unified Index entries even if the record ID does
   # not begin with "emma-".  (This is to support development during which
@@ -143,7 +143,7 @@ module UploadWorkflow::Properties
   #
   # @see #emergency_delete
   #
-  EMERGENCY_DELETE_DEFAULT: bool
+  UPLOAD_EMERGENCY_DELETE: bool
 
   # For the special case of deleting all records (effectively wiping the
   # database) this controls whether the next available ID should be set to 1.
@@ -157,28 +157,28 @@ module UploadWorkflow::Properties
   #
   # @type [Boolean]
   #
-  TRUNCATE_DELETE_DEFAULT: bool
+  UPLOAD_TRUNCATE_DELETE: bool
 
   # For the "partner repository workflow", permit the **creation** of partner
   # repository items via a request to be queued to a partner repository.
   #
   # @type [Boolean]
   #
-  REPO_CREATE_DEFAULT: bool
+  UPLOAD_REPO_CREATE: bool
 
   # For the "partner repository workflow", permit the **update** of partner
   # repository items via a request to be queued to a partner repository.
   #
   # @type [Boolean]
   #
-  REPO_EDIT_DEFAULT: bool
+  UPLOAD_REPO_EDIT: bool
 
   # For the "partner repository workflow", permit the **removal** of partner
   # repository items via a request to be queued to a partner repository.
   #
   # @type [Boolean]
   #
-  REPO_REMOVE_DEFAULT: bool
+  UPLOAD_REPO_REMOVE: bool
 
   # Default size for batching.
   #
@@ -243,7 +243,7 @@ module UploadWorkflow::Properties
   #
   # @return [Boolean]
   #
-  # @see #FORCE_DELETE_DEFAULT
+  # @see #UPLOAD_FORCE_DELETE
   #
   def force_delete: () -> bool
 
@@ -253,7 +253,7 @@ module UploadWorkflow::Properties
   #
   # @return [Boolean]
   #
-  # @see #EMERGENCY_DELETE_DEFAULT
+  # @see #UPLOAD_EMERGENCY_DELETE
   #
   def emergency_delete: () -> bool
 
@@ -261,7 +261,7 @@ module UploadWorkflow::Properties
   #
   # @return [Boolean]
   #
-  # @see #TRUNCATE_DELETE_DEFAULT
+  # @see #UPLOAD_TRUNCATE_DELETE
   #
   def truncate_delete: () -> bool
 
@@ -270,7 +270,7 @@ module UploadWorkflow::Properties
   #
   # @return [Boolean]
   #
-  # @see #REPO_CREATE_DEFAULT
+  # @see #UPLOAD_REPO_CREATE
   #
   def repo_create: () -> bool
 
@@ -279,7 +279,7 @@ module UploadWorkflow::Properties
   #
   # @return [Boolean]
   #
-  # @see #REPO_EDIT_DEFAULT
+  # @see #UPLOAD_REPO_EDIT
   #
   def repo_edit: () -> bool
 
@@ -288,7 +288,7 @@ module UploadWorkflow::Properties
   #
   # @return [Boolean]
   #
-  # @see #REPO_REMOVE_DEFAULT
+  # @see #UPLOAD_REPO_REMOVE
   #
   def repo_remove: () -> bool
 
@@ -460,13 +460,13 @@ module UploadWorkflow::External
 
   # Release the current thread to the scheduler.
   #
-  # @param [Integer]       counter    Iteration counter.
-  # @param [Integer]       frequency  E.g., '3' indicates every third iteration
-  # @param [Float,Boolean] pause      Default: `#THROTTLE_PAUSE`.
+  # @param [Integer]           counter    Iteration counter.
+  # @param [Integer]           frequency  E.g., '3' => every third iteration.
+  # @param [Float,Boolean,nil] pause      Default: `#BULK_THROTTLE_PAUSE`.
   #
   # @return [void]
   #
-  def throttle: (Integer counter, ?frequency: Integer, ?pause: Float|bool) -> void
+  def throttle: (Integer counter, ?frequency: Integer, ?pause: Float|bool|nil) -> void
 
   # The database ID for the item, or, failing that, the submission ID.
   #

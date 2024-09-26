@@ -57,7 +57,7 @@ module UploadWorkflow::Bulk::Edit::Actions
   #
   # @type [Boolean]
   #
-  DEFER_INDEXING = false
+  UPLOAD_DEFER_INDEXING = true?(ENV_VAR['UPLOAD_DEFER_INDEXING'])
 
   # ===========================================================================
   # :section: UploadWorkflow::Actions overrides
@@ -81,7 +81,7 @@ module UploadWorkflow::Bulk::Edit::Actions
   def wf_validate_submission(*event_args)
     __debug_items(binding)
     opt = event_args.extract_options!.dup
-    opt[:index]        = false if DEFER_INDEXING && !opt.key?(:index)
+    opt[:index]        = false if UPLOAD_DEFER_INDEXING && !opt.key?(:index)
     opt[:user]       ||= current_user
     opt[:base_url]   ||= nil #request.base_url
     opt[:importer]   ||= :ia_bulk
@@ -101,7 +101,7 @@ module UploadWorkflow::Bulk::Edit::Actions
     __debug_items(binding)
     if succeeded.blank?
       self.failures << "#{__method__}: NO ENTRIES - INTERNAL WORKFLOW ERROR"
-    elsif DEFER_INDEXING
+    elsif UPLOAD_DEFER_INDEXING
       s, f, _ = bulk_update_in_index(*succeeded)
       self.succeeded = s
       self.failures.concat(f)

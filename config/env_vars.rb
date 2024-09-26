@@ -170,14 +170,14 @@ CONSOLE_DEBUGGING = true?(ENV['CONSOLE_DEBUGGING'])
 # Normally __output (and __debug) are not displayed in non-Rails invocations of
 # the code (e.g. rake, irb, etc) unless CONSOLE_DEBUGGING is *true*.
 #
-CONSOLE_OUTPUT = live_rails_application? || CONSOLE_DEBUGGING
+CONSOLE_OUTPUT = non_test_rails? || CONSOLE_DEBUGGING
 
 # Control TRACE_* activation.
 #
 # By default, the TRACE_* constants are only active when the code is being run
 # as a Rails application (i.e., not for "rake", "rails console", etc.).
 #
-TRACE_OUTPUT = live_rails_application? || true?(ENV['TRACE_RAKE'])
+TRACE_OUTPUT = non_test_rails? || true?(ENV['TRACE_RAKE'])
 
 # Control tracking of file load order.
 #

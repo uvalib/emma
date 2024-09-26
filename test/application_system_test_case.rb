@@ -53,7 +53,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     CapybaraLockstep.active = false
   end
 
-  Capybara::Lockstep.debug   = true?(ENV['DEBUG_LOCKSTEP'])
+  Capybara::Lockstep.debug   = true?(ENV_VAR['DEBUG_LOCKSTEP'])
   Capybara::Lockstep.timeout = 2 * Capybara.default_max_wait_time
 
 end
