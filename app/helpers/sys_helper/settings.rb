@@ -76,8 +76,8 @@ module SysHelper::Settings
     prepend_css!(opt, css)
     html_div(**opt) do
       html_div(class: 'fields') do
-        GlobalProperty.instance_methods.map do |meth|
-          app_setting_display(meth, Object.send(meth))
+        ExecutionProperty.instance_methods(false).sort.map do |meth|
+          app_setting_display(meth, ExecutionProperty.send(meth))
         end
       end
     end

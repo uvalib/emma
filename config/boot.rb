@@ -168,7 +168,7 @@ public
 #--
 # noinspection RubyTooManyInstanceVariablesInspection
 #++
-module GlobalProperty
+module ExecutionProperty
 
   extend self
 
@@ -317,14 +317,14 @@ end
 
 class Object
 
-  GlobalProperty.instance_methods.each do |method|
-    define_method(method) { GlobalProperty.send(method) }
+  ExecutionProperty.instance_methods(false).each do |method|
+    define_method(method) { ExecutionProperty.send(method) }
   end
 
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
-    include GlobalProperty
-    extend  GlobalProperty
+    include ExecutionProperty
+    extend  ExecutionProperty
     # :nocov:
   end
 

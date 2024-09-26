@@ -99,8 +99,8 @@ class Object
     | [T] (T      arg) -> nil
 end
 
-module GlobalProperty
-  extend GlobalProperty
+module ExecutionProperty
+  extend ExecutionProperty
 
   private
 
@@ -185,6 +185,6 @@ module GlobalProperty
 end
 
 class Object
-  include GlobalProperty
-  extend  GlobalProperty
+  include ExecutionProperty
+  extend  ExecutionProperty
 end

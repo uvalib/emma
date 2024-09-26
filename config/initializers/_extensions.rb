@@ -24,8 +24,8 @@ Oj.optimize_rails
 
 # === Local definitions and gem extensions/overrides
 require 'pp'
-require Rails.root.join('lib/emma').to_path
-require Rails.root.join('lib/matomo').to_path
+require 'emma'
+require 'matomo'
 
 # === Custom loggers
 unless LOG_SILENCER
