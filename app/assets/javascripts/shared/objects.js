@@ -121,15 +121,15 @@ export function deepDup(item) {
  * @returns {T}
  */
 export function dup(item, deep) {
-    if (typeof item === "string") { return `${item}` }
-    if (typeof item !== "object") { return item }
-    if (typeof item.toObject === "function") {
-        return item.toObject(); // NOTE: Expected to be a deep copy.
-    } else if (Array.isArray(item)) {
-        return deep ? item.map(v => dup(v, deep)) : [...item];
-    } else {
-        return deep ? $.extend(true, {}, item) : { ...item };
-    }
+    if (typeof item === "string")               { return `${item}` }
+    if (typeof item !== "object")               { return item }
+    if (item === null)                          { return item }
+    if (typeof item.toObject === "function")    { return item.toObject() }
+    const array = Array.isArray(item);
+    if (!deep) { return array ? [...item] : { ...item } }
+    if (array) { return item.map(v => dup(v, deep)) }
+    const entries = Object.entries(item).map(([k,v]) => [k, dup(v, deep)]);
+    return Object.fromEntries(entries);
 }
 
 // ============================================================================
@@ -151,16 +151,17 @@ export function isObject(item, or_array) {
 
 /**
  * If **item** is a class instance return the value of its toObject() method
- * (if it exists) or the item itself otherwise.
+ * (if it exists) or a copy of the item otherwise.
  *
  * @param {*} item
  *
  * @returns {object|undefined}
  */
 export function asObject(item) {
-    switch (true) {
-        case $.isPlainObject(item):     return item;
-        case isDefined(item?.toObject): return item.toObject();
+    if (isDefined(item?.toObject)) {
+        return item.toObject();
+    } else if (isObject(item)) {
+        return { ...item };
     }
 }
 
