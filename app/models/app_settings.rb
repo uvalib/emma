@@ -211,7 +211,6 @@ class AppSettings < AppGlobal
     # === EMMA Unified Ingest API
     :INGEST_API_VERSION,
     :INGEST_API_KEY,
-    :INGEST_BASE_URL,
     :INGEST_MAX_SIZE,
     :SERVICE_INGEST_PRODUCTION,
     :SERVICE_INGEST_STAGING,
@@ -263,9 +262,10 @@ class AppSettings < AppGlobal
     nil,
 
     # === Ruby
-    :RUBYLIB,
-    :RUBYOPT,
     :RUBY_VERSION,
+    :RUBYOPT,
+    :RUBYLIB,
+    nil,
 
     # === Rails
     :RAILS_APP_VERSION,
@@ -362,7 +362,6 @@ class AppSettings < AppGlobal
     :REDIS_URL,
     :ROW_PAGE_SIZE,
     :S3_PREFIX_LIMIT,
-    :SCHEDULER,
     :SHRINE_STORAGE_DIR,
     :TERRAFORM_URL,
 
@@ -378,13 +377,28 @@ class AppSettings < AppGlobal
   }.freeze
 
   if sanity_check?
+    # These are not expected to be in "en.emma.env_var", either because they're
+    # not associated with an environment variable or because they're
+    # intentionally not included in the set of configuration values.
+    constants_only = %i[
+      AUTH_PROVIDERS
+      BV_DEFAULT_REGION
+      CONSOLE_OUTPUT
+      PARALLEL_WORKERS
+      SCRIPT_NAME
+      TRACE_OUTPUT
+    ]
     f, v    = [FLAGS, VALUES].map(&:compact)
     f_dup   = f.tally.select { |_, count| count > 1 }.presence
     v_dup   = v.tally.select { |_, count| count > 1 }.presence
-    missing = (ENV_VAR.from_yaml.keys.map(&:to_sym) - f - v).presence
+    f_v     = (f + v).excluding(*constants_only)
+    cfg     = ENV_VAR.from_yaml.keys.map(&:to_sym)
+    added   = (f_v - cfg).presence
+    missing = (cfg - f_v).presence
     overlap = f.intersection(v).presence
     Log.warn { "#{self} FLAGS duplicates: #{f_dup.keys.inspect}" }  if f_dup
     Log.warn { "#{self} VALUES duplicates: #{v_dup.keys.inspect}" } if v_dup
+    Log.warn { "#{self} FLAGS/VALUES added: #{added.inspect}" }     if added
     Log.warn { "#{self} FLAGS/VALUES missing: #{missing.inspect}" } if missing
     raise "#{self} FLAGS/VALUES overlap: #{overlap.inspect}"        if overlap
   end

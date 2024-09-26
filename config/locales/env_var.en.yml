@@ -30,13 +30,30 @@ en:
         BUNDLE_GEMFILE:               ~
         DEBUGGER_STORED_RUBYLIB:      ~ # NOTE: only seen in RubyMine debugger
         DEPLOYMENT:                   ~
+        GROUP:                        ~
         HOME:                         ~
         IN_PASSENGER:                 ~ # NOTE: defunct
+        LANG:                         ~
+        LANGUAGE:                     ~
+        LC_ALL:                       ~
+        PATH:                         ~
+        PGHOST:                       ~
+        PGPASSWORD:                   ~
+        PGPORT:                       ~
+        PGUSER:                       ~
+        PWD:                          ~
+        RAILS_APP_VERSION:            ~
+        RAILS_CACHE_ID:               ~
         RAILS_ENV:                    ~
         RAILS_LOG_TO_STDOUT:          ~ # NOTE: set in bin/rails if missing
         RAILS_MASTER_KEY:             ~ # NOTE: needed to decrypt credentials
         RAILS_SERVE_STATIC_FILES:     ~ # NOTE: true by default
+        RUBYLIB:                      ~
         RUBYMINE_CONFIG:              ~ # NOTE: manually added to RubyMine configurations
+        RUBYOPT:                      ~
+        RUBY_VERSION:                 ~
+        SHELL:                        ~
+        TZ:                           ~
         USER:                         ~
 
       # =======================================================================
@@ -295,6 +312,7 @@ en:
         SESSION_DEBUG_DATA_ATTR:      true
         SHIBBOLETH:                   true
         SHRINE_CLOUD_STORAGE:         true
+        SHRINE_STORAGE_DIR:           'storage'
         SMTP_DOMAIN:                  'out.mail.virginia.edu'
         SMTP_PORT:                    25
         STRICT_FORMATS:               ~
