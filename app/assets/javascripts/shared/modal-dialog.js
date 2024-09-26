@@ -4,13 +4,14 @@
 
 
 import { AppDebug }          from "../application/debug";
+import { Emma }              from "./assets";
 import { selector }          from "./css";
 import { isMissing }         from "./definitions";
 import { ModalBase, TOGGLE } from "./modal-base";
 
 
 const MODULE = "ModalDialog";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_MODAL_DIALOG;
 
 AppDebug.file("shared/modal-dialog", MODULE, DEBUG);
 

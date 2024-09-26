@@ -4,12 +4,13 @@
 
 
 import { AppDebug }             from "../application/debug";
+import { Emma }                 from "./assets";
 import { ChannelRequest }       from "./channel-request";
 import { deepFreeze, isObject } from "./objects";
 
 
 const MODULE = "SubmitRequest";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_SUBMIT_REQUEST;
 
 AppDebug.file("shared/submit-request", MODULE, DEBUG);
 

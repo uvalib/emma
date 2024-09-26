@@ -2,6 +2,7 @@
 
 
 import { AppDebug }           from "../application/debug";
+import { Emma }               from "../shared/assets";
 import { CableChannel }       from "../shared/cable-channel";
 import { hexRand }            from "../shared/random";
 import { SubmitResponseBase } from "../shared/submit-response";
@@ -12,7 +13,7 @@ import {
 
 
 const CHANNEL = "SubmitChannel";
-const DEBUG   = true;
+const DEBUG   = Emma.Debug.JS_DEBUG_CHANNEL_SUBMIT;
 
 AppDebug.file("channels/submit-channel", CHANNEL, DEBUG);
 

@@ -12,7 +12,7 @@ import { hasKey }                     from "./objects";
 
 
 const MODULE = "Manifest";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_MANIFESTS;
 
 AppDebug.file("shared/manifests", MODULE, DEBUG);
 

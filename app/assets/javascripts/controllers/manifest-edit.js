@@ -91,7 +91,7 @@ import {
 
 
 const MODULE = "ManifestEdit";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_MANIFEST_EDIT;
 
 AppDebug.file("controllers/manifest-edit", MODULE, DEBUG);
 

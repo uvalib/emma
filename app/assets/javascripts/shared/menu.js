@@ -14,7 +14,7 @@ import { compact, deepFreeze, toObject } from "./objects";
 
 
 const MODULE = "Menu";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_MENU;
 
 AppDebug.file("shared/menu", MODULE, DEBUG);
 

@@ -4,6 +4,7 @@
 
 
 import { AppDebug }                 from "../application/debug";
+import { Emma }                     from "./assets";
 import { HIDDEN, selector }         from "./css";
 import { isMissing, isPresent }     from "./definitions";
 import { windowEvent }              from "./events";
@@ -12,7 +13,7 @@ import { ModalBase, PANEL, TOGGLE } from "./modal-base";
 
 
 const MODULE = "InlinePopup";
-const DEBUG  = false;
+const DEBUG  = Emma.Debug.JS_DEBUG_INLINE_POPUP;
 
 AppDebug.file("shared/inline-popup", MODULE, DEBUG);
 

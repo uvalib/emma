@@ -5,6 +5,7 @@
 
 import { AppDebug }           from "../application/debug";
 import { Api }                from "./api";
+import { Emma }               from "./assets";
 import { BaseClass }          from "./base-class";
 import { ChannelRequest }     from "./channel-request";
 import { ChannelResponse }    from "./channel-response";
@@ -14,7 +15,7 @@ import { asString }           from "./strings";
 
 
 const MODULE = "CableChannel";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_CABLE_CHANNEL;
 
 AppDebug.file("shared/cable-channel", MODULE, DEBUG);
 

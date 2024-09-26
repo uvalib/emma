@@ -4,13 +4,14 @@
 
 
 import { AppDebug } from "../application/debug";
+import { Emma }     from "../shared/assets";
 import Rails        from "@rails/ujs";
 
 export { Rails };
 
 
 const MODULE = "Rails";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_RAILS;
 
 AppDebug.file("vendor/rails", MODULE, DEBUG);
 

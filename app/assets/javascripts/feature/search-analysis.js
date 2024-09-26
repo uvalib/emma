@@ -26,7 +26,7 @@ import {
 
 
 const MODULE = "SearchAnalysis";
-const DEBUG  = false;
+const DEBUG  = Emma.Debug.JS_DEBUG_SEARCH_ANALYSIS;
 
 AppDebug.file("feature/search-analysis", MODULE, DEBUG);
 

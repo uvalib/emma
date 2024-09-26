@@ -15,7 +15,7 @@ import {
 
 
 const MODULE = "Scroll";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_SCROLL;
 
 AppDebug.file("feature/scroll", MODULE, DEBUG);
 

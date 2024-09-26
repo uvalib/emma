@@ -3,13 +3,14 @@
 
 import { AppDebug }                       from "../application/debug";
 import { arrayWrap }                      from "./arrays"
+import { Emma }                           from "./assets";
 import { BaseClass }                      from "./base-class";
 import { isEmpty, isPresent, notDefined } from "./definitions";
 import { fromJSON, toObject }             from "./objects";
 
 
 const MODULE = "ChannelRequest";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_CHANNEL_REQUEST;
 
 AppDebug.file("shared/channel-request", MODULE, DEBUG);
 

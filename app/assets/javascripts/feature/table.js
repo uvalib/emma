@@ -20,7 +20,7 @@ import {
 
 
 const MODULE = "Table";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_TABLE;
 
 AppDebug.file("feature/table", MODULE, DEBUG);
 

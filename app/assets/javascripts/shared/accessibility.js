@@ -2,6 +2,7 @@
 
 
 import { AppDebug }                    from "../application/debug";
+import { Emma }                        from "./assets";
 import { attributeSelector, selector } from "./css";
 import { handleEvent }                 from "./events";
 import { keyCombo, modifiersOnly }     from "./keyboard";
@@ -22,7 +23,7 @@ import {
 
 
 const MODULE = "Accessibility";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_ACCESSIBILITY;
 
 AppDebug.file("shared/accessibility", MODULE, DEBUG);
 

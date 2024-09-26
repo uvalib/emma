@@ -2,12 +2,13 @@
 
 
 import { AppDebug }            from "../application/debug";
+import { Emma }                from "./assets";
 import { BaseClass }           from "./base-class";
 import { deepDup, deepFreeze } from "./objects";
 
 
 const MODULE = "ChannelResponse";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_CHANNEL_RESPONSE;
 
 AppDebug.file("shared/channel-response", MODULE, DEBUG);
 

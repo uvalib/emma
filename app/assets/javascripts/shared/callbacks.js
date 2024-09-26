@@ -2,11 +2,12 @@
 
 
 import { AppDebug }  from "../application/debug";
+import { Emma }      from "./assets";
 import { BaseClass } from "./base-class";
 
 
 const MODULE = "CallbackChain";
-const DEBUG  = false;
+const DEBUG  = Emma.Debug.JS_DEBUG_CALLBACKS;
 
 AppDebug.file("shared/callbacks", MODULE, DEBUG);
 

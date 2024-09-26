@@ -36,7 +36,7 @@ import {
 
 
 const MODULE = "AdvancedSearch";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_ADVANCED_SEARCH;
 
 AppDebug.file("feature/advanced-search", MODULE, DEBUG);
 

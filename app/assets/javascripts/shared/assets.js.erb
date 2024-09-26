@@ -471,6 +471,68 @@ AppDebug.file("shared/assets.js.erb");
  * @property {string}  tracker_url
  */
 
+/**
+ * @typedef {Object.<string,boolean>} Flags
+ */
+
+/**
+ * @typedef {Flags} DebugFlags
+ *
+ * @property {boolean} JS_DEBUG_ACCESSIBILITY
+ * @property {boolean} JS_DEBUG_ADVANCED_SEARCH
+ * @property {boolean} JS_DEBUG_BASE_CLASS
+ * @property {boolean} JS_DEBUG_BIB_LOOKUP
+ * @property {boolean} JS_DEBUG_CABLE_CHANNEL
+ * @property {boolean} JS_DEBUG_CABLE_CONSUMER
+ * @property {boolean} JS_DEBUG_CALLBACKS
+ * @property {boolean} JS_DEBUG_CHANNEL_LOOKUP
+ * @property {boolean} JS_DEBUG_CHANNEL_REQUEST
+ * @property {boolean} JS_DEBUG_CHANNEL_RESPONSE
+ * @property {boolean} JS_DEBUG_CHANNEL_SUBMIT
+ * @property {boolean} JS_DEBUG_CLIENT_DEBUG
+ * @property {boolean} JS_DEBUG_DATABASE
+ * @property {boolean} JS_DEBUG_DOWNLOAD
+ * @property {boolean} JS_DEBUG_FLASH
+ * @property {boolean} JS_DEBUG_GRIDS
+ * @property {boolean} JS_DEBUG_IFRAME
+ * @property {boolean} JS_DEBUG_IMAGES
+ * @property {boolean} JS_DEBUG_INLINE_POPUP
+ * @property {boolean} JS_DEBUG_LOOKUP_MODAL
+ * @property {boolean} JS_DEBUG_LOOKUP_REQUEST
+ * @property {boolean} JS_DEBUG_LOOKUP_RESPONSE
+ * @property {boolean} JS_DEBUG_MANIFESTS
+ * @property {boolean} JS_DEBUG_MANIFEST_EDIT
+ * @property {boolean} JS_DEBUG_MANIFEST_REMIT
+ * @property {boolean} JS_DEBUG_MATH_DETECTIVE
+ * @property {boolean} JS_DEBUG_MENU
+ * @property {boolean} JS_DEBUG_MODAL_BASE
+ * @property {boolean} JS_DEBUG_MODAL_DIALOG
+ * @property {boolean} JS_DEBUG_MODAL_HOOKS
+ * @property {boolean} JS_DEBUG_MODEL_FORM
+ * @property {boolean} JS_DEBUG_NAV_GROUP
+ * @property {boolean} JS_DEBUG_OVERLAY
+ * @property {boolean} JS_DEBUG_PANEL
+ * @property {boolean} JS_DEBUG_QUEUE
+ * @property {boolean} JS_DEBUG_RAILS
+ * @property {boolean} JS_DEBUG_RECORDS
+ * @property {boolean} JS_DEBUG_SCROLL
+ * @property {boolean} JS_DEBUG_SEARCH
+ * @property {boolean} JS_DEBUG_SEARCH_ANALYSIS
+ * @property {boolean} JS_DEBUG_SEARCH_IN_PROGRESS
+ * @property {boolean} JS_DEBUG_SESSION
+ * @property {boolean} JS_DEBUG_SETUP
+ * @property {boolean} JS_DEBUG_SKIP_NAV
+ * @property {boolean} JS_DEBUG_SUBMIT_MODAL
+ * @property {boolean} JS_DEBUG_SUBMIT_REQUEST
+ * @property {boolean} JS_DEBUG_SUBMIT_RESPONSE
+ * @property {boolean} JS_DEBUG_TABLE
+ * @property {boolean} JS_DEBUG_TURBOLINKS
+ * @property {boolean} JS_DEBUG_UPLOADER
+ * @property {boolean} JS_DEBUG_XHR
+ *
+ * @see file:config/locales/env_var.en.yml "en.emma.env_var._javascript"
+ */
+
 // ============================================================================
 // Application settings
 // ============================================================================
@@ -489,6 +551,7 @@ AppDebug.file("shared/assets.js.erb");
  * @property {string}               SESSION_ID
  * @property {boolean}              SEARCH_ANALYSIS
  *
+ * @property {Flags}                Debug
  * @property {RepositoryProperties} Repo
  * @property {AnalyticsProperties}  Analytics
  *
@@ -548,6 +611,9 @@ export const Emma = (function() {
     // ========================================================================
     // General information
     // ========================================================================
+
+    /** @type {DebugFlags} */
+    const Debug = o$('<%= js ENV_VAR.select { _1.match?(/^JS_DEBUG_/) } %>');
 
     /** @type {RepositoryProperties} */
     const Repo = {
@@ -891,6 +957,7 @@ export const Emma = (function() {
         DEPLOYED,
         SESSION_ID,
         SEARCH_ANALYSIS,
+        Debug,
         Repo,
         Analytics,
         Field,

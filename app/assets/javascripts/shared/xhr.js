@@ -5,6 +5,7 @@
 
 import { AppDebug }           from "../application/debug";
 import { arrayWrap }          from "./arrays";
+import { Emma }               from "./assets";
 import { isEmpty, isMissing } from "./definitions";
 import * as HTTP              from "./http";
 import { fromJSON, hasKey }   from "./objects";
@@ -13,7 +14,7 @@ import { makeUrl }            from "./url";
 
 
 const MODULE = "XHR";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_XHR;
 
 AppDebug.file("shared/xhr", MODULE, DEBUG);
 

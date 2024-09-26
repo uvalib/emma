@@ -35,7 +35,7 @@ import {
 
 
 const MODULE = "ModalBase";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_MODAL_BASE;
 
 AppDebug.file("shared/modal-base", MODULE, DEBUG);
 

@@ -2,12 +2,13 @@
 
 
 import { AppDebug }   from "../application/debug";
+import { Emma }       from "./assets";
 import { onPageExit } from "./events";
 import { Overlay }    from "./overlay";
 
 
 const MODULE = "SearchInProgress";
-const DEBUG  = false;
+const DEBUG  = Emma.Debug.JS_DEBUG_SEARCH_IN_PROGRESS;
 
 AppDebug.file("shared/search-in-progress", MODULE, DEBUG);
 

@@ -19,7 +19,7 @@ import {
 
 
 const MODULE = "Search";
-const DEBUG  = false;
+const DEBUG  = Emma.Debug.JS_DEBUG_SEARCH;
 
 AppDebug.file("controllers/search", MODULE, DEBUG);
 

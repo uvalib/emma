@@ -23,7 +23,7 @@ import {
 
 
 const MODULE = "MathDetectiveApi";
-const DEBUG  = false;
+const DEBUG  = Emma.Debug.JS_DEBUG_MATH_DETECTIVE;
 
 AppDebug.file("tool/math-detective", MODULE, DEBUG);
 

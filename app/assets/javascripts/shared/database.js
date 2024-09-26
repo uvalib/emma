@@ -3,13 +3,14 @@
 
 import { AppDebug }                               from "../application/debug";
 import { arrayWrap }                              from "./arrays";
+import { Emma }                                   from "./assets";
 import { isDefined, isEmpty, notEmpty, presence } from "./definitions";
 import { fromJSON, hasKey }                       from "./objects";
 import { asString }                               from "./strings";
 
 
 const MODULE = "DB";
-const DEBUG  = false;
+const DEBUG  = Emma.Debug.JS_DEBUG_DATABASE;
 
 AppDebug.file("shared/database", MODULE, DEBUG);
 

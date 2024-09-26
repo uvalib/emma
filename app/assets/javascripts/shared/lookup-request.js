@@ -5,13 +5,14 @@
 
 import { AppDebug }                         from "../application/debug";
 import { arrayWrap }                        from "./arrays";
+import { Emma }                             from "./assets";
 import { ChannelRequest }                   from "./channel-request";
 import { isMissing, isPresent, notDefined } from "./definitions";
 import { deepFreeze, toObject }             from "./objects";
 
 
 const MODULE = "LookupRequest";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_LOOKUP_REQUEST;
 
 AppDebug.file("shared/lookup-request", MODULE, DEBUG);
 

@@ -4,11 +4,12 @@
 import { AppDebug }               from "../application/debug";
 import { appSetup }               from "../application/setup";
 import { handleClickAndKeypress } from "../shared/accessibility";
+import { Emma }                   from "../shared/assets";
 import { isMissing }              from "../shared/definitions";
 
 
 const MODULE = "Iframe";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_IFRAME;
 
 AppDebug.file("feature/iframe", MODULE, DEBUG);
 

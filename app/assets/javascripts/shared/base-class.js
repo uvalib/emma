@@ -4,10 +4,11 @@
 
 
 import { AppDebug } from "../application/debug";
+import { Emma }     from "./assets";
 
 
 const MODULE = "BaseClass";
-const DEBUG  = false;
+const DEBUG  = Emma.Debug.JS_DEBUG_BASE_CLASS;
 
 AppDebug.file("shared/base-class", MODULE, DEBUG);
 

@@ -5,12 +5,13 @@
 
 import { AppDebug }  from "../application/debug";
 import { flatten }   from "./arrays";
+import { Emma }      from "./assets";
 import { BaseClass } from "./base-class";
 import { isEmpty }   from "./definitions";
 
 
 const MODULE = "Queue";
-const DEBUG  = false;
+const DEBUG  = Emma.Debug.JS_DEBUG_QUEUE;
 
 AppDebug.file("shared/queue", MODULE, DEBUG);
 

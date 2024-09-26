@@ -2,13 +2,14 @@
 
 
 import { AppDebug }  from "../application/debug";
+import { Emma }      from "./assets";
 import { BaseClass } from "./base-class";
 import { selector }  from "./css";
 import { isMissing } from "./definitions";
 
 
 const MODULE = "Overlay";
-const DEBUG  = false;
+const DEBUG  = Emma.Debug.JS_DEBUG_OVERLAY;
 
 AppDebug.file("shared/overlay", MODULE, DEBUG);
 

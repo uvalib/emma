@@ -5,12 +5,13 @@
 
 import { AppDebug }                         from "../application/debug";
 import { appTeardown }                      from "../application/setup";
+import { Emma }                             from "./assets";
 import { camelCase }                        from "./strings";
 import { Consumer, createConsumer, logger } from "@rails/actioncable";
 
 
 const MODULE   = "WebSocket";
-const DEBUG    = true;
+const DEBUG    = Emma.Debug.JS_DEBUG_CABLE_CONSUMER;
 logger.enabled = DEBUG;
 
 AppDebug.file("shared/cable-consumer", MODULE, DEBUG);

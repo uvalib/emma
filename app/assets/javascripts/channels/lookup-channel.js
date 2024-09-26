@@ -2,6 +2,7 @@
 
 
 import { AppDebug }       from "../application/debug";
+import { Emma }           from "../shared/assets";
 import { CableChannel }   from "../shared/cable-channel";
 import { LookupRequest }  from "../shared/lookup-request";
 import { LookupResponse } from "../shared/lookup-response";
@@ -9,7 +10,7 @@ import { hexRand }        from "../shared/random";
 
 
 const CHANNEL = "LookupChannel";
-const DEBUG   = true;
+const DEBUG   = Emma.Debug.JS_DEBUG_CHANNEL_LOOKUP;
 
 AppDebug.file("channels/lookup-channel", CHANNEL, DEBUG);
 

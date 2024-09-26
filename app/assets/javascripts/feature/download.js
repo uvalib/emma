@@ -17,7 +17,7 @@ import { SECONDS, secondsSince }            from "../shared/time";
 
 
 const MODULE = "Download";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_DOWNLOAD;
 
 AppDebug.file("feature/download", MODULE, DEBUG);
 

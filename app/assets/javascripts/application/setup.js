@@ -7,13 +7,14 @@
 
 
 import { AppDebug }  from "./debug";
+import { Emma }      from "../shared/assets";
 import { BaseClass } from "../shared/base-class";
 import { isEmpty }   from "../shared/definitions";
 import { hasKey }    from "../shared/objects";
 
 
 const MODULE = "Setup";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_SETUP;
 
 AppDebug.file("application/setup", MODULE, DEBUG);
 

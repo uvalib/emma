@@ -42,7 +42,7 @@ import {
 
 
 const MODULE = "LookupModal";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_LOOKUP_MODAL;
 
 AppDebug.file("shared/lookup-modal", MODULE, DEBUG);
 

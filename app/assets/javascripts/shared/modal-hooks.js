@@ -2,13 +2,14 @@
 
 
 import { AppDebug }      from "../application/debug";
+import { Emma }          from "./assets";
 import { BaseClass }     from "./base-class";
 import { CallbackChain } from "./callbacks";
 import { isPresent }     from "./definitions";
 
 
 const MODULE = "ModalHooks";
-const DEBUG  = false;
+const DEBUG  = Emma.Debug.JS_DEBUG_MODAL_HOOKS;
 
 AppDebug.file("shared/modal-hooks", MODULE, DEBUG);
 

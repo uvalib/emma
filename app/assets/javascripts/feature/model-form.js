@@ -76,7 +76,7 @@ import {
 
 
 const MODULE = "ModelForm";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_MODEL_FORM;
 
 AppDebug.file("feature/model-form", MODULE, DEBUG);
 

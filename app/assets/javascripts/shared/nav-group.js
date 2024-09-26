@@ -43,7 +43,7 @@ import {
 
 
 const MODULE = "NavGroup";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_NAV_GROUP;
 
 AppDebug.file("shared/nav-group", MODULE, DEBUG);
 

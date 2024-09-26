@@ -16,7 +16,7 @@ import { secondsSince }                   from "../shared/time";
 
 
 const MODULE = "Images";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_IMAGES;
 
 AppDebug.file("feature/images", MODULE, DEBUG);
 

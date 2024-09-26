@@ -20,7 +20,7 @@ import {
 
 
 const MODULE = "Records";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_RECORDS;
 
 AppDebug.file("feature/records", MODULE, DEBUG);
 

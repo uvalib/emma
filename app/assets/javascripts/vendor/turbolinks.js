@@ -6,11 +6,12 @@
 
 
 import { AppDebug }      from "../application/debug";
+import { Emma }          from "../shared/assets";
 import { pageLoadType }  from "../shared/browser";
 import { documentEvent } from "../shared/events";
 
 
-const DEBUG = true;
+const DEBUG = Emma.Debug.JS_DEBUG_TURBOLINKS;
 
 AppDebug.file("vendor/turbolinks", undefined, DEBUG);
 

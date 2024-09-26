@@ -17,7 +17,7 @@ import { HEAVY_X }                           from "./unicode";
 
 
 const MODULE = "Flash";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_FLASH;
 
 AppDebug.file("shared/flash", MODULE, DEBUG);
 

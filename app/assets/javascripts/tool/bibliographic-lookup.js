@@ -41,7 +41,7 @@ import {
 
 
 const MODULE = "BibliographicLookup";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_BIB_LOOKUP;
 
 AppDebug.file("tool/bibliographic-lookup", MODULE, DEBUG);
 

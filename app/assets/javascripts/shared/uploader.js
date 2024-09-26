@@ -45,7 +45,7 @@ import {
 
 
 const MODULE = "BaseUploader";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_UPLOADER;
 
 AppDebug.file("shared/uploader", MODULE, DEBUG);
 

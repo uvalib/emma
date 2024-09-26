@@ -4,6 +4,7 @@
 import { AppDebug }           from "../application/debug";
 import { appSetup }           from "../application/setup";
 import { currentlyFocusable } from "../shared/accessibility";
+import { Emma }               from "../shared/assets";
 import { isInternetExplorer } from "../shared/browser";
 import { isPresent }          from "../shared/definitions";
 import { documentEvent }      from "../shared/events";
@@ -17,7 +18,7 @@ AppDebug.file(PATH);
 
 appSetup(PATH, function() {
 
-    const DEBUG = false;
+    const DEBUG = Emma.Debug.JS_DEBUG_SESSION;
 
     /**
      * @readonly

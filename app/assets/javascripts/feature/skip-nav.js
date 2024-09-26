@@ -3,13 +3,14 @@
 
 import { AppDebug }             from "../application/debug";
 import { appSetup }             from "../application/setup";
+import { Emma }                 from "../shared/assets";
 import { selector }             from "../shared/css";
 import { isMissing, isPresent } from "../shared/definitions";
 import { selfOrParent }         from "../shared/html";
 
 
 const MODULE = "SkipNav";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_SKIP_NAV;
 
 AppDebug.file("feature/skip-nav", MODULE, DEBUG);
 

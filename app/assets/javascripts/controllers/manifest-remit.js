@@ -61,7 +61,7 @@ import {
 
 
 const MODULE = "ManifestRemit";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_MANIFEST_REMIT;
 
 AppDebug.file("controllers/manifest-remit", MODULE, DEBUG);
 

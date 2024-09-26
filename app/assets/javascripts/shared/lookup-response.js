@@ -2,12 +2,13 @@
 
 
 import { AppDebug }        from "../application/debug";
+import { Emma }            from "./assets";
 import { ChannelResponse } from "./channel-response";
 import { deepFreeze }      from "./objects";
 
 
 const MODULE = "LookupResponse";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_LOOKUP_RESPONSE;
 
 AppDebug.file("shared/lookup-response", MODULE, DEBUG);
 

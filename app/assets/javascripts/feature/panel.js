@@ -9,7 +9,7 @@ import { isMissing, isPresent }   from "../shared/definitions";
 
 
 const MODULE = "Panel";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_PANEL;
 
 AppDebug.file("feature/panel", MODULE, DEBUG);
 

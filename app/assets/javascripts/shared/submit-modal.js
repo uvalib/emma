@@ -25,7 +25,7 @@ import {
 
 
 const MODULE = "SubmitModal";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_SUBMIT_MODAL;
 
 AppDebug.file("shared/submit-modal", MODULE, DEBUG);
 

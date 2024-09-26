@@ -4,6 +4,7 @@
 
 
 import { AppDebug }                           from "../application/debug";
+import { Emma }                               from "./assets";
 import { BaseClass }                          from "./base-class";
 import { selector }                           from "./css";
 import { keyCombo, keyFormat, modifiersOnly } from "./keyboard";
@@ -38,7 +39,7 @@ import {
 
 
 const MODULE = "Grids";
-const DEBUG  = true;
+const DEBUG  = Emma.Debug.JS_DEBUG_GRIDS;
 
 AppDebug.file("shared/grids", MODULE, DEBUG);
 

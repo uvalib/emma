@@ -5,13 +5,14 @@
 
 import { AppDebug }             from "../application/debug";
 import { appSetup }             from "../application/setup";
+import { Emma }                 from "../shared/assets";
 import { classesWithin }        from "../shared/css";
 import { isMissing, isPresent } from "../shared/definitions";
 import { dataAttributesWithin } from "../shared/html";
 
 
 const MODULE = "ClientDebug";
-const DEBUG  = false;
+const DEBUG  = Emma.Debug.JS_DEBUG_CLIENT_DEBUG;
 
 AppDebug.file("feature/client-debug", MODULE, DEBUG);
 
