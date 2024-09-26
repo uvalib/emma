@@ -17,7 +17,7 @@ module IaDownloadService::Properties
 
   public
 
-  # Configuration values from config/locales/service.en.yml
+  # Configuration values from "config/locales/service.en.yml".
   #
   # @type [Hash]
   #

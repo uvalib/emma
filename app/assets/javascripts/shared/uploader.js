@@ -947,7 +947,7 @@ class BaseUploader extends BaseClass {
      * @protected
      *
      * @see XHRUpload.createFormDataUpload
-     * @see  * @see file://${PROJ_DIR}/node_modules/@uppy/xhr-upload/src/index.ts "XHRUpload#uploadLocalFile"
+     * @see file://${PROJ_DIR}/node_modules/@uppy/xhr-upload/src/index.ts "XHRUpload#uploadLocalFile"
      */
     _forceCharset(file, charset = "utf-8") {
         const func = `_forceCharset(${charset})`;

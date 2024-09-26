@@ -123,8 +123,6 @@ class UploadDecorator < BaseDecorator
     #
     # @type [Hash{Symbol=>Hash}]
     #
-    # @see file:config/locales/controllers/upload.en.yml
-    #
     STATE_GROUP =
       Upload::WorkflowMethods::STATE_GROUP.transform_values do |entry|
         entry.map { |key, value|

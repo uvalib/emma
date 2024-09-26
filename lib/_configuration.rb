@@ -25,7 +25,14 @@ module Emma::Config
   #
   CONFIG_ROOT = 'emma'
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # All "en.emma.*" configuration values.
+  #
   class Data
 
     include Singleton

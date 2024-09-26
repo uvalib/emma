@@ -3,7 +3,7 @@
 # Manifest fields.
 #
 # NOTE: The order here defines the order for "display_fields: !ruby/symbol all"
-# in config/locales/controllers/manifest_item.en.yml
+# in "en.emma.page.manifest_item".
 
 en:
 

@@ -12,6 +12,7 @@ module Emma::Config
   CONFIG_ROOT: String
 
   # All "en.emma.*" configuration values.
+  #
   class Data
     include Singleton
 

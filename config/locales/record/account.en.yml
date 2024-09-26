@@ -3,7 +3,7 @@
 # User account fields.
 #
 # NOTE: The order here defines the order for "display_fields: !ruby/symbol all"
-# in config/locales/controllers/account.en.yml
+# in "en.emma.page.account".
 #
 # MIN MAX INTERPRETATION
 # --- --- ---------------------------------------------------------------------

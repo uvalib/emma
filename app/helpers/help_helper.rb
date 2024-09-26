@@ -411,8 +411,6 @@ module HelpHelper
   # @return [ActiveSupport::SafeBuffer]   Help contents element.
   # @return [nil]                         No content and *wrap* is *false*.
   #
-  # @see config/locales/controllers/help.en.yml
-  #
   def help_container(item: nil, wrap: true, css: '.help-container', **opt)
     topic     = help_topic(item || request_parameters[:id])
     partial   = "help/topic/#{topic}"
@@ -637,7 +635,7 @@ module HelpHelper
     end
   end
 
-  # Render a numbered list container with entries from "emma.help.video".
+  # Render a numbered list container with entries from "en.emma.help.video".
   #
   # @param [String] css             Characteristic CSS class/selector.
   # @param [Hash]   opt             Passed to the outer list container.

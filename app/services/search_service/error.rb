@@ -37,7 +37,7 @@ class SearchService::Error < ApiService::Error
 
     public
 
-    # Name of the service and key into config/locales/error.en.yml.
+    # Name of the service and key into "config/locales/error.en.yml".
     #
     # @return [Symbol]
     #

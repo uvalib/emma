@@ -24,7 +24,7 @@ class IaDownloadService::Error < ApiService::Error
 
     include HtmlHelper
 
-    # Name of the service and key into config/locales/error.en.yml.
+    # Name of the service and key into "config/locales/error.en.yml".
     #
     # @return [Symbol]
     #

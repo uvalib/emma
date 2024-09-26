@@ -10,7 +10,7 @@
 #   - Run "yarn install" to update package(s).
 #
 # * For now, the script just emits the replacement YAML to stdout so that they
-# can be manually copied and pasted into config/locales/en.yml.
+# can be manually copied and pasted into "config/locales/en.yml".
 #
 # frozen_string_literal: true
 # warn_indent:           true

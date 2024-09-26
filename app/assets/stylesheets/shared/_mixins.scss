@@ -137,7 +137,7 @@
 /// Hide the contents of the element while maintaining the space it occupies on
 /// the display.
 ///
-/// @param {Boolean} $force           If true, add "!important".
+/// @param {Boolean} $force           If true then add "!important".
 ///
 @mixin invisible($force: false) {
     $important: if($force, "!important", "");
@@ -149,7 +149,7 @@
 
 /// Hide the contents of the element while maintaining horizontal displacement.
 ///
-/// @param {Boolean} $force           If true, add "!important".
+/// @param {Boolean} $force           If true then add "!important".
 ///
 @mixin invisible-height($force: false) {
     $important: if($force, "!important", "");
@@ -168,7 +168,7 @@
 
 /// Hide the contents of the element while maintaining vertical displacement.
 ///
-/// @param {Boolean} $force           If true, add "!important".
+/// @param {Boolean} $force           If true then add "!important".
 ///
 @mixin invisible-width($force: false) {
     $important: if($force, "!important", "");

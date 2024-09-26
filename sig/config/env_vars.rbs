@@ -200,7 +200,7 @@ CONSOLE_OUTPUT: bool
 
 # Control TRACE_* activation.
 #
-# By default, the TRACE_* constants only active for when the code is being run
+# By default, the TRACE_* constants are only active when the code is being run
 # as a Rails application (i.e., not for "rake", "rails console", etc.).
 #
 TRACE_OUTPUT: bool
@@ -210,7 +210,6 @@ TRACE_OUTPUT: bool
 # During normal operation this should be set to *false*.  Change the default
 # value here or override dynamically with the environment variable.
 #
-# @see #TRACE_OUTPUT
 # @see #__loading
 #
 TRACE_LOADING: bool
@@ -220,7 +219,6 @@ TRACE_LOADING: bool
 # During normal operation this should be set to *false*.  Change the default
 # value here or override dynamically with the environment variable.
 #
-# @see #TRACE_OUTPUT
 # @see #__included
 #
 TRACE_CONCERNS: bool
@@ -230,7 +228,6 @@ TRACE_CONCERNS: bool
 # During normal operation this should be set to *false*.  Change the default
 # value here or override dynamically with the environment variable.
 #
-# @see #TRACE_OUTPUT
 # @see #NOTIFICATIONS
 #
 TRACE_NOTIFICATIONS: bool

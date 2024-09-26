@@ -25,7 +25,7 @@ module AwsS3Service::Status
   #
   # @type [Hash{Symbol=>any}]
   #
-  SAMPLE_RECORD_ID_ACCESS= {
+  SAMPLE_RECORD_ID_ACCESS = {
     ids:      'emma-2931211-pdf',
     expected: ->(result) { result.records.size == 1 }
   }.freeze

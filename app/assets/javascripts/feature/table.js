@@ -621,7 +621,7 @@ appSetup(MODULE, function() {
      * Get the cumulative sorting parameters set by all column headers.
      *
      * @param {Selector} target
-     * @param {boolean}  [none]       If true then "none" sorts are reported.
+     * @param {boolean}  [none]       If *true* then "none" sorts are reported.
      *
      * @returns {SortParameters}
      */

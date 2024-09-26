@@ -353,6 +353,16 @@ class AppSettings < AppGlobal
 
     include Emma::Common
 
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Create a new instance with values acquired for the named keys.
+    #
+    # @param [Array] keys
+    #
     def initialize(keys)
       if keys.is_a?(Hash)
         super
@@ -360,6 +370,10 @@ class AppSettings < AppGlobal
         keys.each { acquire_value(_1) }
       end
     end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
 
     protected
 
@@ -405,6 +419,10 @@ class AppSettings < AppGlobal
       }
       [mods[k], Object].compact.find { _1.const_defined?(k) }
     end
+
+    # =========================================================================
+    # :section: Class methods
+    # =========================================================================
 
     protected
 

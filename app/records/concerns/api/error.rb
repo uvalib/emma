@@ -159,7 +159,7 @@ class Api::Error < ExecError
 
     public
 
-    # Name of the service and key into config/locales/error.en.yml.
+    # Name of the service and key into "config/locales/error.en.yml".
     #
     # @return [Symbol, nil]
     #
@@ -172,7 +172,7 @@ class Api::Error < ExecError
         end
     end
 
-    # Name of the error and subkey into config/locales/error.en.yml.
+    # Name of the error and subkey into "config/locales/error.en.yml".
     #
     # @return [Symbol, nil]
     #

@@ -402,7 +402,7 @@ function select2Language() {
  * @returns {Object.<string,function:string>}
  *
  * @see https://select2.org/i18n
- * @see file:node_modules/select2/src/js/select2/i18n/en.js
+ * @see file://${PROJ_DIR}/node_modules/select2/src/js/select2/i18n/en.js
  */
 function generateSelect2Language() {
     const text = {

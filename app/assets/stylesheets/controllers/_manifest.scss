@@ -661,7 +661,7 @@ body.manifest.remit:not(.select) {
 
         @include table.grid-table($max-columns: 1);
 
-        // If true limit the list to a scrollable list that fits in the
+        // If true then limit the list to a scrollable list that fits in the
         // viewport; otherwise, the entire list is displayed and scrolling is
         // delegated to the page itself.
 

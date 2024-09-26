@@ -235,8 +235,7 @@ module Model
       all_fields[field] = Field.normalize(prop, field).merge!(synthetic: true)
     end
 
-    # Apply adjustments from config/locales/controllers/*.yml then finalize
-    # the generic entries.
+    # Apply adjustments from "en.emma.page" then finalize the generic entries.
     display_config!(all_fields, model_config[:display_fields])
     all_fields.transform_values! { Field.finalize!(_1) }
 

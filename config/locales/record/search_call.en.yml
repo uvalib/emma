@@ -3,7 +3,7 @@
 # Search call model fields.
 #
 # NOTE: The order here defines the order for "display_fields: !ruby/symbol all"
-# in config/locales/controllers/search_call.en.yml
+# in "en.emma.page.search_call".
 #
 # MIN MAX INTERPRETATION
 # --- --- ---------------------------------------------------------------------

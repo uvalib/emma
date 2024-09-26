@@ -30,6 +30,9 @@ module SearchConcern
   #
   def search_api: () -> SearchService
 
+  # Indicate whether search results scoring is displayed when debugging.
+  #
+  # @type [Boolean]
   # @private
   GENERATE_SCORES: bool
 

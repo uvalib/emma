@@ -26,13 +26,13 @@ BUILD_VERSION =
   Dir['buildtag.*'].map { _1.to_s.sub(/^.*buildtag\./, '') }.join(',')
     .tap { _1.replace('unknown') if _1.empty? }.freeze
 
-# For use by the application in desktop (non-deployed) testing.
+# The base URL for the production system deployment.
 #
 # @type [String]
 #
 PRODUCTION_BASE_URL = 'https://emma.lib.virginia.edu'
 
-# For use by the application in desktop (non-deployed) testing.
+# The base URL for the staging system deployment.
 #
 # @type [String]
 #

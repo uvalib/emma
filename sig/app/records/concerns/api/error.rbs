@@ -61,7 +61,7 @@ class Api::Error < ExecError
   module Methods
     include ExecError::Methods
 
-    # Name of the service and key into config/locales/error.en.yml.
+    # Name of the service and key into "config/locales/error.en.yml".
     #
     # @return [Symbol, nil]
     #
@@ -69,7 +69,7 @@ class Api::Error < ExecError
 
     @service: Symbol | nil
 
-    # Name of the error and subkey into config/locales/error.en.yml.
+    # Name of the error and subkey into "config/locales/error.en.yml".
     #
     # @return [Symbol, nil]
     #

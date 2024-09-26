@@ -47,6 +47,9 @@ module SearchConcern
 
   public
 
+  # Indicate whether search results scoring is displayed when debugging.
+  #
+  # @type [Boolean]
   # @private
   GENERATE_SCORES = false
 

@@ -253,11 +253,7 @@ module UploadWorkflow::Properties
 
   # Default size for batching.
   #
-  # If *false* or *nil* then no batching will occur.
-  #
-  # @type [Integer, FalseClass, nil]
-  #
-  # @see #BATCH_SIZE
+  # @type [Integer]
   #
   BATCH_SIZE_DEFAULT = 10
 
@@ -280,9 +276,6 @@ module UploadWorkflow::Properties
   #
   # @type [Integer]
   #
-  #--
-  # noinspection RubyMismatchedConstantType
-  #++
   BATCH_SIZE = [
     ENV['BATCH_SIZE']&.to_i,
     BATCH_SIZE_DEFAULT,

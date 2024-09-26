@@ -97,7 +97,11 @@ class AppSettings < AppGlobal
   class Values
     include Emma::Common
 
-    def initialize: (anyHash|Array[Symbol|String|nil] keys) -> void
+    # Create a new instance with values acquired for the named keys.
+    #
+    # @param [Array] keys
+    #
+    def initialize: (Array[Symbol|String|nil]|anyHash keys) -> void
 
     # Set the value at index *k* from either the associated `ENV` variable or
     # an associated constant.

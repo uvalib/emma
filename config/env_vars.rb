@@ -407,7 +407,7 @@ CONSOLE_OUTPUT = live_rails_application? || CONSOLE_DEBUGGING
 
 # Control TRACE_* activation.
 #
-# By default, the TRACE_* constants only active for when the code is being run
+# By default, the TRACE_* constants are only active when the code is being run
 # as a Rails application (i.e., not for "rake", "rails console", etc.).
 #
 TRACE_OUTPUT = live_rails_application? || true?(ENV['TRACE_RAKE'])
@@ -417,7 +417,6 @@ TRACE_OUTPUT = live_rails_application? || true?(ENV['TRACE_RAKE'])
 # During normal operation this should be set to *false*.  Change the default
 # value here or override dynamically with the environment variable.
 #
-# @see #TRACE_OUTPUT
 # @see #__loading
 #
 TRACE_LOADING = TRACE_OUTPUT && true?(ENV['TRACE_LOADING'])
@@ -427,7 +426,6 @@ TRACE_LOADING = TRACE_OUTPUT && true?(ENV['TRACE_LOADING'])
 # During normal operation this should be set to *false*.  Change the default
 # value here or override dynamically with the environment variable.
 #
-# @see #TRACE_OUTPUT
 # @see #__included
 #
 TRACE_CONCERNS = TRACE_OUTPUT && true?(ENV['TRACE_CONCERNS'])
@@ -437,7 +435,6 @@ TRACE_CONCERNS = TRACE_OUTPUT && true?(ENV['TRACE_CONCERNS'])
 # During normal operation this should be set to *false*.  Change the default
 # value here or override dynamically with the environment variable.
 #
-# @see #TRACE_OUTPUT
 # @see #NOTIFICATIONS
 #
 TRACE_NOTIFICATIONS = TRACE_OUTPUT && true?(ENV['TRACE_NOTIFICATIONS'])

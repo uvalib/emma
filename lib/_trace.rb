@@ -58,7 +58,7 @@ end
 
 public
 
-# If true, log output is going to $stdout rather than a file.
+# If *true*, log output is going to $stdout rather than a file.
 #
 # @type [Boolean]
 #

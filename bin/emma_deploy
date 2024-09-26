@@ -11,10 +11,6 @@
 #
 # This script updates $DEPLOY_TAG based on the currently-deployed staging
 # version.
-#
-# NOTE: Staging services are turned off between 11 PM and 6 AM.
-# That means that this script will not work during that time period because
-# the staging service will not be able to report the latest build version.
 :
 #==============================================================================
 # Constants

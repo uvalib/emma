@@ -22,7 +22,7 @@ class IngestService::Error < ApiService::Error
   module ClassType
     include ApiService::Error::ClassType
 
-    # Name of the service and key into config/locales/error.en.yml.
+    # Name of the service and key into "config/locales/error.en.yml".
     #
     # @return [Symbol]
     #

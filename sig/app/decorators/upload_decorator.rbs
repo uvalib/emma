@@ -44,8 +44,6 @@ class UploadDecorator < BaseDecorator
     #
     # @type [Hash{Symbol=>Hash}]
     #
-    # @see file:config/locales/controllers/upload.en.yml
-    #
     STATE_GROUP: symHash
 
     # CSS class for the state selection panel.

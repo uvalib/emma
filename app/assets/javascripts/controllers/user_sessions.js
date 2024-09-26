@@ -30,7 +30,7 @@ appSetup(PATH, function() {
      * @readonly
      * @type {string}
      *
-     * @see file:app/assets/stylesheets/controllers/_user_sessions.scss .sign-in-form.inline.obscured
+     * @see file:stylesheets/controllers/_user_sessions.scss .sign-in-form.inline.obscured
      */
     const INVISIBLE_MARKER = "obscured";
 

@@ -102,11 +102,7 @@ module Record::Properties
 
   # Default size for batching.
   #
-  # If *false* or *nil* then no batching will occur.
-  #
-  # @type [Integer, FalseClass, nil]
-  #
-  # @see #BATCH_SIZE
+  # @type [Integer]
   #
   BATCH_SIZE_DEFAULT: Integer
 

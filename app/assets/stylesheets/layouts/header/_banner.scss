@@ -129,7 +129,7 @@
 
         a {
             text-decoration: underline;
-            pointer-events: auto;
+            pointer-events:  auto;
         }
 
         .title {
@@ -146,18 +146,18 @@
     // the display regardless of the width of the display.
     .control-area {
 
-        flex-wrap:         wrap;
-        justify-content:   end;
-        align-content:     center;
+        flex-wrap:          wrap;
+        justify-content:    end;
+        align-content:      center;
 
         @media #{$wide-screen} {
-            max-width:     50%;
-            flex:          0 1 50%;
+            max-width:      50%;
+            flex:           0 1 50%;
         }
 
         @media #{$medium-width} {
-            max-width:     33%;
-            flex:          0 1 33%;
+            max-width:      33%;
+            flex:           0 1 33%;
         }
 
         @media #{$narrow-screen} {
