@@ -33,7 +33,7 @@ body.tool.index {
             }
 
             .notice {
-                color: $uva-emergency-red;
+                color: $alert-fg;
             }
         }
     }
@@ -196,7 +196,7 @@ body.tool.md {
             padding:            0.5rem;
             white-space:        pre-wrap;
             overflow:           auto;
-            border:             2px solid $uva-accent-green;
+            border:             2px solid $uva-green;
             border-radius:      0.25rem;
 
             @media #{$wide-screen} {
@@ -284,7 +284,7 @@ body.tool.md {
 
         margin-top:  5rem;
         font-weight: bold;
-        color:       $uva-emergency-red;
+        color:       $error-fg;
 
         @mixin error-margins($h-value) {
             margin-top:    $h-value * 1.5;
@@ -516,11 +516,11 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
                 }
 
                 &.late {
-                    background-color: lighter($uva-accent-green, 75%);
+                    background-color: lighter($uva-green, 75%);
                 }
 
                 &.done {
-                    background-color: lighter($uva-accent-green, 50%);
+                    background-color: lighter($uva-green, 50%);
                 }
 
                 &.empty {
@@ -536,7 +536,7 @@ $lookup-accent-fg: lighter($uva-accent-blue, 50%);
             flex:        0 1 50%;
 
             &.tooltip {
-                color: lighter($uva-accent-magenta, 25%);
+                color: lighter($uva-magenta, 25%);
             }
         }
     }

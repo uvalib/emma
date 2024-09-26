@@ -227,7 +227,7 @@ table.manifest_item-grid {
     $grid-border:     $table-border;
     $grid-head-bg:    $table-header-bg;
     $controls-bg:     $grid-head-bg;
-    $enum-fg:         $uva-text-blue;
+    $enum-fg:         $uva-blue;
 
     $max-row-height:  40vh;
     $max-cell-height: 25vh;
@@ -637,7 +637,7 @@ table.manifest_item-grid {
 
                     .required {
                         font-size:   x-large;
-                        color:       $uva-emergency-red;
+                        color:       $alert-fg;
                         text-shadow: 0 0 1px white;
                         cursor:      default;
                     }
@@ -918,7 +918,7 @@ table.manifest_item-grid {
                                 border-radius:  1px;
                                 box-shadow:
                                     0 0 0 2px $controls-bg,
-                                    0 0 0 4px $uva-emergency-red;
+                                    0 0 0 4px $alert-fg;
                             }
                         }
                     }
@@ -1344,7 +1344,7 @@ table.manifest_item-grid {
                     }
                     > .from-data { // TODO: not yet handled.
                         color:      white;
-                        background: $uva-emergency-red;
+                        background: $error-fg;
                     }
 
                     //=========================================================
@@ -1442,11 +1442,11 @@ table.manifest_item-grid {
                 }
 
                 &.changed {
-                    @include inset-outline($uva-accent-yellow);
+                    @include inset-outline($uva-yellow);
                 }
 
                 &.error {
-                    @include inset-outline($uva-emergency-red);
+                    @include inset-outline($error-fg);
                 }
             }
 
@@ -1603,11 +1603,11 @@ table.manifest_item-grid {
                     }
 
                     &.changed {
-                        @include inset-outline($uva-accent-yellow);
+                        @include inset-outline($uva-yellow);
                     }
 
                     &.error {
-                        @include inset-outline($uva-emergency-red);
+                        @include inset-outline($error-fg);
                     }
                 }
             }
@@ -1623,7 +1623,7 @@ table.manifest_item-grid {
 
                 @mixin bad-item {
                     text-decoration: line-through;
-                    color:           $uva-emergency-red;
+                    color:           $error-fg;
                 }
 
                 > .value {
@@ -1773,7 +1773,7 @@ table.manifest_item-grid {
 
                     &:hover {
 
-                        background: lighter($uva-emergency-red, 90%);
+                        background: $error-bg;
 
                         > .value {
                             text-shadow: none;

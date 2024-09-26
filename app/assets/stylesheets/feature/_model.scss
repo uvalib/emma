@@ -168,7 +168,7 @@
 
                 &:focus {
                     outline-offset:     -0.05rem;
-                    outline-color:      darker($uva-accent-teal, 30%);
+                    outline-color:      darker($uva-teal, 30%);
                 }
             }
         }
@@ -286,7 +286,7 @@ $item-padding:      0.5rem;
     overflow-x:         auto;
     border:             2px solid $fg-color;
     border-radius:      0.5rem;
-    background:         lighter($uva-accent-yellow, 95%);
+    background:         lighter($uva-yellow, 95%);
 
     // Special-case listing when no records are found.
     &.empty {

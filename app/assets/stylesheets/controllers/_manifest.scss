@@ -358,7 +358,7 @@ body.manifest.edit:not(.select) {
             margin:      auto 1rem;
             font-weight: bold;
             font-size:   larger;
-            color:       $uva-emergency-red;
+            color:       $alert-fg;
 
             $statuses:   offline, dynamic; // ManifestDecorator::STATUS_MESSAGE
 
@@ -561,7 +561,7 @@ body.manifest.remit:not(.select) {
 
                 font-weight:    bold;
                 font-size:      large;
-                color:          $uva-text-blue;
+                color:          $uva-blue;
 
                 @media #{$wide-screen} {
                     min-width:  3vw;
@@ -883,7 +883,7 @@ body.manifest.remit:not(.select) {
 
                 @mixin neutral {
                     @include colors($fg-light, $bg-clear);
-                    @include outline($uva-emergency-red);
+                    @include outline($alert-fg);
                 }
 
                 @mixin started {
@@ -891,13 +891,13 @@ body.manifest.remit:not(.select) {
                 }
 
                 @mixin stopped {
-                    @include colors($fg-dark, $uva-accent-yellow);
-                    @include outline($uva-emergency-red);
-                    @include add-edit-contrast(darker($uva-accent-teal, 35%));
+                    @include colors($fg-dark, $uva-yellow);
+                    @include outline($alert-fg);
+                    @include add-edit-contrast(darker($uva-teal, 35%));
                 }
 
                 @mixin failure {
-                    @include colors($fg-clear, $uva-accent-magenta);
+                    @include colors($fg-clear, $uva-magenta);
                     @include outline;
                     @include add-edit-contrast;
                     @include add-text-contrast;

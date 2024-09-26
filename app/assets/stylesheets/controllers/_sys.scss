@@ -75,7 +75,7 @@ body.sys {
 
     .error,
     .invalid {
-        color:       $uva-emergency-red;
+        color:       $error-fg;
         font-weight: bold;
     }
 

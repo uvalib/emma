@@ -64,7 +64,7 @@
 
     &:not(.disabled):not(.forbidden):hover {
         background-color: v.$uva-accent-orange;
-        border-color:     v.$uppy-file-input;
+        border-color:     v.$control-accent;
         color:            v.$rev-fg-color;
     }
 
@@ -82,7 +82,7 @@
     & {
         font-size:     large;
         background:    f.lighter(v.$button-accent, 90%);
-        border:        1px solid v.$uppy-file-input;
+        border:        1px solid v.$control-accent;
         border-radius: 0.25rem;
     }
 }

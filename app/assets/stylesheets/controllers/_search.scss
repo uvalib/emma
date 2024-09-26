@@ -49,8 +49,8 @@ $sticky-top-narrow: 3.125rem;
 
 // Background color for the title (the fixed portion) of collapsible entries.
 
-$title-bg:    lighter($uva-accent-teal, 92.5%);
-$title-focus: darker( $uva-accent-teal, 27.5%);
+$title-bg:    lighter($uva-teal, 92.5%);
+$title-focus: darker( $uva-teal, 27.5%);
 
 //=============================================================================
 // Internal mixins
