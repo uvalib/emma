@@ -11,7 +11,6 @@ module HealthConcern
 
   extend ActiveSupport::Concern
 
-  include Emma::Config
   include Emma::TimeMethods
   include Emma::Debug
 

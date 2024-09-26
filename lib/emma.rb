@@ -161,6 +161,8 @@ end
 # =============================================================================
 
 require '_system'
+require '_configuration'
+require '_constants'
 require '_loader'
 require 'ext/active_support/ext'
 require_submodules(__FILE__)

@@ -7,7 +7,6 @@ __loading_begin(__FILE__)
 
 class EnrollmentMailer < ApplicationMailer
 
-  include Emma::Config
   include Emma::Project
 
   include ActionView::Helpers::UrlHelper

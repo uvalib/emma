@@ -120,10 +120,10 @@ module ConfigurationHelper
   #   * "en.emma.item2.property"
   #
   # === Implementation Notes
-  # Ideally, this method should be moved into Emma::Config, however, because it
-  # takes a very different approach to constructing the list of YAML path(s) to
-  # check, the functionality is not easily merged into the existing methods in
-  # that module.
+  # Ideally, this method should be moved into ::Configuration, however, because
+  # it takes a very different approach to constructing the list of YAML path(s)
+  # to check, the functionality is not easily merged into the existing methods
+  # in that module.
   #
   def config_lookup(
     *path,

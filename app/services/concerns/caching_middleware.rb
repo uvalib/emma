@@ -8,6 +8,7 @@ __loading_begin(__FILE__)
 require 'active_support/concern'
 require 'faraday'
 require 'faraday/retry'
+require 'tmpdir'
 
 module CachingMiddleware
 

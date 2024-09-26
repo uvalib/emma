@@ -1,6 +1,4 @@
 class AccountMailer < ApplicationMailer
-  include Emma::Config
-
   include Emma::Project
 
   include EmmaHelper

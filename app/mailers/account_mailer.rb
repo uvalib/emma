@@ -7,7 +7,6 @@ __loading_begin(__FILE__)
 
 class AccountMailer < ApplicationMailer
 
-  include Emma::Config
   include Emma::Project
 
   include EmmaHelper

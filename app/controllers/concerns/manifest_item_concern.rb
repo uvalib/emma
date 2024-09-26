@@ -20,7 +20,6 @@ module ManifestItemConcern
 
   extend ActiveSupport::Concern
 
-  include Emma::Config
   include Emma::Common
   include Emma::Json
 

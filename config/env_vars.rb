@@ -3,11 +3,13 @@
 # frozen_string_literal: true
 # warn_indent:           true
 #
-# Set key environment variables and global properties.
+# Set key environment variables and global properties which must be available
+# during the boot sequence.
+#
+# For all other global constants:
+# @see lib/_constants.rb
 
 require_relative 'boot'
-require 'tmpdir'
-require 'uri'
 
 # =============================================================================
 # Remove blank environment variables
@@ -22,6 +24,8 @@ end
 # =============================================================================
 # Configuration values for desktop-only deployments
 # =============================================================================
+
+in_rails = rails_application?
 
 config =
   unless ENV['DEPLOYMENT']
@@ -38,17 +42,14 @@ config =
   end
 
 if config && require(config)
-  $stderr.puts("DESKTOP ENVIRONMENT #{config.inspect}") if rails_application?
+  $stderr.puts("DESKTOP ENVIRONMENT #{config.inspect}") if in_rails
 end
 
 # =============================================================================
 # Database properties
 # =============================================================================
 
-db_needed   = rails_application?
-db_needed ||= rake_task? && $*.any? { _1 =~ /^(db|emma|emma_data):/ }
-
-if db_needed
+if in_rails || (rake_task? && $*.any? { _1 =~ /^(db|emma|emma_data):/ })
 
   if ENV['DBHOST'] && ENV['DBPORT'] && ENV['DBUSER'] && ENV['DBPASSWD']
 
@@ -110,6 +111,12 @@ end
 # Operational properties
 # =============================================================================
 
+# Serve files from the "/public" folder if *true*.
+#
+# @type [Boolean]
+#
+RAILS_SERVE_STATIC_FILES = !false?(ENV['RAILS_SERVE_STATIC_FILES'])
+
 # Cache directory for the current execution environment.
 #
 # @note Currently this does not affect precompiled assets (tmp/cache/assets)
@@ -129,212 +136,6 @@ CACHE_DIR =
       end
     }.freeze
 
-# =============================================================================
-# Authorization properties
-# =============================================================================
-
-# Indicate whether Shibboleth authorization is in use.
-#
-# @type [Boolean]
-#
-SHIBBOLETH = !false?(ENV['SHIBBOLETH'])
-
-# OmniAuth providers for Devise.
-#
-# @type [Array<Symbol>]
-#
-AUTH_PROVIDERS = [
-  (:shibboleth if SHIBBOLETH),
-].compact.freeze
-
-if sanity_check?
-  Log.warn('No AUTH_PROVIDERS (including SHIBBOLETH)') if AUTH_PROVIDERS.empty?
-end
-
-# A special conditional for supporting test sign in.
-#
-# @type [Symbol, nil]
-#
-SIGN_IN_AS = (:sign_in_as if ENV['RAILS_ENV'] == 'test')
-
-# =============================================================================
-# Mailer properties
-# =============================================================================
-
-MAILER_SENDER = ENV.fetch('MAILER_SENDER', 'emmahelp@virginia.edu').freeze
-
-MAILER_URL_HOST =
-  case
-    when production_deployment? then URI.parse(PRODUCTION_BASE_URL).host.freeze
-    when staging_deployment?    then URI.parse(STAGING_BASE_URL).host.freeze
-    else                             'localhost'
-  end
-
-# =============================================================================
-# EMMA Unified Ingest API properties
-# =============================================================================
-
-# EMMA Unified Ingest API key.
-#
-# This does not have a default and *must* be provided through the environment.
-#
-# @type [String, nil]
-#
-INGEST_API_KEY = ENV.fetch('INGEST_API_KEY', nil).freeze
-
-# Current EMMA Unified Ingest API version.
-#
-# This is informational only; Ingest API URLs do not include it.
-#
-# @type [String]
-#
-# @see EmmaStatus#api_version
-#
-INGEST_API_VERSION = ENV.fetch('INGEST_API_VERSION', '0.0.5').freeze
-
-# =============================================================================
-# EMMA Unified Search API properties
-# =============================================================================
-
-# Current EMMA Unified Search API version.
-#
-# This is informational only; Search API URLs do not include it.
-#
-# @type [String]
-#
-SEARCH_API_VERSION = ENV.fetch('SEARCH_API_VERSION', INGEST_API_VERSION).freeze
-
-# =============================================================================
-# Internet Archive access
-# =============================================================================
-
-# IA S3 access key generated when logged in as Internet Archive user
-# "emma_pull@archive.org".
-#
-# @type [String, nil]
-#
-# @see IaDownloadConcern#IA_AUTH
-#
-IA_ACCESS = ENV.fetch('IA_ACCESS', nil).freeze
-
-# IA S3 secret generated when logged in as Internet Archive user
-# "emma_pull@archive.org".
-#
-# @type [String, nil]
-#
-# @see IaDownloadConcern#IA_AUTH
-#
-IA_SECRET = ENV.fetch('IA_SECRET', nil).freeze
-
-# IA server cookie for generation of "on-the-fly" content as Internet Archive
-# user "emma_pull@archive.org".
-#
-# @type [String, nil]
-#
-# @see IaDownloadConcern#IA_COOKIES
-#
-IA_USER_COOKIE = ENV.fetch('IA_USER_COOKIE', nil).freeze
-
-# IA server cookie for generation of "on-the-fly" content as Internet Archive
-# user "emma_pull@archive.org".
-#
-# @type [String, nil]
-#
-# @see IaDownloadConcern#IA_COOKIES
-#
-IA_SIG_COOKIE = ENV.fetch('IA_SIG_COOKIE', nil).freeze
-
-# Internet Archive "Printdisabled Unencrypted Ebook API" endpoint.
-#
-# @type [String]
-#
-IA_DOWNLOAD_API_URL =
-  ENV.fetch('IA_DOWNLOAD_API_URL', 'https://archive.org/services/printdisabled/fetch_or_make_ebook.php')
-    .strip
-    .sub(%r{^(http:)?//}, 'https://')
-    .sub(%r{/+$}, '')
-    .freeze
-
-# =============================================================================
-# Amazon Web Services
-# =============================================================================
-
-# Amazon AWS region.
-#
-# This should be supplied by the UVA cloud infrastructure on startup or from
-# `Rails.application.credentials.s3`.
-#
-# @type [String]
-#
-AWS_REGION = ENV.fetch('AWS_REGION', 'us-east-1').freeze
-
-# Amazon S3 storage.
-#
-# Defined in the "terraform-infrastructure" GitLab project in the files
-# "emma.lib.virginia.edu/ecs-tasks/staging/environment.vars" and
-# "emma.lib.virginia.edu/ecs-tasks/production/environment.vars".
-#
-# @type [String]
-#
-AWS_BUCKET =
-  ENV.fetch('AWS_BUCKET') { "emma-storage-#{aws_deployment}" }.freeze
-
-# Amazon identity access key.
-#
-# This should be supplied by the UVA cloud infrastructure on startup or from
-# `Rails.application.credentials.s3`.
-#
-# @type [String, nil]
-#
-AWS_ACCESS_KEY_ID = ENV.fetch('AWS_ACCESS_KEY_ID', nil).freeze
-
-# Amazon identity secret.
-#
-# This should be supplied by the UVA cloud infrastructure on startup or from
-# `Rails.application.credentials.s3`.
-#
-# @type [String, nil]
-#
-AWS_SECRET_KEY = ENV.fetch('AWS_SECRET_KEY', nil).freeze
-
-# Amazon AWS region for BiblioVault collections.
-#
-# This should be supplied by the UVA cloud infrastructure on startup or from
-# `Rails.application.credentials.bibliovault`.
-#
-# @type [String]
-#
-BV_REGION = ENV.fetch('BV_REGION', 'us-east-1').freeze
-
-# Amazon S3 storage for BiblioVault collections.
-#
-# @type [String]
-#
-BV_BUCKET =
-  ENV.fetch('BV_BUCKET') { "bibliovault-transfer-#{aws_deployment}" }.freeze
-
-# Amazon identity access key for BiblioVault collections.
-#
-# This should be supplied by the UVA cloud infrastructure on startup or from
-# `Rails.application.credentials.bibliovault`.
-#
-# @type [String, nil]
-#
-BV_ACCESS_KEY_ID = ENV.fetch('BV_ACCESS_KEY_ID', nil).freeze
-
-# Amazon identity secret for BiblioVault collections.
-#
-# This should be supplied by the UVA cloud infrastructure on startup or from
-# `Rails.application.credentials.bibliovault`.
-#
-# @type [String, nil]
-#
-BV_SECRET_KEY = ENV.fetch('BV_SECRET_KEY', nil).freeze
-
-# =============================================================================
-# Job scheduler properties
-# =============================================================================
-
 # The value of RAILS_MAX_THREADS is adjusted here so that the additional
 # requirements of ActionCable and the scheduler are taken into account before
 # either config/database.yml or config/puma.rb are processed.
@@ -352,41 +153,6 @@ ENV['RAILS_MAX_THREADS'] = [
   (ENV['GOOD_JOB_MAX_THREADS'] || 5),
   1, # When using the postgresql adapter in config/cable.yml.
 ].map!(&:to_i).sum.to_s
-
-# =============================================================================
-# Logging
-# =============================================================================
-
-# Indicate whether the 'silencer' gem is enabled.
-#
-# Currently, attempting to replace system loggers (via Log#replace) ends up
-# defeating the ability of the 'silencer' gem to eliminate *all* log entries
-# for the endpoints on which it operates.
-#
-# @type [bool]
-#
-LOG_SILENCER = !false?(ENV['LOG_SILENCER'])
-
-# Application endpoints which are intended to leave no footprint in the log.
-#
-# @type [Array<String,Regexp>]
-#
-#--
-# noinspection RubyMismatchedArgumentType
-#++
-LOG_SILENCER_ENDPOINTS =
-  if (endpoints = ENV['LOG_SILENCER_ENDPOINTS'])
-    endpoints = endpoints.join("\n") if endpoints.is_a?(Array)
-    endpoints = endpoints.to_s.split(/[|\t\n]/).map!(&:strip).compact_blank!
-    endpoints.map! { _1.start_with?('/') ? _1 : "/#{_1}" }
-  else
-    endpoints = %w[/healthcheck /health/check]
-    endpoints << %r{^/artifact}
-    endpoints << %r{^/bs_api}
-    endpoints << %r{^/periodical}
-    endpoints << %r{^/title}
-    endpoints << %r{^/v2}
-  end.map(&:freeze).freeze
 
 # =============================================================================
 # Output
@@ -439,150 +205,3 @@ TRACE_CONCERNS = TRACE_OUTPUT && true?(ENV['TRACE_CONCERNS'])
 # @see #NOTIFICATIONS
 #
 TRACE_NOTIFICATIONS = TRACE_OUTPUT && true?(ENV['TRACE_NOTIFICATIONS'])
-
-# =============================================================================
-# Debugging
-# =============================================================================
-
-# Control creation of 'data-trace-*' attributes on HTML elements.
-#
-# @see BaseDecorator::Common#trace_attrs
-#
-DEBUG_ATTRS = true?(ENV['DEBUG_ATTRS'])
-
-# When *true* invocation of each low-level IO operation triggers a log entry.
-#
-# @type [Boolean]
-#
-DEBUG_AWS = true?(ENV['DEBUG_AWS'])
-
-# Set to debug ActionCable interactions.
-#
-# @type [Boolean]
-#
-DEBUG_CABLE = true?(ENV['DEBUG_CABLE'])
-
-# Set to debug YAML configuration.
-#
-# @type [Boolean]
-#
-DEBUG_CONFIGURATION = true?(ENV['DEBUG_CONFIGURATION'])
-
-# Set to set the :debug option for Rack::Cors.
-#
-# @type [Boolean]
-#
-DEBUG_CORS = true?(ENV['DEBUG_CORS'])
-
-# Set to show low-level bulk import processing.
-#
-# @type [Boolean]
-#
-DEBUG_IMPORT = true?(ENV['DEBUG_IMPORT'])
-
-# When *true* invocation of each low-level IO operation triggers a log debug
-# entry.
-#
-# @type [Boolean]
-#
-DEBUG_IO = true?(ENV['DEBUG_IO'])
-
-# When *true* ActiveJob debugging callbacks are invoked.
-#
-# @type [Boolean]
-#
-DEBUG_JOB = true?(ENV['DEBUG_JOB'])
-
-# Set to show registration of unique MIME types during startup.
-#
-# @type [Boolean]
-#
-DEBUG_MIME_TYPE = true?(ENV['DEBUG_MIME_TYPE'])
-
-# When *true* invocation of each low-level IO operation triggers a log entry.
-#
-# @type [Boolean]
-#
-DEBUG_OAUTH =
-  true?(ENV['OAUTH_DEBUG']) ||
-  true?(ENV['DEBUG_OAUTH']).tap { |on| ENV['DEBUG_OAUTH'] = 'true' if on }
-
-# When *true* invocation of each low-level IO operation triggers a log entry.
-#
-# @type [Boolean]
-#
-DEBUG_PUMA = true?(ENV['DEBUG_PUMA'])
-
-# Set internal debugging of Representable pipeline actions.
-#
-# - *false* for normal operation
-# - *true*  for full debugging
-# - :input  for debugging parsing/de-serialization.
-# - :output for debugging rendering/serialization.
-#
-# @type [Boolean, Symbol]
-#
-DEBUG_REPRESENTABLE =
-  ENV.fetch('DEBUG_REPRESENTABLE', false).then do |v|
-    case (v.is_a?(String) ? (v = v.strip.downcase) : v)
-      when *TRUE_VALUES  then true
-      when *FALSE_VALUES then false
-      when String        then v.sub(/^:/, '').to_sym
-      else                    v
-    end
-  end
-
-# When *true* invocation of each low-level IO operation triggers a log entry.
-#
-# @type [Boolean]
-#
-DEBUG_SHRINE = true?(ENV['DEBUG_SHRINE'])
-
-# When *true* debug asset pipeline timings in "rake 'assets:precompile'".
-#
-# @type [Boolean]
-#
-DEBUG_SPROCKETS = true?(ENV['DEBUG_SPROCKETS'])
-
-# Set to show better information from Concurrent Ruby.
-#
-# @type [Boolean]
-#
-DEBUG_THREADS = true?(ENV['DEBUG_THREADS'])
-
-# Set to show headers and data being sent to external APIs.
-#
-# @type [Boolean]
-#
-DEBUG_TRANSMISSION = true?(ENV['DEBUG_TRANSMISSION'])
-
-# Indicate whether debugging of view files is active.
-#
-# @type [Boolean]
-#
-DEBUG_VIEW = true?(ENV['DEBUG_VIEW'])
-
-# Debug workflow steps.
-#
-# @type [Boolean]
-#
-DEBUG_WORKFLOW = true?(ENV['DEBUG_WORKFLOW'])
-
-# Debug workflow steps.
-#
-# @type [Boolean]
-#
-DEBUG_RECORD = true?(ENV['DEBUG_RECORD'] || ENV['DEBUG_WORKFLOW'] || true) # TODO: remove - testing
-#DEBUG_RECORD = true?(ENV['DEBUG_RECORD'] || ENV['DEBUG_WORKFLOW'])
-
-# Set to show low-level XML parse logging.
-#
-# @type [Boolean]
-#
-DEBUG_XML_PARSE = true?(ENV['DEBUG_XML_PARSE'])
-
-# When *true* debug loading at startup.
-#
-# @type [Boolean]
-#
-DEBUG_ZEITWERK = true?(ENV['DEBUG_ZEITWERK'])

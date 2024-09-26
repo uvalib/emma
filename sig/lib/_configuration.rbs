@@ -1,6 +1,6 @@
 # General access into "config/locales/**.yml" configuration information.
 #
-module Emma::Config
+module Configuration
   include SystemExtension
 
   # The root of all I18n paths related to the project.
@@ -53,6 +53,135 @@ module Emma::Config
   # @return [Hash]                    Deep frozen
   #
   def config_all: () -> symHash
+
+  # Appropriately-typed configuration values taken from `ENV`,
+  # `Rails.application.credentials`, or "en.emma.env_var" YAML configuration.
+  #
+  class EnvVar < ::Hash[String, any]
+    include Singleton
+
+    # Create an instance which combines configuration values from sources in
+    # this order of precedence:
+    #
+    # 1. From `ENV`.
+    # 2. From `Rails.application.credentials`.
+    # 3. From YAML configuration ("en.emma.env_var").
+    #
+    # As a side effect, values missing from `ENV` will be updated with values
+    # from the other sources.
+    #
+    # @param [Boolean] update_env     If *false*, do not modify `ENV`.
+    # @param [Boolean] check_env      If *true*, run #validate.
+    #
+    def initialize: (update_env: bool, check_env: bool) -> void
+
+    # Compare the configuration values stored in `ENV` with the configuration
+    # values stored here.
+    #
+    # @param [Boolean] output         If *false*, just return error messages.
+    # @param [Boolean] fatal          If *true*, raise exception on mismatch.
+    # @param [String]  prefix         Error message prefix.
+    #
+    # @return [Array<String>]         Error messages.
+    #
+    def validate: (output: bool, fatal: bool, prefix: String, **untyped _ignored) -> strArray
+
+    # Original configuration entries from `ENV`.
+    #
+    # @return [Hash{String=>String}]  Frozen results.
+    #
+    def from_env: () -> Hash[String,String]
+
+    @from_env: Hash[String,String]
+
+    # Configuration entries from "en.emma.env_var".
+    #
+    # @return [Hash{String=>any}]     Frozen results.
+    #
+    def from_yaml: () -> Hash[String,any]
+
+    @from_yaml: Hash[String,any]
+
+    # Configuration values from `Rails.application.credentials`.
+    #
+    # @return [Hash{String=>any}]     Frozen results.
+    #
+    def from_credentials: () -> Hash[String,any]
+
+    @from_credentials: Hash[String,any]
+
+    # All environment variable names whether or not they have a value.
+    #
+    # @return [Array<String>]
+    #
+    def known_keys: () -> strArray
+
+    # Parse an entry from `ENV` into a typed value.
+    #
+    # @param [any] value
+    #
+    # @return [any]
+    #
+    def env_value
+      :     (String value) -> (symHash | anyArray | Regexp | bool | Integer | Float | String)
+      |     (Symbol value) -> untyped
+      | [T] (T      value) -> T
+
+    # Keys within a credentials group for AWS values mapped on to environment
+    # variable names.
+    #
+    # @type [Hash{Symbol=>String}]
+    #
+    AWS_KEYS: Hash[Symbol,String]
+
+    # Keys that may be included in `Rails.application.credentials.s3` mapped to
+    # environment variable names.
+    #
+    # @type [Hash{Symbol=>String}]
+    #
+    S3_KEY_ENV: Hash[Symbol,String]
+
+    # Keys that may be included in `Rails.application.credentials.bibliovault`
+    # mapped to environment variable names.
+    #
+    # @type [Hash{Symbol=>String}]
+    #
+    BV_KEY_ENV: Hash[Symbol,String]
+
+    # Mappings for groups of values from `Rails.application.credentials`.
+    #
+    # Most entries are an environment variable name and value, except for
+    # hierarchical groupings of AWS credentials.
+    #
+    # @type [Hash{Symbol=>Hash{Symbol=>String}}]
+    #
+    CREDENTIAL_GROUPS: Hash[Symbol,Hash[Symbol,String]]
+
+    # Get `Rails.application.credentials` entries.
+    #
+    # Most entries are an environment variable name and value, except for
+    # hierarchical groupings of AWS credentials.  (Any other hierarchical
+    # groupings are ignored if found.)
+    #
+    # @param [Boolean] output         If *false*, do not log ignored groups.
+    # @param [Boolean] fatal          If *true*, fail on ignored groups.
+    #
+    # @return [Hash{String=>any}]
+    #
+    def get_credentials: (output: bool, fatal: false) -> Hash[String,any]
+
+    # Get "en.emma.env_var" configuration entries.
+    #
+    # @return [Hash{String=>any}]
+    #
+    def get_yaml: () -> Hash[String,any]
+
+    # Get `ENV` entries.
+    #
+    # @return [Hash{String=>String}]
+    #
+    def get_env: () -> Hash[String,String]
+  end
 
   # Form an I18n path.
   #
@@ -289,8 +418,8 @@ module Emma::Config
     def message: () -> String
 
     def self.wrap
-      :     (I18n::MissingTranslation     src) -> Emma::Config::MissingTranslation
-      |     (I18n::MissingTranslationData src) -> Emma::Config::MissingTranslationData
+      :     (I18n::MissingTranslation     src) -> Configuration::MissingTranslation
+      |     (I18n::MissingTranslationData src) -> Configuration::MissingTranslationData
       | [T] (T                            src) -> T
   end
 
@@ -312,6 +441,13 @@ module Emma::Config
 end
 
 class Object
-  include Emma::Config
-  extend  Emma::Config
+  include Configuration
+  extend  Configuration
 end
+
+# This holds appropriately-typed configuration values taken from `ENV`,
+# `Rails.application.credentials`, or "en.emma.env_var" YAML configuration.
+#
+# @type [Configuration::EnvVar]
+#
+ENV_VAR: Configuration::EnvVar

@@ -85,6 +85,18 @@ class Object
   # @see file:app/assets/javascripts/shared/decode.js *decodeJSON()*
   #
   def js: (untyped arg) -> String
+
+  # Interpret *arg* as a regular expression, either as "/abc/" or "%r{abc}", or
+  # as an inspection of a Regexp like "(?-mix:abc)".
+  #
+  # @param [any, nil] arg               String or Regexp
+  #
+  # @return [Regexp, nil]
+  #
+  def regexp
+    :     (String arg) -> (Regexp | nil)
+    |     (Regexp arg) -> Regexp
+    | [T] (T      arg) -> nil
 end
 
 module GlobalProperty

@@ -6,8 +6,6 @@ type flashArgs = flashArg | Array[flashArg]
 module FlashHelper
   include Emma::Common
 
-  include Emma::Config
-
   include EncodingHelper
 
   include HtmlHelper

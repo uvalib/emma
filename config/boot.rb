@@ -134,6 +134,29 @@ def js(arg)
   result
 end
 
+# Interpret *arg* as a regular expression, either as "/abc/" or "%r{abc}", or
+# as an inspection of a Regexp like "(?-mix:abc)".
+#
+# @param [any, nil] arg               String or Regexp
+#
+# @return [Regexp, nil]
+#
+def regexp(arg)
+  return arg if arg.is_a?(Regexp)
+  return unless arg.is_a?(String)
+  src = opt = nil
+  case arg.strip
+    when %r{^/(.*)/$}                 then src = $1
+    when /^%r{(.*)}$/                 then src = $1
+    when /^%r\((.*)\)$/               then src = $1
+    when /^%r\[(.*)\]$/               then src = $1
+    when /^\(\?([-mix]{3,4}):(.*)\)$/ then src, opt = $2, $1
+  end
+  src = src.gsub(/\\\\/, '\\') if src && opt
+  opt = opt.split('-').first   if opt
+  Regexp.new(src, opt)         if src
+end
+
 # =============================================================================
 # Global properties
 # =============================================================================
@@ -348,11 +371,6 @@ if rails_application?
         .sort
         .join(%Q(",\n))
         .gsub(/"([^"]+)"=>/, '... \1 = ')
-  end
-
-  # API versions are usually in sync.
-  unless (vs = SEARCH_API_VERSION) == (vi = INGEST_API_VERSION)
-    STDERR.puts "** NOTE ** Search API v#{vs} != Ingest API v#{vi}"
   end
 
 elsif !$0.to_s.end_with?('rails', 'rake')

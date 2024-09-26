@@ -22,7 +22,7 @@ module Emma
   # noinspection RubyResolve
   class Application < Rails::Application
 
-    # Bring in application-specific methods.
+    # Bring in application-specific methods and constants.
     add_lib_to_load_path!(Rails.root)
     require 'emma'
 
@@ -172,9 +172,7 @@ module Emma
     # Static files
     # =========================================================================
 
-    # Disable serving static files from the `/public` folder by default since
-    # Apache or NGINX already handles this.
-    config.public_file_server.enabled = true?(ENV['RAILS_SERVE_STATIC_FILES'])
+    config.public_file_server.enabled = RAILS_SERVE_STATIC_FILES
     config.public_file_server.headers = {
       'Cache-Control' => "public, max-age=#{30.days}"
     }

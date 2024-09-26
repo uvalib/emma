@@ -1,13 +1,16 @@
-# lib/emma/config.rb
+# lib/_configuration.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
+
+require '_system'
+require '_trace'
 
 __loading_begin(__FILE__)
 
 # General access into "config/locales/**.yml" configuration information.
 #
-module Emma::Config
+module Configuration
 
   include SystemExtension
 
@@ -89,7 +92,8 @@ module Emma::Config
     def process(item, html = nil)
       if item.is_a?(Hash)
         item = item.map { |k, v|
-          v = process(v, k.try(:end_with?, '_html'))
+          h = (k.end_with?('_html') if k.is_a?(String) || k.is_a?(Symbol))
+          v = process(v, h)
           [k, v]
         }.to_h
       elsif item.is_a?(String)
@@ -105,7 +109,248 @@ module Emma::Config
   # @return [Hash]                    Deep frozen
   #
   def config_all
-    Emma::Config::Data.all
+    Configuration::Data.all
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Appropriately-typed configuration values taken from `ENV`,
+  # `Rails.application.credentials`, or "en.emma.env_var" YAML configuration.
+  #
+  class EnvVar < ::Hash
+
+    include Singleton
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Create an instance which combines configuration values from sources in
+    # this order of precedence:
+    #
+    # 1. From `ENV`.
+    # 2. From `Rails.application.credentials`.
+    # 3. From YAML configuration ("en.emma.env_var").
+    #
+    # As a side effect, values missing from `ENV` will be updated with values
+    # from the other sources.
+    #
+    # @param [Boolean] update_env     If *false*, do not modify `ENV`.
+    # @param [Boolean] check_env      If *true*, run #validate.
+    #
+    def initialize(update_env: true, check_env: sanity_check?)
+      env, cred, yaml = from_env, from_credentials, from_yaml
+      [*cred.keys, *yaml.keys].sort.uniq.map do |key|
+        val = env_value(env[key]).freeze
+        val = cred[key] if val.nil?
+        val = yaml[key] if val.nil?
+        self[key] = val unless val.nil?
+      end
+      if (update_env &&= keys - ENV.keys).present?
+        slice(*update_env).each_pair do |key, val|
+          ENV[key] = val.is_a?(String) ? val : val.to_json.freeze
+        end
+      end
+      validate if check_env
+    end
+
+    # Compare the configuration values stored in `ENV` with the configuration
+    # values stored here.
+    #
+    # @param [Boolean] output         If *false*, just return error messages.
+    # @param [Boolean] fatal          If *true*, raise exception on mismatch.
+    # @param [String]  prefix         Error message prefix.
+    #
+    # @return [Array<String>]         Error messages.
+    #
+    def validate(output: true, fatal: false, prefix: 'CONFIG MISMATCH', **)
+      warnings =
+        from_credentials.map { |k, c|
+          next if (v = self[k]) == c
+          v = v.inspect
+          c = c.inspect
+          "#{prefix} #{k} | ENV_VAR = #{v} | credentials = #{c}"
+        }.compact
+      errors =
+        map { |k, v|
+          v = env_value(v)
+          e = env_value(ENV[k])
+          next if v == e
+          v = "#{v.class} #{v.inspect}"
+          e = "#{e.class} #{e.inspect}"
+          "#{prefix} #{k} | ENV_VAR = #{v} | ENV = #{e}"
+        }.compact
+      warnings.each { Log.info(_1) }  if output
+      errors.each { Log.warn(_1) }    if output
+      raise prefix                    if fatal && errors.present?
+      warnings + errors
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Original configuration entries from `ENV`.
+    #
+    # @return [Hash{String=>String}]  Frozen results.
+    #
+    def from_env
+      @from_env ||= get_env.transform_values(&:freeze).freeze
+    end
+
+    # Configuration entries from "en.emma.env_var".
+    #
+    # @return [Hash{String=>any}]     Frozen results.
+    #
+    def from_yaml
+      @from_yaml ||= get_yaml.transform_values(&:freeze).freeze
+    end
+
+    # Configuration values from `Rails.application.credentials`.
+    #
+    # @return [Hash{String=>any}]     Frozen results.
+    #
+    def from_credentials
+      @from_credentials ||= get_credentials.transform_values(&:freeze).freeze
+    end
+
+    # All environment variable names whether or not they have a value.
+    #
+    # @return [Array<String>]
+    #
+    def known_keys
+      [from_env, from_credentials, from_yaml].flat_map(&:keys).sort.uniq
+    end
+
+    # Parse an entry from `ENV` into a typed value.
+    #
+    # @param [any] value
+    #
+    # @return [any]
+    #
+    def env_value(value)
+      return try(value) || Object.try(value) || value if value.is_a?(Symbol)
+      return value unless value.is_a?(String)
+      value = value.strip.sub(/^"(.*)"$/, '\1')
+      if value.start_with?('(?')
+        regexp(value) || value
+      elsif value.start_with?('{')
+        JSON.parse(value, symbolize_names: true) rescue value
+      elsif value.sub!(/^\[(.*)\]$/, '\1')
+        value.split(/[;,|\t\n]/).map! { env_value(_1) }.compact_blank!
+      elsif value.present?
+        case value.downcase
+          when *TRUE_VALUES                                   then true
+          when *FALSE_VALUES                                  then false
+          when /^[-+]?\d+(_\d+)*$/                            then value.to_i
+          when /^[-+]?\.0+(_0+)*$/                            then value.to_f
+          when /^[-+]?0+(_0+)*\.0*$/                          then value.to_f
+          when /^[-+]?\.\d+(_\d+)*(e[-+]?\d+)?$/              then value.to_f
+          when /^[-+]?\d+(_\d+)*\.(\d+(_\d+)*)?(e[-+]?\d+)?$/ then value.to_f
+          else                                                     value
+        end
+      end
+    end
+
+    def from_env?(k)
+
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    protected
+
+    # Keys within a credentials group for AWS values mapped on to environment
+    # variable names.
+    #
+    # @type [Hash{Symbol=>String}]
+    #
+    AWS_KEYS = {
+      bucket:             'AWS_BUCKET',
+      region:             'AWS_REGION',
+      access_key_id:      'AWS_ACCESS_KEY_ID',
+      secret_access_key:  'AWS_SECRET_KEY',
+    }.freeze
+
+    # Keys that may be included in `Rails.application.credentials.s3` mapped to
+    # environment variable names.
+    #
+    # @type [Hash{Symbol=>String}]
+    #
+    S3_KEY_ENV = AWS_KEYS.freeze
+
+    # Keys that may be included in `Rails.application.credentials.bibliovault`
+    # mapped to environment variable names.
+    #
+    # @type [Hash{Symbol=>String}]
+    #
+    BV_KEY_ENV = AWS_KEYS.transform_values { _1.sub(/^AWS_/, 'BV_') }.freeze
+
+    # Mappings for groups of values from `Rails.application.credentials`.
+    #
+    # @type [Hash{Symbol=>Hash{Symbol=>String}}]
+    #
+    CREDENTIAL_GROUPS = {
+      s3:           S3_KEY_ENV,
+      bibliovault:  BV_KEY_ENV,
+    }.freeze
+
+    # Get `Rails.application.credentials` entries.
+    #
+    # Most entries are an environment variable name and value, except for
+    # hierarchical groupings of AWS credentials.  (Any other hierarchical
+    # groupings are ignored if found.)
+    #
+    # @param [Boolean] output         If *false*, do not log ignored groups.
+    # @param [Boolean] fatal          If *true*, fail on ignored groups.
+    #
+    # @return [Hash{String=>any}]
+    #
+    def get_credentials(output: true, fatal: false)
+      Rails.application.credentials.to_hash.tap { |items|
+        CREDENTIAL_GROUPS.each_pair do |group, mapping|
+          if (hash = items.delete(group)).is_a?(Hash)
+            mapping.each_pair do |key, var|
+              items[var] = hash[key] if hash[key]
+            end
+          end
+        end
+        if (remaining_groups = items.select { |_, v| v.is_a?(Hash) }).present?
+          issue = "#{__method__}: ignored groups: #{remaining_groups.inspect}"
+          Log.info(issue) if output
+          raise issue     if fatal
+          items.except!(*remaining_groups.keys)
+        end
+      }.transform_keys { _1.to_s.upcase }.sort_by { _1 }.to_h
+    end
+
+    # Get "en.emma.env_var" configuration entries.
+    #
+    # @return [Hash{String=>any}]
+    #
+    def get_yaml
+      items = config_all.dig(:env_var, application_deployment)
+      items.transform_keys { _1.to_s.upcase }.sort_by { _1 }.to_h
+    end
+
+    # Get `ENV` entries.
+    #
+    # @return [Hash{String=>String}]
+    #
+    def get_env
+      ENV.to_hash.sort_by { _1 }.to_h
+    end
+
   end
 
   # ===========================================================================
@@ -696,13 +941,20 @@ class Object
   # Non-functional hints for RubyMine type checking.
   unless ONLY_FOR_DOCUMENTATION
     # :nocov:
-    include Emma::Config
-    extend  Emma::Config
+    include Configuration
+    extend  Configuration
     # :nocov:
   end
 
-  Emma::Config.include_and_extend(self)
+  Configuration.include_and_extend(self)
 
 end
+
+# This holds appropriately-typed configuration values taken from `ENV`,
+# `Rails.application.credentials`, or "en.emma.env_var" YAML configuration.
+#
+# @type [Configuration::EnvVar]
+#
+ENV_VAR = Configuration::EnvVar.instance
 
 __loading_end(__FILE__)

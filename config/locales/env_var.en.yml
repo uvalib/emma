@@ -1,0 +1,358 @@
+# config/locales/env_var.en.yml
+#
+# Configured values.
+#
+# Each value is named for the environment variable which can be used to supply
+# that value in the execution environment.  The settings here represent the
+# fallbacks for those values not in `ENV` or `Rails.application.credentials`.
+#
+# All configured values are listed but some should not actually be set here.
+
+en:
+
+  emma:
+
+    env_var:
+
+      # =======================================================================
+      # System settings from the execution environment.
+      #
+      # These values are used in the boot sequence before `ENV` is augmented by
+      # values from this configuration file.  Hence, they must be provided by
+      # the execution environment (e.g., Docker or RubyMine).  If any values
+      # are provided here they are only for documentation purposes.
+      # =======================================================================
+
+      _system:                        &SYSTEM
+
+        AWS_DEFAULT_REGION:           ~ # NOTE: only seen in an AWS deployment
+        BOOTSNAP_CACHE_DIR:           'tmp/cache'
+        BUNDLE_GEMFILE:               ~
+        DEBUGGER_STORED_RUBYLIB:      ~ # NOTE: only seen in RubyMine debugger
+        DEPLOYMENT:                   ~
+        HOME:                         ~
+        IN_PASSENGER:                 ~ # NOTE: defunct
+        RAILS_ENV:                    ~
+        RAILS_LOG_TO_STDOUT:          ~ # NOTE: set in bin/rails if missing
+        RAILS_MASTER_KEY:             ~ # NOTE: needed to decrypt credentials
+        RAILS_SERVE_STATIC_FILES:     ~ # NOTE: true by default
+        RUBYMINE_CONFIG:              ~ # NOTE: manually added to RubyMine configurations
+        USER:                         ~
+
+      # =======================================================================
+      # Output settings from the execution environment.
+      #
+      # These values are used in lib/_trace.rb before `ENV` is augmented by
+      # values from this configuration file.  Hence, they must be provided by
+      # the execution environment (e.g., Docker or RubyMine).
+      # =======================================================================
+
+      _output:                        &OUTPUT
+        CONSOLE_DEBUGGING:            ~
+        TRACE_CONCERNS:               ~
+        TRACE_LOADING:                ~
+        TRACE_NOTIFICATIONS:          ~
+        TRACE_RAKE:                   ~
+
+      # =======================================================================
+      # Value settings from `Rails.application.credentials`.
+      #
+      # These values generally should not be set here because they are stored
+      # encrypted in config/credentials.yml.enc.  There are listed here as
+      # documentation; values should be managed via `rails credentials:edit`.
+      # =======================================================================
+
+      _credentials:                   &CREDENTIALS
+
+        ANALYTICS_TOKEN:              ~
+        AWS_ACCESS_KEY_ID:            ~ # NOTE: credentials.s3.access_key_id
+        AWS_SECRET_KEY:               ~ # NOTE: credentials.s3.secret_access_key
+        BV_ACCESS_KEY_ID:             ~ # NOTE: credentials.bibliovault.access_key_id
+        BV_SECRET_KEY:                ~ # NOTE: credentials.bibliovault.secret_access_key
+        CROSSREF_API_KEY:             ~
+        GOOGLE_API_KEY:               ~
+        IA_ACCESS:                    ~
+        IA_SECRET:                    ~
+        IA_SIG_COOKIE:                ~
+        IA_USER_COOKIE:               ~
+        INGEST_API_KEY:               ~
+        MD_API_KEY:                   ~
+        RECAPTCHA_SECRET_KEY:         ~
+        RECAPTCHA_SITE_KEY:           ~
+        RECAPTCHA_VERSION:            ~
+        SECRET_KEY_BASE:              ~
+        WORLDCAT_API_KEY:             ~
+
+      # =======================================================================
+      # Puma defaults environment variables
+      #
+      # Some values are generated in config/puma.rb based on the current
+      # deployment and/or execution context.  None of these (except as noted)
+      # are expected by Puma itself; they exist only to allow configuration
+      # defaults to be overridden by environment variables.
+      # =======================================================================
+
+      _puma:                          &PUMA
+
+        PUMA_DEBUG:                   ~     # NOTE: Puma env var
+        PUMA_FIRST_DATA_TIMEOUT:      90    # seconds
+        PUMA_LOG_REQUESTS:            ~
+        PUMA_PERSISTENT_TIMEOUT:      300   # seconds
+        PUMA_PORT:                    3000
+        PUMA_WORKER_TIMEOUT:          3600  # seconds if in_debugger?
+        WEB_CONCURRENCY:              2     # NOTE: Puma env var
+
+      # =======================================================================
+      # GoodJob environment variables
+      #
+      # Variables that are noted as "computed" generally should not be set here
+      # because config/initializers/good_job.rb defines their values based on
+      # the current deployment and/or execution context.
+      # =======================================================================
+
+      _good_job:                                            &GOOD_JOB
+
+        GOOD_JOB_CLEANUP_DISCARDED_JOBS:                    ~
+        GOOD_JOB_CLEANUP_INTERVAL_JOBS:                     ~
+        GOOD_JOB_CLEANUP_INTERVAL_SECONDS:                  ~
+        GOOD_JOB_CLEANUP_PRESERVED_JOBS_BEFORE_SECONDS_AGO: ~
+        GOOD_JOB_ENABLE_CRON:                               ~ # NOTE: computed
+        GOOD_JOB_ENABLE_LISTEN_NOTIFY:                      ~
+        GOOD_JOB_EXECUTION_MODE:                            ~ # NOTE: computed
+        GOOD_JOB_IDLE_TIMEOUT:                              ~
+        GOOD_JOB_MAX_CACHE:                                 ~
+        GOOD_JOB_MAX_THREADS:                               ~
+        GOOD_JOB_PIDFILE:                                   ~
+        GOOD_JOB_POLL_INTERVAL:                             ~ # NOTE: computed
+        GOOD_JOB_QUEUES:                                    ~
+        GOOD_JOB_QUEUE_SELECT_LIMIT:                        ~
+        GOOD_JOB_SHUTDOWN_TIMEOUT:                          ~
+
+        GOOD_JOB_CRON:
+          session_cleanup:
+            cron:         '0 0 * * *'
+            class:        'SessionCleanupJob'
+            description:  'Every day run rake db:sessions:trim'
+
+      # =======================================================================
+      # JavaScript client settings
+      #
+      # These values are used only when assets are compiled via inclusion in
+      # "app/assets/javascripts/shared/assets.js.erb".
+      # =======================================================================
+
+      _javascript:                    &JAVASCRIPT
+
+        JS_DEBUG_ACCESSIBILITY:       true
+        JS_DEBUG_ADVANCED_SEARCH:     true
+        JS_DEBUG_BASE_CLASS:          false
+        JS_DEBUG_BIB_LOOKUP:          true
+        JS_DEBUG_CABLE_CHANNEL:       true
+        JS_DEBUG_CABLE_CONSUMER:      true
+        JS_DEBUG_CALLBACKS:           false
+        JS_DEBUG_CHANNEL_LOOKUP:      true
+        JS_DEBUG_CHANNEL_REQUEST:     true
+        JS_DEBUG_CHANNEL_RESPONSE:    true
+        JS_DEBUG_CHANNEL_SUBMIT:      true
+        JS_DEBUG_CLIENT_DEBUG:        false
+        JS_DEBUG_DATABASE:            false
+        JS_DEBUG_DOWNLOAD:            true
+        JS_DEBUG_FLASH:               true
+        JS_DEBUG_GRIDS:               true
+        JS_DEBUG_IFRAME:              true
+        JS_DEBUG_IMAGES:              true
+        JS_DEBUG_INLINE_POPUP:        false
+        JS_DEBUG_LOOKUP_MODAL:        true
+        JS_DEBUG_LOOKUP_REQUEST:      true
+        JS_DEBUG_LOOKUP_RESPONSE:     true
+        JS_DEBUG_MANIFESTS:           true
+        JS_DEBUG_MANIFEST_EDIT:       true
+        JS_DEBUG_MANIFEST_REMIT:      true
+        JS_DEBUG_MATH_DETECTIVE:      false
+        JS_DEBUG_MENU:                true
+        JS_DEBUG_MODAL_BASE:          true
+        JS_DEBUG_MODAL_DIALOG:        true
+        JS_DEBUG_MODAL_HOOKS:         false
+        JS_DEBUG_MODEL_FORM:          true
+        JS_DEBUG_NAV_GROUP:           true
+        JS_DEBUG_OVERLAY:             false
+        JS_DEBUG_PANEL:               true
+        JS_DEBUG_QUEUE:               false
+        JS_DEBUG_RAILS:               true
+        JS_DEBUG_RECORDS:             true
+        JS_DEBUG_SCROLL:              true
+        JS_DEBUG_SEARCH:              false
+        JS_DEBUG_SEARCH_ANALYSIS:     false
+        JS_DEBUG_SEARCH_IN_PROGRESS:  true # NOTE: should be false
+        JS_DEBUG_SESSION:             false
+        JS_DEBUG_SETUP:               true
+        JS_DEBUG_SKIP_NAV:            true
+        JS_DEBUG_SUBMIT_MODAL:        true
+        JS_DEBUG_SUBMIT_REQUEST:      true
+        JS_DEBUG_SUBMIT_RESPONSE:     true
+        JS_DEBUG_TABLE:               true
+        JS_DEBUG_TURBOLINKS:          true
+        JS_DEBUG_UPLOADER:            true
+        JS_DEBUG_XHR:                 true
+
+      # =======================================================================
+      # Value settings applicable to any deployment.
+      # =======================================================================
+
+      common:                         &COMMON
+        <<:                           *SYSTEM
+        <<:                           *OUTPUT
+        <<:                           *CREDENTIALS
+        <<:                           *PUMA
+        <<:                           *GOOD_JOB
+        <<:                           *JAVASCRIPT
+
+        ANALYTICS_ENABLED:            true
+        ANALYTICS_HOST:               'https://analytics.lib.virginia.edu'
+        ANALYTICS_SITE:               ~
+        AWS_BUCKET:                   ~
+        AWS_CONSOLE_URL:              'https://console.aws.amazon.com'
+        AWS_REGION:                   'us-east-1'
+        BATCH_SIZE:                   10
+        BULK_DB_BATCH_SIZE:           ~
+        BULK_THROTTLE_PAUSE:          0.01 # seconds
+        BV_BUCKET:                    ~
+        BV_REGION:                    'us-east-1'
+        CACHE_DIR:                    'tmp/cache'
+        DATABASE:                     'postgres'
+        DBHOST:                       ~
+        DBNAME:                       ~
+        DBPASSWD:                     ~
+        DBPORT:                       ~
+        DBUSER:                       ~
+        DEBUG_ATTRS:                  ~
+        DEBUG_AWS:                    ~
+        DEBUG_CABLE:                  ~
+        DEBUG_CONFIGURATION:          ~
+        DEBUG_CORS:                   true
+        DEBUG_DECORATOR_COLLECTION:   ~
+        DEBUG_DECORATOR_EXECUTE:      ~
+        DEBUG_DECORATOR_INHERITANCE:  ~
+        DEBUG_DOWNLOAD:               true
+        DEBUG_HASH:                   ~
+        DEBUG_IMPORT:                 true
+        DEBUG_IO:                     ~
+        DEBUG_JOB:                    ~
+        DEBUG_LOCKSTEP:               ~
+        DEBUG_MIME_TYPE:              ~
+        DEBUG_OAUTH:                  true
+        DEBUG_PUMA:                   ~ # NOTE: different from PUMA_DEBUG
+        DEBUG_RECORD:                 true
+        DEBUG_REPRESENTABLE:          ~
+        DEBUG_SHRINE:                 true
+        DEBUG_SPROCKETS:              ~
+        DEBUG_TESTS:                  ~
+        DEBUG_THREADS:                ~
+        DEBUG_TRANSMISSION:           true
+        DEBUG_VIEW:                   ~
+        DEBUG_WORKFLOW:               true
+        DEBUG_XML_PARSE:              ~
+        DEBUG_ZEITWERK:               ~
+        UPLOAD_DEV_TITLE_PREFIX:             'RWL'
+        DISABLE_UPLOAD_INDEX_UPDATE:  ~
+        DOWNLOAD_EXPIRATION:          3600 # seconds
+        EMMA_LOG_AWS_FORMATTING:      true
+        EMMA_LOG_FILTERING:           true
+        FILE_UPLOAD_MIN_SIZE:         100 # bytes
+        GITHUB_URL:                   'https://github.com/uvalib/emma'
+        HEX_RAND_DIGITS:              8
+        IA_DOWNLOAD_API_URL:          'https://archive.org/services/printdisabled/fetch_or_make_ebook.php'
+        IMPLEMENT_OVERRIDES:          true
+        INGEST_API_VERSION:           '0.0.5'
+        INGEST_MAX_SIZE:              1000
+        LOG_SILENCER:                 true
+        MAILER_SENDER:                'emmahelp@virginia.edu'
+        MAXIMUM_PASSWORD_LENGTH:      ~
+        MD_BASE_PATH:                 'https://api.dev.mathdetective.ai/v1'
+        MINIMUM_PASSWORD_LENGTH:      8
+        OAUTH_DEBUG:                  ~
+        PIDFILE:                      'tmp/pids/server.pid'
+        PORT:                         3000
+        RAILS_MAX_THREADS:            ~ # NOTE: computed in config/env_vars.rb
+        RAILS_MIN_THREADS:            ~ # NOTE: computed in config/puma.rb
+        REDIS_URL:                    ~
+        REINDEX_BATCH_SIZE:           100
+        ROW_PAGE_SIZE:                20
+        S3_PREFIX_LIMIT:              10
+        SEARCH_API_VERSION:           '0.0.5'
+        SEARCH_EXTENDED_TITLE:        ~
+        SEARCH_GENERATE_SCORES:       ~
+        SEARCH_RELEVANCY_SCORE:       ~
+        SEARCH_SAVE_SEARCHES:         true
+        SERVICE_INGEST_PRODUCTION:    'https://emma-ingest-production.internal.lib.virginia.edu'
+        SERVICE_INGEST_STAGING:       'https://emma-ingest-staging.internal.lib.virginia.edu'
+        SERVICE_INGEST_TEST:          'https://ingest.qa.bookshareunifiedsearch.org'
+        SERVICE_SEARCH_PRODUCTION:    'https://emma-search-production.internal.lib.virginia.edu'
+        SERVICE_SEARCH_STAGING:       'https://emma-search-staging.internal.lib.virginia.edu'
+        SERVICE_SEARCH_TEST:          'https://api.qa.bookshareunifiedsearch.org'
+        SERVICE_UNAVAILABLE:          false
+        SESSION_DEBUG_CSS_CLASS:      ~
+        SESSION_DEBUG_DATA_ATTR:      true
+        SHIBBOLETH:                   true
+        SHRINE_CLOUD_STORAGE:         true
+        SMTP_DOMAIN:                  'out.mail.virginia.edu'
+        SMTP_PORT:                    25
+        STRICT_FORMATS:               ~
+        TABLE_HEAD_DARK:              true
+        TABLE_HEAD_STICKY:            true
+        TERRAFORM_URL:                'https://gitlab.com/uvalib/terraform-infrastructure'
+        TEST_FORMATS:                 ~
+        UPLOAD_DEFER_INDEXING:        ~
+        UPLOAD_EMERGENCY_DELETE:      ~
+        UPLOAD_FORCE_DELETE:          true
+        UPLOAD_REPO_CREATE:           true
+        UPLOAD_REPO_EDIT:             ~
+        UPLOAD_REPO_REMOVE:           ~
+        UPLOAD_TRUNCATE_DELETE:       true
+        WORLDCAT_PRINCIPAL:           ~
+        WORLDCAT_REGISTRY:            ~
+
+        LOG_SILENCER_ENDPOINTS:
+          - '/healthcheck'
+          - '/health/check'
+          - !ruby/regexp /^\/artifact/
+          - !ruby/regexp /^\/bs_api/
+          - !ruby/regexp /^\/periodical/
+          - !ruby/regexp /^\/title/
+          - !ruby/regexp /^\/v2/
+
+      # =======================================================================
+      # Value settings if application_deployment == :production
+      # =======================================================================
+
+      production:                     &PRODUCTION
+        <<:                           *COMMON
+
+        ANALYTICS_SITE:               52 # Matomo::PROD_SITE
+        AWS_BUCKET:                   'emma-storage-production'
+        BV_BUCKET:                    'bibliovault-transfer-production'
+
+      # =======================================================================
+      # Value settings if application_deployment == :staging
+      # =======================================================================
+
+      staging:                        &STAGING
+        <<:                           *COMMON
+
+        ANALYTICS_SITE:               53 # Matomo::DEV_SITE
+        AWS_BUCKET:                   'emma-storage-staging'
+        BV_BUCKET:                    'bibliovault-transfer-staging'
+        DEBUG_CABLE:                  true
+        DEBUG_JOB:                    true
+        DEBUG_XML_PARSE:              true
+
+      # =======================================================================
+      # Value settings if application_deployment == :local
+      # =======================================================================
+
+      local:
+        <<:                           *STAGING
+
+        ANALYTICS_ENABLED:            false
+        DEBUG_CORS:                   false
+        DEBUG_SHRINE:                 false
