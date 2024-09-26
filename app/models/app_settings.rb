@@ -230,17 +230,17 @@ class AppSettings < AppGlobal
     :AWS_CONSOLE_URL,
     :AWS_BUCKET,
     :AWS_REGION,
-    :AWS_DEFAULT_REGION,
     :AWS_ACCESS_KEY_ID,
     :AWS_SECRET_KEY,
+    :AWS_DEFAULT_REGION,
     nil,
 
     # === Amazon Web Services for BiblioVault collections.
     :BV_BUCKET,
     :BV_REGION,
-    :BV_DEFAULT_REGION,
     :BV_ACCESS_KEY_ID,
     :BV_SECRET_KEY,
+    :BV_DEFAULT_REGION,
     nil,
 
     # === Internet Archive
@@ -251,30 +251,10 @@ class AppSettings < AppGlobal
     :IA_SIG_COOKIE,
     nil,
 
-    # === OCLC/WorldCat
-    :WORLDCAT_API_KEY,
-    :WORLDCAT_REGISTRY,
-    :WORLDCAT_PRINCIPAL,
-    nil,
-
-    # === Google, Google Books, Google Search
-    :GOOGLE_API_KEY,
-    :GOOGLE_USER,
-    :GOOGLE_PASSWORD,
-    :GB_USER,
-    :GB_PASSWORD,
-    :GB_API_KEY,
-    :GS_USER,
-    :GS_PASSWORD,
-    :GS_API_KEY,
-    nil,
-
-    # === CrossRef
-    :CROSSREF_API_KEY,
-    nil,
-
-    # === Shrine uploader
-    :SHRINE_STORAGE_DIR,
+    # === Lookup API keys
+    :CROSSREF_API_KEY,  # CrossRef
+    :GOOGLE_API_KEY,    # Google Books
+    :WORLDCAT_API_KEY,  # OCLC/WorldCat
     nil,
 
     # === Benetech "Math Detective"
@@ -383,6 +363,7 @@ class AppSettings < AppGlobal
     :ROW_PAGE_SIZE,
     :S3_PREFIX_LIMIT,
     :SCHEDULER,
+    :SHRINE_STORAGE_DIR,
     :TERRAFORM_URL,
 
   ].freeze
@@ -606,6 +587,7 @@ class AppSettings < AppGlobal
         DEBUG_DECORATOR_COLLECTION:   BaseCollectionDecorator,
         DEBUG_DECORATOR_EXECUTE:      BaseDecorator::List,
         DEBUG_DECORATOR_INHERITANCE:  BaseDecorator,
+        DEBUG_HASH:                   Emma::Common::HashMethods,
         DISABLE_UPLOAD_INDEX_UPDATE:  Record::Submittable::IndexIngestMethods,
         DOWNLOAD_EXPIRATION:          Record::Uploadable,
         HEX_RAND_DIGITS:              CssHelper,
@@ -628,9 +610,6 @@ class AppSettings < AppGlobal
         UPLOAD_REPO_EDIT:             Record::Properties,
         UPLOAD_REPO_REMOVE:           Record::Properties,
         UPLOAD_TRUNCATE_DELETE:       Record::Properties,
-        WORLDCAT_PRINCIPAL_ID:        LookupService::WorldCat::Common,
-        WORLDCAT_REGISTRY_ID:         LookupService::WorldCat::Common,
-        WORLDCAT_WSKEY:               LookupService::WorldCat::Common,
       }
     end
 

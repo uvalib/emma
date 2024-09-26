@@ -336,9 +336,10 @@ DEBUG_REPRESENTABLE =
   ENV_VAR['DEBUG_REPRESENTABLE'].then do |v|
     v = v.strip.downcase if v.is_a?(String)
     case v
+      when nil                  then false
       when true, false, Symbol  then v
-      when *FALSE_VALUES        then false
       when *TRUE_VALUES         then true
+      when *FALSE_VALUES        then false
       when String               then v.delete_prefix(':').to_sym
     end
   end

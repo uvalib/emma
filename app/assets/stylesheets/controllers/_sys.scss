@@ -439,7 +439,7 @@ body.sys.settings {
                 &.from-env   { background: green; }
                 &.from-cred  { background: violet; }
                 &.from-yaml  { visibility: hidden; }
-                &.from-const { background: brown; }
+                &.from-const { visibility: hidden; }
                 &.from-other { background: maroon; }
             }
 

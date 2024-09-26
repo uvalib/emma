@@ -46,7 +46,7 @@ en:
           <<:           *LOOKUP_SERVICE
           name:         'Amazon'
           endpoint:     ~
-          api_key:      'AMAZON_API_KEY'
+          api_key:      'AMAZON_API_KEY' # NOTE: ENV_VAR['AMAZON_API_KEY']
           types:        [isbn, upc]
           enabled:      false
 
@@ -54,7 +54,7 @@ en:
           <<:           *LOOKUP_SERVICE
           name:         'Crossref'
           endpoint:     'https://api.crossref.org'
-          api_key:      'CROSSREF_API_KEY'
+          api_key:      'CROSSREF_API_KEY' # NOTE: ENV_VAR['CROSSREF_API_KEY']
           types:        [doi, issn]
           priority:     1
 
@@ -62,7 +62,7 @@ en:
           <<:           *LOOKUP_SERVICE
           name:         'Google Books'
           endpoint:     'https://www.googleapis.com/books'
-          api_key:      'GOOGLE_API_KEY'
+          api_key:      'GOOGLE_API_KEY' # NOTE: ENV_VAR['GOOGLE_API_KEY']
           api_version:  'v1'
           types:        [isbn, lccn, oclc]
           priority:     2
@@ -71,7 +71,7 @@ en:
           <<:           *LOOKUP_SERVICE
           name:         'Google Search'
           endpoint:     'https://customsearch.googleapis.com'
-          api_key:      'GOOGLE_API_KEY'
+          api_key:      'GOOGLE_API_KEY' # NOTE: ENV_VAR['GOOGLE_API_KEY']
           types:        [doi, isbn, issn, lccn, oclc, upc]
           priority:     3
           enabled:      false
@@ -80,7 +80,7 @@ en:
           <<:           *LOOKUP_SERVICE
           name:         'ISSN Portal'
           endpoint:     ~
-          api_key:      'ISSN_PORTAL_API_KEY'
+          api_key:      'ISSN_PORTAL_API_KEY' # NOTE: ENV_VAR['ISSN_PORTAL_API_KEY']
           types:        [issn]
           enabled:      false
 
@@ -88,7 +88,7 @@ en:
           <<:           *LOOKUP_SERVICE
           name:         'WorldCat'
           endpoint:     'https://worldcat.org/webservices'
-          api_key:      'WORLDCAT_API_KEY'
+          api_key:      'WORLDCAT_API_KEY' # NOTE: ENV_VAR['WORLDCAT_API_KEY']
           types:        [isbn, oclc, lccn]
           priority:     1
 
@@ -96,7 +96,7 @@ en:
           <<:           *LOOKUP_SERVICE
           name:         'WorldCat'
           endpoint:     'https://americas.discovery.api.oclc.org/worldcat/search'
-          api_key:      'WORLDCAT_API_KEY'
+          api_key:      'WORLDCAT_API_KEY' # NOTE: ENV_VAR['WORLDCAT_API_KEY']
           api_version:  'v2'
           types:        [isbn, oclc, lccn]
           priority:     1

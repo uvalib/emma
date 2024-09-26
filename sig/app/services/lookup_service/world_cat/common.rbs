@@ -5,12 +5,6 @@ module LookupService::WorldCat::Common
 
   include LookupService::WorldCat::Properties
 
-  WORLDCAT_REGISTRY_ID: String
-
-  WORLDCAT_PRINCIPAL_ID: String
-
-  WORLDCAT_WSKEY: String
-
   WORLDCAT_MARCXML:     String
   WORLDCAT_DUBLIN_CORE: String
 

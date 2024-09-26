@@ -19,10 +19,6 @@ module LookupService::WorldCat::Common
 
   public
 
-  WORLDCAT_REGISTRY_ID  = ENV_VAR['WORLDCAT_REGISTRY']
-  WORLDCAT_PRINCIPAL_ID = ENV_VAR['WORLDCAT_PRINCIPAL']
-  WORLDCAT_WSKEY        = ENV_VAR['WORLDCAT_API_KEY']
-
   #--
   # noinspection SpellCheckingInspection
   #++

@@ -309,8 +309,6 @@ en:
         UPLOAD_REPO_EDIT:             ~
         UPLOAD_REPO_REMOVE:           ~
         UPLOAD_TRUNCATE_DELETE:       true
-        WORLDCAT_PRINCIPAL:           ~
-        WORLDCAT_REGISTRY:            ~
 
         LOG_SILENCER_ENDPOINTS:
           - '/healthcheck'
