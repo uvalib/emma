@@ -412,10 +412,10 @@ en:
             "ISBN/DOI/etc.", "Title", "Creator", "Publisher", and "Keyword".
 
         shibboleth_login:
-          asset:        'help/shibboleth_login.png'
+          asset:        'help/seamless_access.png'
           alt:
             >-
-            The InCommon login form with a dropdown menu to select your
+            The externally-hosted login form allowing you to select your
             institution.
 
         # =====================================================================
