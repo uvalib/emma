@@ -52,14 +52,22 @@ module Emma::Common::UrlMethods
     opt.reverse_merge!(args.extract_options!) if args.last.is_a?(Hash)
     url = args.flatten.compact.join('/').lstrip.sub(/[?&\s]+$/, '')
     url, query = url.split('?', 2)
-    parts = query.to_s.split('&').compact_blank!
-    first = (parts.shift unless parts.blank? || parts.first.include?('='))
-    query = url_query(*parts, **opt).presence
-    url << '?'   if first || query
-    url << first if first
-    url << '&'   if first && query
-    url << query if query
-    url
+
+    # Combine URL path parts from `args`, stripping extraneous path separators.
+    start = nil
+    url.sub!(%r{^https?://}) { start = _1; nil }
+    parts = url.split('/')
+    start = parts.shift unless start
+    parts = parts.compact_blank.map { _1.sub(%r{^/*(.*)/*$}, '\1') }
+    parts = [start.delete_suffix('/'), *parts] if start
+    url   = parts.join('/')
+
+    # Combine URL parameters from `args.last` with parameters from `opt`.
+    pairs = query.to_s.split('&')
+    query = url_query(*pairs, **opt).presence
+
+    # Add URL parameter(s) to the URL path.
+    query ? "#{url}?#{query}" : url
   end
 
   # Combine URL query parameters into a URL query string.

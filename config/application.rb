@@ -82,7 +82,7 @@ module Emma
 
     # Specify I18n load paths for entire directory hierarchy.
     config.i18n.load_path +=
-      Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}').to_s]
+      Dir[Rails.root.join('config/locales/**/*.{rb,yml}').to_s]
 
     # =========================================================================
     # ActionController

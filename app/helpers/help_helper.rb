@@ -685,9 +685,9 @@ module HelpHelper
   # @return [Array<String>]
   #
   def help_offline_items
-    dir  = Rails.root.join('public', 'doc')
+    dir  = Rails.root.join('public/doc')
     base = "#{dir}/"
-    Dir[dir.join('*.pdf')].sort_by { _1.delete_prefix(base).to_i }
+    Dir["#{dir}/*.pdf"].sort_by { _1.delete_prefix(base).to_i }
   end
 
   # ===========================================================================

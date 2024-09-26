@@ -62,16 +62,16 @@ EMMA_RAILTIE_RAKE ||= begin
     # @return [void]
     #
     def preprocess_erb(src, dst = nil)
-      src   = src.delete_prefix('/')
-      src   = src.delete_prefix("#{ASSETS_ROOT}/").delete_prefix("#{JS_SRC}/")
-      src   = "#{JS_SRC}/#{src}".delete_suffix('.erb')
+      root  = ASSETS_ROOT.delete_prefix('/').delete_suffix('/')
 
-      dst &&= dst.delete_prefix('/')
-      dst &&= dst.delete_prefix("#{ASSETS_ROOT}/").delete_prefix("#{JS_DST}/")
+      src   = src.sub(%r{^/?#{root}/}, '').delete_prefix("#{JS_SRC}/")
+      src   = File.join(JS_SRC, src).delete_suffix('.erb')
+
+      dst &&= dst.sub(%r{^/?#{root}/}, '').delete_prefix("#{JS_DST}/")
       dst ||= src
 
-      dst   = "#{ASSETS_ROOT}/#{JS_DST}/#{dst.tr('/', '-')}"
-      src   = "#{ASSETS_ROOT}/#{src}.erb"
+      src   = File.join(root, "#{src}.erb")
+      dst   = File.join(root, JS_DST, dst.tr('/', '-'))
 
       file  = File.read(src)
       erb   = ERB.new(file, trim_mode: '<>').tap { _1.filename = src }

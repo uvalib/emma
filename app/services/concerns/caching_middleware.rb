@@ -311,7 +311,7 @@ module CachingMiddleware
       return            if (log = @logger).is_a?(Logger)
       log = log.to_path if log.respond_to?(:to_path)
       if log.is_a?(String)
-        log = File.join(Dir.tmpdir, log) unless log.start_with?('/')
+        log = make_path(Dir.tmpdir, log) unless log.start_with?('/')
       else
         raise "expected String, got #{log.inspect}" unless log.nil?
       end
@@ -330,8 +330,7 @@ module CachingMiddleware
         options = @store_options&.dup || {}
         case type
           when :file_store
-            @cache_dir ||= File.join(FARADAY_CACHE_DIR, @namespace.to_s)
-            @cache_dir ||= FARADAY_CACHE_DIR
+            @cache_dir ||= make_path(FARADAY_CACHE_DIR, @namespace)
             params << @cache_dir
           when :redis_cache_store
 =begin # TODO: redis cache?

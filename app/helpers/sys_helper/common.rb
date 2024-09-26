@@ -266,14 +266,14 @@ module SysHelper::Common
   #
   def ls_command(root: nil, names: %w[.[^.]* *], ignore: nil, ls_opt: 'hlp')
     names  = Array.wrap(names).compact_blank
-    names.map! { "#{root}/#{_1}" } if root
+    names.map! { make_path(root, _1) } if root
     names  = names.join(' ')
-    ignore = Array.wrap(ignore).compact_blank.presence
-    ignore.map! { "#{root}/#{_1}" } if root
+    ignore = Array.wrap(ignore).compact_blank
+    ignore.map! { make_path(root, _1) } if root
     ignore = ignore.join("\n")
 
     dirs   = "ls -dv #{names}"
-    dirs   = %Q(#{dirs} | grep -v -x "#{ignore}") if ignore
+    dirs   = %Q(#{dirs} | grep -v -x "#{ignore}") if ignore.present?
     dirs   = `#{dirs}`.squish
     cmd    = [
       "ls -dv#{ls_opt} #{names}",             # In place of root-level lines
@@ -318,7 +318,7 @@ module SysHelper::Common
       ERB::Util.h(line)
     else
       pos  = line.rindex(name)
-      path = '/sys/view?file=%s' % (base ? File.join(base, name) : name)
+      path = '/sys/view?file=%s' % make_path(base, name)
       ERB::Util.h(line[0...pos]) << external_link(path, name)
     end
   end

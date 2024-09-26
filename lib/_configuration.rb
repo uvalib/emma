@@ -71,7 +71,7 @@ module Emma::Config
         require 'active_support/i18n'
         require 'active_support/i18n_railtie'
         I18n.load_path +=
-          Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}').to_s]
+          Dir[Rails.root.join('config/locales/**/*.{rb,yml}').to_s]
         I18n.load_path.uniq!
         I18n::Railtie.initialize_i18n(Rails.application)
       end

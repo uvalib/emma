@@ -121,6 +121,7 @@ end
 CACHE_DIR =
   [ENV['CACHE_DIR'], ENV['BOOTSNAP_CACHE_DIR'], 'tmp/cache']
     .compact.map(&:strip).reject(&:empty?).first.then { |path|
+      path = path.delete_suffix('/')
       case ENV['RAILS_ENV']
         when 'development' then "#{path}-dev"
         when 'test'        then "#{path}-test"

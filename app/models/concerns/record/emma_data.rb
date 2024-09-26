@@ -77,8 +77,7 @@ module Record::EmmaData
     return if rid.blank?
     base_url = base_url[:base_url] if base_url.is_a?(Hash)
     base_url = BULK_BASE_URL       if base_url.blank?
-    # noinspection RubyMismatchedArgumentType
-    File.join(base_url, 'download', rid).to_s
+    make_path(base_url, 'download', rid)
   end
 
   # ===========================================================================

@@ -49,7 +49,7 @@ module TestHelper::SystemTests::Common
       case url
         when %r{^([^:/]+://[^:/]+)(:\d+)?(/.*)} then [$1, $3].join
         when %r{^(//[^:/]+)(:\d+)?(/.*)}        then [s, $1, $3].join
-        else                                         File.join("#{s}#{h}", url)
+        else                                         make_path("#{s}#{h}", url)
       end
     assert_equal url, url_without_port(cur)
   end

@@ -116,7 +116,7 @@ Shrine.storages = {
     storage_dir = ENV.fetch('STORAGE_DIR', 'storage')
 
     storages.transform_values! do |subdir|
-      Shrine::Storage::FileSystem.new("#{storage_dir}/#{subdir}")
+      Shrine::Storage::FileSystem.new(File.join(storage_dir, subdir))
     end
 
   end
