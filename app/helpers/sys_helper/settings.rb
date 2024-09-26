@@ -126,43 +126,33 @@ module SysHelper::Settings
   def app_flag_controls(key, value = nil)
     value = AppSettings[key] if value.nil?
     if value.is_a?(AppSettings::Value)
-      env, obj = value.env?, value.obj?
-      case
-        when env then value = value.env
-        when obj then value = value.obj
-        else          value = nil
-      end
+      src   = value.origin
+      value = value.content
     else
-      env, obj = !value.nil?
+      src   = (:env unless value.nil?)
     end
 
     cls = []
     tip = []
-    if env
-      cls << 'from-env'
-      tip << config_term(:sys, :from_env_var)
-    else
-      tip << config_term(:sys, :no_env_var)
-    end
-    if obj
-      cls << 'from-obj'
-      tip << config_term(:sys, :from_constant)
-    end
+    tip << :no_env_var    unless %i[env cred yaml].include?(src)
+    tip << :"from_#{src}" if src
+    cls << "from-#{src}"  if src
+    tip.map! { config_term(:sys, _1) }
     if value.nil? || (value == EMPTY_VALUE)
       cls << 'missing'
     elsif !boolean?(value)
       cls << 'invalid'
       tip << config_term(:sys, :invalid_value, value: value.inspect)
     end
+    tip  = tip.join('; ').presence&.upcase_first
+    cls  = css_classes('radio-group line', *cls)
 
-    opt  = { class: css_classes('radio-group line', *cls) }
-    opt[:title] = tip.join('; ').upcase_first if tip.present?
-
-    name = html_div(key, **opt)
+    src  = app_origin_marker(src)
+    name = html_div(key, title: tip, class: cls)
     on   = app_flag_radio_button(key, value, on: true)
     off  = app_flag_radio_button(key, value, on: false)
 
-    name << on << off
+    src << name << on << off
   end
 
   # HTML for an entry displaying an application configuration value.
@@ -175,46 +165,37 @@ module SysHelper::Settings
   def app_setting_display(key, value = nil)
     value = AppSettings[key] if value.nil?
     if value.is_a?(AppSettings::Value)
-      env, obj = value.env?, value.obj?
-      case
-        when env then value = value.env
-        when obj then value = value.obj
-        else          value = nil
-      end
+      src   = value.origin
+      value = value.content
     else
-      env, obj = !value.nil?
+      src   = (:env unless value.nil?)
     end
 
     cls = []
     tip = []
-    if env
-      cls << 'from-env'
-      tip << config_term(:sys, :from_env_var)
-    else
-      tip << config_term(:sys, :no_env_var)
-    end
-    if obj
-      cls << 'from-obj'
-      tip << config_term(:sys, :from_constant)
-    end
+    tip << :no_env_var    unless %i[env cred yaml].include?(src)
+    tip << :"from_#{src}" if src
+    cls << "from-#{src}"  if src
+    tip.map! { config_term(:sys, _1) }
 
-    app_entry_display(key, value, class: cls, title: tip)
+    app_entry_display(key, value, src, class: cls, title: tip)
   end
 
   # HTML for an entry displaying an application setting value.
   #
-  # @param [Symbol, String] key
-  # @param [any, nil]       value
-  # @param [Hash]           opt       Passed to label and value elements.
+  # @param [Symbol, String]          key
+  # @param [any, nil]                value
+  # @param [Symbol,String,false,nil] src
+  # @param [Hash]                    opt    Passed to label and value elements.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def app_entry_display(key, value, **opt)
+  def app_entry_display(key, value, src = false, **opt)
     case value
+      when Hash        then append_css!(opt, 'hierarchy')
       when nil         then append_css!(opt, 'text missing')
       when EMPTY_VALUE then append_css!(opt, 'text missing')
       when 'nil'       then append_css!(opt, 'text literal')
-      when Hash        then append_css!(opt, 'hierarchy')
       when String      then append_css!(opt, 'text string')
       else                  append_css!(opt, 'text literal')
     end
@@ -222,8 +203,10 @@ module SysHelper::Settings
     opt[:title] = opt[:title]&.upcase_first
 
     id    = css_randomize(key)
-    v_id  = "value-#{id}"
     l_id  = "label-#{id}"
+    v_id  = "value-#{id}"
+
+    src   = app_origin_marker(src)
 
     l_opt = prepend_css(opt, 'setting line').merge!(id: l_id)
     label = html_span(**l_opt) { key }
@@ -231,7 +214,7 @@ module SysHelper::Settings
     v_opt = prepend_css(opt,'value').merge!(id: v_id, 'aria-describedby': l_id)
     value = html_div(**v_opt) { app_value_display(value) }
 
-    label << value
+    src << label << value
   end
 
   # Render a value for display in an application setting entry.
@@ -242,7 +225,7 @@ module SysHelper::Settings
   # @return [String]                    Otherwise
   #
   def app_value_display(value)
-    value = EMPTY_VALUE  if value.nil?
+    value = EMPTY_VALUE  if value.nil? || (value == :null)
     return value         if (value == EMPTY_VALUE) || (value == 'nil')
     return value.inspect unless value.is_a?(Hash)
     value.flat_map { |k, v|
@@ -257,15 +240,36 @@ module SysHelper::Settings
   # @param [Symbol, String] flag
   # @param [any, nil]       value     Current value of the flag.
   # @param [Boolean, nil]   on        Whether this is the 'ON' or 'OFF' control
+  # @param [Hash]           opt       Passed to button and label elements.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def app_flag_radio_button(flag, value, on:)
+  def app_flag_radio_button(flag, value, on:, **opt)
+    css_cls = ('on' if on == true) || ('off' if on == false)
+    prepend_css!(opt, css_cls)
     checked = on ? true?(value) : false?(value)
-    control = radio_button_tag(flag, on, checked)
+    control = radio_button_tag(flag, on, checked, opt)
     label   = config_term(on ? :_on : :_off).upcase
-    label   = label_tag(flag, label, value: on)
+    label   = label_tag(flag, label, opt.merge(value: on))
     control << label
+  end
+
+  # Create a marker element indicating the origin of a value.
+  #
+  # @param [Symbol,String,Boolean,nil] src
+  # @param [String]                    css  Characteristic CSS class/selector.
+  # @param [Hash]                      opt  Passed to #html_span.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def app_origin_marker(src, css: '.origin', **opt)
+    # noinspection RubyMismatchedReturnType
+    return src       if src.is_a?(ActiveSupport::SafeBuffer)
+    return html_span if src.is_a?(FalseClass)
+    src = nil        if src.is_a?(TrueClass)
+    prepend_css!(opt, "from-#{src}") if src
+    prepend_css!(opt, css)
+    html_span(src, **opt)
   end
 
   # ===========================================================================

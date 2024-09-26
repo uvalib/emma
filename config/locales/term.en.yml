@@ -717,10 +717,14 @@ en:
       sys:
 
         commit:               'Commit'
-        from_constant:        'value from constant'
-        from_env_var:         'from ENV variable'
         invalid_value:        'invalid value %{value}'
-        no_env_var:           'ENV variable not present'
+        no_env_var:           'ENV_VAR entry not present'
+
+        from_env:             'from ENV variable'
+        from_cred:            'from Rails.application.credentials'
+        from_yaml:            'from en.emma.env_var'
+        from_const:           'value from constant'
+        from_other:           'value from other'
 
       # =======================================================================
       # CONTROLLER: Tool term definitions

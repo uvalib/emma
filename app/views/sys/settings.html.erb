@@ -58,6 +58,11 @@
 <p role="note">
   Flags which may be turned on or off to dynamically change application
   behavior when "<%= SysHelper::Settings::COMMIT_LABEL -%>" is pressed.
+  Values explicitly overridden by an environment variable are marked with
+  "ENV";
+  all other values come from "en.emma.env_var" YAML configuration settings,
+  except for those marked with "CONST" which indicate values of the given
+  constant.
 </p>
 
 <%= app_flags %>
@@ -73,6 +78,12 @@
   Other configuration values which are defined at startup and cannot be
   changed dynamically.
   They can only be changed by modifying <%= vars -%> and restarting.
+  Values explicitly overridden by an environment variable are marked with
+  "ENV";
+  values taken from `Rails.application.credentials` are marked with "CRED";
+  all other values come from "en.emma.env_var" YAML configuration settings,
+  except for those marked with "CONST" which display values of the given
+  constant.
 </p>
 
 <%= app_settings %>

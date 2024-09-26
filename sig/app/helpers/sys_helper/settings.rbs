@@ -63,13 +63,14 @@ module SysHelper::Settings
 
   # HTML for an entry displaying an application setting value.
   #
-  # @param [Symbol, String] key
-  # @param [any, nil]       value
-  # @param [Hash]           opt       Passed to label and value elements.
+  # @param [Symbol, String]          key
+  # @param [any, nil]                value
+  # @param [Symbol,String,false,nil] src
+  # @param [Hash]                    opt    Passed to label and value elements.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def app_entry_display: (Symbol|String key, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
+  def app_entry_display: (Symbol|String key, untyped value, ?(Symbol|String|false|nil) src, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Render a value for display in an application setting entry.
   #
@@ -87,10 +88,21 @@ module SysHelper::Settings
   # @param [Symbol, String] flag
   # @param [any, nil]       value     Current value of the flag.
   # @param [Boolean, nil]   on        Whether this is the 'ON' or 'OFF' control
+  # @param [Hash]           opt       Passed to button and label elements.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def app_flag_radio_button: (Symbol|String flag, untyped value, on: bool|nil) -> ActiveSupport::SafeBuffer
+  def app_flag_radio_button: (Symbol|String flag, untyped value, on: bool|nil, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Create a marker element indicating the origin of a value.
+  #
+  # @param [Symbol,String,Boolean,nil] src
+  # @param [String]                    css  Characteristic CSS class/selector.
+  # @param [Hash]                      opt  Passed to #html_span.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def app_origin_marker: (Symbol|String|bool|nil src, css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   private
 

@@ -21,6 +21,10 @@ class AppSettings < AppGlobal
   #
   FLAGS = [
 
+    :SERVICE_UNAVAILABLE,
+    :ANALYTICS_ENABLED,
+    nil,
+
     :CONSOLE_DEBUGGING,
     :CONSOLE_OUTPUT,
     nil,
@@ -37,7 +41,11 @@ class AppSettings < AppGlobal
     :DEBUG_CABLE,
     :DEBUG_CONFIGURATION,
     :DEBUG_CORS,
+    :DEBUG_DECORATOR_COLLECTION,
     :DEBUG_DECORATOR_EXECUTE,
+    :DEBUG_DECORATOR_INHERITANCE,
+    :DEBUG_DOWNLOAD,
+    :DEBUG_HASH,
     :DEBUG_IMPORT,
     :DEBUG_IO,
     :DEBUG_JOB,
@@ -49,6 +57,7 @@ class AppSettings < AppGlobal
     :DEBUG_REPRESENTABLE,
     :DEBUG_SHRINE,
     :DEBUG_SPROCKETS,
+    :DEBUG_TESTS,
     :DEBUG_THREADS,
     :DEBUG_TRANSMISSION,
     :DEBUG_VIEW,
@@ -57,14 +66,102 @@ class AppSettings < AppGlobal
     :DEBUG_ZEITWERK,
     nil,
 
-    :SAVE_SEARCHES,
-    :IMPLEMENT_OVERRIDES,
+    # === JavaScript client debug
+    :JS_DEBUG_ACCESSIBILITY,
+    :JS_DEBUG_ADVANCED_SEARCH,
+    :JS_DEBUG_BASE_CLASS,
+    :JS_DEBUG_BIB_LOOKUP,
+    :JS_DEBUG_CABLE_CHANNEL,
+    :JS_DEBUG_CABLE_CONSUMER,
+    :JS_DEBUG_CALLBACKS,
+    :JS_DEBUG_CHANNEL_LOOKUP,
+    :JS_DEBUG_CHANNEL_REQUEST,
+    :JS_DEBUG_CHANNEL_RESPONSE,
+    :JS_DEBUG_CHANNEL_SUBMIT,
+    :JS_DEBUG_CLIENT_DEBUG,
+    :JS_DEBUG_DATABASE,
+    :JS_DEBUG_DOWNLOAD,
+    :JS_DEBUG_FLASH,
+    :JS_DEBUG_GRIDS,
+    :JS_DEBUG_IFRAME,
+    :JS_DEBUG_IMAGES,
+    :JS_DEBUG_INLINE_POPUP,
+    :JS_DEBUG_LOOKUP_MODAL,
+    :JS_DEBUG_LOOKUP_REQUEST,
+    :JS_DEBUG_LOOKUP_RESPONSE,
+    :JS_DEBUG_MANIFESTS,
+    :JS_DEBUG_MANIFEST_EDIT,
+    :JS_DEBUG_MANIFEST_REMIT,
+    :JS_DEBUG_MATH_DETECTIVE,
+    :JS_DEBUG_MENU,
+    :JS_DEBUG_MODAL_BASE,
+    :JS_DEBUG_MODAL_DIALOG,
+    :JS_DEBUG_MODAL_HOOKS,
+    :JS_DEBUG_MODEL_FORM,
+    :JS_DEBUG_NAV_GROUP,
+    :JS_DEBUG_OVERLAY,
+    :JS_DEBUG_PANEL,
+    :JS_DEBUG_QUEUE,
+    :JS_DEBUG_RAILS,
+    :JS_DEBUG_RECORDS,
+    :JS_DEBUG_SCROLL,
+    :JS_DEBUG_SEARCH,
+    :JS_DEBUG_SEARCH_ANALYSIS,
+    :JS_DEBUG_SEARCH_IN_PROGRESS,
+    :JS_DEBUG_SESSION,
+    :JS_DEBUG_SETUP,
+    :JS_DEBUG_SKIP_NAV,
+    :JS_DEBUG_SUBMIT_MODAL,
+    :JS_DEBUG_SUBMIT_REQUEST,
+    :JS_DEBUG_SUBMIT_RESPONSE,
+    :JS_DEBUG_TABLE,
+    :JS_DEBUG_TURBOLINKS,
+    :JS_DEBUG_UPLOADER,
+    :JS_DEBUG_XHR,
     nil,
 
+    # === Search
+    :SEARCH_EXTENDED_TITLE,
+    :SEARCH_GENERATE_SCORES,
+    :SEARCH_RELEVANCY_SCORE,
+    :SEARCH_SAVE_SEARCHES,
+    nil,
+
+    # === Upload
+    :UPLOAD_DEFER_INDEXING,
+    :UPLOAD_EMERGENCY_DELETE,
+    :UPLOAD_FORCE_DELETE,
+    :UPLOAD_REPO_CREATE,
+    :UPLOAD_REPO_EDIT,
+    :UPLOAD_REPO_REMOVE,
+    :UPLOAD_TRUNCATE_DELETE,
+    nil,
+
+    # === Bulk Upload
+    :DISABLE_UPLOAD_INDEX_UPDATE,
+    nil,
+
+    # === Logging
+    :EMMA_LOG_AWS_FORMATTING,
+    :EMMA_LOG_FILTERING,
+    nil,
+
+    # === Puma
+    :PUMA_DEBUG,
     :PUMA_LOG_REQUESTS, # NOTE: Might not be changeable...
     nil,
 
-    :SERVICE_UNAVAILABLE,
+    # === Other
+    :IMPLEMENT_OVERRIDES,
+    :OAUTH_DEBUG,
+    :SHIBBOLETH,
+    :SHRINE_CLOUD_STORAGE,
+    :STRICT_FORMATS,
+    :TABLE_HEAD_DARK,
+    :TABLE_HEAD_STICKY,
+    :SESSION_DEBUG_CSS_CLASS,
+    :SESSION_DEBUG_DATA_ATTR,
+    nil,
 
   ].freeze
 
@@ -78,14 +175,9 @@ class AppSettings < AppGlobal
     :DEPLOYMENT,
     nil,
 
-    # === Bulk Upload
-    :BATCH_SIZE,
-    :BULK_DB_BATCH_SIZE,
-    :DISABLE_UPLOAD_INDEX_UPDATE,
-    nil,
-
     # === Database
     :DATABASE,
+    :DBNAME,
     :DBHOST,
     :DBPORT,
     :DBUSER,
@@ -99,18 +191,43 @@ class AppSettings < AppGlobal
     :PGPASSWORD,
     nil,
 
-    # === Authorization
-    :AUTH_PROVIDERS,
-    :SHIBBOLETH,
-    nil,
-
     # === Mailer
     :MAILER_SENDER,
     :SMTP_DOMAIN,
     :SMTP_PORT,
     nil,
 
+    # === Authorization
+    :AUTH_PROVIDERS,
+    nil,
+
+    # === EMMA Unified Search API
+    :SEARCH_API_VERSION,
+    :SERVICE_SEARCH_PRODUCTION,
+    :SERVICE_SEARCH_STAGING,
+    :SERVICE_SEARCH_TEST,
+    nil,
+
+    # === EMMA Unified Ingest API
+    :INGEST_API_VERSION,
+    :INGEST_API_KEY,
+    :INGEST_BASE_URL,
+    :INGEST_MAX_SIZE,
+    :SERVICE_INGEST_PRODUCTION,
+    :SERVICE_INGEST_STAGING,
+    :SERVICE_INGEST_TEST,
+    nil,
+
+    # === Bulk Upload
+    :BATCH_SIZE,
+    :BULK_DB_BATCH_SIZE,
+    :BULK_THROTTLE_PAUSE,
+    :REINDEX_BATCH_SIZE,
+    :UPLOAD_DEV_TITLE_PREFIX,
+    nil,
+
     # === Amazon Web Services for EMMA storage.
+    :AWS_CONSOLE_URL,
     :AWS_BUCKET,
     :AWS_REGION,
     :AWS_DEFAULT_REGION,
@@ -126,32 +243,12 @@ class AppSettings < AppGlobal
     :BV_SECRET_KEY,
     nil,
 
-    # === EMMA Unified Search API
-    :SEARCH_API_VERSION,
-    :SERVICE_SEARCH_PRODUCTION,
-    :SERVICE_SEARCH_STAGING,
-    :SERVICE_SEARCH_TEST,
-    nil,
-
-    # === EMMA Unified Ingest API
-    :INGEST_API_VERSION,
-    :INGEST_API_KEY,
-    :SERVICE_INGEST_PRODUCTION,
-    :SERVICE_INGEST_STAGING,
-    :SERVICE_INGEST_TEST,
-    nil,
-
     # === Internet Archive
     :IA_DOWNLOAD_API_URL,
     :IA_ACCESS,
     :IA_SECRET,
     :IA_USER_COOKIE,
     :IA_SIG_COOKIE,
-    nil,
-
-    # === Benetech "Math Detective"
-    :MD_API_KEY,
-    :MD_BASE_PATH,
     nil,
 
     # === OCLC/WorldCat
@@ -161,9 +258,9 @@ class AppSettings < AppGlobal
     nil,
 
     # === Google, Google Books, Google Search
+    :GOOGLE_API_KEY,
     :GOOGLE_USER,
     :GOOGLE_PASSWORD,
-    :GOOGLE_API_KEY,
     :GB_USER,
     :GB_PASSWORD,
     :GB_API_KEY,
@@ -172,50 +269,79 @@ class AppSettings < AppGlobal
     :GS_API_KEY,
     nil,
 
-    # === Shrine uploader
-    :SHRINE_CLOUD_STORAGE,
-    :STORAGE_DIR,
+    # === CrossRef
+    :CROSSREF_API_KEY,
     nil,
 
+    # === Shrine uploader
+    :SHRINE_STORAGE_DIR,
+    nil,
+
+    # === Benetech "Math Detective"
+    :MD_API_KEY,
+    :MD_BASE_PATH,
+    nil,
+
+    # === Ruby
+    :RUBYLIB,
+    :RUBYOPT,
+    :RUBY_VERSION,
+
     # === Rails
-    :SCRIPT_NAME,
     :RAILS_APP_VERSION,
-    :RAILS_MIN_THREADS,
-    :RAILS_MAX_THREADS,
-    :RAILS_LOG_TO_STDOUT,
-    :RAILS_SERVE_STATIC_FILES,
     :RAILS_CACHE_ID,
+    :RAILS_LOG_TO_STDOUT,
     :RAILS_MASTER_KEY,
+    :RAILS_MAX_THREADS,
+    :RAILS_MIN_THREADS,
+    :RAILS_SERVE_STATIC_FILES,
     :SECRET_KEY_BASE,
     nil,
 
     # === GoodJob
     :GOOD_JOB_CRON,
+    :GOOD_JOB_CLEANUP_DISCARDED_JOBS,
+    :GOOD_JOB_CLEANUP_INTERVAL_JOBS,
+    :GOOD_JOB_CLEANUP_INTERVAL_SECONDS,
+    :GOOD_JOB_CLEANUP_PRESERVED_JOBS_BEFORE_SECONDS_AGO,
     :GOOD_JOB_ENABLE_CRON,
+    :GOOD_JOB_ENABLE_LISTEN_NOTIFY,
     :GOOD_JOB_EXECUTION_MODE,
+    :GOOD_JOB_IDLE_TIMEOUT,
     :GOOD_JOB_MAX_CACHE,
     :GOOD_JOB_MAX_THREADS,
     :GOOD_JOB_PIDFILE,
     :GOOD_JOB_POLL_INTERVAL,
-    :GOOD_JOB_PROBE_PORT,
     :GOOD_JOB_QUEUES,
+    :GOOD_JOB_QUEUE_SELECT_LIMIT,
     :GOOD_JOB_SHUTDOWN_TIMEOUT,
-    :GOOD_JOB_CLEANUP_INTERVAL_JOBS,
-    :GOOD_JOB_CLEANUP_INTERVAL_SECONDS,
-    :GOOD_JOB_CLEANUP_PRESERVED_JOBS_BEFORE_SECONDS_AGO,
     nil,
 
     # === Puma
     :PORT,
     :PIDFILE,
     :WEB_CONCURRENCY,
+    :PUMA_PORT,
+    :PUMA_FIRST_DATA_TIMEOUT,
+    :PUMA_PERSISTENT_TIMEOUT,
+    :PUMA_WORKER_TIMEOUT,
+    nil,
+
+    # === Analytics
+    :ANALYTICS_HOST,
+    :ANALYTICS_SITE,
+    :ANALYTICS_TOKEN,
+    nil,
+
+    # === ReCaptcha
+    :RECAPTCHA_VERSION,
+    :RECAPTCHA_SITE_KEY,
+    :RECAPTCHA_SECRET_KEY,
     nil,
 
     # === Logging
     :LOG_SILENCER,
     :LOG_SILENCER_ENDPOINTS,
-    :EMMA_LOG_FILTERING,
-    :EMMA_LOG_AWS_FORMATTING,
     nil,
 
     # === Testing
@@ -227,21 +353,37 @@ class AppSettings < AppGlobal
     :USER,
     :GROUP,
     :HOME,
+    :PWD,
+    :SHELL,
     :TZ,
     :LANG,
     :LC_ALL,
     :LANGUAGE,
-    :SMTP_DOMAIN,
-    :SMTP_PORT,
+    :PATH,
+    nil,
+
+    # === Execution environment
+    :BOOTSNAP_CACHE_DIR,
+    :BUNDLE_GEMFILE,
+    :CACHE_DIR,
+    :DEBUGGER_STORED_RUBYLIB,
+    :IN_PASSENGER,
+    :RUBYMINE_CONFIG,
+    :SCRIPT_NAME,
     nil,
 
     # === Other
-    :BUNDLE_GEMFILE,
-    :DEBUGGER_STORED_RUBYLIB,
-    :IN_PASSENGER,
+    :DOWNLOAD_EXPIRATION,
+    :FILE_UPLOAD_MIN_SIZE,
+    :GITHUB_URL,
+    :HEX_RAND_DIGITS,
+    :MAXIMUM_PASSWORD_LENGTH,
+    :MINIMUM_PASSWORD_LENGTH,
     :REDIS_URL,
-    :RUBYMINE_CONFIG,
+    :ROW_PAGE_SIZE,
+    :S3_PREFIX_LIMIT,
     :SCHEDULER,
+    :TERRAFORM_URL,
 
   ].freeze
 
@@ -255,7 +397,15 @@ class AppSettings < AppGlobal
   }.freeze
 
   if sanity_check?
-    raise 'FLAGS and VALUES cannot overlap' if FLAGS.compact.intersect?(VALUES)
+    f, v    = [FLAGS, VALUES].map(&:compact)
+    f_dup   = f.tally.select { |_, count| count > 1 }.presence
+    v_dup   = v.tally.select { |_, count| count > 1 }.presence
+    missing = (ENV_VAR.from_yaml.keys.map(&:to_sym) - f - v).presence
+    overlap = f.intersection(v).presence
+    Log.warn { "#{self} FLAGS duplicates: #{f_dup.keys.inspect}" }  if f_dup
+    Log.warn { "#{self} VALUES duplicates: #{v_dup.keys.inspect}" } if v_dup
+    Log.warn { "#{self} FLAGS/VALUES missing: #{missing.inspect}" } if missing
+    raise "#{self} FLAGS/VALUES overlap: #{overlap.inspect}"        if overlap
   end
 
   # ===========================================================================
@@ -268,23 +418,31 @@ class AppSettings < AppGlobal
   #
   class Value
 
+    # Sources for AppSettings values.
+    #
+    # @type [Array<Symbol>]
+    #
+    # @see "en.emma.term.sys.from_*"
+    #
+    ORIGIN = %i[env cred yaml const other].freeze
+
     # Either :flag or :setting.
     #
     # @return [Symbol]
     #
     attr_reader :type
 
-    # The value if acquired from ENV.
+    # The source of the value.
     #
-    # @return [any, nil]
+    # @return [Symbol, nil]           An element of Value#ORIGIN.
     #
-    attr_reader :env
+    attr_reader :origin
 
-    # The value if acquired from a constant.
+    # The value itself.
     #
     # @return [any, nil]
     #
-    attr_reader :obj
+    attr_reader :content
 
     # Whether this instance represents a *nil* value.
     #
@@ -307,30 +465,22 @@ class AppSettings < AppGlobal
     #
     # @option opt [Symbol, String] :type
     # @option opt [any, nil]       :env
-    # @option opt [any, nil]       :obj
+    # @option opt [any, nil]       :cred
+    # @option opt [any, nil]       :yaml
+    # @option opt [any, nil]       :const
+    # @option opt [any, nil]       :other
     # @option opt [Boolean]        :null
     # @option opt [Boolean]        :spacer
     #
     def initialize(type_key = nil, **opt)
-      # noinspection RubyMismatchedVariableType
-      @type   = (opt.delete(:type) || type_key)&.to_sym
-      keys    = opt.compact_blank.keys
+      @type    = (opt.delete(:type) || type_key).to_sym
+      keys     = opt.compact_blank.keys
       fail "cannot specify #{keys} together" if keys.many?
-      @env_   = opt.key?(:env)
-      @env    = opt.delete(:env)
-      @obj_   = opt.key?(:obj)
-      @obj    = opt.delete(:obj)
-      @null   = opt.delete(:null)   || false
-      @spacer = opt.delete(:spacer) || false
+      @null    = true?(opt[:null])
+      @spacer  = true?(opt[:spacer])
+      @origin  = opt.keys.intersection(ORIGIN).first
+      @content = opt[@origin]
     end
-
-    # Indicate whether the value was acquired from ENV (even if it is *nil*).
-    #
-    def env? = @env_
-
-    # Indicate whether the value was acquired from a constant.
-    #
-    def obj? = @obj_
 
     # Indicate whether this instance represents a *nil* value.
     #
@@ -388,12 +538,18 @@ class AppSettings < AppGlobal
       if (k = k&.to_s).nil?
         k = spacer_key
         v = { spacer: true }
-      elsif ENV.key?(k)
-        v = { env: storage_value(ENV[k]) }
+      elsif !ENV_VAR.from_env[k].nil?
+        v = { env:    storage_value(ENV_VAR[k]) }
+      elsif !ENV_VAR.from_credentials[k].nil?
+        v = { cred:   storage_value(ENV_VAR[k]) }
+      elsif ENV_VAR.key?(k)
+        v = { yaml:   storage_value(ENV_VAR[k]) }
       elsif (mod = module_defining(k))
-        v = { obj: storage_value(mod.const_get(k)) }
+        v = { const:  storage_value(mod.const_get(k)) }
+      elsif k.start_with?('GOOD_JOB_')
+        v = { other:  storage_value(good_job_value(k)) }
       else
-        v = { null: true }
+        v = { null:   true }
       end
       self[k.to_sym] = Value.new(type_key, **v)
     end
@@ -407,6 +563,27 @@ class AppSettings < AppGlobal
     def module_defining(const)
       return if (const = const&.to_sym).blank?
       [constant_map[const], Object].compact.find { _1.const_defined?(const) }
+    end
+
+    # Return the GoodJob configuration value associated with the given
+    # environment name.
+    #
+    # @param [Symbol, String, nil] var
+    #
+    # @return [any, nil]
+    #
+    def good_job_value(var)
+      key = GOOD_JOB_ENV_KEY_MAP[var&.to_s].presence or return
+      # noinspection RubyResolve
+      if Rails.application.config.good_job.key?(key)
+        Rails.application.config.good_job[key] || :null
+      elsif GoodJob.configuration.respond_to?("#{key}?")
+        GoodJob.configuration.send("#{key}?")
+      elsif GoodJob.configuration.respond_to?(key)
+        GoodJob.configuration.send(key) || :null
+      elsif key == :queues
+        GoodJob.configuration.queue_string
+      end
     end
 
     # =========================================================================

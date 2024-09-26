@@ -366,6 +366,7 @@ body.sys.settings {
             align-items: baseline;
             gap:         0.375rem 0.75rem;
             grid-template-columns:
+                [origin] max-content
                 [label]  0.5fr
                 [check1] min-content [label1] 0.1875fr
                 [check2] min-content [label2] 0.1875fr;
@@ -392,8 +393,20 @@ body.sys.settings {
                     // TODO: ?
                 }
 
-                &.from-obj {
+                &.from-cred {
+                    // TODO: ?
+                }
+
+                &.from-yaml {
+                    // TODO: ?
+                }
+
+                &.from-const {
                     color: brown;
+                }
+
+                &.from-other {
+                    color: maroon;
                 }
 
                 &.missing {
@@ -412,6 +425,22 @@ body.sys.settings {
                 & {
                     height: 1rem;
                 }
+            }
+
+            .origin {
+
+                margin:         auto 0;
+                padding:        0 0.25rem;
+                text-align:     center;
+                font-variant:   small-caps;
+                color:          white;
+                background:     black;
+
+                &.from-env   { background: green; }
+                &.from-cred  { background: violet; }
+                &.from-yaml  { visibility: hidden; }
+                &.from-const { background: brown; }
+                &.from-other { background: maroon; }
             }
 
             @if not $show-nil {
@@ -439,6 +468,7 @@ body.sys.settings {
         border-color: gray;
 
         grid-template-columns:
+            [origin] max-content
             [label]  max-content
             [radio1] min-content [label1] 0.1875fr
             [radio2] min-content [label2] 0.1875fr;
@@ -467,7 +497,7 @@ body.sys.settings {
 
         padding: 0.75rem;
 
-        grid-template-columns: [label] 0.33fr [value] 1fr;
+        grid-template-columns: [origin] max-content [label] 0.33fr [value] 1fr;
 
         @media #{$wide-screen} {
             max-width: 75vw;
@@ -500,6 +530,11 @@ body.sys.settings {
 
                 .value::before {
                     content: "= ";
+                }
+
+                > .value:has(.value) {
+                    display: contents;
+                    &::before { content: ": "; }
                 }
             }
         }

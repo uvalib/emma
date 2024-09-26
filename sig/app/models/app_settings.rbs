@@ -22,23 +22,31 @@ class AppSettings < AppGlobal
   # An AppSettings value instance.
   #
   class Value
+    # Sources for AppSettings values.
+    #
+    # @type [Array<Symbol>]
+    #
+    # @see "en.emma.term.sys.from_*"
+    #
+    ORIGIN: symArray
+
     # Either :flag or :setting.
     #
     # @return [Symbol]
     #
     attr_reader type: Symbol
 
-    # The value if acquired from ENV.
+    # The source of the value.
     #
-    # @return [any, nil]
+    # @return [Symbol, nil]           An element of Value#ORIGIN.
     #
-    attr_reader env: untyped?
+    attr_reader origin: Symbol?
 
-    # The value if acquired from a constant.
+    # The value itself.
     #
     # @return [any, nil]
     #
-    attr_reader obj: untyped?
+    attr_reader content: untyped?
 
     # Whether this instance represents a *nil* value.
     #
@@ -61,19 +69,14 @@ class AppSettings < AppGlobal
     #
     # @option opt [Symbol, String] :type
     # @option opt [any, nil]       :env
-    # @option opt [any, nil]       :obj
+    # @option opt [any, nil]       :cred
+    # @option opt [any, nil]       :yaml
+    # @option opt [any, nil]       :const
+    # @option opt [any, nil]       :other
     # @option opt [Boolean]        :null
     # @option opt [Boolean]        :spacer
     #
     def initialize: (?(Symbol|String|nil) type_key, **untyped opt) -> void
-
-    # Indicate whether the value was acquired from ENV (even if it is *nil*).
-    #
-    def env?: () -> bool
-
-    # Indicate whether the value was acquired from a constant.
-    #
-    def obj?: () -> bool
 
     # Indicate whether this instance represents a *nil* value.
     #
@@ -87,9 +90,6 @@ class AppSettings < AppGlobal
     # to indicate a break between related groups of values.
     #
     def spacer?: () -> bool
-
-    @env_: bool
-    @obj_: bool
   end
 
   # A table of AppSettings value instances.
@@ -119,6 +119,15 @@ class AppSettings < AppGlobal
     # @return [Module, nil]
     #
     def module_defining: (Symbol|String|nil const) -> Module?
+
+    # Return the GoodJob configuration value associated with the given
+    # environment name.
+    #
+    # @param [Symbol, String, nil] k
+    #
+    # @return [any, nil]
+    #
+    def good_job_value: (Symbol|String|nil k) -> untyped?
 
     def type_key: () -> Symbol
 
