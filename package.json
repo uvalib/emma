@@ -9,10 +9,10 @@
     "@uppy/file-input":   "^4.0.1",
     "@uppy/informer":     "^4.1.0",
     "@uppy/progress-bar": "^4.0.0",
-    "@uppy/xhr-upload":   "^4.1.0",
-    "esbuild":            "^0.23.1",
+    "@uppy/xhr-upload":   "^4.2.0",
+    "esbuild":            "^0.24.0",
     "jquery":             "^3.7.1",
-    "sass":               "^1.78.0",
+    "sass":               "^1.79.3",
     "select2":            "^4.1.0-rc.0",
     "turbolinks":         "^5.2.0"
   },
@@ -27,7 +27,7 @@
     "@uppy/status-bar":           "^4.0.3",
     "@uppy/thumbnail-generator":  "^4.0.0",
     "@uppy/url":                  "^4.1.0",
-    "uppy":                       "^4.3.0"
+    "uppy":                       "^4.4.0"
   },
   "scripts": {
     "build":     "bin/asset_build esbuild",
