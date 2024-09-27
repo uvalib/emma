@@ -21,11 +21,7 @@ module LayoutHelper::Overlay
   #
   # @type [Hash]
   #
-  OVERLAY_ATTRIBUTES = {
-    role:                         'none',
-    'aria-hidden':                true,
-    'data-turbolinks-permanent':  true,
-  }.freeze
+  OVERLAY_ATTRIBUTES = { role: 'none', 'aria-hidden': true }.freeze
 
   # ===========================================================================
   # :section:
@@ -57,7 +53,9 @@ module LayoutHelper::Overlay
   #
   def search_in_progress(content = nil, css: '.search-in-progress', **opt)
     prepend_css!(opt, css).reverse_merge!(OVERLAY_ATTRIBUTES)
-    html_div(**opt) { html_div(content, class: 'content') }
+    html_div(**opt) do
+      html_div(content, class: 'content', **OVERLAY_ATTRIBUTES)
+    end
   end
 
 end

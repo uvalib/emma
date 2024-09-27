@@ -112,6 +112,7 @@ export class Overlay extends BaseClass {
         const visible = this.constructor.suppressed ? false : show;
         this.container.toggleClass(marker, visible);
         this.overlay.toggleClass(marker, visible);
+        this._info('toggle', visible);
     }
 
     // ========================================================================

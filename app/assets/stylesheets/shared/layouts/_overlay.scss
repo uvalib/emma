@@ -64,7 +64,7 @@ $default-height: 100vh;     // Enough to cover the viewport.
 /// @param {Numeric} $delay           Start of overlay appearance.
 /// @param {Numeric} $bg              Overlay background.
 ///
-@mixin fill-animated($duration: 0.5s, $delay: 0.75s, $bg: $default-bg) {
+@mixin fill-animated($duration: 0.75s, $delay: 1s, $bg: $default-bg) {
 
     @include fill-hidden($bg);
 

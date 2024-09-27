@@ -3,6 +3,7 @@
 
 import { AppDebug }   from "../application/debug";
 import { Emma }       from "./assets";
+import { selector }   from "./css";
 import { onPageExit } from "./events";
 import { Overlay }    from "./overlay";
 
@@ -79,5 +80,23 @@ export class SearchInProgress extends Overlay {
         if (!no_on_page_exit) {
             onPageExit(() => this.showOnPageExit && this.show());
         }
+    }
+
+    /**
+     * This override is necessary to ensure that the overlay and its container
+     * are found during page transitions.
+     *
+     * @param {boolean} [show]
+     */
+    toggle(show) {
+        const container  = this.constructor.CONTAINER_CLASS;
+        const $container = $('body').children(selector(container));
+        const overlay    = this.constructor.OVERLAY_CLASS;
+        const $overlay   = $container.children(selector(overlay));
+        const marker     = this.constructor.VISIBLE_MARKER;
+        const visible    = this.constructor.suppressed ? false : show;
+        $container.toggleClass(marker, visible);
+        $overlay.toggleClass(marker, visible);
+        this._info('toggle', visible);
     }
 }

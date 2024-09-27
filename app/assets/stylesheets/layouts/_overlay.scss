@@ -20,11 +20,6 @@
     background: transparent;
     z-index:    $z-overlay;
 
-    //// NOTE: The preferred approach when there is full support for :has().
-    //&:has(.visible) {
-    //    overflow-y: visible;
-    //}
-
     &.visible {
         overflow-y: visible;
     }
@@ -33,12 +28,14 @@
     // In-progress overlay
     //=========================================================================
 
-    // An indicator that is presented during a time-consuming search.
+    // An indicator that is presented during a time-consuming action.
     .search-in-progress {
 
+        // Before the action has started, the overlay is made visible and will
+        // ease out of transparency.
         @include overlay.image("loading-balls.gif", $width: max(5vw,2cm));
 
-        // When the search is done, hide the overlay immediately rather than
+        // When the action is done, hide the overlay immediately rather than
         // easing back to transparency.
         &:not(.visible) {
             transition: unset;

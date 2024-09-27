@@ -200,7 +200,7 @@ en:
         JS_DEBUG_SCROLL:              true
         JS_DEBUG_SEARCH:              false
         JS_DEBUG_SEARCH_ANALYSIS:     false
-        JS_DEBUG_SEARCH_IN_PROGRESS:  true # NOTE: should be false
+        JS_DEBUG_SEARCH_IN_PROGRESS:  false
         JS_DEBUG_SESSION:             false
         JS_DEBUG_SETUP:               true
         JS_DEBUG_SKIP_NAV:            true
@@ -372,3 +372,4 @@ en:
         ANALYTICS_ENABLED:            false
         DEBUG_CORS:                   false
         DEBUG_SHRINE:                 false
+        JS_DEBUG_SEARCH_IN_PROGRESS:  true
