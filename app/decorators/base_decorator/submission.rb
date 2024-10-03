@@ -77,7 +77,7 @@ module BaseDecorator::Submission
   # @see LayoutHelper::PageModals#add_page_modal
   #
   def monitor_control(js: MONITOR_JS_CLASS, css: MONITOR_CLASS, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt = trace_attrs_from(opt)
     type  = opt.delete(:type)
     m_opt = { 'data-modal-class': js, 'data-modal-selector': css }
@@ -99,8 +99,8 @@ module BaseDecorator::Submission
     opt[:close]        = monitor_cancel_options
     opt[:controls]     = monitor_log_toggle
     opt[:'aria-label'] = SUBMIT_DESC
+    trace_attrs!(opt, __method__)
     prepend_css!(opt, css)
-    trace_attrs!(opt)
     h.modal_popup(**opt) do
       t_opt = trace_attrs_from(opt)
       monitor_container(**container, **t_opt)
@@ -150,8 +150,8 @@ module BaseDecorator::Submission
   def monitor_log_toggle(label: nil, css: '.log-toggle', **opt)
     label       ||= SUBMIT_DIAG
     opt[:title] ||= SUBMIT_DIAG_TIP
+    trace_attrs!(opt, __method__)
     prepend_css!(opt, css)
-    trace_attrs!(opt)
     html_button(label, **opt)
   end
 
@@ -184,8 +184,8 @@ module BaseDecorator::Submission
   #
   def monitor_container(unique: nil, css: '.monitor-container', **opt)
     unique ||= hex_rand
+    trace_attrs!(opt, __method__)
     prepend_css!(opt, css)
-    trace_attrs!(opt)
     html_div(**opt) do
       t_opt = trace_attrs_from(opt)
       MONITOR_PARTS.map { send(_1, unique: unique, **t_opt) }
@@ -201,8 +201,8 @@ module BaseDecorator::Submission
   #
   def monitor_heading(unique:, css: '.monitor-heading', **opt)
     opt[:id] = unique_id(css, unique: unique)
+    trace_attrs!(opt, __method__)
     prepend_css!(opt, css)
-    trace_attrs!(opt)
     html_h1(SUBMIT_TITLE, **opt)
   end
 
@@ -217,8 +217,8 @@ module BaseDecorator::Submission
   #
   def monitor_status(css: '.monitor-status', **opt)
     opt.delete(:unique)
+    trace_attrs!(opt, __method__)
     prepend_css!(opt, css)
-    trace_attrs!(opt)
     html_div(**opt) do
       t_opt = trace_attrs_from(opt)
       html_div(class: 'notice', **t_opt)
@@ -233,7 +233,7 @@ module BaseDecorator::Submission
   # @return [ActiveSupport::SafeBuffer]
   #
   def monitor_output(css: '.monitor-output', **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt = trace_attrs_from(opt)
     opt.delete(:unique)
 
@@ -259,8 +259,8 @@ module BaseDecorator::Submission
   # @return [ActiveSupport::SafeBuffer]
   #
   def output_part(label, css:, **opt)
+    trace_attrs!(opt, __method__)
     prepend_css!(opt, css)
-    trace_attrs!(opt)
     html_div(**opt) do
       t_opt = trace_attrs_from(opt)
       html_h2(label, **t_opt) << html_div(class: 'display', **t_opt)
@@ -278,7 +278,7 @@ module BaseDecorator::Submission
   # @see file:app/assets/javascripts/shared/submit-modal.js *outputDisplay*
   #
   def monitor_log(unique:, css: '.monitor-log', **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt = trace_attrs_from(opt)
 
     # === Results element
@@ -307,7 +307,7 @@ module BaseDecorator::Submission
   # @return [ActiveSupport::SafeBuffer]
   #
   def log_part(label, type:, unique:, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt = trace_attrs_from(opt)
     id    = unique_id(type, unique: unique)
     html_div(class: "#{type} pair", **t_opt) do

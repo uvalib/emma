@@ -32,7 +32,7 @@ class SearchTitleDecorator < SearchDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def list_item(**opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     if present?
       added = {}
       # noinspection RailsParamDefResolve

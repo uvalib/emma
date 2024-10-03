@@ -132,7 +132,7 @@ class ManifestDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def list_item_number(**opt)
-      trace_attrs!(opt)
+      trace_attrs!(opt, __method__)
       super(**opt) do
         control_icon_buttons(index: opt[:index], except: :show)
       end
@@ -172,7 +172,7 @@ class ManifestDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def items_menu(**opt)
-      trace_attrs!(opt)
+      trace_attrs!(opt, __method__)
       items_menu_role_constraints!(opt)
       opt[:sort] ||= { updated_at: :desc, name: :asc }
       super
@@ -429,7 +429,7 @@ class ManifestDecorator
   # @return [Hash{Symbol=>FieldConfig}]
   #
   def table_field_values(**opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt    = trace_attrs_from(opt)
     controls = control_group { control_icon_buttons(**t_opt) }
     opt[:before] = { actions: controls }
@@ -522,7 +522,7 @@ class ManifestDecorator
   # @yieldreturn [Array<ActiveSupport::SafeBuffer>, nil]
   #
   def form_buttons(**opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     opt[:action]          ||= context[:action] || DEFAULT_FORM_ACTION
     opt[:'data-manifest'] ||= object.id
     buttons = super
@@ -894,7 +894,7 @@ class ManifestDecorator
     css:    '.submission-status-grid',
     **opt
   )
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     index ||= paginator.first_index
     r_start = row || 0
     table   = for_html_table?(tag)

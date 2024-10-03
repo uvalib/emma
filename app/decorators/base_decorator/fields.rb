@@ -53,7 +53,7 @@ module BaseDecorator::Fields
         value = pairs.delete(cfg[:label]) || pairs.delete(fld)
         [fld, value] unless value.nil?
       }.compact.to_h.merge(pairs)
-    opt[:outer] = trace_attrs(opt[:outer])
+    opt[:outer] = trace_attrs(opt[:outer], __method__)
     render_json_data(pairs, **opt)
   end
 
@@ -67,7 +67,7 @@ module BaseDecorator::Fields
   #
   def render_file_data(value = nil, field: :file_data, **opt)
     value ||= object.try(field) || object.try(:[], field)
-    opt[:outer] = trace_attrs(opt[:outer])
+    opt[:outer] = trace_attrs(opt[:outer], __method__)
     render_json_data(value, **opt, field_root: field)
   end
 
@@ -86,8 +86,8 @@ module BaseDecorator::Fields
   def render_json_data(value, outer: nil, css: '.data-list', **opt)
     value &&= json_parse(value) unless value.is_a?(Hash)
     outer   = outer&.dup || {}
+    trace_attrs!(outer, __method__)
     prepend_css!(outer, css)
-    trace_attrs!(outer)
     html_div(**outer) do
       t_opt = trace_attrs_from(outer)
       if value.present?
@@ -311,7 +311,7 @@ module BaseDecorator::Fields
   #
   def render_form_field_item(name, value, **opt)
     normalize_attributes!(opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     local = opt.extract!(*RENDER_FIELD_ITEM_OPT)
     field = opt[:'data-field']
     name  = local[:name] || name || local[:base] || field
@@ -364,7 +364,7 @@ module BaseDecorator::Fields
   #
   def render_check_box(name, value, tag: :li, css: '.checkbox.single', **opt)
     normalize_attributes!(opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt    = trace_attrs_from(opt)
     local    = opt.extract!(*CHECK_OPT)
     checked  = local.delete(:checked)

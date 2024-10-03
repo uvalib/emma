@@ -364,7 +364,7 @@ class UploadDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def list_item_number(**opt)
-      trace_attrs!(opt)
+      trace_attrs!(opt, __method__)
       super(**opt) do
         control_icon_buttons(index: opt[:index], except: :show)
       end
@@ -401,7 +401,7 @@ class UploadDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def items_menu(**opt)
-      trace_attrs!(opt)
+      trace_attrs!(opt, __method__)
       items_menu_role_constraints!(opt)
       opt[:sort] ||= { submission_id: :desc }
       super
@@ -448,8 +448,8 @@ class UploadDecorator < BaseDecorator
       leader   = html_span(leader, class: 'leader')
       filename = config_term(:upload, :uploaded_file, :blank)
       filename = html_span(filename, class: 'filename')
+      trace_attrs!(opt, __method__)
       prepend_css!(opt, css)
-      trace_attrs!(opt)
       html_div(**opt) do
         leader << filename
       end
@@ -582,7 +582,7 @@ class UploadDecorator
   #
   def list_field_values(**opt)
     opt[:except] ||= FIELD_FILTERS unless developer?
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     result = super
 
     # Move :file_data and :emma_data to the end.
@@ -608,7 +608,7 @@ class UploadDecorator
   def list_field_value(value, field:, **opt)
     return value if value.is_a?(ActiveSupport::SafeBuffer)
     return super unless value.present? && field.is_a?(Symbol)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     case field
       when :file_data, :edit_file_data
         render_file_data(value, field: field, **opt)
@@ -654,7 +654,7 @@ class UploadDecorator
   # @return [Hash{Symbol=>FieldConfig}]
   #
   def table_field_values(**opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt    = trace_attrs_from(opt)
     controls = control_group { control_icon_buttons(**t_opt) }
     opt[:before] = { actions: controls }
@@ -849,7 +849,7 @@ class UploadDecorator
   # @see Upload#SELECT_REPO
   #
   def form_top_controls(f, *buttons, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt = trace_attrs_from(opt)
     super do |parts|
       parts << parent_entry_select(**t_opt)
@@ -866,7 +866,7 @@ class UploadDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def form_top_button_tray(f, *buttons, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt = trace_attrs_from(opt)
     super do |parts|
       parts << f.label(:file, FILE_LABEL, class: 'sr-only', id: 'fi_label')
@@ -934,7 +934,7 @@ class UploadDecorator
   # @see file:javascripts/feature/model-form.js *monitorSourceRepository()*
   #
   def parent_entry_select(css: '.parent-entry-select', **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt  = trace_attrs_from(opt)
     b_opt  = { role: 'button', tabindex: 0 }
     id     = 'parent-entry-search'

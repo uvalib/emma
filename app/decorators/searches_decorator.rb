@@ -52,7 +52,7 @@ class SearchesDecorator < BaseCollectionDecorator
   # @see file:javascripts/feature/search-analysis.js *AdvancedFeature*
   #
   def list_styles(css: STYLE_CONTAINER, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     b_opt   = trace_attrs_from(opt).merge(class: 'style-button')
     buttons =
       STYLE_BUTTONS.values.map { |prop|
@@ -92,7 +92,7 @@ class SearchesDecorator < BaseCollectionDecorator
       }.compact
     opt[:'data-path'] = make_path(base_path, **url_params)
     prepend_css!(opt, css)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     html_div(**opt) do
       menu_name   = :results
       option_tags = h.options_for_select(pairs, selected)

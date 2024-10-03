@@ -205,7 +205,7 @@ class UploadsDecorator < BaseCollectionDecorator
   # @see file:app/assets/javascripts/feature/records.js *filterOptionToggle()*
   #
   def list_filter_options(css: FILTER_OPTIONS_CLASS, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt  = trace_attrs_from(opt)
     name   = "#{model_type}-#{__method__}"
     base   = unique_id(name)

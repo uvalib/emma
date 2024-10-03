@@ -32,7 +32,7 @@ module BaseCollectionDecorator::Form
   # @return [ActiveSupport::SafeBuffer]
   #
   def delete_form(label: nil, outer: nil, css: '.model-form.delete', **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt     = trace_attrs_from(opt)
     inner_opt = opt.slice!(:cancel, *delete_submit_option_keys)
 
@@ -110,9 +110,9 @@ module BaseCollectionDecorator::Form
     opt[:title]  ||= config.dig((if_enabled || :if_disabled), :tooltip)
     opt[:role]   ||= 'button'
     opt[:method] ||= :delete
+    trace_attrs!(opt, __method__)
     append_css!(opt, (if_enabled ? 'best-choice' : 'forbidden'))
     prepend_css!(opt, css)
-    trace_attrs!(opt)
     h.button_to(label, url, opt)
   end
 
@@ -124,7 +124,7 @@ module BaseCollectionDecorator::Form
   #
   def delete_cancel_button(**opt)
     opt[:action] ||= :delete
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     cancel_button(**opt)
   end
 

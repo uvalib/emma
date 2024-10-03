@@ -665,7 +665,7 @@ class SearchDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def list_item(**opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     score_data  = (score_values.presence if relevancy_scores?)
     opt[:outer] = (opt[:outer] || {}).merge(score_data) if score_data
     opt.reverse_merge!(wrap: PAIR_WRAPPER)

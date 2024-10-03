@@ -81,7 +81,7 @@ module BaseDecorator::Lookup
   # @see LayoutHelper::PageModals#add_page_modal
   #
   def lookup_control(js: LOOKUP_JS_CLASS, css: LOOKUP_CLASS, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     type  = opt.delete(:type)
     m_opt = { 'data-modal-class': js, 'data-modal-selector': css }
     b_opt = opt.extract!(ACTION_ATTR).merge!(opt.delete(:button) || {})
@@ -102,8 +102,8 @@ module BaseDecorator::Lookup
     opt[:close]        = lookup_cancel_options
     opt[:controls]     = lookup_commit_button
     opt[:'aria-label'] = LOOKUP_DESC
+    trace_attrs!(opt, __method__)
     prepend_css!(opt, css)
-    trace_attrs!(opt)
     h.modal_popup(**opt) do
       t_opt = trace_attrs_from(opt)
       lookup_container(**container, **t_opt)
@@ -157,8 +157,8 @@ module BaseDecorator::Lookup
     label       ||= COMMIT_LABEL
     opt[:title] ||= COMMIT_TIP
     opt[:type]  ||= 'submit'
+    trace_attrs!(opt, __method__)
     prepend_css!(opt, css)
-    trace_attrs!(opt)
     html_button(label, **opt)
   end
 
@@ -194,8 +194,8 @@ module BaseDecorator::Lookup
   #
   def lookup_container(unique: nil, css: '.lookup-container', **opt)
     unique ||= hex_rand
+    trace_attrs!(opt, __method__)
     prepend_css!(opt, css)
-    trace_attrs!(opt)
     html_div(**opt) do
       t_opt = trace_attrs_from(opt)
       LOOKUP_PARTS.map { send(_1, unique: unique, **t_opt) }
@@ -216,8 +216,8 @@ module BaseDecorator::Lookup
     l_id   = unique_id('label', css, unique: unique || hex_rand)
     label  = html_div(QUERY_LABEL, id: l_id)
     terms  = html_div(class: 'terms', 'aria-describedby': l_id)
+    trace_attrs!(opt, __method__)
     prepend_css!(opt, css)
-    trace_attrs!(opt)
     html_div(**opt) do
       label << terms
     end
@@ -271,8 +271,8 @@ module BaseDecorator::Lookup
       end
 
     # === Input prompt element
+    trace_attrs!(opt, __method__)
     prepend_css!(opt, css)
-    trace_attrs!(opt)
     html_div(**opt) do
       terms_input << choices
     end
@@ -295,8 +295,8 @@ module BaseDecorator::Lookup
     label  = html_span(label, class: 'label')
     status = html_div(class: 'services invisible') { label }
     notice = html_div(class: 'notice')
+    trace_attrs!(opt, __method__)
     prepend_css!(opt, css)
-    trace_attrs!(opt)
     html_div(**opt) do
       status << notice
     end
@@ -313,7 +313,7 @@ module BaseDecorator::Lookup
   # @see file:app/assets/javascripts/shared/lookup-modal.js *outputDisplay*
   #
   def lookup_results(unique: nil, css: '.lookup-output', **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt     = trace_attrs_from(opt)
     uniq_opt  = { unique: unique || hex_rand }
 
@@ -369,8 +369,8 @@ module BaseDecorator::Lookup
   #
   def lookup_in_progress(unique: nil, css: '.loading-in-progress', **opt)
     unique # NOTE: unused
+    trace_attrs!(opt, __method__)
     prepend_css!(opt, css, 'hidden')
-    trace_attrs!(opt)
     html_div(**opt) do
       html_div(class: 'content')
     end

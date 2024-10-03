@@ -62,7 +62,7 @@ module BaseDecorator::Hierarchy
 
     # Get a line for each metadata field/pair and plus interstitial content.
     lines = item_lines(hierarchy, opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     # noinspection RubyMismatchedArgumentType
     lines.map! { _1.is_a?(Hash) ? render_field(_1, opt) : ERB::Util.h(_1) }
     lines.unshift(nil).join(separator).html_safe
@@ -351,7 +351,7 @@ module BaseDecorator::Hierarchy
     opt[:'data-raw-value'] = Array.wrap(line[:value]).compact.join('|')
     opt = append_css(opt, scopes) if scopes.present?
     opt.delete(:level) # Label/value pairs are "leaf nodes".
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     render_line(label, value, prop: line, **opt)
   end
 
@@ -403,7 +403,7 @@ module BaseDecorator::Hierarchy
     opt.merge!(role: 'heading', 'aria-level': level) if level
     opt.merge!(index: index, field: field, 'data-value': data_value)
     opt.merge!(prop.select { |k, _| k.start_with?('data-') })
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     render_line(label, value, **opt)
   end
 
@@ -423,7 +423,7 @@ module BaseDecorator::Hierarchy
       opt[:'data-row'] ||= ".#{row}"
     end
     opt[:context] ||= :item
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     tree_button(**opt)
   end
 
@@ -438,7 +438,7 @@ module BaseDecorator::Hierarchy
   def render_line(label, value, **opt)
     if value.present?
       opt.except!(:action, :record_map, :term)
-      trace_attrs!(opt)
+      trace_attrs!(opt, __method__)
       render_pair(label, value, **opt)
     end || ''.html_safe
   end

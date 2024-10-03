@@ -37,7 +37,7 @@ module BaseCollectionDecorator::Table
   # @see #TABLE_HEAD_DARK
   #
   def render_table(tag: nil, css: nil, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     css ||= table_css_class
     table = for_html_table?(tag)
     tag   = table && :table || tag || :div
@@ -153,7 +153,7 @@ module BaseCollectionDecorator::Table
   # @return [Array<ActiveSupport::SafeBuffer>]  If :separator is *nil*.
   #
   def table_entries(row: 1, separator: "\n", **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     arg   = opt.extract!(*MODEL_TABLE_DATA_OPT)
     p_opt = opt.extract!(:sort).merge!(limit: arg[:partial] || 0)
     rows  = table_row_page(**p_opt)
@@ -179,7 +179,7 @@ module BaseCollectionDecorator::Table
   # @return [ActiveSupport::SafeBuffer]
   #
   def table_heading(dark: TABLE_HEAD_DARK, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     item  = object.first || object_class.new
     local = opt.extract!(*MODEL_TABLE_DATA_OPT)
     inner = opt[:inner_opt] = { tag: :th, role: 'columnheader' }

@@ -204,7 +204,7 @@ class OrgDecorator
   # @return [Hash{Symbol=>FieldConfig}]
   #
   def table_field_values(**opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt    = trace_attrs_from(opt)
     controls = control_group { control_icon_buttons(**t_opt) }
     opt[:before] = { actions: controls }

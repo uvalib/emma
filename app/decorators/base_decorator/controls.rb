@@ -109,7 +109,7 @@ module BaseDecorator::Controls
   #
   def control_icon_buttons(except: nil, css: '.icon-tray', **opt)
     return if blank?
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     icons =
       control_icons.except(*except).map { |action, prop|
         control_icon_button(action, **prop.merge(opt))
@@ -164,9 +164,9 @@ module BaseDecorator::Controls
     icon    = symbol_icon(icon)
     visible = check_setting(prop[:visible])
 
+    trace_attrs!(opt, __method__)
     append_css!(opt, 'invisible') unless allowed && visible
     prepend_css!(opt, css, action)
-    trace_attrs!(opt)
     # noinspection RubyMismatchedArgumentType
     case path
       when :button then html_button(icon, **opt)
@@ -183,7 +183,7 @@ module BaseDecorator::Controls
   # @return [ActiveSupport::SafeBuffer]
   #
   def symbol_icon(icon, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     icon = icon_definition(icon)[:icon] if icon.is_a?(Symbol)
     super
   end
@@ -205,8 +205,8 @@ module BaseDecorator::Controls
   def control_group(id = nil, css: '.control-group', **opt, &blk)
     opt[:'aria-labelledby'] = id if id
     opt[:role] ||= 'group'
+    trace_attrs!(opt, __method__)
     prepend_css!(opt, css)
-    trace_attrs!(opt)
     html_div(**opt, &blk)
   end
 

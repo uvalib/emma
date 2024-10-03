@@ -65,7 +65,7 @@ module BaseDecorator::Links
   # noinspection RubyMismatchedArgumentType
   #++
   def model_link(item, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     local  = opt.extract!(*MODEL_LINK_OPT)
     type   = (ctrlr_type unless item)
     item ||= object
@@ -95,8 +95,8 @@ module BaseDecorator::Links
   #
   def link(css: nil, **opt)
     opt[:title] = opt.delete(:tooltip) || opt[:title] || show_tooltip
+    trace_attrs!(opt, __method__)
     prepend_css!(opt, css) if css.present?
-    trace_attrs!(opt)
     model_link(object, **opt)
   end
 
@@ -109,7 +109,7 @@ module BaseDecorator::Links
   #
   def button_link(css: '.button', **opt)
     opt[:role] ||= 'button'
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     link(css: css, **opt)
   end
 
@@ -156,7 +156,7 @@ module BaseDecorator::Links
     css:      '.page-actions',
     **opt
   )
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt     = trace_attrs_from(opt)
     current ||= context[:action]
     table   ||= action_links(**opt)
@@ -202,7 +202,7 @@ module BaseDecorator::Links
     css:      '.page-action',
     **opt
   )
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt  = trace_attrs_from(opt)
     action = opt.delete(:action) || action
     entry  = action_entry(action, current: current, **opt)
@@ -229,7 +229,7 @@ module BaseDecorator::Links
   # @return [Hash{Symbol=>String}]
   #
   def action_entry(action = nil, current: nil, table: nil, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     current = (opt.delete(:current) || current || context[:action])&.to_sym
     action  = (opt.delete(:action)  || action  || current)&.to_sym
     table ||= action_links(**opt)

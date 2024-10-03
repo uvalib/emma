@@ -77,7 +77,7 @@ module BaseDecorator::List
     return ''.html_safe if blank? && vp_opt.blank?
     opt.delete(:level) # Not propagated in the general case.
 
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt  = trace_attrs_from(opt)
     fv_opt = opt.slice(:index, :no_fmt)
     pp_opt = opt.extract!(*PROPERTY_PAIRS_OPT, :fake_upload_file)
@@ -107,7 +107,7 @@ module BaseDecorator::List
   #
   def list_render_pair(label, value, field:, prop:, **opt)
     scopes = field_scopes(field).presence and append_css!(opt, *scopes)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     render_pair(label, value, field: field, prop: prop, **opt)
   end
 
@@ -309,7 +309,7 @@ module BaseDecorator::List
     # Explicit 'data-*' attributes.
     opt.merge!(prop.select { |k, _| k.start_with?('data-') })
     opt[:'data-field'] ||= field
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     parts = []
 
     # Label and label HTML options.
@@ -442,7 +442,7 @@ module BaseDecorator::List
   # @return [Hash{Symbol=>FieldConfig}]
   #
   def list_field_values(limited: true, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt = trace_attrs_from(opt)
     v_opt = opt.extract!(:index, :no_fmt).merge!(t_opt)
     property_pairs(**opt).map { |field, prop|
@@ -541,7 +541,7 @@ module BaseDecorator::List
   # @return [ActiveSupport::SafeBuffer]
   #
   def details(outer: nil, css: nil, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     pairs   = list_field_values(**opt)
     count   = list_item_columns(pairs)
     css   ||= "#{model_type}-details"
@@ -569,7 +569,7 @@ module BaseDecorator::List
     css  ||= ".#{model_type}-container"
     role ||= (:article if level == 1)
     opt.delete(:skip) # In case this slipped in to the base method.
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
 
     parts  = before
     parts << details(**opt)
@@ -598,7 +598,7 @@ module BaseDecorator::List
     opt[:id] ||= model_item_id
     l     = opt.delete(:level)
     skip  = Array.wrap(skip)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     parts = []
     parts << list_item_number(level: l, **opt) unless skip.include?(:number)
     parts << thumbnail(link: true, **opt)      unless skip.include?(:thumbnail)
@@ -655,7 +655,7 @@ module BaseDecorator::List
     row    = positive(row)
 
     opt.except!(*ITEM_ENTRY_OPT)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt  = trace_attrs_from(opt)
 
     # Set up number label and inner parts if supplied.
@@ -705,7 +705,7 @@ module BaseDecorator::List
   # @return [ActiveSupport::SafeBuffer]
   #
   def list_item_number_label(index: nil, label: nil, value: nil, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
 
     # Label visible only to screen-readers:
     l_opt   = prepend_css(opt, 'sr-only')
@@ -752,7 +752,7 @@ module BaseDecorator::List
     id:     nil,
     **opt
   )
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     css   ||= ".#{model_type}-list-item"
     row     = positive(opt[:row])
     col     = positive(opt[:col])

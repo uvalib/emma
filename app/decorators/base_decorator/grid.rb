@@ -204,7 +204,7 @@ module BaseDecorator::Grid
   # @return [Array(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)]
   #
   def grid_controls(row: nil, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     opt[:list] ||= grid_row_page(**opt)
     page_content_controls(form_button_tray, row: row, **opt)
   end
@@ -229,7 +229,7 @@ module BaseDecorator::Grid
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_grid(row: nil, index: nil, cols: nil, tag: nil, css: nil, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt   = trace_attrs_from(opt)
     css   ||= grid_css_class
     row   ||= 0
@@ -283,7 +283,7 @@ module BaseDecorator::Grid
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_grid_head_row(cols: nil, row: nil, tag: nil, css: nil, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt = trace_attrs_from(opt)
     css ||= grid_row_css_class
     table = for_html_table?(tag)
@@ -315,7 +315,7 @@ module BaseDecorator::Grid
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_grid_data_rows(items = nil, row: nil, index: nil, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     table = for_html_table?(opt[:tag])
     wrap  = opt.key?(:wrap) ? opt.delete(:wrap) : table
     opt[:cols] ||= grid_row_columns
@@ -355,7 +355,7 @@ module BaseDecorator::Grid
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_grid_data_row(item, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     decorate(item).grid_row(**opt)
   end
 
@@ -374,7 +374,7 @@ module BaseDecorator::Grid
     opt[:index]    = GridIndex::NONE
     opt[:outer]    = append_css(opt[:outer], 'hidden')
     opt[:template] = true
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     # noinspection RubyMismatchedArgumentType
     render_grid_data_row(model, **opt)
   end
@@ -404,7 +404,7 @@ module BaseDecorator::Grid
   # @return [Array<ActiveSupport::SafeBuffer>]
   #
   def grid_head_headers(**opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt = trace_attrs_from(opt)
     col   = positive(opt[:'aria-colindex']) || 1
     c_opt = opt.slice(:row, :tag).merge!('aria-colindex': col)
@@ -425,7 +425,7 @@ module BaseDecorator::Grid
   # @return [Array<ActiveSupport::SafeBuffer>]
   #
   def grid_head_control_headers(css: CONTROLS_CELL_CLASS, **opt, &blk)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt = trace_attrs_from(opt)
     idx   = opt[:'aria-colindex'] ||= 1
     l_id  = opt[:'aria-labelledby'] = unique_id(css, index: idx)
@@ -443,7 +443,7 @@ module BaseDecorator::Grid
   # @return [Array<ActiveSupport::SafeBuffer>]
   #
   def grid_head_data_headers(cols: nil, **opt, &blk)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     start_column = positive(opt.delete(:'aria-colindex')) || 1
     (cols || grid_row_columns).map.with_index(start_column) do |col, idx|
       grid_head_cell(col, **opt, 'aria-colindex': idx, &blk)
@@ -464,7 +464,7 @@ module BaseDecorator::Grid
   # @return [ActiveSupport::SafeBuffer]
   #
   def grid_head_cell(col, row: nil, tag: nil, css: '.cell', **opt, &blk)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     table   = for_html_table?(tag)
     tag     = :th if table
     hidden  = undisplayed?(col)
@@ -499,8 +499,8 @@ module BaseDecorator::Grid
   #
   def grid_head_label(text = nil, css: '.label.text', **opt)
     text ||= yield
+    trace_attrs!(opt, __method__)
     prepend_css!(opt, css)
-    trace_attrs!(opt)
     html_span(text, **opt)
   end
 
@@ -526,7 +526,7 @@ module BaseDecorator::Grid
   # @return [ActiveSupport::SafeBuffer]
   #
   def grid_row(control: {}, unique: nil, tag: nil, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt        = trace_attrs_from(opt)
     opt[:tag]    = for_html_table?(tag) ? :tr : tag
     opt[:index]  = grid_index(opt[:index])
@@ -566,8 +566,8 @@ module BaseDecorator::Grid
     button.merge!(label: label, 'aria-labelledby': l_id)
 
     opt[:role] = 'rowheader' if table
+    trace_attrs!(opt, __method__)
     prepend_css!(opt, css)
-    trace_attrs!(opt)
     html_tag(tag, **opt) do
       t_opt = trace_attrs_from(opt)
       grid_row_control_contents(**button, **t_opt)
@@ -588,7 +588,7 @@ module BaseDecorator::Grid
   # @yieldreturn [Array,ActiveSupport::SafeBuffer,nil]
   #
   def grid_row_control_contents(*added, row: nil, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     opt.transform_keys! { _1.to_s.sub(/^data_/, 'data-').to_sym }
     l_id  = opt.delete(:'aria-labelledby')
     label = opt.delete(:label)
@@ -609,7 +609,7 @@ module BaseDecorator::Grid
   # @return [ActiveSupport::SafeBuffer]
   #
   def grid_item(cols: nil, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     cols = nil unless cols&.difference(grid_row_columns)&.present?
     opt[:css]    = ".#{model_type}-grid-item" unless opt.key?(:css)
     opt[:tag]    = :tr  if for_html_table?(opt[:tag])
@@ -643,7 +643,7 @@ module BaseDecorator::Grid
     vp_opt = opt.extract!(*VALUE_PAIRS_OPT).compact_blank!
     return ''.html_safe if blank? && vp_opt.blank?
 
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt = trace_attrs_from(opt)
     opt.except!(:row, :title, :unique)
 
@@ -678,7 +678,7 @@ module BaseDecorator::Grid
   # @return [Hash{Symbol=>FieldConfig}]
   #
   def grid_field_values(**opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt = trace_attrs_from(opt)
     v_opt = opt.extract!(:index, :no_fmt).merge!(t_opt)
     property_pairs(**opt).map { |field, prop|
@@ -714,7 +714,7 @@ module BaseDecorator::Grid
   # Compare with BaseDecorator::List#list_render_pair
   #
   def grid_data_cell_render_pair(label, value, field:, prop:, col: nil, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     # Special adjustment to keep #render_pair from causing single-select values
     # from being represented as multi-select inputs.
     prop[:array] ||= :false if prop[:type].is_a?(Class)
@@ -751,7 +751,7 @@ module BaseDecorator::Grid
     opt[:value_css] = css
     opt[:render]  ||= :render_grid_input if prop[:type] == 'text'
 
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt = trace_attrs_from(opt)
     control_group(l_id, **t_opt) do
       render_form_pair(field, value, **opt)
@@ -810,7 +810,7 @@ module BaseDecorator::Grid
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_grid_input(name, value, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     render_form_input(name, value, **opt, type: :textarea)
   end
 

@@ -161,7 +161,7 @@ module BaseDecorator::Table
   # @see #table_heading
   #
   def render_table_row(row: 1, col: 1, **opt, &blk)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt = trace_attrs_from(opt)
     local = opt.extract!(:tag, :outer_tag, :inner_tag, :outer_opt, :inner_opt)
     table = for_html_table?(local[:tag]) # If not rendering HTML table.
@@ -206,7 +206,7 @@ module BaseDecorator::Table
   # @return [ActiveSupport::SafeBuffer]
   #
   def table_entry(**opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     render_table_row(inner_tag: :td, **opt) do |_field, prop, **f_opt|
       render_pair(nil, prop[:value], **f_opt, prop: prop, no_label: true)
     end
@@ -223,7 +223,7 @@ module BaseDecorator::Table
   # @return [Hash{Symbol=>FieldConfig}]
   #
   def table_field_values(limited: true, **opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt = trace_attrs_from(opt)
     v_opt = opt.extract!(:index, :no_fmt).merge!(t_opt)
     opt[:config] ||= model_table_fields

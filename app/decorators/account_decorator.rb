@@ -246,7 +246,7 @@ class AccountDecorator
   # @return [Hash{Symbol=>FieldConfig}]
   #
   def table_field_values(**opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     t_opt    = trace_attrs_from(opt)
     controls = control_group { control_icon_buttons(**t_opt) }
     opt[:before] = { actions: controls }
@@ -274,7 +274,7 @@ class AccountDecorator
   # @return [Hash{Symbol=>FieldConfig}]
   #
   def list_field_values(**opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     opt[:except] ||= FIELD_FILTERS unless developer?
     super
   end
@@ -308,7 +308,7 @@ class AccountDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def form_field_rows(**opt)
-    trace_attrs!(opt)
+    trace_attrs!(opt, __method__)
     fields = AccountConcern::PASSWORD_KEYS
     fields = fields.excluding(:current_password) if manager? || administrator?
     fields = fields.map { [_1, nil] }.to_h

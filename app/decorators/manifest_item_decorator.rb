@@ -267,7 +267,7 @@ class ManifestItemDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def list_item(**opt)
-      trace_attrs!(opt)
+      trace_attrs!(opt, __method__)
       index = opt[:index]
       outer = opt[:outer] = opt[:outer]&.dup || {}
       outer[:id]                ||= "#{model_type}-item-#{index}" if index
@@ -284,7 +284,7 @@ class ManifestItemDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def list_item_number(**opt)
-      trace_attrs!(opt)
+      trace_attrs!(opt, __method__)
       super(**opt) do
         control_icon_buttons(**opt.slice(:index))
       end
@@ -692,7 +692,7 @@ class ManifestItemDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def submission_status_header(row: HEADER_ROW, css: '.head', **opt)
-      trace_attrs!(opt)
+      trace_attrs!(opt, __method__)
       prepend_css!(opt, css)
       wrap = !opt.key?(:wrap) || opt.delete(:wrap)
       name = config_term(:manifest_item, :submit, :item_name)
@@ -729,7 +729,7 @@ class ManifestItemDecorator < BaseDecorator
       css:      '.submission-status',
       **opt
     )
-      trace_attrs!(opt)
+      trace_attrs!(opt, __method__)
       table   = for_html_table?(tag)
       tag     = :tr if table
       heading = (row == HEADER_ROW)
