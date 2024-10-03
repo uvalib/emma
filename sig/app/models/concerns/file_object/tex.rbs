@@ -1,0 +1,5 @@
+# A TeX file object.
+#
+class FileObject::Tex < FileObject
+  include FileFormat::Tex
+end

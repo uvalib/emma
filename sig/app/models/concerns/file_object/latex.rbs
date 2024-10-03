@@ -1,0 +1,5 @@
+# A LaTeX file object.
+#
+class FileObject::Latex < FileObject
+  include FileFormat::Latex
+end

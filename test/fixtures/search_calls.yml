@@ -47,6 +47,8 @@ template:
         - word
         - rtf
         - html
+        - tex
+        - latex
         - daisy
         - daisyAudio
         - brf

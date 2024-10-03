@@ -66,6 +66,8 @@ en:
           word:                     'Microsoft Word'
           rtf:                      'RTF'
           html:                     'HTML'
+          tex:                      'TeX'
+          latex:                    'LaTeX'
           daisy:                    'DAISY'
           daisyAudio:               'DAISY Audio'
           brf:                      'BRF'

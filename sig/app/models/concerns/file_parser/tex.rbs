@@ -1,0 +1,11 @@
+# TeX file format metadata extractor.
+#
+class FileParser::Tex < FileParser
+  include FileFormat::Tex
+
+  # metadata
+  #
+  # @return [OpenStruct]
+  #
+  def metadata: () -> OpenStruct
+end

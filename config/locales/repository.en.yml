@@ -38,6 +38,8 @@ en:
           word:         'word'
           rtf:          'rtf'
           html:         'html'
+          tex:          'tex'
+          latex:        'latex'
           daisy:        'daisy'
           daisyAudio:   'daisyAudio'
           brf:          'brf'
