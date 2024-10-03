@@ -37,7 +37,7 @@ module HtmlHelper::Attributes
     opt  = args.pop if args.last.is_a?(Hash) && opt.blank?
     name = args.first
     return true if name.present? && (name.html_safe? || !only_symbols?(name))
-    return true if opt.slice(:title, *ARIA_LABEL_ATTRS).compact_blank!.present?
+    return true if opt.slice(:title, *ARIA_LABEL_ATTRS).compact_blank.present?
     Log.debug { "#{__method__}: none for #{args.inspect} #{opt.inspect}" }
     false
   end

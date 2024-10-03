@@ -903,7 +903,7 @@ module LayoutHelper::SearchFilters
 
     # Setup the <input> element.
     d_opt   = { 'aria-labelledby': label_id, 'data-default': default }
-    input   = date_field_tag(url_prm, value, d_opt.compact_blank!)
+    input   = date_field_tag(url_prm, value, d_opt.compact_blank)
 
     # Add CSS classes which indicate the position of the control.
     prepend_grid_cell_classes!(opt, css, **local)

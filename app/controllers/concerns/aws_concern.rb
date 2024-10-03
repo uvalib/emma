@@ -72,19 +72,14 @@ module AwsConcern
     if values.nil? || values.include?('*')
       EmmaRepository.s3_queue.excluding(:ace).sort << emma
     else
-      values.map! do |v|
+      values.map! { |v|
         case v.to_s.downcase
           when 'emma'                    then :emma
           when 'ia', /internet.*archive/ then :internetArchive
           when 'ac', 'ace', /ace/        then :internetArchive
           else Log.debug { "#{__method__}: #{v.inspect}: invalid" }
         end
-      end
-      values.compact!
-      values.sort!
-      values.uniq!
-      values << emma if values.delete(emma)
-      values
+      }.compact.sort.uniq.tap { |vals| vals << emma if vals.delete(emma) }
     end
   end
 
@@ -127,7 +122,7 @@ module AwsConcern
   #
   def params_values(opt, *keys)
     prm = url_parameters(opt.presence)
-    prm.values_at(*keys).compact_blank!.first.to_s.downcase.split(/\s*,\s*/)
+    prm.values_at(*keys).compact_blank.first.to_s.downcase.split(/\s*,\s*/)
   end
 
   # aws_params

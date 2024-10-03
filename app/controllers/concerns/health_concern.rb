@@ -205,7 +205,7 @@ module HealthConcern
   # @return [Hash{Symbol=>HealthStatus}]
   #
   def get_health_status(*subsystem)
-    subsystem = subsystem.flatten.compact_blank!.map!(&:to_sym).presence
+    subsystem = subsystem.flatten.compact_blank.map!(&:to_sym).presence
     entries   = subsystem&.map! { [_1, nil] }&.to_h || HEALTH_CHECK
     entries.map { |type, entry| [type, status_report(type, entry)] }.to_h
   end

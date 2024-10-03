@@ -115,7 +115,7 @@ module Representable
                   when :class   then "#{k0} = <#{v0.class}>"
                   when :inspect then "#{k0} = #{v0.inspect}"
                 end
-              }.compact.sort_by!(&:size).join(', ')
+              }.compact.sort_by(&:size).join(', ')
             elsif v.class.to_s.end_with?('Serializer')
               "#{k} = #{v}"
             elsif v.is_a?(String) && v.start_with?(*LITERAL)

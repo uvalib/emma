@@ -404,7 +404,7 @@ module TestHelper::Utility
       format ||= item.format
       ver    ||= item.formatVersion
     end
-    [repo, rid, format].compact_blank!.tap { |parts|
+    [repo, rid, format].compact_blank.tap { |parts|
       parts << ver if ver && (parts.size == 3)
     }.join('-')
   end

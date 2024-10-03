@@ -194,7 +194,7 @@ class ApplicationRecord < ActiveRecord::Base
     recs.order(sort).map(&blk).to_h.tap { |pairs|
       pairs.merge!(append)          if append.present?
       pairs.reverse_merge!(prepend) if prepend.present?
-    }.stringify_keys!
+    }.stringify_keys
   end
 
 end

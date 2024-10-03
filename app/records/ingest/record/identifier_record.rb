@@ -97,7 +97,7 @@ class Ingest::Record::IdentifierRecord < Ingest::Api::Record
     parts = [emma_repository, emma_repositoryRecordId, dc_format]
     parts << emma_formatVersion unless no_version
     # noinspection RubyMismatchedReturnType
-    parts.compact_blank!.join('-').presence
+    parts.compact_blank.join('-').presence
   end
 
 end

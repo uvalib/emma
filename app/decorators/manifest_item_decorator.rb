@@ -829,8 +829,8 @@ class ManifestItemDecorator < BaseDecorator
         }.transform_values! { |field|
           item[field].to_s.split("\n").map! { |s|
             s.strip.delete_suffix(';')
-          }.compact_blank!.presence
-        }.compact_blank!
+          }.compact_blank
+        }.compact_blank
         sep   = ' / '
         first = [*part[:title], *part[:author], *part[:identifier]].take(2)
         first = first.join(sep)

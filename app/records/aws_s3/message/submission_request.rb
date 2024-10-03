@@ -146,7 +146,7 @@ class AwsS3::Message::SubmissionRequest < AwsS3::Api::Message
   # @return [Array<AwsS3::Message::SubmissionRequest>]
   #
   def self.array(records)
-    Array.wrap(records).flatten.compact_blank!.map! { self[_1] }
+    Array.wrap(records).flatten.compact_blank.map! { self[_1] }
   end
 
 end

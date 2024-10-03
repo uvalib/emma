@@ -115,7 +115,7 @@ module HeadHelper::PageTitle
   # '<head>' have changed.
   #
   def emit_page_meta_title(**opt)
-    @page_meta_title &&= @page_meta_title.flatten.compact_blank!.uniq
+    @page_meta_title &&= @page_meta_title.flatten.compact_blank.uniq
     @page_meta_title ||= []
     title  = @page_meta_title.join(' ').squish
     parts  = []

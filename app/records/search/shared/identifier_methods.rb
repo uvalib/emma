@@ -59,7 +59,7 @@ module Search::Shared::IdentifierMethods
     fields
       .flat_map { get_values(_1) }
       .map! { _1.to_s.remove(/\s/).sub!(/^isbn[^\d]*/, '') }
-      .compact_blank!
+      .compact_blank
       .uniq
   end
 

@@ -268,7 +268,7 @@ class Upload < ApplicationRecord
     attributes  = attributes.fields              if attributes.is_a?(Upload)
     attributes  = attributes.deep_symbolize_keys if attributes.is_a?(Hash)
     opt, fields = partition_hash(attributes, *ASSIGN_CONTROL_OPT)
-    op_mode     = opt.slice(*ASSIGN_MODES).compact_blank!.keys.first
+    op_mode     = opt.slice(*ASSIGN_MODES).compact_blank.keys.first
 
     set_model_options(opt)
 

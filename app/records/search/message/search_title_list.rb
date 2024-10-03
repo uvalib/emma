@@ -156,7 +156,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
 
     def initialize(hash)
       id, val = partition_hash(hash, *IDENTIFIER_FIELDS)
-      @ids    = [*id.values].compact_blank!.presence
+      @ids    = [*id.values].compact_blank.presence
       @ids  &&= PublicationIdentifierSet.new(@ids)
       @values = val.values.map { LIST_ELEMENT.make_comparable(_1) }.presence
     end
@@ -248,7 +248,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
     return blk.call(recs) if level == GROUPING_LEVEL_DEPTH
     group_related(recs, level).flat_map { |flds, group|
       recursive_group_records(group, level: (level+1), fields: flds, &blk)
-    }.compact_blank!
+    }.compact_blank
   end
 
   # This functions as an alternative to Enumerable#group_by, but grouping by

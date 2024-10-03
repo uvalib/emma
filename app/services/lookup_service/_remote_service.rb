@@ -278,7 +278,7 @@ class LookupService::RemoteService < ApiService
       result[:bib_seriesPosition]    ||= rec.series_position
       result[:emma_publicationDate]  ||= rec.publication_date
       result[:dcterms_dateCopyright] ||= rec.publication_year
-    }.compact_blank!
+    }.compact_blank
   end
 
 end

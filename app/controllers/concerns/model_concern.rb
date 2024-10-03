@@ -340,7 +340,7 @@ module ModelConcern
     m_key = model.model_key
     i_key = model.model_id_key
     keys  = [m_key, i_key, id_key].compact
-    item  = opt.extract!(*keys).compact_blank!.values.first.presence
+    item  = opt.extract!(*keys).compact_blank.values.first.presence
     id    = ('' if item.nil? || %w[* 0 all false].include?(item))
     id  ||=
       if item.is_a?(model)

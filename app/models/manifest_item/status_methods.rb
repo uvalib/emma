@@ -90,7 +90,7 @@ module ManifestItem::StatusMethods
   def evaluate_file_status(item = nil, symbol: true, **added)
     if (value = added[:file_status]).blank?
       data, err = item_fields(item, added).values_at(:file_data, :field_error)
-      data  &&= ManifestItem.normalize_file(data)&.compact_blank!
+      data  &&= ManifestItem.normalize_file(data)&.compact_blank
       value   = (:missing   if data.blank?)
       value ||= (:invalid   if err&.dig(:file_data)&.present?)
       value ||= (:url_only  if data[:url])

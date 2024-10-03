@@ -358,7 +358,7 @@ class User < ApplicationRecord
       first_name: data.info&.first_name || data.info&.givenName,
       last_name:  data.info&.last_name  || data.info&.sn,
       provider:   data.provider,
-    }.compact_blank!
+    }.compact_blank
     find_by(email: attr[:email]).tap do |user|
       if user && update
         attr.delete(:email)

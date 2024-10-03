@@ -383,7 +383,7 @@ module AccountConcern
   def get_accounts(*terms, columns: ACCT_MATCH_KEYS, **hash_terms)
     keys  = Record::Searchable::MAKE_RELATION_OPT
     opt   = normalize_sort_order!(hash_terms.extract!(*keys))
-    terms = terms.push(hash_terms).flatten.compact_blank!
+    terms = terms.push(hash_terms).flatten.compact_blank
     # noinspection RubyMismatchedArgumentType
     terms.map! { _1.is_a?(Hash) ? normalize_predicates!(_1) : _1 }
     case

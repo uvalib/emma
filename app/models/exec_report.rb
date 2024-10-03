@@ -100,7 +100,7 @@ class ExecReport
   #
   def add(*src)
     added =
-      src.flatten.compact_blank!.flat_map do |v|
+      src.flatten.compact_blank.flat_map do |v|
         v.is_a?(ExecReport) ? v.parts : ExecReport::Part[v]
       end
     @render_html ||= added.any?(&:html_safe?)
@@ -264,7 +264,7 @@ class ExecReport
     def serialize_filter(part)
       case part
         when Array
-          part.map { serialize_filter(_1) }.compact_blank!
+          part.map { serialize_filter(_1) }.compact_blank
         when Hash
           part.map { |k, v|
             v = v.class.name if v.is_a?(Exception)
@@ -290,7 +290,7 @@ class ExecReport
     def message_hashes(src)
       extract_message_hashes(src, __method__).map! { |part|
         normalized_hash(part)
-      }.compact_blank!
+      }.compact_blank
     end
 
     # Get topic/details from *src*.
@@ -442,7 +442,7 @@ class ExecReport
           result[EXCEPTION_KEY] = src
 
         when Hash
-          result = src.deep_dup.deep_symbolize_keys!
+          result = src.deep_dup.deep_symbolize_keys
           result[STATUS_KEY] = result.extract!(*STATUS_KEYS).values.first
           result[HTML_KEY]   = result.extract!(*HTML_KEYS).values.first
 
@@ -462,7 +462,7 @@ class ExecReport
           Log.info { error }
           result = { TOPIC_KEY => "-[ #{error} ]-" }
       end
-      result.compact_blank!.transform_values! { Array.wrap(_1) }
+      result.compact_blank.transform_values! { Array.wrap(_1) }
     end
 
     # =========================================================================
@@ -616,7 +616,7 @@ class ExecReport
       html = entries.any? { _1.try(:html_safe?) } if html.nil?
       error_table_hash(entries, **opt).transform_values! { |v|
         message_line(nil, *v, html: html)
-      }.compact_blank!
+      }.compact_blank
     end
 
     # Return workflow error messages as multiple string(s).
@@ -635,7 +635,7 @@ class ExecReport
         k = k.to_s
         k = nil if k.start_with?(GENERAL_ERROR_TAG)
         message_line(k, *v, html: html)
-      }.compact_blank!
+      }.compact_blank
     end
 
     # =========================================================================
@@ -1151,7 +1151,7 @@ class ExecReport::Part
       src   = Array.wrap(src)
       label = render_topic(src.first, **opt)
       parts = render_details((src[1..] || src), **opt)
-      line  = [label, parts].compact_blank!.presence or return
+      line  = [label, parts].compact_blank.presence or return
       opt[:html] ? html_join(line, separator) : line.join(separator)
     end
 

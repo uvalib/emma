@@ -27,7 +27,7 @@ module FormHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def hidden_input(k, v, id: nil, separator: "\n")
-    id = [id, k].compact_blank!.join('-')
+    id = [id, k].compact_blank.join('-')
     if v.is_a?(Array)
       v.map.with_index(1) { |value, index|
         hidden_field_tag("#{k}[]", value, id: "#{id}-#{index}")
@@ -55,7 +55,7 @@ module FormHelper
   def hidden_parameters_for(id, fields)
     id    = id&.to_sym
     skip  = [id, *Paginator::NON_SEARCH_KEYS].compact
-    pairs = fields.symbolize_keys.except!(*skip).compact_blank!.sort
+    pairs = fields.symbolize_keys.except!(*skip).compact_blank.sort
     before_after = id ? pairs.partition { |k, _| k <= id } : [pairs, []]
     before_after.each { _1.map! { |k, v| hidden_input(k, v, id: id) } }
   end

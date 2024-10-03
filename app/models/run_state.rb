@@ -272,7 +272,7 @@ class RunState < Hash
     hr:  'hour',
     dy:  'day',
     wk:  'week'
-  }.stringify_keys!.deep_freeze
+  }.stringify_keys.deep_freeze
 
   # A regular expression pattern fragment for time units.
   #

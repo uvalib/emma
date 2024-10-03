@@ -90,7 +90,7 @@ class SearchController < ApplicationController
     prm      = paginator.initial_parameters
     playback = prm.delete(:search_call)
     s_params = (playback || prm).except(*Paginator::NON_SEARCH_KEYS)
-    q_params = s_params.extract!(*search_query_keys).compact_blank!
+    q_params = s_params.extract!(*search_query_keys).compact_blank
     if q_params.blank?
       if s_params.present?
         redirect_to prm.merge!(q: SearchTerm::NULL_SEARCH)

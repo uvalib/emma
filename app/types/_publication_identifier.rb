@@ -343,7 +343,7 @@ class PublicationIdentifier < ScalarType
   # @return [Array<String>]
   #
   def self.split(value)
-    Array.wrap(value).join("\n").split(/ *[,;|\t\n] */).compact_blank!
+    Array.wrap(value).join("\n").split(/ *[,;|\t\n] */).compact_blank
   end
 
   # Create an array of identifier instances from candidate string(s).

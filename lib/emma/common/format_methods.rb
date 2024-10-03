@@ -249,7 +249,7 @@ module Emma::Common::FormatMethods
     return [] unless (text = text.to_s).match?(/%[{<]/)
     match  = match ? Array.wrap(match) : NAMED_REFERENCES
     result = match.flat_map { text.scan(_1).map(&:shift) }
-    result.compact_blank!.map!(&:to_sym).uniq
+    result.compact_blank.map!(&:to_sym).uniq
   end
 
   # ===========================================================================

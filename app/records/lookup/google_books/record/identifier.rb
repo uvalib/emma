@@ -55,7 +55,7 @@ class Lookup::GoogleBooks::Record::Identifier < Lookup::GoogleBooks::Api::Record
   def to_s
     t = type.presence&.downcase
     t = 'isbn' if t&.start_with?('isbn')
-    [t, identifier].compact_blank!.join(':')
+    [t, identifier].compact_blank.join(':')
   end
 
   # blank?

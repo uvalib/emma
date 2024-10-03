@@ -114,7 +114,7 @@ module Emma::Common::StringMethods
             value.to_s
           end
       end
-    }.compact_blank!
+    }.compact_blank
   end
 
   # ===========================================================================

@@ -7,7 +7,7 @@
 
   view_debug(__FILE__)
 
-  p_opt = { fast: Rails.env.test? }.compact_blank!
+  p_opt = { fast: Rails.env.test? }.compact_blank
   links = User.test_users.keys.map { |acct|
     user  = html_bold(acct)
     label = get_sessions_label(:sign_in_as, user: user).html_safe

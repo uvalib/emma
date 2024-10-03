@@ -189,7 +189,7 @@ module ApiHelper
           message:   ex.message,
           response:  ex.response,
           exception: ex.wrapped_exception
-        }.compact_blank!
+        }.compact_blank
       when Exception
         ex.message
       else

@@ -477,7 +477,7 @@ module BaseDecorator::Grid
       label = grid_head_label(label, id: l_id, **trace_attrs_from(opt))
     end
 
-    data    = prop&.slice(:pairs, *FIELD_PROPERTIES)&.compact_blank!
+    data    = prop&.slice(:pairs, *FIELD_PROPERTIES)&.compact_blank
     opt.merge!(data.transform_keys! { :"data-#{_1}" }) if data.present?
 
     opt[:role]           = 'columnheader' if table
@@ -640,7 +640,7 @@ module BaseDecorator::Grid
   # @return [ActiveSupport::SafeBuffer]
   #
   def grid_data_cell(tag: nil, separator: nil, css: '.cell', **opt)
-    vp_opt = opt.extract!(*VALUE_PAIRS_OPT).compact_blank!
+    vp_opt = opt.extract!(*VALUE_PAIRS_OPT).compact_blank
     return ''.html_safe if blank? && vp_opt.blank?
 
     trace_attrs!(opt, __method__)

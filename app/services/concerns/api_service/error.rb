@@ -253,7 +253,7 @@ class ApiService::Error < Api::Error
             next unless msg.delete_prefix!("#{ERROR_TAG}=")
           end
           msg.remove(/\\"/)
-        }.compact_blank!.presence
+        }.compact_blank.presence
       result ||= src['message'].presence
       result ||= src.values.flat_map { _1 if _1.is_a?(Array) }
       Array.wrap(result || src).compact

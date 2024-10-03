@@ -610,7 +610,7 @@ module SubmissionService::Action::Submit
       result.merge!(failed)
     end
 
-    result.stringify_keys!
+    result.stringify_keys
 
   rescue => error
     notice = error.to_s

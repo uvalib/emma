@@ -53,7 +53,7 @@ module CssHelper
     classes.flat_map { |c|
       next if c.blank?
       c.is_a?(Array) ? css_class_array(*c) : c.to_s.squish.split(/[ .]/)
-    }.compact_blank!.uniq
+    }.compact_blank.uniq
   end
 
   # Return a copy of *html_opt* where the classes are appended to the current

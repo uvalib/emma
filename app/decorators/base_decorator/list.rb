@@ -73,7 +73,7 @@ module BaseDecorator::List
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_field_values(separator: nil, **opt)
-    vp_opt = opt.extract!(*VALUE_PAIRS_OPT).compact_blank!
+    vp_opt = opt.extract!(*VALUE_PAIRS_OPT).compact_blank
     return ''.html_safe if blank? && vp_opt.blank?
     opt.delete(:level) # Not propagated in the general case.
 

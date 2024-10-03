@@ -214,8 +214,8 @@ module Record::Searchable
       ids  = recs.map { _1[i_key] }.concat(ids)  if i_key
       sids = recs.map { _1[s_key] }.concat(sids) if s_key
     end
-    ids  = ids.compact_blank!.uniq.presence
-    sids = sids.compact_blank!.uniq.presence
+    ids  = ids.compact_blank.uniq.presence
+    sids = sids.compact_blank.uniq.presence
     if ids && sids
       terms << sql_or(i_key => ids, s_key => sids)
     elsif ids

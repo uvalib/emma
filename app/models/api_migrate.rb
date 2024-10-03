@@ -539,7 +539,7 @@ class ApiMigrate
     #
     def normalize_text_list(value)
       value = Array.wrap(value).join("\n") unless value.is_a?(String)
-      value.split(/(?<=\w)\.(?=\s|\z)|[,;|\t\n]/).map!(&:strip).compact_blank!
+      value.split(/(?<=\w)\.(?=\s|\z)|[,;|\t\n]/).map!(&:strip).compact_blank
     end
 
     # normalize_coverage
@@ -781,7 +781,7 @@ class ApiMigrate
       current = emma_data[field]
       return current                             if values.blank?
       single  = current && !current.is_a?(Array) if single.nil?
-      changed = [*current, *values].compact_blank!
+      changed = [*current, *values].compact_blank
       changed.uniq!                              if unique
       changed = changed.join("\n")               if single
       emma_data[field] = changed

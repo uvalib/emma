@@ -105,7 +105,7 @@ module BaseDecorator::Hierarchy
         main_prop.merge!(level: level) if level
         part_level_lines(main_section, main_index, main_prop, opt)
       end
-    }.compact_blank!
+    }.compact_blank
   end
 
   # Data for the lines of title-level information which relates to the overall
@@ -188,7 +188,7 @@ module BaseDecorator::Hierarchy
       next if part_key == :bibliographic
       next if skip_entry?(part_key, part_section, **skip_opt)
       part_lines(part_section, part_key, part_index, part_prop, opt)
-    }.compact_blank!
+    }.compact_blank
   end
 
   # Data for the lines representing all of the available formats for a specific
@@ -257,7 +257,7 @@ module BaseDecorator::Hierarchy
       next if fmt_key == :bibliographic
       next if skip_entry?(fmt_key, fmt_entry, **skip_opt)
       file_lines(fmt_entry, fmt_key, format_index, format_prop, opt)
-    }.compact_blank!
+    }.compact_blank
   end
 
   # Data for the lines representing each copy of a specific format of a portion
@@ -310,7 +310,7 @@ module BaseDecorator::Hierarchy
       next if skip_entry?(section_key, section_entry, **skip_opt)
       prop = add_scope(section_prop, section_key, index: section_index)
       field_lines(section_entry, prop, opt)
-    }.compact_blank!
+    }.compact_blank
   end
 
   # Data for the lines representing a set of metadata items of a unique copy
@@ -331,7 +331,7 @@ module BaseDecorator::Hierarchy
   def field_lines(pairs, field_prop, opt)
     property_pairs(pairs: pairs, **opt).map { |_field, prop|
       prop.merge(field_prop, row: (opt[:row] += 1))
-    }.compact_blank!
+    }.compact_blank
   end
 
   # Render a single field label and value.

@@ -320,7 +320,7 @@ class ApplicationMailer < ActionMailer::Base
   # @return [String]
   #
   def join_addresses(*values)
-    values = values.flatten.compact_blank!
+    values = values.flatten.compact_blank
     if values.many?
       values.uniq { _1.to_s.downcase }.join('; ')
     else

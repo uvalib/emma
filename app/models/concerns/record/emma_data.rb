@@ -132,12 +132,12 @@ module Record::EmmaData
       elsif (lines = (type == 'textarea')) || (type == 'text') || type.blank?
         join = sep = ';' unless lines
         if array
-          v = v.join(join).split(sep).map!(&:strip).compact_blank!
+          v = v.join(join).split(sep).map!(&:strip).compact_blank
         else
-          v = v.map(&:to_s).map!(&:strip).compact_blank!.join(join)
+          v = v.map { _1.to_s.strip }.compact_blank.join(join)
         end
       else
-        v = v.join(join).split(sep).map!(&:strip).compact_blank!
+        v = v.join(join).split(sep).map!(&:strip).compact_blank
       end
       v = v.first if v.is_a?(Array) && !array
       [k, v] if blanks || v.present? || v.is_a?(FalseClass)

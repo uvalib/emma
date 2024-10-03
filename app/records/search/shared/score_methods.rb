@@ -257,7 +257,7 @@ module Search::Shared::ScoreMethods
     words -= stop_words                                           if stop_words
     words.map! { _1.delete(KEEP).downcase }                       if keep_words
     words.map! { normalized(_1.tr(substitute, original)) }        if no_break
-    words.compact_blank!
+    words.compact_blank
 
     # NOTE: [1] Eliminate possessives before *no_break* makes them invisible.
   end

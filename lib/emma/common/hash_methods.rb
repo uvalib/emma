@@ -37,7 +37,7 @@ module Emma::Common::HashMethods
   # @return [Array(Hash, Hash)]       Matching hash followed by remainder hash.
   #
   def partition_hash(hash, *keys)
-    keys      = keys.flatten.compact_blank!.map!(&:to_sym)
+    keys      = keys.flatten.compact_blank.map!(&:to_sym)
     hash      = normalize_hash(hash)
     matching  = hash.slice(*keys)
     remainder = hash.except(*matching.keys)

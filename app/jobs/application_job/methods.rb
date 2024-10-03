@@ -60,7 +60,7 @@ module ApplicationJob::Methods
     return result if path.blank?
 
     path = path.is_a?(Array) ? path.map(&:to_s) : path.to_s.split('/')
-    result.dig(*path.compact_blank!)
+    result.dig(*path.compact_blank)
   end
 
   # ===========================================================================

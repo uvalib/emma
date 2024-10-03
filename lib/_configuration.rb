@@ -245,7 +245,7 @@ module Configuration
       elsif value.start_with?('{')
         JSON.parse(value, symbolize_names: true) rescue value
       elsif value.sub!(/^\[(.*)\]$/, '\1')
-        value.split(/[;,|\t\n]/).map! { env_value(_1) }.compact_blank!
+        value.split(/[;,|\t\n]/).map! { env_value(_1) }.compact_blank
       elsif value.present?
         case value.downcase
           when *TRUE_VALUES                                   then true
@@ -691,8 +691,8 @@ module Configuration
   #
   def config_term_section(*base, item, **opt)
     base, item = [[item], nil] if base.empty?
-    keys = config_term_keys(*base, item).reverse
-    vals = keys.map { config_section(_1, **opt) }.compact_blank!
+    keys = config_term_keys(*base, item)
+    vals = keys.reverse.map! { config_section(_1, **opt) }.compact_blank
     vals.select { _1.is_a?(Hash) }.prepend({}).reduce(&:rmerge!)
   end
 
@@ -729,8 +729,8 @@ module Configuration
   # @return [Hash]
   #
   def config_page_section(*base, item, **opt)
-    keys = config_page_keys(*base, item).reverse
-    vals = keys.map { config_section(_1, **opt) }.compact_blank!
+    keys = config_page_keys(*base, item)
+    vals = keys.reverse.map! { config_section(_1, **opt) }.compact_blank
     vals.select { _1.is_a?(Hash) }.prepend({}).reduce(&:rmerge!)
   end
 

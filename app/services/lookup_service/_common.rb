@@ -65,7 +65,7 @@ module LookupService::Common
       when PublicationIdentifier then item = item.presence
       else                            item = item&.to_s
     end
-    Array.wrap(item).compact_blank!
+    Array.wrap(item).compact_blank
   end
 
   # Transform a type/ID pair.

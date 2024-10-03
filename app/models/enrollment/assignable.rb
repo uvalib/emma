@@ -75,7 +75,7 @@ module Enrollment::Assignable
         when /;/  then arg = arg.split(';')
         else           arg = [arg]
       end
-      arg.map! { |v|
+      arg.map! do |v|
         e = l = f = nil
         case (v = v.squish.presence)
           when nil  then next
@@ -85,13 +85,13 @@ module Enrollment::Assignable
           else           l = v
         end
         { email: e, last_name: l, first_name: f }.compact
-      }.compact!
+      end
     elsif arg.is_a?(Hash)
       arg = arg.transform_values { _1.is_a?(String) ? _1.squish : _1 }
     elsif !arg.is_a?(Array)
       Log.warn { "#{__method__}: bad: #{arg.inspect}" }
     end
-    Array.wrap(arg).compact_blank!
+    Array.wrap(arg).compact_blank
   end
 
   # Normalize a value for the :request_notes or :admin_notes attributes.
@@ -107,7 +107,7 @@ module Enrollment::Assignable
       when nil    then return
       else             return Log.warn { "#{__method__}: bad: #{arg.inspect}" }
     end
-    arg.map!(&:squish).compact_blank!.presence&.join("\n")
+    arg.map!(&:squish).compact_blank.presence&.join("\n")
   end
 
   # ===========================================================================

@@ -103,7 +103,7 @@ module SqlMethods
   #   sql_clauses(cond, ids)-> "age='18' AND hgt='1.8' AND (id IN (123, 456))"
   #
   def sql_terms(*terms, join: :and, **other)
-    terms = terms.flatten.compact_blank!
+    terms = terms.flatten.compact_blank
     terms << other if other.present?
     # noinspection RubyMismatchedArgumentType
     terms.map! { _1.is_a?(Hash) ? sql_clauses(_1, join: join) : _1 }
@@ -207,7 +207,7 @@ module SqlMethods
   # @return [Array<String>]             If *join* is *nil*.
   #
   def sql_join(*terms, join)
-    terms = terms.flatten.compact_blank!
+    terms = terms.flatten.compact_blank
     # noinspection RubyMismatchedReturnType
     return terms             if join.nil?
     return terms.first || '' unless terms.many?

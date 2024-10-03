@@ -138,7 +138,7 @@ module OmniAuth
           first_name: account_info.dig(:name, :firstName),
           last_name:  account_info.dig(:name, :lastName),
           email:      account_info[:username]
-        }.compact_blank!
+        }.compact_blank
       end
 
       # Credential information for the authenticated user from #access_token.
@@ -151,7 +151,7 @@ module OmniAuth
           expires:       (expires = access_token.expires?),
           expires_at:    (access_token.expires_at    if expires),
           refresh_token: (access_token.refresh_token if expires)
-        }.compact_blank!
+        }.compact_blank
       end
 
       # Extra information.
@@ -172,7 +172,7 @@ module OmniAuth
           info:        (info unless skip_info?),
           credentials: credentials,
           extra:       extra
-        }.compact_blank!
+        }.compact_blank
         OmniAuth::AuthHash.new(data)
       end
 

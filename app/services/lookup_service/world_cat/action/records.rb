@@ -283,7 +283,7 @@ module LookupService::WorldCat::Action::Records
       end
     end
 
-    result.compact_blank!
+    result.compact_blank
   end
 
   # Combine terms to make a WorldCat query string.
@@ -451,7 +451,8 @@ module LookupService::WorldCat::Action::Records
         when /^(.+)\s+([^\s]+)$/      then names = [$2, $1]
         else                               names = [value, nil]
       end
-      names.map! { _1&.gsub(/[[:punct:]]/, ' ')&.squish }.compact_blank!
+      names.map! { _1&.gsub(/[[:punct:]]/, ' ')&.squish }
+      names.compact_blank!
       names.join(', ')
     end
 

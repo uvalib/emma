@@ -47,7 +47,7 @@ class ISO_639
         record.each do |field|
           field = field.downcase
           words = field.split(/[[:blank:]]|\(|\)|,|;/) + field.split(/;/)
-          words.compact_blank!.uniq.each do |word|
+          words.compact_blank.uniq.each do |word|
             index[word] ||= []
             index[word] << i
           end

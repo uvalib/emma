@@ -170,7 +170,7 @@ module SearchConcern
     elsif value.is_a?(Array)
       sanitize_keys(value.first)
     elsif value.is_a?(String) && value.include?(FileFormat::FILE_FORMAT_SEP)
-      value.split(FileFormat::FILE_FORMAT_SEP).compact_blank!
+      value.split(FileFormat::FILE_FORMAT_SEP).compact_blank
     else
       value
     end

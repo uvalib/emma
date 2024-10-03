@@ -92,7 +92,7 @@ module BaseDecorator::Form
   # Compare with BaseDecorator::List#render_field_values
   #
   def render_form_fields(action: nil, separator: nil, **opt)
-    vp_opt = opt.extract!(*VALUE_PAIRS_OPT).compact_blank!
+    vp_opt = opt.extract!(*VALUE_PAIRS_OPT).compact_blank
     return ''.html_safe if blank? && vp_opt.blank?
 
     action    ||= context[:action]

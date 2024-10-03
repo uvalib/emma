@@ -151,7 +151,7 @@ module Import
   def array_value(v, &blk)
     Array.wrap(values(v)).tap { |result|
       result.map!(&blk) if blk
-    }.compact_blank!
+    }.compact_blank
   end
 
   # Transform a data item into a string.

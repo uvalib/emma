@@ -286,7 +286,7 @@ module HtmlHelper::Tags
     check_required_attributes(tag, opt, meth: calling_method) if Log.debug?
 
     args.concat(Array.wrap(yield)) if block_given?
-    args = args.flatten.compact_blank!
+    args = args.flatten.compact_blank
     args = safe_join(args, separator)
 
     content_tag(tag, args, opt)
@@ -308,7 +308,7 @@ module HtmlHelper::Tags
   def html_form(url_or_path, *args, separator: "\n", **opt)
     opt  = args.pop.dup if opt.blank? && args.last.is_a?(Hash)
     args.concat(Array.wrap(yield)) if block_given?
-    args = args.flatten.compact_blank!
+    args = args.flatten.compact_blank
     form_tag(url_or_path, opt) do
       safe_join(args, separator)
     end

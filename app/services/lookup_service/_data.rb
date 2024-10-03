@@ -83,7 +83,8 @@ class LookupService::Data
     result = {}
     items  = items.values  if items.is_a?(Hash)
     items  = items.flatten if items.is_a?(Array)
-    Array.wrap(items).compact_blank!.each do |item|
+    Array.wrap(items).each do |item|
+      next if item.blank?
       item = LookupService::Data::Item.wrap(item)
       key  = item.identifier.to_sym
       case result[key]

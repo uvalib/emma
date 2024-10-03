@@ -713,7 +713,7 @@ module BaseDecorator::Fields
   # @return [Array<String>]
   #
   def format_multiline(text, separator: / *[;\n] */, **)
-    Array.wrap(text).flat_map { _1.to_s.split(separator) }.compact_blank!
+    Array.wrap(text).flat_map { _1.to_s.split(separator) }.compact_blank
   end
 
   # ===========================================================================

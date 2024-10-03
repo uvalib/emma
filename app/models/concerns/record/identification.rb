@@ -438,7 +438,7 @@ module Record::Identification
     opt[:max_id] ||= maximum_id
     ids.flatten.flat_map { |id|
       id.is_a?(String) ? id.strip.split(/\s*,\s*/) : id
-    }.compact_blank!.flat_map { expand_id_range(_1, **opt) }.uniq
+    }.compact_blank.flat_map { expand_id_range(_1, **opt) }.uniq
   end
 
   # Condense an array of identifiers by replacing runs of contiguous number

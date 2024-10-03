@@ -1548,8 +1548,7 @@ module UploadWorkflow::External
   #   @return [Hash{String=>Array<Upload>}]
   #
   def repository_requests(items, empty_key: false)
-    items = items.flatten.compact_blank! if items.is_a?(Array)
-    items = [items]                      if items.is_a?(Upload)
+    items = item.is_a?(Array) ? items.flatten.compact_blank : Array.wrap(items)
     case items
       when Array then items.group_by { Upload.repository_value(_1) }
       when Hash  then items.transform_values { Array.wrap(_1) }

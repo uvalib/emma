@@ -181,7 +181,7 @@ module Record::EmmaIdentification
       if (repo = get_value(item, :emma_repository))
         rid    = get_value(item, :emma_repositoryRecordId)
         format = get_value(item, :dc_format)
-        parts  = [repo, rid, format].compact_blank!
+        parts  = [repo, rid, format].compact_blank
         ver    = (get_value(item, :emma_formatVersion) if parts.size == 3)
         parts << ver if ver.present?
         parts.join('-')

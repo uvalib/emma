@@ -80,7 +80,7 @@ module Lookup::Crossref::Shared::CreatorMethods
     types.flat_map { |type|
       find_record_items(type)
         .map { [_1.given, _1.family].join(' ').squish }
-        .compact_blank!
+        .compact_blank
         .presence&.tap do |names|
           if (role = opt.key?(:role) ? opt[:role] : CREATOR_ROLE[type])
             role  = type if role.is_a?(TrueClass)

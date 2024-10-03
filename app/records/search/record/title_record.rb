@@ -399,12 +399,12 @@ class Search::Record::TitleRecord < Search::Api::Record
         when Hash
           value.map { |k, v|
             [k, make_comparable(v, k)]
-          }.compact_blank!.sort_by! { |kv| kv&.first || '' }.to_h
+          }.compact_blank.sort_by { |kv| kv&.first || '' }.to_h
         when Array
           if id_field?(field)
-            value.compact_blank.sort_by! { identifier_sort_key(_1) }
+            value.compact_blank.sort_by { identifier_sort_key(_1) }
           else
-            value.map { make_comparable(_1) }.compact_blank!.sort!
+            value.map { make_comparable(_1) }.compact_blank.sort
           end
         else
           # noinspection RubyMismatchedReturnType

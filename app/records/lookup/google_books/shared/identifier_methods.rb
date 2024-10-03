@@ -33,7 +33,7 @@ module Lookup::GoogleBooks::Shared::IdentifierMethods
   def identifier_list
     @identifier_list ||=
       find_record_items(:industryIdentifiers)
-        .compact_blank.sort_by! { id_sort_key(_1) }.map!(&:to_s)
+        .compact_blank.sort_by { id_sort_key(_1) }.map!(&:to_s)
   end
 
   # identifier_table
@@ -47,7 +47,7 @@ module Lookup::GoogleBooks::Shared::IdentifierMethods
         id   = PublicationIdentifier.cast(id, invalid: true)
         id ? result.merge!(type => [*result[type], id]) : result
       }.transform_values! { |ids|
-        ids.sort_by! { -_1.to_s.size }
+        ids.sort_by { -_1.to_s.size }
       }
   end
 

@@ -46,7 +46,7 @@ module Api::Shared::TransformMethods
   RENAMED_FIELDS =
     ApiMigrate::configuration.transform_values { |v|
       v[:new_name]&.to_sym
-    }.compact_blank!.freeze
+    }.compact_blank.freeze
 
   # Back-fill "deprecated" fields.
   #

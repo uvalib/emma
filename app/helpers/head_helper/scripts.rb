@@ -86,7 +86,7 @@ module HeadHelper::Scripts
   # @return [ActiveSupport::SafeBuffer]
   #
   def emit_page_javascripts(**opt)
-    result = @page_javascript&.compact_blank! || DEFAULT_PAGE_JAVASCRIPTS.dup
+    result = @page_javascript&.compact_blank || DEFAULT_PAGE_JAVASCRIPTS.dup
     result.map! do |src|
       case src
         when Hash  then source, options = src[:src], src.except(:src)

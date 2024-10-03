@@ -124,7 +124,7 @@ module ParamsHelper
   def identifier_list(*ids, separator: /\s*,\s*/, **)
     ids = ids.flat_map { _1.is_a?(String) ? _1.strip.split(separator) : _1 }
     ids.map! { _1.is_a?(ApplicationRecord) ? _1.id : _1 }
-    ids.map! { positive(_1) || _1 }.compact_blank!
+    ids.map! { positive(_1) || _1 }.compact_blank
   end
 
   # ===========================================================================

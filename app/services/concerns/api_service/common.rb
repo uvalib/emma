@@ -320,8 +320,8 @@ module ApiService::Common
   def api_path(*args)
     arg   = args.flatten.join('/').strip
     uri   = URI.parse(arg)
-    base  = base_uri.path&.split('/')&.compact_blank!&.presence
-    path  = uri.path&.split('/')&.compact_blank!&.presence
+    base  = base_uri.path&.split('/')&.compact_blank&.presence
+    path  = uri.path&.split('/')&.compact_blank&.presence
     path.shift(base.size) if path && base && (path.first(base.size) == base)
     ver   = api_version.presence
     ver   = nil if ver && (base&.include?(ver) || path&.include?(ver))

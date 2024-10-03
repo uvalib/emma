@@ -459,8 +459,8 @@ module FileFormat
           hash[key] ||= {}
           hash[key].transform_values! { |value|
             array = value.is_a?(Array)
-            value = Array.wrap(value).map! { _1.to_s.strip.to_sym }
-            array ? value.compact_blank!.presence : value.first
+            value = Array.wrap(value).map { _1.to_s.strip.to_sym }
+            array ? value.compact_blank.presence : value.first
           }.compact!
         end
       end

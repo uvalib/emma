@@ -30,7 +30,7 @@ public
 def require_files(relative_to, *patterns)
   return if relative_to.blank?
   dir = File.dirname(relative_to)
-  patterns.flatten.compact_blank!.uniq.flat_map do |pattern|
+  patterns.flatten.compact_blank.uniq.flat_map do |pattern|
     Dir.glob("#{dir}/#{pattern}")
       .reject  { [relative_to, dir].include?(_1) }
       .sort_by { [_1, _1.length] }
@@ -49,7 +49,7 @@ end
 #
 def require_subdirs(relative_to, *patterns)
   return if relative_to.blank?
-  subdirs = patterns.flatten.compact_blank!.uniq
+  subdirs = patterns.flatten.compact_blank.uniq
   subdirs << '' if subdirs.blank?
   subdirs.map! { "#{_1}/**/*.rb" }
   require_files(relative_to, *subdirs)

@@ -58,7 +58,8 @@ module EmmaRake
         when Array then args.map { _1.split('=', 2) }.to_h.symbolize_keys
         else            args&.to_hash || {}
       end
-    hash.transform_values!(&:to_s).compact_blank!
+    hash.transform_values!(&:to_s)
+    hash.compact_blank!
     unless args.is_a?(Rake::TaskArguments)
       args = Rake::TaskArguments.new(hash.keys, hash.values)
     end
@@ -115,7 +116,7 @@ module EmmaRake
   def task_option(flag, args = nil)
     flag = %W[--#{flag} -#{flag} #{flag}]
     # noinspection RubyMismatchedReturnType
-    [args, cli_task_options].compact_blank!.find do |options|
+    [args, cli_task_options].compact_blank.find do |options|
       options.find do |opt|
         opt, val = opt.is_a?(Array) ? opt.map(&:to_s) : opt.split('=', 2)
         return val || '' if flag.include?(opt)

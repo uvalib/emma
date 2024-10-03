@@ -53,7 +53,7 @@ module Lookup::WorldCat::Shared::IdentifierMethods
         type = :oclc
         result.merge!(type => [*result[type], *ids]) if ids
       }.transform_values! { |ids|
-        ids.sort_by! { -_1.to_s.size }
+        ids.sort_by { -_1.to_s.size }
       }
   end
 

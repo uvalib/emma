@@ -311,7 +311,8 @@ module IngestService::Action::Submissions
       attr[:emma_repositoryRecordId] ||= attr[:submission_id]
       attr[:emma_repository]         ||= attr[:repository]
       attr[:dc_format]               ||= attr[:fmt]
-      attr.slice!(*INGEST_ID_FIELDS).compact_blank!
+      attr.slice!(*INGEST_ID_FIELDS)
+      attr.compact_blank!
     end
     unless (result = attr.slice(:emma_recordId)).present?
       repo = format = nil

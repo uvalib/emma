@@ -89,7 +89,7 @@ module HeadHelper::Stylesheets
   # @return [ActiveSupport::SafeBuffer]
   #
   def emit_page_stylesheets(**opt)
-    result = @page_stylesheets&.compact_blank! || DEFAULT_PAGE_STYLESHEETS.dup
+    result = @page_stylesheets&.compact_blank || DEFAULT_PAGE_STYLESHEETS.dup
     result.map! do |src|
       case src
         when Hash  then source, options = src[:src], src.except(:src)

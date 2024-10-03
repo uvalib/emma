@@ -99,9 +99,9 @@ module HtmlHelper::Options
   # @return [String]
   #
   def tooltip_text(title, *lines)
-    split = ->(v) { v.to_s.split("\n") }
-    text  = split.(title).compact_blank!
-    rest  = lines.flat_map(&split).compact_blank!
+    split = ->(v) { v.to_s.split("\n").compact_blank }
+    text  = split.(title)
+    rest  = lines.flat_map(&split)
     if text.present? && rest.present?
       norm = ->(v) { v.gsub(/[[:punct:]]/, ' ').squish.downcase }
       last = norm.(text.last)

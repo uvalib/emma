@@ -139,8 +139,9 @@ module LookupService::GoogleBooks::Action::Volumes
   # @return [Array<String>]
   #
   def query_terms(terms, opt)
-    query = opt.extract!(:q, :query).compact_blank!.presence&.values&.first
-    other = opt.extract!(*QUERY_ALIAS).compact_blank!.presence
+    opt   = opt.compact_blank
+    query = opt.extract!(:q, :query).presence&.values&.first
+    other = opt.extract!(*QUERY_ALIAS).presence
     if terms.is_a?(LookupService::Request)
       req = (query || other) ? terms.dup : terms
     else

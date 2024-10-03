@@ -87,8 +87,8 @@ module DataConcern
   # @return [Array<String>, nil]      *nil* if *value* is *nil*.
   #
   def array_param(value)
-    value = value.split(',')                   if value.is_a?(String)
-    value.map { _1.to_s.strip }.compact_blank! if value.is_a?(Array)
+    value = value.split(',')                  if value.is_a?(String)
+    value.map { _1.to_s.strip }.compact_blank if value.is_a?(Array)
   end
 
   # Because DataHelper is biased toward assuming that non-HTML is expected,
