@@ -90,7 +90,7 @@ module BaseDecorator::Common
     # noinspection RubyMismatchedArgumentType
     trace_attrs!(opt, meth)
   end
-    .tap { define_method(_1) { |opt, *| opt&.dup || {} } unless DEBUG_ATTRS }
+    .tap { define_method(_1) { |*arg| arg[0]&.dup || {} } unless DEBUG_ATTRS }
 
   # Inject 'data-trace-*' attributes into *opt*.
   #
@@ -111,7 +111,7 @@ module BaseDecorator::Common
     opt[:'data-trace-method']  = meth
     opt
   end
-    .tap { define_method(_1) { |opt, *, **| opt } unless DEBUG_ATTRS }
+    .tap { define_method(_1) { |*arg, **| arg[0] } unless DEBUG_ATTRS }
 
   # Extract 'data-trace-*' attributes from *opt*.
   #

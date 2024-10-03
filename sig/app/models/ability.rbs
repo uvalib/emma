@@ -419,32 +419,6 @@ class Ability
 
   public
 
-  def all_actions_inspect: () -> String
-
-  def self.all_actions: () -> Hash[Symbol,anyArray]
-
-  def all_actions: () -> Hash[Symbol,anyArray]
-
-  def self.all_actions_sort: () -> Hash[Symbol,anyArray]
-
-  def all_actions_sort: () -> Hash[Symbol,anyArray]
-
-  def self.all_actions_keys: () -> symArray
-
-  def all_actions_keys: () -> symArray
-
-  def self.all_actions_for: (ApplicationRecord|Class model) -> symArray
-
-  def all_actions_for: (ApplicationRecord|Class model) -> symArray
-
-  def self.all_actions_add: (?(Symbol|String|Array[Symbol|String]|nil) action, untyped subject) -> void
-
-  def all_actions_add: (?(Symbol|String|Array[Symbol|String]|nil) action, untyped subject) -> void
-
-  def self.all_actions_remove: (?(Symbol|String|Array[Symbol|String]|nil) action, untyped subject) -> void
-
-  def all_actions_remove: (?(Symbol|String|Array[Symbol|String]|nil) action, untyped subject) -> void
-
   # Models which are managed by CanCan.
   #
   # @return [Array<Class>]

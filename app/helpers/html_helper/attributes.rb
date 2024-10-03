@@ -108,20 +108,6 @@ module HtmlHelper::Attributes
   # @param [Symbol, String] tag
   # @param [Hash]           opt
   #
-  # @return [Hash]          A possibly-modified copy of *opt*.
-  #
-  # @note Currently unused.
-  #
-  def add_inferred_attributes(tag, opt)
-    add_inferred_attributes!(tag, opt.dup)
-  end
-
-  # Augment with attributes that should be set/unset according to the context
-  # (e.g. CSS classes present).
-  #
-  # @param [Symbol, String] tag
-  # @param [Hash]           opt
-  #
   # @return [Hash]          The possibly-modified *opt*.
   #
   def add_inferred_attributes!(tag, opt)
@@ -178,19 +164,6 @@ module HtmlHelper::Attributes
     tr:     { role: 'row' },
     td:     { role: nil },            # Either 'cell' or 'gridcell'
   }.deep_freeze
-
-  # Augment with default attributes.
-  #
-  # @param [Symbol, String] tag
-  # @param [Hash]           opt
-  #
-  # @return [Hash]          A possibly-modified copy of *opt*.
-  #
-  # @note Currently unused.
-  #
-  def add_required_attributes(tag, opt)
-    add_required_attributes!(tag, opt.dup)
-  end
 
   # Augment with default attributes.
   #

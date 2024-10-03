@@ -318,6 +318,9 @@ module ApiService::Common
   #
   def invalid_params: ((Symbol|String) meth, *String errors, ?fatal: bool) -> nil
 
+  # @private
+  API_DEBUGGING: bool
+
   # __debug_api_headers
   #
   # @param [Hash, nil]         options

@@ -651,6 +651,9 @@ module ApiService::Common
 
   protected
 
+  # @private
+  API_DEBUGGING = CONSOLE_DEBUGGING || DEBUG_TRANSMISSION
+
   # __debug_api_headers
   #
   # @param [Hash, nil]         options
@@ -679,6 +682,7 @@ module ApiService::Common
       [service_name] << action.inspect << opts_hdrs << body
     end
   end
+    .tap { neutralize(_1) unless API_DEBUGGING }
 
   # __debug_api_response
   #
@@ -724,10 +728,7 @@ module ApiService::Common
       [service_name] << action.inspect << status << "DATA: #{data}"
     end
   end
-
-  unless CONSOLE_DEBUGGING || DEBUG_TRANSMISSION
-    neutralize(:__debug_api_headers, :__debug_api_response)
-  end
+    .tap { neutralize(_1) unless API_DEBUGGING }
 
   # ===========================================================================
   # :section:

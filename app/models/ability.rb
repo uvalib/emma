@@ -707,7 +707,6 @@ class Ability
   #
   def can(action = nil, subject = nil, *conditions, &blk)
     action, subject, conditions = prep_conditions(action, subject, conditions)
-    all_actions_add(action, subject)
     super
   end
 
@@ -721,7 +720,6 @@ class Ability
   #
   def cannot(action = nil, subject = nil, *conditions, &blk)
     action, subject, conditions = prep_conditions(action, subject, conditions)
-    all_actions_remove(action, subject)
     super
   end
 
@@ -775,71 +773,6 @@ class Ability
     conditions.map! { normalize_id_keys(_1, subject) }
     return action, subject, conditions
   end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  delegate :all_actions,      :all_actions_keys,  to: :class
-  delegate :all_actions_sort, :all_actions_for,   to: :class
-
-  def all_actions_inspect
-    all_actions_sort.transform_values { |list|
-      list.map { _1.is_a?(Class) && _1.try(:model_type) || _1.inspect }.sort
-    }.to_h.pretty_inspect
-  end
-
-  # ===========================================================================
-  # :section: Class methods
-  # ===========================================================================
-
-  protected
-
-  def self.all_actions
-    # noinspection RbsMissingTypeSignature
-    @all_actions ||= {}
-  end
-
-  def self.all_actions_sort
-    # noinspection RbsMissingTypeSignature
-    if defined?(@all_actions_sort)
-      @all_actions_sort
-    else
-      @all_actions_sort = @all_actions = all_actions.sort.to_h
-    end
-  end
-
-  def self.all_actions_keys
-    # noinspection RbsMissingTypeSignature
-    @all_actions_keys ||= all_actions_sort.keys
-  end
-
-  # @param [ApplicationRecord,Class] model
-  def self.all_actions_for(model)
-    keys  = all_actions_keys
-    ctrlr = model.try(:controller)
-    ctrlr ? keys.intersection(ctrlr.public_instance_methods(false)) : keys
-  end
-
-  def self.all_actions_add(action, subject)
-    return unless subject
-    Array.wrap(action).each do |act|
-      all_actions[act] = [*all_actions[act], *subject].uniq
-    end
-  end
-
-  def self.all_actions_remove(action, subject)
-    return unless subject
-    Array.wrap(action).each do |act|
-      (list = all_actions[act]) && list.delete(subject) or next
-      all_actions[act] = list.presence
-    end
-    all_actions.compact!
-  end
-
-  delegate :all_actions_add, :all_actions_remove, to: :class
 
   # ===========================================================================
   # :section: Class methods
