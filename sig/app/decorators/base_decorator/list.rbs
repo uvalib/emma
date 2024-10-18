@@ -15,6 +15,31 @@ module BaseDecorator::List
   #
   PAIR_WRAPPER: String
 
+  # Heading element for lists of model items.
+  #
+  # @param [Array, nil]       list
+  # @param [Integer]          level
+  # @param [String, nil]      title
+  # @param [Integer, Boolean] count   Default: `object.size`.
+  # @param [String]           css     Characteristic CSS class/selector.
+  # @param [Hash]             opt     Passed to heading element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def list_heading: (?(anyArray|nil) list, ?level: Integer, ?title: String|nil, ?count: Integer|bool, ?css: String, ?skip: symArray, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Append a parenthesized count to a label.
+  #
+  # @param [String]      label
+  # @param [Integer]     count        Wrapped in a `<span>`.
+  # @param [String, nil] unit         Appended to the displayed count value.
+  # @param [String]      css          CSS class/selector for count element.
+  # @param [Hash]        opt          Passed to count element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def label_with_count: (String label, Integer count, ?unit: String|nil, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
   # thumbnail_data
   #
   # @return [String, nil]

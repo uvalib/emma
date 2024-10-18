@@ -6,7 +6,6 @@
 
   list  ||= nil
   dec   ||= SearchesDecorator.new(list, **context)
-  list    = dec.object
 
   level ||= 1
   row   ||= level
@@ -15,13 +14,9 @@
   skip    = [*skip, :thumbnail]
   heading =
     unless skip.include?(:title)
-      count ||= list.size
       title ||= nil
-      title   = dec.page_title(title)
-      title  += " (#{count})" unless skip.include?(:count)
-      classes = 'list-heading'
-      classes = css_classes(classes, 'empty') if list.blank?
-      html_tag(level, title, class: classes)
+      count   = !skip.include?(:count)
+      dec.list_heading(level: level, title: title, count: count)
     end
   level += 1
 

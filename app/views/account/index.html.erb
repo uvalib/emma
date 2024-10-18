@@ -8,14 +8,13 @@
   list    = dec.object
 
   help  ||= dec.help_topic
-  title ||= nil
   name  ||= list.many? ? list.map(&:id).join(', ') : list.first&.label.inspect
+  title ||= nil
   title   = dec.page_title(title, name: name)
-
-  count ||= paginator.total_items || list.size
 
   search  = search_terms
   query   = search.except(*SearchTermsHelper::NON_SEARCH_PARAMS).presence
+  heading = dec.table_label_with_count(title, total: !query)
 
   unless modal?
     page    = paginator.page_number
@@ -27,11 +26,9 @@
     set_page_description(title)
   end
 
-  title += " (#{count} %s)" % (query ? 'matches' : 'total')
-
 -%>
 
-<%= page_heading(title, help: help) %>
+<%= page_heading(heading, help: help) %>
 <%= page_description_section %>
 
 <%= page_directions_section %>

@@ -20,11 +20,38 @@ module BaseCollectionDecorator::Table
 
   public
 
+  # The total number of records associated with the current table (which may
+  # larger than the number of rows in the table).
+  #
+  # @return [Integer]
+  #
+  def table_total
+    paginator.total_items || object.size
+  end
+
+  # Append a parenthesized total count to a string for use as a heading for
+  # the current table.
+  #
+  # @param [String]          label
+  # @param [Integer, nil]    count    Default: `#table_total`.
+  # @param [Boolean, String] total    If *false*, show "matches" not "total".
+  # @param [Hash]            opt      Passed to count element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def table_label_with_count(label, count: nil, total: true, **opt)
+    count ||= table_total
+    total   = total ? 'total' : 'matches' unless total.is_a?(String) # TODO: I18n
+    # noinspection RubyMismatchedArgumentType
+    label_with_count(label, count, unit: total, **opt)
+  end
+
   # Render model items as a table.
   #
-  # @param [Symbol] tag               Potential alternative to :table.
-  # @param [String] css               Default: `#table_css_class`.
-  # @param [Hash]   opt               Passed to outer #html_tag except
+  # @param [Symbol]           tag     Potential alternative to :table.
+  # @param [Integer, Boolean] total   Default: `#table_total`.
+  # @param [String]           css     Default: `#table_css_class`.
+  # @param [Hash]             opt     Passed to outer #html_tag except
   #                                     #RENDER_TABLE_OPT to render methods.
   #
   # @option opt [ActiveSupport::SafeBuffer] :thead  Pre-generated *thead*.
@@ -36,11 +63,12 @@ module BaseCollectionDecorator::Table
   # @see #TABLE_HEAD_STICKY
   # @see #TABLE_HEAD_DARK
   #
-  def render_table(tag: nil, css: nil, **opt)
+  def render_table(tag: nil, total: true, css: nil, **opt)
     trace_attrs!(opt, __method__)
     css ||= table_css_class
     table = for_html_table?(tag)
     tag   = table && :table || tag || :div
+    total = table_total unless total.is_a?(Integer) || total.is_a?(FalseClass)
     local = opt.extract!(*RENDER_TABLE_OPT)
     t_opt = trace_attrs_from(opt)
     local = context.slice(*MODEL_TABLE_DATA_OPT).merge!(local)
@@ -78,6 +106,7 @@ module BaseCollectionDecorator::Table
     opt[:role] = table_role                   if table
     opt[:'aria-rowcount'] = rows              if rows.positive?
     opt[:'aria-colcount'] = cols              if cols.positive?
+    opt[:'data-record-total'] = total         if total
     opt[:'data-turbolinks-permanent'] = true  if local[:sortable]
 
     # Generate the table, preceded by a link to access the full table if only

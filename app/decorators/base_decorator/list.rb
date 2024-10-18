@@ -35,6 +35,52 @@ module BaseDecorator::List
 
   public
 
+  # Heading element for lists of model items.
+  #
+  # @param [Array, nil]       list
+  # @param [Integer]          level
+  # @param [String, nil]      title
+  # @param [Integer, Boolean] count   Default: `object.size`.
+  # @param [String]           css     Characteristic CSS class/selector.
+  # @param [Hash]             opt     Passed to heading element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def list_heading(
+    list =  nil,
+    level:  1,
+    title:  nil,
+    count:  true,
+    css:    '.list-heading',
+    **opt
+  )
+    list ||= object
+    title  = ERB::Util.h(page_title(title))
+    count  = list.size unless count.is_a?(Integer) || count.is_a?(FalseClass)
+    prepend_css!(opt, 'empty') if list.blank?
+    prepend_css!(opt, css)
+    html_tag(level, **opt) do
+      # noinspection RubyMismatchedArgumentType
+      count ? label_with_count(title, count) : title
+    end
+  end
+
+  # Append a parenthesized count to a label.
+  #
+  # @param [String]      label
+  # @param [Integer]     count        Wrapped in a `<span>`.
+  # @param [String, nil] unit         Appended to the displayed count value.
+  # @param [String]      css          CSS class/selector for count element.
+  # @param [Hash]        opt          Passed to count element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def label_with_count(label, count, unit: nil, css: '.total-count', **opt)
+    count = html_span(count, **prepend_css!(opt, css))
+    count = unit ? "(#{count} #{ERB::Util.h(unit)})" : "(#{count})"
+    safe_join([label, count.html_safe], ' ')
+  end
+
   # thumbnail_data
   #
   # @return [String, nil]

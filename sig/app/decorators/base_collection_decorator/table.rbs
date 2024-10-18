@@ -7,11 +7,31 @@ module BaseCollectionDecorator::Table
 
   include BaseCollectionDecorator::Row
 
+  # The total number of records associated with the current table (which may
+  # larger than the number of rows in the table).
+  #
+  # @return [Integer]
+  #
+  def table_total: () -> Integer
+
+  # Append a parenthesized total count to a string for use as a heading for
+  # the current table.
+  #
+  # @param [String]          label
+  # @param [Integer, nil]    count    Default: `#table_total`.
+  # @param [Boolean, String] total    If *false*, show "matches" not "total".
+  # @param [Hash]            opt      Passed to count element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def table_label_with_count: (String label, ?count: Integer|nil, ?total: bool|String, **untyped opt) -> ActiveSupport::SafeBuffer
+
   # Render model items as a table.
   #
-  # @param [Symbol] tag               Potential alternative to :table.
-  # @param [String] css               Default: `#table_css_class`.
-  # @param [Hash]   opt               Passed to outer #html_tag except
+  # @param [Symbol]           tag     Potential alternative to :table.
+  # @param [Integer, Boolean] total   Default: `#table_total`.
+  # @param [String]           css     Default: `#table_css_class`.
+  # @param [Hash]             opt     Passed to outer #html_tag except
   #                                     #RENDER_TABLE_OPT to render methods.
   #
   # @option opt [ActiveSupport::SafeBuffer] :thead  Pre-generated *thead*.
@@ -23,7 +43,7 @@ module BaseCollectionDecorator::Table
   # @see #TABLE_HEAD_STICKY
   # @see #TABLE_HEAD_DARK
   #
-  def render_table: (?tag: Symbol|nil, ?css: String|nil, **untyped opt) { (symHash, Array[Model], symHash) -> void } -> ActiveSupport::SafeBuffer
+  def render_table: (?tag: Symbol|nil, ?total: Integer|bool, ?css: String|nil, **untyped opt) { (symHash, Array[Model], symHash) -> void } -> ActiveSupport::SafeBuffer
 
   ALL_RECORDS: String
 
