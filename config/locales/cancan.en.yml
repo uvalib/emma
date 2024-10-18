@@ -14,6 +14,7 @@ en:
       all:            'You are not authorized to %{action} %{subject}.'
 #     account:        'You are not authorized to %{action} EMMA accounts.'
 #     data:           'You are not authorized to %{action} EMMA data.'
+      enrollment:     'You are not authorized to %{action} enrollments.'
       org:            'You are not authorized to %{action} EMMA organizations.'
 #     search:         'You are not authorized to %{action} EMMA searches.'
       search_call:    'You are not authorized to %{action} EMMA statistics.'
@@ -24,6 +25,7 @@ en:
 
     list:             &LIST
       <<:             *TEMPLATE
+      enrollment:     'You are not authorized to list enrollments.'
       org:            'You are not authorized to list EMMA organizations.'
       search_call:    'You are not authorized to list EMMA statistics.'
       upload:         'You are not authorized to list EMMA submissions.'
@@ -33,7 +35,8 @@ en:
 
     view:             &VIEW
       <<:             *TEMPLATE
-      org:            'You are not authorized to display EMMA organizations.'
+      enrollment:     'You are not authorized to view enrollments.'
+      org:            'You are not authorized to view EMMA organizations.'
       search_call:    'You are not authorized to view EMMA statistics.'
       upload:         'You are not authorized to view EMMA submissions.'
       user:           'You are not authorized to view EMMA user accounts.'
@@ -42,6 +45,7 @@ en:
 
     create:           &CREATE
       <<:             *TEMPLATE
+      enrollment:     'You are not authorized to create enrollments.'
       org:            'You are not authorized to create EMMA organizations.'
       search_call:    'You are not authorized to create EMMA statistics.'
       upload:         'You are not authorized to create EMMA submissions.'
@@ -51,6 +55,7 @@ en:
 
     modify:           &MODIFY
       <<:             *TEMPLATE
+      enrollment:     'You are not authorized to modify enrollments.'
       org:            'You are not authorized to modify EMMA organizations.'
       search_call:    'You are not authorized to modify EMMA statistics.'
       upload:         'You are not authorized to modify EMMA submissions.'
@@ -60,6 +65,7 @@ en:
 
     remove:           &REMOVE
       <<:             *TEMPLATE
+      enrollment:     'You are not authorized to remove enrollments.'
       org:            'You are not authorized to remove EMMA organizations.'
       search_call:    'You are not authorized to remove EMMA statistics.'
       upload:         'You are not authorized to remove EMMA submissions.'
@@ -87,41 +93,44 @@ en:
     # Ability actions
     # =========================================================================
 
-    index:            &INDEX
+    index:
       <<: *LIST
 
-    show:             &SHOW
+    show_select:
+      <<: *TEMPLATE
+
+    show:
       <<: *VIEW
 
-    new:              &NEW
+    new:
       <<: *CREATE
 
-    edit:             &EDIT
+    edit_select:
+      <<: *TEMPLATE
+
+    edit:
       <<: *MODIFY
 
-    edit_select:
-      <<: *EDIT
-
-    update:           &UPDATE
-      <<: *EDIT
-
     update_select:
-      <<: *UPDATE
+      <<: *TEMPLATE
 
-    delete:           &DELETE
-      <<: *REMOVE
+    update:
+      <<: *MODIFY
 
     delete_select:
-      <<: *DELETE
+      <<: *TEMPLATE
 
-    destroy:          &DESTROY
-      <<: *DELETE
+    delete:
+      <<: *REMOVE
 
-    remit:            &REMIT
-      <<: *SUBMIT
+    destroy:
+      <<: *REMOVE
 
     remit_select:
-      <<: *REMIT
+      <<: *TEMPLATE
+
+    remit:
+      <<: *SUBMIT
 
     # =========================================================================
     # Ability specific aliases
