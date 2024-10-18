@@ -25,11 +25,14 @@ en:
       # User emails
       # =======================================================================
 
-      new_org:
+      new_org:          &NEW_ORG
         <<:             *TESTING
         subject:        'Welcome to EMMA'
         heading:        'Welcome to EMMA'
         body:           https://emma.uvacreate.virginia.edu/jmu2m/welcome.new.manager.html
+
+      new_man:
+        <<:             *NEW_ORG
 
       new_user:
         <<:             *TESTING

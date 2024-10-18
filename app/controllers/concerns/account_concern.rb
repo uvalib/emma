@@ -194,6 +194,12 @@ module AccountConcern
         invalid_attr(:email, acct, 'account already exists')
       end
 
+      unless @new_admin || @new_org_man || attr[:role].blank?
+        new_role = RolePrototype(attr[:role])
+        man_role = RolePrototype(:manager)
+        @new_man = (new_role == man_role)
+      end
+
       if skip.present?
         Log.debug do
           list = skip.join(', ')
@@ -306,6 +312,13 @@ module AccountConcern
 
       if acct && !skip.include?(:email) && User.find_by(email: acct).present?
         invalid_attr(:email, acct, 'account already exists')
+      end
+
+      unless @new_admin || @new_org_man || attr[:role].blank?
+        old_role = RolePrototype(record[:role])
+        new_role = RolePrototype(attr[:role])
+        man_role = RolePrototype(:manager)
+        @new_man = (new_role == man_role) unless old_role == man_role
       end
 
       if skip.present?

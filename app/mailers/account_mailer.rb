@@ -41,44 +41,46 @@ class AccountMailer < ApplicationMailer
 
   # Send a welcome email to a new EMMA user.
   #
-  # If this is not the production deployment, the email subject will be
-  # annotated to indicate that this is not a real enrollment request.
-  #
   # @param [Hash] opt
   #
   def new_user_email(**opt)
-    test  = opt.key?(:test) ? opt.delete(:test) : !production_deployment?
-    @item = params[:item]
-    @elem = email_elements(:new_user, **opt, test: test)
-    test  = test && @elem[:testing] || {}
+    new_welcome_email(key: :new_user, **opt)
+  end
 
-    # Setup mail options.
-    opt             = params.merge(opt).slice(*MAIL_OPT)
-    opt[:to]        = join_addresses(@item.email_address, opt[:to], @elem[:to])
-    opt[:cc]        = join_addresses(opt[:cc],  @elem[:cc]).presence
-    opt[:bcc]       = join_addresses(opt[:bcc], @elem[:bcc]).presence
-    opt[:from]    ||= @elem[:from] || CONTACT_EMAIL
-    opt[:subject] ||= @elem[:subject]
-    opt[:subject] &&= test[:subject] % opt[:subject] if test[:subject].present?
-
-    # Send the email to the user.
-    mail(opt) do |format|
-      format.text
-      format.html
-    end
+  # Send a welcome email to a new manager.
+  #
+  # @param [Hash] opt
+  #
+  def new_man_email(**opt)
+    new_welcome_email(key: :new_man, **opt)
   end
 
   # Send a welcome email to the manager of a new organization.
   #
-  # If this is not the production deployment, the email subject will be
-  # annotated to indicate that this is not a real enrollment request.
-  #
   # @param [Hash] opt
   #
   def new_org_email(**opt)
+    new_welcome_email(key: :new_org, **opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Send a welcome email based on configuration from "en.emma.mail".
+  #
+  # If this is not the production deployment, the email subject will be
+  # annotated to indicate that this is not a real message.
+  #
+  # @param [Symbol] key               Entry under "en.emma.mail".
+  # @param [Hash]   opt               Passed to ActionMailer::Base#mail.
+  #
+  def new_welcome_email(key:, **opt)
     test  = opt.key?(:test) ? opt.delete(:test) : !production_deployment?
     @item = params[:item]
-    @elem = email_elements(:new_org, **opt, test: test)
+    @elem = email_elements(key, **opt, test: test)
     test  = test && @elem[:testing] || {}
 
     # Setup mail options.

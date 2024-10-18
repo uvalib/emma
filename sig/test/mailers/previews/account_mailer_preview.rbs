@@ -6,10 +6,22 @@ class AccountMailerPreview < ActionMailer::Preview
   #
   def new_user_email: () -> void
 
+  # Preview '/rails/mailers/account_mailer/new_man_email' using a fake user by
+  # default or the specified User record if an :id parameter is given.
+  #
+  def new_man_email: () -> void
+
   # Preview '/rails/mailers/account_mailer/new_org_email' using a fake user by
   # default or the specified User record if an :id parameter is given.
   #
   def new_org_email: () -> void
+
+  # Preview '/rails/mailers/account_mailer/$(meth)' using a fake user by
+  # default or the specified User record if an :id parameter is given.
+  #
+  # @param [Symbol] meth              An AccountMailer public method.
+  #
+  def preview_email: (Symbol meth) -> void
 
   # Generate a fake User if there is no record to use with the preview.
   #

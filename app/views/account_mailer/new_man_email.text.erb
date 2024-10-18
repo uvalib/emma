@@ -1,0 +1,7 @@
+<%# app/views/account_mailer/new_man_email.text.erb -%>
+<%-
+  # Create a welcome message to a new manager.
+  elem ||= @elem
+  body ||= elem[:body]
+-%>
+<%= as_text(body) || render_as_text('new_man') %>

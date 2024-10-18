@@ -1,0 +1,8 @@
+<%# app/views/account_mailer/new_man_email.html.erb -%>
+<%-
+  # Create a welcome message to a new manager.
+  elem ||= @elem
+  heading, body = elem.values_at(:heading, :body)
+  body &&= html_h1(heading) << body if heading.present?
+-%>
+<%= body || render('new_man') %>

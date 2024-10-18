@@ -27,6 +27,13 @@ module MailConcern
   #
   attr_reader :new_org_man
 
+  # Set when a new Manager user is created (outside the context of creating a
+  # new organization) or when the role of an existing user is set to Manager.
+  #
+  # @type [Boolean, nil]
+  #
+  attr_reader :new_man
+
   # Set when the current record operation has created an Administrator user or
   # converted an organization member user into an Administrator.
   #
@@ -71,6 +78,25 @@ module MailConcern
     prm = url_parameters.slice(*ApplicationMailer::MAIL_OPT).except!(:to)
     opt = prm.merge!(opt, item: user)
     AccountMailer.with(opt).new_user_email.deliver_later
+  end
+
+  # Indicate whether #generate_new_man_email should be run for a new manager.
+  #
+  def new_man_email?
+    new_man.present? && send_welcome_email?
+  end
+
+  # Send a welcome email to a new manager.
+  #
+  # @param [User] user
+  # @param [Hash] opt
+  #
+  # @return [void]
+  #
+  def generate_new_man_email(user, **opt)
+    prm = url_parameters.slice(*ApplicationMailer::MAIL_OPT).except!(:to)
+    opt = prm.merge!(opt, item: user)
+    AccountMailer.with(opt).new_man_email.deliver_later
   end
 
   # Indicate whether #generate_new_org_email should be run for a user that

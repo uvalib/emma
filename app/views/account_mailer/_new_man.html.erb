@@ -1,0 +1,8 @@
+<%# app/views/account_mailer/_new_man.html.erb -%>
+<%-
+  # A welcome message to a new manager.
+  elem ||= @elem
+  test ||= elem[:testing] || {}
+-%>
+
+<%= render 'new_org', elem: elem, test: test %>
