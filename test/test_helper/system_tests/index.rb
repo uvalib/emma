@@ -190,7 +190,7 @@ module TestHelper::SystemTests::Index
   def visit_each_show_page(model, entry_css: nil, &blk)
     ctrlr       = controller_name(model)
     entry_css ||= property(ctrlr, :index, :entry_css)
-    assert entry_css, ->() { "#{ctrlr} entry_css could not be determined" }
+    assert entry_css, -> { "#{ctrlr} entry_css could not be determined" }
     entry_count = all(entry_css).size
     max_index = entry_count - 1
     (0..max_index).each do |index|
