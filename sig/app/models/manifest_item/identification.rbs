@@ -1,6 +1,7 @@
 module ManifestItem::Identification
   # :nocov:
   #include Record::Identification
+  # :nocov:
 
   # Column name for the identifier of the associated user.
   #

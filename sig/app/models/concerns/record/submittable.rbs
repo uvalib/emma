@@ -119,6 +119,7 @@ module Record::Submittable
 
     # :nocov:
     #include Record::Submittable::SubmissionMethods
+    # :nocov:
 
     # Current EMMA Unified Ingest API service instance.
     #
@@ -401,6 +402,7 @@ module Record::Submittable
 
     # :nocov:
     #include Record::Submittable::SubmissionMethods
+    # :nocov:
 
     # Bulk removal.
     #

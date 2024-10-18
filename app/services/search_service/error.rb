@@ -68,9 +68,9 @@ class SearchService::Error < ApiService::Error
 end
 
 # Non-functional hints for RubyMine type checking.
+# :nocov:
 # noinspection LongLine
 unless ONLY_FOR_DOCUMENTATION
-  # :nocov:
   class SearchService::AuthError          < ApiService::AuthError;          include SearchService::Error::ClassType; end # "en.emma.error.search.auth"            || "en.emma.error.api.auth"
   class SearchService::CommError          < ApiService::CommError;          include SearchService::Error::ClassType; end # "en.emma.error.search.comm"            || "en.emma.error.api.comm"
   class SearchService::SessionError       < ApiService::SessionError;       include SearchService::Error::ClassType; end # "en.emma.error.search.session"         || "en.emma.error.api.session"
@@ -86,7 +86,7 @@ unless ONLY_FOR_DOCUMENTATION
   class SearchService::HtmlResultError    < ApiService::HtmlResultError;    include SearchService::Error::ClassType; end # "en.emma.error.search.html_result"     || "en.emma.error.api.html_result"
   class SearchService::RedirectionError   < ApiService::RedirectionError;   include SearchService::Error::ClassType; end # "en.emma.error.search.redirection"     || "en.emma.error.api.redirection"
   class SearchService::RedirectLimitError < ApiService::RedirectLimitError; include SearchService::Error::ClassType; end # "en.emma.error.search.redirect_limit"  || "en.emma.error.api.redirect_limit"
-  # :nocov:
 end
+# :nocov:
 
 __loading_end(__FILE__)

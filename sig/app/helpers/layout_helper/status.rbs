@@ -10,6 +10,7 @@ module LayoutHelper::Status
 
   # :nocov:
   #include EngineConcern
+  # :nocov:
 
   # A structure for the result of #engine_status.
   #

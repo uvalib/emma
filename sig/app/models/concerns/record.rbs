@@ -66,6 +66,7 @@ module Record
 
     # :nocov:
     include ActiveRecord::ModelSchema::ClassMethods
+    # :nocov:
 
     # Indicate whether the record schema includes any of the given columns.
     #

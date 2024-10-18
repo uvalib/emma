@@ -1,6 +1,7 @@
 module Org::Assignable
   # :nocov:
   #include Record::Assignable
+  # :nocov:
 
   # Ensure that blanks are allowed, that input values are normalized, and that
   # :status_date is set if :status is updated.

@@ -1,6 +1,7 @@
 module ManifestItem::FileData
   # :nocov:
   #include Record::FileData
+  # :nocov:
 
   # Name of the file referenced by :file_data if it does not contain Shrine
   # uploader metadata.

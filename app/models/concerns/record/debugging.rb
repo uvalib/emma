@@ -21,11 +21,11 @@ module Record::Debugging
     include Record
 
     # Non-functional hints for RubyMine type checking.
+    # :nocov:
     unless ONLY_FOR_DOCUMENTATION
-      # :nocov:
       include Kernel
-      # :nocov:
     end
+    # :nocov:
 
     # =========================================================================
     # :section:
@@ -98,11 +98,11 @@ module Record::Debugging
     if DEBUG_RECORD
 
       # Non-functional hints for RubyMine type checking.
+      # :nocov:
       unless ONLY_FOR_DOCUMENTATION
-        # :nocov:
         include ActiveRecord::Scoping::Named::ClassMethods
-        # :nocov:
       end
+      # :nocov:
 
       # =======================================================================
       # :section:
@@ -144,11 +144,11 @@ module Record::Debugging
     if DEBUG_RECORD
 
       # Non-functional hints for RubyMine type checking.
+      # :nocov:
       unless ONLY_FOR_DOCUMENTATION
-        # :nocov:
         include ActiveRecord::Core
-        # :nocov:
       end
+      # :nocov:
 
       # =======================================================================
       # :section: ActiveRecord overrides

@@ -7,6 +7,6 @@
 class ManifestItemsDecorator < BaseCollectionDecorator
   # :nocov:
   #include ManifestItemDecorator::SharedInstanceMethods
-
   #extend ManifestItemDecorator::SharedClassMethods
+  # :nocov:
 end

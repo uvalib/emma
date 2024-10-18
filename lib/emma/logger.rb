@@ -13,11 +13,12 @@ module Emma
 
     include Emma::Common
 
+    # Non-functional hints for RubyMine type checking.
+    # :nocov:
     unless ONLY_FOR_DOCUMENTATION
-      # :nocov:
       include ActiveSupport::LoggerSilence
-      # :nocov:
     end
+    # :nocov:
 
     # =========================================================================
     # :section:

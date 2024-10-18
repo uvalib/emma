@@ -14,6 +14,7 @@ module LayoutHelper::PageControls
 
   # :nocov:
   #include Emma::Common::ObjectMethods
+  # :nocov:
 
   # Indicate whether it is appropriate to show page controls.
   #

@@ -31,10 +31,9 @@ class UploadController < ApplicationController
 
   # :nocov:
   #include AbstractController::Callbacks
-
   #include ActionController::RespondWith
-
   #extend CanCan::ControllerAdditions::ClassMethods
+  # :nocov:
 
   ADMIN_OPS: symArray
 

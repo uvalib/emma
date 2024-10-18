@@ -49,6 +49,7 @@ class ManifestItem < ApplicationRecord
   #include Record::Rendering
   #extend  Record::Rendering
   #extend  Record::Describable::ClassMethods
+  # :nocov:
 
   # Create a new instance.
   #

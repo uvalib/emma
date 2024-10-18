@@ -15,6 +15,7 @@ class ToolController < ApplicationController
 
   # :nocov:
   #include AbstractController::Callbacks
+  # :nocov:
 
   # === GET /tool
   #

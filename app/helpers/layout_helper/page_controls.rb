@@ -18,11 +18,11 @@ module LayoutHelper::PageControls
   include ParamsHelper
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include Emma::Common::ObjectMethods
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:

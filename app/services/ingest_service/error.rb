@@ -208,9 +208,9 @@ class IngestService::Error < ApiService::Error
 end
 
 # Non-functional hints for RubyMine type checking.
+# :nocov:
 # noinspection LongLine
 unless ONLY_FOR_DOCUMENTATION
-  # :nocov:
   class IngestService::AuthError          < ApiService::AuthError;          include IngestService::Error::ClassType; end # "en.emma.error.ingest.auth"            || "en.emma.error.api.auth"
   class IngestService::CommError          < ApiService::CommError;          include IngestService::Error::ClassType; end # "en.emma.error.ingest.comm"            || "en.emma.error.api.comm"
   class IngestService::SessionError       < ApiService::SessionError;       include IngestService::Error::ClassType; end # "en.emma.error.ingest.session"         || "en.emma.error.api.session"
@@ -226,7 +226,7 @@ unless ONLY_FOR_DOCUMENTATION
   class IngestService::HtmlResultError    < ApiService::HtmlResultError;    include IngestService::Error::ClassType; end # "en.emma.error.ingest.html_result"     || "en.emma.error.api.html_result"
   class IngestService::RedirectionError   < ApiService::RedirectionError;   include IngestService::Error::ClassType; end # "en.emma.error.ingest.redirection"     || "en.emma.error.api.redirection"
   class IngestService::RedirectLimitError < ApiService::RedirectLimitError; include IngestService::Error::ClassType; end # "en.emma.error.ingest.redirect_limit"  || "en.emma.error.api.redirect_limit"
-  # :nocov:
 end
+# :nocov:
 
 __loading_end(__FILE__)

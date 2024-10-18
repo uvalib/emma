@@ -23,12 +23,12 @@ module Record::Uploadable
   include Record::FileData
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include ActiveRecord::Validations
     include Record::Testing
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -59,8 +59,8 @@ module Record::Uploadable
   include FileUploader::Attachment(:file)
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
 
     # Represents a file that was uploaded to a storage.
     #
@@ -80,8 +80,8 @@ module Record::Uploadable
     #
     attr_reader :file_attacher
 
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -490,13 +490,13 @@ module Record::Uploadable
     include Record::EmmaData
 
     # Non-functional hints for RubyMine type checking.
+    # :nocov:
     unless ONLY_FOR_DOCUMENTATION
-      # :nocov:
       include Record::Uploadable
       include ActiveRecord::Validations
       include ActiveRecord::Callbacks::ClassMethods
-      # :nocov:
     end
+    # :nocov:
 
     # =========================================================================
     # :section: ActiveRecord validations

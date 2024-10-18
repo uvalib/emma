@@ -37,6 +37,6 @@ module PaginationConcern
 
   # :nocov:
   #include AbstractController::Callbacks::ClassMethods
-
   #include PaginationConcern
+  # :nocov:
 end

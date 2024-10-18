@@ -19,6 +19,7 @@ class SearchController < ApplicationController
 
   # :nocov:
   #include AbstractController::Callbacks
+  # :nocov:
 
   # API results for :index.
   #

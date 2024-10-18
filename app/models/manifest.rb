@@ -25,13 +25,13 @@ class Manifest < ApplicationRecord
   include Manifest::Sortable
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include Record::Rendering
     extend  Record::Rendering
     extend  Record::Describable::ClassMethods
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: ActiveRecord ModelSchema

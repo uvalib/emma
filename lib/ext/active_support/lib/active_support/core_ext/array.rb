@@ -12,11 +12,11 @@ module ArrayExt
   include SystemExtension
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include ObjectExt
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: Instance methods to add to Array
@@ -145,11 +145,11 @@ end
 class Array
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include ArrayExt
-    # :nocov:
   end
+  # :nocov:
 
   ArrayExt.include_in(self)
 

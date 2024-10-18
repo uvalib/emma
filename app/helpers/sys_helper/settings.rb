@@ -12,11 +12,12 @@ module SysHelper::Settings
   include SysHelper::Common
   include Emma::Json
 
+  # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include ActionView::Helpers::FormTagHelper
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:

@@ -340,8 +340,8 @@ module SqlMethods
 
     # :nocov:
     include ActiveRecord::ModelSchema::ClassMethods
-
     include ActiveRecord::QueryMethods
+    # :nocov:
 
     # The fields defined in the schema for this record.
     #

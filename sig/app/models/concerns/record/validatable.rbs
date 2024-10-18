@@ -7,6 +7,7 @@ module Record::Validatable
 
   # :nocov:
   #include ActiveRecord::Validations
+  # :nocov:
 
   # Control whether field validation should occur.
   #
@@ -74,4 +75,5 @@ module Record::Validatable
 
   # :nocov:
   include ActiveRecord::Validations
+  # :nocov:
 end

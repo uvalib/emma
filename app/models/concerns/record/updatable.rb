@@ -131,12 +131,12 @@ module Record::Updatable
     include Record::Updatable
 
     # Non-functional hints for RubyMine type checking.
+    # :nocov:
     unless ONLY_FOR_DOCUMENTATION
-      # :nocov:
       include ActiveRecord::Core
       include ActiveRecord::AttributeMethods
-      # :nocov:
     end
+    # :nocov:
 
     # =========================================================================
     # :section:

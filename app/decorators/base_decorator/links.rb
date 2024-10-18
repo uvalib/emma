@@ -14,11 +14,11 @@ module BaseDecorator::Links
   include BaseDecorator::Configuration
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include BaseDecorator::SharedInstanceMethods # for link_to_action override
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:

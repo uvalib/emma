@@ -14,11 +14,11 @@ module Record::Validatable
   include Record
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include ActiveRecord::Validations
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -163,11 +163,11 @@ module Record::Validatable
     assert_record_class(base, THIS_MODULE)
 
     # Non-functional hints for RubyMine type checking.
+    # :nocov:
     unless ONLY_FOR_DOCUMENTATION
-      # :nocov:
       include ActiveRecord::Validations
-      # :nocov:
     end
+    # :nocov:
 
     # =========================================================================
     # :section: ActiveRecord validations

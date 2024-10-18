@@ -19,11 +19,11 @@ module AuthConcern
   include ParamsConcern
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include Devise::Controllers::Helpers
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: Devise::Controllers::Helpers overrides
@@ -215,8 +215,8 @@ module AuthConcern
 
 end
 
+# :nocov:
 unless ONLY_FOR_DOCUMENTATION
-  # :nocov:
 
   # Devise attributes defined via Devise::Models, depending on the Devise
   # configuration.
@@ -237,7 +237,7 @@ unless ONLY_FOR_DOCUMENTATION
     def validatable?              ; end # @see Devise::Mapping#add_module
   end
 
-  # :nocov:
 end
+# :nocov:
 
 __loading_end(__FILE__)

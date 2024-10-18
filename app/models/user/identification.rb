@@ -7,12 +7,13 @@ __loading_begin(__FILE__)
 
 module User::Identification
 
+  # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include Emma::Common
     include Record::Identification
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: Record::Identification overrides

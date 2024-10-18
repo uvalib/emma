@@ -15,6 +15,7 @@ module ParamsConcern
 
   # :nocov:
   include LayoutHelper::SearchFilters
+  # :nocov:
 
   # Controllers with their own independent on-screen debugging facilities.
   #

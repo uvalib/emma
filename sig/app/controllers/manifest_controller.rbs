@@ -23,10 +23,9 @@ class ManifestController < ApplicationController
 
   # :nocov:
   #include AbstractController::Callbacks
-
   #include ActionController::RespondWith
-
   #extend  CanCan::ControllerAdditions::ClassMethods
+  # :nocov:
 
   LISTS: symArray
 

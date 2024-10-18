@@ -21,8 +21,8 @@ class SearchService < ApiService
   include SearchService::Testing
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
 
     # @!method instance
     #   @return [SearchService]
@@ -31,8 +31,8 @@ class SearchService < ApiService
     class << self
     end
 
-    # :nocov:
   end
+  # :nocov:
 
 end
 

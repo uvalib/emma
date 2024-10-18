@@ -10,11 +10,11 @@ module Enrollment::Assignable
   include Emma::Json
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include Record::Assignable
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: Record::Assignable overrides

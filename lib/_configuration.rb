@@ -935,12 +935,12 @@ end
 class Object
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include Configuration
     extend  Configuration
-    # :nocov:
   end
+  # :nocov:
 
   Configuration.include_and_extend(self)
 

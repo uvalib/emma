@@ -4,6 +4,7 @@ module Devise
   module Controllers::StoreLocationExt
     # :nocov:
     include Devise::Controllers::StoreLocation
+    # :nocov:
 
     # Replace "user_return_to" with "app.current_path".
     #

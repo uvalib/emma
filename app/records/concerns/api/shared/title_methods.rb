@@ -15,11 +15,11 @@ module Api::Shared::TitleMethods
   include Api::Shared::CommonMethods
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include Model
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: Object overrides

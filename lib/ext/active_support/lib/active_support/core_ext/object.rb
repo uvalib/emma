@@ -44,11 +44,11 @@ end
 class Object
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include ObjectExt
-    # :nocov:
   end
+  # :nocov:
 
   ObjectExt.include_in(self)
 

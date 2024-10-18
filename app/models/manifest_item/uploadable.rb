@@ -9,11 +9,12 @@ module ManifestItem::Uploadable
 
   include ManifestItem::FileData
 
+  # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include Record::Uploadable
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: Record::Uploadable overrides

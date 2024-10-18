@@ -29,6 +29,7 @@ class Manifest < ApplicationRecord
   #include Record::Rendering
   #extend  Record::Rendering
   #extend  Record::Describable::ClassMethods
+  # :nocov:
 
   # A textual label for the record instance.
   #

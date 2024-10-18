@@ -68,9 +68,9 @@ class BvDownloadService::Error < ApiService::Error
 end
 
 # Non-functional hints for RubyMine type checking.
+# :nocov:
 # noinspection LongLine
 unless ONLY_FOR_DOCUMENTATION
-  # :nocov:
   class BvDownloadService::AuthError          < ApiService::AuthError;          include BvDownloadService::Error::ClassType; end # "en.emma.error.bv_download.auth"           || "en.emma.error.api.auth"
   class BvDownloadService::CommError          < ApiService::CommError;          include BvDownloadService::Error::ClassType; end # "en.emma.error.bv_download.comm"           || "en.emma.error.api.comm"
   class BvDownloadService::SessionError       < ApiService::SessionError;       include BvDownloadService::Error::ClassType; end # "en.emma.error.bv_download.session"        || "en.emma.error.api.session"
@@ -86,7 +86,7 @@ unless ONLY_FOR_DOCUMENTATION
   class BvDownloadService::HtmlResultError    < ApiService::HtmlResultError;    include BvDownloadService::Error::ClassType; end # "en.emma.error.bv_download.html_result"    || "en.emma.error.api.html_result"
   class BvDownloadService::RedirectionError   < ApiService::RedirectionError;   include BvDownloadService::Error::ClassType; end # "en.emma.error.bv_download.redirection"    || "en.emma.error.api.redirection"
   class BvDownloadService::RedirectLimitError < ApiService::RedirectLimitError; include BvDownloadService::Error::ClassType; end # "en.emma.error.bv_download.redirect_limit" || "en.emma.error.api.redirect_limit"
-  # :nocov:
 end
+# :nocov:
 
 __loading_end(__FILE__)

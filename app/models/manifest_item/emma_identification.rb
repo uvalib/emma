@@ -7,11 +7,12 @@ __loading_begin(__FILE__)
 
 module ManifestItem::EmmaIdentification
 
+  # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include Record::EmmaIdentification
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: Record::EmmaIdentification overrides

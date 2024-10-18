@@ -59,6 +59,6 @@ module RunStateConcern
 
   # :nocov:
   #include AbstractController::Callbacks::ClassMethods
-
   #include RunStateConcern
+  # :nocov:
 end

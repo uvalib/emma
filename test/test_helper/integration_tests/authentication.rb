@@ -217,9 +217,9 @@ module TestHelper::IntegrationTests::Authentication
   end
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   # noinspection RubyUnusedLocalVariable
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
 
     # HTTP GET *url* as *user*.
     #
@@ -271,7 +271,7 @@ module TestHelper::IntegrationTests::Authentication
     #
     def delete_as(user, url, **opt, &blk); end
 
-    # :nocov:
   end
+  # :nocov:
 
 end

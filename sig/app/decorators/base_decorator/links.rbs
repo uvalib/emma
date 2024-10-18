@@ -8,6 +8,7 @@ module BaseDecorator::Links
 
   # :nocov:
   #include BaseDecorator::SharedInstanceMethods # for link_to_action override
+  # :nocov:
 
   # Separator for a list formed by HTML elements.
   #

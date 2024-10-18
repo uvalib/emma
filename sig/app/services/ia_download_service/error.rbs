@@ -122,3 +122,4 @@ end
 class IaDownloadService::RedirectLimitError < ApiService::RedirectLimitError
   include IaDownloadService::Error::ClassType
 end
+# :nocov:

@@ -7,8 +7,8 @@
 class UploadsDecorator < BaseCollectionDecorator
   # :nocov:
   #include UploadDecorator::SharedInstanceMethods
-
   #extend UploadDecorator::SharedClassMethods
+  # :nocov:
 
   # group_counts
   #

@@ -20,11 +20,11 @@ module Record::Assignable
   include SqlMethods
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include ActiveRecord::Core
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -519,12 +519,12 @@ module Record::Assignable
     include Record::Assignable
 
     # Non-functional hints for RubyMine type checking.
+    # :nocov:
     unless ONLY_FOR_DOCUMENTATION
-      # :nocov:
       include ActiveRecord::AttributeAssignment
       include Record::Debugging::InstanceMethods
-      # :nocov:
     end
+    # :nocov:
 
     # =========================================================================
     # :section:

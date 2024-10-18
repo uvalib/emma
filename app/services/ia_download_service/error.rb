@@ -126,9 +126,9 @@ class IaDownloadService::Error < ApiService::Error
 end
 
 # Non-functional hints for RubyMine type checking.
+# :nocov:
 # noinspection LongLine
 unless ONLY_FOR_DOCUMENTATION
-  # :nocov:
   class IaDownloadService::AuthError          < ApiService::AuthError;          include IaDownloadService::Error::ClassType; end # "en.emma.error.ia_download.auth"           || "en.emma.error.api.auth"
   class IaDownloadService::CommError          < ApiService::CommError;          include IaDownloadService::Error::ClassType; end # "en.emma.error.ia_download.comm"           || "en.emma.error.api.comm"
   class IaDownloadService::SessionError       < ApiService::SessionError;       include IaDownloadService::Error::ClassType; end # "en.emma.error.ia_download.session"        || "en.emma.error.api.session"
@@ -144,7 +144,7 @@ unless ONLY_FOR_DOCUMENTATION
   class IaDownloadService::HtmlResultError    < ApiService::HtmlResultError;    include IaDownloadService::Error::ClassType; end # "en.emma.error.ia_download.html_result"    || "en.emma.error.api.html_result"
   class IaDownloadService::RedirectionError   < ApiService::RedirectionError;   include IaDownloadService::Error::ClassType; end # "en.emma.error.ia_download.redirection"    || "en.emma.error.api.redirection"
   class IaDownloadService::RedirectLimitError < ApiService::RedirectLimitError; include IaDownloadService::Error::ClassType; end # "en.emma.error.ia_download.redirect_limit" || "en.emma.error.api.redirect_limit"
-  # :nocov:
 end
+# :nocov:
 
 __loading_end(__FILE__)

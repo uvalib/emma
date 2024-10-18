@@ -14,12 +14,12 @@ __loading_begin(__FILE__)
 class ManifestsDecorator < BaseCollectionDecorator
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include ManifestDecorator::SharedInstanceMethods
     extend  ManifestDecorator::SharedClassMethods
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: Draper

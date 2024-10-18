@@ -14,12 +14,12 @@ __loading_begin(__FILE__)
 class UploadsDecorator < BaseCollectionDecorator
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include UploadDecorator::SharedInstanceMethods
     extend  UploadDecorator::SharedClassMethods
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: Draper

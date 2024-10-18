@@ -1,6 +1,7 @@
 module Manifest::EmmaIdentification
   # :nocov:
   #Record::EmmaIdentification
+  # :nocov:
 
   # @private
   UUID_PATTERN: ::Regexp

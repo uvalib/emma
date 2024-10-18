@@ -5,6 +5,7 @@ module TestHelper::SystemTests::Pagination
 
   # :nocov:
   #include Capybara::Minitest::Assertions
+  # :nocov:
 
   NEXT_LABEL: String
 

@@ -3,6 +3,7 @@ module ManifestItem::Uploadable
 
   # :nocov:
   #include Record::Uploadable
+  # :nocov:
 
   # Full name of the file.
   #

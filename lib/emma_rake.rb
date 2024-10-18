@@ -209,11 +209,11 @@ module EmmaRake
   module DSL
 
     # Non-functional hints for RubyMine type checking.
+    # :nocov:
     unless ONLY_FOR_DOCUMENTATION
-      # :nocov:
       include Rake::DSL
-      # :nocov:
     end
+    # :nocov:
 
     # =========================================================================
     # :section:

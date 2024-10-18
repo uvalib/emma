@@ -3,8 +3,8 @@ module ApplicationJob::Properties
 
   # :nocov:
   #include ActiveJob::Core
-
   #include ActiveJob::QueueName
+  # :nocov:
 
   # Job queue keys and priorities.
   #
@@ -69,10 +69,9 @@ module ApplicationJob::Properties
 
     # :nocov:
     #include ActiveJob::QueueName::ClassMethods
-
     #include ActiveJob::QueuePriority
-
     #include ActiveJob::QueuePriority::ClassMethods
+    # :nocov:
 
     def queue_name_from_part: ((String|Symbol|Integer|Class|ApplicationJob|nil) part_name) -> String
 

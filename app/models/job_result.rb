@@ -10,11 +10,11 @@ class JobResult < ApplicationRecord
   include JobMethods
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     extend JobMethods
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: ActiveRecord associations

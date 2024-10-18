@@ -8,12 +8,12 @@
 module TestHelper::SystemTests
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include Capybara::Node::Actions                 # for :click_on alias
     include TestHelper::SystemTests::Authentication # disambiguate :sign_in_as
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:

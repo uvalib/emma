@@ -63,8 +63,8 @@ module Record::Updatable
 
     # :nocov:
     include ActiveRecord::Core
-
     include ActiveRecord::AttributeMethods
+    # :nocov:
 
     # Get the current value of a database column.
     #

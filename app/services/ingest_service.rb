@@ -21,8 +21,8 @@ class IngestService < ApiService
   include IngestService::Testing
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
 
     # @!method instance
     #   @return [IngestService]
@@ -31,8 +31,8 @@ class IngestService < ApiService
     class << self
     end
 
-    # :nocov:
   end
+  # :nocov:
 
 end
 

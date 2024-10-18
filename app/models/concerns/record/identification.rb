@@ -660,11 +660,11 @@ module Record::Identification
       include InstanceMethods
 
       # Non-functional hints for RubyMine type checking.
+      # :nocov:
       unless ONLY_FOR_DOCUMENTATION
-        # :nocov:
         include Model
-        # :nocov:
       end
+      # :nocov:
 
       # =======================================================================
       # :section: Model overrides

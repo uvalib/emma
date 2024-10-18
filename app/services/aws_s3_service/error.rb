@@ -68,9 +68,9 @@ class AwsS3Service::Error < ApiService::Error
 end
 
 # Non-functional hints for RubyMine type checking.
+# :nocov:
 # noinspection LongLine
 unless ONLY_FOR_DOCUMENTATION
-  # :nocov:
   class AwsS3Service::AuthError          < ApiService::AuthError;          include AwsS3Service::Error::ClassType; end # "en.emma.error.aws_s3.auth"            || "en.emma.error.api.auth"
   class AwsS3Service::CommError          < ApiService::CommError;          include AwsS3Service::Error::ClassType; end # "en.emma.error.aws_s3.comm"            || "en.emma.error.api.comm"
   class AwsS3Service::SessionError       < ApiService::SessionError;       include AwsS3Service::Error::ClassType; end # "en.emma.error.aws_s3.session"         || "en.emma.error.api.session"
@@ -86,7 +86,7 @@ unless ONLY_FOR_DOCUMENTATION
   class AwsS3Service::HtmlResultError    < ApiService::HtmlResultError;    include AwsS3Service::Error::ClassType; end # "en.emma.error.aws_s3.html_result"     || "en.emma.error.api.html_result"
   class AwsS3Service::RedirectionError   < ApiService::RedirectionError;   include AwsS3Service::Error::ClassType; end # "en.emma.error.aws_s3.redirection"     || "en.emma.error.api.redirection"
   class AwsS3Service::RedirectLimitError < ApiService::RedirectLimitError; include AwsS3Service::Error::ClassType; end # "en.emma.error.aws_s3.redirect_limit"  || "en.emma.error.api.redirect_limit"
-  # :nocov:
 end
+# :nocov:
 
 __loading_end(__FILE__)

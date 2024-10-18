@@ -8,11 +8,11 @@ __loading_begin(__FILE__)
 module Org::Assignable
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include Record::Assignable
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: Record::Assignable overrides

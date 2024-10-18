@@ -21,11 +21,11 @@ class SearchController < ApplicationController
   include SearchConcern
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include AbstractController::Callbacks
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: Authentication

@@ -2,6 +2,7 @@ module ActiveJob
   module ArgumentsExt
     # :nocov:
     include ActiveJob::Arguments
+    # :nocov:
 
     private
 

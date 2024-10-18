@@ -7,11 +7,12 @@ __loading_begin(__FILE__)
 
 module ManifestItem::FileData
 
+  # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include Record::FileData
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:

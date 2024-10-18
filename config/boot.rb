@@ -319,12 +319,13 @@ class Object
     define_method(method) { ExecutionProperty.send(method) }
   end
 
+  # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include ExecutionProperty
     extend  ExecutionProperty
-    # :nocov:
   end
+  # :nocov:
 
 end
 

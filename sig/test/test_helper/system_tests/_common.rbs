@@ -12,6 +12,7 @@ module TestHelper::SystemTests::Common
 
   include Emma::Json
 
+  # :nocov:
   #include Minitest::Assertions
 
   #include Capybara::Node::Actions
@@ -19,6 +20,7 @@ module TestHelper::SystemTests::Common
   #include Capybara::Node::Finders
 
   #include TestHelper::SystemTests::Authentication
+  # :nocov:
 
   # assert_current_url
   #

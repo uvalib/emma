@@ -11,9 +11,9 @@ module LookupService::WorldCat::Properties
   include LookupService::RemoteService::Properties
 end
 
+# :nocov:
 # noinspection SpellCheckingInspection
 unless ONLY_FOR_DOCUMENTATION
-# :nocov:
 =begin # NOTE: preserved for possible future use
 # LookupService::WorldCatV2::Properties
 #
@@ -201,7 +201,7 @@ module LookupService::WorldCatV2::Properties
 
 end
 =end
-# :nocov:
 end
+# :nocov:
 
 __loading_end(__FILE__)

@@ -96,3 +96,4 @@ end
 class LookupService::RedirectLimitError < ApiService::RedirectLimitError
   include LookupService::Error::ClassType
 end
+# :nocov:

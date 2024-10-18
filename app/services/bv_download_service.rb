@@ -18,8 +18,8 @@ class BvDownloadService < ApiService
   include BvDownloadService::Status
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
 
     # @!method instance
     #   @return [BvDownloadService]
@@ -28,8 +28,8 @@ class BvDownloadService < ApiService
     class << self
     end
 
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: ApiService overrides

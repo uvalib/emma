@@ -24,12 +24,12 @@ class Enrollment < ApplicationRecord
   include Enrollment::Assignable
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include Record::Rendering
     extend  Record::Rendering
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: ActiveRecord ModelSchema

@@ -10,11 +10,11 @@ module TestHelper::SystemTests::Pagination
   include TestHelper::SystemTests::Index
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include Capybara::Minitest::Assertions
-    # :nocov:
   end
+  # :nocov:
 
   NEXT_LABEL = 'NEXT'
   PREV_LABEL = 'PREV'

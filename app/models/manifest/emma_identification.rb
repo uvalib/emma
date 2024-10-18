@@ -7,11 +7,11 @@ __loading_begin(__FILE__)
 
 module Manifest::EmmaIdentification
 
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include Record::EmmaIdentification
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: Record::Identification overrides

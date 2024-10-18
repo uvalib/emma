@@ -17,8 +17,8 @@ module Record::Uploadable
 
   # :nocov:
   #include ActiveRecord::Validations
-
   #include Record::Testing
+  # :nocov:
 
   # The maximum age (in seconds) allowed for download links.
   #
@@ -278,8 +278,7 @@ module Record::Uploadable
 
   # :nocov:
   #include Record::Uploadable
-
   #include ActiveRecord::Validations
-
   #include ActiveRecord::Callbacks::ClassMethods
+  # :nocov:
 end

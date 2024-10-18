@@ -7,11 +7,12 @@ __loading_begin(__FILE__)
 
 module ManifestItem::Identification
 
+  # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include Record::Identification
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: Record::Identification overrides

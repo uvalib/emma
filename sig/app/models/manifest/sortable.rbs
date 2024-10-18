@@ -1,6 +1,7 @@
 module Manifest::Sortable
   # :nocov:
   #include Record::Sortable
+  # :nocov:
 
   # Sort order applied by default in #get_relation.
   #

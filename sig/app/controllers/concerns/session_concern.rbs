@@ -17,6 +17,7 @@ module SessionConcern
 
   # :nocov:
   #include Devise::Controllers::Helpers
+  # :nocov:
 
   # Keys for session values that should not be touched by #cleanup_session.
   #
@@ -246,8 +247,8 @@ module SessionConcern
 
   # :nocov:
   #include AbstractController::Callbacks::ClassMethods
-
   #include SessionConcern
+  # :nocov:
 
   # This overrides the DeviseController message to allow the standard
   # 'already_authenticated' flash message to be overridden by

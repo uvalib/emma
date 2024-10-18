@@ -393,9 +393,9 @@ Rails.application.routes.draw do
 end
 
 # Non-functional hints for RubyMine type checking.
+# :nocov:
 # noinspection RubyInstanceMethodNamingConvention
 unless ONLY_FOR_DOCUMENTATION
-  # :nocov:
   def account_index_path(...);                     end
   def account_index_url(...);                      end
   def admin_upload_path(...);                      end
@@ -747,7 +747,6 @@ unless ONLY_FOR_DOCUMENTATION
   def view_sys_url(...);                           end
   def welcome_path(...);                           end
   def welcome_url(...);                            end
-  # :nocov:
 end
 
 if !SIGN_IN_AS
@@ -770,3 +769,4 @@ elsif !ONLY_FOR_DOCUMENTATION
   def user_shibboleth_omniauth_callback_path(...);  end
   def user_shibboleth_omniauth_callback_url(...);   end
 end
+# :nocov:

@@ -12,11 +12,11 @@ module HashExt
   include SystemExtension
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include ObjectExt
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: Instance methods to add to Hash
@@ -149,11 +149,11 @@ end
 class Hash
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include HashExt
-    # :nocov:
   end
+  # :nocov:
 
   HashExt.include_in(self)
 

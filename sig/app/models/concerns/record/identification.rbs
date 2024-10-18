@@ -346,6 +346,7 @@ module Record::Identification
 
   # :nocov:
   #include Model
+  # :nocov:
 
   public
 

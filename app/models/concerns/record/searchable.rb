@@ -16,11 +16,11 @@ module Record::Searchable
   include Record::Sortable
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include ActiveRecord::FinderMethods
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:

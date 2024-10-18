@@ -14,12 +14,12 @@ module CanCan
   module ControllerAdditionsExt
 
     # Non-functional hints for RubyMine type checking.
+    # :nocov:
     unless ONLY_FOR_DOCUMENTATION
-      # :nocov:
       include CanCan::ControllerAdditions
       include UserConcern
-      # :nocov:
     end
+    # :nocov:
 
     # =========================================================================
     # :section: CanCan::ControllerAdditions overrides

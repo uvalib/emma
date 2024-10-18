@@ -16,12 +16,12 @@ module ApplicationJob::Logging
   include Emma::ThreadMethods
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include ActiveJob::Execution
     include ActiveJob::Logging
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: ActiveJob::Execution overrides

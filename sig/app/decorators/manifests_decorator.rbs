@@ -7,8 +7,8 @@
 class ManifestsDecorator < BaseCollectionDecorator
   # :nocov:
   #include ManifestDecorator::SharedInstanceMethods
-
   #extend  ManifestDecorator::SharedClassMethods
+  # :nocov:
 
   # group_counts
   #

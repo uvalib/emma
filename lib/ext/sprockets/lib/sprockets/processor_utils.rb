@@ -18,11 +18,11 @@ if DEBUG_SPROCKETS
       include Sprockets::ExtensionDebugging
 
       # Non-functional hints for RubyMine type checking.
+      # :nocov:
       unless ONLY_FOR_DOCUMENTATION
-        # :nocov:
         include Sprockets::ProcessorUtils
-        # :nocov:
       end
+      # :nocov:
 
       # =======================================================================
       # :section: Sprockets::ProcessorUtils overrides

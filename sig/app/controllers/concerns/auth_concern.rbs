@@ -13,6 +13,7 @@ module AuthConcern
 
   # :nocov:
   #include Devise::Controllers::Helpers
+  # :nocov:
 
   # The "home" URL for a signed-in user.
   #

@@ -23,6 +23,7 @@ class Enrollment < ApplicationRecord
   # :nocov:
   #include Record::Rendering
   #extend  Record::Rendering
+  # :nocov:
 
   # A short textual representation for the record instance.
   #

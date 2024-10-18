@@ -207,11 +207,11 @@ module Record::Submittable
     include ExecReport::Constants
 
     # Non-functional hints for RubyMine type checking.
+    # :nocov:
     unless ONLY_FOR_DOCUMENTATION
-      # :nocov:
       include Record::Submittable::SubmissionMethods
-      # :nocov:
     end
+    # :nocov:
 
     # =========================================================================
     # :section:
@@ -747,11 +747,11 @@ module Record::Submittable
     include Record::Submittable::PartnerRepositoryMethods
 
     # Non-functional hints for RubyMine type checking.
+    # :nocov:
     unless ONLY_FOR_DOCUMENTATION
-      # :nocov:
       include Record::Submittable::SubmissionMethods
-      # :nocov:
     end
+    # :nocov:
 
     # =========================================================================
     # :section:

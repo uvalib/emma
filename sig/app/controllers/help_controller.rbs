@@ -14,6 +14,7 @@ class HelpController < ApplicationController
 
   # :nocov:
   #include AbstractController::Callbacks
+  # :nocov:
 
   @list: symArray
 

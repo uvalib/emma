@@ -21,11 +21,11 @@ module SessionConcern
   include SerializationConcern
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include Devise::Controllers::Helpers
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -476,12 +476,12 @@ module SessionConcern
     include SerializationHelper
 
     # Non-functional hints for RubyMine type checking.
+    # :nocov:
     unless ONLY_FOR_DOCUMENTATION
-      # :nocov:
       include AbstractController::Callbacks::ClassMethods
       include SessionConcern
-      # :nocov:
     end
+    # :nocov:
 
     # =========================================================================
     # :section: Session management

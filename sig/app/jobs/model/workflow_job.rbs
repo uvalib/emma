@@ -1,6 +1,7 @@
 class Model::WorkflowJob < ApplicationJob
   # :nocov:
   #extend ActiveJob::Core
+  # :nocov:
 
   # @private
   CLASS: Class

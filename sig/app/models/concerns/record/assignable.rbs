@@ -15,6 +15,7 @@ module Record::Assignable
 
   # :nocov:
   #include ActiveRecord::Core
+  # :nocov:
 
   # Called to prepare values to be used for assignment to record attributes.
   #
@@ -306,8 +307,8 @@ module Record::Assignable
 
     # :nocov:
     #include ActiveRecord::AttributeAssignment
-
     #include Record::Debugging::InstanceMethods
+    # :nocov:
 
     # Model/controller options passed in through the constructor.
     #

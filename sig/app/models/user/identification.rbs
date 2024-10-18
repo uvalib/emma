@@ -1,8 +1,8 @@
 module User::Identification
   # :nocov:
   #include Emma::Common
-
   #include Record::Identification
+  # :nocov:
 
   # Value of :id for the indicated record.
   #

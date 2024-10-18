@@ -14,11 +14,11 @@ module EngineConcern
   include ParamsHelper
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include ActionController::Redirecting
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:

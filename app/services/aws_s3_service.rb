@@ -21,8 +21,8 @@ class AwsS3Service < ApiService
   include AwsS3Service::Testing
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
 
     # @!method instance
     #   @return [AwsS3Service]
@@ -31,8 +31,8 @@ class AwsS3Service < ApiService
     class << self
     end
 
-    # :nocov:
   end
+  # :nocov:
 
 end
 

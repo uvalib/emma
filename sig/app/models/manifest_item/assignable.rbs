@@ -5,6 +5,7 @@ module ManifestItem::Assignable
 
   # :nocov:
   #include Record::Assignable
+  # :nocov:
 
   # Ensure that blanks are allowed and that input values are normalized.
   #

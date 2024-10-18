@@ -177,9 +177,9 @@ module TestHelper::Common
   # Non-functional hints for RubyMine type checking for the fixture accessor
   # methods defined by ActiveRecord::TestFixtures#fixtures.
 
+  # :nocov:
   # noinspection RubyUnusedLocalVariable
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
 
     # Fixture accessor defined by ActiveRecord::TestFixtures#fixtures.
     # @param [Array<Symbol|String>] name
@@ -221,8 +221,8 @@ module TestHelper::Common
     # @return [User, Array<User>]
     def users(*name) end
 
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:

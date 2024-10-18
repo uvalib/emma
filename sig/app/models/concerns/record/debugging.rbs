@@ -12,6 +12,7 @@ module Record::Debugging
 
   # :nocov:
   include Kernel
+  # :nocov:
 
   # Show instance output.
   #
@@ -40,6 +41,7 @@ module Record::Debugging
 
     # :nocov:
     include ActiveRecord::Scoping::Named::ClassMethods
+    # :nocov:
 
     # Show class output.
     #
@@ -59,6 +61,7 @@ module Record::Debugging
 
     # :nocov:
     include ActiveRecord::Core
+    # :nocov:
 
     # Create a new instance.
     #

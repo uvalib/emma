@@ -12,11 +12,11 @@ module ModuleExt
   include SystemExtension
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include ObjectExt
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: Instance methods to add to Module
@@ -56,12 +56,12 @@ end
 class Module
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include ModuleExt
     extend  ModuleExt
-    # :nocov:
   end
+  # :nocov:
 
   ModuleExt.include_and_extend(self)
 

@@ -11,6 +11,7 @@ module Record::Searchable
 
   # :nocov:
   #include ActiveRecord::FinderMethods
+  # :nocov:
 
   # Name of the column on which pagination is based.
   #

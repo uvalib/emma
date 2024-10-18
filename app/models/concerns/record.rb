@@ -111,11 +111,11 @@ module Record
     include Record
 
     # Non-functional hints for RubyMine type checking.
+    # :nocov:
     unless ONLY_FOR_DOCUMENTATION
-      # :nocov:
       include ActiveRecord::ModelSchema::ClassMethods
-      # :nocov:
     end
+    # :nocov:
 
     # =========================================================================
     # :section:

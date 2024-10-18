@@ -6,6 +6,7 @@ module Sprockets
 
     # :nocov:
     include Sprockets::Loader
+    # :nocov:
 
     def load_from_unloaded: (untyped unloaded) -> untyped
   end

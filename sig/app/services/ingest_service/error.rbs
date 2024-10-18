@@ -167,3 +167,4 @@ end
 class IngestService::RedirectLimitError < ApiService::RedirectLimitError
   include IngestService::Error::ClassType
 end
+# :nocov:

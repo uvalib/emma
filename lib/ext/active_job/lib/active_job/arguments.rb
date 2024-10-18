@@ -14,11 +14,11 @@ module ActiveJob
   module ArgumentsExt
 
     # Non-functional hints for RubyMine type checking.
+    # :nocov:
     unless ONLY_FOR_DOCUMENTATION
-      # :nocov:
       include ActiveJob::Arguments
-      # :nocov:
     end
+    # :nocov:
 
     # =========================================================================
     # :section: ActiveJob::Arguments overrides

@@ -18,14 +18,14 @@ module TestHelper::SystemTests::Common
   include Emma::Json
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include Minitest::Assertions                    # for #flunk
     include Capybara::Node::Actions                 # for #select
     include Capybara::Node::Finders                 # for #find
     include TestHelper::SystemTests::Authentication # disambiguate :sign_in_as
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:

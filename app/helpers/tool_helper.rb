@@ -12,11 +12,11 @@ module ToolHelper
   include LinkHelper
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include ActionDispatch::Routing::UrlFor
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:

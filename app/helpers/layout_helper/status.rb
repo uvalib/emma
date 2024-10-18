@@ -16,11 +16,11 @@ module LayoutHelper::Status
   include ParamsHelper
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include EngineConcern
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:

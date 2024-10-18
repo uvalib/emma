@@ -110,12 +110,12 @@ module RunStateConcern
     extend ParamsHelper
 
     # Non-functional hints for RubyMine type checking.
+    # :nocov:
     unless ONLY_FOR_DOCUMENTATION
-      # :nocov:
       include AbstractController::Callbacks::ClassMethods
       include RunStateConcern
-      # :nocov:
     end
+    # :nocov:
 
     # =========================================================================
     # :section: Callbacks

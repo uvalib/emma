@@ -19,13 +19,13 @@ class SearchCall < ApplicationRecord
   include Record::Sortable
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include Record::Rendering
     extend  Record::Rendering
     extend  SqlMethods::ClassMethods
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: ActiveRecord ModelSchema

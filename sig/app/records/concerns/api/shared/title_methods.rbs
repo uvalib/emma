@@ -5,6 +5,7 @@ module Api::Shared::TitleMethods
 
   # :nocov:
   #include Model
+  # :nocov:
 
   # Convert object to string.
   #

@@ -10,6 +10,7 @@ class Shrine
     include Shrine::Plugins::Activerecord::AttacherMethods
 
     include Shrine::Plugins::Entity::AttacherMethods
+    # :nocov:
 
     # initialize
     #

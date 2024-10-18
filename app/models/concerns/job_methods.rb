@@ -14,11 +14,11 @@ module JobMethods
   include Emma::Common
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include ActiveRecord::QueryMethods
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:

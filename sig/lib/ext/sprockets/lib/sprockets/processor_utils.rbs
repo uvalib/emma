@@ -4,6 +4,7 @@ module Sprockets
 
     # :nocov:
     include Sprockets::ProcessorUtils
+    # :nocov:
 
     def call_processor: (untyped processor, untyped input) -> untyped
   end

@@ -1,6 +1,7 @@
 module User::Assignable
   # :nocov:
   #include Record::Assignable
+  # :nocov:
 
   # Parameter keys related to password management.
   #

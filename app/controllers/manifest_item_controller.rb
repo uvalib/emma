@@ -22,13 +22,13 @@ class ManifestItemController < ApplicationController
   include ManifestItemConcern
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include AbstractController::Callbacks
     include ActionController::RespondWith
     extend  CanCan::ControllerAdditions::ClassMethods
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: Authentication

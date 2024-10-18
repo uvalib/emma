@@ -6,6 +6,7 @@ class Shrine
 
     # :nocov:
     #include Shrine::UploadedFile::InstanceMethods
+    # :nocov:
 
     # Bibliographic metadata and remediation information.
     #
@@ -34,6 +35,7 @@ class Shrine
 
     # :nocov:
     include Shrine::UploadedFileExt
+    # :nocov:
 
     # initialize
     #

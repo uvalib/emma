@@ -96,3 +96,4 @@ end
 class AwsS3Service::RedirectLimitError < ApiService::RedirectLimitError
   include AwsS3Service::Error::ClassType
 end
+# :nocov:

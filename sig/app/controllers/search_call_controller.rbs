@@ -19,6 +19,7 @@ class SearchCallController < ApplicationController
 
   # :nocov:
   #include AbstractController::Callbacks
+  # :nocov:
 
   # Initially extend table with a column for each JSON sub-field.
   #

@@ -15,6 +15,7 @@ class EnrollmentController < ApplicationController
 
   # :nocov:
   #include AbstractController::Callbacks
+  # :nocov:
 
   ANON_OPS: symArray
 

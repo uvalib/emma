@@ -10,11 +10,11 @@ module NilClassExt
   include SystemExtension
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include ObjectExt
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: Instance methods to add to NilClass
@@ -60,11 +60,11 @@ end
 class NilClass
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include NilClassExt
-    # :nocov:
   end
+  # :nocov:
 
   NilClassExt.include_in(self)
 

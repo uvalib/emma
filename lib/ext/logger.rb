@@ -52,11 +52,12 @@ class Logger
 
   module Ext
 
+    # Non-functional hints for RubyMine type checking.
+    # :nocov:
     unless ONLY_FOR_DOCUMENTATION
-      # :nocov:
       include SuppressionExt
-      # :nocov:
     end
+    # :nocov:
 
     # Override to avoid logging if suppressed.
     #

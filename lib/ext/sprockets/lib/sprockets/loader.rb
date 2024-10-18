@@ -20,11 +20,11 @@ if DEBUG_SPROCKETS
       include Sprockets::ProcessorUtilsDebug if RUBY_VERSION < '3'
 
       # Non-functional hints for RubyMine type checking.
+      # :nocov:
       unless ONLY_FOR_DOCUMENTATION
-        # :nocov:
         include Sprockets::Loader
-        # :nocov:
       end
+      # :nocov:
 
       # =======================================================================
       # :section: Sprockets::Loader overrides

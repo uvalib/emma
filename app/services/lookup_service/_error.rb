@@ -68,9 +68,9 @@ class LookupService::Error < ApiService::Error
 end
 
 # Non-functional hints for RubyMine type checking.
+# :nocov:
 # noinspection LongLine
 unless ONLY_FOR_DOCUMENTATION
-  # :nocov:
   class LookupService::AuthError          < ApiService::AuthError;          include LookupService::Error::ClassType; end # "en.emma.error.lookup.auth"            || "en.emma.error.api.auth"
   class LookupService::CommError          < ApiService::CommError;          include LookupService::Error::ClassType; end # "en.emma.error.lookup.comm"            || "en.emma.error.api.comm"
   class LookupService::SessionError       < ApiService::SessionError;       include LookupService::Error::ClassType; end # "en.emma.error.lookup.session"         || "en.emma.error.api.session"
@@ -86,7 +86,7 @@ unless ONLY_FOR_DOCUMENTATION
   class LookupService::HtmlResultError    < ApiService::HtmlResultError;    include LookupService::Error::ClassType; end # "en.emma.error.lookup.html_result"     || "en.emma.error.api.html_result"
   class LookupService::RedirectionError   < ApiService::RedirectionError;   include LookupService::Error::ClassType; end # "en.emma.error.lookup.redirection"     || "en.emma.error.api.redirection"
   class LookupService::RedirectLimitError < ApiService::RedirectLimitError; include LookupService::Error::ClassType; end # "en.emma.error.lookup.redirect_limit"  || "en.emma.error.api.redirect_limit"
-  # :nocov:
 end
+# :nocov:
 
 __loading_end(__FILE__)

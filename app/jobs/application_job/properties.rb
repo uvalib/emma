@@ -10,12 +10,12 @@ module ApplicationJob::Properties
   extend ActiveSupport::Concern
 
   # Non-functional hints for RubyMine type checking.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
     include ActiveJob::Core
     include ActiveJob::QueueName
-    # :nocov:
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -123,13 +123,13 @@ module ApplicationJob::Properties
     include ApplicationJob::Properties
 
     # Non-functional hints for RubyMine type checking.
+    # :nocov:
     unless ONLY_FOR_DOCUMENTATION
-      # :nocov:
       include ActiveJob::QueueName::ClassMethods
       include ActiveJob::QueuePriority
       include ActiveJob::QueuePriority::ClassMethods
-      # :nocov:
     end
+    # :nocov:
 
     # =========================================================================
     # :section:
