@@ -2381,7 +2381,7 @@ body.search.grid-style {
 
                 @each $type in map.keys($field-columns) {
                     &.field-#{$type} {
-                        $columns: map-get($field-columns, $type);
+                        $columns: map.get($field-columns, $type);
                         @if $columns {
                             grid-column: $columns;
                             grid-row:    2/2;

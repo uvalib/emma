@@ -4,6 +4,7 @@
 //
 // @see https://www.unicode.org/emoji/charts/full-emoji-list.html
 
+@use "sass:map";
 
 //=============================================================================
 // Constants
@@ -83,17 +84,17 @@ $EMOJI_TEXT_VARIANT: "\FE0E";
 /// @param {Color}  $base           The dominant color of the emoji to change.
 ///
 @mixin green($char: false, $base: yellow) {
-    $hue: map-get((
+    $hue: map.get((
         orange: 80deg,
         red:    75deg,
         yellow: 65deg,
     ), $base);
-    $saturate: map-get((
+    $saturate: map.get((
         orange: 300%,
         red:    100%,
         yellow: 100%,
     ), $base);
-    $brightness: map-get((
+    $brightness: map.get((
         orange: 100%,
         red:    175%,
         yellow: 100%,
@@ -109,25 +110,25 @@ $EMOJI_TEXT_VARIANT: "\FE0E";
 /// @param {Color}  $base           The dominant color of the emoji to change.
 ///
 @mixin red($char: false, $base: yellow) {
-    $hue: map-get((
+    $hue: map.get((
         green:  245deg,
         orange: 320deg,
         red:    0,
         yellow: 305deg,
     ), $base);
-    $saturate: map-get((
+    $saturate: map.get((
         green:  75%,
         orange: 200%,
         red:    75%,
         yellow: 150%,
     ), $base);
-    $brightness: map-get((
+    $brightness: map.get((
         green:  90%,
         orange: 90%,
         red:    150%,
         yellow: 100%,
     ), $base);
-    $contrast: map-get((
+    $contrast: map.get((
         green:  200%,
     ), $base);
     @include color-emoji($base, $char, $hue, $saturate, $brightness, $contrast);
@@ -141,16 +142,16 @@ $EMOJI_TEXT_VARIANT: "\FE0E";
 /// @param {Color}  $base           The dominant color of the emoji to change.
 ///
 @mixin orange($char: null, $base: yellow) {
-    $hue: map-get((
+    $hue: map.get((
         orange: 0,
         red:    20deg,
         yellow: 330deg,
     ), $base);
-    $saturate: map-get((
+    $saturate: map.get((
         red:    50%,
         yellow: 150%,
     ), $base);
-    $brightness: map-get((
+    $brightness: map.get((
         red:    200%,
         yellow: 100%,
     ), $base);
@@ -165,16 +166,16 @@ $EMOJI_TEXT_VARIANT: "\FE0E";
 /// @param {Color}  $base           The dominant color of the emoji to change.
 ///
 @mixin blue($char: null, $base: green) {
-    $hue: map-get((
+    $hue: map.get((
         green:  120deg,
     ), $base);
-    $saturate: map-get((
+    $saturate: map.get((
         green:  75%,
     ), $base);
-    $brightness: map-get((
+    $brightness: map.get((
         green:  90%,
     ), $base);
-    $contrast: map-get((
+    $contrast: map.get((
         green:  200%,
     ), $base);
     @include color-emoji($char, $base, $hue, $saturate, $brightness, $contrast);
