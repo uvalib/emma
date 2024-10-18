@@ -46,7 +46,8 @@ class DataControllerTest < ActionDispatch::IntegrationTest
 
   public
 
-  # Perform a DataController test for #TEST_READERS in all #TEST_FORMATS.
+  # Perform a DataController test for #TEST_READERS in all #TEST_FORMATS to
+  # verify expected response status.
   #
   # @param [Symbol]  action
   # @param [Boolean] anonymous        Does not require authentication.

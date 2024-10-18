@@ -362,7 +362,8 @@ class ManifestsTest < ApplicationSystemTestCase
     opt.slice(:name, :unique, :tag).compact.values.join(' - ')
   end
 
-  # Check operation of Manifest information display/edit.
+  # Check operation of Manifest information display/edit by setting the title
+  # to the provided value.
   #
   # @param [Hash] opt                 Test options
   #

@@ -43,7 +43,8 @@ class SearchCallControllerTest < ActionDispatch::IntegrationTest
 
   public
 
-  # Perform a SearchCallController test for #TEST_READERS in all #TEST_FORMATS.
+  # Perform a SearchCallController test for #TEST_READERS in all #TEST_FORMATS
+  # to verify expected response status.
   #
   # @param [Symbol]  action
   # @param [Symbol]  meth             Calling test method.

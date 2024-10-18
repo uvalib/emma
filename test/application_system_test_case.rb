@@ -6,6 +6,9 @@
 require 'test_helper'
 require 'capybara-lockstep'
 
+# Common base for system tests, which validate page contents over sequences of
+# actions.
+#
 # Browser choices are:
 #
 # - :chrome

@@ -5,6 +5,8 @@ module TestHelper::SystemTests::Cookies
 
   # Shortcut to the browser client interface.
   #
+  # @note Currently unused
+  #
   def browser: () -> untyped
 
   @browser: untyped

@@ -98,7 +98,7 @@ class AccountMailer < ApplicationMailer
   end
 
   # ===========================================================================
-  # :section:
+  # :section: ApplicationMailer overrides
   # ===========================================================================
 
   protected

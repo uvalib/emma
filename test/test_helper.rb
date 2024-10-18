@@ -11,8 +11,11 @@ require_relative '../config/environment'
 require 'capybara/rails'
 require 'rails/test_help'
 
-# If *true* then #show_item and #show_reflections will produce output on the
-# console.
+# If *true* then TestHelper::Debugging methods like #show_url and #show_item
+# will produce output on the console, and screenshots will be generated.
+#
+# Otherwise, no debugging console output is produced and no screenshots will be
+# generated.
 #
 # @type [Boolean]
 #

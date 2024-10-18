@@ -17,6 +17,8 @@ module TestHelper::SystemTests::Cookies
 
   # Shortcut to the browser client interface.
   #
+  # @note Currently unused
+  #
   def browser
     @browser ||= Capybara.current_session.driver.browser
   end

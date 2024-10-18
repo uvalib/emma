@@ -196,6 +196,11 @@ module BaseDecorator::Pagination
 
   # Page count display element.
   #
+  # The text of elements with these selectors are notable:
+  #
+  # * ".page-items"   The number of items displayed on the page.
+  # * ".total-items"  The total number of items across all pages.
+  #
   # @param [Integer, nil] count
   # @param [Integer, nil] total
   # @param [String,  nil] unit        Name for one page item.

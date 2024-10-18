@@ -67,7 +67,7 @@ class EnrollmentMailer < ApplicationMailer
   end
 
   # ===========================================================================
-  # :section:
+  # :section: ApplicationMailer overrides
   # ===========================================================================
 
   protected
@@ -103,6 +103,12 @@ class EnrollmentMailer < ApplicationMailer
 
     super.merge!(show: show, list: list, org: org, name: name, comments: com)
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
 
   # Extract organization name.
   #
