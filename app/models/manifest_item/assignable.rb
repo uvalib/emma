@@ -39,6 +39,7 @@ module ManifestItem::Assignable
     opt.reverse_merge!(key_norm: true, compact: false)
     opt.reverse_merge!(errors: {}) if rev
     super.tap do |result|
+      result[:repository] = EmmaRepository.default
       if rev
         result[:field_error] = opt[:errors]
         update_status!(result, **opt.slice(*UPDATE_STATUS_OPT))
