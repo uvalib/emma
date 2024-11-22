@@ -253,7 +253,7 @@ en:
             default:        ~  # NOTE: Override per-controller
             multiple:       false
             reverse:        &SEARCH_FILTERS_SORT_REVERSE
-              label:        '%{sort} (rev)'
+              label:        '%{sort} (reversed)'
               suffix:       'rev'
               except:       [relevance]
               enabled:      false
@@ -674,9 +674,6 @@ en:
             <<:             *INDEX_SEARCH_FILTERS_DEFAULT
             <<:             *SEARCH_FILTERS_SORT
             values:         !ruby/symbol SearchSort
-            reverse:        &INDEX_SEARCH_FILTERS_SORT_REVERSE
-              <<:           *SEARCH_FILTERS_SORT_REVERSE
-              enabled:      true
 
           layout:
             - [sort,   size,           repository  ]
