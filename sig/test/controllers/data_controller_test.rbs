@@ -1,15 +1,15 @@
-class DataControllerTest < ActionDispatch::IntegrationTest
-  CONTROLLER: Symbol
+class DataControllerTest < ApplicationControllerTestCase
+  CTRLR: Symbol
 
-  PARAMS: symHash
+  PRM: symHash
 
-  OPTIONS: symHash
-
-  TEST_USERS: symArray
+  OPT: symHash
 
   TEST_READERS: symArray
 
   READ_FORMATS: symArray | Symbol
+
+  NO_READ: symArray
 
   @readers: Array[User|nil]
 
@@ -23,5 +23,5 @@ class DataControllerTest < ActionDispatch::IntegrationTest
   #
   # @return [void]
   #
-  def read_test: (Symbol action, ?anonymous: bool|nil, ?meth: Symbol|nil, **untyped opt) -> void
+  def read_test: (Symbol action, ?anonymous: bool, ?meth: Symbol|nil, **untyped opt) -> void
 end

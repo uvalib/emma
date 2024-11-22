@@ -3,9 +3,9 @@
 # frozen_string_literal: true
 # warn_indent:           true
 
-require 'test_helper'
+require 'application_model_test_case'
 
-class EmmaStatusTest < ActiveSupport::TestCase
+class EmmaStatusTest < ApplicationModelTestCase
 
   # TODO: EmmaStatusTest
 

@@ -21,15 +21,17 @@ module TestHelper::SystemTests::Show
 
   # Assert that the current page is a valid index page.
   #
-  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Symbol,String,Class,Model,nil] ctrlr
   # @param [String]                        title
   #
   # @raise [Minitest::Assertion]
   #
   # @return [true]
   #
-  def assert_valid_show_page(model, title: nil)
-    ctrlr    = controller_name(model)
+  # @note Currently unused.
+  #
+  def assert_valid_show_page(ctrlr, title: nil)
+    ctrlr    = controller_name(ctrlr)
     title    = title ? sanitized_string(title) : property(ctrlr, :show, :title)
     heading  = title ? { text: title } : {}
     body_css = property(ctrlr, :show, :body_css)
@@ -47,7 +49,7 @@ module TestHelper::SystemTests::Show
 
   # Visit an entry on an index page.
   #
-  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Symbol,String,Class,Model,nil] ctrlr
   # @param [Capybara::Node::Element, nil]  entry
   # @param [Integer, Symbol]               index
   # @param [String]                        entry_css
@@ -60,8 +62,10 @@ module TestHelper::SystemTests::Show
   # @yieldparam [String] title
   # @yieldreturn [void]
   #
-  def visit_show_page(model, entry: nil, index: nil, entry_css: nil)
-    ctrlr = controller_name(model)
+  # @note Currently unused.
+  #
+  def visit_show_page(ctrlr, entry: nil, index: nil, entry_css: nil)
+    ctrlr = controller_name(ctrlr)
     entry ||=
       if (entry_css ||= property(ctrlr, :index, :entry_css))
         case index

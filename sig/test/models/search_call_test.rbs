@@ -1,2 +1,2 @@
-class SearchCallTest < ActiveSupport::TestCase
+class SearchCallTest < ApplicationModelTestCase
 end

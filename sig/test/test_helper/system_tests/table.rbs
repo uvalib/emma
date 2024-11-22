@@ -1,0 +1,50 @@
+# Support for tables of items.
+#
+module TestHelper::SystemTests::Table
+  include TestHelper::SystemTests::Common
+
+  # Validate an item table, ensuring that:
+  #
+  # * The number of rows is reflected in "aria-rowcount".
+  # * The number of columns indicated by the "columns-NN" class matches those
+  #   in the header, the number of cells in the first row, and the value of
+  #   "aria-colcount".
+  #
+  # @param [Capybara::Node::Element, String] table
+  # @param [Boolean]                         section
+  #
+  # @return [void]
+  #
+  def check_item_table: (?(Capybara::Node::Element|String) table, ?section: bool) -> void
+
+  # Validate a horizontal listing of record values, ensuring that:
+  #
+  # * The number of columns indicated by the "columns-NN" class matches the
+  #   number of label/value pairs within the element.
+  #
+  # @param [Capybara::Node::Element, String] listing
+  # @param [Array, String, nil]              prune
+  #
+  # @return [void]
+  #
+  def check_details_columns: (Capybara::Node::Element|String listing, ?prune: strArray|String|nil) -> void
+
+  # Validate a details section that has a heading containing an item count and
+  # a toggle to reveal a table of items.
+  #
+  # @param [Capybara::Node::Element, String] section
+  #
+  # @return [void]
+  #
+  def check_details_section: (Capybara::Node::Element|String section) -> void
+
+  # Validate a page selection menu (e.g. from :show_select, :edit_select, etc).
+  #
+  # @param [Capybara::Node::Element, String] section
+  # @param [Integer]                         count
+  # @param [String]                          action
+  #
+  # @return [void]
+  #
+  def check_page_select_menu: (Capybara::Node::Element|String section, count: Integer, action: String, **untyped _ignored) -> void
+end

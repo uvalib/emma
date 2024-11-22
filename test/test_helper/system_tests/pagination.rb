@@ -79,7 +79,7 @@ module TestHelper::SystemTests::Pagination
 
   # Visit the next page of search results.
   #
-  # @param [Symbol] model
+  # @param [Symbol] ctrlr
   # @param [Hash]   opt               Passed to #assert_valid_index_page.
   #
   # @raise [Minitest::Assertion]
@@ -91,19 +91,19 @@ module TestHelper::SystemTests::Pagination
   #
   # @note Currently unused.
   #
-  def visit_next_page(model, **opt)
+  def visit_next_page(ctrlr, **opt)
     click_on NEXT_LABEL, match: :first
     if block_given?
       yield
     else
       show_url
     end
-    assert_valid_index_page(model, **opt)
+    assert_valid_index_page(ctrlr, **opt)
   end
 
   # Visit the previous page of search results.
   #
-  # @param [Symbol] model
+  # @param [Symbol] ctrlr
   # @param [Hash]   opt               Passed to #assert_valid_index_page.
   #
   # @raise [Minitest::Assertion]
@@ -115,14 +115,14 @@ module TestHelper::SystemTests::Pagination
   #
   # @note Currently unused.
   #
-  def visit_prev_page(model, **opt)
+  def visit_prev_page(ctrlr, **opt)
     click_on PREV_LABEL, match: :first
     if block_given?
       yield
     else
       show_url
     end
-    assert_valid_index_page(model, **opt)
+    assert_valid_index_page(ctrlr, **opt)
   end
 
 end

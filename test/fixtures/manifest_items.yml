@@ -2,11 +2,6 @@
 #
 # @see https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-# This model initially had no columns defined. If you add columns to the
-# model remove the '{}' from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
-#
-
 one:            &ONE
   manifest:     csv
   row:          1
@@ -32,3 +27,115 @@ edit_example:
 delete_example:
   <<:           *TWO
   row:          5
+
+manifest_grid_new_example:  &ROW_DATA
+  bib_series:               'FAKE bib_series'
+  bib_seriesPosition:       'FAKE bib_seriesPosition'
+  bib_seriesType:           'newspaper'
+  dc_creator:               'FAKE dc_creator'
+  dc_description:           'FAKE dc_description'
+  dc_format:                'epub'
+  dc_identifier:            '9785485996185; 9781951717148' # fakes
+  dc_language:              ['arm', 'afr']
+  dc_publisher:             'FAKE dc_publisher'
+  dc_relation:              '9787034650203; 9781325604692' # fakes
+  dc_rights:                'creativeCommons'
+  dc_subject:               'FAKE dc_subject; second; third'
+  dc_title:                 'FAKE dc_title - do not use'
+  dc_type:                  'movingImage'
+  dcterms_dateAccepted:     '2010-01-02'
+  dcterms_dateCopyright:    1849
+  emma_formatFeature:       ['grade2', 'ueb', 'tts']
+  emma_publicationDate:     'Jan 02, 2010'
+  emma_version:             'FAKE emma_version'
+  rem_comments:             'FAKE rem_comments'
+  rem_complete:             true
+  rem_coverage:             'FAKE rem_coverage'
+  rem_metadataSource:       'FAKE rem_metadataSource; second; third'
+  rem_remediatedAspects:    ['linkedToc', 'addedMathMl', 'taggedPdf']
+  rem_remediatedBy:         'FAKE rem_remediatedBy; second; third'
+  rem_remediationDate:      'April 18, 1960'
+  rem_source:               'publisher'
+  rem_status:               'bornAccessible'
+  rem_textQuality:          'rekeyed'
+  s_accessMode:             ['textual', 'visual', 'textOnVisual']
+  s_accessModeSufficient:   ['textual', 'visual']
+  s_accessibilityControl:   ['fullKeyboardControl', 'fullMouseControl']
+  s_accessibilityFeature:   ['index', 'latex', 'MathML']
+  s_accessibilityHazard:    ['flashing', 'noMotionSimulationHazard']
+  s_accessibilitySummary:   'FAKE s_accessibilitySummary'
+
+complete_example: &COMPLETE
+  <<:             *ROW_DATA
+  last_saved:     <%= Time.now + 1.minute %>
+  file_status:    'complete'
+  data_status:    'complete'
+  ready_status:   'ready'
+  file_data:      { name: 'file_a.txt' }
+
+complete_row_1:   &COMPLETE_FILE_A
+  <<:             *COMPLETE
+  row:            1
+  file_data:      { name: 'file_a.txt' }
+
+complete_row_2:   &COMPLETE_FILE_B
+  <<:             *COMPLETE
+  row:            2
+  file_data:      { name: 'file_b.txt' }
+
+complete_row_3:   &COMPLETE_FILE_C
+  <<:             *COMPLETE
+  row:            3
+  file_data:      { name: 'file_c.txt' }
+
+# =============================================================================
+# Examples for ready-to-submit manifests
+# =============================================================================
+
+staff_1_A_a:
+  <<:             *COMPLETE_FILE_A
+  manifest:       staff_1_A
+
+staff_1_A_b:
+  <<:             *COMPLETE_FILE_B
+  manifest:       staff_1_A
+
+staff_1_A_c:
+  <<:             *COMPLETE_FILE_C
+  manifest:       staff_1_A
+
+dso_1_A_a:
+  <<:             *COMPLETE_FILE_A
+  manifest:       dso_1_A
+
+dso_1_A_b:
+  <<:             *COMPLETE_FILE_B
+  manifest:       dso_1_A
+
+dso_1_A_c:
+  <<:             *COMPLETE_FILE_C
+  manifest:       dso_1_A
+
+man_1_A_a:
+  <<:             *COMPLETE_FILE_A
+  manifest:       man_1_A
+
+man_1_A_b:
+  <<:             *COMPLETE_FILE_B
+  manifest:       man_1_A
+
+man_1_A_c:
+  <<:             *COMPLETE_FILE_C
+  manifest:       man_1_A
+
+adm_A_a:
+  <<:             *COMPLETE_FILE_A
+  manifest:       adm_A
+
+adm_A_b:
+  <<:             *COMPLETE_FILE_B
+  manifest:       adm_A
+
+adm_A_c:
+  <<:             *COMPLETE_FILE_C
+  manifest:       adm_A

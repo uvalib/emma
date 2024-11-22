@@ -3,16 +3,15 @@
 # frozen_string_literal: true
 # warn_indent:           true
 
-require 'test_helper'
+require 'application_controller_test_case'
 
-class SearchControllerTest < ActionDispatch::IntegrationTest
+class SearchControllerTest < ApplicationControllerTestCase
 
-  CONTROLLER   = :search
-  PARAMS       = { controller: CONTROLLER }.freeze
-  OPTIONS      = { controller: CONTROLLER }.freeze
+  CTRLR = :search
+  PRM   = { controller: CTRLR }.freeze
+  OPT   = { controller: CTRLR, sign_out: false }.freeze
 
-  TEST_USERS   = CORE_TEST_USERS
-  TEST_READERS = TEST_USERS
+  TEST_READERS = CORE_TEST_USERS
 
   READ_FORMATS = :all
 
@@ -26,14 +25,15 @@ class SearchControllerTest < ActionDispatch::IntegrationTest
 
   test 'search index - no search' do
     action  = :index
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
+    params  = PRM.merge(action: action)
+    options = OPT.merge(action: action, test: __method__, expect: :success)
 
     @readers.each do |user|
       u_opt = options
+      u_prm = params
 
-      TEST_FORMATS.each do |fmt|
-        url = url_for(**params, format: fmt)
+      foreach_format(user, **u_opt) do |fmt|
+        url = url_for(**u_prm, format: fmt)
         opt = u_opt.merge(format: fmt)
         get_as(user, url, **opt, only: :html)
       end
@@ -43,36 +43,39 @@ class SearchControllerTest < ActionDispatch::IntegrationTest
   test 'search index - sample search' do
     action  = :index
     item    = search_calls(:example)
-    params  = PARAMS.merge(action: action).merge!(item.query.symbolize_keys)
-    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
+    params  = PRM.merge(action: action).merge!(item.query.symbolize_keys)
+    options = OPT.merge(action: action, test: __method__, expect: :success)
 
     @readers.each do |user|
       u_opt = options
+      u_prm = params
 
-      TEST_FORMATS.each do |fmt|
-        url = url_for(**params, format: fmt)
+      foreach_format(user, **u_opt) do |fmt|
+        url = url_for(**u_prm, format: fmt)
         opt = u_opt.merge(format: fmt)
         get_as(user, url, **opt, only: READ_FORMATS)
       end
     end
   end
 
+=begin # NOTE: Per SearchController#show, this endpoint can't be implemented.
   test 'search show - details search result item' do
     action  = :show
     item    = search_results(:example)
-    params  = PARAMS.merge(action: action, id: record_id(item))
-    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
+    params  = PRM.merge(action: action, id: record_id(item))
+    options = OPT.merge(action: action, test: __method__, expect: :success)
 
     @readers.each do |user|
       u_opt = options
+      u_prm = params
 
-      TEST_FORMATS.each do |fmt|
-        url = url_for(**params, format: fmt)
+      foreach_format(user, **u_opt) do |fmt|
+        url = url_for(**u_prm, format: fmt)
         opt = u_opt.merge(format: fmt)
         get_as(user, url, **opt, only: READ_FORMATS)
       end
     end unless not_applicable('EMMA Unified Search API does not support this')
-    # NOTE: Per SearchController#show, this endpoint can't be implemented.
   end
+=end
 
 end

@@ -3,18 +3,23 @@
 # frozen_string_literal: true
 # warn_indent:           true
 
-require 'test_helper'
+require 'application_controller_test_case'
 
-class HealthControllerTest < ActionDispatch::IntegrationTest
+class HealthControllerTest < ApplicationControllerTestCase
 
-  CONTROLLER     = :health
-  PARAMS         = { controller: CONTROLLER }.freeze
-  OPTIONS        = { controller: CONTROLLER }.freeze
+  CTRLR = :health
+  PRM   = { controller: CTRLR }.freeze
+  OPT   = { controller: CTRLR, sign_out: false }.freeze
 
-  TEST_USERS     = ALL_TEST_USERS
-  TEST_READERS   = TEST_USERS
+  TEST_READERS   = ALL_TEST_USERS
 
-  TEST_SUBSYSTEM = 'storage'
+  READ_FORMATS   = :all
+
+  NO_READ        = formats_other_than(*READ_FORMATS).freeze
+
+  setup do
+    @readers = find_users(*TEST_READERS)
+  end
 
   # ===========================================================================
   # :section: Read tests
@@ -40,21 +45,27 @@ class HealthControllerTest < ActionDispatch::IntegrationTest
     check_url_test(:check, url, meth: __method__)
   end
 
-  test 'health check - single subsystem status' do
-    url = check_subsystem_health_url(subsystem: TEST_SUBSYSTEM)
+  test 'health check - storage subsystem status' do
+    url = check_subsystem_health_url(subsystem: 'storage')
     check_url_test(:check, url, meth: __method__)
   end
 
   test 'health run_state' do
     action  = :run_state
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
+    params  = PRM.merge(action: action)
+    options = OPT.merge(action: action, test: __method__, expect: :success)
 
-    find_users(*TEST_READERS).each do |user|
-      u_opt = options
-      TEST_FORMATS.each do |fmt|
-        url = url_for(**params, format: fmt)
+    @readers.each do |user|
+      able  = true
+      u_opt = able ? options : options.except(:controller, :action, :expect)
+      u_prm = params
+
+      foreach_format(user, **u_opt) do |fmt|
+        url = url_for(**u_prm, format: fmt)
         opt = u_opt.merge(format: fmt)
+        if NO_READ.include?(fmt)
+          opt[:expect] = :not_found if able
+        end
         get_as(user, url, **opt)
       end
     end
@@ -71,15 +82,16 @@ class HealthControllerTest < ActionDispatch::IntegrationTest
   # @param [Symbol] action
   # @param [String] url
   # @param [Symbol] meth              Calling test method.
+  # @param [Hash]   opt               Passed to #assert_result.
   #
   # @return [void]
   #
-  def check_url_test(action, url, meth: nil)
-    meth  ||= __method__
-    options = OPTIONS.merge(action: action)
+  def check_url_test(action, url, meth: nil, **opt)
+    meth ||= __method__
+    opt.reverse_merge!(OPT).merge!(action: action)
     run_test(meth, format: :json) do
-      get url
-      assert_result :success, **options
+      get(url)
+      assert_result(:success, **opt)
     end
   end
 

@@ -7,105 +7,110 @@ require 'application_system_test_case'
 
 class ManifestsTest < ApplicationSystemTestCase
 
-  MODEL        = Manifest
-  CONTROLLER   = :manifest
-  PARAMS       = { controller: CONTROLLER }.freeze
-  INDEX_TITLE  = page_title(**PARAMS, action: :index).freeze
-  LIST_ACTIONS = %i[list_all list_org list_own].freeze
-
-  TEST_USER    = :test_dso_1
+  MODEL = Manifest
+  CTRLR = :manifest
+  PRM   = { controller: CTRLR }.freeze
+  TITLE = page_title(**PRM, action: :index).freeze
 
   setup do
-    @user = find_user(TEST_USER)
+    @csv      = csv_import_file
+    @json     = json_import_file
+    @admin    = find_user(:test_adm)
+    @manager  = find_user(:test_man_1)
+    @member   = find_user(:test_dso_1)
+    @generate = ManifestSampleGenerator.new(self)
   end
 
   # ===========================================================================
   # :section: Read tests
   # ===========================================================================
 
-  test 'manifests - index' do
-    action = :index
-    params = PARAMS.merge(action: action, meth: __method__)
-    title  = page_title(**params)
-    total  = nil # This will varying depending on the redirection destination.
-    redir  = index_redirect(**params)
-    list_test(title: title, total: total, redir_url: redir, **params)
+  test 'manifests - index - anonymous' do
+    list_test(nil, meth: __method__)
   end
 
-  test 'manifests - list_all' do
-    # NOTE: There's an issue with looping in attempting to sign-in which causes
-    #   this to fail inexplicably. Since this test user can't perform this
-    #   action anyway, this test needs to be skipped for now.
-    unless @user.can?(:list_all, MODEL)
-      # noinspection RubyJumpError
-      return not_applicable("#{@user} is not an administrator")
-    end
-    action = :list_all
-    params = PARAMS.merge(action: action, meth: __method__)
-    title  = page_title(**params)
-    total  = fixture_count(MODEL)
-    list_test(title: title, total: total, **params)
+  test 'manifests - index - member' do
+    list_test(@member, meth: __method__)
   end
 
-  test 'manifests - list_org' do
-    action = :list_org
-    params = PARAMS.merge(action: action, meth: __method__)
-    title  = page_title(**params, name: @user&.org&.label)
-    total  = fixture_count_for_org(MODEL, @user)
-    list_test(title: title, total: total, **params)
+  test 'manifests - index - admin' do
+    list_test(@admin, meth: __method__)
   end
 
-  test 'manifests - list_own' do
-    action = :list_own
-    params = PARAMS.merge(action: action, meth: __method__)
-    title  = page_title(**params, name: @user&.label.inspect)
-    total  = fixture_count_for_user(MODEL, @user)
-    list_test(title: title, total: total, **params)
+  test 'manifests - list_all - anonymous' do
+    list_test(nil, meth: __method__, action: :list_all)
   end
 
-  test 'manifests - show' do
-    action    = :show
-    item      = manifests(:example)
-    params    = PARAMS.merge(action: action, id: item.id)
-    title     = page_title(item, **params)
+  test 'manifests - list_all - member' do
+    list_test(@member, meth: __method__, action: :list_all)
+  end
 
-    start_url = url_for(**params)
-    final_url = start_url
+  test 'manifests - list_all - admin' do
+    list_test(@admin, meth: __method__, action: :list_all)
+  end
 
-    run_test(__method__) do
+  test 'manifests - list_org - anonymous' do
+    list_test(nil, meth: __method__, action: :list_org)
+  end
 
-      # Not available anonymously; successful sign-in should redirect back.
-      visit start_url
-      assert_flash(alert: AUTH_FAILURE)
-      sign_in_as(@user)
+  test 'manifests - list_org - member' do
+    list_test(@member, meth: __method__, action: :list_org)
+  end
 
-      # The page should show the details of the item.
-      show_url
-      assert_current_url(final_url)
-      assert_valid_page(heading: title)
-      screenshot
+  test 'manifests - list_org - admin' do
+    list_test(@admin, meth: __method__, action: :list_org)
+  end
 
-    end
+  test 'manifests - list_own - anonymous' do
+    list_test(nil, meth: __method__, action: :list_own)
+  end
+
+  test 'manifests - list_own - member' do
+    list_test(@member, meth: __method__, action: :list_own)
+  end
+
+  test 'manifests - list_own - admin' do
+    list_test(@admin, meth: __method__, action: :list_own)
+  end
+
+  test 'manifests - show - anonymous' do
+    show_test(nil, meth: __method__)
+  end
+
+  test 'manifests - show - member' do
+    show_test(@member, meth: __method__)
+  end
+
+  test 'manifests - show - admin' do
+    show_test(@admin, meth: __method__)
   end
 
   # ===========================================================================
   # :section: Write tests
   # ===========================================================================
 
-  test 'manifests - new' do
-    new_test(meth: __method__, direct: true)
+  test 'manifests - new - anonymous' do
+    new_test(nil, meth: __method__)
   end
 
-  test 'manifests - new from index' do
-    new_test(meth: __method__, direct: false)
+  test 'manifests - new - member' do
+    new_test(@member, meth: __method__)
   end
 
-  test 'manifests - edit (select)' do
-    edit_select_test(meth: __method__, direct: true)
+  test 'manifests - edit - anonymous' do
+    edit_test(nil, meth: __method__)
   end
 
-  test 'manifests - edit (select) from index' do
-    edit_select_test(meth: __method__, direct: false)
+  test 'manifests - edit - member' do
+    edit_test(@member, meth: __method__)
+  end
+
+  test 'manifests - delete - anonymous' do
+    delete_test(nil, meth: __method__)
+  end
+
+  test 'manifests - delete - member' do
+    delete_test(@member, meth: __method__)
   end
 
   test 'manifests - delete (select)' do
@@ -122,224 +127,377 @@ class ManifestsTest < ApplicationSystemTestCase
 
   public
 
-  # Perform a test to list bulk operation manifests visible to the test user.
+  # Perform a test to list manifests visible to *user*.
   #
-  # @param [Symbol]       action
-  # @param [String]       title
+  # @param [User, nil]    user
   # @param [Integer, nil] total       Expected total number of items.
-  # @param [String, nil]  redir_url
+  # @param [String, nil]  title       Default based on *user* and opt[:action].
   # @param [Symbol]       meth        Calling test method.
   # @param [Hash]         opt         URL parameters.
   #
   # @return [void]
   #
-  def list_test(action:, title:, total:, redir_url: nil, meth: nil, **opt)
-    params    = opt.merge!(action: action)
+  def list_test(user, total: nil, title: nil, meth: nil, **opt)
+    params    = PRM.merge(action: :index, **opt)
+    action    = params[:action]
 
     start_url = url_for(**params)
-    final_url = redir_url || start_url
 
     run_test(meth || __method__) do
 
-      # Not available anonymously; successful sign-in should redirect back.
-      visit start_url
-      assert_flash(alert: AUTH_FAILURE)
-      sign_in_as(@user)
+      if permitted?(action, user)
 
-      # The listing should be the first of one or more results pages with as
-      # many entries as there are fixture records.
-      show_url
-      assert_current_url(final_url)
-      assert_valid_page(heading: title)
-      assert_search_count(CONTROLLER, total: total) if total
-      screenshot
+        admin     = user&.administrator?
+        index     = (action == :index)
+        list_org  = (action == :list_org)
+        list_own  = (action == :list_own)
+
+        title   ||= page_title(**params, name: user&.org&.label) if list_org
+        title   ||= page_title(**params)
+        total   ||= fixture_count_for_user(MODEL, user) if index || list_own
+        total   ||= fixture_count(MODEL) if admin
+        total   ||= fixture_count_for_org(MODEL, user)
+
+        final_url = index ? index_redirect(user: user) : start_url
+
+        # Successful sign-in should redirect back to the action page.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
+
+        # The listing should be the first of one or more results pages with as
+        # many entries as there are manifests visible to the user.
+        show_url
+        screenshot
+        assert_current_url(final_url)
+        assert_valid_page(heading: title)
+        assert_search_count(CTRLR, expected: total)
+
+        # Verify that there are actually the indicated number of items.
+        items   = all('.manifest-list .manifest-list-item')
+        count   = all('.page-items', visible: :all).first&.text&.presence&.to_i
+        count ||= total
+        unless count == items.size
+          flunk "#{count} items indicated but #{items.size} items found"
+        end
+
+        # Validate page contents.
+        check_details_columns(items.first) if items.present?
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from listing manifests." }
+        assert_no_visit(start_url, action, as: user)
+
+      else
+
+        show_item { 'Anonymous user blocked from listing manifests.' }
+        assert_no_visit(start_url, :sign_in)
+
+      end
+
+    end
+  end
+
+  # Perform a test to show a manifest visible to *user*.
+  #
+  # @param [User, nil]     user
+  # @param [Manifest, nil] target
+  # @param [String, nil]   title
+  # @param [Symbol]        meth       Calling test method.
+  # @param [Hash]          opt        URL parameters.
+  #
+  # @return [void]
+  #
+  def show_test(user, target: nil, title: nil, meth: nil, **opt)
+    target  ||= user&.manifests&.first || manifests(:example)
+    params    = PRM.merge(action: :show, id: target.id, **opt)
+    action    = params[:action]
+
+    start_url = url_for(**params)
+
+    run_test(meth || __method__) do
+
+      if permitted?(action, user, target)
+
+        title   ||= page_title(target, **params, name: target.label.inspect)
+
+        final_url = start_url
+
+        # Successful sign-in should redirect back to the action page.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
+
+        # The page should show the details of the target manifest.
+        show_url
+        screenshot
+        assert_current_url(final_url)
+        assert_valid_page(heading: title)
+
+        # Validate page contents.
+        check_details_columns('.manifest-details')
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from viewing manifest." }
+        assert_no_visit(start_url, action, as: user)
+
+      else
+
+        show_item { 'Anonymous user blocked from viewing manifest.' }
+        assert_no_visit(start_url, :sign_in)
+
+      end
 
     end
   end
 
   # Perform a test to create a new bulk operation manifest.
   #
-  # @param [Boolean] direct
-  # @param [Symbol]  meth             Calling test method.
-  # @param [Hash]    opt              Added to URL parameters.
+  # @param [User, nil]             user
+  # @param [String, Pathname, nil] file   Data import file.
+  # @param [Symbol, nil]           meth   Calling test method.
+  # @param [Hash]                  opt    Added to URL parameters.
   #
   # @return [void]
   #
-  def new_test(direct:, meth: nil, **opt)
-    action    = :new
-    params    = PARAMS.merge(action: action, **opt)
+  def new_test(user, file: nil, meth: nil, **opt)
+    button   = 'Create'
+    action   = :new
+    params   = PRM.merge(action: action, **opt)
 
-    form_url  = url_for(**params)
-    index_url = url_for(**params, action: :list_own)
-
-    tag       = direct ? 'DIRECT' : 'INDIRECT'
-    start_url = direct ? form_url : index_url
-    # noinspection RubyUnusedLocalVariable
-    final_url = index_url
-
-    # noinspection RubyUnusedLocalVariable
-    total     = fixture_count_for_user(MODEL, @user)
-    item      = manifests(:example)
-    test_opt  = { item: item, action: action, tag: tag, name: 'New manifest' }
+    form_url = url_for(**params)
 
     run_test(meth || __method__) do
 
-      # Not available anonymously; successful sign-in should redirect back.
-      visit start_url
-      assert_flash(alert: AUTH_FAILURE)
-      sign_in_as(@user)
+      if permitted?(action, user)
 
-      # Change to the form page if coming in from the index page.
-      unless direct
-        click_on 'Create', match: :first
-        wait_for_page form_url
+        name      = "New Manifest #{hex_rand}"
+
+        admin     = user&.administrator?
+        records   = (fixture_count(MODEL) if admin)
+        total     = (fixture_count_for_user(MODEL, user) unless records)
+
+        index_url = url_for(**params, action: :index)
+        all_url   = url_for(**params, action: :list_all)
+        own_url   = url_for(**params, action: :list_own)
+        org_url   = url_for(**params, action: :list_org)
+
+        start_url = index_url
+        final_url = [index_url, all_url, own_url, org_url]
+
+        # Start on the index page showing the current number of items.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
+
+        # Go to the form page.
+        select_action(button, wait_for: form_url)
+
+        # Test functionality, either by acquiring field data from an import
+        # file or by generating field data for the item to create.
+        if file
+          attach_file(file) { find('.import-button').click }
+          data  = File.read(file)
+          json  = file.to_s.end_with?('.json')
+          rows  = json ? JSON.parse(data).size : (CSV.parse(data).size - 1)
+          wait_for_condition(fatal: true) { all('tbody tr').size == rows }
+        else
+          tag   = user&.role&.upcase || 'ANON'
+          flds  = @generate.fields_for(action, tag: tag, base: name)
+          name  = flds[:name]
+          t_opt = { item: flds.except(:id), action: action, tag: tag }
+          manifest_title_test(**t_opt)
+          manifest_grid_test(**t_opt)
+        end
+
+        # Create the item.
+        show_item { "Creating manifest #{name.inspect}..." }
+        screenshot
+        click_on 'Save', match: :first, exact: true
+
+        # There should be one more item than before on the index page.
+        visit final_url.first unless final_url.include?(current_url)
+        assert_valid_page(heading: TITLE)
+        displayed_manifest_total(expected: total.succ)    if total
+        assert_model_count(MODEL, expected: records.succ) if records
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from creating manifest." }
+        assert_no_visit(form_url, action, as: user)
+
+      else
+
+        show_item { 'Anonymous user blocked from creating manifest.' }
+        assert_no_visit(form_url, :sign_in)
+
       end
-
-      # Test functionality.
-      manifest_title_test(**test_opt)
-      manifest_grid_test(**test_opt)
-
-=begin
-      # If all required fields have been filled then submit will be visible.
-      send_keys :tab # Bypass debounce delay by inducing a 'change' event.
-      screenshot
-      click_on 'Save', match: :first, exact: true
-
-      # We should be back on the index page with one more record than before.
-      wait_for_page final_url
-      assert_flash 'SUCCESS'
-      assert_valid_page heading: INDEX_TITLE
-      assert_search_count(CONTROLLER, total: (total += 1))
-=end
 
     end
   end
 
   # Perform a test to select then modify a bulk operation manifest.
   #
-  # @param [Boolean] direct
-  # @param [Symbol]  meth             Calling test method.
-  # @param [Hash]    opt              Added to URL parameters.
+  # @param [User, nil]             user
+  # @param [String, Pathname, nil] file   Data import file.
+  # @param [Symbol, nil]           meth   Calling test method.
+  # @param [Hash]                  opt    Added to URL parameters.
   #
   # @return [void]
   #
-  def edit_select_test(direct:, meth: nil, **opt)
-    action    = :edit
-    select    = menu_action(action)
-    params    = PARAMS.merge(action: action, **opt)
+  def edit_test(user, file: nil, meth: nil, **opt)
+    button   = 'Change'
+    action   = :edit
+    params   = PRM.merge(action: action, **opt)
 
-    index_url = url_for(**params, action: :list_own)
-    menu_url  = url_for(**params, action: select)
+    # Find the item to be edited.
+    record   = user&.manifests&.first || manifests(:edit_example)
+    form_url = form_page_url(record.id, **params)
 
-    tag       = direct ? 'DIRECT' : 'INDIRECT'
-    start_url = direct ? menu_url : index_url
-    # noinspection RubyUnusedLocalVariable
-    final_url = index_url
-
-    # noinspection RubyUnusedLocalVariable
-    total     = fixture_count_for_user(MODEL, @user)
-    item      = manifests(:edit_example)
-    test_opt  = { action: action, tag: tag, item: item, unique: hex_rand }
-
-    # noinspection RubyMismatchedArgumentType
     run_test(meth || __method__) do
 
-      # Not available anonymously; successful sign-in should redirect back.
-      visit start_url
-      assert_flash(alert: AUTH_FAILURE)
-      sign_in_as(@user)
+      if permitted?(action, user, record)
 
-      # Change to the select menu if coming in from the index page.
-      unless direct
-        click_on 'Change'
-        wait_for_page menu_url
+        name      = record.name
+
+        admin     = user.administrator?
+        records   = (fixture_count(MODEL) if admin)
+        total     = (fixture_count_for_user(MODEL, user) unless records)
+
+        index_url = url_for(**params, action: :index)
+        all_url   = url_for(**params, action: :list_all)
+        own_url   = url_for(**params, action: :list_own)
+        org_url   = url_for(**params, action: :list_org)
+        menu_url  = url_for(**params, action: menu_action(action))
+
+        start_url = index_url
+        final_url = [index_url, all_url, own_url, org_url]
+
+        # Start on the index page showing the current number of items.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
+
+        # Go to the menu page and choose the item to edit.
+        select_action(button, wait_for: menu_url)
+        select_item(name, wait_for: form_url)
+
+        # Test functionality, either by acquiring field data from an import
+        # file or by generating new field data for the item to edit.
+        if file
+          rows  = all('tbody tr').size
+          attach_file(file) { find('.import-button').click }
+          data  = File.read(file)
+          json  = file.to_s.end_with?('.json')
+          rows += json ? JSON.parse(data).size : (CSV.parse(data).size - 1)
+          wait_for_condition(fatal: true) { all('tbody tr').size == rows }
+        else
+          tag   = user&.role&.upcase || 'ANON'
+          flds  = @generate.fields(record, tag: tag)
+          t_opt = { item: flds, action: action, tag: tag }
+          manifest_title_test(**t_opt)
+          manifest_grid_test(**t_opt)
+        end
+
+        # Update the item.
+        show_item { "Updating manifest #{name.inspect}..." }
+        screenshot
+        click_on 'Save', match: :first, exact: true
+
+        # There should be the same number of items as before on the index page.
+        visit final_url.first unless final_url.include?(current_url)
+        assert_valid_page(heading: TITLE)
+        displayed_manifest_total(expected: total)    if total
+        assert_model_count(MODEL, expected: records) if records
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from modifying manifest." }
+        assert_no_visit(form_url, action, as: user)
+
+      else
+
+        show_item { 'Anonymous user blocked from modifying manifest.' }
+        assert_no_visit(form_url, :sign_in)
+
       end
-
-      # Choose manifest to edit.
-      item_menu_select(item.name, name: 'id')
-
-      # Test functionality.
-      manifest_title_test(**test_opt)
-      manifest_grid_test(**test_opt)
-
-=begin
-      # If all required fields have been filled then submit will be visible.
-      send_keys :tab # Bypass debounce delay by inducing a 'change' event.
-      screenshot
-      click_on 'Save', match: :first, exact: true
-
-      # We should be back on the index page with the same number of records.
-      wait_for_page final_url
-      assert_flash 'SUCCESS'
-      assert_valid_page heading: INDEX_TITLE
-      assert_search_count(CONTROLLER, total: total)
-=end
 
     end
   end
 
   # Perform a test to select then remove a bulk operation manifest.
   #
-  # @param [Boolean] direct
-  # @param [Symbol]  meth             Calling test method.
-  # @param [Hash]    opt              Added to URL parameters.
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
   #
   # @return [void]
   #
-  def delete_select_test(direct:, meth: nil, **opt)
-    action    = :delete
-    select    = menu_action(action)
-    params    = PARAMS.merge(action: action, **opt)
+  def delete_test(user, meth: nil, **opt)
+    button   = 'Remove'
+    action   = :delete
+    params   = PRM.merge(action: action, **opt)
 
-    index_url = url_for(**params, action: :list_own)
-    menu_url  = url_for(**params, action: select)
-
-    tag       = direct ? 'DIRECT' : 'INDIRECT'
-    start_url = direct ? menu_url : index_url
-
-    total     = fixture_count_for_user(MODEL, @user)
-    item      = manifests(:delete_example)
-    test_opt  = { action: action, tag: tag, item: item, unique: hex_rand }
-
-    # Add item copy to be deleted.
-    name = manifest_name(**test_opt)
-    attr = item.fields.except(:id).merge!(name: name)
-    item = Manifest.create!(attr)
-
-    item_delete = [
-      url_for(**params, id: item.id),
-      make_path(url_for(**params), id: item.id)
-    ]
+    # Generate a new item to be deleted.
+    tag      = user&.role&.upcase || 'ANON'
+    record   = @generate.new_record_for(action, tag: tag)
+    form_url = form_page_url(record.id, **params)
 
     run_test(meth || __method__) do
 
-      # Verify added copies on the index page.
-      visit index_url
-      assert_flash(alert: AUTH_FAILURE)
-      sign_in_as(@user)
-      assert_search_count(CONTROLLER, total: (total += 1))
+      if permitted?(action, user, record)
 
-      # Change to the select menu if coming in from the index page.
-      visit start_url
-      unless direct
-        click_on 'Remove'
-        wait_for_page menu_url
+        admin     = user.administrator?
+        records   = (fixture_count(MODEL).succ if admin)
+        total     = (fixture_count_for_user(MODEL, user).succ unless records)
+
+        index_url = url_for(**params, action: :index)
+        all_url   = url_for(**params, action: :list_all)
+        own_url   = url_for(**params, action: :list_own)
+        org_url   = url_for(**params, action: :list_org)
+        menu_url  = url_for(**params, action: menu_action(action))
+
+        start_url = index_url
+        final_url = [index_url, all_url, own_url, org_url]
+
+        # Identify the item to be deleted.
+        item_name = record.name
+
+        # Start on the index page showing the current number of items.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
+
+        # Go to the menu page and choose the item to remove.
+        select_action(button, wait_for: menu_url)
+        select_item(item_name, wait_for: form_url)
+
+        # Delete the selected item.
+        show_item { "Removing manifest #{item_name.inspect}..." }
+        form_submit
+
+        # After deletion, we should be back on the menu page.
+        wait_for_page(menu_url)
+        assert_flash('Removed manifest')
+
+        # On the index page, there should be one less record than before.
+        visit final_url.first unless final_url.include?(current_url)
+        assert_model_count_for_user(MODEL, user, expected: total.pred) if total
+        assert_model_count(MODEL, expected: records.pred) if records
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from removing manifest." }
+        assert_no_visit(form_url, action, as: user)
+
+      else
+
+        show_item { 'Anonymous user blocked from removing manifest.' }
+        assert_no_visit(form_url, :sign_in)
+
       end
-
-      # Choose submission to remove, which leads to the delete page.
-      item_menu_select(item.name, name: 'id')
-      wait_for_page item_delete
-      screenshot
-
-      # After deletion we should be back on the previous page.
-      click_on 'Delete', match: :first, exact: true
-      wait_for_page menu_url
-      assert_flash 'SUCCESS'
-
-      # On the index page, there should be one less record than before.
-      visit index_url
-      assert_valid_page(heading: INDEX_TITLE)
-      assert_search_count(CONTROLLER, total: (total -= 1))
 
     end
   end
@@ -350,16 +508,18 @@ class ManifestsTest < ApplicationSystemTestCase
 
   protected
 
-  # Generate a distinct Manifest name.
+  # Get the number of manifests from a manifest listing page.
   #
-  # @param [Hash] opt                 Test options
+  # @param [Integer, nil] expected    Assert that the expected count is found.
   #
-  # @return [String]
+  # @return [Integer]
   #
-  def manifest_name(**opt)
-    opt[:name] ||= opt[:item].name      if opt[:item]
-    opt[:name]  += " (#{opt[:action]})" if opt[:action]
-    opt.slice(:name, :unique, :tag).compact.values.join(' - ')
+  def displayed_manifest_total(expected: nil)
+    total = find('.manifest-list .total-items').text.to_i
+    unless expected.nil? || (total == expected)
+      flunk "count is #{total} instead of #{expected}"
+    end
+    total
   end
 
   # Check operation of Manifest information display/edit by setting the title
@@ -370,39 +530,145 @@ class ManifestsTest < ApplicationSystemTestCase
   # @return [void]
   #
   def manifest_title_test(**opt)
-    _title = manifest_name(**opt)
-=begin # TODO: manifest_title_test
+    show_item { 'Modify manifest name...' }
+    title = opt.dig(:item, :name)
+    curr  = find('.heading .name').text
+    title = "#{title} - MODIFIED #{hex_rand}" if title == curr
 
-    # On the form page:
-    assert_selector '[data-field="user_id"]', visible: false#, text: @user&.id
+    # Click on "Edit" button to make the line editor visible.
+    click_on class: 'title-edit', match: :first
 
-    # Replace field data.
-    fill_in 'Title', with: title
-=end
+    # Change the title value and commit by clicking the "Change" button.
+    line = find('.line-editor')
+    line.find('.input.value').set(title)
+    line.find('.update').click
+
+    # Verify that the displayed title has changed.
+    current = find('.heading .name').text
+    return if current == title
+    flunk "title = #{title.inspect} but current = #{current.inspect}"
   end
 
   # Check operation of ManifestItem grid.
   #
-  # @param [Hash] opt                 Test options
+  # @param [Hash, nil] fields         Default: `#generate_item_fields`.
+  # @param [Boolean]   shuffle        If *false*, do not randomize order.
+  # @param [Hash]      opt            Test options
+  #
+  # @option opt [Symbol] :fixture     Passed to #generate_item_fields
   #
   # @return [void]
   #
-  def manifest_grid_test(**opt)
-    _title = manifest_name(**opt)
-=begin # TODO: manifest_grid_test
-    total = opt.delete(:total)
+  def manifest_grid_test(fields: nil, shuffle: true, **opt)
+    show_item { 'Modify manifest content...' }
+    fields &&= fields.except(*NON_DATA_ITEM_FIELDS)
+    fields ||= generate_item_fields(**opt)
+    fields   = fields.to_a.shuffle.to_h if shuffle
+    fields.each_pair do |field, value|
+      fill_cell(field, value)
+    end
+  end
 
-    # If all required fields have been filled then submit will be visible.
-    send_keys :tab # Bypass debounce delay by inducing a 'change' event.
-    screenshot
-    click_on 'Save', match: :first, exact: true
+  # ManifestItem fields which do not relate directly to manifest grid inputs.
+  #
+  # @type [Array<Symbol>]
+  #
+  NON_DATA_ITEM_FIELDS = %i[
+    dcterms_dateAccepted
+    id manifest_id row delta
+    editing deleting
+    last_saved last_lookup last_submit
+    created_at updated_at
+    data_status file_status ready_status
+    backup last_indexed submission_id field_error
+  ].freeze
 
-    # Should be back on the index page with the same number of records.
-    wait_for_page index_url
-    assert_flash 'SUCCESS'
-    assert_valid_page heading: INDEX_TITLE
-    assert_search_count(CONTROLLER, total: total)
-=end
+  # Generate fields for a ManifestItem.
+  #
+  # @param [Symbol] fixture
+  #
+  # @return [Hash{Symbol=>any}]
+  #
+  def generate_item_fields(fixture: :manifest_grid_new_example, **)
+    manifest_items(fixture).fields.compact.except(*NON_DATA_ITEM_FIELDS)
+  end
+
+  # Click on the cell to activate the input control before filling it.
+  #
+  # @param [Symbol, String] key
+  # @param [any]            value
+  # @param [Integer]        row
+  #
+  # @return [void]
+  #
+  def fill_cell(key, value, row: 1)
+    key = key.to_s.sub(/^[^_]+_/, '') if key.is_a?(Symbol)
+    key = key.camelize
+
+    # Click the cell to make its edit element visible.
+    find_by_id("cell-#{key}-#{row}").scroll_to(:center).click
+
+    # Update the edit element based on its type.
+    edit = find_by_id("edit-#{key}-#{row}").scroll_to(:center)
+    css  = edit[:class].split(' ')
+    if css.include?('menu')
+      items = Array.wrap(value).map { %Q([value="#{_1}"]) }.join(',')
+      if css.include?('multi')
+        edit.all(items).each { _1.set(true) }
+      else
+        edit.all(items).each { _1.scroll_to(:center).select_option }
+      end
+    elsif css.include?('input')
+      value = value.join("\n") if value.is_a?(Array)
+      edit.set(value)
+    else
+      flunk "unexpected class combination: #{css.inspect}"
+    end
+  rescue Selenium::WebDriver::Error::ElementClickInterceptedError => e
+    $stderr.puts "KEY #{key.inspect} EXCEPTION: #{e.inspect}" # TODO: remove
+    take_screenshot # TODO: remove?
+  end
+
+  # Return the path to the CSV import file fixture.
+  #
+  # @param [String, Pathname] name
+  #
+  # @return [Pathname]
+  #
+  def csv_import_file(name: 'import.csv')
+    file_fixture(name)
+  end
+
+  # Return the path to the JSON import file fixture.
+  #
+  # If it does not exist, it will be generated from the CSV import fixture.
+  #
+  # @param [String, Pathname] name
+  #
+  # @return [Pathname]
+  #
+  def json_import_file(name: 'import.json')
+    json = Pathname.new(File.join(file_fixture_path, name))
+    unless json.exist?
+      base = File.basename(name, '.*')
+      csv  = file_fixture("#{base}.csv")
+      data = csv_to_json(csv)
+      File.write(json, data)
+    end
+    json
+  end
+
+  # Convert CSV content into JSON.
+  #
+  # @param [String, Pathname] file
+  #
+  # @return [String]
+  #
+  def csv_to_json(file)
+    file = file_fixture(file) unless file.is_a?(Pathname)
+    data = CSV.read(file)
+    flds = data.shift
+    data.map { flds.zip(_1).to_h }.to_json
   end
 
   # ===========================================================================
@@ -415,10 +681,10 @@ class ManifestsTest < ApplicationSystemTestCase
   #
   # @param [Hash] opt
   #
-  # @return [String, nil]
+  # @return [String]
   #
   def index_redirect(**opt)
-    opt[:user] ||= current_user || @user
+    opt.reverse_merge!(PRM)
     opt[:dst]  ||= :list_own
     super
   end

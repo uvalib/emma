@@ -116,6 +116,14 @@ class ActiveSupport::TestCase
 
   include TestHelper
 
+  # Non-functional hints for RubyMine type checking.
+  # :nocov:
+  unless ONLY_FOR_DOCUMENTATION
+    extend ActiveRecord::TestFixtures::ClassMethods # for #fixtures
+    extend ActiveSupport::Testing::SetupAndTeardown::ClassMethods # for #setup
+  end
+  # :nocov:
+
   # Run tests in parallel.
   parallelize if PARALLEL_TESTS
   #parallelize(threshold: 1) if PARALLEL_TESTS
@@ -125,15 +133,6 @@ class ActiveSupport::TestCase
 
   set_fixture_class searches: SearchCall
 
-end
-
-# Augment the base class for integration test cases (controllers).
-#
-class ActionDispatch::IntegrationTest
-  include Devise::Test::IntegrationHelpers
-  include TestHelper
-  include TestHelper::Debugging::Trace
-  extend  TestHelper::Utility
 end
 
 # Make relative paths expand correctly.

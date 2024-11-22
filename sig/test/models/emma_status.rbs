@@ -1,2 +1,2 @@
-class EmmaStatusTest < ActiveSupport::TestCase
+class EmmaStatusTest < ApplicationModelTestCase
 end

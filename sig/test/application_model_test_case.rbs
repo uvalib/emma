@@ -1,0 +1,4 @@
+# Common base for model tests.
+#
+class ApplicationModelTestCase < ActiveSupport::TestCase
+end

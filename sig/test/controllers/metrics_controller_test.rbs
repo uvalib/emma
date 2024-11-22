@@ -1,3 +1,5 @@
-class MetricsControllerTest < ActionDispatch::IntegrationTest
-  OPTIONS: symHash
+class MetricsControllerTest < ApplicationControllerTestCase
+  PRM: symHash
+
+  OPT: symHash
 end

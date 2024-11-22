@@ -1,5 +1,7 @@
 class HomeTest < ApplicationSystemTestCase
-  CONTROLLER: Symbol
+  CTRLR: Symbol
 
-  INDEX_TITLE: String
+  PRM: symHash
+
+  TITLE: String
 end

@@ -1,11 +1,9 @@
-class SysControllerTest < ActionDispatch::IntegrationTest
-  CONTROLLER: Symbol
+class SysControllerTest < ApplicationControllerTestCase
+  CTRLR: Symbol
 
-  PARAMS: symHash
+  PRM: symHash
 
-  OPTIONS: symHash
-
-  TEST_USERS: symArray
+  OPT: symHash
 
   TEST_READERS: symArray
 
@@ -14,6 +12,10 @@ class SysControllerTest < ActionDispatch::IntegrationTest
   READ_FORMATS: symArray | Symbol
 
   WRITE_FORMATS: symArray | Symbol
+
+  NO_READ: symArray
+
+  NO_WRITE: symArray
 
   @readers: Array[User|nil]
 

@@ -1,2 +1,2 @@
-class HelpControllerTest < ActionDispatch::IntegrationTest
+class HelpControllerTest < ApplicationControllerTestCase
 end

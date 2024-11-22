@@ -78,18 +78,6 @@ class ActiveSupport::TestCase
   include TestHelper
 end
 
-# Augment the base class for integration test cases.
-#
-class ActionDispatch::IntegrationTest
-  include Devise::Test::IntegrationHelpers
-
-  include TestHelper #::Samples
-
-  include TestHelper::Debugging::Trace
-
-  extend TestHelper::Utility
-end
-
 # Make relative paths expand correctly.
 #
 class ActionDispatch::Integration::Session

@@ -5,9 +5,11 @@
 emma_blank:           &EMMA
   user:               test_dso_1
   repository:         emma
+  submission_id:      <%= Upload.generate_submission_id %>
 
 emma_with_data:       &EMMA_WITH_DATA
   <<:                 *EMMA
+  submission_id:      <%= Upload.generate_submission_id %>
   emma_data:          |-
     <%= {
     dc_creator:       ['Edgar Allan Poe'],
@@ -30,7 +32,7 @@ emma_with_data:       &EMMA_WITH_DATA
 
 emma_completed:       &EMMA_COMPLETED
   <<:                 *EMMA_WITH_DATA
-  submission_id:      'u627e662dg77'
+  submission_id:      <%= Upload.generate_submission_id %>
   fmt:                'epub'
   ext:                'epub'
   state:              'completed'
@@ -50,10 +52,13 @@ emma_completed:       &EMMA_COMPLETED
 # =============================================================================
 
 example:
-  <<: *EMMA_WITH_DATA
+  <<:                 *EMMA_WITH_DATA
+  submission_id:      <%= Upload.generate_submission_id %>
 
 edit_example:
-  <<: *EMMA_COMPLETED
+  <<:                 *EMMA_COMPLETED
+  submission_id:      <%= Upload.generate_submission_id %>
 
 delete_example:
-  <<: *EMMA_COMPLETED
+  <<:                 *EMMA_COMPLETED
+  submission_id:      <%= Upload.generate_submission_id %>

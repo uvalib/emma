@@ -1,69 +1,88 @@
 class AccountsTest < ApplicationSystemTestCase
   MODEL: Class
 
-  CONTROLLER: Symbol
+  CTRLR: Symbol
 
-  PARAMS: symHash
+  PRM: symHash
 
-  INDEX_TITLE: String
+  @admin: User
 
-  LIST_ACTIONS: symArray
+  @manage: User
 
-  TEST_USER: Symbol
+  @member: User
 
-  OTHER_USER: Symbol
+  @generate: UserSampleGenerator
 
-  @user: User
-
-  @other: User
-
-  # Perform a test to list accounts visible to the test user.
+  # Perform a test to list accounts visible to *user*.
   #
-  # @param [Symbol]      action
-  # @param [String, nil] title        Default: #INDEX_TITLE.
-  # @param [String, nil] redir_url
+  # @param [User, nil]    user
+  # @param [Integer, nil] total       Expected total number of items.
+  # @param [String, nil]  title       Default based on *user* and opt[:action].
+  # @param [Symbol]       meth        Calling test method.
+  # @param [Hash]         opt         URL parameters.
+  #
+  # @return [void]
+  #
+  def list_test: ((User|nil) user, ?total: Integer|nil, ?title: String|nil, ?meth: Symbol|nil, **untyped opt) -> void
+
+  # Perform a test to show a user account visible to *user*.
+  #
+  # If showing *user* itself, activity takes place on the :show_current page;
+  # otherwise, activity takes place on the :show page.
+  #
+  # @param [User, nil]   user
+  # @param [User, nil]   target       Default: *user* (i.e. :show_current).
+  # @param [String, nil] title        Default based on *user* and opt[:action].
   # @param [Symbol]      meth         Calling test method.
   # @param [Hash]        opt          URL parameters.
   #
   # @return [void]
   #
-  def list_test: (action: Symbol, ?title: String|nil, ?redir_url: String|nil, ?meth: Symbol|nil, **untyped opt) -> void
+  def show_test: ((User|nil) user, ?target: User|nil, ?title: String|nil, ?meth: Symbol|nil, **untyped opt) -> void
 
   # Perform a test to create a new account.
   #
-  # @param [Boolean] direct
-  # @param [Symbol]  meth             Calling test method.
-  # @param [Hash]    opt              Added to URL parameters.
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
   #
   # @return [void]
   #
-  def new_test: (direct: bool, ?meth: Symbol|nil, **untyped opt) -> void
+  def new_test: ((User|nil) user, ?meth: Symbol|nil, **untyped opt) -> void
 
   # Perform a test to select then modify an account.
   #
-  # @param [Boolean] direct
-  # @param [Symbol]  meth             Calling test method.
-  # @param [Hash]    opt              Added to URL parameters.
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
   #
   # @return [void]
   #
-  def edit_select_test: (direct: bool, ?meth: Symbol|nil, **untyped opt) -> void
+  def edit_test: ((User|nil) user, ?meth: Symbol|nil, **untyped opt) -> void
 
   # Perform a test to select then remove an account.
   #
-  # @param [Boolean] direct
-  # @param [Symbol]  meth             Calling test method.
-  # @param [Hash]    opt              Added to URL parameters.
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
   #
   # @return [void]
   #
-  def delete_select_test: (direct: bool, ?meth: Symbol|nil, **untyped opt) -> void
+  def delete_test: ((User|nil) user, ?meth: Symbol|nil, **untyped opt) -> void
+
+  # Get the number of total records stored as a table attribute.
+  #
+  # @param [Integer, nil] expected    Assert that the expected count is found.
+  #
+  # @return [Integer]
+  #
+  def data_record_total: (?expected: Integer|nil) -> Integer
 
   # The default :index action redirects to :list_org for an organization user.
   #
   # @param [Hash] opt
   #
-  # @return [String, nil]
+  # @return [String]
   #
-  def index_redirect: (**untyped opt) ?{ () -> (Symbol|String|Proc|nil) } -> (String | nil)
+  def index_redirect: (**untyped opt) ?{ () -> (Symbol|String|Proc|nil) } -> String
 end

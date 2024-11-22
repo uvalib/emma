@@ -1,0 +1,1 @@
+Simulated content file file_c.txt

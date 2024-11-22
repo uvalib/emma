@@ -1,15 +1,17 @@
-class HealthControllerTest < ActionDispatch::IntegrationTest
-  CONTROLLER: Symbol
+class HealthControllerTest < ApplicationControllerTestCase
+  CTRLR: Symbol
 
-  PARAMS: symHash
+  PRM: symHash
 
-  OPTIONS: symHash
-
-  TEST_USERS: symArray
+  OPT: symHash
 
   TEST_READERS: symArray
 
-  TEST_SUBSYSTEM: String
+  READ_FORMATS: symArray | Symbol
+
+  NO_READ: symArray
+
+  @readers: Array[User|nil]
 
   # ===========================================================================
   # :section: Methods
@@ -22,8 +24,9 @@ class HealthControllerTest < ActionDispatch::IntegrationTest
   # @param [Symbol] action
   # @param [String] url
   # @param [Symbol] meth              Calling test method.
+  # @param [Hash]   opt               Passed to #assert_result.
   #
   # @return [void]
   #
-  def check_url_test: (Symbol action, String url, meth: Symbol|nil) -> void
+  def check_url_test: (Symbol action, String url, meth: Symbol|nil, **untyped opt) -> void
 end

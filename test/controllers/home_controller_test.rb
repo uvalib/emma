@@ -3,19 +3,19 @@
 # frozen_string_literal: true
 # warn_indent:           true
 
-require 'test_helper'
+require 'application_controller_test_case'
 
-class HomeControllerTest < ActionDispatch::IntegrationTest
+class HomeControllerTest < ApplicationControllerTestCase
 
-  CONTROLLER   = :home
-  OPTIONS      = { controller: CONTROLLER }.freeze
+  CTRLR = :home
+  PRM   = {}.freeze
+  OPT   = { controller: CTRLR, sign_out: false }.freeze
 
-  TEST_USERS   = %i[anonymous test_guest_1 test_dso_1 test_adm].freeze
-  TEST_READERS = TEST_USERS
+  TEST_READERS = %i[anonymous test_guest_1 test_dso_1 test_adm].freeze
 
   READ_FORMATS = :html
 
-  TEST_USER    = :test_dso_1
+  NO_READ      = formats_other_than(*READ_FORMATS).freeze
 
   setup do
     @readers = find_users(*TEST_READERS)
@@ -27,10 +27,11 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
 
   test 'home main as anonymous' do
     # action  = :main
-    # options = OPTIONS.merge(action: action)
+    # options = OPT.merge(action: action)
+    params = PRM
 
     TEST_FORMATS.each do |fmt|
-      url = home_url(format: fmt)
+      url = home_url(**params, format: fmt)
 
       run_test(__method__, format: fmt, only: READ_FORMATS) do
         get(url)
@@ -41,13 +42,15 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
 
   test 'home main as test_dso_1' do
     # action  = :main
-    # options = OPTIONS.merge(action: action)
+    # options = OPT.merge(action: action)
+    params = PRM
+    user   = :test_dso_1
 
     TEST_FORMATS.each do |fmt|
-      url = home_url(format: fmt)
+      url = home_url(**params, format: fmt)
 
       run_test(__method__, format: fmt, only: READ_FORMATS) do
-        get_sign_in_as(TEST_USER, follow_redirect: false)
+        get_sign_in_as(user, follow_redirect: false)
         get(url)
         assert_redirected_to dashboard_url
       end
@@ -56,10 +59,11 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
 
   test 'home welcome' do
     action  = :welcome
-    options = OPTIONS.merge(action: action)
+    options = OPT.merge(action: action)
+    params  = PRM
 
     TEST_FORMATS.each do |fmt|
-      url = welcome_url(format: fmt)
+      url = welcome_url(**params, format: fmt)
       opt = options.merge(format: fmt)
 
       run_test(__method__, format: fmt, only: READ_FORMATS) do
@@ -71,16 +75,21 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
 
   test 'home dashboard' do
     action  = :dashboard
-    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
+    options = OPT.merge(action: action, test: __method__, expect: :success)
+    params  = PRM
 
     @readers.each do |user|
       able  = user.present?
       u_opt = able ? options : options.except(:controller, :action, :expect)
+      u_prm = params
 
-      TEST_FORMATS.each do |fmt|
-        url = dashboard_url(format: fmt)
+      foreach_format(user, **u_opt) do |fmt|
+        url = dashboard_url(**u_prm, format: fmt)
         opt = u_opt.merge(format: fmt)
-        get_as(user, url, **opt, only: READ_FORMATS)
+        if NO_READ.include?(fmt)
+          opt[:expect] = :unauthorized unless able
+        end
+        get_as(user, url, **opt)
       end
     end
   end

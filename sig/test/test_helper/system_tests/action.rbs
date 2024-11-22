@@ -5,7 +5,7 @@ module TestHelper::SystemTests::Action
 
   # Assert that the current page is for creating a model instance.
   #
-  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Symbol,String,Class,Model,nil] ctrlr
   # @param [Hash]                          opt    Passed to #assert_valid_page.
   #
   # @raise [Minitest::Assertion]
@@ -14,11 +14,11 @@ module TestHelper::SystemTests::Action
   #
   # @note Currently unused.
   #
-  def assert_valid_create_page: (Symbol|String|Class|Model|nil model, **untyped opt) -> true
+  def assert_valid_create_page: (Symbol|String|Class|Model|nil ctrlr, **untyped opt) -> true
 
   # Assert that the current page is for modifying a model instance.
   #
-  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Symbol,String,Class,Model,nil] ctrlr
   # @param [Hash]                          opt    Passed to #assert_valid_page.
   #
   # @option opt [String] :id          If missing, expect :edit_select.
@@ -29,11 +29,11 @@ module TestHelper::SystemTests::Action
   #
   # @note Currently unused.
   #
-  def assert_valid_update_page: (Symbol|String|Class|Model|nil model, **untyped opt) -> true
+  def assert_valid_update_page: (Symbol|String|Class|Model|nil ctrlr, **untyped opt) -> true
 
   # Assert that the current page is for removing a model instance.
   #
-  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Symbol,String,Class,Model,nil] ctrlr
   # @param [Hash]                          opt    Passed to #assert_valid_page.
   #
   # @option opt [String] :id          If missing, expect :delete_select.
@@ -44,11 +44,11 @@ module TestHelper::SystemTests::Action
   #
   # @note Currently unused.
   #
-  def assert_valid_delete_page: (Symbol|String|Class|Model|nil model, **untyped opt) -> true
+  def assert_valid_delete_page: (Symbol|String|Class|Model|nil ctrlr, **untyped opt) -> true
 
   # Assert that the current page is a valid page for the given operation.
   #
-  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Symbol,String,Class,Model,nil] ctrlr
   # @param [Symbol]                        action
   # @param [Hash]                          opt    Passed to #assert_valid_page.
   #
@@ -56,11 +56,11 @@ module TestHelper::SystemTests::Action
   #
   # @return [true]
   #
-  def assert_valid_action_page: (Symbol|String|Class|Model|nil model, Symbol action, **untyped opt) -> true
+  def assert_valid_action_page: (Symbol|String|Class|Model|nil ctrlr, Symbol action, **untyped opt) -> true
 
   # Visit the page for creating a new model instance.
   #
-  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Symbol,String,Class,Model,nil] ctrlr
   # @param [Hash]                          opt
   # @param [Proc]                          blk
   #
@@ -70,11 +70,11 @@ module TestHelper::SystemTests::Action
   #
   # @note Currently unused.
   #
-  def visit_new_page: (Symbol|String|Class|Model|nil model, **untyped opt) ?{ () -> void } -> true
+  def visit_new_page: (Symbol|String|Class|Model|nil ctrlr, **untyped opt) ?{ () -> void } -> true
 
   # Visit the page for modifying an existing model instance.
   #
-  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Symbol,String,Class,Model,nil] ctrlr
   # @param [Hash]                          opt
   # @param [Proc]                          blk
   #
@@ -86,11 +86,11 @@ module TestHelper::SystemTests::Action
   #
   # @note Currently unused.
   #
-  def visit_edit_page: (Symbol|String|Class|Model|nil model, **untyped opt) ?{ () -> void } -> true
+  def visit_edit_page: (Symbol|String|Class|Model|nil ctrlr, **untyped opt) ?{ () -> void } -> true
 
   # Visit the page for removing an existing model instance.
   #
-  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Symbol,String,Class,Model,nil] ctrlr
   # @param [Hash]                          opt
   # @param [Proc]                          blk
   #
@@ -102,11 +102,11 @@ module TestHelper::SystemTests::Action
   #
   # @note Currently unused.
   #
-  def visit_delete_page: (Symbol|String|Class|Model|nil model, **untyped opt) ?{ () -> void } -> true
+  def visit_delete_page: (Symbol|String|Class|Model|nil ctrlr, **untyped opt) ?{ () -> void } -> true
 
   # Visit the page for an action on a model.
   #
-  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Symbol,String,Class,Model,nil] ctrlr
   # @param [Symbol]                        action
   # @param [Hash]                          opt    To #assert_valid_action_page.
   #
@@ -117,5 +117,39 @@ module TestHelper::SystemTests::Action
   # @yield Test code to run while on the page.
   # @yieldreturn [void]
   #
-  def visit_action_page: (Symbol|String|Class|Model|nil model, Symbol action, **untyped opt) ?{ () -> void } -> true
+  # @note Currently unused.
+  #
+  def visit_action_page: (Symbol|String|Class|Model|nil ctrlr, Symbol action, **untyped opt) ?{ () -> void } -> true
+
+  # Click on a page action menu button.
+  #
+  # @param [String]           locator   Action button to click.
+  # @param [Array,String,nil] wait_for  URL(s) expected to result.
+  # @param [Hash]             opt       Passed to #click_on.
+  #
+  # @return [void]
+  #
+  def select_action: (String locator, ?wait_for: strArray|String|nil, **untyped opt) -> void
+
+  # Assert that the page has an action button.
+  #
+  # @param [String] locator           Action button label.
+  # @param [Hash]   opt               Passed to #click_on.
+  #
+  # @return [void]
+  #
+  # @note Currently unused.
+  #
+  def assert_action: (String locator, **untyped opt) -> void
+
+  # Assert that the page does not have an action button.
+  #
+  # @param [String] locator           Action button label.
+  # @param [Hash]   opt               Passed to #click_on.
+  #
+  # @return [void]
+  #
+  # @note Currently unused.
+  #
+  def assert_no_action: (String locator, **untyped opt) -> void
 end

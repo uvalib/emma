@@ -1,13 +1,11 @@
-class ManifestItemControllerTest < ActionDispatch::IntegrationTest
+class ManifestItemControllerTest < ApplicationControllerTestCase
   MODEL: Class
 
-  CONTROLLER: Symbol
+  CTRLR: Symbol
 
-  PARAMS: symHash
+  PRM: symHash
 
-  OPTIONS: symHash
-
-  TEST_USERS: symArray
+  OPT: symHash
 
   TEST_READERS: symArray
 
@@ -16,6 +14,10 @@ class ManifestItemControllerTest < ActionDispatch::IntegrationTest
   READ_FORMATS: symArray | Symbol
 
   WRITE_FORMATS: symArray | Symbol
+
+  NO_READ: symArray
+
+  NO_WRITE: symArray
 
   @readers: Array[User|nil]
 

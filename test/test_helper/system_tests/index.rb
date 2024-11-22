@@ -27,7 +27,7 @@ module TestHelper::SystemTests::Index
 
   # Assert that the current page is a valid index page.
   #
-  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Symbol,String,Class,Model,nil] ctrlr
   # @param [Integer]                       index
   # @param [Integer]                       total
   # @param [Integer]                       page
@@ -40,7 +40,7 @@ module TestHelper::SystemTests::Index
   # @return [true]
   #
   def assert_valid_index_page(
-    model,
+    ctrlr,
     index: nil,
     total: nil,
     page:  nil,
@@ -48,7 +48,7 @@ module TestHelper::SystemTests::Index
     terms: nil,
     **opt
   )
-    ctrlr = controller_name(model)
+    ctrlr = controller_name(ctrlr)
     prop  = property(ctrlr, :index)&.slice(:title, :heading)
     opt.reverse_merge!(prop) if prop.is_a?(Hash)
     if (terms = terms.presence)
@@ -57,8 +57,8 @@ module TestHelper::SystemTests::Index
 
     # Validate page properties.
     assert_valid_action_page(ctrlr, :index, **opt)
-    assert_search_terms(**terms)                    if terms
-    assert_search_count(ctrlr, total: total, **opt) if terms || total
+    assert_search_terms(**terms)                if terms
+    assert_search_count(ctrlr, expected: total) if terms || total
 
     # Validate pagination if provided.
     if index || page
@@ -76,13 +76,16 @@ module TestHelper::SystemTests::Index
   # Generate a string for search terms as they would appear in the '<title>'
   # element.
   #
-  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Symbol,String,Class,Model,nil] ctrlr
   # @param [Hash]                          terms
   #
   # @return [String]
   #
-  def title_terms(model, **terms)
-    ctrlr = controller_name(model)
+  # @note Currently unused.
+  #
+  def title_terms(ctrlr, **terms)
+    ctrlr = controller_name(ctrlr)
+    # noinspection RubyMismatchedArgumentType
     SearchTermsHelper.search_terms(ctrlr, pairs: terms).values.map { |term|
       if term.query?
         array_string(term.names, inspect: true)
@@ -115,8 +118,8 @@ module TestHelper::SystemTests::Index
 
   # Assert that a search count is displayed on the index page.
   #
-  # @param [Symbol,String,Class,Model,nil] model
-  # @param [Integer]                       total
+  # @param [Symbol,String,Class,Model,nil] ctrlr
+  # @param [Integer]                       expected
   # @param [String]                        records
   #
   # @raise [Minitest::Assertion]      If the count is not displayed.
@@ -124,11 +127,15 @@ module TestHelper::SystemTests::Index
   #
   # @return [true]
   #
-  def assert_search_count(model, total: nil, records: nil, **)
-    ctrlr     = controller_name(model)
+  def assert_search_count(ctrlr, expected: nil, records: nil, **)
+    ctrlr     = controller_name(ctrlr)
     records ||= property(ctrlr, :index, :count)
-    assert records, ->() { "#{ctrlr} unit could not be determined" }
-    records = "#{total} #{records}".strip if total.present?
+    assert records, -> { "#{ctrlr} unit could not be determined" }
+    case expected
+      when nil then records = records.strip
+      when 1   then records = "#{expected} #{records}".singularize
+      else          records = "#{expected} #{records}".pluralize
+    end
     assert_selector SEARCH_COUNT_CLASS, text: records
   end
 
@@ -142,7 +149,7 @@ module TestHelper::SystemTests::Index
   #
   # @param [Symbol, String] target    Controller or literal URL.
   # @param [Symbol]         action
-  # @param [Symbol, nil]    model
+  # @param [Symbol, nil]    ctrlr     Override *target* if necessary.
   # @param [Hash]           opt       Passed to #assert_valid_index_page.
   #
   # @raise [Minitest::Assertion]
@@ -152,7 +159,7 @@ module TestHelper::SystemTests::Index
   # @yield Test code to run while on the page.
   # @yieldreturn [void]
   #
-  def visit_index(target, action: :index, model: nil, **opt)
+  def visit_index(target, action: :index, ctrlr: nil, **opt)
     if target.is_a?(Symbol)
       terms = opt[:terms].presence || {}
       u_opt = opt.extract!(:limit, :offset).merge!(terms)
@@ -166,40 +173,8 @@ module TestHelper::SystemTests::Index
     else
       show_url
     end
-    model ||= target || this_controller
-    assert_valid_index_page(model, **opt)
     screenshot
-  end
-
-  # visit_each_show_page
-  #
-  # @param [Symbol,String,Class,Model,nil] model
-  # @param [String]                        entry_css
-  #
-  # @raise [Minitest::Assertion]
-  #
-  # @return [void]
-  #
-  # @yield [index, title] Exposes each visited page for additional actions.
-  # @yieldparam [Integer] index
-  # @yieldparam [String]  title
-  # @yieldreturn [void]
-  #
-  # @note Currently unused
-  #
-  def visit_each_show_page(model, entry_css: nil, &blk)
-    ctrlr       = controller_name(model)
-    entry_css ||= property(ctrlr, :index, :entry_css)
-    assert entry_css, -> { "#{ctrlr} entry_css could not be determined" }
-    entry_count = all(entry_css).size
-    max_index = entry_count - 1
-    (0..max_index).each do |index|
-      visit_show_page(ctrlr, entry_css: entry_css, index: index) do |title|
-        blk&.call(index, title)
-      end
-      go_back # Return to index page.
-    end
-    true
+    assert_valid_index_page((ctrlr || target), **opt)
   end
 
 end

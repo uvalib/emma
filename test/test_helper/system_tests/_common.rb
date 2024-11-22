@@ -23,9 +23,51 @@ module TestHelper::SystemTests::Common
     include Minitest::Assertions                    # for #flunk
     include Capybara::Node::Actions                 # for #select
     include Capybara::Node::Finders                 # for #find
+    include ActionDispatch::Routing::UrlFor         # for #url_for
     include TestHelper::SystemTests::Authentication # disambiguate :sign_in_as
   end
   # :nocov:
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Get the number of total records reported by a counter element.
+  #
+  # @param [Integer, nil] expected    Assert that the expected count is found.
+  # @param [String, nil]  selector    Additional counter element selector.
+  # @param [String]       css         Base counter element selector.
+  #
+  # @return [Integer]
+  #
+  def title_total_count(expected: nil, selector: nil, css: '.total-count')
+    css   = [selector, css].compact.map { '.%s' % _1.delete_prefix('.') }.join
+    total = find(css, match: :first).text.to_i
+    unless expected.nil? || (total == expected)
+      flunk "count is #{total} instead of #{expected}"
+    end
+    total
+  end
+
+  # Get the number of total records from the 'data-record-total' attribute of a
+  # table element.
+  #
+  # @param [Integer, nil] expected    Assert that the expected count is found.
+  # @param [String, nil]  selector    Additional table selector.
+  # @param [String]       css         Base table selector.
+  #
+  # @return [Integer]
+  #
+  def data_record_total(expected: nil, selector: nil, css: '.model-table')
+    css   = [selector, css].compact.map { '.%s' % _1.delete_prefix('.') }.join
+    total = find(css, match: :first)[:'data-record-total'].to_i
+    unless expected.nil? || (total == expected)
+      flunk "count is #{total} instead of #{expected}"
+    end
+    total
+  end
 
   # ===========================================================================
   # :section:
@@ -134,54 +176,52 @@ module TestHelper::SystemTests::Common
 
   # Block until the browser can confirm that it is on the target page.
   #
-  # @param [String, Array, nil] target  One or more acceptable target URLs, or
-  #                                       *nil* for any new page.
-  # @param [Boolean]            port    Passed to #get_browser_url.
-  # @param [Boolean]            fatal   If *false* don't assert.
-  # @param [Boolean]            trace   Output each URL acquired.
-  # @param [Numeric]            wait    Overall time limit.
+  # @param [Array, nil] targets       One or more acceptable target URLs, or
+  #                                     *nil* for any new page.
+  # @param [Boolean]    port          Passed to #get_browser_url.
+  # @param [Boolean]    fatal         If *false*, don't assert.
+  # @param [Boolean]    trace         Output each URL acquired.
+  # @param [Numeric]    wait          Overall time limit.
   #
-  # @raise [Minitest::Assertion]        If the browser failed to get to the
-  #                                       expected page and *fatal* is *true*.
+  # @raise [Minitest::Assertion]      If the browser failed to get to the
+  #                                     expected page and *fatal* is *true*.
   #
   # @return [Boolean]
   #
   def wait_for_page(
-    target =  nil,
-    port:     false,
-    fatal:    true,
-    trace:    true,
-    wait:     DEF_WAIT_MAX_TIME
+    *targets,
+    port:   false,
+    fatal:  true,
+    trace:  true,
+    wait:   DEF_WAIT_MAX_TIME
   )
-    targets = Array.wrap(target).compact_blank
+    targets = targets.flatten.compact_blank.presence
     timer   = Capybara::Helpers::Timer.new(wait)
-    url     = nil
+    timeout = found = url = nil
 
     # Retry until the expected page is found or the timer expires.
     loop do
-      url     = get_browser_url(port: port)
-      found   = url && (targets.empty? || targets.include?(url))
-      timeout = (' [timeout]' if !found && timer.expired?)
-      show "#{__method__}: URL = #{url}#{timeout}" if trace
-      screenshot   if found || timeout
-      return true  if found
-      return false if timeout && !fatal
-      break        if timeout
+      url = get_browser_url(port: port)
+      break if (found   = targets ? targets.include?(url) : url.present?)
+      break if (timeout = timer.expired?)
+      show_url(url, '[waiting]') if trace
       sleep Capybara::Lockstep.timeout
     end
 
-    # Control reaches here only if the page was not found and not *fatal*.
-    # noinspection RubyMismatchedArgumentType
-    current = url_without_port(url || current_url).inspect
-    target  = targets.map!(&:inspect).pop
-    if targets.present?
-      expected = "any of expected pages %s or #{target}" % targets.join(', ')
-    elsif target.present?
-      expected = "expected page #{target}"
-    else
-      expected = 'a new page'
+    # Done waiting and now either *found* or *timeout* is true.
+    show_url(url, ('[timeout]' if timeout)) if trace
+    screenshot
+    if timeout && fatal
+      current    = url_without_port(url || current_url).inspect
+      page       = targets&.map!(&:inspect)&.pop
+      expected   = targets&.presence&.join(', ')
+      expected &&= "any of expected pages #{expected} or #{page}"
+      expected ||= page ? "expected page #{page}" : 'a new page'
+      flunk "Browser on page #{current} and not on #{expected}"
     end
-    flunk "Browser on page #{current} and not on #{expected}"
+
+    # noinspection RubyMismatchedReturnType
+    found
   end
 
   # Depending on the context, there may be two menus for performing an action
@@ -244,6 +284,84 @@ module TestHelper::SystemTests::Common
     ParamsHelper.menu_action(action)
   end
 
+  # Return the expected URL(s) for an action form page.
+  #
+  # @param [Integer, String, nil] id
+  # @param [Hash]                 params
+  #
+  # @return [Array<String>]           If *id* is given.
+  # @return [String]                  If *id* is not given.
+  #
+  def form_page_url(id = nil, **params)
+    if id
+      [url_for(**params, id: id), make_path(url_for(**params), id: id)]
+    else
+      url_for(**params)
+    end
+  end
+
+  # Assert that the requested URL could not be visited and that an appropriate
+  # flash error message was displayed.
+  #
+  # @param [String, Array<String>]     url
+  # @param [String, Symbol, nil]       action Basis for expected flash message.
+  # @param [String, Symbol, User, nil] as     Sign-in as user.
+  #
+  # @return [void]
+  #
+  def assert_no_visit(url, action = nil, as: nil)
+    sign_in_as(as)  if as
+    url = url.first if url.is_a?(Array)
+    visit url
+    screenshot
+    assert_no_current_path(url)
+    assert_not_authorized(action) if action
+  end
+
+  # Assert that an appropriate flash error message is being displayed.
+  #
+  # @param [String, Symbol, nil] action
+  #
+  # @return [void]
+  #
+  def assert_not_authorized(action)
+    action = not_authorized_for(action) if action.is_a?(Symbol)
+    # noinspection RubyMismatchedArgumentType
+    assert_flash(action) if action.is_a?(String)
+  end
+
+  # Text indicating an administrator feature.
+  #
+  # @type [String]
+  #
+  ADMIN_ONLY = I18n.t('emma.term.user.privileged', Role:'Administrator').freeze
+
+  # Text indicating an authentication failure.
+  #
+  # @type [String]
+  #
+  AUTH_FAILURE = I18n.t('devise.failure.unauthenticated').freeze
+
+  # Return a partial flash message based on *action*.
+  #
+  # @param [Symbol, String, nil] action
+  #
+  # @return [String]
+  #
+  def not_authorized_for(action)
+    case action&.to_sym
+      when :admin_only  then ADMIN_ONLY
+      when :sign_in     then AUTH_FAILURE
+      when nil          then 'You are not authorized'        
+      when :index       then 'You are not authorized to list'
+      when :show        then 'You are not authorized to view'
+      when :new         then 'You are not authorized to create'
+      when :edit        then 'You are not authorized to modify'
+      when :delete      then 'You are not authorized to remove'
+      else                   "You are not authorized to #{action}"
+    end
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -253,12 +371,14 @@ module TestHelper::SystemTests::Common
   # If DEBUG_TESTS is true, this will take a screenshot (ignoring an error that
   # has been observed [in rare cases] since these are informational-only).
   #
+  # @param [Hash] opt                 Passed to #take_screenshot.
+  #
   # @return [void]
   #
-  def screenshot
-    take_screenshot
+  def screenshot(**opt)
+    take_screenshot(**opt)
   rescue Selenium::WebDriver::Error::UnknownError => error
-    show_item("[Screenshot Image]: #{error.class} - #{error.message}")
+    show_item { "[Screenshot Image]: #{error.class} - #{error.message}" }
   end
     .tap { neutralize(_1) unless DEBUG_TESTS && TESTING_JAVASCRIPT }
 

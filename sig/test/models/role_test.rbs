@@ -1,2 +1,2 @@
-class RoleTest < ActiveSupport::TestCase
+class RoleTest < ApplicationModelTestCase
 end

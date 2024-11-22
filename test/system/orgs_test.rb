@@ -7,86 +7,112 @@ require 'application_system_test_case'
 
 class OrgsTest < ApplicationSystemTestCase
 
-  MODEL        = Org
-  CONTROLLER   = :org
-  PARAMS       = { controller: CONTROLLER }.freeze
-  INDEX_TITLE  = page_title(**PARAMS, action: :index).freeze
-  LIST_ACTIONS = %i[list_all].freeze
-
-  TEST_USER    = :test_adm
+  MODEL = Org
+  CTRLR = :org
+  PRM   = { controller: CTRLR }.freeze
+  TITLE = page_title(**PRM, action: :index).freeze
 
   setup do
-    @user = find_user(TEST_USER)
+    @admin    = find_user(:test_adm)
+    @manager  = find_user(:test_man_1)
+    @member   = find_user(:test_dso_1)
+    @generate = OrgSampleGenerator.new(self)
   end
 
   # ===========================================================================
   # :section: Read tests
   # ===========================================================================
 
-  test 'orgs - index' do
-    action = :index
-    params = PARAMS.merge(action: action, meth: __method__)
-    redir  = index_redirect(**params)
-    list_test(redir_url: redir, **params)
+  test 'orgs - index - anonymous' do
+    list_test(nil, meth: __method__)
   end
 
-  test 'orgs - list_all' do
-    action = :list_all
-    params = PARAMS.merge(action: action, meth: __method__)
-    list_test(**params)
+  test 'orgs - index - member' do
+    # NOTE: redirects to the show page for the user's organization.
+    user  = @member
+    title = page_title(action: :show, name: user.org.label.inspect)
+    total = fixture_count_for_org(User, user)
+    list_test(user, meth: __method__, title: title, total: total)
   end
 
-  test 'orgs - show' do
-    action    = :show
-    item      = orgs(:example)
-    params    = PARAMS.merge(action: action, id: item.id)
-    title     = page_title(item, **params, name: item.label.inspect)
+  test 'orgs - index - admin' do
+    list_test(@admin, meth: __method__)
+  end
 
-    start_url = url_for(**params)
-    final_url = start_url
+  test 'orgs - list_all - anonymous' do
+    list_test(nil, meth: __method__, action: :list_all)
+  end
 
-    run_test(__method__) do
+  test 'orgs - list_all - member' do
+    list_test(@member, meth: __method__, action: :list_all)
+  end
 
-      # Not available anonymously; successful sign-in should redirect back.
-      visit start_url
-      assert_flash(alert: AUTH_FAILURE)
-      sign_in_as(@user)
+  test 'orgs - list_all - admin' do
+    list_test(@admin, meth: __method__, action: :list_all)
+  end
 
-      # The page should show the details of the item.
-      show_url
-      assert_current_url(final_url)
-      assert_valid_page(heading: title)
-      screenshot
+  test 'orgs - show - anonymous' do
+    show_test(nil, meth: __method__)
+  end
 
-    end
+  test 'orgs - show - member' do
+    show_test(@member, meth: __method__)
+  end
+
+  test 'orgs - show - admin' do
+    show_test(@admin, meth: __method__)
   end
 
   # ===========================================================================
   # :section: Write tests
   # ===========================================================================
 
-  test 'orgs - new' do
-    new_test(direct: true, meth: __method__)
+  test 'orgs - new - anonymous' do
+    new_test(nil, meth: __method__)
   end
 
-  test 'orgs - new from index' do
-    new_test(direct: false, meth: __method__)
+  test 'orgs - new - member' do
+    new_test(@member, meth: __method__)
   end
 
-  test 'orgs - edit (select)' do
-    edit_select_test(direct: true, meth: __method__)
+  test 'orgs - new - manager' do
+    new_test(@manager, meth: __method__)
   end
 
-  test 'orgs - edit (select) from index' do
-    edit_select_test(direct: false, meth: __method__)
+  test 'orgs - new - admin' do
+    new_test(@admin, meth: __method__)
   end
 
-  test 'orgs - delete (select)' do
-    delete_select_test(direct: true, meth: __method__)
+  test 'orgs - edit - anonymous' do
+    edit_test(nil, meth: __method__)
   end
 
-  test 'orgs - delete (select) from index' do
-    delete_select_test(direct: false, meth: __method__)
+  test 'orgs - edit - member' do
+    edit_test(@member, meth: __method__)
+  end
+
+  test 'orgs - edit - manager' do
+    edit_test(@manager, meth: __method__)
+  end
+
+  test 'orgs - edit - admin' do
+    edit_test(@admin, meth: __method__)
+  end
+
+  test 'orgs - delete - anonymous' do
+    delete_test(nil, meth: __method__)
+  end
+
+  test 'orgs - delete - member' do
+    delete_test(@member, meth: __method__)
+  end
+
+  test 'orgs - delete - manager' do
+    delete_test(@manager, meth: __method__)
+  end
+
+  test 'orgs - delete - admin' do
+    delete_test(@admin, meth: __method__)
   end
 
   # ===========================================================================
@@ -95,246 +121,372 @@ class OrgsTest < ApplicationSystemTestCase
 
   public
 
-  # Perform a test to list organizations visible to the test user.
+  # Perform a test to list organizations visible to *user*.
   #
-  # @param [Symbol]      action
-  # @param [String, nil] title        Default: #INDEX_TITLE.
-  # @param [String, nil] redir_url
+  # @param [User, nil]    user
+  # @param [Integer, nil] total       Expected total number of items.
+  # @param [String, nil]  title       Default based on *user* and opt[:action].
+  # @param [Symbol]       meth        Calling test method.
+  # @param [Hash]         opt         URL parameters.
+  #
+  # @return [void]
+  #
+  def list_test(user, total: nil, title: nil, meth: nil, **opt)
+    params    = PRM.merge(action: :index, **opt)
+    action    = params[:action]
+
+    start_url = url_for(**params)
+
+    run_test(meth || __method__) do
+
+      if permitted?(action, user)
+
+        admin     = user&.administrator?
+        index     = (action == :index)
+
+        total   ||= admin ? fixture_count(MODEL) : 1
+        title   ||= page_title(**params, name: user&.org&.long_name)
+
+        final_url = index ? index_redirect(user: user) : start_url
+
+        # Successful sign-in should redirect back to the action page.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
+
+        # The listing should be the first of one or more results pages with as
+        # many entries as there are organizations visible to the user.
+        show_url
+        screenshot
+        assert_current_url(final_url)
+        assert_valid_page(heading: title)
+        data_record_total(expected: total)
+
+        # Validate the table of organizations.
+        check_item_table(section: true)
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from listing organizations." }
+        assert_no_visit(start_url, action, as: user)
+
+      else
+
+        show_item { 'Anonymous user blocked from listing organizations.' }
+        assert_no_visit(start_url, :sign_in)
+
+      end
+
+    end
+  end
+
+  # Perform a test to show an organization visible to *user*.
+  #
+  # If showing the user's own organization, activity takes place on the
+  # :show_current page; otherwise, activity takes place on the :show page;
+  # otherwise if *target* is not given it is assigned an example organization.
+  #
+  # @param [User, nil]   user
+  # @param [Org, nil]    target       Default: `user.org` (i.e. :show_current).
+  # @param [String, nil] title        Default based on *user* and opt[:action].
   # @param [Symbol]      meth         Calling test method.
   # @param [Hash]        opt          URL parameters.
   #
   # @return [void]
   #
-  def list_test(action:, title: nil, redir_url: nil, meth: nil, **opt)
-    params    = opt.merge!(action: action)
-    title   ||= page_title(**params)
+  def show_test(user, target: nil, title: nil, meth: nil, **opt)
+    target  ||= user&.org || orgs(:example)
+    params    = PRM.merge(action: :show, id: target.id, **opt)
+    action    = params[:action]
 
     start_url = url_for(**params)
-    final_url = redir_url || start_url
 
     run_test(meth || __method__) do
 
-      # Not available anonymously; successful sign-in should redirect back.
-      visit start_url
-      assert_flash(alert: AUTH_FAILURE)
-      sign_in_as(@user)
+      if permitted?(action, user, target)
 
-      # The listing should be the first of one or more results pages with as
-      # many entries as there are fixture records.
-      show_url
-      assert_current_url(final_url)
-      assert_valid_page(heading: title)
-      screenshot
+        accounts  = fixture_count_for_org(User, target)
+
+        title   ||= page_title(target, **params, name: target.label.inspect)
+
+        final_url =
+          if user&.org&.id == target.id
+            url_for(**params.except(:id).merge!(action: :show_current))
+          else
+            start_url
+          end
+
+        # Successful sign-in should redirect back to the action page.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
+
+        # The page should show the details of the target organization.
+        show_url
+        screenshot
+        assert_current_url(final_url)
+        assert_valid_page(heading: title)
+        data_record_total(selector: '.account', expected: accounts)
+
+        # Validate the "Users" section.
+        check_item_table('.account.model-table')
+
+        # Validate the "EMMA Submissions" section.
+        check_details_section('.uploads-section')
+
+        # Validate the "Bulk Upload Manifests" section.
+        check_details_section('.manifests-section')
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from viewing organization." }
+        assert_no_visit(start_url, action, as: user)
+
+      else
+
+        show_item { 'Anonymous user blocked from viewing organization.' }
+        assert_no_visit(start_url, :sign_in)
+
+      end
 
     end
   end
 
   # Perform a test to create a new organization.
   #
-  # @param [Boolean] direct
-  # @param [Symbol]  meth             Calling test method.
-  # @param [Hash]    opt              Added to URL parameters.
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
   #
   # @return [void]
   #
-  def new_test(direct:, meth: nil, **opt)
-    action    = :new
-    params    = PARAMS.merge(action: action, **opt)
+  def new_test(user, meth: nil, **opt)
+    button   = 'Create'
+    action   = :new
+    params   = PRM.merge(action: action, **opt)
 
-    form_url  = url_for(**params)
-    index_url = url_for(**params, action: :index)
-    list_urls = LIST_ACTIONS.map { |m| url_for(**params, action: m) }
+    form_url = url_for(**params)
 
-    tag       = direct ? 'DIRECT' : 'INDIRECT'
-    start_url = direct ? form_url : index_url
-    final_url = [index_url, *list_urls]
-
-    item      = orgs(:one)
-    test_opt  = { action: action, tag: tag, item: item, unique: hex_rand }
-
-    # noinspection RubyMismatchedArgumentType
     run_test(meth || __method__) do
 
-      # Not available anonymously; successful sign-in should redirect back.
-      visit start_url
-      assert_flash(alert: AUTH_FAILURE)
-      sign_in_as(@user)
+      if permitted?(action, user)
 
-      # Change to the form page if coming in from the index page.
-      unless direct
-        click_on 'Create', match: :first
-        wait_for_page form_url
+        records   = fixture_count(MODEL)
+
+        index_url = url_for(**params, action: :index)
+        all_url   = url_for(**params, action: :list_all)
+        own_url   = url_for(**params, action: :show_current)
+
+        start_url = index_url
+        final_url = [index_url, all_url, own_url]
+
+        # Generate field data for the item to create.
+        name   = 'New Organization'
+        tag    = user&.role&.upcase || 'ANON'
+        fields = @generate.fields_for(action, tag: tag, base: name).except(:id)
+        name   = fields[:long_name]
+
+        # Start on the index page showing the current number of items.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
+
+        # Go to the form page.
+        select_action(button, wait_for: form_url)
+
+        # Add field data.
+        fill_in 'value-ShortName', with: fields[:short_name]
+        fill_in 'value-LongName',  with: fields[:long_name]
+        fill_in 'value-IpDomain',  with: fields[:ip_domain]&.join("\n")
+        menu_select user.email, from: 'value-Contact'
+        menu_select 'Active',   from: 'value-Status'
+
+        # Create the item.
+        show_item { "Creating organization #{name.inspect}..." }
+        form_submit
+
+        # Verify successful submission.
+        wait_for_page(final_url)
+        assert_valid_page(heading: TITLE)
+        assert_flash('SUCCESS')
+
+        # There should be one more item than before on the index page.
+        visit final_url.first unless final_url.include?(current_url)
+        assert_model_count(MODEL, expected: records.succ)
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from creating organization." }
+        assert_no_visit(form_url, action, as: user)
+
+      else
+
+        show_item { 'Anonymous user blocked from creating organizations.' }
+        assert_no_visit(form_url, :sign_in)
+
       end
-
-      # Add field data.
-      fill_in 'value-ShortName', with: 'NU'
-      fill_in 'value-LongName',  with: org_name(**test_opt)
-      fill_in 'value-IpDomain',  with: 'new_university.edu'
-=begin # TODO: selecting contact from user list
-      fill_in 'value-Contact',   with: 'test_adm@new_university.edu'
-=end
-=begin # TODO: fix evaluation of field role
-      # noinspection RubyMismatchedArgumentType
-      select 'Incomplete', from: 'value-Status'   if @user.administrator?
-=end
-=begin # TODO: is there even a reason for this field?
-      select 'Shibboleth', from: 'value-Provider'
-=end
-
-      # After submitting should be back on the index page with one more record
-      # than before.
-      form_submit
-
-      # We should be back on the index page with one more record than before.
-      wait_for_page(final_url)
-      assert_flash('SUCCESS')
-      assert_valid_page(heading: INDEX_TITLE)
 
     end
   end
 
   # Perform a test to select then modify an organization.
   #
-  # @param [Boolean] direct
-  # @param [Symbol]  meth             Calling test method.
-  # @param [Hash]    opt              Added to URL parameters.
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
   #
   # @return [void]
   #
-  def edit_select_test(direct:, meth: nil, **opt)
-    action    = :edit
-    select    = menu_action(action)
-    params    = PARAMS.merge(action: action, **opt)
+  def edit_test(user, meth: nil, **opt)
+    button   = 'Change'
+    action   = :edit
+    params   = PRM.merge(action: action, **opt)
 
-    index_url = url_for(**params, action: :index)
-    menu_url  = url_for(**params, action: select)
-    list_urls = LIST_ACTIONS.map { |m| url_for(**params, action: m) }
+    # Find the item to be edited.
+    admin    = user&.administrator?
+    record   = !admin && find_org(user) || orgs(:edit_example)
+    form_url = form_page_url(record.id, **params)
+    if form_url.is_a?(Array)
+      form_url << url_for(**params, action: :edit_current)
+    end
 
-    tag       = direct ? 'DIRECT' : 'INDIRECT'
-    start_url = direct ? menu_url : index_url
-    final_url = [index_url, *list_urls]
-
-    item      = orgs(:edit_example)
-    test_opt  = { action: action, tag: tag, item: item, unique: hex_rand }
-
-    # noinspection RubyMismatchedArgumentType
     run_test(meth || __method__) do
 
-      # Not available anonymously; successful sign-in should redirect back.
-      visit start_url
-      assert_flash(alert: AUTH_FAILURE)
-      sign_in_as(@user)
+      if permitted?(action, user, record)
 
-      # Change to the select menu if coming in from the index page.
-      unless direct
-        click_on 'Change'
-        wait_for_page menu_url
-      end
+        records   = fixture_count(MODEL)
 
-      # Choose org to edit.
-      item_menu_select(item.long_name, name: 'id')
+        index_url = url_for(**params, action: :index)
+        all_url   = url_for(**params, action: :list_all)
+        own_url   = url_for(**params, action: :show_current)
+        menu_url  = url_for(**params, action: menu_action(action))
 
-      # Replace field data.
-      fill_in 'value-LongName', with: org_name(**test_opt)
+        start_url = index_url
+        final_url = [index_url, all_url, own_url]
 
-      # After submitting should be back on the index page with the same number
-      # of records.
-      form_submit
-      assert_flash('SUCCESS')
+        # Generate new field data for the item to edit.
+        tag       = user&.role&.upcase || 'ANON'
+        fields    = @generate.fields(record, tag: tag)
+        item_name = record.long_name
 
-      # We should be back on the index page with the same number of records.
-      if direct
-        visit index_url
-        screenshot
+        # Start on the index page showing the current number of items.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
+
+        # If administrator, go to the menu page and choose the item to edit.
+        if admin
+          select_action(button, wait_for: menu_url)
+          select_item(item_name, wait_for: form_url)
+          result_page = menu_url
+          final_title = TITLE
+        else
+          select_action('Modify', wait_for: form_url)
+          result_page = url_for(**params, action: :show_current)
+          final_title = TITLE.singularize
+        end
+
+        # Modify field data.
+        fill_in 'value-LongName', with: fields[:long_name]
+
+        # Update the item.
+        show_item { "Updating organization #{item_name.inspect}..." }
+        form_submit
+
+        # Verify that success was indicated back on the menu page.
+        wait_for_page(result_page)
+        assert_flash('SUCCESS')
+
+        # There should be the same number of items as before on the index page.
+        visit final_url.first unless final_url.include?(current_url)
+        assert_valid_page(heading: final_title)
+        assert_model_count(MODEL, expected: records)
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from modifying organization." }
+        assert_no_visit(form_url, action, as: user)
+
       else
-        wait_for_page(final_url)
+
+        show_item { 'Anonymous user blocked from modifying organization.' }
+        assert_no_visit(form_url, :sign_in)
+
       end
-      assert_valid_page(heading: INDEX_TITLE)
 
     end
   end
 
   # Perform a test to select then remove an organization.
   #
-  # @param [Boolean] direct
-  # @param [Symbol]  meth             Calling test method.
-  # @param [Hash]    opt              Added to URL parameters.
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
   #
   # @return [void]
   #
-  def delete_select_test(direct:, meth: nil, **opt)
-    action    = :delete
-    select    = menu_action(action)
-    params    = PARAMS.merge(action: action, **opt)
+  def delete_test(user, meth: nil, **opt)
+    button   = 'Remove'
+    action   = :delete
+    params   = PRM.merge(action: action, **opt)
 
-    index_url = url_for(**params, action: :index)
-    menu_url  = url_for(**params, action: select)
+    # Generate a new item to be deleted.
+    tag      = user&.role&.upcase || 'ANON'
+    record   = @generate.new_record_for(action, tag: tag)
+    form_url = form_page_url(record.id, **params)
 
-    tag       = direct ? 'DIRECT' : 'INDIRECT'
-    start_url = direct ? menu_url : index_url
-
-    item      = orgs(:delete_example)
-    test_opt  = { action: action, tag: tag, item: item, unique: hex_rand }
-
-    # Add item copy to be deleted.
-    name = org_name(**test_opt)
-    attr = item.fields.except(:id).merge!(long_name: name)
-    item = Org.create!(attr)
-
-    item_delete = [
-      url_for(**params, id: item.id),
-      make_path(url_for(**params, action: action), id: item.id)
-    ]
-
-    # noinspection RubyMismatchedArgumentType
     run_test(meth || __method__) do
 
-      # Not available anonymously; successful sign-in should redirect back.
-      visit start_url
-      assert_flash(alert: AUTH_FAILURE)
-      sign_in_as(@user)
+      if permitted?(action, user, record)
 
-      # Change to the select menu if coming in from the index page.
-      unless direct
-        click_on 'Remove'
-        wait_for_page menu_url
+        records   = fixture_count(MODEL).succ
+
+        index_url = url_for(**params, action: :index)
+        all_url   = url_for(**params, action: :list_all)
+        own_url   = url_for(**params, action: :show_current)
+        menu_url  = url_for(**params, action: menu_action(action))
+
+        start_url = index_url
+        final_url = [index_url, all_url, own_url]
+
+        # Identify the item to be deleted.
+        item_name = record.long_name
+
+        # Start on the index page showing the current number of items.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
+
+        # Go to the menu page and choose the item to remove.
+        select_action(button, wait_for: menu_url)
+        select_item(item_name, wait_for: form_url)
+
+        # Delete the selected item.
+        show_item { "Removing organization #{item_name.inspect}..." }
+        form_submit
+
+        # Verify that success was indicated back on the menu page.
+        wait_for_page(menu_url)
+        assert_flash('SUCCESS')
+
+        # On the index page, there should be one less record than before.
+        visit final_url.first unless final_url.include?(current_url)
+        assert_valid_page(heading: TITLE)
+        assert_model_count(MODEL, expected: records.pred)
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from removing organization." }
+        assert_no_visit(form_url, action, as: user)
+
+      else
+
+        show_item { 'Anonymous user blocked from removing organization.' }
+        assert_no_visit(form_url, :sign_in)
+
       end
 
-      # Choose submission to remove, which leads to the delete page.
-      item_menu_select(item.long_name, name: 'id')
-      wait_for_page item_delete
-      screenshot
-
-      # After deletion we should be back on the previous page.
-      click_on class: 'submit-button', match: :first
-
-      # After deletion we should be back on the previous page.
-      wait_for_page(menu_url)
-      assert_flash('SUCCESS')
-
-      # On the index page, there should be one less record than before.
-      visit index_url
-      assert_valid_page(heading: INDEX_TITLE)
-
     end
-  end
-
-  # ===========================================================================
-  # :section: Methods
-  # ===========================================================================
-
-  protected
-
-  # Generate a distinct organization name.
-  #
-  # @param [Hash] opt                 Test options
-  #
-  # @return [String]
-  #
-  def org_name(**opt)
-    opt[:name] ||= opt[:item].long_name if opt[:item]
-    opt[:name]  += " (#{opt[:action]})" if opt[:action]
-    opt.slice(:name, :unique, :tag).compact.values.join(' - ')
   end
 
   # ===========================================================================
@@ -344,15 +496,16 @@ class OrgsTest < ApplicationSystemTestCase
   public
 
   # The default :index action redirects to :list_all for Administrator and
-  # :show for everyone else.
+  # :show_current for everyone else.
   #
   # @param [Hash] opt
   #
-  # @return [String, nil]
+  # @return [String]
   #
   def index_redirect(**opt)
-    opt[:user] = find_user(opt[:user] || current_user || @user)
-    opt[:dst]  = opt[:user]&.administrator? ? :list_all : :show
+    opt.reverse_merge!(PRM)
+    opt[:user] = find_user(opt[:user] || current_user)
+    opt[:dst]  = opt[:user]&.administrator? ? :list_all : :show_current
     super
   end
 

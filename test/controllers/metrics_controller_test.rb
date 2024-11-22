@@ -3,12 +3,13 @@
 # frozen_string_literal: true
 # warn_indent:           true
 
-require 'test_helper'
+require 'application_controller_test_case'
 require 'prometheus/middleware/exporter'
 
-class MetricsControllerTest < ActionDispatch::IntegrationTest
+class MetricsControllerTest < ApplicationControllerTestCase
 
-  OPTIONS = {}.freeze
+  PRM = {}.freeze
+  OPT = {}.freeze
 
   # ===========================================================================
   # :section: Read tests
@@ -16,8 +17,9 @@ class MetricsControllerTest < ActionDispatch::IntegrationTest
 
 =begin # NOTE: This doesn't work because '/metrics' is handled within Rack.
   test 'metrics' do
-    opt = OPTIONS.merge(format: :text)
+    opt = OPT.merge(format: :text)
     url = '/metrics'
+    url = make_path(url, **PRM) if PRM.present?
     run_test(__method__) do
       get(url, as: :text)
       assert_result :success, **opt
@@ -25,9 +27,9 @@ class MetricsControllerTest < ActionDispatch::IntegrationTest
   end
 =end
 
-  test 'test metrics' do
-    opt = OPTIONS.merge(format: :json)
-    url = metrics_test_url
+  test 'metrics test' do
+    opt = OPT.merge(format: :json)
+    url = metrics_test_url(**PRM)
     url = "#{url}.json" if opt[:json]
     run_test(__method__) do
       get(url)

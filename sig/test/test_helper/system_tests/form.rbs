@@ -5,6 +5,16 @@ module TestHelper::SystemTests::Form
 
   include TestHelper::SystemTests::Flash
 
+  # Choose an item from a form menu.
+  #
+  # @param [String]           item
+  # @param [Array,String,nil] wait_for  URL(s) expected to result.
+  # @param [Hash]             opt       Passed to #item_menu_select.
+  #
+  # @return [void]
+  #
+  def select_item: (String item, ?wait_for: strArray|String|nil, **untyped opt) -> void
+
   # Click on the form submit button after setting up a screenshot to show
   # invalid field(s) if the submit fails.
   #
@@ -13,5 +23,5 @@ module TestHelper::SystemTests::Form
   #
   # @return [Capybara::Node::Element] The element clicked.
   #
-  def form_submit: (untyped? label, **untyped opt) -> Capybara::Node::Element
+  def form_submit: (?label: String|nil, **untyped opt) -> Capybara::Node::Element
 end

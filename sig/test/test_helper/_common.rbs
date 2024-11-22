@@ -45,46 +45,132 @@ module TestHelper::Common
 
   # property
   #
-  # @param [Symbol, String, Class, Model, nil] model
+  # @param [Symbol, String, Class, Model, nil] ctrlr
   # @param [Array<Symbol>]                     traversal
   # @param [any, nil]                          default
   #
   # @return [any, nil]
   #
   def property
-    : [T] (Symbol|String|Class|Model|nil model, *Symbol traversal,  default: T)   -> T
-    |     (Symbol|String|Class|Model|nil model, *Symbol traversal, ?default: nil) -> (untyped | nil)
+    : [T] (Symbol|String|Class|Model|nil ctrlr, *Symbol traversal,  default: T)   -> (untyped | T)
+    |     (Symbol|String|Class|Model|nil ctrlr, *Symbol traversal, ?default: nil) -> (untyped | nil)
 
   # The title (:h1 text value) for the given parameters.
   #
-  # @param [Model, item] item
-  # @param [Symbol]      controller
-  # @param [Symbol]      action       Default: :index
-  # @param [Symbol]      prop_key     End of #PROPERTY traversal.
-  # @param [Symbol]      meth         Calling method (for error reporting).
-  # @param [Hash]        opt          Override interpolation values.
+  # @param [Model, nil] item
+  # @param [Symbol]     controller    Default: self
+  # @param [Symbol]     action        Default: :index
+  # @param [Symbol]     prop_key      End of #PROPERTY traversal.
+  # @param [Hash]       opt           Override interpolation values.
   #
   # @raise [Minitest::Assertion] If value could not be found or interpolated.
   #
   # @return [String]
   #
-  def page_title: (?(Model|nil) item, ?controller: Symbol|nil, ?action: Symbol|nil, prop_key: Symbol, ?meth: Symbol|nil, **untyped opt) -> String
+  def page_title: (?(Model|nil) item, ?controller: Symbol|nil, ?action: Symbol, ?prop_key: Symbol, **untyped opt) -> String
 
-  # Give the target controller for the current context.
+  # Text indicating an authentication failure.
   #
-  # @return [Symbol]
+  # @type [String]
   #
-  def this_controller: () -> Symbol
+  AUTH_FAILURE: String
 
-  # Derive the name of the associated controller from the given source.
+  # Current user within a test.
   #
-  # @param [any, nil] value           Symbol, String, Class, Model
+  # @return [User, nil]
+  #
+  def current_user: () -> (User | nil)
+
+  @current_user: User | nil
+
+  # Set the current test user.
+  #
+  # @param [String, Symbol, User, nil] user
+  #
+  # @return [User, nil]
+  #
+  def set_current_user: (String|Symbol|User|nil user) -> (User | nil)
+
+  # Clear the current test user.
+  #
+  # @return [nil]
+  #
+  def clear_current_user: () -> nil
+
+  # Indicate whether is an authenticated session.
+  #
+  def signed_in?: () -> bool
+
+  # Indicate whether is an anonymous session.
+  #
+  def not_signed_in?: () -> bool
+
+  # Table of formats and associated MIME media types.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  MEDIA_TYPE: Hash[Symbol,String]
+
+  # Table of MIME media types and associated formats.
+  #
+  # @type [Hash{String=>Symbol}]
+  #
+  REVERSE_MEDIA_TYPE: Hash[String,Symbol]
+
+  # The format type associated with the given value.
+  #
+  # @param [Symbol, String, nil] type
   #
   # @return [Symbol, nil]
   #
-  def controller_name
-    : (nil     value) -> nil
-    | (untyped value) -> Symbol
+  def format_type: (Symbol|String|nil `type`) -> (Symbol | nil)
+
+  # Indicate whether *type* is HTML.
+  #
+  # @param [Symbol, String, nil] type
+  #
+  def html?: (Symbol|String|nil `type`) -> bool
+
+  # Indicate whether *type* is JSON.
+  #
+  # @param [Symbol, String, nil] type
+  #
+  # @note Currently unused.
+  #
+  def json?: (Symbol|String|nil `type`) -> bool
+
+  # Indicate whether *type* is XML.
+  #
+  # @param [Symbol, String, nil] type
+  #
+  # @note Currently unused.
+  #
+  def xml?: (Symbol|String|nil `type`) -> bool
+
+  # Derive the name of the associated controller from the given source.
+  #
+  # @param [any, nil] item      Symbol, String, Class, Model; def: `self_class`
+  #
+  # @return [Symbol, nil]
+  #
+  def controller_name: (?untyped item) -> (Symbol | nil)
+
+  # Derive the name of the associated model from the given source.
+  #
+  # @param [any, nil] item      Symbol, String, Class, Model; def: `self_class`
+  #
+  # @return [Symbol, nil]
+  #
+  def model_name: (?untyped item) -> (Symbol | nil)
+
+  # Derive the class of the associated model from the given source, using the
+  # MODEL constant if available.
+  #
+  # @param [any, nil] item      Symbol, String, Class, Model; def: `self_class`
+  #
+  # @return [Class, nil]
+  #
+  def model_class: (?untyped item) -> (Class | nil)
 
   # Fixture accessor defined by ActiveRecord::TestFixtures#fixtures.
   # @param [Array<Symbol|String>] name

@@ -1,17 +1,17 @@
-class SearchCallControllerTest < ActionDispatch::IntegrationTest
+class SearchCallControllerTest < ApplicationControllerTestCase
   MODEL: Class
 
-  CONTROLLER: Symbol
+  CTRLR: Symbol
 
-  PARAMS: symHash
+  PRM: symHash
 
-  OPTIONS: symHash
-
-  TEST_USERS: symArray
+  OPT: symHash
 
   TEST_READERS: symArray
 
   READ_FORMATS: symArray | Symbol
+
+  NO_READ: symArray
 
   @readers: Array[User|nil]
 

@@ -7,22 +7,21 @@ require 'application_system_test_case'
 
 class SearchCallsTest < ApplicationSystemTestCase
 
-  CONTROLLER = :search_call
-  PARAMS     = { controller: CONTROLLER }.freeze
-
-  TEST_USER  = :test_dev
+  CTRLR = :search_call
+  PRM   = { controller: CTRLR }.freeze
 
   setup do
-    @user = find_user(TEST_USER)
+    @dev = find_user(:test_dev)
   end
 
   # ===========================================================================
   # :section: Read tests
   # ===========================================================================
 
-  test 'search calls - index' do
+  test 'search_calls - index' do
+    user      = @dev
     action    = :index
-    params    = PARAMS.merge(action: action)
+    params    = PRM.merge(action: action)
 
     start_url = url_for(**params)
     final_url = start_url
@@ -32,15 +31,15 @@ class SearchCallsTest < ApplicationSystemTestCase
       # Not available anonymously.
       visit start_url
       assert_flash(alert: AUTH_FAILURE)
-      sign_in_as(@user)
+      sign_in_as(user)
 
       # Successful sign-in should redirect back.
       show_url
+      screenshot
       assert_current_url(final_url)
 
       # The listing should be the first of one or more results pages.
-      assert_valid_index_page(CONTROLLER, page: 0)
-      screenshot
+      assert_valid_index_page(CTRLR, page: 0)
 
     end
   end

@@ -3,9 +3,9 @@
 # frozen_string_literal: true
 # warn_indent:           true
 
-require 'test_helper'
+require 'application_model_test_case'
 
-class ManifestTest < ActiveSupport::TestCase
+class ManifestTest < ApplicationModelTestCase
 
   test 'model - valid manifest' do
     run_test(__method__) do

@@ -5,379 +5,525 @@
 
 require 'application_system_test_case'
 
-# noinspection RubyJumpError
 class AccountsTest < ApplicationSystemTestCase
 
-  MODEL        = User
-  CONTROLLER   = :account
-  PARAMS       = { controller: CONTROLLER }.freeze
-  INDEX_TITLE  = page_title(**PARAMS, action: :index).freeze
-  LIST_ACTIONS = %i[list_all list_org].freeze
-
-  TEST_USER    = :test_man_1
-  OTHER_USER   = :test_dso_1
+  MODEL = User
+  CTRLR = :account
+  PRM   = { controller: CTRLR }.freeze
 
   setup do
-    @user  = find_user(TEST_USER)
-    @other = find_user(OTHER_USER)
+    @admin    = find_user(:test_adm)
+    @manager  = find_user(:test_man_1)
+    @member   = find_user(:test_dso_1)
+    @generate = UserSampleGenerator.new(self)
   end
 
   # ===========================================================================
   # :section: Read tests
   # ===========================================================================
 
-  test 'accounts - index' do
-    action = :index
-    params = PARAMS.merge(action: action, meth: __method__)
-    redir  = index_redirect(**params)
-    list_test(redir_url: redir, **params)
+  test 'accounts - index - anonymous' do
+    list_test(nil, meth: __method__)
   end
 
-  test 'accounts - list_all' do
-    # NOTE: There's an issue with looping in attempting to sign-in which causes
-    #   this to fail inexplicably. Since this test user can't perform this
-    #   action anyway, this test needs to be skipped for now.
-    unless @user.can?(:list_all, MODEL)
-      # noinspection RubyJumpError
-      return not_applicable("#{@user} is not an administrator")
-    end
-    action = :list_all
-    params = PARAMS.merge(action: action, meth: __method__)
-    list_test(**params)
+  test 'accounts - index - member' do
+    list_test(@member, meth: __method__)
   end
 
-  test 'accounts - list_org' do
-    action = :list_org
-    params = PARAMS.merge(action: action, meth: __method__)
-    list_test(**params)
+  test 'accounts - index - admin' do
+    list_test(@admin, meth: __method__)
   end
 
-  test 'accounts - show' do
-    action    = :show
-    item      = @other
-    params    = PARAMS.merge(action: action, id: item.id)
-    title     = page_title(item, **params, name: item.label.inspect)
-
-    start_url = url_for(**params)
-    final_url = start_url
-
-    run_test(__method__) do
-
-      # Not available anonymously; successful sign-in should redirect back.
-      visit start_url
-      assert_flash(alert: AUTH_FAILURE)
-      sign_in_as(@user)
-
-      # The page should show the details of the org.
-      show_url
-      assert_current_url(final_url)
-      assert_valid_page(heading: title)
-      screenshot
-
-    end
+  test 'accounts - list_all - anonymous' do
+    list_test(nil, meth: __method__, action: :list_all)
   end
 
-  test 'accounts - show_current' do
-    action    = :show
-    item      = @user
-    params    = PARAMS.merge(action: action, id: item.id)
-    title     = page_title(item, **params, name: item.label.inspect)
+  test 'accounts - list_all - member' do
+    list_test(@member, meth: __method__, action: :list_all)
+  end
 
-    start_url = url_for(**params)
-    final_url = url_for(**params.except(:id).merge!(action: :show_current))
+  test 'accounts - list_all - admin' do
+    list_test(@admin, meth: __method__, action: :list_all)
+  end
 
-    run_test(__method__) do
+  test 'accounts - list_org - anonymous' do
+    list_test(nil, meth: __method__, action: :list_org)
+  end
 
-      # Not available anonymously; successful sign-in should redirect back.
-      visit start_url
-      assert_flash(alert: AUTH_FAILURE)
-      sign_in_as(@user)
+  test 'accounts - list_org - member' do
+    list_test(@member, meth: __method__, action: :list_org)
+  end
 
-      # The page should show the details of the org.
-      show_url
-      assert_current_url(final_url)
-      assert_valid_page(heading: title)
-      screenshot
+  test 'accounts - list_org - admin' do
+    list_test(@admin, meth: __method__, action: :list_org)
+  end
 
-    end
+  test 'accounts - show - anonymous' do
+    show_test(nil, meth: __method__, target: @manager)
+  end
+
+  test 'accounts - show - member' do
+    show_test(@member, meth: __method__, target: @manager)
+  end
+
+  test 'accounts - show - admin' do
+    show_test(@admin, meth: __method__, target: @manager)
+  end
+
+  test 'accounts - show_current - anonymous' do
+    show_test(nil, meth: __method__)
+  end
+
+  test 'accounts - show_current - member' do
+    show_test(@member, meth: __method__)
+  end
+
+  test 'accounts - show_current - admin' do
+    show_test(@admin, meth: __method__)
   end
 
   # ===========================================================================
   # :section: Write tests
   # ===========================================================================
 
-  test 'accounts - new' do
-    return if not_applicable 'test account/new' # TODO: AccountsTest#new_test
-    new_test(direct: true, meth: __method__)
+  test 'accounts - new - anonymous' do
+    new_test(nil, meth: __method__)
   end
 
-  test 'accounts - new from index' do
-    return if not_applicable 'test account/new' # TODO: AccountsTest#new_test
-    new_test(direct: false, meth: __method__)
+  test 'accounts - new - member' do
+    new_test(@member, meth: __method__)
   end
 
-  test 'accounts - edit (select)' do
-    return if not_applicable 'test account/edit' # TODO: AccountsTest#edit_select_test
-    edit_select_test(direct: true, meth: __method__)
+  test 'accounts - new - manager' do
+    new_test(@manager, meth: __method__)
   end
 
-  test 'accounts - edit (select) from index' do
-    return if not_applicable 'test account/edit' # TODO: AccountsTest#edit_select_test
-    edit_select_test(direct: false, meth: __method__)
+  test 'accounts - new - admin' do
+    new_test(@admin, meth: __method__)
   end
 
-  test 'accounts - delete (select)' do
-    return if not_applicable 'test account/delete' # TODO: AccountsTest#delete_select_test
-    delete_select_test(direct: true, meth: __method__)
+  test 'accounts - edit - anonymous' do
+    edit_test(nil, meth: __method__)
   end
 
-  test 'accounts - delete (select) from index' do
-    return if not_applicable 'test account/delete' # TODO: AccountsTest#delete_select_test
-    delete_select_test(direct: false, meth: __method__)
+  test 'accounts - edit - member' do
+    edit_test(@member, meth: __method__)
+  end
+
+  test 'accounts - edit - manager' do
+    edit_test(@manager, meth: __method__)
+  end
+
+  test 'accounts - edit - admin' do
+    edit_test(@admin, meth: __method__)
+  end
+
+  test 'accounts - delete - anonymous' do
+    delete_test(nil, meth: __method__)
+  end
+
+  test 'accounts - delete - member' do
+    delete_test(@member, meth: __method__)
+  end
+
+  test 'accounts - delete - manager' do
+    delete_test(@manager, meth: __method__)
+  end
+
+  test 'accounts - delete - admin' do
+    delete_test(@admin, meth: __method__)
   end
 
   # ===========================================================================
-  # :section: Methods
+  # :section: Methods - read tests
   # ===========================================================================
 
   public
 
-  # Perform a test to list accounts visible to the test user.
+  # Perform a test to list accounts visible to *user*.
   #
-  # @param [Symbol]      action
-  # @param [String, nil] title        Default: #INDEX_TITLE.
-  # @param [String, nil] redir_url
+  # @param [User, nil]    user
+  # @param [Integer, nil] total       Expected total number of items.
+  # @param [String, nil]  title       Default based on *user* and opt[:action].
+  # @param [Symbol]       meth        Calling test method.
+  # @param [Hash]         opt         URL parameters.
+  #
+  # @return [void]
+  #
+  def list_test(user, total: nil, title: nil, meth: nil, **opt)
+    params    = PRM.merge(action: :index, **opt)
+    action    = params[:action]
+
+    start_url = url_for(**params)
+
+    run_test(meth || __method__) do
+
+      if permitted?(action, user)
+
+        admin     = user&.administrator?
+        index     = (action == :index)
+
+        total   ||= fixture_count(MODEL) if admin
+        total   ||= fixture_count_for_org(MODEL, user)
+        title   ||= page_title(**params, name: user&.org&.label)
+
+        final_url = index ? index_redirect(user: user) : start_url
+
+        # Successful sign-in should redirect back to the action page.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
+
+        # The listing should be the first of one or more results pages with as
+        # many entries as there are accounts visible to the user.
+        show_url
+        screenshot
+        assert_current_url(final_url)
+        assert_valid_page(heading: title)
+        title_total_count(expected: total)
+        data_record_total(expected: total)
+
+        # Validate the table of accounts.
+        check_item_table(section: true)
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from listing user accounts." }
+        assert_no_visit(start_url, action, as: user)
+
+      else
+
+        show_item { 'Anonymous user blocked from listing user accounts.' }
+        assert_no_visit(start_url, :sign_in)
+
+      end
+
+    end
+  end
+
+  # Perform a test to show a user account visible to *user*.
+  #
+  # If showing *user* itself, activity takes place on the :show_current page;
+  # otherwise, activity takes place on the :show page.
+  #
+  # @param [User, nil]   user
+  # @param [User, nil]   target       Default: *user* (i.e. :show_current).
+  # @param [String, nil] title        Default based on *user* and opt[:action].
   # @param [Symbol]      meth         Calling test method.
   # @param [Hash]        opt          URL parameters.
   #
   # @return [void]
   #
-  def list_test(action:, title: nil, redir_url: nil, meth: nil, **opt)
-    params    = opt.merge!(action: action)
-    title   ||= page_title(**params, name: @user&.org&.label)
+  def show_test(user, target: nil, title: nil, meth: nil, **opt)
+    target  ||= user || users(:example)
+    params    = PRM.merge(action: :show, id: target.id, **opt)
+    action    = params[:action]
 
     start_url = url_for(**params)
-    final_url = redir_url || start_url
 
     run_test(meth || __method__) do
 
-      # Not available anonymously; successful sign-in should redirect back.
-      visit start_url
-      assert_flash(alert: AUTH_FAILURE)
-      sign_in_as(@user)
+      if permitted?(action, user, target)
 
-      # The listing should be the first of one or more results pages with as
-      # many entries as there are fixture records.
-      show_url
-      assert_current_url(final_url)
-      assert_valid_page(heading: title)
-      screenshot
+        title   ||= page_title(target, **params, name: target.label.inspect)
+
+        final_url =
+          if user&.id == target.id
+            url_for(**params.except(:id).merge!(action: :show_current))
+          else
+            start_url
+          end
+
+        # Successful sign-in should redirect back to the action page.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
+
+        # The page should show the details of the target user account.
+        show_url
+        screenshot
+        assert_current_url(final_url)
+        assert_valid_page(heading: title)
+
+        # Validate the "Account Details" section.
+        check_details_columns('.details-section .account-details')
+
+        # Validate the "EMMA Submissions" section.
+        check_details_section('.uploads-section')
+
+        # Validate the "Bulk Upload Manifests" section.
+        check_details_section('.manifests-section')
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from viewing user account." }
+        assert_no_visit(start_url, action, as: user)
+
+      else
+
+        show_item { 'Anonymous user blocked from viewing user account.' }
+        assert_no_visit(start_url, :sign_in)
+
+      end
 
     end
   end
 
   # Perform a test to create a new account.
   #
-  # @param [Boolean] direct
-  # @param [Symbol]  meth             Calling test method.
-  # @param [Hash]    opt              Added to URL parameters.
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
   #
   # @return [void]
   #
-  def new_test(direct:, meth: nil, **opt)
-    action    = :new
-    params    = PARAMS.merge(action: action, **opt)
+  def new_test(user, meth: nil, **opt)
+    button   = 'Add User'
+    action   = :new
+    params   = PRM.merge(action: action, **opt)
 
-    form_url  = url_for(**params)
-    index_url = url_for(**params, action: :index)
-    list_urls = LIST_ACTIONS.map { |m| url_for(**params, action: m) }
+    # Generate field data for the item to create.
+    tag      = user&.role&.upcase || 'ANON'
+    gen_opt  = { user: user, tag: tag, preserve: :org_id }
+    fields   = @generate.fields_for(action, **gen_opt).except(:id)
+    org_id   = fields[:org_id]
 
-    # noinspection RubyUnusedLocalVariable
-    tag       = direct ? 'DIRECT' : 'INDIRECT'
-    start_url = direct ? form_url : index_url
-    final_url = [index_url, *list_urls]
+    form_url = form_page_url(**params)
 
-    # noinspection RubyMismatchedArgumentType
     run_test(meth || __method__) do
 
-      # Not available anonymously; successful sign-in should redirect back.
-      visit start_url
-      assert_flash alert: AUTH_FAILURE
-      sign_in_as @user
+      if permitted?(action, user)
 
-      # Change to the form page if coming in from the index page.
-      unless direct
-        click_on 'Add User'
-        wait_for_page form_url
+        admin     = user&.administrator?
+        records   = (fixture_count(MODEL) if admin)
+        total     = (fixture_count_for_org(MODEL, user) unless records)
+
+        index_url = url_for(controller: :org, action: :index)
+        all_url   = url_for(controller: :org, action: :list_all)
+        own_url   = url_for(controller: :org, action: :show_current)
+        org_url   = url_for(controller: :org, action: :show, id: org_id)
+
+        start_url = index_url
+        final_url = [index_url, all_url, own_url, org_url]
+
+        # Generate field data for the item to create.
+        item_name = fields[:email]
+
+        # Start on the index page showing the current number of items.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
+
+        # Go to the form page.
+        select_action(button, wait_for: form_url)
+
+        # On the form page:
+        assert_selector '[data-field="id"]', visible: false #admin
+
+        # Select/validate organization.
+        org_name    = find_org(org_id).long_name.to_s
+        org_menu_id = 'value-OrgId'
+        if admin
+          menu_select org_name, from: org_menu_id
+        else
+          assert_selector id: org_menu_id, text: org_name
+        end
+
+        # Add field data.
+        fill_in 'value-Email',          with: fields[:email]
+        fill_in 'value-FirstName',      with: fields[:first_name]
+        fill_in 'value-LastName',       with: fields[:last_name]
+        fill_in 'value-PreferredEmail', with: fields[:preferred_email]
+        fill_in 'value-Phone',          with: fields[:phone]
+        fill_in 'value-Address',        with: fields[:address]
+        menu_select 'Standard',         from: 'value-Role'
+        menu_select 'Active',           from: 'value-Status'
+
+        # Create the item.
+        show_item { "Creating user #{item_name.inspect}..." }
+        form_submit
+
+        # Verify successful submission.
+        wait_for_page(final_url)
+        assert_flash('Created EMMA user account')
+
+        # There should be one more item than before on the index page.
+        visit final_url.first unless final_url.include?(current_url)
+        data_record_total(expected: total.succ)           if total
+        assert_model_count(MODEL, expected: records.succ) if records
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from creating user account." }
+        assert_no_visit(form_url, action, as: user)
+
+      else
+
+        show_item { 'Anonymous user blocked from creating user account.' }
+        assert_no_visit(form_url, :sign_in)
+
       end
-
-=begin
-      # On the form page:
-      assert_selector '[data-field="user_id"]', visible: false
-
-      # Provide file and wait for data extraction.
-      attach_file(@file) { click_on 'Select file' }
-      assert_selector '.uploaded-filename.complete', wait: 5
-
-      # Add field data.
-      select 'EMMA',            from: 'value-Repository'
-      select 'Moving Image',    from: 'value-Type'
-      select 'True',            from: 'value-Complete'
-      select 'Born Accessible', from: 'value-Status'
-      check  'Armenian'         # inside 'value-Language'
-      fill_in 'value-Identifier', with: '' # remove bogus identifier
-      fill_in 'value-Title',      with: "#{title } - #{tag}"
-      fill_in 'value-Creator',    with: "#{author} - #{tag}"
-      fill_in 'value-Comments',   with: 'FAKE - do not use'
-=end
-
-      # After submitting should be back on the index page with one more record
-      # than before.
-      form_submit
-      wait_for_page final_url
-      assert_flash 'SUCCESS'
-      assert_valid_page heading: INDEX_TITLE
 
     end
   end
 
   # Perform a test to select then modify an account.
   #
-  # @param [Boolean] direct
-  # @param [Symbol]  meth             Calling test method.
-  # @param [Hash]    opt              Added to URL parameters.
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
   #
   # @return [void]
   #
-  def edit_select_test(direct:, meth: nil, **opt)
-    action    = :edit
-    select    = menu_action(action)
-    params    = PARAMS.merge(action: action, **opt)
+  def edit_test(user, meth: nil, **opt)
+    button   = 'Edit User'
+    action   = :edit
+    params   = PRM.merge(action: action, **opt)
 
-    index_url = url_for(**params, action: :index)
-    menu_url  = url_for(**params, action: select)
-    list_urls = LIST_ACTIONS.map { |m| url_for(**params, action: m) }
+    # Find the item to be edited.
+    record   = users(:edit_example)
+    form_url = form_page_url(record.id, **params)
 
-    tag       = direct ? 'DIRECT' : 'INDIRECT'
-    start_url = direct ? menu_url : index_url
-    final_url = [index_url, *list_urls]
-
-    item      = users(:edit_example)
-    # noinspection RubyUnusedLocalVariable
-    test_opt  = { action: action, tag: tag, item: item, unique: hex_rand }
-
-    # noinspection RubyMismatchedArgumentType
     run_test(meth || __method__) do
 
-      # Not available anonymously; successful sign-in should redirect back.
-      visit start_url
-      assert_flash alert: AUTH_FAILURE
-      sign_in_as @user
+      if permitted?(action, user, record)
 
-      # Change to the select menu if coming in from the index page.
-      unless direct
-        click_on 'Edit User'
-        wait_for_page menu_url
-      end
+        admin     = user.administrator?
+        records   = (fixture_count(MODEL) if admin)
+        total     = (fixture_count_for_org(MODEL, user) unless records)
 
-=begin
-      # Choose submission to edit.
-      item_menu_select(item.id, name: 'id')
+        index_url = url_for(controller: :org, action: :index)
+        all_url   = url_for(controller: :org, action: :list_all)
+        own_url   = url_for(controller: :org, action: :show_current)
+        org_url   = url_for(controller: :org, action: :show, id: record.org_id)
+        menu_url  = url_for(**params, action: menu_action(action))
 
-      # On the form page:
-      assert_selector '[data-field="user_id"]', visible: false#, text: @user&.id # TODO: why is this not filled?
+        start_url = index_url
+        final_url = [index_url, all_url, own_url, org_url]
 
-      # Replace field data.
-      fill_in 'value-Title',   with: title
-      fill_in 'value-Creator', with: author
-=end
+        # Generate new field data for the item to edit.
+        tag       = user&.role&.upcase || 'ANON'
+        fields    = @generate.fields(record, tag: tag)
+        item_name = record.email
 
+        # Start on the index page showing the current number of items.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
 
-      # After submitting should be back on the index page with the same number
-      # of records.
-      form_submit
-      assert_flash 'SUCCESS'
-      if direct
-        visit index_url
-        screenshot
+        # Go to the menu page and choose the item to edit.
+        select_action(button, wait_for: menu_url)
+        select_item(item_name, wait_for: form_url)
+
+        # On the form page:
+        assert_selector '[data-field="id"]', visible: false #admin
+
+        # Modify field data.
+        fill_in 'value-FirstName',      with: fields[:first_name]
+        fill_in 'value-LastName',       with: fields[:last_name]
+        fill_in 'value-PreferredEmail', with: fields[:preferred_email]
+        fill_in 'value-Phone',          with: fields[:phone]
+        fill_in 'value-Address',        with: fields[:address]
+
+        # Update the item.
+        show_item { "Updating user #{item_name.inspect}..." }
+        form_submit
+
+        # Verify that success was indicated back on the menu page.
+        wait_for_page(menu_url)
+        assert_flash('Updated EMMA user account')
+
+        # There should be the same number of items as before on the index page.
+        visit org_url unless final_url.include?(current_url)
+        data_record_total(expected: total)           if total
+        assert_model_count(MODEL, expected: records) if records
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from modifying user account." }
+        assert_no_visit(form_url, action, as: user)
+
       else
-        wait_for_page final_url
+
+        show_item { 'Anonymous user blocked from modifying user account.' }
+        assert_no_visit(form_url, :sign_in)
+
       end
-      assert_valid_page heading: INDEX_TITLE
 
     end
   end
 
   # Perform a test to select then remove an account.
   #
-  # @param [Boolean] direct
-  # @param [Symbol]  meth             Calling test method.
-  # @param [Hash]    opt              Added to URL parameters.
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
   #
   # @return [void]
   #
-  def delete_select_test(direct:, meth: nil, **opt)
-    action    = :delete
-    select    = menu_action(action)
-    params    = PARAMS.merge(action: action, **opt)
+  def delete_test(user, meth: nil, **opt)
+    button   = 'Remove User'
+    action   = :delete
+    params   = PRM.merge(action: action, **opt)
 
-    index_url = url_for(**params, action: :index)
-    menu_url  = url_for(**params, action: select)
-    list_urls = LIST_ACTIONS.map { |m| url_for(**params, action: m) }
+    # Generate a new item to be deleted.
+    tag      = user&.role&.upcase || 'ANON'
+    record   = @generate.new_record_for(action, user: user, tag: tag)
+    form_url = form_page_url(record.id, **params)
 
-    tag       = direct ? 'DIRECT' : 'INDIRECT'
-    start_url = direct ? menu_url : index_url
-    final_url = [index_url, *list_urls]
-
-    item      = users(:delete_example)
-    # noinspection RubyUnusedLocalVariable
-    test_opt  = { action: action, tag: tag, item: item, unique: hex_rand }
-
-=begin
-    # Add Upload copy to be deleted and ensure that it is in the EMMA Unified
-    # Index.
-    name = upload_title(**test_opt)
-    attr = item.fields.except(:id).merge!(dc_title: name)
-    item = Upload.create!(attr)
-    reindex(item)
-
-    item_delete = [
-      url_for(**params, id: item.id),
-      make_path(url_for(**params), id: item.id)
-    ]
-=end
-
-    # noinspection RubyMismatchedArgumentType
     run_test(meth || __method__) do
 
-      # Verify added copies on the index page.
-      visit index_url
-      assert_flash(alert: AUTH_FAILURE)
-      sign_in_as(@user)
+      if permitted?(action, user, record)
 
-      # Change to the select menu if coming in from the index page.
-      visit start_url
-      unless direct
-        click_on 'Remove User'
-        wait_for_page menu_url
+        admin     = user.administrator?
+        records   = (fixture_count(MODEL).succ if admin)
+        total     = (fixture_count_for_org(MODEL, user).succ unless records)
+
+        index_url = url_for(controller: :org, action: :index)
+        all_url   = url_for(controller: :org, action: :list_all)
+        own_url   = url_for(controller: :org, action: :show_current)
+        org_url   = url_for(controller: :org, action: :show, id: record.org_id)
+        menu_url  = url_for(**params, action: menu_action(action))
+
+        start_url = index_url
+        final_url = [index_url, all_url, own_url, org_url]
+
+        # Identify the item to be deleted.
+        item_name = record.email
+
+        # Start on the index page showing the current number of items.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
+
+        # Go to the menu page and choose the item to remove.
+        select_action(button, wait_for: menu_url)
+        select_item(item_name, wait_for: form_url)
+
+        # Delete the selected item.
+        show_item { "Removing user #{item_name.inspect}..." }
+        form_submit
+
+        # Verify that success was indicated back on the menu page.
+        wait_for_page(menu_url)
+        assert_flash('Removed EMMA user account')
+
+        # There should be one less item than before.
+        visit org_url unless final_url.include?(current_url)
+        data_record_total(expected: total.pred)           if total
+        assert_model_count(MODEL, expected: records.pred) if records
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from removing user account." }
+        assert_no_visit(form_url, action, as: user)
+
+      else
+
+        show_item { 'Anonymous user blocked from removing user account.' }
+        assert_no_visit(form_url, :sign_in)
+
       end
-
-=begin
-      # Choose submission to remove, which leads to the delete page.
-      item_menu_select(item.id, name: 'id')
-      wait_for_page item_delete
-      screenshot
-      click_on 'Delete', match: :first, exact: true
-=end
-
-      # After deletion we should be back on the previous page.
-      wait_for_page(menu_url)
-      assert_flash('SUCCESS')
-
-      # On the index page, there should be one less record than before.
-      visit index_url
-      wait_for_page(final_url)
-      assert_valid_page(heading: INDEX_TITLE)
 
     end
   end
@@ -392,10 +538,11 @@ class AccountsTest < ApplicationSystemTestCase
   #
   # @param [Hash] opt
   #
-  # @return [String, nil]
+  # @return [String]
   #
   def index_redirect(**opt)
-    opt[:user] = find_user(opt[:user] || current_user || @user)
+    opt.reverse_merge!(PRM)
+    opt[:user] = find_user(opt[:user] || current_user)
     opt[:dst]  = opt[:user]&.org ? :list_org : :list_all
     super
   end

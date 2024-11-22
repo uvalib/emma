@@ -1,11 +1,11 @@
-class UserSessionsControllerTest < ActionDispatch::IntegrationTest
-  CONTROLLER: Symbol
+class UserSessionsControllerTest < ApplicationControllerTestCase
+  CTRLR: Symbol
 
-  OPTIONS: symHash
+  PRM: symHash
 
-  TEST_USER: Symbol
+  OPT: symHash
 
   READ_FORMATS: symArray | Symbol
 
-  @user: User | nil
+  @member: User | nil
 end

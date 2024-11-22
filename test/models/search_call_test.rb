@@ -3,9 +3,9 @@
 # frozen_string_literal: true
 # warn_indent:           true
 
-require 'test_helper'
+require 'application_model_test_case'
 
-class SearchCallTest < ActiveSupport::TestCase
+class SearchCallTest < ApplicationModelTestCase
 
   test 'model - valid search call' do
     run_test(__method__) do

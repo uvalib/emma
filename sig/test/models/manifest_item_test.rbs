@@ -1,2 +1,2 @@
-class ManifestItemTest < ActiveSupport::TestCase
+class ManifestItemTest < ApplicationModelTestCase
 end

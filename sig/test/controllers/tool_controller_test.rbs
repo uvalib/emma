@@ -1,11 +1,9 @@
-class ToolControllerTest < ActionDispatch::IntegrationTest
-  CONTROLLER: Symbol
+class ToolControllerTest < ApplicationControllerTestCase
+  CTRLR: Symbol
 
-  PARAMS: symHash
+  PRM: symHash
 
-  OPTIONS: symHash
-
-  TEST_USERS: symArray
+  OPT: symHash
 
   TEST_READERS: symArray
 
@@ -14,6 +12,10 @@ class ToolControllerTest < ActionDispatch::IntegrationTest
   READ_FORMATS: symArray | Symbol
 
   WRITE_FORMATS: symArray | Symbol
+
+  NO_READ: symArray
+
+  NO_WRITE: symArray
 
   @readers: Array[User|nil]
 
@@ -29,5 +31,5 @@ class ToolControllerTest < ActionDispatch::IntegrationTest
   #
   # @return [void]
   #
-  def read_test: (Symbol action, ?anonymous: bool|nil, ?meth: Symbol|nil, **untyped opt) -> void
+  def read_test: (Symbol action, ?anonymous: bool, ?meth: Symbol|nil, **untyped opt) -> void
 end

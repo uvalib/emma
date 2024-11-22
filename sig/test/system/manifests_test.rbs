@@ -1,68 +1,87 @@
 class ManifestsTest < ApplicationSystemTestCase
   MODEL: Class
 
-  CONTROLLER: Symbol
+  CTRLR: Symbol
 
-  PARAMS: symHash
+  PRM: symHash
 
-  INDEX_TITLE: String
+  TITLE: String
 
-  LIST_ACTIONS: symArray
+  @csv: Pathname
 
-  TEST_USER: Symbol
+  @json: Pathname
 
-  @user: User
+  @admin: User
 
-  # Perform a test to list bulk operation manifests visible to the test user.
+  @manager: User
+
+  @member: User
+
+  @generate: ManifestSampleGenerator
+
+  # Perform a test to list manifests visible to *user*.
   #
-  # @param [Symbol]       action
-  # @param [String]       title
+  # @param [User, nil]    user
   # @param [Integer, nil] total       Expected total number of items.
-  # @param [String, nil]  redir_url
+  # @param [String, nil]  title       Default based on *user* and opt[:action].
   # @param [Symbol]       meth        Calling test method.
   # @param [Hash]         opt         URL parameters.
   #
   # @return [void]
   #
-  def list_test: (action: Symbol, title: String, total: Integer|nil, ?redir_url: String|nil, ?meth: Symbol|nil, **untyped opt) -> void
+  def list_test: ((User|nil) user, ?total: Integer|nil, ?title: String|nil, ?meth: Symbol|nil, **untyped opt) -> void
+
+  # Perform a test to show a manifest visible to *user*.
+  #
+  # @param [User, nil]     user
+  # @param [Manifest, nil] target
+  # @param [String, nil]   title
+  # @param [Symbol]        meth       Calling test method.
+  # @param [Hash]          opt        URL parameters.
+  #
+  # @return [void]
+  #
+  def show_test: ((User|nil) user, ?target: Manifest|nil, ?title: String|nil, ?meth: Symbol|nil, **untyped opt) -> void
 
   # Perform a test to create a new bulk operation manifest.
   #
-  # @param [Boolean] direct
-  # @param [Symbol]  meth             Calling test method.
-  # @param [Hash]    opt              Added to URL parameters.
+  # @param [User, nil]             user
+  # @param [String, Pathname, nil] file   Data import file.
+  # @param [Symbol, nil]           meth   Calling test method.
+  # @param [Hash]                  opt    Added to URL parameters.
   #
   # @return [void]
   #
-  def new_test: (direct: bool, ?meth: Symbol|nil, **untyped opt) -> void
+  def new_test: ((User|nil) user, ?file: String|Pathname|nil, ?meth: Symbol|nil, **untyped opt) -> void
 
   # Perform a test to select then modify a bulk operation manifest.
   #
-  # @param [Boolean] direct
-  # @param [Symbol]  meth             Calling test method.
-  # @param [Hash]    opt              Added to URL parameters.
+  # @param [User, nil]             user
+  # @param [String, Pathname, nil] file   Data import file.
+  # @param [Symbol, nil]           meth   Calling test method.
+  # @param [Hash]                  opt    Added to URL parameters.
   #
   # @return [void]
   #
-  def edit_select_test: (direct: bool, ?meth: Symbol|nil, **untyped opt) -> void
+  def edit_test: ((User|nil) user, ?file: String|Pathname|nil, ?meth: Symbol|nil, **untyped opt) -> void
 
   # Perform a test to select then remove a bulk operation manifest.
   #
-  # @param [Boolean] direct
-  # @param [Symbol]  meth             Calling test method.
-  # @param [Hash]    opt              Added to URL parameters.
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
   #
   # @return [void]
   #
-  def delete_select_test: (direct: bool, ?meth: Symbol|nil, **untyped opt) -> void
+  def delete_test: ((User|nil) user, ?meth: Symbol|nil, **untyped opt) -> void
 
-  # Generate a distinct Manifest name.
+  # Get the number of manifests from a manifest listing page.
   #
-  # @param [Hash] opt                 Test options
+  # @param [Integer, nil] expected    Assert that the expected count is found.
   #
-  # @return [String]
+  # @return [Integer]
   #
-  def manifest_name: (**untyped opt) -> String
+  def displayed_manifest_total: (?expected: Integer|nil) -> Integer
 
   # Check operation of Manifest information display/edit by setting the title
   # to the provided value.
@@ -75,17 +94,71 @@ class ManifestsTest < ApplicationSystemTestCase
 
   # Check operation of ManifestItem grid.
   #
-  # @param [Hash] opt                 Test options
+  # @param [Hash, nil] fields         Default: `#generate_item_fields`.
+  # @param [Boolean]   shuffle        If *false*, do not randomize order.
+  # @param [Hash]      opt            Test options
+  #
+  # @option opt [Symbol] :fixture     Passed to #generate_item_fields
   #
   # @return [void]
   #
-  def manifest_grid_test: (**untyped opt) -> void
+  def manifest_grid_test: (?fields: symHash|nil, ?shuffle: bool, **untyped opt) -> void
+
+  # ManifestItem fields which do not relate directly to manifest grid inputs.
+  #
+  # @type [Array<Symbol>]
+  #
+  NON_DATA_ITEM_FIELDS: symArray
+
+  # Generate fields for a ManifestItem.
+  #
+  # @param [Symbol] fixture
+  #
+  # @return [Hash{Symbol=>any}]
+  #
+  def generate_item_fields: (?fixture: Symbol, **untyped _ignored) -> symHash
+
+  # Click on the cell to activate the input control before filling it.
+  #
+  # @param [Symbol, String] key
+  # @param [any]            value
+  # @param [Integer]        row
+  #
+  # @return [void]
+  #
+  def fill_cell: (Symbol|String key, untyped value, row: Integer) -> void
+
+  # Return the path to the CSV import file fixture.
+  #
+  # @param [String, Pathname] name
+  #
+  # @return [Pathname]
+  #
+  def csv_import_file: (?name: String|Pathname) -> Pathname
+
+  # Return the path to the JSON import file fixture.
+  #
+  # If it does not exist, it will be generated from the CSV import fixture.
+  #
+  # @param [String, Pathname] name
+  #
+  # @return [Pathname]
+  #
+  def json_import_file: (?name: String|Pathname) -> Pathname
+
+  # Convert CSV content into JSON.
+  #
+  # @param [String, Pathname] file
+  #
+  # @return [String]
+  #
+  def csv_to_json: (String|Pathname file) -> String
 
   # The default :index action redirects to :list_own.
   #
   # @param [Hash] opt
   #
-  # @return [String, nil]
+  # @return [String]
   #
-  def index_redirect: (**untyped opt) ?{ () -> (Symbol|String|Proc|nil) } -> (String | nil)
+  def index_redirect: (**untyped opt) ?{ () -> (Symbol|String|Proc|nil) } -> String
 end

@@ -17,7 +17,7 @@ module TestHelper::Common
 
   public
 
-  TEST_TYPES = %w[channel decorator controller helper mailer model].freeze
+  TEST_TYPES = %w[channel controller decorator helper mailer model].freeze
 
   # The full directory path for "/test/test_helper".
   #
@@ -98,25 +98,24 @@ module TestHelper::Common
 
   # property
   #
-  # @param [Symbol, String, Class, Model, nil] model
+  # @param [Symbol, String, Class, Model, nil] ctrlr
   # @param [Array<Symbol>]                     traversal
   # @param [any, nil]                          default
   #
   # @return [any, nil]
   #
-  def property(model, *traversal, default: nil)
-    ctrlr = controller_name(model || self)
-    PROPERTY.dig(ctrlr, *traversal) || default
+  def property(ctrlr, *traversal, default: nil)
+    controller = controller_name(ctrlr)
+    PROPERTY.dig(controller, *traversal) || default
   end
 
   # The title (:h1 text value) for the given parameters.
   #
-  # @param [Model, item] item
-  # @param [Symbol]      controller   Default: self
-  # @param [Symbol]      action       Default: :index
-  # @param [Symbol]      prop_key     End of #PROPERTY traversal.
-  # @param [Symbol]      meth         Calling method (for error reporting).
-  # @param [Hash]        opt          Override interpolation values.
+  # @param [Model, nil] item
+  # @param [Symbol]     controller    Default: self
+  # @param [Symbol]     action        Default: :index
+  # @param [Symbol]     prop_key      End of #PROPERTY traversal.
+  # @param [Hash]       opt           Override interpolation values.
   #
   # @raise [Minitest::Assertion] If value could not be found or interpolated.
   #
@@ -125,16 +124,13 @@ module TestHelper::Common
   def page_title(
     item =      nil,
     controller: nil,
-    action:     nil,
+    action:     :index,
     prop_key:   :heading,
-    meth:       nil,
     **opt
   )
-    action ||= :index
-    if (value = property(controller, action, prop_key)).blank?
-      fail "#{meth || __method__}: no :#{prop_key} for #{controller}/#{action}"
-    end
-    interpolate(value, item, **opt)
+    value = property(controller, action, prop_key)
+    flunk "no :#{prop_key} for #{controller}/#{action}" if value.blank?
+    interpolate(value, item, **opt).strip
   end
 
   # ===========================================================================
@@ -143,31 +139,173 @@ module TestHelper::Common
 
   public
 
-  # Give the target controller for the current context.
+  # Text indicating an authentication failure.
   #
-  # @return [Symbol]
+  # @type [String]
   #
-  def this_controller
-    # noinspection RubyMismatchedReturnType
-    controller_name(self_class)
+  AUTH_FAILURE = I18n.t('devise.failure.unauthenticated').freeze
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Current user within a test.
+  #
+  # @return [User, nil]
+  #
+  def current_user
+    @current_user
   end
 
-  # Derive the name of the model/controller from the given source.
+  # Set the current test user.
   #
-  # @param [any, nil] value           Symbol, String, Class, Model
+  # @param [String, Symbol, User, nil] user
+  #
+  # @return [User, nil]
+  #
+  def set_current_user(user)
+    @current_user = find_user(user)
+  end
+
+  # Clear the current test user.
+  #
+  # @return [nil]
+  #
+  def clear_current_user
+    set_current_user(nil)
+  end
+
+  # Indicate whether is an authenticated session.
+  #
+  def signed_in?
+    current_user.present?
+  end
+
+  # Indicate whether is an anonymous session.
+  #
+  def not_signed_in?
+    current_user.blank?
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Table of formats and associated MIME media types.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  MEDIA_TYPE = {
+    any:  '*/*',
+    html: 'text/html',
+    json: 'application/json',
+    text: 'text/plain',
+    xml:  'application/xml',
+  }.freeze
+
+  # Table of MIME media types and associated formats.
+  #
+  # @type [Hash{String=>Symbol}]
+  #
+  REVERSE_MEDIA_TYPE = MEDIA_TYPE.invert.freeze
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # The format type associated with the given value.
+  #
+  # @param [Symbol, String, nil] type
   #
   # @return [Symbol, nil]
   #
-  def controller_name(value)
-    return value                    if value.nil? || value.is_a?(Symbol)
-    value = value.name || ''        if value.is_a?(Class)
-    value = value.class.name || ''  unless value.is_a?(String)
-    value.underscore.tr('/', '_').split('_').tap { |part|
+  def format_type(type)
+    type &&= type.to_s.downcase or return
+    type.include?('/') ? REVERSE_MEDIA_TYPE[type] : type.to_sym
+  end
+
+  # Indicate whether *type* is HTML.
+  #
+  # @param [Symbol, String, nil] type
+  #
+  def html?(type)
+    format_type(type) == :html
+  end
+
+  # Indicate whether *type* is JSON.
+  #
+  # @param [Symbol, String, nil] type
+  #
+  # @note Currently unused.
+  # :nocov:
+  def json?(type)
+    format_type(type) == :json
+  end
+  # :nocov:
+
+  # Indicate whether *type* is XML.
+  #
+  # @param [Symbol, String, nil] type
+  #
+  # @note Currently unused.
+  # :nocov:
+  def xml?(type)
+    format_type(type) == :xml
+  end
+  # :nocov:
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Derive the name of the associated controller from the given source.
+  #
+  # @param [any, nil] item      Symbol, String, Class, Model; def: `self_class`
+  #
+  # @return [Symbol, nil]
+  #
+  def controller_name(item = nil)
+    return item                   if item.is_a?(Symbol)
+    item = self_class             if item.nil?
+    item = item.name || ''        if item.is_a?(Class)
+    item = item.class.name || ''  unless item.is_a?(String)
+    item.underscore.tr('/', '_').split('_').tap { |part|
       part.pop if part.last == 'test'
       part.pop if TEST_TYPES.include?(part.last)
       singular = part.many? && (part[0] == 'user') || SINGLE.include?(part[-1])
       part[-1] = part[-1].singularize unless singular
     }.compact_blank.join('_').to_sym.presence
+  end
+
+  # Derive the name of the associated model from the given source.
+  #
+  # @param [any, nil] item      Symbol, String, Class, Model; def: `self_class`
+  #
+  # @return [Symbol, nil]
+  #
+  def model_name(item = nil)
+    item = controller_name(item)
+    (item == :account) ? :user : item
+  end
+
+  # Derive the class of the associated model from the given source, using the
+  # MODEL constant if available.
+  #
+  # @param [any, nil] item      Symbol, String, Class, Model; def: `self_class`
+  #
+  # @return [Class, nil]
+  #
+  def model_class(item = nil)
+    item = model_name(item)&.to_s&.camelize&.safe_constantize or return
+    (item < ApplicationRecord) ? item : item.safe_const_get(:MODEL)
   end
 
   # ===========================================================================
@@ -180,6 +318,11 @@ module TestHelper::Common
   # :nocov:
   # noinspection RubyUnusedLocalVariable
   unless ONLY_FOR_DOCUMENTATION
+
+    # Fixture accessor defined by ActiveRecord::TestFixtures#fixtures.
+    # @param [Array<Symbol|String>] name
+    # @return [Enrollment, Array<Enrollment>]
+    def enrollments(*name) end
 
     # Fixture accessor defined by ActiveRecord::TestFixtures#fixtures.
     # @param [Array<Symbol|String>] name

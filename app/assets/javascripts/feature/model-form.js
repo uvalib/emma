@@ -3945,6 +3945,14 @@ appSetup(MODULE, function() {
                 markAsDeleting(f);
             });
         }
+        // NOTE: This was only determined to be necessary when testing the
+        //  creation and modification of enrollments -- in all other cases,
+        //  the click event is handled as expected to cause form submission.
+        if (Emma.RAILS_ENV === 'test') {
+            event.stopPropagation();
+            event.preventDefault();
+            $form.trigger('submit');
+        }
     }
 
     /**

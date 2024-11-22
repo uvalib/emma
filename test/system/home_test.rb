@@ -7,9 +7,9 @@ require 'application_system_test_case'
 
 class HomeTest < ApplicationSystemTestCase
 
-  CONTROLLER  = :home
-
-  INDEX_TITLE = page_title(controller: CONTROLLER, action: :welcome).freeze
+  CTRLR = :home
+  PRM   = { controller: CTRLR }.freeze
+  TITLE = page_title(**PRM, action: :welcome).freeze
 
   # ===========================================================================
   # :section: Read tests
@@ -19,8 +19,8 @@ class HomeTest < ApplicationSystemTestCase
     url = home_url
     run_test(__method__) do
       visit url
-      assert_valid_page(heading: INDEX_TITLE)
       screenshot
+      assert_valid_page(heading: TITLE)
     end
   end
 
@@ -28,8 +28,8 @@ class HomeTest < ApplicationSystemTestCase
     url = welcome_url
     run_test(__method__) do
       visit url
-      assert_valid_page(heading: INDEX_TITLE)
       screenshot
+      assert_valid_page(heading: TITLE)
     end
   end
 
@@ -37,8 +37,8 @@ class HomeTest < ApplicationSystemTestCase
     url = dashboard_url
     run_test(__method__) do
       visit url
-      assert_flash(alert: AUTH_FAILURE)
       screenshot
+      assert_flash(alert: AUTH_FAILURE)
     end
   end
 

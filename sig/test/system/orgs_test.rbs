@@ -1,76 +1,84 @@
 class OrgsTest < ApplicationSystemTestCase
   MODEL: Class
 
-  CONTROLLER: Symbol
+  CTRLR: Symbol
 
-  PARAMS: symHash
+  PRM: symHash
 
-  INDEX_TITLE: String
+  TITLE: String
 
-  LIST_ACTIONS: symArray
+  @admin: User
 
-  TEST_USER: Symbol
+  @manager: User
 
-  #@total: Integer
+  @member: User
 
-  @user: User
+  @generate: OrgSampleGenerator
 
-  # Perform a test to list organizations visible to the test user.
+  # Perform a test to list organizations visible to *user*.
   #
-  # @param [Symbol]      action
-  # @param [String, nil] title        Default: #INDEX_TITLE.
-  # @param [String, nil] redir_url
+  # @param [User, nil]    user
+  # @param [Integer, nil] total       Expected total number of items.
+  # @param [String, nil]  title       Default based on *user* and opt[:action].
+  # @param [Symbol]       meth        Calling test method.
+  # @param [Hash]         opt         URL parameters.
+  #
+  # @return [void]
+  #
+  def list_test: ((User|nil) user, ?total: Integer|nil, ?title: String|nil, ?meth: Symbol|nil, **untyped opt) -> void
+
+  # Perform a test to show an organization visible to *user*.
+  #
+  # If showing the user's own organization, activity takes place on the
+  # :show_current page; otherwise, activity takes place on the :show page;
+  # otherwise if *target* is not given it is assigned an example organization.
+  #
+  # @param [User, nil]   user
+  # @param [Org, nil]    target       Default: `user.org` (i.e. :show_current).
+  # @param [String, nil] title        Default based on *user* and opt[:action].
   # @param [Symbol]      meth         Calling test method.
   # @param [Hash]        opt          URL parameters.
   #
   # @return [void]
   #
-  def list_test: (action: Symbol, ?title: String|nil, ?redir_url: String|nil, ?meth: Symbol|nil, **untyped opt) -> void
+  def show_test: ((User|nil) user, ?target: Org|nil, ?title: String|nil, ?meth: Symbol|nil, **untyped opt) -> void
 
   # Perform a test to create a new organization.
   #
-  # @param [Boolean] direct
-  # @param [Symbol]  meth             Calling test method.
-  # @param [Hash]    opt              Added to URL parameters.
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
   #
   # @return [void]
   #
-  def new_test: (direct: bool, ?meth: Symbol|nil, **untyped opt) -> void
+  def new_test: ((User|nil) user, ?meth: Symbol|nil, **untyped opt) -> void
 
   # Perform a test to select then modify an organization.
   #
-  # @param [Boolean] direct
-  # @param [Symbol]  meth             Calling test method.
-  # @param [Hash]    opt              Added to URL parameters.
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
   #
   # @return [void]
   #
-  def edit_select_test: (direct: bool, ?meth: Symbol|nil, **untyped opt) -> void
+  def edit_test: ((User|nil) user, ?meth: Symbol|nil, **untyped opt) -> void
 
   # Perform a test to select then remove an organization.
   #
-  # @param [Boolean] direct
-  # @param [Symbol]  meth             Calling test method.
-  # @param [Hash]    opt              Added to URL parameters.
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
   #
   # @return [void]
   #
-  def delete_select_test: (direct: bool, ?meth: Symbol|nil, **untyped opt) -> void
-
-  # Generate a distinct organization name.
-  #
-  # @param [Hash] opt                 Test options
-  #
-  # @return [String]
-  #
-  def org_name: (**untyped opt) -> String
+  def delete_test: ((User|nil) user, ?meth: Symbol|nil, **untyped opt) -> void
 
   # The default :index action redirects to :list_all for Administrator and
-  # :show for everyone else.
+  # :show_current for everyone else.
   #
   # @param [Hash] opt
   #
-  # @return [String, nil]
+  # @return [String]
   #
-  def index_redirect: (**untyped opt) ?{ () -> (Symbol|String|Proc|nil) } -> (String | nil)
+  def index_redirect: (**untyped opt) ?{ () -> (Symbol|String|Proc|nil) } -> String
 end

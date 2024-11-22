@@ -1,15 +1,15 @@
-class HomeControllerTest < ActionDispatch::IntegrationTest
-  CONTROLLER: Symbol
+class HomeControllerTest < ApplicationControllerTestCase
+  CTRLR: Symbol
 
-  OPTIONS: symHash
+  PRM: symHash
 
-  TEST_USERS: symArray
+  OPT: symHash
 
   TEST_READERS: symArray
 
   READ_FORMATS: symArray | Symbol
 
-  @readers: Array[User|nil]
+  NO_READ: symArray
 
-  TEST_USER: Symbol
+  @readers: Array[User|nil]
 end

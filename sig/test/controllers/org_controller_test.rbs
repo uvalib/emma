@@ -1,13 +1,11 @@
-class OrgControllerTest < ActionDispatch::IntegrationTest
+class OrgControllerTest < ApplicationControllerTestCase
   MODEL: Class
 
-  CONTROLLER: Symbol
+  CTRLR: Symbol
 
-  PARAMS: symHash
+  PRM: symHash
 
-  OPTIONS: symHash
-
-  TEST_USERS: symArray
+  OPT: symHash
 
   TEST_READERS: symArray
 
@@ -16,6 +14,10 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
   READ_FORMATS: symArray | Symbol
 
   WRITE_FORMATS: symArray | Symbol
+
+  NO_READ: symArray
+
+  NO_WRITE: symArray
 
   # The organization for users in #ALL_TEST_USERS.
   TEST_ORG: Symbol
@@ -31,44 +33,14 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
 
   @other_org: Org
 
-  # @private
-  # @type [String,nil]
-  attr_accessor edit_id: String | nil
-
-  # @private
-  # @type [String,nil]
-  attr_accessor delete_id: String | nil
-
-  # Push a dummy item into the database for editing.
-  #
-  # @param [Symbol, String, Hash] src
-  #
-  # @return [Org]
-  #
-  def sample_for_edit: (?(Symbol|String|symHash) src) -> Org
-
-  # Push a dummy item into the database for deletion.
-  #
-  # @param [Symbol, String, Hash] src
-  #
-  # @return [Org]
-  #
-  def sample_for_delete: (?(Symbol|String|symHash) src) -> Org
-
-  # Generate a new non-persisted item to support new item creation.
-  #
-  # @param [Symbol, String, Hash] src
-  #
-  # @return [Org]
-  #
-  def new_record: (?(Symbol|String|symHash) src) -> Org
+  @generate: OrgSampleGenerator
 
   # The default :index action redirects to :list_all for Administrator and
   # :show for everyone else.
   #
   # @param [Hash] opt
   #
-  # @return [String, nil]
+  # @return [String]
   #
-  def index_redirect: (**untyped opt) ?{ () -> (Symbol|String|Proc|nil) } -> (String | nil)
+  def index_redirect: (**untyped opt) ?{ () -> (Symbol|String|Proc|nil) } -> String
 end

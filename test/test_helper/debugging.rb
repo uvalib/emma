@@ -233,8 +233,8 @@ module TestHelper::Debugging
 
   public
 
-  TRACE_NL           = (' ' * 4).freeze
-  TRACE_BODY         = 4 * 1024
+  TRACE_NL           = ' \n '.freeze # Not " \n ".
+  TRACE_BODY         = 2 * 1024
   TRACE_SEPARATOR    = { ('*' * 7) => ('*' * 65) }.deep_freeze
 
   SHOW_PRE_SEND_OPT  = %i[user format verb url].freeze
@@ -252,14 +252,18 @@ module TestHelper::Debugging
   # @return [String, nil]             The displayable result.
   #
   def show_pre_send(verb, url, user: nil, format: nil, **opt)
-    user ||= current_user
     show_trace(**opt, finish: "\n") do
+      if (user ||= current_user)
+        org  = user.org&.then { "org = #{_1.long_name.inspect} (#{_1.id})" }
+        name = "#{user.to_s.inspect} (#{user.id})"
+        user = [name, org].compact.join('; ')
+      end
       lines = {}
-      lines[:user]   = user&.to_s&.inspect
+      lines[:user]   = user
       lines[:format] = format&.inspect
-      lines[:method] = verb.inspect
-      lines[:url]    = url.inspect
-      lines.transform_values! { |v| v || '-' }.reverse_merge!(TRACE_SEPARATOR)
+      lines[:method] = verb&.inspect
+      lines[:url]    = url
+      lines.transform_values! { _1 || '-' }.reverse_merge!(TRACE_SEPARATOR)
     end
   end
     .tap { neutralize(_1) unless DEBUG_TESTS }
@@ -274,16 +278,17 @@ module TestHelper::Debugging
   # @return [String, nil]             The displayable result.
   #
   def show_post_send(expect: nil, status: nil, response: nil, **opt)
-    status ||= response&.response_code
-    redirect = response&.redirection? && response.redirect_url
-    contents = response&.body&.gsub(/\n/, TRACE_NL)&.truncate(TRACE_BODY)
     show_trace(**opt) do
+      stat  = status || response&.response_code
+      body  = response&.body&.presence&.gsub(/( *\n *)+/, TRACE_NL)
+      body  = body&.sub(/(<head[^>]*>).*(<\/head>)/, '\1...\2')
+      body  = body&.sub(/(<header[^>]*>).*(<\/header>)/, '\1...\2')
       lines = {}
-      lines[:redir]  = redirect.inspect if redirect
-      lines[:status] = status&.inspect
+      lines[:redir]  = response.redirect_url if response&.redirection?
+      lines[:status] = stat&.inspect
       lines[:expect] = expect&.inspect
-      lines[:body]   = contents
-      lines.transform_values! { |v| v || '-' }.merge!(TRACE_SEPARATOR)
+      lines[:body]   = body&.truncate(TRACE_BODY)
+      lines.transform_values! { _1 || '-' }.merge!(TRACE_SEPARATOR)
     end
   end
     .tap { neutralize(_1) unless DEBUG_TESTS }
@@ -324,7 +329,7 @@ module TestHelper::Debugging
 
 end
 
-# This module is included in ActionDispatch::IntegrationTest to support tracing
+# This module is included in ApplicationControllerTestCase to support tracing
 # of HTTP method calls.
 #
 # @!method original_get

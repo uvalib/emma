@@ -3,18 +3,19 @@
 # frozen_string_literal: true
 # warn_indent:           true
 
-require 'test_helper'
+require 'application_controller_test_case'
 
-class DataControllerTest < ActionDispatch::IntegrationTest
+class DataControllerTest < ApplicationControllerTestCase
 
-  CONTROLLER    = :data
-  PARAMS        = { controller: CONTROLLER }.freeze
-  OPTIONS       = { controller: CONTROLLER }.freeze
+  CTRLR = :data
+  PRM   = { controller: CTRLR }.freeze
+  OPT   = { controller: CTRLR, sign_out: false }.freeze
 
-  TEST_USERS    = ALL_TEST_USERS
-  TEST_READERS  = TEST_USERS
+  TEST_READERS = ALL_TEST_USERS
 
-  READ_FORMATS  = :all
+  READ_FORMATS = :all
+
+  NO_READ      = formats_other_than(*READ_FORMATS).freeze
 
   setup do
     @readers = find_users(*TEST_READERS)
@@ -56,19 +57,23 @@ class DataControllerTest < ActionDispatch::IntegrationTest
   #
   # @return [void]
   #
-  def read_test(action, anonymous: nil, meth: nil, **opt)
+  def read_test(action, anonymous: false, meth: nil, **opt)
     meth  ||= __method__
-    params  = PARAMS.merge(action: action, **opt)
-    options = OPTIONS.merge(action: action, test: meth, expect: :success)
+    params  = PRM.merge(action: action, **opt)
+    options = OPT.merge(action: action, test: meth, expect: :success)
 
     @readers.each do |user|
       able  = anonymous || user&.administrator?
       u_opt = able ? options : options.except(:controller, :action, :expect)
+      u_prm = params
 
-      TEST_FORMATS.each do |fmt|
-        url = url_for(**params, format: fmt)
+      foreach_format(user, **u_opt) do |fmt|
+        url = url_for(**u_prm, format: fmt)
         opt = u_opt.merge(format: fmt)
-        get_as(user, url, **opt, only: READ_FORMATS)
+        if NO_READ.include?(fmt)
+          opt[:expect] = :not_found if able
+        end
+        get_as(user, url, **opt)
       end
     end
   end

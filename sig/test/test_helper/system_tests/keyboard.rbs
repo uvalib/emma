@@ -1,0 +1,30 @@
+# Support for key presses.
+#
+# @see Selenium::WebDriver::Keys
+# @see Capybara::Node::Element#send_keys
+#
+module TestHelper::SystemTests::Keyboard
+  def press_esc           : () -> void
+
+  def press_home          : () -> void
+  def press_end           : () -> void
+  def press_ctrl_home     : () -> void
+  def press_ctrl_end      : () -> void
+
+  def press_up            : () -> void
+  def press_down          : () -> void
+  def press_left          : () -> void
+  def press_right         : () -> void
+  def press_ctrl_up       : () -> void
+  def press_ctrl_down     : () -> void
+  def press_ctrl_left     : () -> void
+  def press_ctrl_right    : () -> void
+
+  def press_pg_up         : () -> void
+  def press_pg_down       : () -> void
+  def press_ctrl_pg_up    : () -> void
+  def press_ctrl_pg_down  : () -> void
+
+  def press_tab           : () -> void
+  def press_shift_tab     : () -> void
+end

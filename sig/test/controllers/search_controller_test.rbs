@@ -1,11 +1,9 @@
-class SearchControllerTest < ActionDispatch::IntegrationTest
-  CONTROLLER: Symbol
+class SearchControllerTest < ApplicationControllerTestCase
+  CTRLR: Symbol
 
-  PARAMS: symHash
+  PRM: symHash
 
-  OPTIONS: symHash
-
-  TEST_USERS: symArray
+  OPT: symHash
 
   TEST_READERS: symArray
 

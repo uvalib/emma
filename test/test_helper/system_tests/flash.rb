@@ -91,4 +91,23 @@ module TestHelper::SystemTests::Flash
     no_flash?(content, fatal: true, **opt)
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Close all flash messages.
+  #
+  # @param [Boolean] first            If *true* only close the first.
+  #
+  # @return [true]
+  #
+  def close_flash(first: false)
+    flash = all('.flash .closer')
+    flash = flash[0..0] if first
+    flash.each(&:click)
+    true
+  end
+
 end

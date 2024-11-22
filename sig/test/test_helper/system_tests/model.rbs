@@ -1,0 +1,46 @@
+# Support for checking model values.
+#
+module TestHelper::SystemTests::Model
+  include TestHelper::SystemTests::Common
+
+  # Assert that the required number of *model* records meet the *constraints*.
+  #
+  # @param [any,nil]     model        Symbol,String,Class,Model; def:self_class
+  # @param [Integer,nil] total        If given, the current number of records.
+  # @param [Integer,nil] expected     If given, the expected number of records.
+  # @param [Hash]        constraints  Passed to #get_model_count.
+  #
+  # @raise [Minitest::Assertion]
+  #
+  # @return [true]
+  #
+  def assert_model_count: (?untyped model, ?total: untyped, ?expected: untyped, **untyped constraints) -> true
+
+  # Assert that the required number of *model* records associated with *user*
+  # meet the *constraints*.
+  #
+  # @param [any, nil] model         Symbol,String,Class,Model; def: self_class
+  # @param [any, nil] user          Symbol, String, Integer, Hash, Model, User
+  # @param [Hash]     constraints   Passed to #assert_model_count.
+  #
+  # @raise [Minitest::Assertion]
+  #
+  # @return [true]
+  #
+  def assert_model_count_for_user: (untyped model, untyped user, **untyped constraints) -> true
+
+  # Assert that the required number of *model* records associated with *org*
+  # meet the *constraints*.
+  #
+  # @param [any, nil] model         Symbol,String,Class,Model; def: self_class
+  # @param [any, nil] org           Symbol, String, Integer, Hash, Model, User
+  # @param [Hash]     constraints   Passed to #assert_model_count.
+  #
+  # @raise [Minitest::Assertion]
+  #
+  # @return [true]
+  #
+  # @note Currently unused.
+  #
+  def assert_model_count_for_org: (untyped model, untyped org, **untyped constraints) -> true
+end

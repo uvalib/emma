@@ -51,4 +51,12 @@ module TestHelper::SystemTests::Flash
   # @return [true]
   #
   def assert_no_flash: (?(String|nil) content, **untyped opt) -> true
+
+  # Close all flash messages.
+  #
+  # @param [Boolean] first            If *true* only close the first.
+  #
+  # @return [true]
+  #
+  def close_flash: (?first: bool) -> true
 end

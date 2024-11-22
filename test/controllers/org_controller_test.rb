@@ -3,24 +3,23 @@
 # frozen_string_literal: true
 # warn_indent:           true
 
-require 'test_helper'
+require 'application_controller_test_case'
 
-class OrgControllerTest < ActionDispatch::IntegrationTest
+class OrgControllerTest < ApplicationControllerTestCase
 
-  MODEL         = Org
-  CONTROLLER    = :org
-  PARAMS        = { controller: CONTROLLER }.freeze
-  OPTIONS       = { controller: CONTROLLER }.freeze
+  MODEL = Org
+  CTRLR = :org
+  PRM   = { controller: CTRLR }.freeze
+  OPT   = { controller: CTRLR, sign_out: false }.freeze
 
-  TEST_USERS    = ALL_TEST_USERS
-  TEST_READERS  = TEST_USERS
-=begin # TODO: test_man_1's org doesn't match artificially generated fixture org
-  TEST_WRITERS  = TEST_USERS
-=end # TODO: Skip until able to dynamically create test users to match generated orgs:
-  TEST_WRITERS  = TEST_USERS.excluding(:test_man_1).freeze
+  TEST_READERS  = ALL_TEST_USERS
+  TEST_WRITERS  = ALL_TEST_USERS
 
   READ_FORMATS  = :all
   WRITE_FORMATS = :html
+
+  NO_READ       = formats_other_than(*READ_FORMATS).freeze
+  NO_WRITE      = formats_other_than(*WRITE_FORMATS).freeze
 
   # The organization for users in #ALL_TEST_USERS.
   TEST_ORG = :one
@@ -33,6 +32,7 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
     @writers   = find_users(*TEST_WRITERS)
     @test_org  = orgs(TEST_ORG)
     @other_org = orgs(OTHER_ORG)
+    @generate  = OrgSampleGenerator.new(self)
   end
 
   # ===========================================================================
@@ -41,78 +41,91 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
 
   test 'org index - list orgs' do
     action  = :index
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
+    params  = PRM.merge(action: action)
+    options = OPT.merge(action: action, test: __method__, expect: :success)
 
     @readers.each do |user|
-      able  = can?(user, action, MODEL)
+      able  = permitted?(action, user)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+      u_prm = params
 
-      TEST_FORMATS.each do |fmt|
-        url = url_for(**params, format: fmt)
+      foreach_format(user, **u_opt) do |fmt|
+        url = url_for(**u_prm, format: fmt)
         opt = u_opt.merge(format: fmt)
-        if opt[:expect] == :success
+        if NO_READ.include?(fmt)
+          opt[:expect] = :not_found if able
+        elsif able
           opt[:redir]  = index_redirect(user: user, **opt)
-          opt[:expect] = :redirect
+          opt[:expect] = :nothing
+          opt[:format] = :any
         end
-        opt[:format] = :any if opt[:expect] == :redirect
-        get_as(user, url, **opt, only: READ_FORMATS)
+        get_as(user, url, **opt)
       end
     end
   end
 
   test 'org list_all - list all orgs' do
     action  = :list_all
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
+    params  = PRM.merge(action: action)
+    options = OPT.merge(action: action, test: __method__, expect: :success)
 
     @readers.each do |user|
-      able  = can?(user, action, MODEL)
+      able  = permitted?(action, user)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+      u_prm = params
 
-      TEST_FORMATS.each do |fmt|
-        url = url_for(**params, format: fmt)
+      foreach_format(user, **u_opt) do |fmt|
+        url = url_for(**u_prm, format: fmt)
         opt = u_opt.merge(format: fmt)
-        get_as(user, url, **opt, only: READ_FORMATS)
+        if NO_READ.include?(fmt)
+          opt[:expect] = :not_found if able
+        end
+        get_as(user, url, **opt)
       end
     end
   end
 
   test 'org show - details of an existing org' do
     action  = :show
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
+    params  = PRM.merge(action: action)
+    options = OPT.merge(action: action, test: __method__, expect: :success)
 
     @readers.each do |user|
-      able  = can?(user, action, MODEL)
+      able  = permitted?(action, user)
       u_opt = able ? options : options.except(:controller, :action, :expect)
-      other = @other_org
+      u_prm = params.merge(id: @other_org.id)
 
-      TEST_FORMATS.each do |fmt|
-        url = url_for(id: other.id, **params, format: fmt)
+      foreach_format(user, **u_opt) do |fmt|
+        url = url_for(**u_prm, format: fmt)
         opt = u_opt.merge(format: fmt)
-        if able && user.org && (user.org != other)
+        if NO_READ.include?(fmt)
+          opt[:expect] = :not_found if able
+        elsif able && user.org && (user.org != @other_org)
           opt[:expect] = (fmt == :html) ? :redirect : :not_found
         end
-        get_as(user, url, **opt, only: READ_FORMATS)
+        get_as(user, url, **opt)
       end
     end
   end
 
   test 'org show_current - details of the current org' do
     action  = :show_current
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
+    params  = PRM.merge(action: action)
+    options = OPT.merge(action: action, test: __method__, expect: :success)
 
     @readers.each do |user|
-      able  = can?(user, action, MODEL)
+      able  = permitted?(action, user)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+      u_prm = params
 
-      TEST_FORMATS.each do |fmt|
+      foreach_format(user, **u_opt) do |fmt|
         rec = @test_org
-        url = url_for(id: rec.id, **params, format: fmt)
+        url = url_for(id: rec.id, **u_prm, format: fmt)
         opt = u_opt.merge(format: fmt)
-        get_as(user, url, **opt, only: READ_FORMATS)
+        if NO_READ.include?(fmt)
+          opt[:expect] = :not_found if able
+        end
+        get_as(user, url, **opt)
       end
     end
   end
@@ -123,163 +136,136 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
 
   test 'org new - import data for a new org' do
     action  = :new
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
+    params  = PRM.merge(action: action)
+    options = OPT.merge(action: action, test: __method__, expect: :success)
 
     @writers.each do |user|
-      able  = can?(user, action, MODEL)
+      able  = permitted?(action, user)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+      u_prm = params
 
-      TEST_FORMATS.each do |fmt|
-        url = url_for(**params, format: fmt)
+      foreach_format(user, **u_opt) do |fmt|
+        url = url_for(**u_prm, format: fmt)
         opt = u_opt.merge(format: fmt)
-        get_as(user, url, **opt, only: WRITE_FORMATS)
+        if NO_WRITE.include?(fmt)
+          opt[:expect] = :not_found if able
+        end
+        get_as(user, url, **opt)
       end
     end
   end
 
   test 'org create - a new org' do
     action  = :create
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
+    params  = PRM.merge(action: action)
+    options = OPT.merge(action: action, test: __method__)
 
     @writers.each do |user|
-      able  = can?(user, action, MODEL)
+      able  = permitted?(action, user)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+      u_prm = params
 
-      TEST_FORMATS.each do |fmt|
-        rec = new_record
-        url = url_for(**rec.fields, **params, format: fmt)
+      foreach_format(user, **u_opt) do |fmt|
+        rec = @generate.sample_for(action, unique: true)
+        url = url_for(**rec.fields, **u_prm, format: fmt)
         opt = u_opt.merge(format: fmt)
-        post_as(user, url, **opt, only: WRITE_FORMATS)
+        if NO_WRITE.include?(fmt)
+          opt[:expect] = able ? :not_found : :unauthorized
+        end
+        post_as(user, url, **opt)
       end
     end
   end
 
   test 'org edit - data for an existing org' do
     action  = :edit
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
+    params  = PRM.merge(action: action)
+    options = OPT.merge(action: action, test: __method__, expect: :success)
 
     @writers.each do |user|
-      able  = can?(user, action, MODEL)
+      able  = permitted?(action, user)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+      u_prm = params
 
-      TEST_FORMATS.each do |fmt|
-        rec = sample_for_edit
-        url = url_for(id: rec.id, **params, format: fmt)
+      foreach_format(user, **u_opt) do |fmt|
+        rec = @generate.sample_for(action)
+        url = url_for(id: rec.id, **u_prm, format: fmt)
         opt = u_opt.merge(format: fmt)
-        get_as(user, url, **opt, only: WRITE_FORMATS)
+        if NO_WRITE.include?(fmt)
+          opt[:expect] = :not_found if able
+        elsif !able || !permitted?(action, user, rec)
+          opt[:expect] = :redirect
+        end
+        get_as(user, url, **opt)
       end
     end
   end
 
   test 'org update - replace an existing org' do
     action  = :update
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
+    params  = PRM.merge(action: action)
+    options = OPT.merge(action: action, test: __method__)
 
     @writers.each do |user|
-      able  = can?(user, action, MODEL)
+      able  = permitted?(action, user)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+      u_prm = params
 
-      TEST_FORMATS.each do |fmt|
-        rec = sample_for_edit
-        url = url_for(**rec.fields, **params, format: fmt)
+      foreach_format(user, **u_opt) do |fmt|
+        rec = @generate.sample_for(action)
+        url = url_for(**rec.fields, **u_prm, format: fmt)
         opt = u_opt.merge(format: fmt)
-        put_as(user, url, **opt, only: WRITE_FORMATS)
+        if NO_WRITE.include?(fmt)
+          can = able && permitted?(action, user, rec)
+          opt[:expect] = can ? :no_content : :unauthorized
+        end
+        put_as(user, url, **opt)
       end
     end
   end
 
   test 'org delete - select an existing org for removal' do
     action  = :delete
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
+    params  = PRM.merge(action: action)
+    options = OPT.merge(action: action, test: __method__, expect: :success)
 
     @writers.each do |user|
-      able  = can?(user, action, MODEL)
+      able  = permitted?(action, user)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+      u_prm = params
 
-      TEST_FORMATS.each do |fmt|
-        rec = sample_for_delete
-        url = url_for(id: rec.id, **params, format: fmt)
+      foreach_format(user, **u_opt) do |fmt|
+        rec = @generate.sample_for(action)
+        url = url_for(id: rec.id, **u_prm, format: fmt)
         opt = u_opt.merge(format: fmt)
-        get_as(user, url, **opt, only: WRITE_FORMATS)
+        if NO_WRITE.include?(fmt)
+          opt[:expect] = :not_found if able
+        end
+        get_as(user, url, **opt)
       end
     end
   end
 
   test 'org destroy - remove an existing org' do
     action  = :destroy
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
+    params  = PRM.merge(action: action)
+    options = OPT.merge(action: action, test: __method__)
 
     @writers.each do |user|
-      able  = can?(user, action, MODEL)
+      able  = permitted?(action, user)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+      u_prm = params
 
-      TEST_FORMATS.each do |fmt|
-        rec = sample_for_delete
-        url = url_for(id: rec.id, **params, format: fmt)
+      foreach_format(user, **u_opt) do |fmt|
+        rec = @generate.sample_for(action)
+        url = url_for(id: rec.id, **u_prm, format: fmt)
         opt = u_opt.merge(format: fmt)
-        delete_as(user, url, **opt, only: WRITE_FORMATS)
+        if NO_WRITE.include?(fmt)
+          opt[:expect] = :no_content if able
+        end
+        delete_as(user, url, **opt)
       end
     end
-  end
-
-  # ===========================================================================
-  # :section: Methods
-  # ===========================================================================
-
-  public
-
-  # @private
-  # @type [String,nil]
-  attr_accessor :edit_id
-
-  # @private
-  # @type [String,nil]
-  attr_accessor :delete_id
-
-  # Push a dummy item into the database for editing.
-  #
-  # @param [Symbol, String, Hash] src
-  #
-  # @return [Org]
-  #
-  def sample_for_edit(src = :edit_example)
-    current = edit_id && Org.find_by(id: edit_id)
-    current&.delete
-    new_record(src).tap do |record|
-      self.edit_id = record.id if record.save!
-    end
-  end
-
-  # Push a dummy item into the database for deletion.
-  #
-  # @param [Symbol, String, Hash] src
-  #
-  # @return [Org]
-  #
-  def sample_for_delete(src = :delete_example)
-    current = delete_id && Org.find_by(id: delete_id)
-    return current if current && (src == :delete_example)
-    current&.delete
-    new_record(src).tap do |record|
-      self.delete_id = record.id if record.save!
-    end
-  end
-
-  # Generate a new non-persisted item to support new item creation.
-  #
-  # @param [Symbol, String, Hash] src
-  #
-  # @return [Org]
-  #
-  def new_record(src = :example)
-    fields = src.is_a?(Hash) ? src : orgs(src.to_sym).fields.except(:id)
-    Org.new(fields)
   end
 
   # ===========================================================================
@@ -293,9 +279,10 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
   #
   # @param [Hash] opt
   #
-  # @return [String, nil]
+  # @return [String]
   #
   def index_redirect(**opt)
+    opt.reverse_merge!(PRM)
     opt[:user] = find_user(opt[:user] || current_user)
     opt[:dst]  = opt[:user]&.administrator? ? :list_all : :show
     super

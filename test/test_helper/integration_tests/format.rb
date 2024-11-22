@@ -7,68 +7,14 @@
 #
 module TestHelper::IntegrationTests::Format
 
-  # Table of formats and associated MIME media types.
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  MEDIA_TYPE = {
-    any:  '*/*',
-    html: 'text/html',
-    json: 'application/json',
-    text: 'text/plain',
-    xml:  'application/xml',
-  }.freeze
+  include TestHelper::Common
 
-  # Table of MIME media types and associated formats.
-  #
-  # @type [Hash{String=>Symbol}]
-  #
-  REVERSE_MEDIA_TYPE = MEDIA_TYPE.invert.freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # The format type associated with the given value.
-  #
-  # @param [Symbol, String, nil] type
-  #
-  # @return [Symbol, nil]
-  #
-  def format_type(type)
-    type &&= type.to_s.downcase or return
-    type.include?('/') ? REVERSE_MEDIA_TYPE[type] : type.to_sym
+  # Non-functional hints for RubyMine type checking.
+  # :nocov:
+  unless ONLY_FOR_DOCUMENTATION
+    include Minitest::Assertions # disambiguate :assert_equal
   end
-
-  # Indicate whether *type* is HTML.
-  #
-  # @param [Symbol, String, nil] type
-  #
-  def html?(type)
-    format_type(type) == :html
-  end
-
-  # Indicate whether *type* is JSON.
-  #
-  # @param [Symbol, String, nil] type
-  #
-  # @note Currently unused
-  #
-  def json?(type)
-    format_type(type) == :json
-  end
-
-  # Indicate whether *type* is XML.
-  #
-  # @param [Symbol, String, nil] type
-  #
-  # @note Currently unused
-  #
-  def xml?(type)
-    format_type(type) == :xml
-  end
+  # :nocov:
 
   # ===========================================================================
   # :section:

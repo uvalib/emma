@@ -3,9 +3,9 @@
 # frozen_string_literal: true
 # warn_indent:           true
 
-require 'test_helper'
+require 'application_controller_test_case'
 
-class HelpControllerTest < ActionDispatch::IntegrationTest
+class HelpControllerTest < ApplicationControllerTestCase
 
   # ===========================================================================
   # :section: Read tests

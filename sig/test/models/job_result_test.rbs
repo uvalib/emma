@@ -1,2 +1,2 @@
-class JobResultTest < ActiveSupport::TestCase
+class JobResultTest < ApplicationModelTestCase
 end

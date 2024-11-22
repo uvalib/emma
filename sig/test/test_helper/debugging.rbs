@@ -178,8 +178,8 @@ module TestHelper::Debugging
   attr_accessor silence_tracing: bool | nil
 end
 
-# This module is included in ActionDispatch::IntegrationTest to support
-# tracing of HTTP method calls.
+# This module is included in ApplicationControllerTestCase to support tracing
+# of HTTP method calls.
 #
 # @!method original_get
 #   The superclass :get method (without pre/post trace output).

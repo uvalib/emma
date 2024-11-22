@@ -5,13 +5,63 @@ module TestHelper::SystemTests::Authentication
 
   include TestHelper::SystemTests::Common
 
-  # Sign in as one of the pre-configured users.
+  include TestHelper::SystemTests::Flash
+
+  include TestHelper::SystemTests::Keyboard
+
+  # Sign in as one of the pre-configured users if #AUTH_FAILURE is displayed.
   #
-  # @param [String, Symbol, User, nil] user
+  # @param [String, Symbol, User, nil] arg
   #
   # @raise [Minitest::Assertion]
   #
   # @return [void]
   #
-  def sign_in_as: ((String|Symbol|User|nil) user) -> void
+  # @note Currently unused.
+  #
+  def if_needed_sign_in_as: ((String|Symbol|User|nil) arg) -> void
+
+  # Verify that #AUTH_FAILURE is displayed and sign in as a user.
+  #
+  # @param [String, Symbol, User, nil] arg
+  #
+  # @raise [Minitest::Assertion]
+  #
+  # @return [void]
+  #
+  # @note Currently unused.
+  #
+  def required_sign_in_as: ((String|Symbol|User|nil) arg) -> void
+
+  # Sign in as one of the pre-configured users.
+  #
+  # @param [String, Symbol, User, nil] arg
+  #
+  # @raise [Minitest::Assertion]
+  #
+  # @return [Boolean]
+  #
+  def sign_in_as
+    : (nil                arg) -> false
+    | (String|Symbol|User arg) -> bool
+
+  # Sign out as `#current_user`.
+  #
+  # @param [Boolean] verify           If *true*, assert success.
+  #
+  # @return [Boolean]
+  #
+  def sign_out: (?verify: bool) -> bool
+
+  # Perform sign-in/sign-out.
+  #
+  # @param [String]  expect   Expected flash message.
+  # @param [Boolean] verify   If *true*, assert success.
+  #
+  # @return [Boolean]
+  #
+  # @yield  Sign-in/sign-out actions.
+  # @yieldreturn [void]
+  #
+  def sign_in_out: (expect: String, ?verify: bool) -> bool
 end

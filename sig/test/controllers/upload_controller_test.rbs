@@ -1,13 +1,11 @@
-class UploadControllerTest < ActionDispatch::IntegrationTest
+class UploadControllerTest < ApplicationControllerTestCase
   MODEL: Class
 
-  CONTROLLER: Symbol
+  CTRLR: Symbol
 
-  PARAMS: symHash
+  PRM: symHash
 
-  OPTIONS: symHash
-
-  TEST_USERS: symArray
+  OPT: symHash
 
   TEST_READERS: symArray
 
@@ -17,59 +15,21 @@ class UploadControllerTest < ActionDispatch::IntegrationTest
 
   WRITE_FORMATS: symArray | Symbol
 
+  NO_READ: symArray
+
+  NO_WRITE: symArray
+
   @readers: Array[User|nil]
 
   @writers: Array[User|nil]
 
-  # @private
-  # @type [Integer,nil]
-  attr_accessor create_id: Integer | nil
-
-  # @private
-  # @type [Integer,nil]
-  attr_accessor edit_id: Integer | nil
-
-  # @private
-  # @type [Integer,nil]
-  attr_accessor delete_id: Integer | nil
-
-  # Push a dummy item into the database for creating.
-  #
-  # @param [Symbol, String, Hash] src
-  #
-  # @return [Upload]
-  #
-  def sample_for_create: (?(Symbol|String|symHash) src) -> Upload
-
-  # Push a dummy item into the database for editing.
-  #
-  # @param [Symbol, String, Hash] src
-  #
-  # @return [Upload]
-  #
-  def sample_for_edit: (?(Symbol|String|symHash) src) -> Upload
-
-  # Push a dummy item into the database for deletion.
-  #
-  # @param [Symbol, String, Hash] src
-  #
-  # @return [Upload]
-  #
-  def sample_for_delete: (?(Symbol|String|symHash) src) -> Upload
-
-  # Generate a new non-persisted item to support new item creation.
-  #
-  # @param [Symbol, String, Hash] src
-  #
-  # @return [Upload]
-  #
-  def new_record: (?(Symbol|String|symHash) src) -> Upload
+  @generate: UploadSampleGenerator
 
   # The default :index action redirects to :list_own.
   #
   # @param [Hash] opt
   #
-  # @return [String, nil]
+  # @return [String]
   #
-  def index_redirect: (**untyped opt) ?{ () -> (Symbol|String|Proc|nil) } -> (String | nil)
+  def index_redirect: (**untyped opt) ?{ () -> (Symbol|String|Proc|nil) } -> String
 end

@@ -14,13 +14,32 @@ module TestHelper::SystemTests::Common
 
   # :nocov:
   #include Minitest::Assertions
-
   #include Capybara::Node::Actions
-
   #include Capybara::Node::Finders
-
+  #include ActionDispatch::Routing::UrlFor
   #include TestHelper::SystemTests::Authentication
   # :nocov:
+
+  # Get the number of total records reported by a counter element.
+  #
+  # @param [Integer, nil] expected    Assert that the expected count is found.
+  # @param [String, nil]  selector    Additional counter element selector.
+  # @param [String]       css         Base counter element selector.
+  #
+  # @return [Integer]
+  #
+  def title_total_count: (?expected: Integer|nil, ?selector: String|nil, ?css: String) -> Integer
+
+  # Get the number of total records from the 'data-record-total' attribute of a
+  # table element.
+  #
+  # @param [Integer, nil] expected    Assert that the expected count is found.
+  # @param [String, nil]  selector    Additional table selector.
+  # @param [String]       css         Base table selector.
+  #
+  # @return [Integer]
+  #
+  def data_record_total: (?expected: Integer|nil, ?selector: String|nil, ?css: String) -> Integer
 
   # Assert that *url* matches `current_url`.
   #
@@ -86,26 +105,19 @@ module TestHelper::SystemTests::Common
 
   # Block until the browser can confirm that it is on the target page.
   #
-  # @param [String, Array, nil] target  One or more acceptable target URLs, or
-  #                                       *nil* for any new page.
-  # @param [Boolean]            port    Passed to #get_browser_url.
-  # @param [Boolean]            fatal   If *false* don't assert.
-  # @param [Boolean]            trace   Output each URL acquired.
-  # @param [Numeric]            wait    Overall time limit.
+  # @param [Array, nil] targets       One or more acceptable target URLs, or
+  #                                     *nil* for any new page.
+  # @param [Boolean]    port          Passed to #get_browser_url.
+  # @param [Boolean]    fatal         If *false*, don't assert.
+  # @param [Boolean]    trace         Output each URL acquired.
+  # @param [Numeric]    wait          Overall time limit.
   #
-  # @raise [Minitest::Assertion]        If the browser failed to get to the
-  #                                       expected page and *fatal* is *true*.
+  # @raise [Minitest::Assertion]      If the browser failed to get to the
+  #                                     expected page and *fatal* is *true*.
   #
   # @return [Boolean]
   #
-  def wait_for_page: (?(String|strArray|nil) target, ?port: bool, ?fatal: bool, ?trace: bool, ?wait: Numeric) -> bool
-
-  # If DEBUG_TESTS is true, this will take a screenshot (ignoring an error that
-  # has been observed [in rare cases] since these are informational-only).
-  #
-  # @return [void]
-  #
-  def screenshot: () -> void
+  def wait_for_page: (*(String|strArray|nil) targets, ?port: bool, ?fatal: bool, ?trace: bool, ?wait: Numeric) -> bool
 
   # Depending on the context, there may be two menus for performing an action
   # on a selected item.
@@ -142,4 +154,64 @@ module TestHelper::SystemTests::Common
   # @return [Symbol]
   #
   def menu_action: (Symbol|String action) -> Symbol
+
+  # Return the expected URL(s) for an action form page.
+  #
+  # @param [Integer, String, nil] id
+  # @param [Hash]                 params
+  #
+  # @return [Array<String>]           If *id* is given.
+  # @return [String]                  If *id* is not given.
+  #
+  def form_page_url
+    : ( id: Integer|String, **untyped params) -> strArray
+    | (?id: nil,            **untyped params) -> String
+
+  # Assert that the requested URL could not be visited and that an appropriate
+  # flash error message was displayed.
+  #
+  # @param [String, Array<String>] url
+  # @param [String, Symbol, nil]   action   Basis for expected flash message.
+  # @param [String, Symbol, User, nil] as     Sign-in as user.
+  #
+  # @return [void]
+  #
+  def assert_no_visit: (String|strArray url, ?(String|Symbol|nil) action, ?as: String|Symbol|User|nil) -> void
+
+  # Assert that an appropriate flash error message is being displayed.
+  #
+  # @param [String, Symbol, nil] action
+  #
+  # @return [void]
+  #
+  def assert_not_authorized: (String|Symbol|nil action) -> void
+
+  # Text indicating an administrator feature.
+  #
+  # @type [String]
+  #
+  ADMIN_ONLY: String
+
+  # Text indicating an authentication failure.
+  #
+  # @type [String]
+  #
+  AUTH_FAILURE: String
+
+  # Return a partial flash message based on *action*.
+  #
+  # @param [Symbol, String, nil] action
+  #
+  # @return [String]
+  #
+  def not_authorized_for: (Symbol|String|nil action) -> String
+
+  # If DEBUG_TESTS is true, this will take a screenshot (ignoring an error that
+  # has been observed [in rare cases] since these are informational-only).
+  #
+  # @param [Hash] opt                 Passed to #take_screenshot.
+  #
+  # @return [void]
+  #
+  def screenshot: (**untyped opt) -> void
 end

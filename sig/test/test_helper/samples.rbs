@@ -13,12 +13,336 @@ module TestHelper::Samples
   # @type [String]
   #
   UPLOAD_FILE: String
+end
 
-  # Generate a unique user account email name.
+class SampleGenerator
+  include TestHelper::Utility
+
+  # Suitable files in 'test/fixtures' will define these fixtures.
   #
-  # @param [User, String] original
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  FIXTURE: Hash[Symbol,Symbol]
+
+  # The test class creating this instance in its #setup block.
+  #
+  # @type [ActiveSupport::TestCase]
+  #
+  attr_accessor context: ActiveSupport::TestCase
+
+  # Create a new instance.
+  #
+  # @param [ActiveSupport::TestCase] context
+  # @param [Hash]                    opt
+  #
+  # @option opt [Class]  :model_class
+  # @option opt [String] :fixture_name
+  #
+  def initialize: (ActiveSupport::TestCase context, **untyped opt) -> void
+
+  # Derive the class of the associated model from the given source, using the
+  # MODEL constant if available.
+  #
+  # @param [any, nil] item      Symbol, String, Class, Model; def: `#context`
+  #
+  # @return [Class]
+  #
+  def model_class: (?(Symbol|String|Class|ApplicationRecord|nil) item) -> Class
+
+  @model_class: Class
+
+  # The name of the fixture set for the indicated model type.
+  #
+  # @param [Symbol, String, Class, ApplicationRecord] item
   #
   # @return [String]
   #
-  def unique_email: (User|String original) -> String
+  def fixture_name: (?(Symbol|String|Class|ApplicationRecord|nil) item) -> String
+
+  @fixture_name: String
+
+  # @private
+  # @type [String, Integer, nil]
+  attr_accessor edit_id: String | Integer | nil
+
+  # @private
+  # @type [String, Integer, nil]
+  attr_accessor delete_id: String | Integer | nil
+
+  # Invoke the method associated with *action*.
+  #
+  # @param [Symbol] action
+  # @param [Hash]   opt               Passed to the generation method.
+  #
+  # @return [Model]
+  #
+  def sample_for: (Symbol action, **untyped opt) ?{ (symHash attr, **untyped opt) -> void } -> Model
+
+  # Create a new un-persisted item for the purpose of supplying field values to
+  # an item submission form.
+  #
+  # @param [Model,Hash,Symbol] src    The exemplar record or fixture name.
+  # @param [Hash]              opt    Additional field values.
+  #
+  # @return [Model]
+  #
+  def sample_for_new: (?src: Model|symHash|Symbol, **untyped opt) ?{ (symHash attr, **untyped opt) -> void } -> Model
+
+  # Create a new un-persisted item for the purpose of supplying field values to
+  # submit a new item to the database.
+  #
+  # @param [Model,Hash,Symbol] src    The exemplar record or fixture name.
+  # @param [Hash]              opt    Additional field values.
+  #
+  # @return [Model]
+  #
+  def sample_for_create: (?src: Model|symHash|Symbol, **untyped opt) ?{ (symHash attr, **untyped opt) -> void } -> Model
+
+  # Push a dummy item into the database for the purpose of supplying field
+  # values to an item edit form.
+  #
+  # @param [Model,Hash,Symbol] src    The exemplar record or fixture name.
+  # @param [Hash]              opt    Additional field values.
+  #
+  # @return [Model]
+  #
+  def sample_for_edit: (?src: Model|symHash|Symbol, **untyped opt) ?{ (symHash attr, **untyped opt) -> void } -> Model
+
+  # Push a dummy item into the database for editing.
+  #
+  # @param [Model,Hash,Symbol] src    The exemplar record or fixture name.
+  # @param [Hash]              opt    Additional field values.
+  #
+  # @return [Model]
+  #
+  def sample_for_update: (?src: Model|symHash|Symbol, **untyped opt) ?{ (symHash attr, **untyped opt) -> void } -> Model
+
+  # Push a dummy item into the database for deletion.
+  #
+  # @param [Model,Hash,Symbol] src    The exemplar record or fixture name.
+  # @param [Hash]              opt    Additional field values.
+  #
+  # @return [Model]
+  #
+  def sample_for_delete: (?src: Model|symHash|Symbol, **untyped opt) ?{ (symHash attr, **untyped opt) -> void } -> Model
+
+  # Push a dummy item into the database for deletion.
+  #
+  # @param [Model,Hash,Symbol] src    The exemplar record or fixture name.
+  # @param [Hash]              opt    Additional field values.
+  #
+  # @return [Model]
+  #
+  def sample_for_destroy: (?src: Model|symHash|Symbol, **untyped opt) ?{ (symHash attr, **untyped opt) -> void } -> Model
+
+  # Invoke #new_record with the appropriate fixture for *action*.
+  #
+  # @param [Symbol] action
+  # @param [Hash]   opt               Passed to #new_record.
+  #
+  # @return [Model]
+  #
+  def new_record_for: (Symbol action, **untyped opt) ?{ (symHash attr, **untyped opt) -> void } -> Model
+
+  # Generate a new persisted item record based on *src*.
+  #
+  # @param [Model,Hash,Symbol,nil] src  An exemplar record or fixture name.
+  # @param [Hash]                  opt  Passed to #new_item.
+  # @param [Proc]                  blk  Passed to #new_item.
+  #
+  # @return [Model]
+  #
+  def new_record: (?(Model|symHash|Symbol|nil) src, **untyped opt) ?{ (symHash attr, **untyped opt) -> void } -> Model
+
+  # Generate a new un-persisted item record based on *src*.
+  #
+  # @param [Model,Hash,Symbol,nil] src  An exemplar record or fixture name.
+  # @param [Hash]                  opt  Passed to #fields.
+  # @param [Proc]                  blk  Passed to #fields.
+  #
+  # @return [Model]
+  #
+  def new_item: (?(Model|symHash|Symbol|nil) src, **untyped opt) ?{ (symHash attr, **untyped opt) -> void } -> Model
+
+  # Invoke #fields with the appropriate fixture for *action*.
+  #
+  # @param [Symbol] action
+  # @param [Hash]   opt               Passed to #fields.
+  #
+  # @return [Hash]
+  #
+  def fields_for: (Symbol action, **untyped opt) ?{ (symHash attr, **untyped opt) -> void } -> symHash
+
+  # Generate field values based on *src*.
+  #
+  # @param [Model,Hash,Symbol,nil] src  An exemplar record or fixture name.
+  # @param [Hash]                  opt  Additional field values except for
+  #                                       #FIELDS_OPT which are passed to the
+  #                                       block.
+  #
+  # @return [Hash]
+  #
+  # @yield [attr] Expose fields for adjustment.
+  # @yieldparam [Hash] attr   Field values for the new record.
+  # @yieldreturn [void]       The block may update *attr* directly.
+  #
+  def fields: (?(Model|symHash|Symbol|nil) src, **untyped opt) ?{ (symHash attr, **untyped opt) -> void } -> symHash
+
+  # Used within #fields overrides to provide values to specific fields.
+  #
+  # @param [Hash]      attr
+  # @param [Hash, nil] preserve
+  # @param [Hash, nil] mutate
+  # @param [Boolean]   force
+  # @param [Hash]      opt
+  #
+  # @yield Provide field value setters.
+  # @yieldreturn [Hash{Symbol=>Proc}]
+  #
+  def set_field: (symHash attr, preserve: symHash|nil, mutate: symHash|nil, force: bool|:unset, **untyped opt) { () -> Hash[Symbol,Proc] } -> void
+
+  # Transform a provided option value into a Hash or remove it if it is blank.
+  #
+  # @param [Hash]   opt
+  # @param [Symbol] key
+  #
+  # @return [void]
+  #
+  def set_field_option!: (symHash opt, Symbol key) -> void
+
+  # Get the indicated fixture record.
+  #
+  # @param [Symbol] name
+  #
+  # @return [Model, nil]
+  #
+  def fixture: (Symbol name) -> (Model | nil)
+
+  # Local options for #set_field.
+  #
+  # @type [Array<Symbol>]
+  #
+  SET_FIELD_OPT: symArray
+
+  # Options for #fields.
+  #
+  # @type [Array<Symbol>]
+  #
+  FIELDS_OPT: symArray
+end
+
+class ManifestSampleGenerator < SampleGenerator
+  # Generate field values based on *src*.
+  #
+  # @param [Model,Hash,Symbol,nil] src  An exemplar record or fixture name.
+  # @param [Hash]                  opt  Additional field values except for
+  #                                       #FIELDS_OPT which are passed to the
+  #                                       block, and local:
+  #
+  # @option opt [User] :user            Calling user.
+  #
+  # @return [Hash]
+  #
+  def fields: (?(Model|symHash|Symbol|nil) src, **untyped opt) ?{ (symHash attr, **untyped opt) -> void } -> symHash
+
+  def manifest_name: (?(Model|symHash|nil) item, **untyped opt) -> String
+end
+
+class OrgSampleGenerator < SampleGenerator
+  # Generate field values based on *src*.
+  #
+  # @param [Model,Hash,Symbol,nil] src  An exemplar record or fixture name.
+  # @param [Hash]                  opt  Additional field values except for
+  #                                       #FIELDS_OPT which are passed to the
+  #                                       block.
+  #
+  # @return [Hash]
+  #
+  # @yield [attr] Expose fields for adjustment.
+  # @yieldparam [Hash] attr   Field values for the new record.
+  # @yieldreturn [void]       The block may update *attr* directly.
+  #
+  def fields: (?(Model|symHash|Symbol|nil) src, **untyped opt) ?{ (symHash attr, **untyped opt) -> void } -> symHash
+
+  def org_name: (?(Model|symHash|nil) item, **untyped opt) -> String
+end
+
+class UploadSampleGenerator < SampleGenerator
+  include Emma::Json
+
+  # @private
+  # @type [String,Integer,nil]
+  attr_accessor create_id: untyped
+
+  # Push a dummy item into the database in the 'validating' state.
+  #
+  # @param [Hash] opt               Passed to super.
+  #
+  # @return [Upload]
+  #
+  def sample_for_create: (**untyped opt) ?{ (symHash attr, **untyped opt) -> void } -> Upload
+
+  # Push a dummy item into the database for editing in the 'validating' state.
+  #
+  # @param [Hash] opt               Passed to super.
+  #
+  # @return [Upload]
+  #
+  def sample_for_update: (**untyped opt) ?{ (symHash attr, **untyped opt) -> void } -> Upload
+
+  # Generate field values based on *src*.
+  #
+  # @param [Model,Hash,Symbol,nil] src  An exemplar record or fixture name.
+  # @param [Hash]                  opt  Additional field values except for
+  #                                       #FIELDS_OPT which are passed to the
+  #                                       block.
+  #
+  # @return [Hash]
+  #
+  # @yield [attr] Expose fields for adjustment.
+  # @yieldparam [Hash] attr   Field values for the new record.
+  # @yieldreturn [void]       The block may update *attr* directly.
+  #
+  def fields: (?(Model|symHash|Symbol|nil) src, **untyped opt) ?{ (symHash attr, **untyped opt) -> void } -> symHash
+
+  # Generate a distinct submission title.
+  #
+  # @param [Upload, Hash, nil] item
+  # @param [Hash]              opt    Options for #unique_name.
+  #
+  # @return [String]
+  #
+  def upload_title: (?(Model|symHash|nil) item, **untyped opt) -> String
+
+  # Generate a distinct submission author.
+  #
+  # @param [Upload, Hash, nil] item
+  # @param [Hash]              opt    Options for #unique_name.
+  #
+  # @return [String]
+  #
+  def upload_author: (?(Model|symHash|nil) item, **untyped opt) -> String
+end
+
+class UserSampleGenerator < SampleGenerator
+  # Generate field values based on *src*.
+  #
+  # @param [Model,Hash,Symbol,nil] src  An exemplar record or fixture name.
+  # @param [Hash]                  opt  Additional field values except for
+  #                                       #FIELDS_OPT which are passed to the
+  #                                       block, and local:
+  #
+  # @option opt [User] :user            Calling user.
+  #
+  # @return [Hash]
+  #
+  def fields: (?(Model|symHash|Symbol|nil) src, **untyped opt) ?{ (symHash attr, **untyped opt) -> void } -> symHash
+
+  # Generate a distinct user name.
+  #
+  # @param [User, String, nil] original
+  #
+  # @return [String]
+  #
+  def account_name: (User|String|nil original) -> ::String
 end

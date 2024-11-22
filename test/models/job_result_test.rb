@@ -3,9 +3,9 @@
 # frozen_string_literal: true
 # warn_indent:           true
 
-require 'test_helper'
+require 'application_model_test_case'
 
-class JobResultTest < ActiveSupport::TestCase
+class JobResultTest < ApplicationModelTestCase
 
   test 'model - valid job result' do
     run_test(__method__) do

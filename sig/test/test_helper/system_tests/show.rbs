@@ -11,18 +11,20 @@ module TestHelper::SystemTests::Show
 
   # Assert that the current page is a valid index page.
   #
-  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Symbol,String,Class,Model,nil] ctrlr
   # @param [String]                        title
   #
   # @raise [Minitest::Assertion]
   #
   # @return [true]
   #
-  def assert_valid_show_page: (Symbol|String|Class|Model|nil model, ?title: String|nil) -> true
+  # @note Currently unused.
+  #
+  def assert_valid_show_page: (Symbol|String|Class|Model|nil ctrlr, ?title: String|nil) -> true
 
   # Visit an entry on an index page.
   #
-  # @param [Symbol,String,Class,Model,nil] model
+  # @param [Symbol,String,Class,Model,nil] ctrlr
   # @param [Capybara::Node::Element, nil]  entry
   # @param [Integer, Symbol]               index
   # @param [String]                        entry_css
@@ -35,5 +37,7 @@ module TestHelper::SystemTests::Show
   # @yieldparam [String] title
   # @yieldreturn [void]
   #
-  def visit_show_page: (Symbol|String|Class|Model|nil model, ?entry: Capybara::Node::Element|nil, ?index: Integer|Symbol|nil, ?entry_css: String|nil) ?{ (String) -> void } -> true
+  # @note Currently unused.
+  #
+  def visit_show_page: (Symbol|String|Class|Model|nil ctrlr, ?entry: Capybara::Node::Element|nil, ?index: Integer|Symbol|nil, ?entry_css: String|nil) ?{ (String) -> void } -> true
 end

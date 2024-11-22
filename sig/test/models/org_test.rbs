@@ -1,2 +1,2 @@
-class OrgTest < ActiveSupport::TestCase
+class OrgTest < ApplicationModelTestCase
 end

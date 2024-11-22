@@ -1,47 +1,7 @@
 # Support for sign-in.
 #
 module TestHelper::IntegrationTests::Format
-  # Table of formats and associated MIME media types.
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  MEDIA_TYPE: Hash[Symbol,String]
-
-  # Table of MIME media types and associated formats.
-  #
-  # @type [Hash{String=>Symbol}]
-  #
-  REVERSE_MEDIA_TYPE: Hash[String,Symbol]
-
-  # The format type associated with the given value.
-  #
-  # @param [Symbol, String, nil] type
-  #
-  # @return [Symbol, nil]
-  #
-  def format_type: (Symbol|String|nil `type`) -> (Symbol | nil)
-
-  # Indicate whether *type* is HTML.
-  #
-  # @param [Symbol, String, nil] type
-  #
-  def html?: (Symbol|String|nil `type`) -> bool
-
-  # Indicate whether *type* is JSON.
-  #
-  # @param [Symbol, String, nil] type
-  #
-  # @note Currently unused
-  #
-  def json?: (Symbol|String|nil `type`) -> bool
-
-  # Indicate whether *type* is XML.
-  #
-  # @param [Symbol, String, nil] type
-  #
-  # @note Currently unused
-  #
-  def xml?: (Symbol|String|nil `type`) -> bool
+  include TestHelper::Common
 
   # Assert that the response is 'text/html'.
   #

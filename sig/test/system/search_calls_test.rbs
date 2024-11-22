@@ -1,9 +1,7 @@
 class SearchCallsTest < ApplicationSystemTestCase
-  CONTROLLER: Symbol
+  CTRLR: Symbol
 
-  PARAMS: symHash
+  PRM: symHash
 
-  TEST_USER: Symbol
-
-  @user: User
+  @dev: User
 end

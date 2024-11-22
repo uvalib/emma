@@ -1,78 +1,81 @@
 class UploadsTest < ApplicationSystemTestCase
   MODEL: Class
 
-  CONTROLLER: Symbol
+  CTRLR: Symbol
 
-  PARAMS: symHash
+  PRM: symHash
 
-  INDEX_TITLE: String
-
-  LIST_ACTIONS: symArray
-
-  TEST_USER: Symbol
-
-  @total: Integer
-
-  @user: User
+  TITLE: String
 
   @file: Pathname
 
-  # Perform a test to list EMMA submissions visible to the test user.
+  @admin: User
+
+  @manager: User
+
+  @member: User
+
+  @generate: UploadSampleGenerator
+
+  # Perform a test to list EMMA submissions visible to *user*.
   #
-  # @param [Symbol]       action
-  # @param [String]       title
+  # @param [User, nil]    user
   # @param [Integer, nil] total       Expected total number of items.
-  # @param [String, nil]  redir_url
+  # @param [String, nil]  title       Default based on *user* and opt[:action].
   # @param [Symbol]       meth        Calling test method.
   # @param [Hash]         opt         URL parameters.
   #
   # @return [void]
   #
-  def list_test: (action: Symbol, title: String, total: Integer|nil, ?redir_url: String|nil, ?meth: Symbol|nil, **untyped opt) -> void
+  def list_test: ((User|nil) user, ?total: Integer|nil, ?title: String|nil, ?meth: Symbol|nil, **untyped opt) -> void
+
+  # Perform a test to show an EMMA submission visible to *user*.
+  #
+  # @param [User, nil]   user
+  # @param [Upload, nil] target
+  # @param [String, nil] title
+  # @param [Symbol]      meth         Calling test method.
+  # @param [Hash]        opt          URL parameters.
+  #
+  # @return [void]
+  #
+  def show_test: ((User|nil) user, ?target: Upload|nil, ?title: String|nil, ?meth: Symbol|nil, **untyped opt) -> void
 
   # Perform a test to create a new EMMA submission.
   #
-  # @param [Boolean] direct
-  # @param [Symbol]  meth             Calling test method.
-  # @param [Hash]    opt              Added to URL parameters.
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
   #
   # @return [void]
   #
-  def new_test: (direct: bool, ?meth: Symbol|nil, **untyped opt) -> void
+  def new_test: ((User|nil) user, ?meth: Symbol|nil, **untyped opt) -> void
 
   # Perform a test to select then modify an EMMA submission.
   #
-  # @param [Boolean] direct
-  # @param [Symbol]  meth             Calling test method.
-  # @param [Hash]    opt              Added to URL parameters.
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
   #
   # @return [void]
   #
-  def edit_select_test: (direct: bool, ?meth: Symbol|nil, **untyped opt) -> void
+  def edit_test: ((User|nil) user, ?meth: Symbol|nil, **untyped opt) -> void
 
   # Perform a test to select then remove an EMMA submission.
   #
-  # @param [Boolean] direct
-  # @param [Symbol]  meth             Calling test method.
-  # @param [Hash]    opt              Added to URL parameters.
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
   #
   # @return [void]
   #
-  def delete_select_test: (direct: bool, ?meth: Symbol|nil, **untyped opt) -> void
-
-  # Generate a distinct submission title.
-  #
-  # @param [Hash] opt                 Test options
-  #
-  # @return [String]
-  #
-  def upload_title: (**untyped opt) -> String
+  def delete_test: ((User|nil) user, ?meth: Symbol|nil, **untyped opt) -> void
 
   # The default :index action redirects to :list_own.
   #
   # @param [Hash] opt
   #
-  # @return [String, nil]
+  # @return [String]
   #
-  def index_redirect: (**untyped opt) ?{ () -> (Symbol|String|Proc|nil) } -> (String | nil)
+  def index_redirect: (**untyped opt) ?{ () -> (Symbol|String|Proc|nil) } -> String
 end

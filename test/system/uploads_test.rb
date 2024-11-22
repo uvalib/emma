@@ -7,112 +7,136 @@ require 'application_system_test_case'
 
 class UploadsTest < ApplicationSystemTestCase
 
-  MODEL        = Upload
-  CONTROLLER   = :upload
-  PARAMS       = { controller: CONTROLLER }.freeze
-  INDEX_TITLE  = page_title(**PARAMS, action: :index).freeze
-  LIST_ACTIONS = %i[list_all list_org list_own].freeze
-
-  TEST_USER    = :test_dso_1
+  MODEL = Upload
+  CTRLR = :upload
+  PRM   = { controller: CTRLR }.freeze
+  TITLE = page_title(**PRM, action: :index).freeze
 
   setup do
-    @user = find_user(TEST_USER)
-    @file = file_fixture(UPLOAD_FILE)
+    @file     = file_fixture(UPLOAD_FILE)
+    @admin    = find_user(:test_adm)
+    @manager  = find_user(:test_man_1)
+    @member   = find_user(:test_dso_1)
+    @generate = UploadSampleGenerator.new(self)
   end
 
   # ===========================================================================
   # :section: Read tests
   # ===========================================================================
 
-  test 'uploads - index' do
-    action = :index
-    params = PARAMS.merge(action: action, meth: __method__)
-    title  = page_title(**params)
-    total  = nil # This will varying depending on the redirection destination.
-    redir  = index_redirect(**params)
-    list_test(title: title, total: total, redir_url: redir, **params)
+  test 'uploads - index - anonymous' do
+    list_test(nil, meth: __method__)
   end
 
-  test 'uploads - list_all' do
-    # NOTE: There's an issue with looping in attempting to sign-in which causes
-    #   this to fail inexplicably. Since this test user can't perform this
-    #   action anyway, this test needs to be skipped for now.
-    unless @user.can?(:list_all, MODEL)
-      # noinspection RubyJumpError
-      return not_applicable("#{@user} is not an administrator")
-    end
-    action = :list_all
-    params = PARAMS.merge(action: action, meth: __method__)
-    title  = page_title(**params)
-    total  = fixture_count(MODEL)
-    list_test(title: title, total: total, **params)
+  test 'uploads - index - member' do
+    list_test(@member, meth: __method__)
   end
 
-  test 'uploads - list_org' do
+  test 'uploads - index - admin' do
+    list_test(@admin, meth: __method__)
+  end
+
+  test 'uploads - list_all - anonymous' do
+    list_test(nil, meth: __method__, action: :list_all)
+  end
+
+  test 'uploads - list_all - member' do
+    list_test(@member, meth: __method__, action: :list_all)
+  end
+
+  test 'uploads - list_all - admin' do
+    list_test(@admin, meth: __method__, action: :list_all)
+  end
+
+  test 'uploads - list_org - anonymous' do
+    list_test(nil, meth: __method__, action: :list_org)
+  end
+
+  test 'uploads - list_org - member' do
+    user   = @member
     action = :list_org
-    params = PARAMS.merge(action: action, meth: __method__)
-    title  = page_title(**params, name: @user&.org&.label)
-    total  = fixture_count_for_org(MODEL, @user)
-    list_test(title: title, total: total, **params)
+    title  = page_title(action: action, name: user.org&.label)
+    list_test(user, meth: __method__, action: action, title: title)
   end
 
-  test 'uploads - list_own' do
-    action = :list_own
-    params = PARAMS.merge(action: action, meth: __method__)
-    title  = page_title(**params, name: @user&.label.inspect)
-    total  = fixture_count_for_user(MODEL, @user)
-    list_test(title: title, total: total, **params)
+  test 'uploads - list_org - admin' do
+    list_test(@admin, meth: __method__, action: :list_org)
   end
 
-  test 'uploads - show' do
-    action    = :show
-    item      = uploads(:emma_completed)
-    params    = PARAMS.merge(action: action, id: item.id)
-    title     = "Uploaded file #{item.filename.inspect}"
+  test 'uploads - list_own - anonymous' do
+    list_test(nil, meth: __method__, action: :list_own)
+  end
 
-    start_url = url_for(**params)
-    final_url = start_url
+  test 'uploads - list_own - member' do
+    list_test(@member, meth: __method__, action: :list_own)
+  end
 
-    run_test(__method__) do
+  test 'uploads - list_own - admin' do
+    list_test(@admin, meth: __method__, action: :list_own)
+  end
 
-      # Details of a single upload submission are available anonymously.
-      visit start_url
+  test 'uploads - show - anonymous' do
+    show_test(nil, meth: __method__)
+  end
 
-      # The page should show the details of the item.
-      show_url
-      assert_current_url(final_url)
-      assert_valid_page(heading: title)
-      screenshot
+  test 'uploads - show - member' do
+    show_test(@member, meth: __method__)
+  end
 
-    end
+  test 'uploads - show - admin' do
+    show_test(@admin, meth: __method__)
   end
 
   # ===========================================================================
   # :section: Write tests
   # ===========================================================================
 
-  test 'uploads - new' do
-    new_test(meth: __method__, direct: true)
+  test 'uploads - new - anonymous' do
+    new_test(nil, meth: __method__)
   end
 
-  test 'uploads - new from index' do
-    new_test(meth: __method__, direct: false)
+  test 'uploads - new - member' do
+    new_test(@member, meth: __method__)
   end
 
-  test 'uploads - edit (select)' do
-    edit_select_test(meth: __method__, direct: true)
+  test 'uploads - new - manager' do
+    new_test(@manager, meth: __method__)
   end
 
-  test 'uploads - edit (select) from index' do
-    edit_select_test(meth: __method__, direct: false)
+  test 'uploads - new - admin' do
+    new_test(@admin, meth: __method__)
   end
 
-  test 'uploads - delete (select)' do
-    delete_select_test(meth: __method__, direct: true)
+  test 'uploads - edit - anonymous' do
+    edit_test(nil, meth: __method__)
   end
 
-  test 'uploads - delete (select) from index' do
-    delete_select_test(meth: __method__, direct: false)
+  test 'uploads - edit - member' do
+    edit_test(@member, meth: __method__)
+  end
+
+  test 'uploads - edit - manager' do
+    edit_test(@manager, meth: __method__)
+  end
+
+  test 'uploads - edit - admin' do
+    edit_test(@admin, meth: __method__)
+  end
+
+  test 'uploads - delete - anonymous' do
+    delete_test(nil, meth: __method__)
+  end
+
+  test 'uploads - delete - member' do
+    delete_test(@member, meth: __method__)
+  end
+
+  test 'uploads - delete - manager' do
+    delete_test(@manager, meth: __method__)
+  end
+
+  test 'uploads - delete - admin' do
+    delete_test(@admin, meth: __method__)
   end
 
   # ===========================================================================
@@ -121,275 +145,386 @@ class UploadsTest < ApplicationSystemTestCase
 
   public
 
-  # Perform a test to list EMMA submissions visible to the test user.
+  # Perform a test to list EMMA submissions visible to *user*.
   #
-  # @param [Symbol]       action
-  # @param [String]       title
+  # @param [User, nil]    user
   # @param [Integer, nil] total       Expected total number of items.
-  # @param [String, nil]  redir_url
+  # @param [String, nil]  title       Default based on *user* and opt[:action].
   # @param [Symbol]       meth        Calling test method.
   # @param [Hash]         opt         URL parameters.
   #
   # @return [void]
   #
-  def list_test(action:, title:, total:, redir_url: nil, meth: nil, **opt)
-    params    = opt.merge!(action: action)
-    title   ||= INDEX_TITLE
+  def list_test(user, total: nil, title: nil, meth: nil, **opt)
+    params    = PRM.merge(action: :index, **opt)
+    action    = params[:action]
 
     start_url = url_for(**params)
-    final_url = redir_url || start_url
 
     run_test(meth || __method__) do
 
-      # Not available anonymously; successful sign-in should redirect back.
-      visit start_url
-      assert_flash(alert: AUTH_FAILURE)
-      sign_in_as(@user)
+      if permitted?(action, user)
 
-      # The listing should be the first of one or more results pages with as
-      # many entries as there are fixture records.
-      show_url
-      assert_current_url(final_url)
-      assert_valid_page(heading: title)
-      assert_search_count(CONTROLLER, total: total) if total
-      screenshot
+        admin     = user&.administrator?
+        index     = (action == :index)
+        list_org  = (action == :list_org)
+        list_own  = (action == :list_own)
+
+        title   ||= page_title(**params, name: user&.org&.label) if list_org
+        title   ||= page_title(**params)
+        total   ||= fixture_count_for_user(MODEL, user) if index || list_own
+        total   ||= fixture_count(MODEL) if admin
+        total   ||= fixture_count_for_org(MODEL, user)
+
+        final_url = index ? index_redirect(user: user) : start_url
+
+        # Successful sign-in should redirect back to the action page.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
+
+        # The listing should be the first of one or more results pages with as
+        # many entries as there are submissions visible to the user.
+        show_url
+        screenshot
+        assert_current_url(final_url)
+        assert_valid_page(heading: title)
+        assert_search_count(CTRLR, expected: total)
+
+        # Verify that there are actually the indicated number of items.
+        items   = all('.upload-list .upload-list-item')
+        count   = all('.page-items', visible: :all).first&.text&.presence&.to_i
+        count ||= total
+        unless count == items.size
+          flunk "#{count} items indicated but #{items.size} items found"
+        end
+
+        # Validate page contents.
+        check_details_columns(items.first, prune: '.hierarchy') if items.present?
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from listing submissions." }
+        assert_no_visit(start_url, action, as: user)
+
+      else
+
+        show_item { 'Anonymous user blocked from listing submissions.' }
+        assert_no_visit(start_url, :sign_in)
+
+      end
+
+    end
+  end
+
+  # Perform a test to show an EMMA submission visible to *user*.
+  #
+  # @param [User, nil]   user
+  # @param [Upload, nil] target
+  # @param [String, nil] title
+  # @param [Symbol]      meth         Calling test method.
+  # @param [Hash]        opt          URL parameters.
+  #
+  # @return [void]
+  #
+  def show_test(user, target: nil, title: nil, meth: nil, **opt)
+    target  ||= user&.uploads&.first || uploads(:emma_completed)
+    params    = PRM.merge(action: :show, id: target.id, **opt)
+    action    = params[:action]
+
+    start_url = url_for(**params)
+
+    run_test(meth || __method__) do
+
+      if permitted?(action, user, target)
+
+        title   ||= "Uploaded file #{target.filename.inspect}"
+
+        final_url = start_url
+
+        # Details of a single upload submission are available anonymously.
+        sign_in_as(user) if user
+        visit start_url
+
+        # The page should show the details of the target submission.
+        show_url
+        screenshot
+        assert_current_url(final_url)
+        assert_valid_page(heading: title)
+
+        # Validate page contents.
+        check_details_columns('.upload-details', prune: '.hierarchy')
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from viewing submission." }
+        assert_no_visit(start_url, action, as: user)
+
+      else
+
+        show_item { 'Anonymous user blocked from viewing submission.' }
+        assert_no_visit(start_url, :sign_in)
+
+      end
 
     end
   end
 
   # Perform a test to create a new EMMA submission.
   #
-  # @param [Boolean] direct
-  # @param [Symbol]  meth             Calling test method.
-  # @param [Hash]    opt              Added to URL parameters.
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
   #
   # @return [void]
   #
-  def new_test(direct:, meth: nil, **opt)
-    action    = :new
-    params    = PARAMS.merge(action: action, **opt)
+  def new_test(user, meth: nil, **opt)
+    button   = 'Create'
+    action   = :new
+    params   = PRM.merge(action: action, **opt)
 
-    form_url  = url_for(**params)
-    index_url = url_for(**params, action: :list_own)
+    form_url = url_for(**params)
 
-    tag       = direct ? 'DIRECT' : 'INDIRECT'
-    start_url = direct ? form_url : index_url
-    final_url = index_url
-
-    title     = 'New Upload'
-    author    = "#{title} Author"
-    prefix    = "#{TITLE_PREFIX} - "
-    title     = "#{prefix} #{title}" unless title.start_with?(prefix)
-    total     = fixture_count_for_user(MODEL, @user)
-
-    # noinspection RubyMismatchedArgumentType
     run_test(meth || __method__) do
 
-      # Not available anonymously; successful sign-in should redirect back.
-      visit start_url
-      assert_flash(alert: AUTH_FAILURE)
-      sign_in_as(@user)
+      if permitted?(action, user)
 
-      # Change to the form page if coming in from the index page.
-      unless direct
-        click_on 'Create', match: :first
-        wait_for_page form_url
+        admin     = user&.administrator?
+        records   = (fixture_count(MODEL) if admin)
+        total     = (fixture_count_for_user(MODEL, user) unless records)
+
+        index_url = url_for(**params, action: :index)
+        all_url   = url_for(**params, action: :list_all)
+        own_url   = url_for(**params, action: :list_own)
+        org_url   = url_for(**params, action: :list_org)
+
+        start_url = index_url
+        final_url = [index_url, all_url, own_url, org_url]
+
+        # Generate field data for the item to create.
+        name   = 'New Upload'
+        tag    = user&.role&.upcase || 'ANON'
+        fields = @generate.fields_for(action, tag: tag, base: name).except(:id)
+
+        # Start on the index page showing the current number of items.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
+
+        # Go to the form page.
+        select_action(button, wait_for: form_url)
+
+        # On the form page a Manager or Administrator should see the
+        # "Submitter" menu with their account pre-selected.
+        if admin || user.manager?
+          assert_selector '[data-field="user_id"]', text: user.email
+        end
+
+        # Provide file and wait for data extraction.
+        attach_file(@file) { click_on 'Select file' }
+        assert_selector '.uploaded-filename.complete', wait: 5
+
+        # Add field data.
+        menu_select 'Moving Image',    from: 'value-Type'
+        menu_select 'RTF',             from: 'value-Format'
+        menu_select 'True',            from: 'value-Complete'
+        menu_select 'Born Accessible', from: 'value-Status'
+        check       'Armenian'         # inside 'value-Language'
+        fill_in 'value-Identifier', with: '' # remove bogus identifier
+        fill_in 'value-Title',      with: fields[:dc_title]
+        fill_in 'value-Creator',    with: fields[:dc_creator]
+        fill_in 'value-Comments',   with: fields[:rem_comments]
+
+        # Create the item.
+        show_item { 'Creating EMMA submission...' }
+        form_submit
+
+        # Verify successful submission.
+        wait_for_page(final_url)
+        assert_valid_page(heading: TITLE)
+        assert_flash('Created EMMA entry')
+
+        # There should be one more item than before on the index page.
+        visit final_url.first unless final_url.include?(current_url)
+        assert_search_count(CTRLR, expected: total.succ)   if total
+        assert_model_count( MODEL, expected: records.succ) if records
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from creating submission." }
+        assert_no_visit(form_url, action, as: user)
+
+      else
+
+        show_item { 'Anonymous user blocked from creating submission.' }
+        assert_no_visit(form_url, :sign_in)
+
       end
-
-      # On the form page:
-=begin # TODO: User selection field visible for Manager and Administrator
-      assert_selector '[data-field="user_id"]', visible: false#, text: @user&.id # TODO: why is this not filled?
-=end
-
-      # Provide file and wait for data extraction.
-      attach_file(@file) { click_on 'Select file' }
-      assert_selector '.uploaded-filename.complete', wait: 5
-
-      # Add field data.
-      menu_select 'Moving Image',    from: 'value-Type'
-      menu_select 'RTF',             from: 'value-Format'
-      menu_select 'True',            from: 'value-Complete'
-      menu_select 'Born Accessible', from: 'value-Status'
-      check       'Armenian'         # inside 'value-Language'
-      fill_in 'value-Identifier', with: '' # remove bogus identifier
-      fill_in 'value-Title',      with: "#{title } - #{tag}"
-      fill_in 'value-Creator',    with: "#{author} - #{tag}"
-      fill_in 'value-Comments',   with: 'FAKE - do not use'
-
-      # After submitting should be back on the index page with one more record
-      # than before.
-      form_submit
-
-      # We should be back on the index page with one more record than before.
-      wait_for_page(final_url)
-      assert_flash('SUCCESS')
-      assert_valid_page(heading: INDEX_TITLE)
-      assert_search_count(CONTROLLER, total: (total += 1))
 
     end
   end
 
   # Perform a test to select then modify an EMMA submission.
   #
-  # @param [Boolean] direct
-  # @param [Symbol]  meth             Calling test method.
-  # @param [Hash]    opt              Added to URL parameters.
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
   #
   # @return [void]
   #
-  def edit_select_test(direct:, meth: nil, **opt)
-    action    = :edit
-    select    = menu_action(action)
-    params    = PARAMS.merge(action: action, **opt)
-    prefix    = "#{TITLE_PREFIX} - "
+  def edit_test(user, meth: nil, **opt)
+    button   = 'Change'
+    action   = :edit
+    params   = PRM.merge(action: action, **opt)
 
-    index_url = url_for(**params, action: :list_own)
-    menu_url  = url_for(**params, action: select)
+    # Find the item to be edited.
+    record   = user&.uploads&.find(&:completed?) || uploads(:edit_example)
+    form_url = form_page_url(record.id, **params)
 
-    tag       = direct ? 'DIRECT' : 'INDIRECT'
-    start_url = direct ? menu_url : index_url
-    final_url = index_url
-
-    total     = fixture_count_for_user(MODEL, @user)
-    item      = uploads(:edit_example)
-    test_opt  = { action: action, tag: tag, item: item, unique: hex_rand }
-
-    author    = item.emma_metadata[:dc_creator]
-    author    = [author, *test_opt.slice(:unique, :tag)].join(' - ')
-    title     = upload_title(**test_opt)
-    title     = "#{prefix} #{title}" unless title.start_with?(prefix)
-
-    # noinspection RubyMismatchedArgumentType
     run_test(meth || __method__) do
 
-      # Not available anonymously; successful sign-in should redirect back.
-      visit start_url
-      assert_flash(alert: AUTH_FAILURE)
-      sign_in_as(@user)
+      if permitted?(action, user, record)
 
-      # Change to the select menu if coming in from the index page.
-      unless direct
-        click_on 'Change'
-        wait_for_page menu_url
-      end
+        admin     = user.administrator?
+        records   = (fixture_count(MODEL) if admin)
+        total     = (fixture_count_for_user(MODEL, user) unless records)
 
-      # Choose submission to edit.
-      item_menu_select(item.id, name: 'id')
+        index_url = url_for(**params, action: :index)
+        all_url   = url_for(**params, action: :list_all)
+        own_url   = url_for(**params, action: :list_own)
+        org_url   = url_for(**params, action: :list_org)
+        menu_url  = url_for(**params, action: menu_action(action))
 
-      # On the form page:
-=begin # TODO: User selection field visible for Manager and Administrator
-      assert_selector '[data-field="user_id"]', visible: false#, text: @user&.id # TODO: why is this not filled?
-=end
+        start_url = index_url
+        final_url = [index_url, all_url, own_url, org_url]
 
-      # Replace field data.
-      fill_in 'value-Title',   with: title
-      fill_in 'value-Creator', with: author
+        # Generate new field data for the item to edit.
+        tag       = user&.role&.upcase || 'ANON'
+        fields    = @generate.fields(record, tag: tag)
+        item_name = Upload.make_label(record)
 
-      # After submitting should be back on the index page with the same number
-      # of records.
-      form_submit
-      assert_flash('SUCCESS')
+        # Start on the index page showing the current number of items.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
 
-      # We should be back on the index page with the same number of records.
-      if direct
-        visit index_url
-        screenshot
+        # Go to the menu page and choose the item to edit.
+        select_action(button, wait_for: menu_url)
+        select_item(item_name, wait_for: form_url)
+
+        # On the form page a Manager or Administrator should see the
+        # "Submitter" menu with their account pre-selected.
+        if admin || user.manager?
+          assert_selector '[data-field="user_id"]', text: user.email
+        end
+
+        # Modify field data.
+        fill_in 'value-Title',   with: fields[:dc_title]
+        fill_in 'value-Creator', with: fields[:dc_creator]
+
+        # Update the item.
+        show_item { "Updating #{item_name.inspect}..." }
+        form_submit
+
+        # Verify that success was indicated back on the menu page.
+        wait_for_page(menu_url)
+        assert_flash('Updated EMMA entry')
+
+        # There should be the same number of items as before on the index page.
+        visit final_url.first unless final_url.include?(current_url)
+        assert_valid_page(heading: TITLE)
+        assert_search_count(CTRLR, expected: total)   if total
+        assert_model_count( MODEL, expected: records) if records
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from modifying submission." }
+        assert_no_visit(form_url, action, as: user)
+
       else
-        wait_for_page(final_url)
+
+        show_item { 'Anonymous user blocked from modifying submission.' }
+        assert_no_visit(form_url, :sign_in)
+
       end
-      assert_valid_page(heading: INDEX_TITLE)
-      assert_search_count(CONTROLLER, total: total)
 
     end
   end
 
   # Perform a test to select then remove an EMMA submission.
   #
-  # @param [Boolean] direct
-  # @param [Symbol]  meth             Calling test method.
-  # @param [Hash]    opt              Added to URL parameters.
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
   #
   # @return [void]
   #
-  def delete_select_test(direct:, meth: nil, **opt)
-    action    = :delete
-    select    = menu_action(action)
-    params    = PARAMS.merge(action: action, **opt)
+  def delete_test(user, meth: nil, **opt)
+    button   = 'Remove'
+    action   = :delete
+    params   = PRM.merge(action: action, **opt)
 
-    index_url = url_for(**params, action: :list_own)
-    menu_url  = url_for(**params, action: select)
+    # Generate a new item to be deleted.
+    tag      = user&.role&.upcase || 'ANON'
+    record   = @generate.new_record_for(action, tag: tag)
+    form_url = form_page_url(record.id, **params)
 
-    tag       = direct ? 'DIRECT' : 'INDIRECT'
-    start_url = direct ? menu_url : index_url
-    final_url = index_url
-
-    total     = fixture_count_for_user(MODEL, @user)
-    item      = uploads(:delete_example)
-    test_opt  = { action: action, tag: tag, item: item, unique: hex_rand }
-
-    # Add Upload copy to be deleted and ensure that it is in the EMMA Unified
-    # Index.
-    name = upload_title(**test_opt)
-    attr = item.fields.except(:id).merge!(dc_title: name)
-    item = Upload.create!(attr)
-    reindex(item)
-
-    item_delete = [
-      url_for(**params, id: item.id),
-      make_path(url_for(**params), id: item.id)
-    ]
-
-    # noinspection RubyMismatchedArgumentType
     run_test(meth || __method__) do
 
-      # Verify added copies on the index page.
-      visit index_url
-      assert_flash(alert: AUTH_FAILURE)
-      sign_in_as(@user)
-      assert_search_count(CONTROLLER, total: (total += 1))
+      if permitted?(action, user, record)
 
-      # Change to the select menu if coming in from the index page.
-      visit start_url
-      unless direct
-        click_on 'Remove'
-        wait_for_page menu_url
+        admin     = user.administrator?
+        records   = (fixture_count(MODEL).succ if admin)
+        total     = (fixture_count_for_user(MODEL, user).succ unless records)
+
+        index_url = url_for(**params, action: :index)
+        all_url   = url_for(**params, action: :list_all)
+        own_url   = url_for(**params, action: :list_own)
+        org_url   = url_for(**params, action: :list_org)
+        menu_url  = url_for(**params, action: menu_action(action))
+
+        start_url = index_url
+        final_url = [index_url, all_url, own_url, org_url]
+
+        # Identify the item to be deleted.
+        item_name = record.menu_label
+        reindex(record)
+
+        # Start on the index page showing the current number of items.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
+
+        # Go to the menu page and choose the item to remove.
+        select_action(button, wait_for: menu_url)
+        select_item(item_name, wait_for: form_url)
+
+        # Delete the selected item.
+        show_item { "Removing EMMA submission #{item_name.inspect}..." }
+        form_submit
+
+        # Verify that success was indicated back on the menu page.
+        wait_for_page(menu_url)
+        assert_flash('Removed EMMA entry')
+
+        # On the index page, there should be one less record than before.
+        visit final_url.first unless final_url.include?(current_url)
+        assert_search_count(CTRLR, expected: total.pred)   if total
+        assert_model_count( MODEL, expected: records.pred) if records
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from removing submission." }
+        assert_no_visit(form_url, action, as: user)
+
+      else
+
+        show_item { 'Anonymous user blocked from removing submission.' }
+        assert_no_visit(form_url, :sign_in)
+
       end
 
-      # Choose submission to remove, which leads to the delete page.
-      item_menu_select(item.id, name: 'id')
-      wait_for_page item_delete
-      screenshot
-      click_on 'Delete', match: :first, exact: true
-
-      # After deletion we should be back on the menu page.
-      wait_for_page(menu_url)
-      assert_flash('SUCCESS')
-
-      # On the index page, there should be one less record than before.
-      visit index_url
-      wait_for_page(final_url)
-      assert_valid_page(heading: INDEX_TITLE)
-      assert_search_count(CONTROLLER, total: (total -= 1))
-
     end
-  end
-
-  # ===========================================================================
-  # :section: Methods
-  # ===========================================================================
-
-  protected
-
-  # Generate a distinct submission title.
-  #
-  # @param [Hash] opt                 Test options
-  #
-  # @return [String]
-  #
-  def upload_title(**opt)
-    opt[:name] ||= opt[:item].emma_metadata[:dc_title] if opt[:item]
-    opt[:name]  += " (#{opt[:action]})"                if opt[:action]
-    opt.slice(:name, :unique, :tag).compact.values.join(' - ')
   end
 
   # ===========================================================================
@@ -402,11 +537,11 @@ class UploadsTest < ApplicationSystemTestCase
   #
   # @param [Hash] opt
   #
-  # @return [String, nil]
+  # @return [String]
   #
   def index_redirect(**opt)
-    opt[:user] ||= current_user || @user
-    opt[:dst]  ||= :list_own
+    opt.reverse_merge!(PRM)
+    opt[:dst] ||= :list_own
     super
   end
 

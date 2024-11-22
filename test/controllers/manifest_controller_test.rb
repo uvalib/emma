@@ -3,65 +3,75 @@
 # frozen_string_literal: true
 # warn_indent:           true
 
-require 'test_helper'
+require 'application_controller_test_case'
 
-class ManifestControllerTest < ActionDispatch::IntegrationTest
+class ManifestControllerTest < ApplicationControllerTestCase
 
-  MODEL         = Manifest
-  CONTROLLER    = :manifest
-  PARAMS        = { controller: CONTROLLER }.freeze
-  OPTIONS       = { controller: CONTROLLER }.freeze
+  MODEL = Manifest
+  CTRLR = :manifest
+  PRM   = { controller: CTRLR }.freeze
+  OPT   = { controller: CTRLR, sign_out: false }.freeze
 
-  TEST_USERS    = ALL_TEST_USERS
-  TEST_READERS  = TEST_USERS
-  TEST_WRITERS  = TEST_USERS
+  TEST_READERS  = ALL_TEST_USERS
+  TEST_WRITERS  = ALL_TEST_USERS
 
   READ_FORMATS  = :all
   WRITE_FORMATS = :html
 
+  NO_READ       = formats_other_than(*READ_FORMATS).freeze
+  NO_WRITE      = formats_other_than(*WRITE_FORMATS).freeze
+
   setup do
-    @readers = find_users(*TEST_READERS)
-    @writers = find_users(*TEST_WRITERS)
+    @readers  = find_users(*TEST_READERS)
+    @writers  = find_users(*TEST_WRITERS)
+    @generate = ManifestSampleGenerator.new(self)
   end
 
   # ===========================================================================
   # :section: Read tests
   # ===========================================================================
 
-  test 'manifest index - list all manifests' do
+  test 'manifest index - list manifests' do
     action  = :index
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
+    params  = PRM.merge(action: action)
+    options = OPT.merge(action: action, test: __method__, expect: :success)
 
     @readers.each do |user|
-      able  = can?(user, action, MODEL)
+      able  = permitted?(action, user)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+      u_prm = params
 
-      TEST_FORMATS.each do |fmt|
-        url = url_for(**params, format: fmt)
+      foreach_format(user, **u_opt) do |fmt|
+        url = url_for(**u_prm, format: fmt)
         opt = u_opt.merge(format: fmt)
-        case opt[:expect]
-          when :success then opt[:redir] = index_redirect(user: user, **opt)
+        if NO_READ.include?(fmt)
+          opt[:expect] = :not_found if able
+        else
+          opt[:redir]  = index_redirect(user: user, **opt) if able
         end
-        get_as(user, url, **opt, only: READ_FORMATS)
+        get_as(user, url, **opt)
       end
     end
   end
 
   test 'manifest show - details of an existing manifest' do
     action  = :show
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
+    params  = PRM.merge(action: action)
+    options = OPT.merge(action: action, test: __method__, expect: :success)
 
     @readers.each do |user|
-      able  = can?(user, action, MODEL)
+      able  = permitted?(action, user)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+      u_prm = params
 
-      TEST_FORMATS.each do |fmt|
+      foreach_format(user, **u_opt) do |fmt|
         rec = manifests(:example)
-        url = url_for(id: rec.id, **params, format: fmt)
+        url = url_for(id: rec.id, **u_prm, format: fmt)
         opt = u_opt.merge(format: fmt)
-        get_as(user, url, **opt, only: READ_FORMATS)
+        if NO_READ.include?(fmt)
+          opt[:expect] = :not_found if able
+        end
+        get_as(user, url, **opt)
       end
     end
   end
@@ -72,163 +82,133 @@ class ManifestControllerTest < ActionDispatch::IntegrationTest
 
   test 'manifest new - import data for a new manifest' do
     action  = :new
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
+    params  = PRM.merge(action: action)
+    options = OPT.merge(action: action, test: __method__, expect: :success)
 
     @writers.each do |user|
-      able  = can?(user, action, MODEL)
+      able  = permitted?(action, user)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+      u_prm = params
 
-      TEST_FORMATS.each do |fmt|
-        url = url_for(**params, format: fmt)
+      foreach_format(user, **u_opt) do |fmt|
+        url = url_for(**u_prm, format: fmt)
         opt = u_opt.merge(format: fmt)
-        get_as(user, url, **opt, only: WRITE_FORMATS)
+        if NO_WRITE.include?(fmt)
+          opt[:expect] = :not_found if able
+        end
+        get_as(user, url, **opt)
       end
     end
   end
 
   test 'manifest create - a new manifest' do
     action  = :create
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
+    params  = PRM.merge(action: action)
+    options = OPT.merge(action: action, test: __method__)
 
     @writers.each do |user|
-      able  = can?(user, action, MODEL)
+      able  = permitted?(action, user)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+      u_prm = params
 
-      TEST_FORMATS.each do |fmt|
-        rec = new_record.tap { |r| r.user = user }
-        url = url_for(**rec.fields, **params, format: fmt)
+      foreach_format(user, **u_opt) do |fmt|
+        rec = @generate.sample_for(action, user: user, mutate: true)
+        url = url_for(**rec.fields, **u_prm, format: fmt)
         opt = u_opt.merge(format: fmt)
-        post_as(user, url, **opt, only: WRITE_FORMATS)
+        if NO_WRITE.include?(fmt)
+          opt[:expect] = able ? :no_content : :unauthorized
+        end
+        post_as(user, url, **opt)
       end
     end
   end
 
   test 'manifest edit - data for an existing manifest' do
     action  = :edit
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
+    params  = PRM.merge(action: action)
+    options = OPT.merge(action: action, test: __method__, expect: :success)
 
     @writers.each do |user|
-      able  = can?(user, action, MODEL)
+      able  = permitted?(action, user)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+      u_prm = params
 
-      TEST_FORMATS.each do |fmt|
-        rec = sample_for_edit
-        url = url_for(id: rec.id, **params, format: fmt)
+      foreach_format(user, **u_opt) do |fmt|
+        rec = @generate.sample_for(action)
+        url = url_for(id: rec.id, **u_prm, format: fmt)
         opt = u_opt.merge(format: fmt)
-        get_as(user, url, **opt, only: WRITE_FORMATS)
+        if NO_WRITE.include?(fmt)
+          opt[:expect] = :not_found if able
+        end
+        get_as(user, url, **opt)
       end
     end
   end
 
   test 'manifest update - replace an existing manifest' do
     action  = :update
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
+    params  = PRM.merge(action: action)
+    options = OPT.merge(action: action, test: __method__)
 
     @writers.each do |user|
-      able  = can?(user, action, MODEL)
+      able  = permitted?(action, user)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+      u_prm = params
 
-      TEST_FORMATS.each do |fmt|
-        rec = sample_for_edit
-        url = url_for(**rec.fields, **params, format: fmt)
+      foreach_format(user, **u_opt) do |fmt|
+        rec = @generate.sample_for(action)
+        url = url_for(**rec.fields, **u_prm, format: fmt)
         opt = u_opt.merge(format: fmt)
-        put_as(user, url, **opt, only: WRITE_FORMATS)
+        if NO_WRITE.include?(fmt)
+          opt[:expect] = able ? :no_content : :unauthorized
+        end
+        put_as(user, url, **opt)
       end
     end
   end
 
   test 'manifest delete - select an existing manifest for removal' do
     action  = :delete
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__, expect: :success)
+    params  = PRM.merge(action: action)
+    options = OPT.merge(action: action, test: __method__, expect: :success)
 
     @writers.each do |user|
-      able  = can?(user, action, MODEL)
+      able  = permitted?(action, user)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+      u_prm = params
 
-      TEST_FORMATS.each do |fmt|
-        rec = sample_for_delete
-        url = url_for(id: rec.id, **params, format: fmt)
+      foreach_format(user, **u_opt) do |fmt|
+        rec = @generate.sample_for(action)
+        url = url_for(id: rec.id, **u_prm, format: fmt)
         opt = u_opt.merge(format: fmt)
-        get_as(user, url, **opt, only: WRITE_FORMATS)
+        if NO_WRITE.include?(fmt)
+          opt[:expect] = :not_found if able
+        end
+        get_as(user, url, **opt)
       end
     end
   end
 
   test 'manifest destroy - remove an existing manifest' do
     action  = :destroy
-    params  = PARAMS.merge(action: action)
-    options = OPTIONS.merge(action: action, test: __method__)
+    params  = PRM.merge(action: action)
+    options = OPT.merge(action: action, test: __method__)
 
     @writers.each do |user|
-      able  = can?(user, action, MODEL)
+      able  = permitted?(action, user)
       u_opt = able ? options : options.except(:controller, :action, :expect)
+      u_prm = params
 
-      TEST_FORMATS.each do |fmt|
-        rec = sample_for_delete
-        url = url_for(id: rec.id, **params, format: fmt)
+      foreach_format(user, **u_opt) do |fmt|
+        rec = @generate.sample_for(action)
+        url = url_for(id: rec.id, **u_prm, format: fmt)
         opt = u_opt.merge(format: fmt)
-        delete_as(user, url, **opt, only: WRITE_FORMATS)
+        if NO_WRITE.include?(fmt)
+          opt[:expect] = :no_content if able
+        end
+        delete_as(user, url, **opt)
       end
     end
-  end
-
-  # ===========================================================================
-  # :section: Methods
-  # ===========================================================================
-
-  public
-
-  # @private
-  # @type [String,nil]
-  attr_accessor :edit_id
-
-  # @private
-  # @type [String,nil]
-  attr_accessor :delete_id
-
-  # Push a dummy item into the database for editing.
-  #
-  # @param [Symbol, String, Hash] src
-  #
-  # @return [Manifest]
-  #
-  def sample_for_edit(src = :edit_example)
-    current = edit_id && Manifest.find_by(id: edit_id)
-    current&.delete
-    new_record(src).tap do |record|
-      self.edit_id = record.id if record.save!
-    end
-  end
-
-  # Push a dummy item into the database for deletion.
-  #
-  # @param [Symbol, String, Hash] src
-  #
-  # @return [Manifest]
-  #
-  def sample_for_delete(src = :delete_example)
-    current = delete_id && Manifest.find_by(id: delete_id)
-    return current if current && (src == :delete_example)
-    current&.delete
-    new_record(src).tap do |record|
-      self.delete_id = record.id if record.save!
-    end
-  end
-
-  # Generate a new non-persisted item to support new item creation.
-  #
-  # @param [Symbol, String, Hash] src
-  #
-  # @return [Manifest]
-  #
-  def new_record(src = :example)
-    fields = src.is_a?(Hash) ? src : manifests(src.to_sym).fields.except(:id)
-    Manifest.new(fields)
   end
 
   # ===========================================================================
@@ -241,9 +221,10 @@ class ManifestControllerTest < ActionDispatch::IntegrationTest
   #
   # @param [Hash] opt
   #
-  # @return [String, nil]
+  # @return [String]
   #
   def index_redirect(**opt)
+    opt.reverse_merge!(PRM)
     opt[:dst] ||= :list_own
     super
   end
