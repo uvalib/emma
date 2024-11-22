@@ -546,8 +546,12 @@ module Workflow::Base::Events
             result = process_event!(event, *args)
             result unless failures?
           rescue => error
-            self.failures << error unless failures?
             Log.warn { "#{event}!: #{error.class} #{error.message}" }
+            if (event == :edit) && error.is_a?(Workflow::NoTransitionAllowed)
+              note  = 'This may be open for editing already.' # TODO: I18n
+              error = error.class.new("#{error.message}. (#{note})")
+            end
+            self.failures << error unless failures?
             re_raise_if_internal_exception(error)
           end
 
@@ -624,8 +628,12 @@ module Workflow::Base::Events
               result = process_event!(event, *args)
               result unless failures?
             rescue => error
-              self.failures << error unless failures?
               Log.warn { "#{event}!: #{error.class} #{error.message}" }
+              if (event == :edit) && error.is_a?(Workflow::NoTransitionAllowed)
+                note  = 'This may be open for editing already.' # TODO: I18n
+                error = error.class.new("#{error.message}. (#{note})")
+              end
+              self.failures << error unless failures?
               re_raise_if_internal_exception(error)
             end
 
