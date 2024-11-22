@@ -112,7 +112,7 @@ class Api::Error < ExecError
   # @return [Array<String>]
   #
   # === Usage Notes
-  # As a side-effect, if @http_response is nil it will be set here.
+  # As a side effect, if @http_response is nil it will be set here.
   #
   def faraday_response(arg)
     @http_response ||= arg
@@ -126,7 +126,7 @@ class Api::Error < ExecError
   # @return [Array<String>]
   #
   # === Usage Notes
-  # As a side-effect, if @http_status is nil and HTTP status can be determined,
+  # As a side effect, if @http_status is nil and HTTP status can be determined,
   # then @http_status will be set here.
   #
   def faraday_error(*messages)

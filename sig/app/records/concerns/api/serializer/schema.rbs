@@ -45,11 +45,15 @@ module Api::Serializer::Schema
   #
   # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
   #
+  # @note Currently used only by #element_parse_name.
+  #
   def element_parse_naming: () -> Symbol
 
   # The default naming mode for serialized attributes.
   #
   # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
+  #
+  # @note Currently used only by #attribute_parse_name.
   #
   def attribute_parse_naming: () -> Symbol
 
@@ -84,6 +88,8 @@ module Api::Serializer::Schema
   #
   # @return [String]
   #
+  # @note Currently unused.
+  #
   def element_parse_name: ((Symbol|String|Class) name, ?(Symbol|nil) mode) -> String
 
   # Transform *name* into the form indicated by the given naming mode.
@@ -92,6 +98,8 @@ module Api::Serializer::Schema
   # @param [Symbol, nil]           mode   Default: `#attribute_parse_naming`.
   #
   # @return [String]
+  #
+  # @note Currently unused.
   #
   def attribute_parse_name: ((Symbol|String|Class) name, ?(Symbol|nil) mode) -> String
 

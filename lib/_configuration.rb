@@ -48,13 +48,13 @@ module Configuration
 
     # All "en.emma.*" configuration values.
     #
-    # @return [Hash]                    Deep frozen
+    # @return [Hash]                    Deep-frozen.
     #
     def self.all = instance.all
 
     # All "en.emma.*" configuration values.
     #
-    # @return [Hash]                    Deep frozen
+    # @return [Hash]                    Deep-frozen.
     #
     def all = @all ||= fetch_all || fetch_all(initialize: true)
 
@@ -66,8 +66,8 @@ module Configuration
 
     # Acquire "en.emma.*" configuration values.
     #
-    # @return [Hash]                    Deep frozen
-    # @return [nil]                     Failed to find "en.(CONFIG_ROOT)"
+    # @return [Hash]                    Deep-frozen.
+    # @return [nil]                     Failed to find "en.(CONFIG_ROOT)".
     #
     def fetch_all(initialize: false)
       if initialize
@@ -106,7 +106,7 @@ module Configuration
 
   # All "en.emma.*" configuration values.
   #
-  # @return [Hash]                    Deep frozen
+  # @return [Hash]                    Deep-frozen.
   #
   def config_all
     Configuration::Data.all
@@ -636,8 +636,8 @@ module Configuration
   # @param [Array, any, nil] other    Alternate location(s)
   # @param [Hash]            opt      Passed to I18n#translate except:
   #
-  # @option opt [Boolean] :cfg_fatal  If *false* do not raise if item not found
-  # @option opt [Boolean] :cfg_warn   If *false* do not log a warning.
+  # @option opt [Boolean] :cfg_fatal  If *false*, no raise if item not found.
+  # @option opt [Boolean] :cfg_warn   If *false*, do not log a warning.
   #
   # @return [any, nil]
   #

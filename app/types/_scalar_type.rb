@@ -52,7 +52,7 @@ class ScalarType
       false
     end
 
-    # Indicate whether *v* would be a valid value for an item of this type.
+    # Indicate whether `*v*` would be a valid value for an item of this type.
     #
     # @param [any, nil] v
     #
@@ -161,16 +161,19 @@ class ScalarType
   #
   # @return [String, nil]
   #
+  # @note Currently unused.
+  # :nocov:
   def value=(v)
     set(v)
   end
+  # :nocov:
 
   # Assign a new value to the instance.
   #
   # @param [any, nil] v
-  # @param [Boolean]  invalid         If *true* allow invalid value.
-  # @param [Boolean]  allow_nil       If *false* use #default if necessary.
-  # @param [Boolean]  warn            If *true* log invalid.
+  # @param [Boolean]  invalid         If *true*, allow invalid value.
+  # @param [Boolean]  allow_nil       If *false*, use #default if necessary.
+  # @param [Boolean]  warn            If *true*, log invalid.
   #
   # @return [String, nil]
   #
@@ -190,8 +193,8 @@ class ScalarType
 
   public
 
-  # Indicate whether the instance is valid, or indicate whether *v* would be a
-  # valid value.
+  # Indicate whether the instance is valid, or indicate whether `*v*` would be
+  # a valid value.
   #
   # @param [any, nil] v
   #

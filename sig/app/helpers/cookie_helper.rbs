@@ -25,6 +25,8 @@ module CookieHelper
   #
   # @return [void]
   #
+  # @note Currently used only by DevHelper#forget_dev.
+  #
   def delete_cookie: ((Symbol|String) key) -> void
 
   private

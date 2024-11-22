@@ -120,7 +120,7 @@ en:
         WEB_CONCURRENCY:              2     # NOTE: Puma env var
 
       # =======================================================================
-      # GoodJob environment variables
+      # GoodJob environment variables:
       #
       # Variables that are noted as "computed" generally should not be set here
       # because config/initializers/good_job.rb defines their values based on

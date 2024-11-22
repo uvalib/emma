@@ -76,7 +76,7 @@ class Issn < PublicationIdentifier
 
     public
 
-    # Indicate whether *v* would be a valid value for an item of this type.
+    # Indicate whether `*v*` would be a valid value for an item of this type.
     #
     # @param [any, nil] v
     #

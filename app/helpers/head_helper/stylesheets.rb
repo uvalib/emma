@@ -73,14 +73,15 @@ module HeadHelper::Stylesheets
   # @yield To supply additional source(s) to @page_stylesheets.
   # @yieldreturn [String,Hash,Array(String,Hash),Array<String,Hash,Array(String,Hash)>]
   #
-  # @note Currently unused
-  #
+  # @note Currently unused.
+  # :nocov:
   def append_page_stylesheets(*sources)
     @page_stylesheets ||= DEFAULT_PAGE_STYLESHEETS.dup
     @page_stylesheets.concat(sources)
     @page_stylesheets.concat(Array.wrap(yield)) if block_given?
     @page_stylesheets
   end
+  # :nocov:
 
   # Emit the stylesheet '<link>' tag(s) appropriate for the current page.
   #

@@ -24,6 +24,8 @@ module BaseCollectionDecorator::List
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @note Currently unused.
+  #
   def no_records_row: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Options used with template :locals.

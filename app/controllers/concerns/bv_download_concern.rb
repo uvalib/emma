@@ -8,8 +8,8 @@ __loading_begin(__FILE__)
 # Controller support methods for downloads from EMMA collections originating
 # from BiblioVault.
 #
-# Currently there is only one collection (:emma_repository == :bibliovault_ump)
-# but future collections will use the same logic.
+# Currently, there is only one collection (:bibliovault_ump) but future
+# collections will use the same logic.
 #
 module BvDownloadConcern
 

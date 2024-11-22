@@ -22,7 +22,7 @@ module RecaptchaHelper
   public
 
   # The older version of reCAPTCHA is better for selective use on specific
-  # pages.  Version 3 is better for web sites where *every* form submission is
+  # pages.  Version 3 is better for websites where *every* form submission is
   # reCAPTCHA-validated.
   #
   # @type [Integer]
@@ -38,7 +38,7 @@ module RecaptchaHelper
   #
   RECAPTCHA_INVISIBLE = true
 
-  # By default the "recaptcha" gem injects the script element along with the
+  # By default, the "recaptcha" gem injects the script element along with the
   # reCAPTCHA tags.  If this constant is *true*, that script element is added
   # to `<head>` instead.
   #

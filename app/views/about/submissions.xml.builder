@@ -1,4 +1,4 @@
-# app/views/about/members.xml.builder
+# app/views/about/submissions.xml.builder
 #
 # frozen_string_literal: true
 # warn_indent:           true

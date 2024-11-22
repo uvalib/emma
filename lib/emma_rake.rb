@@ -90,20 +90,21 @@ module EmmaRake
   end
 
   # Indicate whether the option flag was provided via task arguments or on the
-  # the command line (after "--").
+  # command line (after "--").
   #
   # @param [String, Symbol]                  flag
   # @param [Rake::TaskArguments, Array, nil] task_args
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def task_option?(flag, task_args = nil)
     value = task_option(flag, task_args)
     !value.nil? && !value.casecmp?('false')
   end
+  # :nocov:
 
   # Return the value of an option flag provided via task arguments or on the
-  # the command line (after "--").
+  # command line (after "--").
   #
   # A flag of the form "--name" will return "" if present.
   # A flag of the form "--name=value" will return *value* if present.

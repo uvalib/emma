@@ -13,22 +13,25 @@ class AccountMailerPreview < ActionMailer::Preview
 
   public
 
-  # Preview '/rails/mailers/account_mailer/new_user_email' using a fake user by
-  # default or the specified User record if an :id parameter is given.
+  # Generate a preview of '/rails/mailers/account_mailer/new_user_email'.
+  #
+  # @return [Mail::Message]
   #
   def new_user_email
     preview_email(__method__)
   end
 
-  # Preview '/rails/mailers/account_mailer/new_man_email' using a fake user by
-  # default or the specified User record if an :id parameter is given.
+  # Generate a preview of '/rails/mailers/account_mailer/new_man_email'.
+  #
+  # @return [Mail::Message]
   #
   def new_man_email
     preview_email(__method__)
   end
 
-  # Preview '/rails/mailers/account_mailer/new_org_email' using a fake user by
-  # default or the specified User record if an :id parameter is given.
+  # Generate a preview of '/rails/mailers/account_mailer/new_org_email'.
+  #
+  # @return [Mail::Message]
   #
   def new_org_email
     preview_email(__method__)
@@ -40,10 +43,12 @@ class AccountMailerPreview < ActionMailer::Preview
 
   protected
 
-  # Preview '/rails/mailers/account_mailer/$(meth)' using a fake user by
-  # default or the specified User record if an :id parameter is given.
+  # Generate a preview of '/rails/mailers/account_mailer/$(meth)' using a fake
+  # user by default or the specified User record if an `:id` param is given.
   #
   # @param [Symbol] meth              An AccountMailer public method.
+  #
+  # @return [Mail::Message]
   #
   def preview_email(meth)
     id     = params[:id]

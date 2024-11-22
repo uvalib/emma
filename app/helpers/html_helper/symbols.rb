@@ -35,8 +35,8 @@ module HtmlHelper::Symbols
   # If the text has any symbols in it, hide them from screen readers.
   #
   # If so, each run of one or more symbolic characters will be wrapped in
-  # span.symbol with 'aria-hidden' and all other runs of characters will be
-  # wrapped in span.text (unless *text* is already ActiveSupport::SafeBuffer).
+  # `span.symbol` with 'aria-hidden' and all other runs of characters will be
+  # wrapped in `span.text` (unless *text* is already ActiveSupport::SafeBuffer)
   #
   # If not, *text* will be returned HTML-ready with no `<span>`s added.
   #
@@ -80,7 +80,7 @@ module HtmlHelper::Symbols
   # screen readers.
   #
   # @param [String, nil] text
-  # @param [Boolean]     show_symbols   If *true* don't #hide_symbols.
+  # @param [Boolean]     show_symbols   If *true*, don't #hide_symbols.
   # @param [Hash]        opt            To super.
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -96,7 +96,7 @@ module HtmlHelper::Symbols
   # readers.
   #
   # @param [String, Symbol, nil]  text
-  # @param [Boolean]              show_symbols  If *true* don't #hide_symbols.
+  # @param [Boolean]              show_symbols  If *true*, don't #hide_symbols.
   # @param [Hash]                 opt           To super.
   #
   # @return [ActiveSupport::SafeBuffer]

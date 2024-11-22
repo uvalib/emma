@@ -35,7 +35,7 @@ module ViewDebugHelper
     __output arg.prepend("--- VIEW TEMPLATE #{template}").join(separator)
   end
 
-  # view_abort
+  # Used to annotate a view template that is not expected to be used.
   #
   # @param [String] template
   # @param [Array]  arg

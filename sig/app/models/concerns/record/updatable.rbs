@@ -53,6 +53,8 @@ module Record::Updatable
     #
     # @see #set_fields_direct
     #
+    # @note Currently unused.
+    #
     def enum_methods: ((symHash|Symbol|String) cols, ?(Array[Symbol|String]|nil) vals) -> void
   end
 

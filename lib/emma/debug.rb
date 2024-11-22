@@ -322,9 +322,6 @@ module Emma::Debug
 
   # Methods for emitting debug output.
   #
-  # When a module includes "Emma::Debug", these are made available only if
-  # CONSOLE_DEBUGGING is defined.
-  #
   module OutputMethods
 
     include FormatMethods
@@ -604,8 +601,6 @@ module Emma::Debug
   #
   # @yield Block to execute.
   # @yieldreturn [void]
-  #
-  # @note Currently unused.
   #
   def capture_stderr
     saved, $stderr = $stderr, StringIO.new

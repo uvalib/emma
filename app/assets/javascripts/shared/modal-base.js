@@ -387,7 +387,7 @@ export class ModalBase extends BaseClass {
             return;
         }
 
-        // Setup the element that will actually contain the received content
+        // Set up the element that will actually contain the received content
         // then fetch it.  The element will appear only if successfully loaded.
         const $content = $(`<${type}>`);
         if (isPresent(attributes)) { $content.attr(decodeObject(attributes)) }
@@ -555,7 +555,7 @@ export class ModalBase extends BaseClass {
             return;
         }
 
-        // Setup the element that will actually contain the received content
+        // Set up the element that will actually contain the received content
         // then fetch it.  The element will appear only if successfully loaded.
         const $content = $('<embed>');
         if (isPresent(attributes)) { $content.attr(decodeObject(attributes)) }

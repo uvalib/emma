@@ -205,7 +205,7 @@ class Paginator
       end
 
       # On the first page, all pagination values retain their defaults.
-      # Otherwise the previous page link is just 'history.back()'.
+      # Otherwise, the previous page link is just 'history.back()'.
       unless on_first
         self.page_offset = offset
         self.page_number = page
@@ -599,9 +599,12 @@ class Paginator
   #
   # @return [Hash]
   #
+  # @note Currently unused.
+  # :nocov:
   def current_properties
     Properties.keys.map { [_1, send(_1)] }.to_h
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -622,9 +625,12 @@ class Paginator
 
   # Indicate whether a single record will be produced.
   #
+  # @note Currently unused.
+  # :nocov:
   def one?
     size == 1
   end
+  # :nocov:
 
   # Indicate whether multiple records will be produced.
   #
@@ -995,10 +1001,13 @@ class Paginator
   #
   # @return [Integer]
   #
+  # @note Currently unused.
+  # :nocov:
   def set_first_position(value, index = nil)
     index ||= current_index
     property[:first_position][index] = value.to_i
   end
+  # :nocov:
 
   # The field position of the last field for the indicated item.
   #
@@ -1018,10 +1027,13 @@ class Paginator
   #
   # @return [Integer]
   #
+  # @note Currently unused.
+  # :nocov:
   def set_final_position(value, index = nil)
     index ||= current_index
     property[:final_position][index] = value.to_i
   end
+  # :nocov:
 
   # The field position cursor.
   #

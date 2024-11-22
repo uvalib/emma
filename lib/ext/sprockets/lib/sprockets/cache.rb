@@ -3,7 +3,7 @@
 # frozen_string_literal: true
 # warn_indent:           true
 #
-# Sprockets Sprockets::Cache and Sprockets::Cache::FileStore overrides.
+# Sprockets::Cache and Sprockets::Cache::FileStore overrides.
 
 __loading_begin(__FILE__)
 

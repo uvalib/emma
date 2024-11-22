@@ -17,7 +17,7 @@ class FileParser::Braille < FileParser
 
   public
 
-  # metadata
+  # Metadata extracted from the file format instance.
   #
   # @return [OpenStruct]
   #

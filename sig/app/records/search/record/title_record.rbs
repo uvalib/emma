@@ -191,7 +191,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     def get_year: ((String|nil) value) -> (String | nil)
 
-    # Fields values used to determine whether *rec* can be included.
+    # Fields values used to determine whether `*rec*` can be included.
     #
     # @param [Search::Record::MetadataRecord, Hash, nil] rec
     #
@@ -207,7 +207,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     def sort_fields: ((Search::Record::MetadataRecord|symHash|nil) rec) -> symHash
 
-    # The values for *rec* for use with Enumerable#sort_by.
+    # The values for `*rec*` for use with Enumerable#sort_by.
     #
     # @param [Search::Record::MetadataRecord, Hash, nil] rec
     # @param [Hash]                                      opt To #sort_key_value
@@ -245,7 +245,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     def make_comparable: (untyped value, ?(Symbol|nil) field) -> untyped
 
     # Group identifiers of the same prefix in descending order of length
-    # (favoring ISBN-13 over ISBN-10).
+    # (favoring "ISBN-13" over "ISBN-10").
     #
     # @param [String, nil] id
     #

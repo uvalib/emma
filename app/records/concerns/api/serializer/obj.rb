@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Base class for object-specific serializers that process data passed in as a
+# Base class for object-specific serializers that process data passed in as an
 # Obj (a Ruby [hash] object representation).
 #
 # @see Representable::Obj

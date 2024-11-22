@@ -107,9 +107,9 @@ module BaseDecorator::Form
 
   # Internal options for #render_form_pair_label.
   #
-  # :tag    - Optional alternative to :label
-  # :help   - To #help_popup
-  # :status - To #status_marker
+  # * :tag    Optional alternative to :label
+  # * :help   To #help_popup
+  # * :status To #status_marker
   #
   # @type [Array<Symbol>]
   #
@@ -200,7 +200,7 @@ module BaseDecorator::Form
   #
   def render_form_input_multi: (String name, anyArray value, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # render_form_input
+  # Render a generic `<input>` element.
   #
   # @param [String]   name
   # @param [any, nil] value
@@ -213,7 +213,7 @@ module BaseDecorator::Form
   #
   def render_form_input: (String name, untyped value, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # render_form_email
+  # Render an `<input>` element which receives an email address.
   #
   # @param [String]   name
   # @param [any, nil] value
@@ -223,7 +223,7 @@ module BaseDecorator::Form
   #
   def render_form_email: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # render_form_password
+  # Render an `<input>` element which receives a password.
   #
   # @param [String]   name
   # @param [any, nil] value
@@ -279,7 +279,7 @@ module BaseDecorator::Form
   #
   RELATED_IGNORED_KEYS: symArray
 
-  # Modify the provided options for a field related to an form input field.
+  # Modify the provided options for a field related to a form input field.
   # Options that are assumed to be related to the actual field element are
   # removed.
   #
@@ -395,7 +395,7 @@ module BaseDecorator::Form
   #
   def form_top_controls: (?(ActionView::Helpers::FormBuilder|nil) f, *ActiveSupport::SafeBuffer buttons, ?css: String|nil, **untyped opt) ?{ (Array[ActiveSupport::SafeBuffer]) -> strArray? } -> ActiveSupport::SafeBuffer
 
-  # The form controls appearing above the fields.
+  # The form controls appearing above the input fields.
   #
   # @param [ActionView::Helpers::FormBuilder, nil] f
   # @param [Array<ActiveSupport::SafeBuffer>]      buttons
@@ -405,7 +405,7 @@ module BaseDecorator::Form
   #
   def form_top_button_tray: (?(ActionView::Helpers::FormBuilder|nil) f, *ActiveSupport::SafeBuffer buttons, **untyped opt) ?{ (Array[ActiveSupport::SafeBuffer]) -> strArray? } -> ActiveSupport::SafeBuffer
 
-  # Convenience submit and cancel buttons below the fields.
+  # Convenience submit and cancel buttons below the input fields.
   #
   # @param [ActionView::Helpers::FormBuilder, nil] f
   # @param [Array<ActiveSupport::SafeBuffer>]      buttons
@@ -420,7 +420,8 @@ module BaseDecorator::Form
   #
   def form_bottom_controls: (?(ActionView::Helpers::FormBuilder|nil) f, *ActiveSupport::SafeBuffer buttons, ?css: String|nil, **untyped opt) ?{ (Array[ActiveSupport::SafeBuffer]) -> strArray? } -> ActiveSupport::SafeBuffer
 
-  # form_bottom_button_tray
+  # A container including basic form controls which is displayed below the
+  # input fields.
   #
   # @param [ActionView::Helpers::FormBuilder, nil] f
   # @param [Array<ActiveSupport::SafeBuffer>]      buttons
@@ -508,7 +509,7 @@ module BaseDecorator::Form
   # @private
   FORM_BUTTONS_OPT: symArray
 
-  # file_input_button
+  # Render an `<input>` element which receives file(s) via the web browser.
   #
   # @param [String] label
   # @param [String] id          For input field

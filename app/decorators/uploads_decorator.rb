@@ -278,7 +278,7 @@ class UploadsDecorator < BaseCollectionDecorator
 
   protected
 
-  # item_ids
+  # The record IDs extracted from `*items*`.
   #
   # @param [Array<Upload,String>, Upload, String, nil] items  Def: `#object`
   # @param [Hash]                                      opt
@@ -525,10 +525,13 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @note Currently unused.
+  # :nocov:
   def bulk_op_option(f, param, value = nil, **opt)
     opt[:labels] ||= BULK_OPTIONS
     bulk_option(f, param, value, **opt)
   end
+  # :nocov:
 
   # An input element for a bulk new/edit form.
   #

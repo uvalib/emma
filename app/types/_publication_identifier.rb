@@ -113,7 +113,7 @@ class PublicationIdentifier < ScalarType
 
     public
 
-    # Indicate whether *v* would be a valid value for an item of this type.
+    # Indicate whether `*v*` would be a valid value for an item of this type.
     #
     # @param [any, nil] v
     #
@@ -259,7 +259,7 @@ class PublicationIdentifier < ScalarType
   # Assign a new value to the instance, allowing for the possibility of an
   # invalid identifier value.
   #
-  # If *v* has the wrong kind of prefix then the result will be blank (and
+  # If `*v*` has the wrong kind of prefix then the result will be blank (and
   # therefore invalid).
   #
   # @param [any, nil] v

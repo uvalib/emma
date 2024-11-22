@@ -127,6 +127,8 @@ class User < ApplicationRecord
 
   # Indicate whether the user is one of the known "fake" test user accounts.
   #
+  # @note Currently unused.
+  #
   def test_user?: () -> bool
 
   # Indicate whether the user has the :developer role.

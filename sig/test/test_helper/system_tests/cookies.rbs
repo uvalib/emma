@@ -5,7 +5,7 @@ module TestHelper::SystemTests::Cookies
 
   # Shortcut to the browser client interface.
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def browser: () -> untyped
 
@@ -15,13 +15,15 @@ module TestHelper::SystemTests::Cookies
   #
   # @return [void]
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def show_cookies: () -> void
 
   # Get the current cookies from the last response.
   #
   # @return [Hash]
+  #
+  # @note Currently used only by $show_cookies.
   #
   def get_cookies: () -> symHash
 
@@ -31,6 +33,8 @@ module TestHelper::SystemTests::Cookies
   #   single-click authentication for tests.
   #
   # @return [void]
+  #
+  # @note Currently unused.
   #
   def clear_cookies: () -> void
 end

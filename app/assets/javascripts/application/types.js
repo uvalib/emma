@@ -63,7 +63,7 @@
 
 
 /**
- * For composition with an Event type to specify that the target is a element.
+ * For composition with an Event type to specify that the target is an element.
  *
  * @typedef InputTarget
  *
@@ -85,7 +85,7 @@
 
 
 /**
- * For composition with an Event type to specify that the target is a element.
+ * For composition with an Event type to specify that the target is an element.
  *
  * @typedef ElementTarget
  *

@@ -54,10 +54,11 @@ module ApplicationHelper
   # @return [String]
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def app_name
     APP_CONFIG[:name]
   end
+  # :nocov:
 
   # Indicate whether a view template partial exists.
   #

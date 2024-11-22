@@ -81,8 +81,8 @@ module AuthConcern
 
   # Indicate whether the given resource/scope specifies the User resource.
   #
-  # Returns *true* if *obj* cannot be interpreted as a scope or resource since
-  # user scope is the assumed default.
+  # Returns *true* if `*obj*` cannot be interpreted as a scope or resource
+  # since user scope is the assumed default.
   #
   # @param [any, nil] obj             User, Symbol
   #
@@ -145,7 +145,7 @@ module AuthConcern
   #
   # @param [ActionDispatch::Request, OmniAuth::AuthHash, Hash] src
   #
-  # @raise [RuntimeError]             If *src* does not have auth data.
+  # @raise [RuntimeError]             If `*src*` does not have auth data.
   # @raise [RuntimeError]             If a User could not be found.
   #
   # @return [User]

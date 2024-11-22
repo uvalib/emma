@@ -27,7 +27,7 @@ module HelpHelper
 
   # Help topics and values.
   #
-  # Content (if present) is normalize to an array of HTML-safe sections.  If
+  # Content (if present) is normalized to an array of HTML-safe sections.  If
   # both :content_html and :content are present, they will be combined in that
   # order to create a new :content value with one or more HTML-safe sections.
   #

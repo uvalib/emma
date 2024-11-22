@@ -41,9 +41,12 @@ module SubmissionConcern
   #
   # @return [void]
   #
+  # @note Currently unused.
+  # :nocov:
   def start_submission(manifest, **opt)
     submission_api.make_request(:start, manifest: manifest, **opt)
   end
+  # :nocov:
 
   # stop_submission
   #
@@ -52,9 +55,12 @@ module SubmissionConcern
   #
   # @return [void]
   #
+  # @note Currently unused.
+  # :nocov:
   def stop_submission(manifest, **opt)
     submission_api.make_request(:cancel, manifest: manifest, **opt)
   end
+  # :nocov:
 
   # pause_submission
   #
@@ -63,9 +69,12 @@ module SubmissionConcern
   #
   # @return [void]
   #
+  # @note Currently unused.
+  # :nocov:
   def pause_submission(manifest, **opt)
     submission_api.make_request(:pause, manifest: manifest, **opt)
   end
+  # :nocov:
 
   # resume_submission
   #
@@ -74,9 +83,12 @@ module SubmissionConcern
   #
   # @return [void]
   #
+  # @note Currently unused.
+  # :nocov:
   def resume_submission(manifest, **opt)
     submission_api.make_request(:resume, manifest: manifest, **opt)
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:

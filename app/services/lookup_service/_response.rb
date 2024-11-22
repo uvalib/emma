@@ -41,7 +41,7 @@ class LookupService::Response < ApplicationJob::Response
   end
 
   # ===========================================================================
-  # :section: ApplicationJob::Response overrides
+  # :section: ApplicationCable::Payload overrides
   # ===========================================================================
 
   public

@@ -37,12 +37,14 @@ class EnrollmentMailer < ApplicationMailer
 
   public
 
-  # Send to produce a JIRA help ticket for a new enrollment request.
+  # Generate email to produce a JIRA help ticket for a new enrollment request.
   #
   # If this is not the production deployment, the email subject will be
   # annotated to indicate that this is not a real enrollment request.
   #
   # @param [Hash] opt
+  #
+  # @return [Mail::Message]
   #
   def request_email(**opt)
     test  = opt.key?(:test) ? opt.delete(:test) : !production_deployment?

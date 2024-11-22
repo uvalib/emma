@@ -167,7 +167,7 @@ class UploadDecorator < BaseDecorator
     #
     def list_item_number: (**untyped opt) -> ActiveSupport::SafeBuffer
 
-    # The number of columns needed if *item* will be displayed horizontally.
+    # The number of columns needed if `*item*` will be displayed horizontally.
     #
     # @param [any, nil] item          Model, Hash, Array; default: object.
     #
@@ -289,7 +289,7 @@ class UploadDecorator
   #
   FIELD_FILTERS: Array[String|Symbol|Regexp]
 
-  # Fields and configurations augmented with a :value entry containing the
+  # Fields and configurations augmented with a `:value` entry containing the
   # current field value.
   #
   # @param [Hash] opt                 Passed to super
@@ -310,7 +310,7 @@ class UploadDecorator
   #
   def list_field_value: (untyped value, field: Symbol|nil, **untyped opt) -> (Field::Type | String | nil)
 
-  # details_container
+  # Render an element containing a metadata listing of a model instance.
   #
   # @param [Array] before             Optional elements before the details.
   # @param [Hash]  opt                Passed to super except:
@@ -321,7 +321,7 @@ class UploadDecorator
   #
   def details_container: (*String before, **untyped opt) ?{ () -> (ActiveSupport::SafeBuffer | nil) } -> ActiveSupport::SafeBuffer
 
-  # Fields and configurations augmented with a :value entry containing the
+  # Fields and configurations augmented with a `:value` entry containing the
   # current field value.
   #
   # @param [Hash] opt   Passed to #property_pairs and #table_field_value.
@@ -340,7 +340,7 @@ class UploadDecorator
   #
   def table_field_value: (untyped value, field: Symbol|nil, **untyped opt) -> (Field::Type | String | nil)
 
-  # Rendered table value for a :file_data field.
+  # Rendered table value for a `:file_data` field.
   #
   # @param [any, nil] value
   #
@@ -348,7 +348,7 @@ class UploadDecorator
   #
   def table_file_data_value: (untyped value) -> (String | nil)
 
-  # Rendered table value for an :emma_data field.
+  # Rendered table value for an `:emma_data` field.
   #
   # @param [any, nil] value
   #

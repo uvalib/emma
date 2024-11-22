@@ -97,7 +97,7 @@ function endpoint(path, proxy) {
 // ============================================================================
 
 /**
- * Setup a page with Math Detective.
+ * Set up a page with Math Detective.
  *
  * @param {Selector} [root]
  */
@@ -454,7 +454,7 @@ export function setupFor(root) {
     // ========================================================================
 
     /**
-     * Setup a clipboard icon to act as a button.
+     * Set up a clipboard icon to act as a button.
      *
      * @param {Selector} icon
      */

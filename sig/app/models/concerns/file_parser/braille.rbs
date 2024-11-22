@@ -3,7 +3,7 @@
 class FileParser::Braille < FileParser
   include FileFormat::Braille
 
-  # metadata
+  # Metadata extracted from the file format instance.
   #
   # @return [OpenStruct]
   #

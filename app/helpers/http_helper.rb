@@ -75,10 +75,11 @@ module HttpHelper
   # @param [any, nil] code            Symbol, Integer
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def http_info?(code)
     http_status?(:info, code)
   end
+  # :nocov:
 
   # Indicate whether the value represents an HTTP 2xx status.
   #
@@ -109,10 +110,11 @@ module HttpHelper
   # @param [any, nil] code            Symbol, Integer
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def http_temporary_redirect?(code)
     http_status?(:temp_redirect, code)
   end
+  # :nocov:
 
   # Indicate whether the value represents an HTTP 403 status.
   #
@@ -127,30 +129,33 @@ module HttpHelper
   # @param [any, nil] code            Symbol, Integer
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def http_error?(code)
     http_status?(:error, code)
   end
+  # :nocov:
 
   # Indicate whether the value represents an HTTP 4xx status.
   #
   # @param [any, nil] code            Symbol, Integer
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def http_client_error?(code)
     http_status?(:client_error, code)
   end
+  # :nocov:
 
   # Indicate whether the value represents an HTTP 5xx status.
   #
   # @param [any, nil] code            Symbol, Integer
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def http_server_error?(code)
     http_status?(:server_error, code)
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:

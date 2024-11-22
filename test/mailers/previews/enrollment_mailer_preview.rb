@@ -14,7 +14,7 @@ class EnrollmentMailerPreview < ActionMailer::Preview
   public
 
   # Preview '/rails/mailers/enrollment_mailer/request_email' using the latest
-  # Enrollment by default or the specified Enrollment record if an :id
+  # Enrollment by default or the specified Enrollment record if an `:id`
   # parameter is given.
   #
   def request_email

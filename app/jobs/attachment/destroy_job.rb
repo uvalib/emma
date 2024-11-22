@@ -7,8 +7,8 @@ __loading_begin(__FILE__)
 
 # Remove a file.
 #
-# @note Currently unused
-#
+# @note Currently unused.
+# :nocov:
 class Attachment::DestroyJob < ApplicationJob
 
   include ApplicationJob::Logging
@@ -27,8 +27,6 @@ class Attachment::DestroyJob < ApplicationJob
   #
   # @return [void]
   #
-  # @note Currently unused
-  #
   def perform(data)
     __debug_job('START') { { data: item_inspect(data) } }
     attacher = FileUploader::Attacher.from_data(data)
@@ -46,5 +44,6 @@ class Attachment::DestroyJob < ApplicationJob
   end
 
 end
+# :nocov:
 
 __loading_end(__FILE__)

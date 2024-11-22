@@ -28,9 +28,9 @@ module SearchTermsHelper
   #
   # Each entry may have:
   #
-  #   :label          Label for the menu selection.
-  #   :tooltip        Tooltip for the menu selection.
-  #   :placeholder    Placeholder text to display in the search input box.
+  # * :label       - Label for the menu selection.
+  # * :tooltip     - Tooltip for the menu selection.
+  # * :placeholder - Placeholder text to display in the search input box.
   #
   # @type [Hash{Symbol=>Hash}]
   #

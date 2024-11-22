@@ -160,8 +160,8 @@ module CssHelper
   #
   # @return [Hash]                        A new hash with :class set.
   #
-  # @note Currently unused
-  #
+  # @note Currently unused.
+  # :nocov:
   def remove_css(html_opt, *classes, &blk)
     if html_opt.is_a?(Hash)
       html_opt = dup_options(html_opt)
@@ -171,6 +171,7 @@ module CssHelper
       {}
     end
   end
+  # :nocov:
 
   # Replace `html_opt[:class]` with a new string that includes none of the
   # named classes.  If no classes remain, :class is removed from *html_opt*.
@@ -182,7 +183,7 @@ module CssHelper
   #
   # @yield [cls] Indicate whether a CSS class should be removed.
   # @yieldparam [String] cls          A current *html_opt* CSS class.
-  # @yieldreturn [any, nil]           Truthy if *cls* should be removed.
+  # @yieldreturn [any, nil]           Truthy if `*cls*` should be removed.
   #
   def remove_css!(html_opt, *classes, &blk)
     current = css_class_array(*html_opt[:class]).presence

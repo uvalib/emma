@@ -137,6 +137,12 @@ class ApplicationJob::Response
     item.is_a?(self) ? item : new(item)
   end
 
+  # ===========================================================================
+  # :section: ApplicationCable::Payload overrides
+  # ===========================================================================
+
+  public
+
   def self.template = TEMPLATE
 
   def self.default_status = DEFAULT_STATUS

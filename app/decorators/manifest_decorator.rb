@@ -421,7 +421,7 @@ class ManifestDecorator
 
   public
 
-  # Fields and configurations augmented with a :value entry containing the
+  # Fields and configurations augmented with a `:value` entry containing the
   # current field value.
   #
   # @param [Hash] opt                 Passed to super.

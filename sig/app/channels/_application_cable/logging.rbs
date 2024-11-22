@@ -2,6 +2,8 @@ type cableObject = ActionCable::Connection::Base | ActionCable::Channel::Base
 
 # Definitions for ActionCable logging.
 #
+# No output is produced unless DEBUG_CABLE is true.
+#
 module ApplicationCable::Logging
 
   extend ActiveSupport::Concern
@@ -12,9 +14,16 @@ module ApplicationCable::Logging
 
   include Emma::ThreadMethods
 
+  # @private
   TAG_LEADER: String
 
-  def cable_tag: (?(cableObject|Class)? arg, ?tag: String|nil, ?tid: String|nil, **untyped _ignored) -> String
+  # Generate a line leader for cable debugging output.
+  #
+  # @param [any, nil]    arg          Source of class name to display.
+  # @param [any, nil]    tag          Connection ID or stream ID.
+  # @param [String, nil] tid          Default: `#thread_name`.
+  #
+  def cable_tag: (?(cableObject|Class|nil) arg, ?tag: String|nil, ?tid: String|nil, **untyped _ignored) -> String
 
   # Send debugging output to the console.
   #

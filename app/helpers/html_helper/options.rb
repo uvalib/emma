@@ -26,10 +26,11 @@ module HtmlHelper::Options
   # @return [Hash]
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def html_options(html_opt)
     html_options!(dup_options(html_opt))
   end
+  # :nocov:
 
   # Retain only entries which are valid HTML attributes with coalesced "data-*"
   # and `data: { }` options.

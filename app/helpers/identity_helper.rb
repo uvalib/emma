@@ -20,7 +20,7 @@ module IdentityHelper
   # Indicate whether the current user has the :developer role.
   #
   # === Implementation Notes
-  # Currently the :developer role applies regardless of the model.
+  # Currently, the :developer role applies regardless of the model.
   #
   def developer?
     current_user&.developer? || false

@@ -143,7 +143,7 @@ module GridHelper
   # @return [Hash]                        A new hash.
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def append_grid_cell_classes(html_opt, *classes, **opt)
     unless html_opt
       Log.debug { "#{__method__}: nil html_opt from #{calling_method}" }
@@ -151,6 +151,7 @@ module GridHelper
     html_opt = html_opt&.deep_dup || {}
     append_grid_cell_classes!(html_opt, *classes, **opt)
   end
+  # :nocov:
 
   # Add CSS classes which indicate the position of the control within the grid.
   #
@@ -174,7 +175,7 @@ module GridHelper
   # @return [Hash]                        A new hash.
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def prepend_grid_cell_classes(html_opt, *classes, **opt)
     unless html_opt
       Log.debug { "#{__method__}: nil html_opt from #{calling_method}" }
@@ -182,6 +183,7 @@ module GridHelper
     html_opt = html_opt&.deep_dup || {}
     prepend_grid_cell_classes!(html_opt, *classes, **opt)
   end
+  # :nocov:
 
   # Add CSS classes which indicate the position of the control within the grid.
   #

@@ -25,7 +25,7 @@ module ScrollHelper
 
   # An empty element which will be the target for the scroll-to-top button.
   # (For use just before the intended element if it requires a gap at the top
-  # of the viewport but can't have 'padding-top' set.
+  # of the viewport but can't have 'padding-top' set.)
   #
   # @param [Hash] opt                 Passed to #html_span.
   #

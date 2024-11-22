@@ -50,7 +50,7 @@ module SearchModesHelper
   # @type [Boolean]
   #
   # === Usage Notes
-  # This should normally be *false* because it a mode of operation that is
+  # This should normally be *false* because this is a mode of operation that is
   # generally not consider accessibility-friendly and, also, skews search call
   # statistics.
   #
@@ -79,6 +79,8 @@ module SearchModesHelper
   # Ensure that search results are displayed hierarchically (by title).
   #
   # @return [Symbol]
+  #
+  # @note Currently unused.
   #
   def force_title_results: () -> Symbol
 

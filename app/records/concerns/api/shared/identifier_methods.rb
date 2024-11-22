@@ -107,9 +107,12 @@ module Api::Shared::IdentifierMethods
   # @return [String]
   # @return [nil]                     If *value* is not a valid identifier.
   #
+  # @note Currently unused.
+  # :nocov:
   def normalize_identifier(value)
     PublicationIdentifier.cast(value, invalid: true)&.to_s
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:

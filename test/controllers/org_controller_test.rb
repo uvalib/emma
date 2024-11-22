@@ -25,7 +25,7 @@ class OrgControllerTest < ActionDispatch::IntegrationTest
   # The organization for users in #ALL_TEST_USERS.
   TEST_ORG = :one
 
-  # An organization different than #TEST_ORG.
+  # An organization different from #TEST_ORG.
   OTHER_ORG = :two
 
   setup do

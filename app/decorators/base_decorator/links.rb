@@ -107,11 +107,14 @@ module BaseDecorator::Links
   #
   # @return [ActiveSupport::SafeBuffer]   HTML link or text element.
   #
+  # @note Currently unused.
+  # :nocov:
   def button_link(css: '.button', **opt)
     opt[:role] ||= 'button'
     trace_attrs!(opt, __method__)
     link(css: css, **opt)
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -119,7 +122,7 @@ module BaseDecorator::Links
 
   protected
 
-  # show_tooltip
+  # Tooltip for the :show action for the current model.
   #
   # @return [String, nil]
   #
@@ -136,9 +139,9 @@ module BaseDecorator::Links
   # @private
   ANOTHER = config_term(:another).freeze
 
-  # A list of controller action links.  If the current action is provided,
-  # the associated action link will be appear at the top of the list, except
-  # for :edit_select and :delete_select where it is not displayed at all (since
+  # A list of controller action links.  If the current action is provided, the
+  # associated action link will appear at the top of the list, except for
+  # :edit_select and :delete_select where it is not displayed at all (since
   # the link is redundant).
   #
   # @param [String, Symbol, nil]     current      Def: `context[:action]`

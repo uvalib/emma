@@ -138,7 +138,7 @@ module BaseDecorator::Fields
   #
   CHECK_OPT: symArray
 
-  # render_check_box
+  # Render a checkbox and label for use on an input form.
   #
   # @param [String]      name
   # @param [any, nil]    value
@@ -242,27 +242,27 @@ module BaseDecorator::Fields
   #
   def field_html_id: (?(Symbol|String|nil) name, ?id_base: String|nil, ?field: Symbol|nil, ?label: String|Symbol|nil, ?index: String|Integer|nil, ?group: String|Symbol|nil, **untyped opt) -> String
 
-  # format_org
+  # Return the common name of *org* or #EMPTY_VALUE.
   #
-  # @param [any, nil] value
+  # @param [any, nil] org
   #
   # @return [String, nil]
   #
   def format_org
-    :     (Org|String|Integer|nil value, **untyped _ignored) -> String
-    |     (ApplicationRecord      value, **untyped _ignored) -> (String | nil)
-    |     (untyped                value, **untyped _ignored) -> nil
+    :     (Org|String|Integer|nil org, **untyped _ignored) -> String
+    |     (ApplicationRecord      org, **untyped _ignored) -> (String | nil)
+    |     (untyped                org, **untyped _ignored) -> nil
 
-  # format_user
+  # Return the account ID of *user* or #EMPTY_VALUE.
   #
-  # @param [any, nil] value
+  # @param [any, nil] user
   #
   # @return [String, nil]
   #
   def format_user
-    :     (User|String|Integer|nil value, **untyped _ignored) -> String
-    |     (ApplicationRecord       value, **untyped _ignored) -> (String | nil)
-    |     (untyped                 value, **untyped _ignored) -> nil
+    :     (User|String|Integer|nil user, **untyped _ignored) -> String
+    |     (ApplicationRecord       user, **untyped _ignored) -> (String | nil)
+    |     (untyped                 user, **untyped _ignored) -> nil
 
   # Render a value into ISO 8601 format if possible.
   #

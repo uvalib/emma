@@ -162,7 +162,7 @@ module HeadHelper::Scripts
     script_settings.merge!(opt)
   end
 
-  # Produce inline JavaScript to setup dynamic constant values on the client.
+  # Produce inline JavaScript to set up dynamic constant values on the client.
   #
   # The values set here override the values "baked in" to the JavaScript when
   # assets were compiled -- this allows the values of environment variables

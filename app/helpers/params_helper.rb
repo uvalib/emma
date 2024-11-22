@@ -86,7 +86,7 @@ module ParamsHelper
     action.to_s.end_with?(SELECT_ACTION_SUFFIX)
   end
 
-  # Return the base action for a value which may or may not ends with a suffix
+  # Return the base action for a value which may or may not end with a suffix
   # indicating generation of a menu.
   #
   # @param [Symbol, String] action

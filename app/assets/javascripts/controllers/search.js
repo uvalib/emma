@@ -51,7 +51,7 @@ appSetup(MODULE, function() {
     const DISABLED_MARKER = "disabled";
 
     /**
-     * Selector for item sub-sections.
+     * Selector for item subsections.
      *
      * @readonly
      * @type {string}
@@ -387,7 +387,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Update the open/closed state of a sub-section. <p/>
+     * Update the open/closed state of a subsection. <p/>
      *
      * **Usage Notes** <p/>
      * This function expects that "section" resolves to a single HTML element
@@ -415,7 +415,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Toggle open/closed state of the associated item sub-section.
+     * Toggle open/closed state of the associated item subsection.
      *
      * @param {ElementEvt} event
      * @param {boolean}   [open]      Def: opposite state.
@@ -480,8 +480,8 @@ appSetup(MODULE, function() {
         const is_open   = $item.is(OPEN);
         markSectionVisible($sections, is_open);
 
-        // Make clicking on sub-section toggles and associated labels
-        // open/close that sub-section, but hide toggles/labels which are not
+        // Make clicking on subsection toggles and associated labels
+        // open/close that subsection, but hide toggles/labels which are not
         // actually part of the item display.
         $sections.find(TOGGLE).not('.for-item').each((_, toggle) => {
             const $toggle = $(toggle);

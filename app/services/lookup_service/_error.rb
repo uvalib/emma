@@ -21,7 +21,7 @@ __loading_begin(__FILE__)
 #   `LookupService::UniqueError < LookupService::Error`
 #
 # An exception in the LookupService namespace can be identified by checking for
-# `exception.is_a?(LookupService::Error::ClassType)`.
+# `exception.is_a? (LookupService::Error::ClassType)`.
 #
 class LookupService::Error < ApiService::Error
 

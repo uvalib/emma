@@ -69,9 +69,13 @@ class SearchTerm
 
   # Indicate whether this search term represents facet value(s).
   #
+  # @note Currently unused.
+  #
   def facet?: () -> bool
 
   # Indicate whether this search term represents a "null search".
+  #
+  # @note Currently unused.
   #
   def null_search?: () -> bool
 
@@ -81,9 +85,13 @@ class SearchTerm
 
   # Indicate whether this instance is associated with a single field values.
   #
+  # @note Currently unused.
+  #
   def single?: () -> bool
 
   # Indicate whether this instance is associated with multiple field values.
+  #
+  # @note Currently used only by #single?.
   #
   def multiple?: () -> bool
 

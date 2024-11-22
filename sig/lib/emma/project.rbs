@@ -1,7 +1,7 @@
-# Emma::Project
+# Project-related constants.
 #
 module Emma::Project
-  # The web site for project information.
+  # The website for project information.
   #
   # @type [String]
   #
@@ -13,7 +13,7 @@ module Emma::Project
   #
   PROJECT_EMAIL: String
 
-  # The web site for the "emma-users" mailing list.
+  # The website for the "emma-users" mailing list.
   #
   # @type [String]
   #

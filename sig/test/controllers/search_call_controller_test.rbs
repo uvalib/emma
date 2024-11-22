@@ -11,7 +11,7 @@ class SearchCallControllerTest < ActionDispatch::IntegrationTest
 
   TEST_READERS: symArray
 
-  READ_FORMATS: Symbol | symArray
+  READ_FORMATS: symArray | Symbol
 
   @readers: Array[User|nil]
 

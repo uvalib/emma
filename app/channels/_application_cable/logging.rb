@@ -7,6 +7,8 @@ __loading_begin(__FILE__)
 
 # Definitions for ActionCable logging.
 #
+# No output is produced unless DEBUG_CABLE is true.
+#
 module ApplicationCable::Logging
 
   extend ActiveSupport::Concern
@@ -21,8 +23,15 @@ module ApplicationCable::Logging
 
   public
 
+  # @private
   TAG_LEADER = 'CABLE'
 
+  # Generate a line leader for cable debugging output.
+  #
+  # @param [any, nil]    arg          Source of class name to display.
+  # @param [any, nil]    tag          Connection ID or stream ID.
+  # @param [String, nil] tid          Default: `#thread_name`.
+  #
   def cable_tag(arg = nil, tag: nil, tid: nil, **)
     arg ||= self
     name  = arg.is_a?(Class) ? arg : arg.class
@@ -55,7 +64,6 @@ module ApplicationCable::Logging
       when Class, /^#{TAG_LEADER} /      then obj = args.shift
       else                                    obj = self
     end
-    # noinspection RubyMismatchedArgumentType
     opt[:leader]    = "#{cable_tag(obj)}:" unless opt.key?(:leader)
     opt[:compact]   = true                 unless opt.key?(:compact)
     opt[:separator] = "\n\t"               unless opt.key?(:separator)

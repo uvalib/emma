@@ -393,8 +393,9 @@ class ApiMigrate
 
     # Transform JSON EMMA data.
     #
-    # If an :emma_data field won't parse it could be because one or more data
-    # fields contains an unescaped double-quote, making the entry invalid JSON.
+    # If an `:emma_data` field doesn't parse it could be because one or more
+    # data fields contains an unescaped double-quote, making the entry invalid
+    # JSON.
     #
     # This method attempts to correct that by protecting all of the valid
     # instances of unescaped double-quotes and escaping any double-quotes

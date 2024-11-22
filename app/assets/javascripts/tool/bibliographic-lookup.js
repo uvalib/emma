@@ -51,7 +51,7 @@ AppDebug.file("tool/bibliographic-lookup", MODULE, DEBUG);
 
 // noinspection FunctionTooLongJS
 /**
- * Setup a page with interactive bibliographic lookup.
+ * Set up a page with interactive bibliographic lookup.
  *
  * @param {Selector}               base
  * @param {CallbackChainFunctions} [show_hooks]

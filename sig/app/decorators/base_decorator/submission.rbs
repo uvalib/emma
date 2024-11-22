@@ -98,7 +98,8 @@ module BaseDecorator::Submission
   #
   def monitor_cancel_options: (**untyped opt) -> symHash
 
-  # monitor_log_toggle
+  # A control for showing/hiding processing details on the submission monitor
+  # popup.
   #
   # @param [String] label
   # @param [String] css             Characteristic CSS class/selector.

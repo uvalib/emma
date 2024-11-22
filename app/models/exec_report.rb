@@ -114,7 +114,7 @@ class ExecReport
 
   public
 
-  # Find the first exception associated with a error report part.
+  # Find the first exception associated with an error report part.
   #
   # @return [Exception, nil]
   #

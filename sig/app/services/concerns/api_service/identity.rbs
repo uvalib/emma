@@ -7,11 +7,13 @@ module ApiService::Identity
   #
   attr_reader user: User | nil
 
-  # Extract the user name to be used for API parameters.
+  # Extract the username to be used for API parameters.
   #
   # @param [User, String] user
   #
   # @return [String]
+  #
+  # @note Currently unused.
   #
   def name_of: ((User|String|nil) user) -> String
 
@@ -34,6 +36,8 @@ module ApiService::Identity
   # The current OAuth2 refresher token (if applicable).
   #
   # @return [String, nil]
+  #
+  # @note Currently unused.
   #
   def refresh_token: () -> (String | nil)
 end

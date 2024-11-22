@@ -1,3 +1,5 @@
+# The base class for SubmitJob responses.
+#
 class SubmitChannel::Response < ApplicationCable::Response
   STATUS: Hash[Symbol,String]
 
@@ -21,19 +23,27 @@ class SubmitChannel::Response < ApplicationCable::Response
 
   # Indicate whether this response is part of a simulation.
   #
+  # @note Currently unused.
+  #
   def simulation?: () -> bool
 end
 
+# The base class for SubmitJob responses indicating submission status.
+#
 class SubmitChannel::SubmitResponse < SubmitChannel::Response
   TEMPLATE: symHash
 
   def self.template: () -> symHash
 end
 
+# A response sent to indicate that the SubmitJob has started.
+#
 class SubmitChannel::InitialResponse < SubmitChannel::SubmitResponse
   def self.default_status: () -> String
 end
 
+# A response sent to when a SubmitJob submission step has completed.
+#
 class SubmitChannel::StepResponse < SubmitChannel::SubmitResponse
   TEMPLATE: symHash
 
@@ -42,10 +52,16 @@ class SubmitChannel::StepResponse < SubmitChannel::SubmitResponse
   def self.default_status: () -> String
 end
 
+# A response sent to indicate that the SubmitJob has finished.
+#
 class SubmitChannel::FinalResponse < SubmitChannel::StepResponse
   def self.default_status: () -> String
 end
 
+# A response sent to return feedback from a client-issued SubmitJob action.
+#
+# @note Currently unused.
+#
 class SubmitChannel::ControlResponse < SubmitChannel::Response
   TEMPLATE: symHash
 

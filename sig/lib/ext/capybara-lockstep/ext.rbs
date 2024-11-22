@@ -1,9 +1,9 @@
 # Encapsulates setup of 'capybara-lockstep'.
 #
 module CapybaraLockstep
-  # This status is updated in ApplicationSystemTestCase to indicate whether or
-  # not the Javascript for 'capybara-lockstep' should be included in the
-  # `<head>` of the page being rendered.
+  # This status is updated in ApplicationSystemTestCase to indicate whether the
+  # Javascript for 'capybara-lockstep' should be included in the `<head>` of
+  # the page being rendered.
   #
   # (It just gets in the way in controller tests if displaying the contents of
   # the response body.)

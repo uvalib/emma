@@ -17,11 +17,12 @@ module TestHelper::SystemTests::Cookies
 
   # Shortcut to the browser client interface.
   #
-  # @note Currently unused
-  #
+  # @note Currently unused.
+  # :nocov:
   def browser
     @browser ||= Capybara.current_session.driver.browser
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -33,8 +34,8 @@ module TestHelper::SystemTests::Cookies
   #
   # @return [void]
   #
-  # @note Currently unused
-  #
+  # @note Currently unused.
+  # :nocov:
   def show_cookies
     show_item('COOKIES:') do
       get_cookies.map do |k, v|
@@ -43,11 +44,14 @@ module TestHelper::SystemTests::Cookies
       end
     end
   end
+  # :nocov:
 
   # Get the current cookies from the last response.
   #
   # @return [Hash]
   #
+  # @note Currently used only by $show_cookies.
+  # :nocov:
   def get_cookies
     if browser.respond_to?(:cookie_jar) # Rack::Test::Session
       browser.cookie_jar.to_hash
@@ -57,6 +61,7 @@ module TestHelper::SystemTests::Cookies
       raise "#{__method__}: failed for browser #{browser.inspect}"
     end
   end
+  # :nocov:
 
   # Clear all browser cookies.
   #
@@ -65,6 +70,8 @@ module TestHelper::SystemTests::Cookies
   #
   # @return [void]
   #
+  # @note Currently unused.
+  # :nocov:
   def clear_cookies
     if browser.respond_to?(:clear_cookies) # Rack::Test::Session
       browser.clear_cookies
@@ -74,5 +81,6 @@ module TestHelper::SystemTests::Cookies
       raise "#{__method__}: failed for browser #{browser.inspect}"
     end
   end
+  # :nocov:
 
 end

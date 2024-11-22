@@ -50,7 +50,7 @@ module HeadHelper::Stylesheets
   # @yield To supply additional source(s) to @page_stylesheets.
   # @yieldreturn [String,Hash,Array(String,Hash),Array<String,Hash,Array(String,Hash)>]
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def append_page_stylesheets: (*(script_path|Array[script_path]) values) ?{ () -> (script_path | Array[script_path]) } -> Array[String|symHash|[String,symHash]]
 

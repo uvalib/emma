@@ -26,14 +26,15 @@ module HomeHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @note Currently unused
-  #
+  # @note Currently unused.
+  # :nocov:
   def orgs_count(css: '.orgs-count', **opt)
     prepend_css!(opt, css)
     html_span(**opt) do
       Org.active.count
     end
   end
+  # :nocov:
 
   # Generate a display list of active EMMA member organizations.
   #
@@ -42,14 +43,15 @@ module HomeHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @note Currently unused
-  #
+  # @note Currently unused.
+  # :nocov:
   def orgs_list(css: '.orgs-list', **opt)
     prepend_css!(opt, css)
     html_ul(**opt) do
       org_names.map { html_li(_1) }
     end
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:

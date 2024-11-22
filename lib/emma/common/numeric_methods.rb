@@ -29,7 +29,7 @@ module Emma::Common::NumericMethods
   # @param [any, nil] value           String, Symbol, Numeric
   #
   # @return [Integer]
-  # @return [nil]                     If *value* does not represent a number.
+  # @return [nil]                     If `*value*` does not represent a number.
   #
   def to_integer(value)
     return value.round if value.is_a?(Numeric)
@@ -72,7 +72,7 @@ module Emma::Common::NumericMethods
   # @param [any, nil] value           String, Symbol, Numeric
   #
   # @return [Float]
-  # @return [nil]                     If *value* does not represent a number.
+  # @return [nil]                     If `*value*` does not represent a number.
   #
   def to_float(value)
     return value.to_f  if value.is_a?(Numeric)

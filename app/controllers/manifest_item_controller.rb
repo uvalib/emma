@@ -431,6 +431,8 @@ class ManifestItemController < ApplicationController
 
   # === DELETE /manifest_item/bulk/destroy/:manifest
   #
+  # Remove the specified ManifestItem records and their associated files.
+  #
   # @see #bulk_destroy_manifest_item_path               Route helper
   # @see ManifestItemController#bulk_delete
   #

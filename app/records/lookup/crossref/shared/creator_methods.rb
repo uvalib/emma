@@ -40,9 +40,12 @@ module Lookup::Crossref::Shared::CreatorMethods
   #
   # @return [Array<String>]
   #
+  # @note Currently unused.
+  # :nocov:
   def author_list(**opt)
     creator_list(:author, **opt)
   end
+  # :nocov:
 
   # The editor(s) of this catalog title.
   #
@@ -50,10 +53,13 @@ module Lookup::Crossref::Shared::CreatorMethods
   #
   # @return [Array<String>]
   #
+  # @note Currently unused.
+  # :nocov:
   def editor_list(**opt)
     opt[:role] = true unless opt.key?(:role)
     creator_list(:editor, **opt)
   end
+  # :nocov:
 
   # The translator(s) of this catalog title.
   #
@@ -61,10 +67,13 @@ module Lookup::Crossref::Shared::CreatorMethods
   #
   # @return [Array<String>]
   #
+  # @note Currently unused.
+  # :nocov:
   def translator_list(**opt)
     opt[:role] = true unless opt.key?(:role)
     creator_list(:translator, **opt)
   end
+  # :nocov:
 
   # The author(s)/creator(s) of this catalog title.
   #

@@ -15,7 +15,7 @@ module ViewDebugHelper
   #
   def view_debug: (String template, *untyped arg, ?separator: String) -> void
 
-  # view_abort
+  # Used to annotate a view template that is not expected to be used.
   #
   # @param [String] template
   # @param [Array]  arg

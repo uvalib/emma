@@ -37,7 +37,7 @@ class Upc < PublicationIdentifier
     UPC_DIGITS = 12
 
     # If a value has a number of digits within this range it could be either a
-    # valid UPC or intended as an UPC but with one too few or one too many
+    # valid UPC or intended as a UPC but with one too few or one too many
     # digits.
     #
     # @type [Range]
@@ -75,7 +75,7 @@ class Upc < PublicationIdentifier
 
     public
 
-    # Indicate whether *v* would be a valid value for an item of this type.
+    # Indicate whether `*v*` would be a valid value for an item of this type.
     #
     # @param [any, nil] v
     #

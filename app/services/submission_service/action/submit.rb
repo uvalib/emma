@@ -57,6 +57,8 @@ module SubmissionService::Action::Submit
   #
   # @return [SubmissionService::SubmitResponse] The value assigned to @result.
   #
+  # @note Currently unused.
+  # :nocov:
   #--
   # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
   #++
@@ -68,6 +70,7 @@ module SubmissionService::Action::Submit
     self.end_time     = timestamp
     self.result       = post_flight(result_data, **opt)
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -566,8 +569,8 @@ module SubmissionService::Action::Submit
   ENTRY_COLUMNS = COLUMN_KEY_MAP.keys.freeze
   RESULT_KEYS   = COLUMN_KEY_MAP.values.freeze
 
-  # Create an Upload record for the entries that have made it through all of
-  # the steps through index ingest.
+  # Create an Upload record for the entries that have transitioned through all
+  # of the steps ending with index ingest.
   #
   # @param [Array<ManifestItem>]   records
   # @param [User, String, Integer] user
@@ -627,7 +630,7 @@ module SubmissionService::Action::Submit
 
   # Generate a row of fields for #insert_all.
   #
-  # If *sid* is a string, this has the side-effect of setting rec.submission_id
+  # If *sid* is a string, this has the side effect of setting rec.submission_id
   # (without persisting)
   #
   # @param [ManifestItem]          rec
@@ -761,6 +764,8 @@ module SubmissionService::Action::Submit
 
   protected
 
+  # Encapsulates the properties of a submission step.
+  #
   class StepResult < ::Hash
 
     include Emma::Common
@@ -834,6 +839,11 @@ module SubmissionService::Action::Submit
 
   end
 
+  # Encapsulates the properties and behavior of a simulated submission step.
+  #
+  # @note Currently unused.
+  #
+  # :nocov:
   class SimulationOptions < ::Hash
 
     include SubmissionService::Action::Submit
@@ -964,6 +974,7 @@ module SubmissionService::Action::Submit
     end
 
   end
+  # :nocov:
 
 end
 

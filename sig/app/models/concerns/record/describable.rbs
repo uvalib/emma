@@ -16,6 +16,8 @@ module Record::Describable
   #
   # @return [Hash{Symbol=>Symbol}]
   #
+  # @note Currently used only by #interpolations.
+  #
   def interpolation_table: () -> Hash[Symbol,Symbol]
 
   @interpolation_table: Hash[Symbol,Symbol]
@@ -34,6 +36,8 @@ module Record::Describable
   #
   # @see Kernel#sprintf
   #
+  # @note Currently used only by #process_note.
+  #
   def interpolations: (untyped text, untyped model, **untyped opt) -> String
 
   # Process a lambda or method reference and return a final result string.
@@ -49,6 +53,8 @@ module Record::Describable
   #
   # @see Kernel#sprintf
   #
+  # @note Currently unused.
+  #
   def process_note: (?(String|Symbol|Proc|nil) note, untyped model, **untyped opt) -> (String | nil)
 
   # Extract the interpolation methods defined in the current context indexed by
@@ -61,6 +67,8 @@ module Record::Describable
   # @return [Hash{Symbol=>Symbol}]
   #
   # @see InterpolationMethods
+  #
+  # @note Currently used only by #interpolation_table.
   #
   def generate_interpolation_table: (?untyped mod) -> Hash[Symbol,Symbol]
 
@@ -85,6 +93,8 @@ module Record::Describable
     #
     # @see Record::Identification#id_value
     #
+    # @note Currently unused.
+    #
     def describe_id: (?untyped model, **untyped opt) -> (String | nil)
 
     # A replacement value for '%{repo}' or '%{repository}' in #sprintf formats.
@@ -95,6 +105,8 @@ module Record::Describable
     # @return [String, nil]
     #
     # @see Record::EmmaIdentification#repository_name
+    #
+    # @note Currently unused.
     #
     def describe_repo: (?untyped model, **untyped opt) -> (String | nil)
 
@@ -107,6 +119,8 @@ module Record::Describable
     #
     # @see Record::EmmaIdentification#sid_value
     #
+    # @note Currently used only by #describe_submission.
+    #
     def describe_sid: (?untyped model, **untyped opt) -> (String | nil)
 
     # A replacement value for '%{submission}' in #sprintf formats.
@@ -118,6 +132,8 @@ module Record::Describable
     #
     # @see Record::EmmaIdentification#sid_value
     #
+    # @note Currently unused.
+    #
     def describe_submission: (?untyped model, **untyped opt) -> (String | nil)
 
     # A replacement value for '%{user}' in #sprintf formats.
@@ -126,6 +142,8 @@ module Record::Describable
     # @param [Hash]     _opt          Unused.
     #
     # @return [String, nil]
+    #
+    # @note Currently unused.
     #
     def describe_user: (?untyped model, **untyped _ignored) -> (String | nil)
 
@@ -137,6 +155,8 @@ module Record::Describable
     # @return [String, nil]
     #
     # @see User#id_value
+    #
+    # @note Currently unused.
     #
     def describe_user_id: (?untyped model, **untyped _ignored) -> (String | nil)
 
@@ -151,6 +171,8 @@ module Record::Describable
     # === Usage Notes
     # The including class is expected to define an overriding class method.
     #
+    # @note Currently unused.
+    #
     def describe_type: (?untyped model, **untyped opt) -> String
 
     # A textual description of the status of the Model instance.
@@ -163,6 +185,8 @@ module Record::Describable
     # === Usage Notes
     # The including class is expected to define an overriding class method.
     #
+    # @note Currently unused.
+    #
     def describe_status: (?untyped model, **untyped opt) -> String
 
     # self_for_instance_method
@@ -172,6 +196,8 @@ module Record::Describable
     # @raise [RuntimeError]           If a class method is being defined.
     #
     # @return [self]                  If an instance method is being defined.
+    #
+    # @note Currently used only by unused methods.
     #
     def self_for_instance_method: (Symbol meth) -> self
   end
@@ -187,6 +213,8 @@ module Record::Describable
     # methods along with the methods defined within the block.
     #
     # @return [void]
+    #
+    # @note Currently unused.
     #
     def interpolation_methods: () { () -> untyped } -> void
   end

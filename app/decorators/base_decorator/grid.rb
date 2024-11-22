@@ -301,7 +301,7 @@ module BaseDecorator::Grid
     wrap ? html_thead(content, **t_opt) : content
   end
 
-  # render_grid_data_rows
+  # Generate the data row(s) for a grid.
   #
   # @param [Array<Model>,nil] items   Default: `#grid_row_page`.
   # @param [Integer]          row
@@ -397,7 +397,7 @@ module BaseDecorator::Grid
   #
   FIELD_PROPERTIES = %i[max min role type].concat(Field::SYNTHETIC_KEYS).freeze
 
-  # grid_head_headers
+  # Generate grid header row column header elements.
   #
   # @param [Hash] **opt
   #
@@ -416,7 +416,7 @@ module BaseDecorator::Grid
 
   # Render the control column header (the top left grid cell).
   #
-  # By default this is just a spacer for the control column.
+  # By default, this is just a spacer for the control column.
   #
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               Passed to #grid_head_cell.
@@ -513,7 +513,7 @@ module BaseDecorator::Grid
   # @private
   ROW_CONTROLS = config_term(:grid, :row_controls).freeze
 
-  # grid_row
+  # Generate a grid data row.
   #
   # @param [Hash]    control          Options for #grid_row_controls.
   # @param [String]  unique
@@ -670,7 +670,7 @@ module BaseDecorator::Grid
     }.compact.unshift(nil).join(separator).html_safe
   end
 
-  # Fields and configurations augmented with a :value entry containing the
+  # Fields and configurations augmented with a `:value` entry containing the
   # current field value.
   #
   # @param [Hash] opt         Passed to #property_pairs and #grid_field_value.

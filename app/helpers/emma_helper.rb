@@ -53,10 +53,11 @@ module EmmaHelper
   # @return [String]
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def academic_partners(**opt)
     emma_partner_list(**opt, type: :academic)
   end
+  # :nocov:
 
   # List EMMA commercial partners.
   #
@@ -65,10 +66,11 @@ module EmmaHelper
   # @return [String]
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def commercial_partners(**opt)
     emma_partner_list(**opt, type: :commercial)
   end
+  # :nocov:
 
   # Generate a textual list of EMMA partners.
   #
@@ -79,6 +81,8 @@ module EmmaHelper
   #
   # @return [String]
   #
+  # @note Currently used only by unused methods.
+  # :nocov:
   def emma_partner_list(mode: :long, separator: ',', final: 'and', **opt)
     separator   = "#{separator} " if %w[ , ; ].include?(separator)
     separator ||= ' '
@@ -95,6 +99,7 @@ module EmmaHelper
       list[...-1].join(separator) << "#{separator}#{final.strip} " << list[-1]
     end
   end
+  # :nocov:
 
   # Get a selection of EMMA partners.
   #
@@ -103,6 +108,8 @@ module EmmaHelper
   #
   # @return [Hash{Symbol=>Hash}]
   #
+  # @note Currently used only by #emma_partner_list.
+  # :nocov:
   def emma_partners(type: :all, active: true, **)
     cfg = active ? EMMA_PARTNER : EMMA_PARTNER_ENTRY
     if cfg.is_a?(FalseClass)
@@ -114,6 +121,7 @@ module EmmaHelper
       else Log.warn { "#{__method__}: #{type.inspect} not in #{cfg.keys}" }; {}
     end
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -138,10 +146,11 @@ module EmmaHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def project_email(label = nil)
     mail_to(PROJECT_EMAIL, label)
   end
+  # :nocov:
 
   # A simple "mailto:" link for the general email contact.
   #

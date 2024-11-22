@@ -8,7 +8,7 @@ _cable_postgres:        &CABLE_POSTGRES
 
 _cable_redis:           &CABLE_REDIS
   adapter: redis
-  url: <%= ENV.fetch("REDIS_URL") { "redis://localhost:6379/1" } %>
+  url: <%= ENV.fetch('REDIS_URL') { 'redis://localhost:6379/1' } %>
   channel_prefix: emma_production
 
 # =============================================================================

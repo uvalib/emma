@@ -68,7 +68,7 @@ class AppGlobal
     # @param [Hash]     opt           Passed to #cache_write.
     #
     # @return [any]                   The new current value.
-    # @return [nil]                   If the write failed.
+    # @return [nil]                   If the `write` failed.
     #
     def set_item(value = nil, **opt)
       value ||= default
@@ -81,7 +81,7 @@ class AppGlobal
     # @param [Hash]     opt           Passed to #cache_write.
     #
     # @return [any]                   The new current value.
-    # @return [nil]                   If the write failed.
+    # @return [nil]                   If the `write` failed.
     #
     def reset_item(value = nil, **opt)
       set_item(value, **opt).presence
@@ -92,7 +92,7 @@ class AppGlobal
     # @param [Hash] opt               Passed to #cache_delete.
     #
     # @return [Boolean]
-    # @return [nil]                   If the write failed.
+    # @return [nil]                   If the `write` failed.
     #
     def clear_item(**opt)
       cache_delete(**opt)
@@ -111,35 +111,35 @@ class AppGlobal
     def cache_key
     end
 
-    # Get a Rails.cache value.
+    # Get a `Rails.cache` value.
     #
     # @param [Symbol, String] key
     #
     # @return [any, nil]
-    # @return [nil]                   If *key* is missing.
+    # @return [nil]                   If `*key*` is missing.
     #
     def cache_read(key: cache_key, **)
       Rails.cache.read(key, namespace: namespace) if validate_key(key)
     end
 
-    # Set a Rails.cache value.
+    # Set a `Rails.cache` value.
     #
     # @param [any, nil]       value
     # @param [Symbol, String] key
     #
     # @return [Boolean]
-    # @return [nil]                   If *key* is missing.
+    # @return [nil]                   If `*key*` is missing.
     #
     def cache_write(value, key: cache_key, **)
       Rails.cache.write(key, value, namespace: namespace) if validate_key(key)
     end
 
-    # Remove a Rails.cache value.
+    # Remove a `Rails.cache` value.
     #
     # @param [Symbol, String] key
     #
     # @return [Boolean]
-    # @return [nil]                   If *key* is missing.
+    # @return [nil]                   If `*key*` is missing.
     #
     def cache_delete(key: cache_key, **)
       Rails.cache.delete(key, namespace: namespace) if validate_key(key)

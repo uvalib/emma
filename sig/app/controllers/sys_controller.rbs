@@ -59,11 +59,14 @@ class SysController < ApplicationController
   #
   PAGES: symArray
 
+  def analytics:    () -> void
   def disk_space:   () -> void
   def environment:  () -> void
+  def files:        () -> void
   def headers:      () -> void
   def internals:    () -> void
   def loggers:      () -> void
   def processes:    () -> void
   def settings:     () -> void
+  def var:          () -> void
 end

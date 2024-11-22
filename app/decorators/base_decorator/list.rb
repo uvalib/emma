@@ -129,7 +129,7 @@ module BaseDecorator::List
     pp_opt = opt.extract!(*PROPERTY_PAIRS_OPT, :fake_upload_file)
     separator ||= DEFAULT_ELEMENT_SEPARATOR
 
-    pairs  = list_field_values(**vp_opt, **pp_opt, **fv_opt, **t_opt)
+    pairs = list_field_values(**vp_opt, **pp_opt, **fv_opt, **t_opt)
     # noinspection RubyMismatchedArgumentType
     pairs.map.with_index(1) { |(field, prop), pos|
       label = prop[:label] || labelize(field)
@@ -478,7 +478,7 @@ module BaseDecorator::List
   public
 
   # From `opt[:prop]` (or #object by default), return fields and configurations
-  # augmented with a :value entry containing the value for the field.
+  # augmented with a `:value` entry containing the value for the field.
   #
   # @param [Boolean] limited          Do not include fields that are :ignored
   #                                     or have the wrong :role.
@@ -527,7 +527,7 @@ module BaseDecorator::List
   #
   DEBUG_DECORATOR_EXECUTE = true?(ENV_VAR['DEBUG_DECORATOR_EXECUTE'])
 
-  # Attempt to interpret *method* as an *item* method or as a method defined
+  # Attempt to interpret *method* as an `*item*` method or as a method defined
   # in the current context.
   #
   # @param [Model, Hash, nil] item    Default: `#object`.
@@ -600,7 +600,7 @@ module BaseDecorator::List
     end
   end
 
-  # details_container
+  # Render an element containing a metadata listing of a model instance.
   #
   # @param [Array]               before   Optional elements before the details.
   # @param [Integer, nil]        level
@@ -833,7 +833,7 @@ module BaseDecorator::List
     end
   end
 
-  # The number of columns needed if *item* will be displayed horizontally.
+  # The number of columns needed if `*item*` will be displayed horizontally.
   #
   # @param [any, nil] item            Model, Hash, Array; default: `#object`.
   #

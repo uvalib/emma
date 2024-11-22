@@ -140,11 +140,12 @@ module UserConcern
   # @param [Hash] opt                 Passed to #authenticate_user!
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def authenticate_dev!(**opt)
     authenticate_user!(**opt)
     role_failure(:developer) unless developer?
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: Callbacks

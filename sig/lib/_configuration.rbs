@@ -32,8 +32,8 @@ module Configuration
 
     # Acquire "en.emma.*" configuration values.
     #
-    # @return [Hash]                    Deep frozen
-    # @return [nil]                     Failed to find "en.(CONFIG_ROOT)"
+    # @return [Hash]                    Deep-frozen.
+    # @return [nil]                     Failed to find "en.(CONFIG_ROOT)".
     #
     def fetch_all: (?initialize: bool) -> (symHash | nil)
 
@@ -50,14 +50,14 @@ module Configuration
 
   # All "en.emma.*" configuration values.
   #
-  # @return [Hash]                    Deep frozen
+  # @return [Hash]                    Deep-frozen.
   #
   def config_all: () -> symHash
 
   # Appropriately-typed configuration values taken from `ENV`,
   # `Rails.application.credentials`, or "en.emma.env_var" YAML configuration.
   #
-  class EnvVar < ::Hash[String, any]
+  class EnvVar < ::Hash[String, untyped]
     include Singleton
 
     # Create an instance which combines configuration values from sources in
@@ -98,17 +98,17 @@ module Configuration
     #
     # @return [Hash{String=>any}]     Frozen results.
     #
-    def from_yaml: () -> Hash[String,any]
+    def from_yaml: () -> Hash[String,untyped]
 
-    @from_yaml: Hash[String,any]
+    @from_yaml: Hash[String,untyped]
 
     # Configuration values from `Rails.application.credentials`.
     #
     # @return [Hash{String=>any}]     Frozen results.
     #
-    def from_credentials: () -> Hash[String,any]
+    def from_credentials: () -> Hash[String,untyped]
 
-    @from_credentials: Hash[String,any]
+    @from_credentials: Hash[String,untyped]
 
     # All environment variable names whether or not they have a value.
     #
@@ -168,13 +168,13 @@ module Configuration
     #
     # @return [Hash{String=>any}]
     #
-    def get_credentials: (output: bool, fatal: false) -> Hash[String,any]
+    def get_credentials: (output: bool, fatal: false) -> Hash[String,untyped]
 
     # Get "en.emma.env_var" configuration entries.
     #
     # @return [Hash{String=>any}]
     #
-    def get_yaml: () -> Hash[String,any]
+    def get_yaml: () -> Hash[String,untyped]
 
     # Get `ENV` entries.
     #
@@ -319,8 +319,8 @@ module Configuration
   # @param [Array, any, nil] other    Alternate location(s)
   # @param [Hash]            opt      Passed to I18n#translate except:
   #
-  # @option opt [Boolean] :cfg_fatal  If *false* do not raise if item not found
-  # @option opt [Boolean] :cfg_warn   If *false* do not log a warning.
+  # @option opt [Boolean] :cfg_fatal  If *false*, no raise if item not found.
+  # @option opt [Boolean] :cfg_warn   If *false*, do not log a warning.
   #
   # @return [any, nil]
   #

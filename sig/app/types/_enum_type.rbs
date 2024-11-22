@@ -79,6 +79,8 @@ class EnumType < ScalarType
     #
     # @return [Array<String>]
     #
+    # @note Currently unused.
+    #
     def values_for: ((Symbol|String) entry) -> strArray
 
     # The value/label pairs for an enumeration.
@@ -120,7 +122,7 @@ class EnumType < ScalarType
     #
     def default?: (untyped v) -> bool
 
-    # Indicate whether *v* would be a valid value for an item of this type.
+    # Indicate whether `*v*` would be a valid value for an item of this type.
     #
     # @param [any, nil] v
     #

@@ -280,7 +280,7 @@ export class SubmitModal extends ModalDialog {
      */
 
     /**
-     * Setup a modal to display bulk submission responses.
+     * Set up a modal to display bulk submission responses.
      *
      * @param {Selector}             toggle
      * @param {SubmitModalCallbacks} [callbacks]
@@ -328,7 +328,7 @@ export class SubmitModal extends ModalDialog {
     }
 
     /**
-     * Setup a new channel for this subclass.
+     * Set up a new channel for this subclass.
      *
      * @param {ChannelCallbacks} [callbacks]
      *

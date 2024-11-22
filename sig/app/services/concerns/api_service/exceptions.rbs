@@ -64,11 +64,15 @@ module ApiService::Exceptions
   #
   # @return [ApiService::CommError]
   #
+  # @note Currently unused.
+  #
   def comm_error: (*untyped _ignored) ?{ () -> untyped } -> ApiService::CommError
 
   # Generate a service error indicating a network session failure.
   #
   # @return [ApiService::SessionError]
+  #
+  # @note Currently unused.
   #
   def session_error: (*untyped _ignored) ?{ () -> untyped } -> ApiService::SessionError
 
@@ -88,11 +92,15 @@ module ApiService::Exceptions
   #
   # @return [ApiService::XmitError]
   #
+  # @note Currently unused.
+  #
   def xmit_error: (*untyped _ignored) ?{ () -> untyped } -> ApiService::XmitError
 
   # Generate a service error indicating a network receive failure.
   #
   # @return [ApiService::RecvError]
+  #
+  # @note Currently unused.
   #
   def recv_error: (*untyped _ignored) ?{ () -> untyped } -> ApiService::RecvError
 

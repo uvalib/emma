@@ -407,7 +407,7 @@ module Emma::Common::FormatMethods
   end
 
   # If possible, make a copy of *text* with #sprintf named references replaced
-  # by the matching values extracted from *src* or *opt*.  Otherwise return
+  # by the matching values extracted from *src* or *opt*.  Otherwise, return
   # *text* unchanged.
   #
   # If the name is capitalized or all uppercase (e.g. "%{Name}" or "%{NAME}")

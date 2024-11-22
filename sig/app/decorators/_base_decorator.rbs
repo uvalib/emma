@@ -251,7 +251,8 @@ class BaseDecorator < Draper::Decorator
 
     @ar_class: Class | nil
 
-    # null_object
+    # Establish a specific object as "the" null object (for use with the "=="
+    # operator).
     #
     # @return [Object]
     #

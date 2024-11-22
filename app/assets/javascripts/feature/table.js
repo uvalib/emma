@@ -137,7 +137,7 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
-     * Setup a table to support sorting.
+     * Set up a table to support sorting.
      *
      * @param {Selector} table
      */
@@ -395,7 +395,7 @@ appSetup(MODULE, function() {
         }
 
         // If secondary sort(s) apply, perform them first so that they will
-        // have their affect on the selected sort.
+        // have their effect on the selected sort.
         let rows = $rows.toArray();
         if (isPresent(secondary)) {
             const $headers = headersFor($table);

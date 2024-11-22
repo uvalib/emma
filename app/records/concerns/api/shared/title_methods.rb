@@ -220,11 +220,14 @@ module Api::Shared::TitleMethods
   #
   # @return [String, nil]
   #
+  # @note Currently unused.
+  # :nocov:
   def full_journal_title
     title = journal_title
     issue = title && series_position
     issue ? "#{title}, #{issue}" : title
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:

@@ -49,6 +49,10 @@ module AccountConcern
   #
   def id_param_keys: () -> symArray
 
+  # Option keys involved in filtering record searches.
+  #
+  # @return [Array<Symbol>]
+  #
   def find_or_match_keys: () -> symArray
 
   # Return with the specified User record.
@@ -143,7 +147,7 @@ module AccountConcern
   #
   # @return [Paginator::Result]
   #
-  # @yield [items, opt] Raise an exception unless the *items* are acceptable.
+  # @yield [items, opt] Raise an exception unless the `*items*` are acceptable.
   # @yieldparam [Array] items         Identifiers of items to be deleted.
   # @yieldparam [Hash]  options       Options to #search_records.
   # @yieldreturn [void]               Block not called if *record* is *nil*.
@@ -176,6 +180,12 @@ module AccountConcern
   # @return [ActiveRecord::Relation<User>]
   #
   def get_accounts: (*(String|anyArray|anyHash|nil) terms, ?columns: symArray, **untyped hash_terms) -> ActiveRecord::Relation # _ActiveRecord_Relation[User, Integer]
+
+  # The default redirect path for #redirect_back_or_to.
+  #
+  # @return [String]
+  #
+  def default_fallback_location: () -> String
 
   # Display the failure on the screen -- immediately if modal, or after a
   # redirect otherwise.

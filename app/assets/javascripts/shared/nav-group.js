@@ -2396,7 +2396,7 @@ export class MenuGroup extends ControlGroup {
     // ========================================================================
 
     /**
-     * Non group-related click and keypress events are passed directly on to
+     * Non-group-related click and keypress events are passed directly on to
      * the `<select>` element.
      *
      * @param {string} _key           Ignored.

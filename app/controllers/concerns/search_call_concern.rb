@@ -21,7 +21,10 @@ module SearchCallConcern
 
   public
 
+  # The list of valid `#search_call_params`.
+  #
   # @type [Array<Symbol>]
+  #
   SC_PARAMETERS =
     (SearchCall.field_names + SearchCall::PARAMETER_MAP.keys)
       .excluding(:id).sort.uniq.deep_freeze
@@ -38,7 +41,7 @@ module SearchCallConcern
 
   public
 
-  # Only allow a list of trusted parameters through. # TODO: strong params
+  # Only allow through a list of trusted parameters.
   #
   # @param [ActionController::Parameters, Hash, nil] p   Default: `params`.
   #

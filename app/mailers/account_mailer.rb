@@ -39,25 +39,31 @@ class AccountMailer < ApplicationMailer
 
   public
 
-  # Send a welcome email to a new EMMA user.
+  # Generate a welcome email for a new EMMA user.
   #
   # @param [Hash] opt
+  #
+  # @return [Mail::Message]
   #
   def new_user_email(**opt)
     new_welcome_email(key: :new_user, **opt)
   end
 
-  # Send a welcome email to a new manager.
+  # Generate a welcome email for a new manager.
   #
   # @param [Hash] opt
+  #
+  # @return [Mail::Message]
   #
   def new_man_email(**opt)
     new_welcome_email(key: :new_man, **opt)
   end
 
-  # Send a welcome email to the manager of a new organization.
+  # Generate a welcome email for the manager of a new organization.
   #
   # @param [Hash] opt
+  #
+  # @return [Mail::Message]
   #
   def new_org_email(**opt)
     new_welcome_email(key: :new_org, **opt)
@@ -69,13 +75,15 @@ class AccountMailer < ApplicationMailer
 
   protected
 
-  # Send a welcome email based on configuration from "en.emma.mail".
+  # Generate a welcome email based on configuration from "en.emma.mail".
   #
   # If this is not the production deployment, the email subject will be
   # annotated to indicate that this is not a real message.
   #
   # @param [Symbol] key               Entry under "en.emma.mail".
   # @param [Hash]   opt               Passed to ActionMailer::Base#mail.
+  #
+  # @return [Mail::Message]
   #
   def new_welcome_email(key:, **opt)
     test  = opt.key?(:test) ? opt.delete(:test) : !production_deployment?

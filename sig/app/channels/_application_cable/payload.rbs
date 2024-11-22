@@ -5,7 +5,12 @@ module ApplicationCable::Payload
 
   include Emma::ThreadMethods
 
+  # The limit on payload size due to the PostgreSQL-based implementation.
+  #
+  # @return [Integer]
+  #
   # @see https://www.postgresql.org/docs/11/sql-notify.html
+  #
   MAX_PAYLOAD_SIZE: Integer
 
   # Determine the serialized size of the given item.
@@ -25,19 +30,19 @@ module ApplicationCable::Payload
   #
   def invalid_payload_size: (untyped payload) -> (Integer | nil)
 
-  # template
+  # Response data value entries defined by the including class.
   #
   # @return [Hash]
   #
   def template: () -> symHash
 
-  # default_status
+  # The characteristic status value defined by the including class.
   #
   # @return [String, nil]
   #
   def default_status: () -> (String | nil)
 
-  # Setup stored request values.
+  # Set stored request values from the template defined by the including class.
   #
   # @param [Hash, nil] target
   # @param [any, nil]  values

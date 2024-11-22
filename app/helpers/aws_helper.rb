@@ -463,7 +463,7 @@ module AwsHelper
   # @return [Array<Hash>]
   #
   #--
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
+  # noinspection RubyMismatchedArgumentType
   #++
   def sort_objects!(array, sort_keys = nil)
     primary_sort   = transform_sort_keys(S3_BUCKET_PRIMARY_SORT)

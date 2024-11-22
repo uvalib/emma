@@ -17,11 +17,9 @@ module AwsConcern
   #
   # @return [AwsS3Service]
   #
-  # @note Currently unused.
-  #
   def aws_api: () -> AwsS3Service
 
-  # get_aws_repositories
+  # Get a list of the partner repositories indicated.
   #
   # - If :emma is included it will be moved to the end of the list.
   # - If :ace is included it is replaced with :internetArchive since ACE items
@@ -34,7 +32,7 @@ module AwsConcern
   #
   def get_aws_repositories: (?default: String|Symbol|Array[String|Symbol]|nil, **untyped prm) -> symArray
 
-  # get_aws_deployments
+  # Get a list of deployments indicated.
   #
   # @param [String, Symbol, Array, nil] default   Default: '*'
   # @param [Hash]                       prm       Passed to #params_values.
@@ -52,7 +50,7 @@ module AwsConcern
   #
   def params_values: (anyHash opt, *Symbol keys) -> strArray
 
-  # aws_params
+  # Extract AWS S3 related parameters.
   #
   # @param [Hash, nil] opt            Default: `#url_parameters`.
   #
@@ -60,7 +58,7 @@ module AwsConcern
   #
   def aws_params: (?(anyHash|nil) opt) -> symHash
 
-  # repo_bucket
+  # Get the name of the indicated S3 bucket.
   #
   # @param [Symbol, String]      repository
   # @param [Symbol, String, nil] deployment   Def: `#aws_deployment`.
@@ -72,7 +70,7 @@ module AwsConcern
   #
   def repo_bucket: ((Symbol|String) repository, ?(Symbol|String|nil) deployment, ?service: AwsS3Service|nil, **untyped _ignored) -> String
 
-  # get_repo_bucket
+  # Get the indicated S3 bucket.
   #
   # @param [Symbol, String]      repository
   # @param [Symbol, String, nil] deployment   Def: `#aws_deployment`.
@@ -88,7 +86,7 @@ module AwsConcern
   #
   def get_repo_bucket: ((Symbol|String) repository, ?(Symbol|String|nil) deployment, **untyped opt) -> Aws::S3::Bucket
 
-  # get_repo_objects
+  # Get all files (object keys) associated with the indicated S3 bucket.
   #
   # @param [Symbol, String]      repository
   # @param [Symbol, String, nil] deployment   Def: `#aws_deployment`.
@@ -104,7 +102,7 @@ module AwsConcern
   #
   def get_repo_objects: ((Symbol|String) repository, ?(Symbol|String|nil) deployment, **untyped opt) -> Array[Aws::S3::Object]
 
-  # get_s3_bucket_table
+  # Get a table of all AWS S3 buckets.
   #
   # @param [Hash] opt
   #
@@ -118,7 +116,7 @@ module AwsConcern
   #
   def get_s3_bucket_table: (**untyped opt) -> Hash[String,Aws::S3::Bucket]
 
-  # get_s3_object_table
+  # Get a table of all AWS S3 buckets and their files (object keys).
   #
   # @param [Hash] opt
   #
@@ -130,7 +128,7 @@ module AwsConcern
   #
   def get_s3_object_table: (**untyped opt) -> Hash[String,Array[Aws::S3::Object]]
 
-  # get_s3_bucket
+  # Get the named AWS S3 bucket.
   #
   # @param [String] name
   # @param [Hash]   opt                       Passed to #s3_bucket except for:
@@ -139,9 +137,11 @@ module AwsConcern
   #
   # @return [Aws::S3::Bucket]
   #
+  # @note Currently used only by unused methods.
+  #
   def get_s3_bucket: (String name, **untyped opt) -> Aws::S3::Bucket
 
-  # get_s3_objects
+  # List files (object keys) in `*bucket*`.
   #
   # @param [String, Aws::S3::Bucket] bucket
   # @param [Hash]   opt                       Passed to #s3_bucket except for:

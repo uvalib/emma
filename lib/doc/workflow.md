@@ -330,7 +330,7 @@ This is a straightforward rendering of the workflow states.
 
 The constraints of enclosing states within states seem to present a real
 challenge to the rendering logic.  The following code required a *lot* of
-fiddling and still results in a rather sub-optimal layout.
+fiddling and still results in a rather suboptimal layout.
 
 ```PlantUML
 
@@ -651,7 +651,7 @@ In both sections a number of transitions are hidden because displaying them
 not enough to just use the "hidden" attribute because the lines are still
 "rendered" invisibly -- for that reason, all hidden transitions are also
 commented-out (in both sections) so that their invisible presence does not have
-unexpected (and hard to cope with) consequences to the positioning of states
+unexpected (and hard to cope with) consequences for the positioning of states
 and transitions that _are_ visible.
 
 ### References

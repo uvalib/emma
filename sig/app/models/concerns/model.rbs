@@ -72,7 +72,7 @@ module Model
   # @param [any, nil] type    Model/controller type (Symbol,String,Class,Model)
   # @param [Boolean]  fatal
   #
-  # @raise [RuntimeError]             If *type* does not map on to a model.
+  # @raise [RuntimeError]             If `*type*` does not map on to a model.
   #
   # @return [ModelConfig]             Frozen result.
   # @return [nil]                     Only if *fatal* is *false*.
@@ -200,7 +200,7 @@ module Model
   #
   def self.index_fields: (untyped? item) -> ActionConfig
 
-  # Get configured record fields relevant to a :show action for the indicated
+  # Get configured record fields relevant to a `:show` action for the indicated
   # model/controller.
   #
   # @param [any, nil] item            Symbol, String, Class, Model
@@ -244,6 +244,8 @@ module Model
     # Indicate whether the including class is primarily a container for a list
     # of other Model instances.
     #
+    # @note Currently unused.
+    #
     def collection?: () -> bool
 
     # The type for constituent Model elements for a class whose instances are
@@ -275,7 +277,7 @@ module Model
     #
     def index_fields: (?untyped? item) -> ActionConfig
 
-    # Get configured record fields relevant to a :show action for the model.
+    # Get configured record fields relevant to a `:show` action for the model.
     #
     # @param [any, nil] item          Symbol,String,Class,Model; def.: `self`.
     #

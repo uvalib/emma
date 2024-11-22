@@ -57,8 +57,8 @@ class ApplicationMailer < ActionMailer::Base
   # @param [String, Hash] src
   # @param [Hash]         opt
   #
-  # @return [String]                  The acquired message body
-  # @return [nil]                     If no body could be acquired.
+  # @return [String]                  The acquired message body.
+  # @return [nil]                     If none could be acquired.
   #
   def fetch_message(src, **opt)
     src = src[:body] if src.is_a?(Hash)
@@ -72,7 +72,7 @@ class ApplicationMailer < ActionMailer::Base
     end
   end
 
-  # Acquire the message body from a web site.
+  # Acquire the message body from a website.
   #
   # @param [String] src               Full URL to the file.
   # @param [Hash]   opt               Passed to #process_content.

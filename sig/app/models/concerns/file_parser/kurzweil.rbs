@@ -3,7 +3,7 @@
 class FileParser::Kurzweil < FileParser
   include FileFormat::Kurzweil
 
-  # metadata
+  # Metadata extracted from the file format instance.
   #
   # @return [OpenStruct]
   #

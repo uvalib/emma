@@ -24,7 +24,7 @@ module TestHelper::SystemTests::Action
   #
   # @return [true]
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def assert_valid_create_page(model, **opt)
     assert_valid_action_page(model, :new, **opt)
@@ -41,7 +41,7 @@ module TestHelper::SystemTests::Action
   #
   # @return [true]
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def assert_valid_update_page(model, **opt)
     action = opt[:id] ? :edit : :edit_select
@@ -59,7 +59,7 @@ module TestHelper::SystemTests::Action
   #
   # @return [true]
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def assert_valid_delete_page(model, **opt)
     action = opt[:id] ? :delete : :delete_select
@@ -98,7 +98,7 @@ module TestHelper::SystemTests::Action
   #
   # @return [true]
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def visit_new_page(model, **opt, &blk)
     visit_action_page(model, :new, **opt, &blk)
@@ -116,7 +116,7 @@ module TestHelper::SystemTests::Action
   #
   # @return [true]
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def visit_edit_page(model, **opt, &blk)
     action = opt[:id] ? :edit : :edit_select
@@ -135,7 +135,7 @@ module TestHelper::SystemTests::Action
   #
   # @return [true]
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def visit_delete_page(model, **opt, &blk)
     action = opt[:id] ? :delete : :delete_select

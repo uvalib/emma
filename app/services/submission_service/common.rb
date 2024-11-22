@@ -50,9 +50,12 @@ module SubmissionService::Common
 
   # Indicate whether the request sequence has begun.
   #
+  # @note Currently used only by unused methods.
+  # :nocov:
   def started?
     !start_time.nil?
   end
+  # :nocov:
 
   # Indicate whether the request sequence has finished.
   #

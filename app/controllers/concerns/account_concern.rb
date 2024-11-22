@@ -80,6 +80,10 @@ module AccountConcern
 
   public
 
+  # Option keys involved in filtering record searches.
+  #
+  # @return [Array<Symbol>]
+  #
   def find_or_match_keys
     super(*User.field_names, *PASSWORD_KEYS)
   end
@@ -340,7 +344,7 @@ module AccountConcern
   #
   # @return [Paginator::Result]
   #
-  # @yield [items, opt] Raise an exception unless the *items* are acceptable.
+  # @yield [items, opt] Raise an exception unless the `*items*` are acceptable.
   # @yieldparam [Array] items         Identifiers of items to be deleted.
   # @yieldparam [Hash]  options       Options to #search_records.
   # @yieldreturn [void]               Block not called if *record* is *nil*.
@@ -415,6 +419,10 @@ module AccountConcern
 
   public
 
+  # The default redirect path for #redirect_back_or_to.
+  #
+  # @return [String]
+  #
   def default_fallback_location = account_index_path
 
   # Display the failure on the screen -- immediately if modal, or after a

@@ -702,7 +702,7 @@ class AppSettings < AppGlobal
     # @param [Boolean] replace        If *true* erase current settings first.
     #
     # @return [Hash]                  The new settings.
-    # @return [nil]                   If the write failed.
+    # @return [nil]                   If the `write` failed.
     #
     def set_item(values, replace: false, **opt)
       values = prepare_all(values, **opt) or return default
@@ -715,7 +715,7 @@ class AppSettings < AppGlobal
     # @param [Hash, nil] values
     #
     # @return [Hash]                  The new settings.
-    # @return [nil]                   If the write failed.
+    # @return [nil]                   If the `write` failed.
     #
     def reset_item(values = nil)
       values = prepare_all(values) || default
@@ -810,17 +810,19 @@ class AppSettings < AppGlobal
     #
     # @return [String]
     #
-    # @note Currently unused
+    # @note Currently unused.
     #
     #--
     # noinspection RubyMismatchedArgumentType
     #++
+    # :nocov:
     def inspect_all(values = nil, **opt)
       values = values ? filter_all(values, **opt) : get_item(**opt)
       values = encode_symbols(values)
       values = pretty_json(values)
       decode_symbols(values)
     end
+    # :nocov:
 
     # =========================================================================
     # :section:
@@ -834,6 +836,8 @@ class AppSettings < AppGlobal
     #
     # @return [any, nil]
     #
+    # @note Currently used only by #inspect_all.
+    # :nocov:
     def encode_symbols(item)
       # noinspection RubyMismatchedArgumentType
       case item
@@ -843,6 +847,7 @@ class AppSettings < AppGlobal
         else             item
       end
     end
+    # :nocov:
 
     # encode_symbol
     #
@@ -850,9 +855,12 @@ class AppSettings < AppGlobal
     #
     # @return [String]
     #
+    # @note Currently used only by #encode_symbols.
+    # :nocov:
     def encode_symbol(symbol)
       ":#{symbol}:"
     end
+    # :nocov:
 
     # decode_symbols
     #
@@ -860,9 +868,12 @@ class AppSettings < AppGlobal
     #
     # @return [String]
     #
+    # @note Currently used only by #inspect_all.
+    # :nocov:
     def decode_symbols(string)
       string.gsub(/":([^\n]+):"/, ':\1')
     end
+    # :nocov:
 
     # =========================================================================
     # :section:

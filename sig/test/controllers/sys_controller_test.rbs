@@ -11,9 +11,9 @@ class SysControllerTest < ActionDispatch::IntegrationTest
 
   TEST_WRITERS: symArray
 
-  READ_FORMATS: Symbol | symArray
+  READ_FORMATS: symArray | Symbol
 
-  WRITE_FORMATS: Symbol | symArray
+  WRITE_FORMATS: symArray | Symbol
 
   @readers: Array[User|nil]
 

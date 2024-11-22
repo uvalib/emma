@@ -30,10 +30,11 @@ module LayoutHelper::SkipNav
   # @return [Array]
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def skip_nav_clear
     @skip_nav = []
   end
+  # :nocov:
 
   # Set "skip navigation" menu entries (replacing any existing ones).
   #

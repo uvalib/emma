@@ -86,11 +86,14 @@ module ApiConcern
   # @return [Exception]               Current service exception.
   # @return [nil]                     No exception or service not active.
   #
+  # @note Currently unused.
+  # :nocov:
   def api_exception(*only, **opt)
     table = api_active_table(*only, **opt).transform_values(&:exception)
     table.compact!
     (table.size == 1) ? table.values.first : table.presence
   end
+  # :nocov:
 
   # Clear the current API service exception.
   #
@@ -103,7 +106,7 @@ module ApiConcern
     api_active_table(*only, **opt).values.each(&:clear_error)
   end
 
-  # The ApiService.table with any blank entries removed.
+  # The `ApiService.table` with any blank entries removed.
   #
   # @param [Array<Class>] only        If given, limit to those service(s).
   # @param [Hash]         opt         Passed to ApiService#table.

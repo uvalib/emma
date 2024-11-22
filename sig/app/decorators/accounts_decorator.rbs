@@ -14,7 +14,7 @@ class AccountsDecorator < BaseCollectionDecorator
   #
   def initialize: (?(ActiveRecord::Relation|Paginator|Array[ActiveRecord::Base]|ActiveRecord::Base|nil) obj, **untyped opt) -> void
 
-  # item_ids
+  # The record IDs extracted from `*items*`.
   #
   # @param [Array<User,String>, User, String, nil] items  Def: `#object`.
   #

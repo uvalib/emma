@@ -33,7 +33,7 @@ module TestHelper::SystemTests::Common
 
   public
 
-  # assert_current_url
+  # Assert that *url* matches `current_url`.
   #
   # @param [String] url
   #
@@ -82,8 +82,8 @@ module TestHelper::SystemTests::Common
   #
   # @return [true]
   #
-  # @note Currently unused
-  #
+  # @note Currently unused.
+  # :nocov:
   def assert_json(value = nil, exact: nil, **pairs)
     if value.nil?
       value = pairs
@@ -97,6 +97,7 @@ module TestHelper::SystemTests::Common
     text = text[1...-1] unless exact
     assert text.present?
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -111,7 +112,6 @@ module TestHelper::SystemTests::Common
   # @return [String, nil]
   #
   def url_without_port(url)
-    # noinspection RubyMismatchedArgumentType
     URI(url).tap { _1.port = nil }.to_s if url
   end
 
@@ -221,7 +221,6 @@ module TestHelper::SystemTests::Common
       else                selector = "select##{from}"
     end
     menu = find(selector, **opt)
-    # noinspection RubyMismatchedArgumentType
     if menu[:class]&.split(' ')&.include?('select2-hidden-accessible')
       select2(value, css: "#{selector} + .select2-container", **opt)
     else

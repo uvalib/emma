@@ -3,7 +3,7 @@
 class FileParser::Brf < FileParser
   include FileFormat::Brf
 
-  # metadata
+  # Metadata extracted from the file format instance.
   #
   # @return [OpenStruct]
   #

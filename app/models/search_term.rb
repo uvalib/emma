@@ -128,15 +128,21 @@ class SearchTerm
 
   # Indicate whether this search term represents facet value(s).
   #
+  # @note Currently unused.
+  # :nocov:
   def facet?
     !@query
   end
+  # :nocov:
 
   # Indicate whether this search term represents a "null search".
   #
+  # @note Currently unused.
+  # :nocov:
   def null_search?
     query? && names.include?(NULL_SEARCH)
   end
+  # :nocov:
 
   # Indicate whether this instance is unassociated with any field values.
   #
@@ -146,15 +152,21 @@ class SearchTerm
 
   # Indicate whether this instance is associated with a single field values.
   #
+  # @note Currently unused.
+  # :nocov:
   def single?
     !multiple?
   end
+  # :nocov:
 
   # Indicate whether this instance is associated with multiple field values.
   #
+  # @note Currently used only by #single?.
+  # :nocov:
   def multiple?
     count > 1
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: Object overrides

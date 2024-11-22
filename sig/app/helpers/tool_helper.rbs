@@ -42,7 +42,7 @@ module ToolHelper
   # @param [Symbol]    action
   # @param [User, nil] user         Default: `current_user`
   # @param [Hash, nil] config       Default: `TOOL_ITEMS[action]`
-  # @param [Boolean]   check        If *true* don't raise CanCan::AccessDenied.
+  # @param [Boolean]   check        If *true*, don't raise CanCan::AccessDenied
   #
   # @raise [CanCan::AccessDenied]   User is not authorized.
   #

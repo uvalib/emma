@@ -34,17 +34,23 @@ module Api::Serializer::Obj::Schema
   #
   # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
   #
+  # @note Currently used only by #element_parse_name.
+  # :nocov:
   def element_parse_naming
     OBJ_ELEMENT_PARSE_NAMING
   end
+  # :nocov:
 
   # The naming mode for serializing attributes from Obj format.
   #
   # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
   #
+  # @note Currently used only by #attribute_parse_name.
+  # :nocov:
   def attribute_parse_naming
     OBJ_ATTRIBUTE_PARSE_NAMING
   end
+  # :nocov:
 
   # The naming mode for serializing data elements to Obj format.
   #

@@ -56,7 +56,7 @@ module LayoutHelper::PageSections
     page_text_section(:notes, text, **opt)
   end
 
-  # Supply an section indicating a persistent warning condition.
+  # Supply a section indicating a persistent warning condition.
   #
   # @param [String, Symbol]     type
   # @param [String, Array, nil] text  Override text to display.

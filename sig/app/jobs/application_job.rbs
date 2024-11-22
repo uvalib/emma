@@ -35,6 +35,6 @@ class ApplicationJob < ActiveJob::Base
 end
 
 # Namespace for app/jobs/attachment.
-# @note Currently unused
+# @note Currently unused.
 module Attachment
 end

@@ -99,17 +99,26 @@ module HealthConcern
       @message  = DEFAULT_HEALTH_FAILED_MESSAGE unless message || @healthy
     end
 
+    # Indicate whether the subsystem is not failed or degraded.
+    #
     def healthy?
       @healthy
     end
 
+    # Indicate whether the subsystem has failed.
+    #
     def failed?
       !healthy?
     end
 
+    # Indicate whether some subsystems have failed or are degraded.
+    #
+    # @note Currently used only by HealthResponse#degraded?.
+    # :nocov:
     def degraded?
       @degraded
     end
+    # :nocov:
 
   end
 
@@ -124,20 +133,32 @@ module HealthConcern
       @health = status_values || {}
     end
 
+    # Indicate whether all subsystems are healthy.
+    #
+    # @note Currently unused.
+    # :nocov:
     def healthy?
       v = health.values
       v.blank? || v.all?(&:healthy?)
     end
+    # :nocov:
 
+    # Indicate whether all subsystems have failed.
+    #
     def failed?
       v = health.values
       v.present? && v.all?(&:failed?)
     end
 
+    # Indicate whether some subsystems have failed or are degraded.
+    #
+    # @note Currently unused.
+    # :nocov:
     def degraded?
       v = health.values
       v.any?(&:degraded?) || v.any?(&:failed?)
     end
+    # :nocov:
 
     delegate_missing_to :health
 
@@ -319,7 +340,7 @@ module HealthConcern
 
   public
 
-  # Get the current RunState and setup the HTTP response accordingly.
+  # Get the current RunState and set up the HTTP response accordingly.
   #
   # @return [RunState]
   #
@@ -333,11 +354,11 @@ module HealthConcern
   #
   # @return [void]
   #
-  # @note Currently unused.
-  #
   # === Usage Notes
   # Does nothing unless RunState::CLEARABLE or RunState::DYNAMIC.
   #
+  # @note Currently unused.
+  # :nocov:
   def clear_run_state
     if RunState::STATIC
       Log.warn { "#{__method__}: skipped (RunState::STATIC)" }
@@ -345,6 +366,7 @@ module HealthConcern
       RunState.clear_current
     end
   end
+  # :nocov:
 
   # Set the current RunState
   #

@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# ISO 639-2 alpha-3 language code.
+# ISO 639-2 "alpha-3" language code.
 #
 class IsoLanguage < ScalarType
 
@@ -25,7 +25,7 @@ class IsoLanguage < ScalarType
 
     public
 
-    # Indicate whether *v* would be a valid value for an item of this type.
+    # Indicate whether `*v*` would be a valid value for an item of this type.
     #
     # @param [any, nil] v             String
     #

@@ -15,25 +15,31 @@ class AccountMailer < ApplicationMailer
   #
   URL_PARAMETERS: symArray
 
-  # Send a welcome email to a new EMMA user.
+  # Generate a welcome email for a new EMMA user.
   #
   # @param [Hash] opt
   #
-  def new_user_email: (**untyped opt) -> void
+  # @return [Mail::Message]
+  #
+  def new_user_email: (**untyped opt) -> Mail::Message
 
-  # Send a welcome email to a new manager.
+  # Generate a welcome email for a new manager.
   #
   # @param [Hash] opt
   #
-  def new_man_email: (**untyped opt) -> void
+  # @return [Mail::Message]
+  #
+  def new_man_email: (**untyped opt) -> Mail::Message
 
-  # Send a welcome email to the manager of a new organization.
+  # Generate a welcome email for the manager of a new organization.
   #
   # @param [Hash] opt
   #
-  def new_org_email: (**untyped opt) -> void
+  # @return [Mail::Message]
+  #
+  def new_org_email: (**untyped opt) -> Mail::Message
 
-  # Send a welcome email based on configuration from "en.emma.mail".
+  # Generate a welcome email based on configuration from "en.emma.mail".
   #
   # If this is not the production deployment, the email subject will be
   # annotated to indicate that this is not a real message.
@@ -41,7 +47,9 @@ class AccountMailer < ApplicationMailer
   # @param [Symbol] key               Entry under "en.emma.mail".
   # @param [Hash]   opt               Passed to ActionMailer::Base#mail.
   #
-  def new_welcome_email: (key: Symbol, **untyped opt) -> void
+  # @return [Mail::Message]
+  #
+  def new_welcome_email: (key: Symbol, **untyped opt) -> Mail::Message
 
   # Supply interpolation values for the current email.
   #

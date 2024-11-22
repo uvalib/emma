@@ -3,7 +3,7 @@
 class FileParser::Tex < FileParser
   include FileFormat::Tex
 
-  # metadata
+  # Metadata extracted from the file format instance.
   #
   # @return [OpenStruct]
   #

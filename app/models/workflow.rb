@@ -896,7 +896,7 @@ module Workflow::Base::States
 
   # __debug_entry
   #
-  # @param [any, nil] state           State that is being entered.
+  # @param [any, nil] state           The state that is being entered.
   # @param [Symbol]   _event          Triggering event
   # @param [Array]    _event_args
   #
@@ -914,7 +914,7 @@ module Workflow::Base::States
 
   # __debug_exit
   #
-  # @param [any, nil] state           State that is being exited.
+  # @param [any, nil] state           The state that is being exited.
   # @param [Symbol]   _event          Triggering event
   # @param [Array]    _event_args
   #

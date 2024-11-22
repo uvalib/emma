@@ -3,7 +3,7 @@
 class FileParser::Other < FileParser
   include FileFormat::Other
 
-  # metadata
+  # Metadata extracted from the file format instance.
   #
   # @return [OpenStruct]
   #

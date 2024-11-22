@@ -77,6 +77,8 @@ class SearchCallDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @note Currently unused.
+  #
   def search_call_field: ((String|Symbol) field, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Element containing one or more field values.
@@ -89,6 +91,8 @@ class SearchCallDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @note Currently unused.
+  #
   def search_call_value: ((String|Numeric|anyArray) value, **untyped opt) -> ActiveSupport::SafeBuffer
 
   # Element separating multiple values.
@@ -100,6 +104,8 @@ class SearchCallDecorator
   # === Implementation Notes
   # The element is surrounded by spaces so that a compound value element can be
   # copied and pasted legibly.
+  #
+  # @note Currently used only by #search_call_value.
   #
   def search_call_connector: (**untyped opt) -> ActiveSupport::SafeBuffer
 end

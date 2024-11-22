@@ -169,9 +169,12 @@ module ManifestItemConcern
   #
   # @return [Hash]
   #
+  # @note Currently unused.
+  # :nocov:
   def export_transform!(item)
     normalize_export_name!(item)
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -218,9 +221,12 @@ module ManifestItemConcern
   #
   # @return [Hash]
   #
+  # @note Currently used only by #export_transform!.
+  # :nocov:
   def normalize_export_name!(item)
     item.transform_keys! { EXPORT_FIELD[_1] || _1 }
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: ModelConcern overrides
@@ -371,7 +377,7 @@ module ManifestItemConcern
   #
   # @return [Paginator::Result]
   #
-  # @yield [items, opt] Raise an exception unless the *items* are acceptable.
+  # @yield [items, opt] Raise an exception unless the `*items*` are acceptable.
   # @yieldparam [Array] items         Identifiers of items to be deleted.
   # @yieldparam [Hash]  options       Options to #search_records.
   # @yieldreturn [void]               Block not called if *record* is *nil*.
@@ -606,7 +612,8 @@ module ManifestItemConcern
     end
   end
 
-  # bulk_create_manifest_items
+  # Create the specified ManifestItem records, download and store the
+  # associated files.
   #
   # @param [Array<Symbol>] returning  Returned result columns.
   #
@@ -635,7 +642,8 @@ module ManifestItemConcern
     end
   end
 
-  # bulk_update_manifest_items
+  # Modify or create the specified ManifestItem records, download and store the
+  # associated files (if changed).
   #
   # @param [Array<Symbol>] returning  Returned result columns.
   #
@@ -664,7 +672,7 @@ module ManifestItemConcern
     end
   end
 
-  # bulk_destroy_manifest_items
+  # Remove the specified ManifestItem records and their associated files.
   #
   # This marks items for deletion unless `params[:commit]` is true.
   #
@@ -685,7 +693,7 @@ module ManifestItemConcern
     ids
   end
 
-  # bulk_fields_manifest_items
+  # Modify selected ManifestItem fields of one or more items.
   #
   # @raise [Record::SubmitError]      If there were failure(s).
   #
@@ -787,6 +795,10 @@ module ManifestItemConcern
 
   public
 
+  # The default redirect path for #redirect_back_or_to.
+  #
+  # @return [String]
+  #
   def default_fallback_location = manifest_item_index_path
 
   # Generate a response to a POST.

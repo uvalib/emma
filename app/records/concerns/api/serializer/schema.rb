@@ -65,17 +65,23 @@ module Api::Serializer::Schema
   #
   # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
   #
+  # @note Currently used only by #element_parse_name.
+  # :nocov:
   def element_parse_naming
     DEFAULT_ELEMENT_PARSE_NAMING
   end
+  # :nocov:
 
   # The default naming mode for serialized attributes.
   #
   # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
   #
+  # @note Currently used only by #attribute_parse_name.
+  # :nocov:
   def attribute_parse_naming
     DEFAULT_ATTRIBUTE_PARSE_NAMING
   end
+  # :nocov:
 
   # The default naming mode for serialized data elements.
   #
@@ -122,10 +128,13 @@ module Api::Serializer::Schema
   #
   # @return [String]
   #
+  # @note Currently unused.
+  # :nocov:
   def element_parse_name(name, mode = nil)
     mode ||= element_parse_naming
     element_name(name, mode)
   end
+  # :nocov:
 
   # Transform *name* into the form indicated by the given naming mode.
   #
@@ -134,10 +143,13 @@ module Api::Serializer::Schema
   #
   # @return [String]
   #
+  # @note Currently unused.
+  # :nocov:
   def attribute_parse_name(name, mode = nil)
     mode ||= attribute_parse_naming
     element_name(name, mode)
   end
+  # :nocov:
 
   # Transform *name* into the form indicated by the given naming mode.
   #

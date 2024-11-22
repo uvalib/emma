@@ -197,7 +197,7 @@ class BaseDecorator < Draper::Decorator
       config.select { |k, v| v.is_a?(Hash) unless k.start_with?('_') }
     end
 
-    # link_to_action
+    # Create a link element to an application action target.
     #
     # @param [String, nil] label
     # @param [Hash]        opt        Passed to LinkHelper#link_to_action.
@@ -266,7 +266,8 @@ class BaseDecorator < Draper::Decorator
       self.class.ar_class
     end
 
-    # null_object
+    # Establish a specific object as "the" null object (for use with the "=="
+    # operator).
     #
     # @return [Object]
     #
@@ -274,7 +275,7 @@ class BaseDecorator < Draper::Decorator
       self.class.null_object
     end
 
-    # config_lookup
+    # Find the best match from config/locales for the given partial path.
     #
     # @param [String, Array] path     Partial I18n path.
     # @param [Hash]          opt      To ConfigurationHelper#config_lookup
@@ -420,10 +421,13 @@ class BaseDecorator < Draper::Decorator
     #
     # @return [Hash{String=>any}]
     #
+    # @note Currently unused.
+    # :nocov:
     def session_values
       values = context[:session] || request_value(:session)
       values.to_hash
     end
+    # :nocov:
 
     # referrer
     #
@@ -635,7 +639,8 @@ class BaseDecorator < Draper::Decorator
       @ar_class
     end
 
-    # null_object
+    # Establish a specific object as "the" null object (for use with the "=="
+    # operator).
     #
     # @return [Object]
     #
@@ -721,7 +726,7 @@ class BaseDecorator < Draper::Decorator
         base.module_eval do
 
           # Override BaseDecorator::SharedClassMethods#null_object in order to
-          # established a specific object as "the" null object (for use with
+          # establish a specific object as "the" null object (for use with
           # the "==" operator).
           #
           # @return [Object]
@@ -792,10 +797,12 @@ class BaseDecorator
   #
   # @deprecated Use "decorator_for" instead of "decorates"
   #
+  # :nocov:
   def self.decorates(object_class)
     __output 'WARNING: Use "decorator_for" instead of "decorates"'
     decorator_for(object_class)
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: Class methods
@@ -1004,7 +1011,6 @@ class BaseDecorator
 
     def normalize(mod)
       mod = mod.first if mod.is_a?(Array)
-      # noinspection RubyMismatchedArgumentType
       mod.is_a?(Symbol) ? mod : Model.for(mod) if mod
     end
 

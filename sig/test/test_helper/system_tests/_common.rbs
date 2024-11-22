@@ -22,7 +22,7 @@ module TestHelper::SystemTests::Common
   #include TestHelper::SystemTests::Authentication
   # :nocov:
 
-  # assert_current_url
+  # Assert that *url* matches `current_url`.
   #
   # @param [String] url
   #
@@ -56,7 +56,7 @@ module TestHelper::SystemTests::Common
   #
   # @return [true]
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def assert_json
     : (anyHash|anyArray|String value, ?exact: bool|nil, **untyped _ignored) -> true

@@ -297,10 +297,11 @@ module LayoutHelper::SearchFilters
     # @param [String]         suffix
     #
     # @note Currently unused.
-    #
+    # :nocov:
     def is_reverse?(value, suffix = SortOrder::REVERSE_SUFFIX)
       value.to_s.end_with?(suffix)
     end
+    # :nocov:
 
     # Change a :sort value to indicate a normal (ascending) sort.
     #
@@ -310,11 +311,12 @@ module LayoutHelper::SearchFilters
     # @return [String, nil]
     #
     # @note Currently unused.
-    #
+    # :nocov:
     def ascending_sort(value, suffix = SortOrder::REVERSE_SUFFIX)
       return if value.blank?
       value.to_s.delete_suffix(suffix)
     end
+    # :nocov:
 
     # Change a :sort value to indicate a reversed (descending) sort.
     #
@@ -926,7 +928,7 @@ module LayoutHelper::SearchFilters
   # date_tooltip
   #
   # @param [Symbol] menu_name         Control name.
-  # @param [Hash]   opt               Passed to #config_tooltip'.
+  # @param [Hash]   opt               Passed to #config_tooltip.
   #
   # @return [String]                  Tooltip text.
   # @return [nil]                     If no tooltip was defined.

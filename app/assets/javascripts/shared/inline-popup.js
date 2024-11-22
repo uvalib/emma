@@ -241,8 +241,8 @@ export class InlinePopup extends ModalBase {
     /**
      * Allow the **Escape** key to close an open popup. <p/>
      *
-     * If the event originates from outside of a popup control or open popup,
-     * then close all open popups.
+     * If the event originates from outside a popup control or open popup, then
+     * close all open popups.
      *
      * @param {KeyboardEvt} event
      *
@@ -268,7 +268,7 @@ export class InlinePopup extends ModalBase {
     }
 
     /**
-     * Close all popups that are not hidden when clicking outside of a popup
+     * Close all popups that are not hidden when clicking outside a popup
      * control or popup panel.
      *
      * @param {MouseEvt} event

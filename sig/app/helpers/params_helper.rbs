@@ -56,7 +56,7 @@ module ParamsHelper
   #
   def menu_action?: (Symbol|String|nil action) -> bool
 
-  # Return the base action for a value which may or may not ends with a suffix
+  # Return the base action for a value which may or may not end with a suffix
   # indicating generation of a menu.
   #
   # @param [Symbol, String] action
@@ -74,6 +74,8 @@ module ParamsHelper
   def menu_action: (Symbol|String action) -> Symbol
 
   # Normalize a list of model identifier values.
+  #
+  # Instances of #CURRENT_ID are replaced with `#current_id`.
   #
   # @param [Array<Symbol,String,Integer,Array,nil>] ids
   # @param [String,Regexp]                          separator

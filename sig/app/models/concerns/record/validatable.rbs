@@ -35,6 +35,8 @@ module Record::Validatable
   #
   # @note From Upload#emma_data_valid?
   #
+  # @note Currently unused.
+  #
   def emma_data_valid?: () -> bool
 
   # Compare the source fields against configured requirements.

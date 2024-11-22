@@ -58,10 +58,11 @@ module BaseDecorator::Row
   # @return [Integer]
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def row_items_total
     row_items.size
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -74,17 +75,23 @@ module BaseDecorator::Row
   #
   # @return [Hash{Symbol=>Hash}]
   #
+  # @note Currently used only by #row_columns.
+  # :nocov:
   def row_fields
     Model.index_fields(row_model_type)
   end
+  # :nocov:
 
   # The names of each row data column for display.
   #
   # @return [Array<Symbol>]
   #
+  # @note Currently unused.
+  # :nocov:
   def row_columns
     row_fields.keys - row_skipped_columns
   end
+  # :nocov:
 
   # The names of each row data column which is not displayed.
   #

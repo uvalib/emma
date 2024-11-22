@@ -5,6 +5,8 @@
 
 __loading_begin(__FILE__)
 
+# Bibliographic lookup WebSocket channels.
+#
 class LookupChannel < ApplicationCable::Channel
 
   # ===========================================================================
@@ -22,7 +24,7 @@ class LookupChannel < ApplicationCable::Channel
 
   protected
 
-  # stream_name
+  # The channel for the session.
   #
   # @return [String]
   #

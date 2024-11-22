@@ -204,7 +204,7 @@ module BaseDecorator::Hierarchy
   #
   def new_section: ((Symbol|String) `type`, untyped name, untyped data_value, untyped details, untyped index, symHash prop, symHash opt) -> ActiveSupport::SafeBuffer
 
-  # list_item_toggle
+  # Generate a toggle button for a  collapsible container.
   #
   # @param [Integer] row
   # @param [Hash]    opt              Passed to TreeHelper#tree_button.
@@ -246,7 +246,7 @@ module BaseDecorator::Hierarchy
   #
   def add_scope: (symHash item, Symbol scope, **untyped opt) -> symHash
 
-  # count_unique
+  # Return a count and unit label value.
   #
   # @param [Array<Hash,ActiveSupport::SafeBuffer>] lines
   # @param [String, Symbol]                        type

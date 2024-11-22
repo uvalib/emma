@@ -135,17 +135,23 @@ module Api::Serializer::Xml::Schema
   #
   # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
   #
+  # @note Currently used only by #element_parse_name.
+  # :nocov:
   def element_parse_naming
     XML_ELEMENT_PARSE_NAMING
   end
+  # :nocov:
 
   # The naming mode for serializing attributes from XML.
   #
   # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
   #
+  # @note Currently used only by #attribute_parse_name.
+  # :nocov:
   def attribute_parse_naming
     XML_ATTRIBUTE_PARSE_NAMING
   end
+  # :nocov:
 
   # The naming mode for serializing data elements to XML.
   #

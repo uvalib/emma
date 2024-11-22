@@ -76,7 +76,7 @@ module TestHelper::Common
   #
   def this_controller: () -> Symbol
 
-  # Derive the name of the model/controller from the given source.
+  # Derive the name of the associated controller from the given source.
   #
   # @param [any, nil] value           Symbol, String, Class, Model
   #

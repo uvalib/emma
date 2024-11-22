@@ -97,12 +97,15 @@ module HeadHelper::MetaTags
   # @yield To supply additional tag/value pairs for @page_meta_tags.
   # @yieldreturn [Hash]
   #
+  # @note Currently used only by unused methods.
+  # :nocov:
   def append_page_meta_tags(pairs = nil)
     @page_meta_tags ||= DEFAULT_PAGE_META_TAGS.dup
     merge_meta_tags!(pairs) if pairs.present?
     merge_meta_tags!(yield) if block_given?
     @page_meta_tags
   end
+  # :nocov:
 
   # Replace existing (or add new) meta tags for this page.
   #
@@ -224,10 +227,13 @@ module HeadHelper::MetaTags
   #
   # @return [Hash]                    The updated @page_meta_tags contents.
   #
+  # @note Currently unused.
+  # :nocov:
   def append_page_description(*values)
     opt = { sanitize: false } # Sanitization occurs in #emit_meta_tag.
     append_page_meta_tags(description: normalized_list(values, **opt))
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: Meta robots
@@ -241,9 +247,12 @@ module HeadHelper::MetaTags
   #
   # @return [Hash]                    The updated @page_meta_tags contents.
   #
+  # @note Currently unused.
+  # :nocov:
   def set_page_robots(*values)
     replace_page_meta_tags(robots: values.map(&:to_sym))
   end
+  # :nocov:
 
   # Add to '<meta name="robots">'.
   #
@@ -251,9 +260,12 @@ module HeadHelper::MetaTags
   #
   # @return [Hash]                    The updated @page_meta_tags contents.
   #
+  # @note Currently unused.
+  # :nocov:
   def append_page_robots(*values)
     append_page_meta_tags(robots: values.map(&:to_sym))
   end
+  # :nocov:
 
 end
 

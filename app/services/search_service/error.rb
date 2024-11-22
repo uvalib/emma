@@ -21,7 +21,7 @@ __loading_begin(__FILE__)
 #   `SearchService::UniqueError < SearchService::Error`
 #
 # An exception in the SearchService namespace can be identified by checking for
-# `exception.is_a?(SearchService::Error::ClassType)`.
+# `exception.is_a? (SearchService::Error::ClassType)`.
 #
 class SearchService::Error < ApiService::Error
 

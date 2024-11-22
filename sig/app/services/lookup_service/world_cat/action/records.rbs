@@ -29,6 +29,8 @@ module LookupService::WorldCat::Action::Records
   #
   # @see https://developer.api.oclc.org/wcv1#operations-Read-read-oclcnumber
   #
+  # @note Currently unused.
+  #
   def get_oclc: ((String|Oclc) term, **untyped opt) -> Lookup::WorldCat::Message::Oclc
 
   # === GET https://worldcat.org/webservices/catalog/content/isbn/(isbn)
@@ -40,6 +42,8 @@ module LookupService::WorldCat::Action::Records
   #
   # @see https://developer.api.oclc.org/wcv1#operations-Read-read-isbn
   #
+  # @note Currently unused.
+  #
   def get_isbn: ((String|Isbn) term, **untyped opt) -> Lookup::WorldCat::Message::Isbn
 
   # === GET https://worldcat.org/webservices/catalog/content/issn/(issn)
@@ -50,6 +54,8 @@ module LookupService::WorldCat::Action::Records
   # @return [Lookup::WorldCat::Message::Issn]
   #
   # @see https://developer.api.oclc.org/wcv1#operations-Read-read-issn
+  #
+  # @note Currently unused.
   #
   def get_issn: ((String|Issn) term, **untyped opt) -> Lookup::WorldCat::Message::Issn
 
@@ -69,6 +75,8 @@ module LookupService::WorldCat::Action::Records
   # https://www.loc.gov/standards/sourcelist/standard-identifier.html (where
   # LCCN is only one of the possibilities).
   #
+  # @note Currently unused.
+  #
   def get_lccn: ((String|Lccn) term, **untyped opt) -> Lookup::WorldCat::Message::Lccn
 
   # === GET https://worldcat.org/webservices/catalog/search/worldcat/opensearch
@@ -82,6 +90,8 @@ module LookupService::WorldCat::Action::Records
   #
   # @note The documentation incorrectly states that the endpoint is
   #   '/search/worldcat/opensearch', however this does not work.
+  #
+  # @note Currently unused.
   #
   def get_opensearch_records: ((LookupService::Request|strArray|String) terms, **untyped opt) -> Lookup::WorldCat::Message::OpenSearch
 
@@ -134,6 +144,8 @@ module LookupService::WorldCat::Action::Records
     # search_codes
     #
     # @return [Array<Symbol>]
+    #
+    # @note Currently unused.
     #
     def search_codes: () -> symArray
 

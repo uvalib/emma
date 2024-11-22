@@ -31,7 +31,7 @@ module XmlHelper
 
   # Truncate either normal or html_safe strings.
   #
-  # If *str* is html_safe, it is assumed that it is HTML content and it is
+  # If *str* is html_safe, it is assumed that it is HTML content, and it is
   # processed by #xml_truncate.  Otherwise, String#truncate is used.
   #
   # @param [ActiveSupport::SafeBuffer, String] str

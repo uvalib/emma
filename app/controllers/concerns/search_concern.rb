@@ -54,7 +54,7 @@ module SearchConcern
   #
   SEARCH_GENERATE_SCORES = true?(ENV_VAR['SEARCH_GENERATE_SCORES'])
 
-  # index_search
+  # Get search result records from the EMMA Unified Index.
   #
   # @param [Boolean] titles           If *false*, return records not titles.
   # @param [Boolean] save             If *false*, do not save search terms.
@@ -91,13 +91,16 @@ module SearchConcern
     end
   end
 
-  # index_record
+  # Get a single search result record from the EMMA Unified Index.
   #
   # @param [Hash] **opt
   #
   # @return [Search::Message::SearchRecord]
   #
   # @see SearchService::Action::Records#get_record
+  #
+  # @note This method is not actually functional because it depends on an EMMA
+  #   Unified Search endpoint which does not exist.
   #
   def index_record(**opt)
     search_api.get_record(**opt)
@@ -158,6 +161,8 @@ module SearchConcern
   #
   # @return [any, nil]
   #
+  # @note Currently used only by #show_values.
+  # :nocov:
   def sanitize_keys(value)
     if value.is_a?(Hash)
       value.map { |k, v|
@@ -175,6 +180,7 @@ module SearchConcern
       value
     end
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -227,9 +233,12 @@ module SearchConcern
   # @return [String]                  Value of `params[:id]`.
   # @return [nil]                     No :id, :recordId found.
   #
+  # @note Currently used only by SearchController#show.
+  # :nocov:
   def set_record_id
     @record_id = params[:record_id] || params[:recordId] || params[:id]
   end
+  # :nocov:
 
   # Re-cast URL parameters which are aliases for :identifier and redirect to
   # the modified URL if found.
@@ -336,7 +345,7 @@ module SearchConcern
 
   private
 
-  # set_search_feature
+  # Persist the `*param_key*` setting in the session.
   #
   # @param [Symbol]               param_key
   # @param [any, nil]             value
@@ -423,9 +432,12 @@ module SearchConcern
   #
   # @return [Hash{Symbol=>Hash}]
   #
+  # @note Currently used only by SearchController#show.
+  # :nocov:
   def show_values(item = @item, **opt)
     sanitize_keys(super)
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:

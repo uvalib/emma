@@ -25,8 +25,6 @@ module UploadConcern
 
   include ModelConcern
 
-  MIME_REGISTRATION: Array[Class]
-
   # Get URL parameters relevant to the current operation.
   #
   # @return [Hash]
@@ -50,14 +48,24 @@ module UploadConcern
   #
   def upload_bulk_post_params: () -> Array[symHash]
 
-  # workflow_parameters
+  # Parameters supporting upload submission workflow.
   #
   # @return [Hash]
   #
   def workflow_parameters: () -> symHash
 
+  # Option keys involved in constraining record searches.
+  #
+  # @return [Array<Symbol>]
+  #
+  # @see Record::Searchable#search_records
+  #
   def search_records_keys: () -> symArray
 
+  # Option keys involved in filtering record searches.
+  #
+  # @return [Array<Symbol>]
+  #
   def find_or_match_keys: () -> symArray
 
   # Locate and filter Upload records.
@@ -279,7 +287,7 @@ module UploadConcern
   #
   REINDEX_BATCH_SIZE: Integer
 
-  # reindex_submissions
+  # Cause the identified items to be updated in the EMMA Unified Index.
   #
   # @param [Array<Upload,String>] entries
   # @param [Hash, nil]            opt       To Upload#get_relation except for:
@@ -311,6 +319,12 @@ module UploadConcern
   # @return [Array<(Array<String>,Array<String>)>]   Succeeded sids / fail msgs
   #
   def reindex_record: ((Upload|Array[Upload]|ActiveRecord::Relation) list, ?atomic: bool|nil, ?dryrun: bool|nil, ?meth: Symbol|nil) -> [strArray, strArray]
+
+  # The default redirect path for #redirect_back_or_to.
+  #
+  # @return [String]
+  #
+  def default_fallback_location: () -> String
 
   # Create an Options instance from the current parameters.
   #
@@ -345,8 +359,8 @@ module UploadConcern
   #
   def show_values: (?(Upload|anyHash) item, **untyped opt) -> symHash
 
-  # If the :show endpoint is given an :id which is actually a specification for
-  # multiple items then there is a redirect to :index.
+  # If the :show endpoint is given an `:id` which is actually a specification
+  # for multiple items then there is a redirect to :index.
   #
   # @return [void]
   #

@@ -6,7 +6,7 @@
 
   topic             = config_section('help.topic.manifest')
   administrator     = current_user&.administrator?
-  manager           = current_user&.manager? && !administrator
+ #manager           = current_user&.manager? && !administrator
 
   signed_in         = help_jump('signed in', :sign_in)
   csv_template      = '/doc/Bulk Upload Example.xlsx'

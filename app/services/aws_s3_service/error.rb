@@ -21,7 +21,7 @@ __loading_begin(__FILE__)
 #   `AwsS3Service::UniqueError < AwsS3Service::Error`
 #
 # An exception in the AwsS3Service namespace can be identified by checking for
-# `exception.is_a?(AwsS3Service::Error::ClassType)`.
+# `exception.is_a? (AwsS3Service::Error::ClassType)`.
 #
 class AwsS3Service::Error < ApiService::Error
 

@@ -27,7 +27,7 @@ module EngineConcern
   #
   # @param [String, Symbol, Class<ApiService>] service
   #
-  # @return [String, nil]             If different than the default engine.
+  # @return [String, nil]             If different from the default engine.
   #
   def requested_engine: ((String|Symbol|Class) service) -> (String | nil)
 

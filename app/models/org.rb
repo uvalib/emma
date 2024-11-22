@@ -138,11 +138,12 @@ class Org < ApplicationRecord
   # @return [Array<String>]
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def user_accounts
     # noinspection RubyMismatchedReturnType
     users.pluck(:email)
   end
+  # :nocov:
 
   # The number of EMMA entries submitted by users of this organization.
   #

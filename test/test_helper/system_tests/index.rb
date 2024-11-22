@@ -138,9 +138,9 @@ module TestHelper::SystemTests::Index
 
   public
 
-  # visit_index
+  # Visit the indicated index URL and assert that it is valid.
   #
-  # @param [Symbol, String] target
+  # @param [Symbol, String] target    Controller or literal URL.
   # @param [Symbol]         action
   # @param [Symbol, nil]    model
   # @param [Hash]           opt       Passed to #assert_valid_index_page.

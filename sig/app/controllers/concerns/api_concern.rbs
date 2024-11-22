@@ -49,6 +49,8 @@ module ApiConcern
   # @return [Exception]               Current service exception.
   # @return [nil]                     No exception or service not active.
   #
+  # @note Currently unused.
+  #
   def api_exception: (*Class only, **untyped opt) -> (Hash[Class,Exception] | Exception | nil)
 
   # Clear the current API service exception.
@@ -60,7 +62,7 @@ module ApiConcern
   #
   def api_reset: (*Class only, **untyped opt) -> void
 
-  # The ApiService.table with any blank entries removed.
+  # The `ApiService.table` with any blank entries removed.
   #
   # @param [Array<Class>] only        If given, limit to those service(s).
   # @param [Hash]         opt         Passed to ApiService#table.

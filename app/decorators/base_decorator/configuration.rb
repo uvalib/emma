@@ -48,7 +48,8 @@ module BaseDecorator::Configuration
     must_be_overridden
   end
 
-  # null_object
+  # Establish a specific object as "the" null object (for use with the "=="
+  # operator).
   #
   # @return [Object]
   #
@@ -224,7 +225,7 @@ module BaseDecorator::Configuration
 
   public
 
-  # config_lookup
+  # Find the best match from config/locales for the given partial path.
   #
   # @param [String, Array] path       Partial I18n path.
   # @param [Hash]          opt        To ConfigurationHelper#config_lookup

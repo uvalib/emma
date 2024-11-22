@@ -23,7 +23,7 @@ module FileFormat
   #
   FORMAT_MISSING: String
 
-  # Separator between values of a multi-valued field.
+  # Separator between values of a multivalued field.
   #
   # @type [String]
   #
@@ -132,7 +132,7 @@ module FileFormat
   #
   def apply_field_transform: (Symbol `type`, (Symbol|Proc) key, strArray value) -> strArray
 
-  # Separator between values of a multi-valued field.
+  # Separator between values of a multivalued field.
   #
   # @return [String]
   #

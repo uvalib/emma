@@ -277,7 +277,7 @@ module TestHelper::Debugging
     end
   end
 
-  # show_trace
+  # Display output before or after invoking an HTTP method.
   #
   # @param [Boolean, nil] trace
   # @param [Hash]         opt         Passed to #show_item.

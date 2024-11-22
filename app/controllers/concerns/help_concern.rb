@@ -21,7 +21,7 @@ module HelpConcern
 
   public
 
-  # get_help_entry
+  # The "en.emma.help" entry associated with `*topic*`.
   #
   # @param [Symbol, nil] topic
   #

@@ -69,9 +69,12 @@ module ApiService::Common
   #   @param [Symbol, String] http_method
   #   @return [String]                      Type derived from *http_method*.
   #
+  # @note Currently unused.
+  # :nocov:
   def request_type(http_method = nil)
     (http_method || @verb).to_s.upcase
   end
+  # :nocov:
 
   # Indicate whether the latest API request is an update (PUT, POST, or PATCH).
   #
@@ -112,6 +115,8 @@ module ApiService::Common
   #   @param [Hash]    hash           Parameters to check instead of @params.
   #   @param [Boolean] complete       If *true* return :api_key parameter.
   #
+  # @note Currently unused.
+  # :nocov:
   def latest_endpoint(prm = nil)
     prm = (prm || @params).dup
     prm.delete(:api_key) unless prm.delete(:complete)
@@ -119,6 +124,7 @@ module ApiService::Common
     prm = url_query(prm).presence
     [@action, prm].compact.join('?')
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -308,7 +314,7 @@ module ApiService::Common
 
   # Form a normalized API path from one or more path fragments.
   #
-  # If *args* represents a full path which is different than `#base_url` then
+  # If *args* represents a full path which is different from `#base_url` then
   # an absolute path is returned.  Otherwise, `#base_uri`.path exists, the
   # resultant full or partial path may be modified to ensure that it is
   # included exactly once.
@@ -358,8 +364,8 @@ module ApiService::Common
     api_key ? params.merge!(api_key: api_key) : params
   end
 
-  # Determine whether the HTTP method indicates a write rather than a read and
-  # prepare the HTTP headers accordingly.
+  # Determine whether the HTTP method indicates a `write` rather than a `read`
+  # and prepare the HTTP headers accordingly.
   #
   # @param [Hash, nil]         params   Default: @params.
   # @param [Hash, nil]         headers  Default: {}.
@@ -472,7 +478,7 @@ module ApiService::Common
   # @return [nil]
   #
   # === Usage Notes
-  # Sets @response as a side-effect.
+  # Sets @response as a side effect.
   #
   def transmit(verb, action, params, headers, **opt)
     redirect  = nil
@@ -579,9 +585,12 @@ module ApiService::Common
   #
   # @return [Hash]                    A modified copy of *prm*.
   #
+  # @note Currently unused.
+  # :nocov:
   def encode_parameters(**prm)
     encode_parameters!(prm)
   end
+  # :nocov:
 
   # Preserve keys that would be mistaken for an ignored system parameter.
   #
@@ -609,9 +618,12 @@ module ApiService::Common
   #
   # @return [Hash]                    A modified copy of *prm*.
   #
+  # @note Currently unused.
+  # :nocov:
   def decode_parameters(**prm)
     decode_parameters!(prm)
   end
+  # :nocov:
 
   # Restore preserved keys.
   #

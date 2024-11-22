@@ -24,7 +24,7 @@ export function rgbColor(value) {
 }
 
 /**
- * Given a RGB hex color, return the inverse color.
+ * Given an RGB hex color, return the inverse color.
  *
  * @param {string|number} value
  *

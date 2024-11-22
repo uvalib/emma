@@ -24,6 +24,8 @@ module LayoutHelper::PageModals
   #
   # @param [String] selector
   #
+  # @note Currently unused.
+  #
   def page_modal?: (String selector) -> bool
 
   # Add a modal definition associated with the given selector.  If a definition
@@ -44,6 +46,8 @@ module LayoutHelper::PageModals
   # @param [String] selector
   #
   # @return [Boolean]                 True if the definition existed.
+  #
+  # @note Currently unused.
   #
   def remove_page_modal: (String selector) -> bool
 end

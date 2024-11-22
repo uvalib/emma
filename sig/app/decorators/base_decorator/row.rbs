@@ -46,11 +46,15 @@ module BaseDecorator::Row
   #
   # @return [Hash{Symbol=>Hash}]
   #
+  # @note Currently used only by #row_columns.
+  #
   def row_fields: () -> Hash[Symbol,symHash]
 
   # The names of each row data column for display.
   #
   # @return [Array<Symbol>]
+  #
+  # @note Currently unused.
   #
   def row_columns: () -> symArray
 

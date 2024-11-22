@@ -1,8 +1,10 @@
+# Bibliographic lookup WebSocket channels.
+#
 class LookupChannel < ApplicationCable::Channel
   # @see file:javascripts/channels/lookup-channel.js *DEFAULT_ACTION*
   DEFAULT_ACTION: Symbol
 
-  # stream_name
+  # The channel for the session.
   #
   # @return [String]
   #

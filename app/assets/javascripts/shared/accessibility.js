@@ -297,10 +297,10 @@ export function nextInTabOrder(from, opt = {}) {
         const $sibling = $(sibling);
         const display  = $sibling.css("display");
         if (display === "contents") {
-            // This will not be ":visible" and it will not be focusable but it
+            // This will not be ":visible" and it will not be focusable, but it
             // may still have focusable descendent(s).
         } else if (display === "none") {
-            // Otherwise, this is not focusable and it does not have any
+            // Otherwise, this is not focusable, and it does not have any
             // descendents that could be part of the tab order.
             return true; // continue loop
         } else if (isFocusable($sibling, all)) {
@@ -334,10 +334,10 @@ export function prevInTabOrder(from, opt = {}) {
         const $sibling = $(sibling);
         const display  = $sibling.css("display");
         if (display === "contents") {
-            // This will not be ":visible" and it will not be focusable but it
+            // This will not be ":visible" and it will not be focusable, but it
             // may still have focusable descendent(s).
         } else if (display === "none") {
-            // Otherwise, this is not focusable and it does not have any
+            // Otherwise, this is not focusable, and it does not have any
             // descendents that could be part of the tab order.
             return true; // continue loop
         } else if (isFocusable($sibling, all)) {

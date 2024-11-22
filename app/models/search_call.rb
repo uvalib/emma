@@ -444,7 +444,7 @@ class SearchCall < ApplicationRecord
     User.id_value(src)
   end
 
-  # Generate a :record attribute value from the given item.
+  # Generate a `:record` attribute value from the given item.
   #
   # @param [Api::Message, Hash, Array, Numeric, String] src
   #

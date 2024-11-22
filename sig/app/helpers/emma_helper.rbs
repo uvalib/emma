@@ -52,6 +52,8 @@ module EmmaHelper
   #
   # @return [String]
   #
+  # @note Currently used only by unused methods.
+  #
   def emma_partner_list: (?mode: Symbol, ?separator: String, ?final: String, **untyped opt) -> String
 
   # Get a selection of EMMA partners.
@@ -60,6 +62,8 @@ module EmmaHelper
   # @param [Boolean, nil] active      If *nil*, all partners past and present.
   #
   # @return [Hash{Symbol=>Hash}]
+  #
+  # @note Currently used only by #emma_partner_list.
   #
   def emma_partners: (?type: Symbol, ?active: bool|nil, **untyped _ignored) -> symHash
 

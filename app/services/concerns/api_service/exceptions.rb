@@ -142,17 +142,23 @@ module ApiService::Exceptions
   #
   # @return [ApiService::CommError]
   #
+  # @note Currently unused.
+  # :nocov:
   def comm_error(...)
     error_classes[:comm].new(...)
   end
+  # :nocov:
 
   # Generate a service error indicating a network session failure.
   #
   # @return [ApiService::SessionError]
   #
+  # @note Currently unused.
+  # :nocov:
   def session_error(...)
     error_classes[:session].new(...)
   end
+  # :nocov:
 
   # Generate a service error indicating a failure to make a network connection.
   #
@@ -174,17 +180,23 @@ module ApiService::Exceptions
   #
   # @return [ApiService::XmitError]
   #
+  # @note Currently unused.
+  # :nocov:
   def xmit_error(...)
     error_classes[:xmit].new(...)
   end
+  # :nocov:
 
   # Generate a service error indicating a network receive failure.
   #
   # @return [ApiService::RecvError]
   #
+  # @note Currently unused.
+  # :nocov:
   def recv_error(...)
     error_classes[:recv].new(...)
   end
+  # :nocov:
 
   # Generate a service error indicating a bad network packet.
   #

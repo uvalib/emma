@@ -34,6 +34,8 @@ class SubmissionService::Request
 
   # Indicate whether this request is part of a simulation.
   #
+  # @note Currently unused.
+  #
   def simulation?: () -> bool
 
   # command

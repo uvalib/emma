@@ -35,7 +35,7 @@ module LayoutHelper::PageSections
   #
   def page_notes_section: (?(String|strArray|nil) text, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 
-  # Supply an section indicating a persistent warning condition.
+  # Supply a section indicating a persistent warning condition.
   #
   # @param [String, Symbol]     type
   # @param [String, Array, nil] text  Override text to display.

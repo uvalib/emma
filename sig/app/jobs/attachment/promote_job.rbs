@@ -1,6 +1,6 @@
 # Promote a file from :cache to :store.
 #
-# @note Currently unused
+# @note Currently unused.
 #
 class Attachment::PromoteJob < ApplicationJob
   include ApplicationJob::Logging
@@ -12,8 +12,6 @@ class Attachment::PromoteJob < ApplicationJob
   # @param [any, nil] data            :file_data
   #
   # @return [void]
-  #
-  # @note Currently unused
   #
   def perform: (Model record, Symbol name, untyped data) -> void
 end

@@ -394,7 +394,7 @@ module BaseDecorator::Hierarchy
     end
     label = toggle << html_span(label, class: 'text')
 
-    # Make an non-empty value portion.
+    # Make a non-empty value portion.
     value = details || HTML_SPACE
     value = html_span(value, class: 'details')
 
@@ -407,7 +407,7 @@ module BaseDecorator::Hierarchy
     render_line(label, value, **opt)
   end
 
-  # list_item_toggle
+  # Generate a toggle button for a  collapsible container.
   #
   # @param [Integer] row
   # @param [Hash]    opt              Passed to TreeHelper#tree_button.
@@ -487,7 +487,7 @@ module BaseDecorator::Hierarchy
     item.merge(opt).merge!(scopes: [*item[:scopes], scope].uniq)
   end
 
-  # count_unique
+  # Return a count and unit label value.
   #
   # @param [Array<Hash,ActiveSupport::SafeBuffer>] lines
   # @param [String, Symbol]                        type

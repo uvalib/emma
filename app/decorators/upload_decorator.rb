@@ -370,7 +370,7 @@ class UploadDecorator < BaseDecorator
       end
     end
 
-    # The number of columns needed if *item* will be displayed horizontally.
+    # The number of columns needed if `*item*` will be displayed horizontally.
     #
     # @param [any, nil] item          Model, Hash, Array; default: object.
     #
@@ -573,7 +573,7 @@ class UploadDecorator
   #
   FIELD_FILTERS = [:phase, /^edit/, /^review/].deep_freeze
 
-  # Fields and configurations augmented with a :value entry containing the
+  # Fields and configurations augmented with a `:value` entry containing the
   # current field value.
   #
   # @param [Hash] opt                 Passed to super
@@ -625,7 +625,7 @@ class UploadDecorator
 
   public
 
-  # details_container
+  # Render an element containing a metadata listing of a model instance.
   #
   # @param [Array] before             Optional elements before the details.
   # @param [Hash]  opt                Passed to super except:
@@ -646,7 +646,7 @@ class UploadDecorator
 
   public
 
-  # Fields and configurations augmented with a :value entry containing the
+  # Fields and configurations augmented with a `:value` entry containing the
   # current field value.
   #
   # @param [Hash] opt                 Passed to super.
@@ -685,7 +685,7 @@ class UploadDecorator
 
   protected
 
-  # Rendered table value for a :file_data field.
+  # Rendered table value for a `:file_data` field.
   #
   # @param [any, nil] value
   #
@@ -695,7 +695,7 @@ class UploadDecorator
     json_parse(value, log: false)&.dig(:metadata, :filename) if value.present?
   end
 
-  # Rendered table value for an :emma_data field.
+  # Rendered table value for an `:emma_data` field.
   #
   # @param [any, nil] value
   #

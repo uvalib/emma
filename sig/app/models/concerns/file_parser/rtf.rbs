@@ -3,7 +3,7 @@
 class FileParser::Rtf < FileParser
   include FileFormat::Rtf
 
-  # metadata
+  # Metadata extracted from the file format instance.
   #
   # @return [OpenStruct]
   #

@@ -21,7 +21,7 @@ __loading_begin(__FILE__)
 #   `IngestService::UniqueError < IngestService::Error`
 #
 # An exception in the IngestService namespace can be identified by checking
-# for `exception.is_a?(IngestService::Error::ClassType)`.
+# for `exception.is_a? (IngestService::Error::ClassType)`.
 #
 class IngestService::Error < ApiService::Error
 
@@ -108,7 +108,7 @@ class IngestService::Error < ApiService::Error
     #     ]
     #   }
     #
-    # where the each key is the literal "document" separated by a "-" and the
+    # where each key is the literal "document" separated by a "-" and the
     # ordinal number of the problematic posted entry.
     #
     def parse_create_errors(src)

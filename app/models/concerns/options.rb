@@ -107,15 +107,18 @@ class Options
   #
   # @param [Symbol, String] key
   #
+  # @note Currently unused.
+  # :nocov:
   def option?(key)
     key = key&.to_sym
     @value.key?(key) || option_method(key).present?
   end
+  # :nocov:
 
   # Get an option value.
   #
   # @param [Symbol, String] key
-  # @param [Boolean]        log   If *false* do not warn about bad keys.
+  # @param [Boolean]        log   If *false*, do not warn about bad keys.
   #
   # @return [any, nil]
   #
@@ -195,7 +198,6 @@ class Options
   # @return [Symbol, nil]
   #
   def option_method(key)
-    # noinspection RubyMismatchedArgumentType
     key.to_sym if (key.is_a?(Symbol) || key.is_a?(String)) && respond_to?(key)
   end
 

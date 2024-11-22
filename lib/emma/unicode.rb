@@ -47,9 +47,12 @@ module Emma::Unicode
   #
   # @return [String]
   #
+  # @note Currently used only by #pad_char.
+  # :nocov:
   def char(v)
     v.is_a?(Integer) ? v.chr(Encoding::UTF_8) : v.chr
   end
+  # :nocov:
 
   # Pad a character with thin spaces.
   #
@@ -61,12 +64,13 @@ module Emma::Unicode
   # @return [String]
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def pad_char(v, pad: nil, left: nil, right: nil)
     left  ||= pad || THIN_SPACE
     right ||= pad || left
     [left, v, right].map { char(_1) }.join
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:

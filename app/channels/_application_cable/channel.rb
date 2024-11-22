@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Common logic for all channels.
+# Common logic for all WebSocket channels.
 #
 class ApplicationCable::Channel < ActionCable::Channel::Base
 
@@ -48,7 +48,7 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
 
   protected
 
-  # stream_id
+  # A unique identifier to differentiate this channel.
   #
   # @return [String, nil]
   #
@@ -58,7 +58,7 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
     params[:stream_id]
   end
 
-  # stream_name
+  # The channel for the session.
   #
   # @param [String, Symbol, nil] base
   #
@@ -129,12 +129,15 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   #
   # @return [void]
   #
+  # @note Currently unused as an instance method.
+  # :nocov:
   def stream_send(payload, **opt)
     opt[:stream_name] ||= stream_name
     opt[:user]        ||= current_user&.to_s
     opt[:meth]        ||= __method__
     self.class.stream_send(payload, **opt)
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: Class methods

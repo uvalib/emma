@@ -386,6 +386,8 @@ class SearchDecorator
   #
   # @see LogoHelper#repository_source
   #
+  # @note Currently unused.
+  # :nocov:
   def title_and_source(css: '.title', **opt)
     title  = object.full_title
     source = object.emma_repository
@@ -397,6 +399,7 @@ class SearchDecorator
     ctrl   = prev_next_controls(**opt)
     title << logo << ctrl
   end
+  # :nocov:
 
   # An element containing controls for moving up and down through the list.
   #
@@ -464,7 +467,7 @@ class SearchDecorator
   end
 
   # Make a clickable link to the display page for the title on the originating
-  # repository's web site.
+  # repository's website.
   #
   # @param [String] label             Link text (def: :emma_repositoryRecordId)
   # @param [String] url               Overrides `object.record_title_url`.
@@ -491,7 +494,7 @@ class SearchDecorator
   # @param [Hash]   opt               Passed to link method except for:
   #
   # @return [ActiveSupport::SafeBuffer] HTML link element.
-  # @return [nil]                       If no *url* was provided or found.
+  # @return [nil]                       If no `*url*` was provided or found.
   #
   # @see RepositoryHelper#emma_retrieval_link
   # @see BaseDecorator::Download#bv_retrieval_link
@@ -562,7 +565,7 @@ class SearchDecorator
     super
   end
 
-  # details_container
+  # Render an element containing a metadata listing of a model instance.
   #
   # @param [Array] before             Optional elements before the details.
   # @param [Hash]  opt                Passed to super except:

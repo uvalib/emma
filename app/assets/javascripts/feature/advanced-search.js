@@ -665,7 +665,7 @@ appSetup(MODULE, function() {
 
         /**
          * Respond to key presses only after the user has paused, rather than
-         * re-validating the entire form with every key stroke.  This also
+         * re-validating the entire form with every keystroke.  This also
          * applies to cut, paste, drag, drop, and delete input event types.
          *
          * @param {InputEvt} event
@@ -1037,7 +1037,7 @@ appSetup(MODULE, function() {
                 } else if (hidden && original_value) {
                     // If an original row has been hidden, we want that to show
                     // up as a change (to guarantee that newSearchTerms() will
-                    // not return an empty object.
+                    // not return an empty object).
                 } else if (hidden) {
                     skip = "hidden";
                 } else if (value === original_value) {

@@ -21,7 +21,7 @@ __loading_begin(__FILE__)
 #   `BvDownloadService::UniqueError < BvDownloadService::Error`
 #
 # An exception in the BvDownloadService namespace can be identified by checking
-# for `exception.is_a?(BvDownloadService::Error::ClassType)`.
+# for `exception.is_a? (BvDownloadService::Error::ClassType)`.
 #
 class BvDownloadService::Error < ApiService::Error
 

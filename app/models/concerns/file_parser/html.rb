@@ -17,7 +17,7 @@ class FileParser::Html < FileParser
 
   public
 
-  # metadata
+  # Metadata extracted from the file format instance.
   #
   # @return [OpenStruct]
   #

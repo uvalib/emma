@@ -66,7 +66,7 @@ module SearchModesHelper
   # @type [Boolean]
   #
   # === Usage Notes
-  # This should normally be *false* because it a mode of operation that is
+  # This should normally be *false* because this is a mode of operation that is
   # generally not consider accessibility-friendly and, also, skews search call
   # statistics.
   #
@@ -114,9 +114,12 @@ module SearchModesHelper
   #
   # @return [Symbol]
   #
+  # @note Currently unused.
+  # :nocov:
   def force_title_results
     @results_type = :title
   end
+  # :nocov:
 
   # Ensure that search results are displayed literally (per file).
   #
@@ -208,10 +211,11 @@ module SearchModesHelper
   # Indicate whether search results are displayed in the normal way.
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def default_style?
     search_style == DEFAULT_STYLE
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:

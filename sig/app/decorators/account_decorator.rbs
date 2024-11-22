@@ -155,7 +155,7 @@ class AccountDecorator
   #
   #def table_values: (**untyped opt) -> anyHash
 
-  # Fields and configurations augmented with a :value entry containing the
+  # Fields and configurations augmented with a `:value` entry containing the
   # current field value.
   #
   # @param [Hash] opt                 Passed to super.
@@ -171,7 +171,7 @@ class AccountDecorator
   #
   FIELD_FILTERS: Array[String|Symbol|Regexp]
 
-  # Fields and configurations augmented with a :value entry containing the
+  # Fields and configurations augmented with a `:value` entry containing the
   # current field value.
   #
   # @param [Hash] opt                 Passed to super
@@ -207,7 +207,7 @@ class AccountDecorator
   #
   def render_form_menu_single: (String name, anyArray value, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # render_form_email
+  # Render an `<input>` element which receives an email address.
   #
   # @param [String]   name
   # @param [any, nil] value
@@ -217,7 +217,7 @@ class AccountDecorator
   #
   def render_form_email: (String name, untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # render_form_password
+  # Render an `<input>` element which receives a password.
   #
   # @param [String]   name
   # @param [any, nil] value

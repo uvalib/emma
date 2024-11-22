@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Emma::Project
+# Project-related constants.
 #
 module Emma::Project
 
@@ -15,7 +15,7 @@ module Emma::Project
 
   public
 
-  # The web site for project information.
+  # The website for project information.
   #
   # @type [String]
   #
@@ -27,7 +27,7 @@ module Emma::Project
   #
   PROJECT_EMAIL = config_item(:project, :email).freeze
 
-  # The web site for the "emma-users" mailing list.
+  # The website for the "emma-users" mailing list.
   #
   # @type [String]
   #

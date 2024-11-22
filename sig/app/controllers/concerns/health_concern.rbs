@@ -60,10 +60,18 @@ module HealthConcern
 
     def initialize: (bool status, bool degraded, ?(String|nil) message) -> void
 
+    # Indicate whether the subsystem is not failed or degraded.
+    #
     def healthy?: () -> bool
 
+    # Indicate whether the subsystem has failed.
+    #
     def failed?: () -> bool
 
+    # Indicate whether some subsystems have failed or are degraded.
+    #
+    # @note Currently used only by HealthResponse#degraded?.
+    #
     def degraded?: () -> bool
   end
 
@@ -75,10 +83,20 @@ module HealthConcern
 
     def initialize: (?(Hash[Symbol,HealthStatus]|nil) status_values) -> void
 
+    # Indicate whether all subsystems are healthy.
+    #
+    # @note Currently unused.
+    #
     def healthy?: () -> bool
 
+    # Indicate whether all subsystems have failed.
+    #
     def failed?: () -> bool
 
+    # Indicate whether some subsystems have failed or are degraded.
+    #
+    # @note Currently unused.
+    #
     def degraded?: () -> bool
   end
 
@@ -170,7 +188,7 @@ module HealthConcern
 
   public
 
-  # Get the current RunState and setup the HTTP response accordingly.
+  # Get the current RunState and set up the HTTP response accordingly.
   #
   # @return [RunState]
   #
@@ -180,10 +198,10 @@ module HealthConcern
   #
   # @return [void]
   #
-  # @note Currently unused.
-  #
   # === Usage Notes
   # Does nothing unless RunState::CLEARABLE or RunState::DYNAMIC.
+  #
+  # @note Currently unused.
   #
   def clear_run_state: () -> void
 

@@ -32,7 +32,7 @@ class ApplicationJob::Table < Concurrent::Hash[String, untyped]
   #
   # @param [String, nil] job_id
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def pending?: (?(String|nil) job_id) -> bool
 
@@ -42,7 +42,7 @@ class ApplicationJob::Table < Concurrent::Hash[String, untyped]
 
   # Indicate whether all jobs have not been completed.
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def all_pending?: () -> bool
 

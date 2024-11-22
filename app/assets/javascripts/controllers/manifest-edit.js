@@ -1659,7 +1659,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * A operation button for the given row.
+     * An operation button for the given row.
      *
      * @param {Selector} row
      * @param {string}   action
@@ -3207,7 +3207,7 @@ appSetup(MODULE, function() {
      * appears on the screen. <p/>
      *
      * This mitigates the case where a row is inserted within a range of
-     * inserted rows (rather than at the end of the range where it's highest
+     * inserted rows (rather than at the end of the range where its highest
      * delta number would appropriately reflect its ordinal position).
      */
     function updateGridRowIndexes() {
@@ -5811,7 +5811,7 @@ appSetup(MODULE, function() {
      *
      * If target has an equals sign it's assumed to be an attribute/value pair
      * which is used to find the indicated item (e.g. "#data-item-id=18" will
-     * result in the selector `[data-item-id="18"]`.
+     * result in the selector `[data-item-id="18"]`).
      *
      * @params {string} target
      */

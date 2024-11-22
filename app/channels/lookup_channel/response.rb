@@ -5,6 +5,8 @@
 
 __loading_begin(__FILE__)
 
+# The base class for LookupJob responses.
+#
 class LookupChannel::Response < ApplicationCable::Response
 
   # @see file://app/assets/javascripts/shared/lookup-response.js *TEMPLATE*
@@ -16,7 +18,7 @@ class LookupChannel::Response < ApplicationCable::Response
   }.freeze
 
   # ===========================================================================
-  # :section: ApplicationCable::Response::Payload overrides
+  # :section: ApplicationCable::Payload overrides
   # ===========================================================================
 
   public
@@ -33,9 +35,13 @@ class LookupChannel::Response < ApplicationCable::Response
 
 end
 
+# A response sent to return a result from the LookupJob.
+#
 class LookupChannel::LookupResponse < LookupChannel::Response
 end
 
+# The base class for informational LookupJob responses.
+#
 class LookupChannel::StatusResponse < LookupChannel::Response
 
   # ===========================================================================
@@ -55,7 +61,7 @@ class LookupChannel::StatusResponse < LookupChannel::Response
   end
 
   # ===========================================================================
-  # :section: ApplicationCable::Response::Payload overrides
+  # :section: ApplicationCable::Payload overrides
   # ===========================================================================
 
   protected
@@ -70,10 +76,12 @@ class LookupChannel::StatusResponse < LookupChannel::Response
 
 end
 
+# A response sent to indicate that the LookupJob has started.
+#
 class LookupChannel::InitialResponse < LookupChannel::StatusResponse
 
   # ===========================================================================
-  # :section: ApplicationCable::Response::Payload overrides
+  # :section: ApplicationCable::Payload overrides
   # ===========================================================================
 
   public

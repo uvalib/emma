@@ -16,6 +16,8 @@ module LookupService::Crossref::Action::Journal
   #
   # @see https://api.crossref.org/swagger-ui/index.html#operations-Journals-get_journals__issn_
   #
+  # @note Currently unused.
+  #
   def get_journal: (String issn, **untyped opt) -> Lookup::Crossref::Message::Journal
 
   # === GET https://api.crossref.org/journals?query=...
@@ -25,6 +27,8 @@ module LookupService::Crossref::Action::Journal
   # @return [Lookup::Crossref::Message::JournalResults]
   #
   # @see https://api.crossref.org/swagger-ui/index.html#operations-Journals-get_journals
+  #
+  # @note Currently unused.
   #
   def get_journal_list: (**untyped opt) -> Lookup::Crossref::Message::JournalResults
 end

@@ -33,6 +33,8 @@ module SubmissionService::Action::Submit
   #
   # @return [SubmissionService::SubmitResponse] The value assigned to @result.
   #
+  # @note Currently unused.
+  #
   def batch_update: (?(SubmissionService::ControlRequest | nil) request, ?manifest: Manifest|String|nil, ?job: SubmitJob|String|nil, **untyped opt) -> SubmissionService::SubmitResponse
 
   # Process a request to submit a set of ManifestItems.
@@ -209,8 +211,8 @@ module SubmissionService::Action::Submit
 
   RESULT_KEYS: symArray
 
-  # Create an Upload record for the entries that have made it through all of
-  # the steps through index ingest.
+  # Create an Upload record for the entries that have transitioned through all
+  # of the steps ending with index ingest.
   #
   # @param [Array<ManifestItem>]   records
   # @param [User, String, Integer] user
@@ -227,6 +229,9 @@ module SubmissionService::Action::Submit
   JSON_SERIALIZE: bool
 
   # Generate a row of fields for #insert_all.
+  #
+  # If *sid* is a string, this has the side effect of setting rec.submission_id
+  # (without persisting)
   #
   # @param [ManifestItem]          rec
   # @param [User, String, Integer] user
@@ -272,6 +277,8 @@ module SubmissionService::Action::Submit
   #
   def run_step: (Array[ManifestItem] records, ?wait: Integer|Float|nil, **untyped opt) -> StepResult
 
+  # Encapsulates the properties of a submission step.
+  #
   class StepResult < ::Hash[Symbol,untyped]
     include Emma::Common
 
@@ -294,6 +301,10 @@ module SubmissionService::Action::Submit
 
   end
 
+  # Encapsulates the properties and behavior of a simulated submission step.
+  #
+  # @note Currently unused.
+  #
   class SimulationOptions < ::Hash[Symbol,untyped]
     include SubmissionService::Action::Submit
 

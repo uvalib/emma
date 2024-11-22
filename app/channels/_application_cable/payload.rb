@@ -19,7 +19,12 @@ module ApplicationCable::Payload
 
   public
 
+  # The limit on payload size due to the PostgreSQL-based implementation.
+  #
+  # @return [Integer]
+  #
   # @see https://www.postgresql.org/docs/11/sql-notify.html
+  #
   MAX_PAYLOAD_SIZE = 8000
 
   # ===========================================================================
@@ -56,7 +61,7 @@ module ApplicationCable::Payload
 
   public
 
-  # template
+  # Response data value entries defined by the including class.
   #
   # @return [Hash]
   #
@@ -64,14 +69,14 @@ module ApplicationCable::Payload
     must_be_overridden
   end
 
-  # default_status
+  # The characteristic status value defined by the including class.
   #
   # @return [String, nil]
   #
   def default_status
   end
 
-  # Setup stored request values.
+  # Set stored request values from the template defined by the including class.
   #
   # @param [Hash, nil] target
   # @param [any, nil]  values

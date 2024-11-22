@@ -17,7 +17,7 @@ class FileParser::Brf < FileParser
 
   public
 
-  # metadata
+  # Metadata extracted from the file format instance.
   #
   # @return [OpenStruct]
   #

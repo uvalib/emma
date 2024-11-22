@@ -187,8 +187,8 @@ module BaseDecorator::List
   #
   def render_empty_value: (?String message, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # Fields and configurations augmented with a :value entry containing the
-  # current field value.
+  # From `opt[:prop]` (or #object by default), return fields and configurations
+  # augmented with a `:value` entry containing the value for the field.
   #
   # @param [Boolean] limited          Do not include fields that are :ignored
   #                                     or have the wrong :role.
@@ -216,7 +216,7 @@ module BaseDecorator::List
   #
   DEBUG_DECORATOR_EXECUTE: bool
 
-  # Attempt to interpret *method* as an *item* method or as a method defined
+  # Attempt to interpret *method* as an `*item*` method or as a method defined
   # in the current context.
   #
   # @param [Model, Hash, nil] item    Default: `#object`.
@@ -240,7 +240,7 @@ module BaseDecorator::List
   #
   def details: (?outer: symHash|nil, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # details_container
+  # Render an element containing a metadata listing of a model instance.
   #
   # @param [Array]               before   Optional elements before the details.
   # @param [Integer, nil]        level
@@ -334,7 +334,7 @@ module BaseDecorator::List
   #
   def list_item: (?before: String|strArray|nil, ?after: String|strArray|nil, ?outer: symHash|nil, ?tag: Symbol, ?render: Symbol|nil, ?level: Integer|nil, ?css: String|nil, ?id: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # The number of columns needed if *item* will be displayed horizontally.
+  # The number of columns needed if `*item*` will be displayed horizontally.
   #
   # @param [any, nil] item            Model, Hash, Array; default: `#object`.
   #

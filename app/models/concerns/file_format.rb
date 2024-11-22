@@ -36,7 +36,7 @@ module FileFormat
   #
   FORMAT_MISSING = '???'
 
-  # Separator between values of a multi-valued field.
+  # Separator between values of a multivalued field.
   #
   # @type [String]
   #
@@ -259,7 +259,7 @@ module FileFormat
 
   public
 
-  # Separator between values of a multi-valued field.
+  # Separator between values of a multivalued field.
   #
   # @return [String]
   #
@@ -353,10 +353,11 @@ module FileFormat
   # @return [String]
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def format_image(_value)
     must_be_overridden
   end
+  # :nocov:
 
   # Used within #field_transforms to apply a method to each element of a
   # value whether it is a scalar or an array.

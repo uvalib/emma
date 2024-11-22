@@ -53,8 +53,6 @@ module ManifestItem::FileData
   #
   # @return [Hash{String=>any,nil}]
   #
-  # @note Only used by #file_attacher_load
-  #
   # @see config/locales/bulk.en.yml "en.emma.bulk.grid.file"
   #
   def make_file_record(data, **opt)

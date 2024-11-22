@@ -174,7 +174,7 @@ module BaseDecorator::Pagination
   #
   def get_page_count_label: (**untyped opt) -> (String | nil)
 
-  # pagination_separator
+  # The element used to visually separate pagination control icons.
   #
   # @param [String, nil] content      Default: `#PAGINATION_SEPARATOR`.
   # @param [String]      css          Characteristic CSS class/selector.
@@ -184,7 +184,7 @@ module BaseDecorator::Pagination
   #
   def pagination_separator: (?(String|nil) content, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # paginator
+  # The object used to support movement within a set of results.
   #
   # @return [Paginator]
   #
@@ -192,7 +192,7 @@ module BaseDecorator::Pagination
 
   @paginator: Paginator
 
-  # pagination_first
+  # A control for moving to the first page of a set of results.
   #
   # @param [String, Hash, nil] path   Default: `#paginator.first_page`.
   # @param [String]            css    Characteristic CSS class/selector.
@@ -202,7 +202,7 @@ module BaseDecorator::Pagination
   #
   def pagination_first: (?(String|symHash|nil) path, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # pagination_prev
+  # A control for moving to the previous page of a set of results.
   #
   # @param [String, Hash, nil] path   Default: `#paginator.prev_page`.
   # @param [String]            css    Characteristic CSS class/selector.
@@ -212,7 +212,7 @@ module BaseDecorator::Pagination
   #
   def pagination_prev: (?(String|symHash|nil) path, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # pagination_next
+  # A control for moving to the next page of a set of results.
   #
   # @param [String, Hash, nil] path   Default: `#paginator.next_page`.
   # @param [String]            css    Characteristic CSS class/selector.
@@ -222,7 +222,7 @@ module BaseDecorator::Pagination
   #
   def pagination_next: (?(String|symHash|nil) path, ?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # pagination_last
+  # A control for moving to the last page of a set of results.
   #
   # @param [String, Hash, nil] path   Default: `#paginator.last_page`.
   # @param [String]            css    Characteristic CSS class/selector.
@@ -248,7 +248,7 @@ module BaseDecorator::Pagination
   #
   def pagination_control: ((String|symHash) label, (String|symHash|nil) path, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # pagination_first_icon
+  # The icon for a control for moving to the first page of a set of results.
   #
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt
@@ -257,7 +257,7 @@ module BaseDecorator::Pagination
   #
   def pagination_first_icon: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # pagination_prev_icon
+  # The icon for a control for moving to the previous page of a set of results.
   #
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt
@@ -268,7 +268,7 @@ module BaseDecorator::Pagination
   #
   def pagination_prev_icon: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # pagination_next_icon
+  # The icon for a control for moving to the next page of a set of results.
   #
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt
@@ -279,7 +279,7 @@ module BaseDecorator::Pagination
   #
   def pagination_next_icon: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # pagination_last_icon
+  # The icon for a control for moving to the last page of a set of results.
   #
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt
@@ -287,6 +287,8 @@ module BaseDecorator::Pagination
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see file:app/assets/stylesheets/layouts/controls/_shapes.scss
+  #
+  # @note Currently used only by #pagination_last.
   #
   def pagination_last_icon: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 

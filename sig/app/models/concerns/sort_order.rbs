@@ -86,6 +86,8 @@ class SortOrder < Hash[Symbol,Symbol]
   #
   # @return [Hash{Symbol=>Symbol}, String, nil]
   #
+  # @note Currently unused.
+  #
   def sql_order: () -> (Hash[Symbol,Symbol] | String | nil)
 
   # Return the order/direction pairs as a comma-separated string.

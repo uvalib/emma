@@ -90,7 +90,7 @@ module Api::Schema
   #
   ELEMENT_NAMING_MODES: symArray
 
-  # service_name
+  # The class name of the related service for logging.
   #
   # @return [String]
   #

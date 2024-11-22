@@ -489,7 +489,7 @@ export class LookupModal extends ModalDialog {
     // ========================================================================
 
     /**
-     * Setup a modal with interactive bibliographic lookup.
+     * Set up a modal with interactive bibliographic lookup.
      *
      * @param {Selector}               toggle
      * @param {CallbackChainFunctions} [show_hooks]
@@ -519,7 +519,7 @@ export class LookupModal extends ModalDialog {
     }
 
     /**
-     * Setup a new channel for this subclass.
+     * Set up a new channel for this subclass.
      *
      * @param {ChannelCallbacks} [callbacks]
      *

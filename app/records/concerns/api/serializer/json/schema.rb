@@ -34,17 +34,23 @@ module Api::Serializer::Json::Schema
   #
   # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
   #
+  # @note Currently used only by #element_parse_name.
+  # :nocov:
   def element_parse_naming
     JSON_ELEMENT_PARSE_NAMING
   end
+  # :nocov:
 
   # The naming mode for serializing attributes from JSON.
   #
   # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
   #
+  # @note Currently used only by #attribute_parse_name.
+  # :nocov:
   def attribute_parse_naming
     JSON_ATTRIBUTE_PARSE_NAMING
   end
+  # :nocov:
 
   # The naming mode for serializing data elements to JSON.
   #

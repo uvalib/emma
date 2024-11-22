@@ -63,7 +63,7 @@ module TestHelper::IntegrationTests::Format
   #
   # @return [true]
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def assert_json_result: (Symbol status, **untyped opt) -> true
 
@@ -76,7 +76,7 @@ module TestHelper::IntegrationTests::Format
   #
   # @return [true]
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def assert_xml_result: (Symbol status, **untyped opt) -> true
 
@@ -89,7 +89,7 @@ module TestHelper::IntegrationTests::Format
   #
   # @return [true]
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def assert_text_result: (Symbol status, **untyped opt) -> true
 

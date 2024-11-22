@@ -133,7 +133,7 @@ module Model
   # @param [any, nil] type    Model/controller type (Symbol,String,Class,Model)
   # @param [Boolean]  fatal
   #
-  # @raise [RuntimeError]             If *type* does not map on to a model.
+  # @raise [RuntimeError]             If `*type*` does not map on to a model.
   #
   # @return [ModelConfig]             Frozen result.
   # @return [nil]                     Only if *fatal* is *false*.
@@ -200,7 +200,7 @@ module Model
     model_config = config_page_section(type) || {}
 
     # Start with definitions from "en.emma.record.*", separating control
-    # control directives from field name entries.
+    # directives from field name entries.
     rec_config = config_section(:record, type)&.deep_dup || {}
     directives = rec_config.select { |field, _| field.start_with?('_') }
     all_fields = rec_config.except(*directives.keys)
@@ -432,7 +432,7 @@ module Model
     config[:index] || config[:all] || ActionConfig::EMPTY
   end
 
-  # Get configured record fields relevant to a :show action for the indicated
+  # Get configured record fields relevant to a `:show` action for the indicated
   # model/controller.
   #
   # @param [any, nil] item            Symbol, String, Class, Model
@@ -501,9 +501,12 @@ module Model
     # Indicate whether the including class is primarily a container for a list
     # of other Model instances.
     #
+    # @note Currently unused.
+    # :nocov:
     def collection?
       collection_type.present?
     end
+    # :nocov:
 
     # The type for constituent Model elements for a class whose instances are
     # collections.
@@ -549,7 +552,7 @@ module Model
       Model.index_fields(item || self)
     end
 
-    # Get configured record fields relevant to a :show action for the model.
+    # Get configured record fields relevant to a `:show` action for the model.
     #
     # @param [any, nil] item          Symbol,String,Class,Model; def.: `self`.
     #

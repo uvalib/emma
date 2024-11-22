@@ -219,6 +219,7 @@ module AboutHelper
   def org_names(**opt)
     orgs = Org.active
     orgs = orgs.where(**opt) if opt.present?
+    # noinspection RailsParamDefResolve
     orgs.pluck(:long_name).sort
   end
 

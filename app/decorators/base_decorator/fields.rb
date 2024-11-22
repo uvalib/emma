@@ -284,7 +284,7 @@ module BaseDecorator::Fields
   # @type [Hash{Symbol=>Symbol}]
   #
   REPLACE_FIELD_TYPE = {
-=begin
+=begin # TODO: date/time fields ?
     year: :text, # Currently treating :year as plain text.
     date: :text, # Currently treating :date as plain text.
     time: :text, # Currently treating :time as plain text.
@@ -352,7 +352,7 @@ module BaseDecorator::Fields
   CHECK_OPT =
     %i[id checked disabled readonly required data-required label].freeze
 
-  # render_check_box
+  # Render a checkbox and label for use on an input form.
   #
   # @param [String]      name
   # @param [any, nil]    value
@@ -544,24 +544,24 @@ module BaseDecorator::Fields
 
   protected
 
-  # format_org
+  # Return the common name of *org* or #EMPTY_VALUE.
   #
-  # @param [any, nil] value
+  # @param [any, nil] org
   #
   # @return [String, nil]
   #
-  def format_org(value, **)
-    value && Org.org_name(value) || EMPTY_VALUE
+  def format_org(org, **)
+    org && Org.org_name(org) || EMPTY_VALUE
   end
 
-  # format_user
+  # Return the account ID of *user* or #EMPTY_VALUE.
   #
-  # @param [any, nil] value
+  # @param [any, nil] user
   #
   # @return [String, nil]
   #
-  def format_user(value, **)
-    value && User.account_name(value) || EMPTY_VALUE
+  def format_user(user, **)
+    user && User.account_name(user) || EMPTY_VALUE
   end
 
   # ===========================================================================

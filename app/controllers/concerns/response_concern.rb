@@ -113,7 +113,7 @@ module ResponseConcern
   #
   # @param [Symbol, Integer, Exception, nil] status
   # @param [any, nil]                        item      Array
-  # @param [String, FalseClass]              redirect
+  # @param [String, Boolean]                 redirect
   # @param [Boolean]                         xhr       Override `request.xhr?`
   # @param [Symbol]                          meth      Calling method.
   # @param [String]                          tag       Default: #response_tag.
@@ -191,7 +191,6 @@ module ResponseConcern
       end
     end
 
-    # noinspection RubyMismatchedArgumentType
     case
       when xhr      then head status, (msg || {})
       when back     then redirect_back_or_to(fallback, status: status)

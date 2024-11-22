@@ -82,6 +82,8 @@ module ParamsConcern
 
   # Normalize a list of model identifier values.
   #
+  # Instances of #CURRENT_ID are replaced with `#current_id`.
+  #
   # @param [Array<Symbol,String,Integer,Array,nil>] ids
   # @param [Hash]                                   opt   To super
   #

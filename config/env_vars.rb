@@ -144,8 +144,8 @@ CACHE_DIR =
 # * 1 connection dedicated to the scheduler for LISTEN/NOTIFY
 # * enough connections to cover the GoodJob query pool
 # * (optional) 2 connections for the GoodJob cron scheduler
-# * (optional) 1 connection per sub-thread if the application makes multi-
-#   threaded queries within a job.
+# * (optional) 1 connection per sub-thread if the application makes
+#     multithreaded queries within a job.
 # * enough connections to cover the webserver when running GoodJob :async
 
 ENV['RAILS_MAX_THREADS'] = [
@@ -168,7 +168,7 @@ CONSOLE_DEBUGGING = true?(ENV['CONSOLE_DEBUGGING'])
 # Control console output.
 #
 # Normally __output (and __debug) are not displayed in non-Rails invocations of
-# the code (e.g. rake, irb, etc) unless CONSOLE_DEBUGGING is *true*.
+# the code (e.g. rake, irb, etc.) unless CONSOLE_DEBUGGING is *true*.
 #
 CONSOLE_OUTPUT = non_test_rails? || CONSOLE_DEBUGGING
 

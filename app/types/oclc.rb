@@ -91,7 +91,7 @@ class Oclc < PublicationIdentifier
 
     public
 
-    # Indicate whether *v* would be a valid value for an item of this type.
+    # Indicate whether `*v*` would be a valid value for an item of this type.
     #
     # @param [any, nil] v
     #
@@ -124,7 +124,7 @@ class Oclc < PublicationIdentifier
     # actual number is invalid; the caller is expected to differentiate between
     # valid and invalid cases and handle each appropriately.  The one exception
     # is if the prefix is "on" -- here the remainder must be a valid OCLC
-    # number (otherwise words like "one" are interpreted as "oclc:e").
+    # number (otherwise words like "one" would be interpreted as "oclc:e").
     #
     def candidate?(v)
       v = v.to_s.strip

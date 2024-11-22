@@ -36,7 +36,7 @@ const OUT = AppDebug.consoleLogging(MODULE, DEBUG);
  *
  * - **true** is equivalent to "{capture: true}" -- listening in the capture
  *      phase before the event is passed on to `event.target` (if it is
- *      different than `event.currentTarget`).
+ *      different from `event.currentTarget`).
  *
  * - **false** is equivalent to "{capture: false}" -- the default behavior of
  *      listening in the bubbling phase.

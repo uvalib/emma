@@ -1,11 +1,11 @@
-# Common logic for all channels.
+# Common logic for all WebSocket channels.
 #
 class ApplicationCable::Channel < ActionCable::Channel::Base
   include ApplicationCable::Common
 
   include ApplicationCable::Payload
 
-  # stream_id
+  # A unique identifier to differentiate this channel.
   #
   # @return [String, nil]
   #
@@ -13,7 +13,7 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   #
   def stream_id: () -> (String | nil)
 
-  # stream_name
+  # The channel for the session.
   #
   # @param [String, Symbol, nil] base
   #
@@ -58,6 +58,8 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   # @option opt [Boolean] :fatal      Passed to #stream_send.
   #
   # @return [void]
+  #
+  # @note Currently unused as an instance method.
   #
   def stream_send: (ApplicationCable::Response payload, **untyped opt) -> void
 

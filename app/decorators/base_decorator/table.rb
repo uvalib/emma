@@ -182,7 +182,6 @@ module BaseDecorator::Table
 
     html_tag(o_tag, **o_opt, **t_opt) do
       pairs.map.with_index(first) do |(field, prop), c|
-        # noinspection RubyMismatchedArgumentType
         rc_opt = model_rc_options(field, row, c, i_opt)
         append_css!(rc_opt, 'col-first') if c == first
         append_css!(rc_opt, 'col-last')  if c == last
@@ -212,7 +211,7 @@ module BaseDecorator::Table
     end
   end
 
-  # Fields and configurations augmented with a :value entry containing the
+  # Fields and configurations augmented with a `:value` entry containing the
   # current field value.
   #
   # @param [Boolean] limited          Do not include fields that are :ignored

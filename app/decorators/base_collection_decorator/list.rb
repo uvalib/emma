@@ -54,6 +54,8 @@ module BaseCollectionDecorator::List
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @note Currently unused.
+  # :nocov:
   def no_records_row(css: '.no-records', **opt)
     trace_attrs!(opt, __method__)
     prepend_css!(opt, css)
@@ -61,6 +63,7 @@ module BaseCollectionDecorator::List
     notice = html_div(**opt) { config_term(:list, :no_records) }
     space << notice
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: Index page support

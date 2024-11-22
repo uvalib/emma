@@ -56,7 +56,7 @@ module Import
 
   # Transform a data item.
   #
-  # Strings containing ";" are interpreted as multi-valued items; these are
+  # Strings containing ";" are interpreted as multivalued items; these are
   # transformed into an array.
   #
   # Arrays without multiple items are transformed into strings.

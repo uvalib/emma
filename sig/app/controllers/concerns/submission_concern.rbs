@@ -18,6 +18,8 @@ module SubmissionConcern
   #
   # @return [void]
   #
+  # @note Currently unused.
+  #
   def start_submission: (Manifest manifest, **untyped opt) -> void
 
   # stop_submission
@@ -26,6 +28,8 @@ module SubmissionConcern
   # @param [Hash]     opt             To SubmissionService#make_request
   #
   # @return [void]
+  #
+  # @note Currently unused.
   #
   def stop_submission: (Manifest manifest, **untyped opt) -> void
 
@@ -36,6 +40,8 @@ module SubmissionConcern
   #
   # @return [void]
   #
+  # @note Currently unused.
+  #
   def pause_submission: (Manifest manifest, **untyped opt) -> void
 
   # resume_submission
@@ -44,6 +50,8 @@ module SubmissionConcern
   # @param [Hash]     opt             To SubmissionService#make_request
   #
   # @return [void]
+  #
+  # @note Currently unused.
   #
   def resume_submission: (Manifest manifest, **untyped opt) -> void
 

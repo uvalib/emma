@@ -49,11 +49,15 @@ module Record::Reportable
   #
   # @return [ExecReport]                    New value of `#exec_report`.
   #
+  # @note Currently unused.
+  #
   def set_exec_report: (?errorArgs value) -> ExecReport
 
   # Clear the current value of #REPORT_COLUMN for the current record.
   #
   # @return [nil]
+  #
+  # @note Currently unused.
   #
   def clear_exec_report: (*untyped _ignored) ?{ () -> untyped } -> nil
 
@@ -75,6 +79,8 @@ module Record::Reportable
   # @raise [RuntimeError]             If updating failed and !fatal.
   #
   # @return [Boolean]
+  #
+  # @note Currently used only by unused methods.
   #
   def set_report_column: (untyped? value, ?meth: Symbol|nil, ?fatal: bool, ?col: Symbol) -> bool
 

@@ -199,7 +199,7 @@ class EnrollmentDecorator
   #
   def list_field_value: (untyped value, field: Symbol|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | untyped | nil)
 
-  # Fields and configurations augmented with a :value entry containing the
+  # Fields and configurations augmented with a `:value` entry containing the
   # current field value.
   #
   # @param [Hash] opt   Passed to #property_pairs and #table_field_value.

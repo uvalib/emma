@@ -33,9 +33,7 @@ module SerializationHelper
   #
   def rendering_xml?: (?(symHash|nil) p) -> bool
 
-  # Indicate whether the request originated from an HTML page.
-  #
-  # NOTE: This is probably insufficient.
+  # Indicate whether an update request originated from an HTML page.
   #
   def posting_html?: () -> bool
 
@@ -52,7 +50,7 @@ module SerializationHelper
   #
   # @param [any, nil]        item
   # @param [String]          separator
-  # @param [String]          name       Node name if item.respond_to?(:to_xml).
+  # @param [String]          name       Node name if item.respond_to? (:to_xml)
   # @param [Api::Serializer] serializer
   #
   # @return [String]                  XML serialization of *item*.

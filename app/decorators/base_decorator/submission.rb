@@ -139,7 +139,8 @@ module BaseDecorator::Submission
     opt
   end
 
-  # monitor_log_toggle
+  # A control for showing/hiding processing details on the submission monitor
+  # popup.
   #
   # @param [String] label
   # @param [String] css             Characteristic CSS class/selector.

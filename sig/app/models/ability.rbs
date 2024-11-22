@@ -77,10 +77,10 @@ class Ability
   # The first argument to `can` is the action you are giving the user
   # permission to do.
   # If you pass :manage it will apply to every action. Other common actions
-  # here are :read, :create, :update and :destroy.
+  # here are :read, :create, :update, and :destroy.
   #
   # The second argument is the resource the user can perform the action on.
-  # If you pass :all it will apply to every resource. Otherwise pass a Ruby
+  # If you pass :all it will apply to every resource. Otherwise, pass a Ruby
   # class of the resource.
   #
   # The third argument is an optional hash of conditions to further filter the
@@ -333,7 +333,7 @@ class Ability
   # @param [Hash] constraints
   # @param [User] user
   #
-  # @return [Boolean]                 False if :org could not be set.
+  # @return [Boolean]                 False if `:org` could not be set.
   #
   def set_org!: (symHash constraints, User user) -> bool
 
@@ -394,7 +394,7 @@ class Ability
   # The constraints that apply to the Ability instance for the given
   # action/subject or *nil*.
   #
-  # If *nil* is returned, `can?(action,subject)` applies to any applicable
+  # If *nil* is returned, `can? (action,subject)` applies to any applicable
   # record; otherwise, although #can? may return true, the current user is
   # only able to operate on records that match the constraint criteria.
   #

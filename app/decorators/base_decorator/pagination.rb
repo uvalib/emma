@@ -230,7 +230,6 @@ module BaseDecorator::Pagination
       txt.(" #{found}", 'text',         'multi-page', 'single-page'),
       txt.(')',         'right-side',   'single-page'),
     ]
-    # noinspection RubyMismatchedArgumentType
     prepend_css!(opt, css, ((total > count) ? 'multi-page' : 'single-page'))
     html_div(separator: '', **opt) { label }
   end
@@ -298,7 +297,7 @@ module BaseDecorator::Pagination
     config_lookup('pagination.count', **opt)
   end
 
-  # pagination_separator
+  # The element used to visually separate pagination control icons.
   #
   # @param [String, nil] content      Default: `#PAGINATION_SEPARATOR`.
   # @param [String]      css          Characteristic CSS class/selector.
@@ -319,7 +318,7 @@ module BaseDecorator::Pagination
 
   public
 
-  # paginator
+  # The object used to support movement within a set of results.
   #
   # @return [Paginator]
   #
@@ -333,7 +332,7 @@ module BaseDecorator::Pagination
 
   protected
 
-  # pagination_first
+  # A control for moving to the first page of a set of results.
   #
   # @param [String, Hash, nil] path   Default: `#paginator.first_page`.
   # @param [String]            css    Characteristic CSS class/selector.
@@ -348,7 +347,7 @@ module BaseDecorator::Pagination
     pagination_control(FIRST_PAGE, path, **opt)
   end
 
-  # pagination_prev
+  # A control for moving to the previous page of a set of results.
   #
   # @param [String, Hash, nil] path   Default: `#paginator.prev_page`.
   # @param [String]            css    Characteristic CSS class/selector.
@@ -364,7 +363,7 @@ module BaseDecorator::Pagination
     pagination_control(PREV_PAGE, path, **opt)
   end
 
-  # pagination_next
+  # A control for moving to the next page of a set of results.
   #
   # @param [String, Hash, nil] path   Default: `#paginator.next_page`.
   # @param [String]            css    Characteristic CSS class/selector.
@@ -380,7 +379,7 @@ module BaseDecorator::Pagination
     pagination_control(NEXT_PAGE, path, **opt)
   end
 
-  # pagination_last
+  # A control for moving to the last page of a set of results.
   #
   # @param [String, Hash, nil] path   Default: `#paginator.last_page`.
   # @param [String]            css    Characteristic CSS class/selector.
@@ -389,13 +388,14 @@ module BaseDecorator::Pagination
   # @return [ActiveSupport::SafeBuffer]
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def pagination_last(path = nil, css: '.last', **opt)
     path         ||= paginator.last_page
     opt[:suffix] ||= pagination_last_icon
     append_css!(opt, css)
     pagination_control(LAST_PAGE, path, **opt)
   end
+  # :nocov:
 
   # A pagination control link or a non-actionable placeholder if *path* is not
   # valid.
@@ -435,7 +435,7 @@ module BaseDecorator::Pagination
 
   protected
 
-  # pagination_first_icon
+  # The icon for a control for moving to the first page of a set of results.
   #
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt
@@ -446,7 +446,7 @@ module BaseDecorator::Pagination
     pagination_icon(**opt, css: css)
   end
 
-  # pagination_prev_icon
+  # The icon for a control for moving to the previous page of a set of results.
   #
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt
@@ -459,7 +459,7 @@ module BaseDecorator::Pagination
     pagination_icon(**opt, css: css)
   end
 
-  # pagination_next_icon
+  # The icon for a control for moving to the next page of a set of results.
   #
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt
@@ -472,7 +472,7 @@ module BaseDecorator::Pagination
     pagination_icon(**opt, css: css)
   end
 
-  # pagination_last_icon
+  # The icon for a control for moving to the last page of a set of results.
   #
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt
@@ -481,9 +481,12 @@ module BaseDecorator::Pagination
   #
   # @see file:app/assets/stylesheets/layouts/controls/_shapes.scss
   #
+  # @note Currently used only by #pagination_last.
+  # :nocov:
   def pagination_last_icon(css: '.square-icon', **opt)
     pagination_icon(**opt, css: css)
   end
+  # :nocov:
 
   # A decorative visual representation of a control action.
   #

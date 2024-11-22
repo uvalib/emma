@@ -7,7 +7,7 @@
 # Many of these configuration options can be set straight in your model.
 #
 #--
-# noinspection SpellCheckingInspection, LongLine
+# noinspection SpellCheckingInspection, LongLine, GrazieInspection
 #++
 Devise.setup do |config|
 
@@ -96,7 +96,7 @@ Devise.setup do |config|
   # Does not affect registerable.
   config.paranoid = true
 
-  # By default Devise will store the user in session. You can skip storage for
+  # By default, Devise will store the user in session. You can skip storage for
   # particular strategies by setting this option.
   # Notice that if you are skipping storage for all authentication paths, you
   # may want to disable generating routes to Devise's sessions controller by
@@ -151,7 +151,7 @@ Devise.setup do |config|
   # A period that the user is allowed to confirm their account before their
   # token becomes invalid. For example, if set to 3.days, the user can confirm
   # their account within 3 days after the mail was sent, but on the fourth day
-  # their account can't be confirmed with the token any more.
+  # their account can't be confirmed with the token anymore.
   # Default is nil, meaning there is no restriction on how long a user can take
   # before confirming their account.
   # config.confirm_within = 3.days
@@ -252,7 +252,7 @@ Devise.setup do |config|
   # you are using only default views.
   # config.scoped_views = false
 
-  # Configure the default scope given to Warden. By default it's the first
+  # Configure the default scope given to Warden. By default, it's the first
   # Devise role declared in your routes (usually :user).
   # config.default_scope = :user
 
@@ -262,7 +262,7 @@ Devise.setup do |config|
 
   # ==> Navigation configuration
   # Lists the formats that should be treated as navigational. Formats like
-  # :html, should redirect to the sign in page when the user does not have
+  # :html, should redirect to the sign-in page when the user does not have
   # access, but formats like :xml or :json, should return 401.
   #
   # If you have any extra navigational formats, like :iphone or :mobile, you

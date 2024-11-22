@@ -23,7 +23,7 @@ module Field::Configuration
 
   public
 
-  # Sub-trees of the configuration that are visited when looking for a specific
+  # Subtrees of the configuration that are visited when looking for a specific
   # field.  The first (*nil*) indicates the top-level -- i.e., where the field
   # is an ActionConfig key.  The others are meaningful only for the Upload
   # configuration -- e.g., allowing :dc_title to be found within the subtree

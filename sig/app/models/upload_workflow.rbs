@@ -45,7 +45,7 @@ module UploadWorkflow::Errors
   # Each instance translates to a distinct line in the flash message.
   #
   class FlashPart < FlashHelper::FlashPart
-    # A hook for treating the first part of a entry as special.
+    # A hook for treating the first part of an entry as special.
     #
     # @param [any, nil] src
     # @param [Hash]     opt
@@ -508,7 +508,7 @@ module UploadWorkflow::External
   #
   def find_records: (*(Upload|String|Array[Upload|String]) items, **untyped opt) -> Array[Upload]
 
-  # Create a new free-standing (un-persisted) Upload instance.
+  # Create a new freestanding (un-persisted) Upload instance.
   #
   # @param [Hash, Upload, nil] data        Passed to Upload#initialize.
   #

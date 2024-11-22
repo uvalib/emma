@@ -108,7 +108,7 @@ module EnrollmentConcern
   #
   # @return [Paginator::Result]
   #
-  # @yield [items, opt] Raise an exception unless the *items* are acceptable.
+  # @yield [items, opt] Raise an exception unless the `*items*` are acceptable.
   # @yieldparam [Array] items         Identifiers of items to be deleted.
   # @yieldparam [Hash]  options       Options to #search_records.
   # @yieldreturn [void]               Block not called if *record* is *nil*.
@@ -177,6 +177,10 @@ module EnrollmentConcern
 
   public
 
+  # The default redirect path for #redirect_back_or_to.
+  #
+  # @return [String]
+  #
   def default_fallback_location = enrollment_index_path
 
   # ===========================================================================

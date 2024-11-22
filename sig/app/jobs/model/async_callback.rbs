@@ -76,7 +76,7 @@ class Model::AsyncCallback
   #
   # @param [Hash] opt
   #
-  # @return [Boolean]                 *true* if queued; *false* if not.
+  # @return [Boolean]                 `*true*` if queued; `*false*` if not.
   #
   def cb_perform_later: (**untyped opt) -> bool
 

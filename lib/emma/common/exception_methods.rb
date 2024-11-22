@@ -80,11 +80,12 @@ module Emma::Common::ExceptionMethods
   # @param [any, nil] error           Exception
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def operational_exception?(error)
     ancestors = self_class(error).ancestors || []
     ancestors.include?(Exception) && !ancestors.intersect?(INTERNAL_EXCEPTION)
   end
+  # :nocov:
 
   # Re-raise an exception which indicates a likely programming error.
   #

@@ -16,6 +16,8 @@ class SubmissionService::Response < ApplicationJob::Response
 
   # Indicate whether this response is part of a simulation.
   #
+  # @note Currently unused.
+  #
   def simulation?: () -> bool
 
   def self.template: () -> symHash

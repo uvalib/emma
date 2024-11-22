@@ -35,10 +35,11 @@ module LayoutHelper::PageLanguage
   # via I18n::Config#locale.
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def set_page_language(lang)
     @page_language = lang.to_s.downcase.sub(/-.*$/, '')
   end
+  # :nocov:
 
 end
 

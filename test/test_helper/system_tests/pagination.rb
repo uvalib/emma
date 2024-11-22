@@ -41,11 +41,12 @@ module TestHelper::SystemTests::Pagination
   #
   # @return [true]
   #
-  # @note Currently unused
-  #
+  # @note Currently unused.
+  # :nocov:
   def assert_last_page
     assert_no_link NEXT_LABEL
   end
+  # :nocov:
 
   # Assert that this is not the first page of search results.
   #
@@ -63,11 +64,12 @@ module TestHelper::SystemTests::Pagination
   #
   # @return [true]
   #
-  # @note Currently unused
-  #
+  # @note Currently unused.
+  # :nocov:
   def assert_not_last_page
     assert_link NEXT_LABEL
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -87,7 +89,7 @@ module TestHelper::SystemTests::Pagination
   # @yield Test code to run while on the page.
   # @yieldreturn [void]
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def visit_next_page(model, **opt)
     click_on NEXT_LABEL, match: :first
@@ -111,7 +113,7 @@ module TestHelper::SystemTests::Pagination
   # @yield Test code to run while on the page.
   # @yieldreturn [void]
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def visit_prev_page(model, **opt)
     click_on PREV_LABEL, match: :first

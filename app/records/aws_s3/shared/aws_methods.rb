@@ -119,7 +119,6 @@ module AwsS3::Shared::AwsMethods
         params[:copy_source] = "#{content.bucket_name}/#{content.key}"
         client.copy_object(params, opt)
       else
-        # noinspection xRubyMismatchedArgumentType
         params[:body] = content.is_a?(String) ? StringIO.new(content) : content
         client.put_object(params, opt)
       end

@@ -682,7 +682,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * showRemoteFilesPrompt
+     * Prompt for remote file(s) to resolve files named by manifest items.
      *
      * @param {boolean} visible
      * @param {boolean} first
@@ -698,7 +698,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * showLocalFilesPrompt
+     * Prompt for local file(s) to resolve files named by manifest items.
      *
      * @param {boolean} visible
      * @param {boolean} first

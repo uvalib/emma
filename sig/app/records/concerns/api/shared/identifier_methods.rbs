@@ -69,6 +69,8 @@ module Api::Shared::IdentifierMethods
   # @return [String]
   # @return [nil]                     If *value* is not a valid identifier.
   #
+  # @note Currently unused.
+  #
   def normalize_identifier: ((String|PublicationIdentifier|nil) value) -> (String | nil)
 
   # Ensure that "related identifiers" doesn't include values which are already

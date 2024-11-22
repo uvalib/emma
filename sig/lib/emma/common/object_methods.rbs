@@ -11,7 +11,7 @@ module Emma::Common::ObjectMethods
   #
   def struct: (anyHash hash, ?bool arrays) -> Struct[untyped]
 
-  # Translate a item into a class.
+  # Translate an item into a class.
   #
   # @param [any, nil] item            Symbol, String, Class
   #

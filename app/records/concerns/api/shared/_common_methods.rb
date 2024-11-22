@@ -26,9 +26,9 @@ module Api::Shared::CommonMethods
 
   # Normalization array handling.
   #
-  # :required   Results always given as arrays.
-  # :forbidden  Results are only given a singles.
-  # :auto       Results given as arrays when indicated; singles otherwise.
+  # * :required   Results always given as arrays.
+  # * :forbidden  Results are only given a singles.
+  # * :auto       Results given as arrays when indicated; singles otherwise.
   #
   # @type [Array<Symbol>]
   #
@@ -239,8 +239,8 @@ module Api::Shared::CommonMethods
 
   protected
 
-  # A traversal through the hierarchy rooted at the class instance which
-  # holds all of the metadata for a single lookup result item.
+  # A traversal through the hierarchy rooted at the class instance which holds
+  # all of the metadata for a single lookup result item.
   #
   # @return [Array<Symbol>]
   #
@@ -252,9 +252,12 @@ module Api::Shared::CommonMethods
   #
   # @return [Api::Record, nil]
   #
+  # @note Currently unused.
+  # :nocov:
   def item_record
     find_item(*item_record_path)
   end
+  # :nocov:
 
   # find_record_item
   #
@@ -352,7 +355,7 @@ module Api::Shared::CommonMethods
   # @param [Array<Symbol>] path
   # @param [Symbol]        field
   # @param [String]        separator  Used if the item is an array.
-  # @param [Boolean]       clean      If *false* do not #clean.
+  # @param [Boolean]       clean      If *false*, do not #clean.
   # @param [Hash]          opt        Passed to #find_values.
   #
   # @return [String, nil]
@@ -366,7 +369,7 @@ module Api::Shared::CommonMethods
   #
   # @param [Array<Symbol>] path
   # @param [Symbol]        field
-  # @param [Boolean]       clean      If *false* do not #clean.
+  # @param [Boolean]       clean      If *false*, do not #clean.
   # @param [Hash]          opt        Passed to #find_items.
   #
   # @return [Array<String>]

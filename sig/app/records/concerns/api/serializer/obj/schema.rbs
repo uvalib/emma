@@ -19,11 +19,15 @@ module Api::Serializer::Obj::Schema
   #
   # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
   #
+  # @note Currently used only by #element_parse_name.
+  #
   def element_parse_naming: () -> Symbol
 
   # The naming mode for serializing attributes from Obj format.
   #
   # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
+  #
+  # @note Currently used only by #attribute_parse_name.
   #
   def attribute_parse_naming: () -> Symbol
 

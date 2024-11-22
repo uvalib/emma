@@ -64,7 +64,7 @@ module LayoutHelper::Common
   # current URL parameters are included as hidden fields so that the current
   # search is repeated but augmented with the added parameter.
   #
-  # Otherwise a new search is assumed.
+  # Otherwise, a new search is assumed.
   #
   # @param [Symbol, String, nil] target
   # @param [Symbol, String, nil] id       Passed to #hidden_parameter_for.

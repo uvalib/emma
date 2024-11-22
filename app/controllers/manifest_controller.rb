@@ -112,7 +112,7 @@ class ManifestController < ApplicationController
 
   # === GET /manifest/show/(:id)
   #
-  # Redirects to #show_select if :id is missing.
+  # Redirects to #show_select if `:id` is missing.
   #
   # @see #show_manifest_path          Route helper
   #
@@ -449,6 +449,7 @@ class ManifestController < ApplicationController
     __log_activity
     __debug_route
     @item = cancel_changes
+    # noinspection RubyMismatchedArgumentType
     if request_xhr?
       render json: @item.as_json
     else

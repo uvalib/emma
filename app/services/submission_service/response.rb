@@ -54,12 +54,15 @@ class SubmissionService::Response < ApplicationJob::Response
 
   # Indicate whether this response is part of a simulation.
   #
+  # @note Currently unused.
+  # :nocov:
   def simulation?
     self[:simulation].present?
   end
+  # :nocov:
 
   # ===========================================================================
-  # :section: ApplicationCable::Response::Payload overrides
+  # :section: ApplicationCable::Payload overrides
   # ===========================================================================
 
   public
@@ -94,7 +97,7 @@ class SubmissionService::SubmitResponse < SubmissionService::Response
   TEMPLATE = SubmitChannel::SubmitResponse::TEMPLATE
 
   # ===========================================================================
-  # :section: ApplicationCable::Response::Payload overrides
+  # :section: ApplicationCable::Payload overrides
   # ===========================================================================
 
   public
@@ -111,7 +114,7 @@ end
 class SubmissionService::InitialResponse < SubmissionService::SubmitResponse
 
   # ===========================================================================
-  # :section: ApplicationCable::Response::Payload overrides
+  # :section: ApplicationCable::Payload overrides
   # ===========================================================================
 
   public
@@ -136,7 +139,7 @@ class SubmissionService::StepResponse < SubmissionService::SubmitResponse
   TEMPLATE = SubmitChannel::StepResponse::TEMPLATE
 
   # ===========================================================================
-  # :section: ApplicationCable::Response::Payload overrides
+  # :section: ApplicationCable::Payload overrides
   # ===========================================================================
 
   public
@@ -154,7 +157,7 @@ end
 class SubmissionService::BatchSubmitResponse < SubmissionService::SubmitResponse
 
   # ===========================================================================
-  # :section: ApplicationCable::Response::Payload overrides
+  # :section: ApplicationCable::Payload overrides
   # ===========================================================================
 
   public
@@ -179,7 +182,7 @@ end
 class SubmissionService::FinalResponse < SubmissionService::StepResponse
 
   # ===========================================================================
-  # :section: ApplicationCable::Response::Payload overrides
+  # :section: ApplicationCable::Payload overrides
   # ===========================================================================
 
   public
@@ -204,7 +207,7 @@ class SubmissionService::ControlResponse < SubmissionService::Response
   TEMPLATE = SubmitChannel::ControlResponse::TEMPLATE
 
   # ===========================================================================
-  # :section: ApplicationCable::Response::Payload overrides
+  # :section: ApplicationCable::Payload overrides
   # ===========================================================================
 
   public

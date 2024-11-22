@@ -7,8 +7,8 @@ __loading_begin(__FILE__)
 
 # Promote a file from :cache to :store.
 #
-# @note Currently unused
-#
+# @note Currently unused.
+# :nocov:
 class Attachment::PromoteJob < ApplicationJob
 
   include ApplicationJob::Logging
@@ -28,8 +28,6 @@ class Attachment::PromoteJob < ApplicationJob
   # @param [any, nil] data            :file_data
   #
   # @return [void]
-  #
-  # @note Currently unused
   #
   def perform(record, name, data)
     __debug_job('START') do
@@ -56,5 +54,6 @@ class Attachment::PromoteJob < ApplicationJob
   end
 
 end
+# :nocov:
 
 __loading_end(__FILE__)

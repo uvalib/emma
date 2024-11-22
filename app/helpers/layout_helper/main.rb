@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# View helper methods for the '<main>' section..
+# View helper methods for the `<main>` section.
 #
 module LayoutHelper::Main
 

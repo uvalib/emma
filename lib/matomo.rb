@@ -38,7 +38,7 @@ module Matomo
 
   SCRIPT  = analytics_path('matomo.js')
   TRACKER = analytics_path('matomo.php')
-=begin # TODO: Matomo opt-opt
+=begin # TODO: Matomo opt out
   OPT_OUT =
     analytics_path('index.php?module=CoreAdminHome&action=optOut&language=en')
 =end
@@ -547,7 +547,7 @@ module Matomo
   #
   NO_GET_EVOLUTION = %i[Actions Referrers].freeze
 
-  # process_report_result
+  # Create a table of graph images from an analytics report.
   #
   # @param [Array<Hash>, Hash, nil] values
   # @param [Symbol, nil]            target
@@ -577,7 +577,7 @@ module Matomo
       graph1 = image(src: graph1, decoding: 'async') if graph1 && html_out
 
       # A second entry pair for the evolution graph (which is not provided for
-      # some reports.
+      # some reports).
       graph2 = value[:imageGraphEvolutionUrl]
       graph2 = nil if NO_EVOLUTION.include?(m)
       graph2 = nil if (a == :get) && NO_GET_EVOLUTION.include?(m)

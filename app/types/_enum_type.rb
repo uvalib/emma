@@ -140,9 +140,12 @@ class EnumType < ScalarType
     #
     # @return [Array<String>]
     #
+    # @note Currently unused.
+    # :nocov:
     def values_for(entry)
       enumerations.dig(entry.to_sym, :values)
     end
+    # :nocov:
 
     # The value/label pairs for an enumeration.
     #
@@ -204,7 +207,7 @@ class EnumType < ScalarType
       normalize(v) == default
     end
 
-    # Indicate whether *v* would be a valid value for an item of this type.
+    # Indicate whether `*v*` would be a valid value for an item of this type.
     #
     # @param [any, nil] v
     #

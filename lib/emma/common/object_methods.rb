@@ -42,7 +42,7 @@ module Emma::Common::ObjectMethods
 
   public
 
-  # Translate a item into a class.
+  # Translate an item into a class.
   #
   # @param [any, nil] item            Symbol, String, Class
   #

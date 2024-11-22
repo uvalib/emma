@@ -314,7 +314,7 @@ class Search::Record::TitleRecord < Search::Api::Record
 
     public
 
-    # Fields values used to determine whether *rec* can be included.
+    # Fields values used to determine whether `*rec*` can be included.
     #
     # @param [Search::Record::MetadataRecord, Hash, nil] rec
     #
@@ -334,7 +334,7 @@ class Search::Record::TitleRecord < Search::Api::Record
       field_values(rec, *SORT_FIELDS)
     end
 
-    # The values for *rec* for use with Enumerable#sort_by.
+    # The values for `*rec*` for use with Enumerable#sort_by.
     #
     # @param [Search::Record::MetadataRecord, Hash, nil] rec
     # @param [Hash]                                      opt To #sort_key_value
@@ -417,7 +417,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     end
 
     # Group identifiers of the same prefix in descending order of length
-    # (favoring ISBN-13 over ISBN-10).
+    # (favoring "ISBN-13" over "ISBN-10").
     #
     # @param [String, nil] id
     #
@@ -903,6 +903,7 @@ class Search::Record::TitleRecord < Search::Api::Record
     @hierarchy = @exemplar = nil
     super(nil, **opt)
     initialize_attributes
+    # noinspection RubyMismatchedArgumentType
     self.records = copy_records(src)
     @exemplar    = make_exemplar
   end

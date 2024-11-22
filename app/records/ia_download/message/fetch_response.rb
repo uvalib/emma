@@ -8,7 +8,7 @@ __loading_begin(__FILE__)
 # Acquire file content for downloading via the Internet Archive
 # "Printdisabled Unencrypted Ebook API".
 #
-# Currently there are no data fields associated with the received message; the
+# Currently, there are no data fields associated with the received message; the
 # body of the response is the content of the file being downloaded.
 #
 class IaDownload::Message::FetchResponse < IaDownload::Api::Message

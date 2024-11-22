@@ -75,12 +75,14 @@ class Options
   #
   # @param [Symbol, String] key
   #
+  # @note Currently unused.
+  #
   def option?: ((Symbol|String) key) -> bool
 
   # Get an option value.
   #
   # @param [Symbol, String] key
-  # @param [Boolean]        log   If *false* do not warn about bad keys.
+  # @param [Boolean]        log   If *false*, do not warn about bad keys.
   #
   # @return [any, nil]
   #

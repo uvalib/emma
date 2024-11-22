@@ -227,30 +227,30 @@ class ApiService
       # All keys in the property hash are optional, however :synthetic must
       # be included for methods that do not map on to documented API requests.
       #
-      # :alias          One or more identifiers which associate a method named
+      # * :alias        One or more identifiers which associate a method named
       #                 argument with the name of the API parameter it
       #                 represents. (This is not needed for arguments with
       #                 names that are the same as the documented API
       #                 parameter.)
       #
-      # :required       One or more API parameters which are mandatory, which
+      # * :required     One or more API parameters which are mandatory, which
       #                 may include either Path or Query parameters.
       #
-      # :optional       One or more API optional Query parameters.
+      # * :optional     One or more API optional Query parameters.
       #                 (Path parameters are never optional.)
       #
-      # :multi          An array of one or more parameters that can be passed
+      # * :multi        An array of one or more parameters that can be passed
       #                 in as a single value or as an array.
       #
-      # :role           If given as :anonymous this is a hint that the request
+      # * :role         If given as :anonymous this is a hint that the request
       #                 should succeed even if the current user is not logged
       #                 in.
       #
-      # :synthetic      If *true*, then the method is not treated as a true API
+      # * :synthetic    If *true*, then the method is not treated as a true API
       #                 method (i.e., it is defined locally but does not map
       #                 directly on to an endpoint defined by the API).
       #
-      # :topic          The base of the module in which the method was defined
+      # * :topic        The base of the module in which the method was defined
       #                 added by this method as a hint for the API Explorer.
       #
       #--

@@ -50,10 +50,11 @@ module DevHelper
   # @return [void]
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def forget_dev(...)
     delete_cookie(DEV_COOKIE)
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:

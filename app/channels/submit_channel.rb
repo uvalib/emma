@@ -5,6 +5,8 @@
 
 __loading_begin(__FILE__)
 
+# Bulk upload submission WebSocket channels.
+#
 class SubmitChannel < ApplicationCable::Channel
 
   include SubmissionConcern
@@ -24,7 +26,7 @@ class SubmitChannel < ApplicationCable::Channel
 
   protected
 
-  # stream_name
+  # The channel for the session.
   #
   # @return [String]
   #
@@ -140,7 +142,7 @@ class SubmitChannel < ApplicationCable::Channel
     stream_send(payload, meth: __method__, **str_opt, **opt)
   end
 
-  # Invoked from another thread to push acquired data back to the client.
+  # Invoked from another thread to push control status back to the client.
   #
   # @param [Hash] data                Payload data.
   # @param [Hash] opt
@@ -153,12 +155,15 @@ class SubmitChannel < ApplicationCable::Channel
   # @see file:javascripts/shared/cable-channel.js    *response()*
   # @see file:javascripts/channels/submit-channel.js *_createResponse()*
   #
+  # @note Currently unused.
+  # :nocov:
   def self.control_response(data, **opt)
     str_opt = opt.extract!(:meth, :fatal)
     payload = SubmitChannel::ControlResponse.wrap(data, **opt)
     payload.convert_to_data_url! if invalid_payload_size(payload)
     stream_send(payload, meth: __method__, **str_opt, **opt)
   end
+  # :nocov:
 
 end
 

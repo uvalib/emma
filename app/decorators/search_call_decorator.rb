@@ -108,6 +108,8 @@ class SearchCallDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @note Currently unused.
+  # :nocov:
   def search_call_field(field, **opt)
     f_opt = { class: 'name' }
     name  = opt.delete(:name) and merge_html_options!(f_opt, name)
@@ -117,6 +119,7 @@ class SearchCallDecorator
       html_span(field, **f_opt) << ': '.html_safe
     end
   end
+  # :nocov:
 
   # Element containing one or more field values.
   #
@@ -128,6 +131,8 @@ class SearchCallDecorator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @note Currently unused.
+  # :nocov:
   def search_call_value(value, **opt)
     v_opt  = { class: 'item' }
     item   = opt.delete(:item) and merge_html_options!(v_opt, item)
@@ -154,6 +159,7 @@ class SearchCallDecorator
       end
     end
   end
+  # :nocov:
 
   # Element separating multiple values.
   #
@@ -165,11 +171,14 @@ class SearchCallDecorator
   # The element is surrounded by spaces so that a compound value element can be
   # copied and pasted legibly.
   #
+  # @note Currently used only by #search_call_value.
+  # :nocov:
   def search_call_connector(**opt)
     prepend_css!(opt, 'or')
     connector = html_span(**opt) { config_term(:search_call, :or).upcase }
     " #{connector} ".html_safe
   end
+  # :nocov:
 
 end
 

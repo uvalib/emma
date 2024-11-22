@@ -14,7 +14,7 @@ module HomeHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def orgs_count: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 
@@ -25,7 +25,7 @@ module HomeHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def orgs_list: (?css: String|nil, **untyped opt) -> ActiveSupport::SafeBuffer
 

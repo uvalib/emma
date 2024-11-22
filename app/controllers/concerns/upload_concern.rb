@@ -37,8 +37,8 @@ module UploadConcern
 
   public
 
-  MIME_REGISTRATION =
-    FileNaming.format_classes.values.each(&:register_mime_types)
+  # noinspection RbsMissingTypeSignature
+  MIME_REG ||= FileNaming.format_classes.values.each(&:register_mime_types)
 
   # ===========================================================================
   # :section: ModelConcern overrides
@@ -93,7 +93,7 @@ module UploadConcern
     fetch_data(**opt) || []
   end
 
-  # workflow_parameters
+  # Parameters supporting upload submission workflow.
   #
   # @return [Hash]
   #
@@ -110,10 +110,20 @@ module UploadConcern
 
   public
 
+  # Option keys involved in constraining record searches.
+  #
+  # @return [Array<Symbol>]
+  #
+  # @see Record::Searchable#search_records
+  #
   def search_records_keys
     model_class.const_get(:SEARCH_RECORDS_OPT)
   end
 
+  # Option keys involved in filtering record searches.
+  #
+  # @return [Array<Symbol>]
+  #
   def find_or_match_keys
     super(:edit_state, :edit_user)
   end
@@ -527,7 +537,7 @@ module UploadConcern
   #
   REINDEX_BATCH_SIZE = ENV_VAR['REINDEX_BATCH_SIZE'].to_i
 
-  # reindex_submissions
+  # Cause the identified items to be updated in the EMMA Unified Index.
   #
   # @param [Array<Upload,String>] entries
   # @param [Hash, nil]            opt       To Upload#get_relation except for:
@@ -633,6 +643,10 @@ module UploadConcern
 
   public
 
+  # The default redirect path for #redirect_back_or_to.
+  #
+  # @return [String]
+  #
   def default_fallback_location = upload_index_path
 
   # ===========================================================================
@@ -705,8 +719,8 @@ module UploadConcern
 
   protected
 
-  # If the :show endpoint is given an :id which is actually a specification for
-  # multiple items then there is a redirect to :index.
+  # If the :show endpoint is given an `:id` which is actually a specification
+  # for multiple items then there is a redirect to :index.
   #
   # @return [void]
   #

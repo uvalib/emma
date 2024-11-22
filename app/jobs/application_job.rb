@@ -89,8 +89,11 @@ class ApplicationJob < ActiveJob::Base
 end
 
 # Namespace for app/jobs/attachment.
-# @note Currently unused
+#
+# @note Currently unused.
+# :nocov:
 module Attachment
 end
+# :nocov:
 
 __loading_end(__FILE__)

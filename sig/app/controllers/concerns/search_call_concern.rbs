@@ -7,7 +7,10 @@ module SearchCallConcern
 
   include SerializationConcern
 
+  # The list of valid `#search_call_params`.
+  #
   # @type [Array<Symbol>]
+  #
   SC_PARAMETERS: symArray
 
   # Columns searched for generic (:like) matches.
@@ -16,7 +19,7 @@ module SearchCallConcern
   #
   SC_MATCH_COLUMNS: symArray
 
-  # Only allow a list of trusted parameters through. # TODO: strong params
+  # Only allow through a list of trusted parameters.
   #
   # @param [ActionController::Parameters, Hash, nil] p   Default: `params`.
   #

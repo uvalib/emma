@@ -86,7 +86,7 @@ class SearchController < ApplicationController
   def index
     __log_activity(anonymous: true)
     __debug_route
-    err   = nil
+    err      = nil
     prm      = paginator.initial_parameters
     playback = prm.delete(:search_call)
     s_params = (playback || prm).except(*Paginator::NON_SEARCH_KEYS)
@@ -205,6 +205,7 @@ class SearchController < ApplicationController
   def validate
     __debug_route
     ids = params[:identifier].presence
+    # noinspection RubyMismatchedArgumentType
     render json: validate_identifiers(ids) if ids
   end
 

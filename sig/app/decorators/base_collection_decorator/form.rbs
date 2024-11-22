@@ -31,6 +31,8 @@ module BaseCollectionDecorator::Form
   #
   # @return [Hash]
   #
+  # @note Currently unused.
+  #
   def delete_submit_options: (**untyped opt) -> symHash
 
   # delete_submit_path
@@ -46,7 +48,7 @@ module BaseCollectionDecorator::Form
   #
   # @param [String, Symbol, nil] action
   # @param [String, nil]         label    Override button label.
-  # @param [String, Hash, nil]   url
+  # @param [String, Hash, nil]   url      Default: `#delete_submit_path`.
   # @param [String]              css      Characteristic CSS class/selector.
   # @param [Hash]                opt      Passed to #button_to.
   #
@@ -62,7 +64,7 @@ module BaseCollectionDecorator::Form
   #
   def delete_cancel_button: (**untyped opt) -> ActiveSupport::SafeBuffer
 
-  # item_ids
+  # The record IDs extracted from `*items*`.
   #
   # @param [Array<Model,String>, Model, String, nil] items  Def: `#object`.
   #

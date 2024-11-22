@@ -37,7 +37,7 @@ module EmmaRake
   def task_options: (*(String|Symbol|Rake::TaskArguments|strArray|nil) flags) -> Array[String?]
 
   # Indicate whether the option flag was provided via task arguments or on the
-  # the command line (after "--").
+  # command line (after "--").
   #
   # @param [String, Symbol]                  flag
   # @param [Rake::TaskArguments, Array, nil] task_args
@@ -47,7 +47,7 @@ module EmmaRake
   def task_option?: ((String|Symbol) flag, ?(Rake::TaskArguments|strArray|nil) task_args) -> bool
 
   # Return the value of an option flag provided via task arguments or on the
-  # the command line (after "--").
+  # command line (after "--").
   #
   # A flag of the form "--name" will return "" if present.
   # A flag of the form "--name=value" will return *value* if present.

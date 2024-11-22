@@ -13,14 +13,16 @@ class EnrollmentMailer < ApplicationMailer
   #
   URL_PARAMETERS: symArray
 
-  # Send to produce a JIRA help ticket for a new enrollment request.
+  # Generate email to produce a JIRA help ticket for a new enrollment request.
   #
   # If this is not the production deployment, the email subject will be
   # annotated to indicate that this is not a real enrollment request.
   #
   # @param [Hash] opt
   #
-  def request_email: (**untyped opt) -> void
+  # @return [Mail::Message]
+  #
+  def request_email: (**untyped opt) -> Mail::Message
 
   # Supply interpolation values for the current email.
   #

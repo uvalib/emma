@@ -9,11 +9,15 @@ module Api::Shared::CreatorMethods
   #
   # @return [Array<String>]
   #
+  # @note Currently unused.
+  #
   def author_list: (**untyped opt) -> strArray
 
   # The editor(s) of this catalog title.
   #
   # @return [Array<String>]
+  #
+  # @note Currently unused.
   #
   def editor_list: () -> strArray
 
@@ -21,11 +25,15 @@ module Api::Shared::CreatorMethods
   #
   # @return [Array<String>]
   #
+  # @note Currently unused.
+  #
   def composer_list: () -> strArray
 
   # The lyricist(s) of this catalog title.
   #
   # @return [Array<String>]
+  #
+  # @note Currently unused.
   #
   def lyricist_list: () -> strArray
 
@@ -33,11 +41,15 @@ module Api::Shared::CreatorMethods
   #
   # @return [Array<String>]
   #
+  # @note Currently unused.
+  #
   def arranger_list: () -> strArray
 
   # The translator(s) of this catalog title.
   #
   # @return [Array<String>]
+  #
+  # @note Currently unused.
   #
   def translator_list: () -> strArray
 
@@ -46,6 +58,8 @@ module Api::Shared::CreatorMethods
   # @param [Hash] opt                 Passed to #creator_list.
   #
   # @return [Array<String>]
+  #
+  # @note Currently unused.
   #
   def creators: (**untyped opt) -> strArray
 

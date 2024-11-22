@@ -12,7 +12,7 @@ module TestHelper::SystemTests::Action
   #
   # @return [true]
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def assert_valid_create_page: (Symbol|String|Class|Model|nil model, **untyped opt) -> true
 
@@ -27,7 +27,7 @@ module TestHelper::SystemTests::Action
   #
   # @return [true]
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def assert_valid_update_page: (Symbol|String|Class|Model|nil model, **untyped opt) -> true
 
@@ -42,7 +42,7 @@ module TestHelper::SystemTests::Action
   #
   # @return [true]
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def assert_valid_delete_page: (Symbol|String|Class|Model|nil model, **untyped opt) -> true
 
@@ -68,7 +68,7 @@ module TestHelper::SystemTests::Action
   #
   # @return [true]
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def visit_new_page: (Symbol|String|Class|Model|nil model, **untyped opt) ?{ () -> void } -> true
 
@@ -84,7 +84,7 @@ module TestHelper::SystemTests::Action
   #
   # @return [true]
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def visit_edit_page: (Symbol|String|Class|Model|nil model, **untyped opt) ?{ () -> void } -> true
 
@@ -100,7 +100,7 @@ module TestHelper::SystemTests::Action
   #
   # @return [true]
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def visit_delete_page: (Symbol|String|Class|Model|nil model, **untyped opt) ?{ () -> void } -> true
 

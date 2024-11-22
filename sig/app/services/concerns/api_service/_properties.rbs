@@ -110,6 +110,8 @@ module ApiService::Properties
   #
   # @return [String, nil]
   #
+  # @note Currently unused.
+  #
   def api_password: () -> (String | nil)
 
   # Valid service endpoint URLs.

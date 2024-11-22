@@ -89,7 +89,7 @@ module UploadWorkflow::Errors
 
     protected
 
-    # A hook for treating the first part of a entry as special.
+    # A hook for treating the first part of an entry as special.
     #
     # @param [any, nil] src
     # @param [Hash]     opt
@@ -664,9 +664,6 @@ module UploadWorkflow::External
   # If a later item fails, the successfully-destroyed items will still be
   # removed from the index.
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def upload_remove(*items, index: nil, atomic: true, force: nil, **opt)
     __debug_items("UPLOAD WF #{__method__}", binding)
 
@@ -938,7 +935,7 @@ module UploadWorkflow::External
     collect_records(*items, **opt).first || []
   end
 
-  # Create a new free-standing (un-persisted) Upload instance.
+  # Create a new freestanding (un-persisted) Upload instance.
   #
   # @param [Hash, Upload, nil] data        Passed to Upload#initialize.
   #

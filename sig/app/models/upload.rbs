@@ -234,6 +234,8 @@ class Upload < ApplicationRecord
 
   # Indicate whether all required fields have valid values.
   #
+  # @note Currently unused.
+  #
   def emma_data_valid?: () -> bool
 
   # Compare the source fields against configured requirements.

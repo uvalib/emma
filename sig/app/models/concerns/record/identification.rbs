@@ -76,7 +76,7 @@ module Record::Identification
   # Get the indicated value from an object accessed as either a Hash key or
   # an instance method.
   #
-  # The value of *default* is returned if *item* doesn't respond to *key*.
+  # The value of *default* is returned if `*item*` doesn't respond to `*key*`.
   #
   # @param [any, nil]                           item  Model,Hash,String,Symbol
   # @param [Symbol,String,Array<Symbol,String>] key
@@ -99,7 +99,7 @@ module Record::Identification
   def alt_id_key: (symHash opt) -> Symbol
 
   # Return with the specified record or *nil* if one could not be found.
-  # If *item* is a *self*, it is returned; otherwise an instance is generated
+  # If *item* is a `*self*`, it is returned; otherwise an instance is generated
   # from a database lookup.
   #
   # @param [any, nil]    item         String, Integer, Hash, Model
@@ -261,9 +261,9 @@ module Record::Identification
 
   # Interpret an ID string as a range of IDs if possible.
   #
-  # The method supports a mixture of database IDs (which are comprised only of
-  # decimal digits) and submission IDs (which always start with a non-digit),
-  # however a submission ID cannot be part of a range.
+  # The method supports a mixture of database IDs (which are only decimal
+  # digits) and submission IDs (which always start with a non-digit), however a
+  # submission ID cannot be part of a range.
   #
   # @param [String, Integer, Model] id
   # @param [Hash]                   opt

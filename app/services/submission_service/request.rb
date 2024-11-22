@@ -89,9 +89,12 @@ class SubmissionService::Request
 
   # Indicate whether this request is part of a simulation.
   #
+  # @note Currently unused.
+  # :nocov:
   def simulation?
     table[:simulation].present?
   end
+  # :nocov:
 
   # command
   #

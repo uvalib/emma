@@ -11,8 +11,8 @@ require 'active_support'
 require 'active_support/core_ext'
 
 # This is do-nothing module which is included in TrueClass and FalseClass
-# to allow checking for a boolean value as `item.is_a?(BoolType)` in place of
-# `(item.is_a?(TrueClass) || item.is_a?(FalseClass))`.
+# to allow checking for a boolean value as `item.is_a? BoolType` in place of
+# `(item.is_a? TrueClass || item.is_a? FalseClass)`.
 #
 # Since YARD and RBS will not recognize this as a substitute for 'Boolean' or
 # 'bool', respectively, this is not intended for use with type documentation.

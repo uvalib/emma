@@ -33,8 +33,6 @@ module Record::FileData
   #
   # @return [Hash{String=>any,nil}]
   #
-  # @note Only used by #file_attacher_load
-  #
   def make_file_record: (String|anyHash|nil data, **untyped opt) -> strHash
 
   # parse_file_data
@@ -44,7 +42,7 @@ module Record::FileData
   #
   # @return [Hash]
   #
-  # @note Invoked only from methods which are currently unused.
+  # @note Currently used only by unused methods.
   #
   def parse_file_data: (String|anyHash|nil data, ?bool allow_blank) -> symHash
 
@@ -87,7 +85,7 @@ module Record::FileData
     #
     # @return [Hash]
     #
-    # @note Invoked only from methods which are currently unused.
+    # @note Currently used only by unused methods.
     #
     def emma_file_data: () -> symHash
 

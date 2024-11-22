@@ -28,7 +28,7 @@ module Faraday
     #
     # @param params [Hash, Array, #to_hash, nil] Parameters to be encoded
     #
-    # @raise [TypeError] If *params* can not be converted to a Hash.
+    # @raise [TypeError] If `*params*` can not be converted to a Hash.
     #
     # @return [String]
     #

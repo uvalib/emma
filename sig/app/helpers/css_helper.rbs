@@ -116,7 +116,7 @@ module CssHelper
   #
   # @return [Hash]                        A new hash with :class set.
   #
-  # @note Currently unused
+  # @note Currently unused.
   #
   def remove_css: (symHash html_opt, *(Array[_ToS]|_ToS|nil) classes) ?{ (String cls) -> untyped } -> symHash
 
@@ -130,7 +130,7 @@ module CssHelper
   #
   # @yield [cls] Indicate whether a CSS class should be removed.
   # @yieldparam [String] cls          A current *html_opt* CSS class.
-  # @yieldreturn [any, nil]           Truthy if *cls* should be removed.
+  # @yieldreturn [any, nil]           Truthy if `*cls*` should be removed.
   #
   def remove_css!: (symHash html_opt, *(Array[_ToS]|_ToS|nil) classes) ?{ (String cls) -> untyped } -> symHash
 

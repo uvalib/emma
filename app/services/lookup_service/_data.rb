@@ -108,10 +108,13 @@ class LookupService::Data
   # @yieldparam [LookupService::Data::Item] item
   # @yieldreturn [any, nil]
   #
+  # @note Currently unused.
+  # :nocov:
   def transform_table_items(&blk)
     raise ArgumentError, 'no block given' unless blk
     table.transform_values { _1.map(&blk) }
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: Class methods

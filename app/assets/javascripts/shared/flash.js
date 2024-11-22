@@ -348,7 +348,7 @@ function hideFlash(fc, force) {
 /**
  * Show/hide the flash container. <p/>
  *
- * (Only for use within {@link showFlash} and {@link hideFlash}.
+ * (Only for use within {@link showFlash} and {@link hideFlash}.)
  *
  * @param {jQuery}  $fc
  * @param {boolean} show
@@ -604,7 +604,7 @@ function onKeyUpWindow(event) {
 }
 
 /**
- * Allow mouse down outside of a flash item to close all flash items.
+ * Allow mouse down outside a flash item to close all flash items.
  *
  * @param {MouseEvt} event
  */

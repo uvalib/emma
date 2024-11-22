@@ -18,7 +18,7 @@ module IaDownload::Api::Schema
 
   public
 
-  # service_name
+  # The class name of the related service for logging.
   #
   # @return [String]
   #

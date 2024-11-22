@@ -1,6 +1,6 @@
 # Remove a file.
 #
-# @note Currently unused
+# @note Currently unused.
 #
 class Attachment::DestroyJob < ApplicationJob
   include ApplicationJob::Logging
@@ -10,8 +10,6 @@ class Attachment::DestroyJob < ApplicationJob
   # @param [any, nil] data
   #
   # @return [void]
-  #
-  # @note Currently unused
   #
   def perform: (untyped data) -> void
 end

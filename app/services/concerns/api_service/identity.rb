@@ -27,15 +27,18 @@ module ApiService::Identity
 
   public
 
-  # Extract the user name to be used for API parameters.
+  # Extract the username to be used for API parameters.
   #
   # @param [User, String] user
   #
   # @return [String]
   #
+  # @note Currently unused.
+  # :nocov:
   def name_of(user)
     user.to_s
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -68,9 +71,12 @@ module ApiService::Identity
   #
   # @return [String, nil]
   #
+  # @note Currently unused.
+  # :nocov:
   def refresh_token
     may_be_overridden # but only if a new authentication mechanism requires it
   end
+  # :nocov:
 
 end
 

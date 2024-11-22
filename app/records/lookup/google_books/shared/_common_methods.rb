@@ -25,8 +25,8 @@ module Lookup::GoogleBooks::Shared::CommonMethods
   EXT = EXTENDED_FIELDS || COMPLETE_FIELDS
   ALL = COMPLETE_FIELDS
 
-  # A traversal through the hierarchy rooted at the class instance which
-  # holds all of the metadata for a single lookup result item.
+  # A traversal through the hierarchy rooted at the class instance which holds
+  # all of the metadata for a single lookup result item.
   #
   # @type [Array<Symbol>]
   #
@@ -38,8 +38,8 @@ module Lookup::GoogleBooks::Shared::CommonMethods
 
   protected
 
-  # A traversal through the hierarchy rooted at the class instance which
-  # holds all of the metadata for a single lookup result item.
+  # A traversal through the hierarchy rooted at the class instance which holds
+  # all of the metadata for a single lookup result item.
   #
   # @return [Array<Symbol>]
   #

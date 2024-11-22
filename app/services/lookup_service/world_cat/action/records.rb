@@ -105,6 +105,8 @@ module LookupService::WorldCat::Action::Records
   #
   # @see https://developer.api.oclc.org/wcv1#operations-Read-read-oclcnumber
   #
+  # @note Currently unused.
+  # :nocov:
   def get_oclc(term, **opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'catalog/content', term, **opt)
@@ -120,6 +122,7 @@ module LookupService::WorldCat::Action::Records
         role: :anonymous,           # Should succeed for any user.
       }
     end
+  # :nocov:
 
   # === GET https://worldcat.org/webservices/catalog/content/isbn/(isbn)
   #
@@ -130,6 +133,8 @@ module LookupService::WorldCat::Action::Records
   #
   # @see https://developer.api.oclc.org/wcv1#operations-Read-read-isbn
   #
+  # @note Currently unused.
+  # :nocov:
   def get_isbn(term, **opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'catalog/content/isbn', term, **opt)
@@ -145,6 +150,7 @@ module LookupService::WorldCat::Action::Records
         role: :anonymous,           # Should succeed for any user.
       }
     end
+  # :nocov:
 
   # === GET https://worldcat.org/webservices/catalog/content/issn/(issn)
   #
@@ -155,6 +161,8 @@ module LookupService::WorldCat::Action::Records
   #
   # @see https://developer.api.oclc.org/wcv1#operations-Read-read-issn
   #
+  # @note Currently unused.
+  # :nocov:
   def get_issn(term, **opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'catalog/content/issn', term, **opt)
@@ -170,6 +178,7 @@ module LookupService::WorldCat::Action::Records
         role: :anonymous,           # Should succeed for any user.
       }
     end
+  # :nocov:
 
   # === GET https://worldcat.org/webservices/catalog/content/sn/(lccn)
   #
@@ -187,6 +196,8 @@ module LookupService::WorldCat::Action::Records
   # https://www.loc.gov/standards/sourcelist/standard-identifier.html (where
   # LCCN is only one of the possibilities).
   #
+  # @note Currently unused.
+  # :nocov:
   def get_lccn(term, **opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'catalog/content/sn', term, **opt)
@@ -202,6 +213,7 @@ module LookupService::WorldCat::Action::Records
         role: :anonymous,           # Should succeed for any user.
       }
     end
+  # :nocov:
 
   # === GET https://worldcat.org/webservices/catalog/search/worldcat/opensearch
   #
@@ -215,6 +227,8 @@ module LookupService::WorldCat::Action::Records
   # @note The documentation incorrectly states that the endpoint is
   #   '/search/worldcat/opensearch', however this does not work.
   #
+  # @note Currently unused.
+  # :nocov:
   def get_opensearch_records(terms, **opt)
     q_terms = query_terms(terms, opt)
     opt[:q] = make_query(q_terms)
@@ -242,6 +256,7 @@ module LookupService::WorldCat::Action::Records
         role: :anonymous,           # Should succeed for any user.
       }
     end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -350,9 +365,12 @@ module LookupService::WorldCat::Action::Records
     #
     # @return [Array<Symbol>]
     #
+    # @note Currently unused.
+    # :nocov:
     def search_codes
       table.values
     end
+    # :nocov:
 
     # =========================================================================
     # :section:

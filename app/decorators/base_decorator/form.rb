@@ -128,6 +128,7 @@ module BaseDecorator::Form
       opt[:field] = field
       opt[:prop]  = prop
       opt[:index] = (0 if prop[:readonly])
+      # noinspection RubyMismatchedArgumentType
       render_form_pair(label, value, **opt)
     }.compact.unshift(nil).join(separator).html_safe
   end
@@ -289,7 +290,6 @@ module BaseDecorator::Form
     v_opt[:'data-required']   = true         if required
     v_opt[:'aria-labelledby'] = l_id         if l_id
     v_opt[:range]             = range        if range
-    # noinspection RubyMismatchedArgumentType
     parts << send(render_method, name, value, **v_opt)
 
     # Other content if provided.
@@ -301,9 +301,9 @@ module BaseDecorator::Form
 
   # Internal options for #render_form_pair_label.
   #
-  # :tag    - Optional alternative to :label
-  # :help   - To #help_popup
-  # :status - To #status_marker
+  # * :tag    Optional alternative to :label
+  # * :help   To #help_popup
+  # * :status To #status_marker
   #
   # @type [Array<Symbol>]
   #
@@ -505,7 +505,7 @@ module BaseDecorator::Form
     render_form_field_item(name, value, **opt)
   end
 
-  # render_form_input
+  # Render a generic `<input>` element.
   #
   # @param [String]   name
   # @param [any, nil] value
@@ -523,7 +523,7 @@ module BaseDecorator::Form
     render_form_field_item(name, value, **opt)
   end
 
-  # render_form_email
+  # Render an `<input>` element which receives an email address.
   #
   # @param [String]   name
   # @param [any, nil] value
@@ -536,7 +536,7 @@ module BaseDecorator::Form
     render_form_input(name, value, **opt, type: :email)
   end
 
-  # render_form_password
+  # Render an `<input>` element which receives a password.
   #
   # @param [String]   name
   # @param [any, nil] value
@@ -611,7 +611,6 @@ module BaseDecorator::Form
     trace_attrs!(opt, __method__)
     label = form_input_fill(label, **opt) unless label&.html_safe?
     note  = form_input_note(note,  **opt) unless note.html_safe?
-    # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
     label << note
   end
 
@@ -666,7 +665,7 @@ module BaseDecorator::Form
     type
   ].freeze
 
-  # Modify the provided options for a field related to an form input field.
+  # Modify the provided options for a field related to a form input field.
   # Options that are assumed to be related to the actual field element are
   # removed.
   #
@@ -880,7 +879,7 @@ module BaseDecorator::Form
     html_div(*parts, **opt)
   end
 
-  # The form controls appearing above the fields.
+  # The form controls appearing above the input fields.
   #
   # @param [ActionView::Helpers::FormBuilder, nil] f
   # @param [Array<ActiveSupport::SafeBuffer>]      buttons
@@ -893,7 +892,7 @@ module BaseDecorator::Form
     form_button_tray(f, *buttons, **opt, &blk)
   end
 
-  # Convenience submit and cancel buttons below the fields.
+  # Convenience submit and cancel buttons below the input fields.
   #
   # @param [ActionView::Helpers::FormBuilder, nil] f
   # @param [Array<ActiveSupport::SafeBuffer>]      buttons
@@ -916,7 +915,8 @@ module BaseDecorator::Form
     html_div(*parts, **opt)
   end
 
-  # form_bottom_button_tray
+  # A container including basic form controls which is displayed below the
+  # input fields.
   #
   # @param [ActionView::Helpers::FormBuilder, nil] f
   # @param [Array<ActiveSupport::SafeBuffer>]      buttons
@@ -946,7 +946,6 @@ module BaseDecorator::Form
     trace_attrs!(opt, __method__)
     t_opt  = trace_attrs_from(opt)
     fb_opt = opt.extract!(*FORM_BUTTONS_OPT)
-    # noinspection RubyMismatchedArgumentType
     buttons.unshift(f) if f && !f.is_a?(ActionView::Helpers::FormBuilder)
     buttons = form_buttons(**fb_opt, **t_opt) if buttons.blank?
     buttons = yield(buttons) || buttons       if block_given?
@@ -1079,7 +1078,7 @@ module BaseDecorator::Form
   # @private
   FORM_BUTTONS_OPT = [:cancel, *FORM_BUTTON_OPT].freeze
 
-  # file_input_button
+  # Render an `<input>` element which receives file(s) via the web browser.
   #
   # @param [String] label
   # @param [String] id          For input field

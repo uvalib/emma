@@ -158,7 +158,7 @@ class UploadController < ApplicationController
   #
   # Display a single upload.
   #
-  # Redirects to #show_select if :id is missing.
+  # Redirects to #show_select if `:id` is missing.
   #
   # @see #show_upload_path            Route helper
   #
@@ -235,7 +235,7 @@ class UploadController < ApplicationController
   # Initiate modification of an existing EMMA entry by prompting for metadata
   # changes and/or upload of a replacement file.
   #
-  # Redirects to #edit_select if :id is missing.
+  # Redirects to #edit_select if `:id` is missing.
   #
   # @see #edit_upload_path            Route helper
   # @see UploadController#update
@@ -279,7 +279,7 @@ class UploadController < ApplicationController
   #
   # Initiate removal of an existing EMMA entry along with its associated file.
   #
-  # Redirects to #delete_select if :id is missing.
+  # Redirects to #delete_select if `:id` is missing.
   #
   # Use :force to attempt to remove an item from the EMMA Unified Index even if
   # a database record was not found.
@@ -483,7 +483,7 @@ class UploadController < ApplicationController
   # === GET /upload/bulk_new[?source=FILE&batch=true|SIZE&prefix=STRING]
   #
   # Display a form prompting for a bulk operation manifest (either CSV or JSON)
-  # containing an row/element for each entry to submit.
+  # containing a row/element for each entry to submit.
   #
   # @see #bulk_new_upload_path        Route helper
   # @see UploadWorkflow::Bulk::Create::States#on_creating_entry
@@ -522,7 +522,7 @@ class UploadController < ApplicationController
   # === GET /upload/bulk_edit[?source=FILE&batch=true|SIZE&prefix=STRING]
   #
   # Display a form prompting for a bulk operation manifest (either CSV or JSON)
-  # containing an row/element for each entry to change.
+  # containing a row/element for each entry to change.
   #
   # @see #bulk_edit_upload_path       Route helper
   # @see UploadWorkflow::Bulk::Edit::States#on_editing_entry
@@ -666,6 +666,7 @@ class UploadController < ApplicationController
     __log_activity
     __debug_route
     @item = wf_single(event: :cancel)
+    # noinspection RubyMismatchedArgumentType
     if request.get?
       redirect_to(params[:redirect] || upload_index_path)
     else
@@ -687,6 +688,8 @@ class UploadController < ApplicationController
   #
   # @see #check_upload_path           Route helper
   #
+  # @note Currently unused because the "repository workflow" is defunct.
+  # :nocov:
   def check
     __log_activity
     __debug_route
@@ -700,6 +703,7 @@ class UploadController < ApplicationController
   rescue => error
     failure_status(error)
   end
+  # :nocov:
 
   # ===========================================================================
   # :section: Routes

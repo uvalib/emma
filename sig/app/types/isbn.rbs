@@ -52,7 +52,7 @@ class Isbn < PublicationIdentifier
     #
     ISBN_CANDIDATE: Regexp
 
-    # Indicate whether *v* would be a valid value for an item of this type.
+    # Indicate whether `*v*` would be a valid value for an item of this type.
     #
     # @param [any, nil] v
     #
@@ -152,14 +152,14 @@ class Isbn < PublicationIdentifier
     # @param [Boolean] validate         If *true* an exception is raised if the
     #                                     check digit is erroneous.
     #
-    # @raise [RuntimeError]             If *isbn* contains a check digit but it
-    #                                     is not valid.
+    # @raise [RuntimeError]             If *isbn* contains a check digit, but
+    #                                     it is not valid.
     #
     # @return [String, nil]
     #
     def checksum: (String isbn, ?validate: bool) -> (String | nil)
 
-    # Calculate the ISBN-13 checksum for the supplied array of digits.
+    # Calculate the "ISBN-13" checksum for the supplied array of digits.
     #
     # @param [String, Array<String,Integer>] digits
     #
@@ -169,7 +169,7 @@ class Isbn < PublicationIdentifier
     #
     def isbn13_checksum: ((String|Array[String|Integer]) digits) -> String
 
-    # Calculate the ISBN-10 checksum for the supplied array of digits.
+    # Calculate the "ISBN-10" checksum for the supplied array of digits.
     #
     # @param [String, Array<String,Integer>] digits
     #

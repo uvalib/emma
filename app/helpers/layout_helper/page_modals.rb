@@ -40,9 +40,12 @@ module LayoutHelper::PageModals
   #
   # @param [String] selector
   #
+  # @note Currently unused.
+  # :nocov:
   def page_modal?(selector)
     page_modal[selector].present?
   end
+  # :nocov:
 
   # Add a modal definition associated with the given selector.  If a definition
   # already exists, the block will not be executed.
@@ -65,9 +68,12 @@ module LayoutHelper::PageModals
   #
   # @return [Boolean]                 True if the definition existed.
   #
+  # @note Currently unused.
+  # :nocov:
   def remove_page_modal(selector)
     page_modal.delete(selector).present?
   end
+  # :nocov:
 
 end
 

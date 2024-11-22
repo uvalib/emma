@@ -7,7 +7,7 @@ module AwsS3Service::Properties
   # submissions and two S3 buckets for EMMA which include storage used by
   # Shrine.
   #
-  # "emma-storage-production"   EMMA uploads (et. al.)
+  # "emma-storage-production"   EMMA uploads (et al.)
   # "emma-storage-staging"      Development EMMA uploads
   #
   # "emma-bs-queue-production"  Submissions to Bookshare

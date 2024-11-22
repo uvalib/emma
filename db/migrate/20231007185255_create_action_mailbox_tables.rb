@@ -29,7 +29,7 @@ class CreateActionMailboxTables < ActiveRecord::Migration[6.0]
 
   end
 
-=begin
+=begin # NOTE: original from generator
   private
 
   def primary_key_type

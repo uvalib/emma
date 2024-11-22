@@ -1,27 +1,32 @@
 # Preview all emails at '/rails/mailers/account_mailer'.
 #
 class AccountMailerPreview < ActionMailer::Preview
-  # Preview '/rails/mailers/account_mailer/new_user_email' using a fake user by
-  # default or the specified User record if an :id parameter is given.
+  # Generate a preview of '/rails/mailers/account_mailer/new_user_email'.
   #
-  def new_user_email: () -> void
-
-  # Preview '/rails/mailers/account_mailer/new_man_email' using a fake user by
-  # default or the specified User record if an :id parameter is given.
+  # @return [Mail::Message]
   #
-  def new_man_email: () -> void
+  def new_user_email: () -> Mail::Message
 
-  # Preview '/rails/mailers/account_mailer/new_org_email' using a fake user by
-  # default or the specified User record if an :id parameter is given.
+  # Generate a preview of '/rails/mailers/account_mailer/new_man_email'.
   #
-  def new_org_email: () -> void
+  # @return [Mail::Message]
+  #
+  def new_man_email: () -> Mail::Message
 
-  # Preview '/rails/mailers/account_mailer/$(meth)' using a fake user by
-  # default or the specified User record if an :id parameter is given.
+  # Generate a preview of '/rails/mailers/account_mailer/new_org_email'.
+  #
+  # @return [Mail::Message]
+  #
+  def new_org_email: () -> Mail::Message
+
+  # Generate a preview of '/rails/mailers/account_mailer/$(meth)' using a fake
+  # user by default or the specified User record if an `:id` param is given.
   #
   # @param [Symbol] meth              An AccountMailer public method.
   #
-  def preview_email: (Symbol meth) -> void
+  # @return [Mail::Message]
+  #
+  def preview_email: (Symbol meth) -> Mail::Message
 
   # Generate a fake User if there is no record to use with the preview.
   #

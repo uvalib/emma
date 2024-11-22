@@ -308,6 +308,8 @@ class Paginator
   #
   # @return [Hash]
   #
+  # @note Currently unused.
+  #
   def current_properties: () -> symHash
 
   # The number of records that are (or will be) produced.
@@ -319,6 +321,8 @@ class Paginator
   def size: () -> Integer
 
   # Indicate whether a single record will be produced.
+  #
+  # @note Currently unused.
   #
   def one?: () -> bool
 
@@ -540,6 +544,8 @@ class Paginator
   #
   # @return [Integer]
   #
+  # @note Currently unused.
+  #
   def set_first_position: (Integer value, ?(Integer|nil) index) -> Integer
 
   # The field position of the last field for the indicated item.
@@ -556,6 +562,8 @@ class Paginator
   # @param [Integer, nil] index       Default: `#current_index`
   #
   # @return [Integer]
+  #
+  # @note Currently unused.
   #
   def set_final_position: (Integer value, ?(Integer|nil) index) -> Integer
 

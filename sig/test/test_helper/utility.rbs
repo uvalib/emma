@@ -71,7 +71,7 @@ module TestHelper::Utility
   # @param [any, nil] user            String, Symbol, User
   #
   # @return [User]
-  # @return [nil]                     If *user* could not be converted.
+  # @return [nil]                     If `*user*` could not be converted.
   #
   def find_user: (untyped user) -> (User | nil)
 

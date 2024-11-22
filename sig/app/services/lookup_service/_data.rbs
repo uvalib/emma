@@ -55,6 +55,8 @@ class LookupService::Data
   # @yieldparam [LookupService::Data::Item] item
   # @yieldreturn [any, nil]
   #
+  # @note Currently unused.
+  #
   def transform_table_items: [T] () { (LookupService::Data::Item item) -> [T] } -> Hash[Symbol,Array[T]]
 
   # Create a new instance from *item* if it is not already an instance.

@@ -52,7 +52,7 @@ module EngineConcern
   #
   # @param [String, Symbol, Class<ApiService>] service
   #
-  # @return [String, nil]             If different than the default engine.
+  # @return [String, nil]             If different from the default engine.
   #
   def requested_engine(service)
     from_session = get_session_engine(service) or return

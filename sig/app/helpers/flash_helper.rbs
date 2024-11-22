@@ -58,6 +58,8 @@ module FlashHelper
   #
   # @return [Boolean]
   #
+  # @note Currently unused.
+  #
   def set_flash_floating: (?bool on) -> bool
 
   # Specify that the flash container should be cleared on page refresh.
@@ -202,6 +204,8 @@ module FlashHelper
   #
   # @return [Array<String>]     Current flash.now notice messages.
   #
+  # @note Currently used only by #flash_now_success.
+  #
   def flash_now_notice: (*flashArg args, ?topic: Symbol|nil, **untyped opt) -> strArray
 
   # Flash now alert.
@@ -240,7 +244,7 @@ module FlashHelper
   FLASH_TARGETS: symArray
 
   # Prepend the method invoking flash if there is not already one at the start
-  # of *args* and ensure that `opt[:meth]` is removed (whether used or or).
+  # of *args* and ensure that `opt[:meth]` is removed (whether used or not).
   #
   # @param [Array] args
   # @param [Hash]  opt
@@ -394,7 +398,7 @@ module FlashHelper
   #
   def flash_item_render: ((String|FlashPart) item, ?single: bool, ?html: bool|nil, ?xhr: bool|nil, ?inspect: bool|nil, ?max: Integer|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | String)
 
-  # If a :topic was specified, it is used as part of a set of I18n paths used
+  # If a `:topic` was specified, it is used as part of a set of I18n paths used
   # to locate a template to which the flash message is applied.
   #
   # @param [String, Array<String>] msg

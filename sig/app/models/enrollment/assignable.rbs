@@ -34,7 +34,7 @@ module Enrollment::Assignable
   #
   def normalize_users: (String|anyArray|anyHash|nil arg, **untyped opt) -> Array[symHash]
 
-  # Normalize a value for the :request_notes or :admin_notes attributes.
+  # Normalize a value for the `:request_notes` or `:admin_notes` attributes.
   #
   # @param [String, Array, nil] arg
   #

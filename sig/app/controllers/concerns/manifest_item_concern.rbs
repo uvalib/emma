@@ -98,6 +98,8 @@ module ManifestItemConcern
   #
   # @return [Hash]
   #
+  # @note Currently unused.
+  #
   def export_transform!: (symHash item) -> symHash
 
   # Restoration of ManifestItem fields on import.
@@ -128,6 +130,8 @@ module ManifestItemConcern
   # @param [Hash] item
   #
   # @return [Hash]
+  #
+  # @note Currently used only by #export_transform!.
   #
   def normalize_export_name!: (symHash item) -> symHash
 
@@ -221,7 +225,7 @@ module ManifestItemConcern
   #
   # @return [Paginator::Result]
   #
-  # @yield [items, opt] Raise an exception unless the *items* are acceptable.
+  # @yield [items, opt] Raise an exception unless the `*items*` are acceptable.
   # @yieldparam [Array] items         Identifiers of items to be deleted.
   # @yieldparam [Hash]  options       Options to #search_records.
   # @yieldreturn [void]               Block not called if *record* is *nil*.
@@ -335,7 +339,8 @@ module ManifestItemConcern
   #
   def bulk_new_manifest_items: () -> untyped
 
-  # bulk_create_manifest_items
+  # Create the specified ManifestItem records, download and store the
+  # associated files.
   #
   # @param [Array<Symbol>] returning  Returned result columns.
   #
@@ -352,7 +357,8 @@ module ManifestItemConcern
   #
   def bulk_edit_manifest_items: () -> untyped
 
-  # bulk_update_manifest_items
+  # Modify or create the specified ManifestItem records, download and store the
+  # associated files (if changed).
   #
   # @param [Array<Symbol>] returning  Returned result columns.
   #
@@ -369,7 +375,7 @@ module ManifestItemConcern
   #
   def bulk_delete_manifest_items: () -> untyped
 
-  # bulk_destroy_manifest_items
+  # Remove the specified ManifestItem records and their associated files.
   #
   # This marks items for deletion unless `params[:commit]` is true.
   #
@@ -380,7 +386,7 @@ module ManifestItemConcern
   #
   def bulk_destroy_manifest_items: () -> Array[Integer]
 
-  # bulk_fields_manifest_items
+  # Modify selected ManifestItem fields of one or more items.
   #
   # @raise [Record::SubmitError]      If there were failure(s).
   #
@@ -420,6 +426,12 @@ module ManifestItemConcern
   # @return [Hash{Symbol=>Hash}]
   #
   def bulk_id_response: (?untyped list, **untyped _ignored) -> Hash[Symbol,symHash]
+
+  # The default redirect path for #redirect_back_or_to.
+  #
+  # @return [String]
+  #
+  def default_fallback_location: () -> String
 
   # Generate a response to a POST.
   #

@@ -24,7 +24,7 @@ class ApiService::Error < Api::Error
   # @return [Array<String>]
   #
   # === Usage Notes
-  # As a side-effect, if @http_response is nil it will be set here.
+  # As a side effect, if @http_response is nil it will be set here.
   #
   def faraday_response(arg)
     label  = "#{service_name} error"
@@ -448,7 +448,7 @@ unless ONLY_FOR_DOCUMENTATION
     include ApiService::Error::ClassType
   end
 
-  # Exception raised to indicate that a valid message was received but it had
+  # Exception raised to indicate that a valid message was received, but it had
   # no body or its body was empty.
   #
   # @see "en.emma.error.api.empty_result"
@@ -466,7 +466,7 @@ unless ONLY_FOR_DOCUMENTATION
     include ApiService::Error::ClassType
   end
 
-  # Exception raised to indicate a invalid redirect destination.
+  # Exception raised to indicate an invalid redirect destination.
   #
   # @see "en.emma.error.api.redirection"
   #

@@ -3,7 +3,7 @@
 # Since messages are slight variations on records, the base message classes
 # derive from their respective record types, which is why this is a module and
 # not a class.  However, because this module is included in the base message
-# classes, `is_a?(Api::Message)` can be used to generically distinguish message
+# classes, `is_a? Api::Message` can be used to generically distinguish message
 # instances from record instances.
 #
 module Api::Message

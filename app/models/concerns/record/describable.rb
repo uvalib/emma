@@ -29,9 +29,12 @@ module Record::Describable
   #
   # @return [Hash{Symbol=>Symbol}]
   #
+  # @note Currently used only by #interpolations.
+  # :nocov:
   def interpolation_table
     @interpolation_table ||= generate_interpolation_table
   end
+  # :nocov:
 
   # Replace #sprintf named references with the matching values extracted from
   # *model* or *opt*.
@@ -47,6 +50,8 @@ module Record::Describable
   #
   # @see Kernel#sprintf
   #
+  # @note Currently used only by #process_note.
+  # :nocov:
   def interpolations(text, model, **opt)
     text  = text.to_s unless text.is_a?(String)
     terms =
@@ -71,6 +76,7 @@ module Record::Describable
     # noinspection RubyMismatchedReturnType
     terms ? (text % terms) : text
   end
+  # :nocov:
 
   # Process a lambda or method reference and return a final result string.
   #
@@ -85,6 +91,8 @@ module Record::Describable
   #
   # @see Kernel#sprintf
   #
+  # @note Currently unused.
+  # :nocov:
   def process_note(note = nil, model, **opt)
     opt_note = opt.delete(:note)
     case (note ||= opt_note)
@@ -96,6 +104,7 @@ module Record::Describable
     end
     interpolations(note, model, **opt)
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -114,6 +123,8 @@ module Record::Describable
   #
   # @see InterpolationMethods
   #
+  # @note Currently used only by #interpolation_table.
+  # :nocov:
   def generate_interpolation_table(mod = nil)
     mod ||= self.is_a?(Module) ? self : self.class
     mod = mod.ancestors.find { _1.name&.include?('InterpolationMethods') }
@@ -125,6 +136,7 @@ module Record::Describable
       end
     }
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -160,10 +172,13 @@ module Record::Describable
     #
     # @see Record::Identification#id_value
     #
+    # @note Currently unused.
+    # :nocov:
     def describe_id(model = nil, **opt)
       model ||= self_for_instance_method(__method__)
       id_value(model, **opt)
     end
+    # :nocov:
 
     # A replacement value for '%{repo}' or '%{repository}' in #sprintf formats.
     #
@@ -174,11 +189,14 @@ module Record::Describable
     #
     # @see Record::EmmaIdentification#repository_name
     #
+    # @note Currently unused.
+    # :nocov:
     def describe_repo(model = nil, **opt)
       model ||= self_for_instance_method(__method__)
       repo = repository_value(model)
       repository_name(repo || opt)
     end
+    # :nocov:
 
     # A replacement value for '%{sid}' in #sprintf formats.
     #
@@ -189,10 +207,13 @@ module Record::Describable
     #
     # @see Record::EmmaIdentification#sid_value
     #
+    # @note Currently used only by #describe_submission.
+    # :nocov:
     def describe_sid(model = nil, **opt)
       model ||= self_for_instance_method(__method__)
       sid_value(model, **opt)
     end
+    # :nocov:
 
     # A replacement value for '%{submission}' in #sprintf formats.
     #
@@ -203,11 +224,14 @@ module Record::Describable
     #
     # @see Record::EmmaIdentification#sid_value
     #
+    # @note Currently unused.
+    # :nocov:
     def describe_submission(model = nil, **opt)
       model ||= self_for_instance_method(__method__)
       sid = describe_sid(model, **opt)
       config_term(:record, :submission, sid: sid.inspect)
     end
+    # :nocov:
 
     # A replacement value for '%{user}' in #sprintf formats.
     #
@@ -216,10 +240,13 @@ module Record::Describable
     #
     # @return [String, nil]
     #
+    # @note Currently unused.
+    # :nocov:
     def describe_user(model = nil, **_opt)
       model ||= self_for_instance_method(__method__)
       user = model.try(:user) and User.account_name(user)
     end
+    # :nocov:
 
     # A replacement value for '%{user_id}' in #sprintf formats.
     #
@@ -230,10 +257,13 @@ module Record::Describable
     #
     # @see User#id_value
     #
+    # @note Currently unused.
+    # :nocov:
     def describe_user_id(model = nil, **_opt)
       model ||= self_for_instance_method(__method__)
       user = model.try(:user) and User.id_value(user)
     end
+    # :nocov:
 
     # =========================================================================
     # :section:
@@ -252,10 +282,13 @@ module Record::Describable
     # === Usage Notes
     # The including class is expected to define an overriding class method.
     #
+    # @note Currently unused.
+    # :nocov:
     def describe_type(model = nil, **opt)
       model ||= self_for_instance_method(__method__)
       model.class.send(__method__, model, **opt)
     end
+    # :nocov:
 
     # A textual description of the status of the Model instance.
     #
@@ -267,10 +300,13 @@ module Record::Describable
     # === Usage Notes
     # The including class is expected to define an overriding class method.
     #
+    # @note Currently unused.
+    # :nocov:
     def describe_status(model = nil, **opt)
       model ||= self_for_instance_method(__method__)
       model.class.send(__method__, model, **opt)
     end
+    # :nocov:
 
     # =========================================================================
     # :section:
@@ -286,10 +322,13 @@ module Record::Describable
     #
     # @return [self]                  If an instance method is being defined.
     #
+    # @note Currently used only by unused methods.
+    # :nocov:
     def self_for_instance_method(meth)
       return self unless self.is_a?(Class)
       raise "#{meth}: *model* param required for class method"
     end
+    # :nocov:
 
   end
 
@@ -317,6 +356,8 @@ module Record::Describable
     #
     # @return [void]
     #
+    # @note Currently unused.
+    # :nocov:
     def interpolation_methods(&blk)
       new_module =
         module_eval <<~HEREDOC
@@ -329,6 +370,7 @@ module Record::Describable
       include new_module
       extend  new_module
     end
+    # :nocov:
 
   end
 
@@ -347,16 +389,19 @@ module Record::Describable
     public
 
     # @see Record::Describable#interpolation_table
+    # :nocov:
     def interpolation_table
       self.class.send(__method__)
     end
+    # :nocov:
 
     # @see Record::Describable#interpolations
+    # :nocov:
     def interpolations(text, model = nil, **opt)
       model ||= self
       super
     end
-
+    # :nocov:
   end
 
   # ===========================================================================

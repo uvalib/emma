@@ -256,9 +256,12 @@ class User < ApplicationRecord
 
   # Indicate whether the user is one of the known "fake" test user accounts.
   #
+  # @note Currently unused.
+  # :nocov:
   def test_user?
     test_users.keys.include?(account)
   end
+  # :nocov:
 
   # Indicate whether the user has the :developer role.
   #

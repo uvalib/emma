@@ -14,7 +14,7 @@
 class CreateActionTextTables < ActiveRecord::Migration[6.0]
 
   def change
-=begin
+=begin # NOTE: original from generator
     # Use Active Record's configured type for primary and foreign keys
     primary_key_type, foreign_key_type = primary_and_foreign_key_types
 =end
@@ -31,7 +31,7 @@ class CreateActionTextTables < ActiveRecord::Migration[6.0]
     end
   end
 
-=begin
+=begin # NOTE: original from generator
   private
 
   def primary_and_foreign_key_types

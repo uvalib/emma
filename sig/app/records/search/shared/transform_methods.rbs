@@ -18,7 +18,7 @@ module Search::Shared::TransformMethods
   #
   def normalize_data_fields!: (?(Search::Api::Record|symHash|nil) data) -> void
 
-  # Set the URL of the associated work on the web site of the original
+  # Set the URL of the associated work on the website of the original
   # repository if not already present.
   #
   # @param [Search::Api::Record, Hash, nil] data  Default: *self*.

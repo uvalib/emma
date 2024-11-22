@@ -518,7 +518,7 @@ class Upload < ApplicationRecord
           when Date, Time then %Q("#{value.to_s(:inspect)}")
           else                 value.inspect
         end
-      inspection_filter.filter_param(name, inspected_value)
+      inspection_filter.filter_param(name, inspected_value).to_s
     end
   end
 
@@ -617,7 +617,6 @@ class Upload < ApplicationRecord
   def self.latest_for_sid(sid = nil, sort: nil, **opt)
     result = matching_sid(sid, **opt) or return
     sort ||= :created_at
-    # noinspection RubyMismatchedReturnType
     result.order(sort).last
   end
 
@@ -658,6 +657,8 @@ class Upload < ApplicationRecord
 
   # Indicate whether all required fields have valid values.
   #
+  # @note Currently unused.
+  # :nocov:
   def emma_data_valid?
     if active_emma_data.blank?
       error(:emma_data, :missing)
@@ -666,6 +667,7 @@ class Upload < ApplicationRecord
     end
     errors.empty?
   end
+  # :nocov:
 
   # Compare the source fields against configured requirements.
   #

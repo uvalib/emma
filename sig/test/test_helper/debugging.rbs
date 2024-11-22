@@ -154,7 +154,7 @@ module TestHelper::Debugging
   #
   def show_post_send: (?expect: Symbol|String|Integer|nil, ?status: Symbol|String|Integer|nil, ?response: ActionDispatch::TestResponse|nil, **untyped opt) -> (String | nil)
 
-  # show_trace
+  # Display output before or after invoking an HTTP method.
   #
   # @param [Boolean, nil] trace
   # @param [Hash]         opt         Passed to #show_item.

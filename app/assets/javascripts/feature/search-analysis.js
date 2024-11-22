@@ -51,7 +51,7 @@ export function cloneTitle(item, title) {
     const item_id  = $item.attr("id");
     const title_id = `title_${item_id}_txt`;
 
-    // By default the title element is just text for file results.
+    // By default, the title element is just text for file results.
     const $text_title = $title.clone();
     $text_title.attr("id",        title_id);
     $text_title.attr("data-mode", "txt");

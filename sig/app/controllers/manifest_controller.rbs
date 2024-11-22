@@ -53,7 +53,7 @@ class ManifestController < ApplicationController
 
   # === GET /manifest/show/(:id)
   #
-  # Redirects to #show_select if :id is missing.
+  # Redirects to #show_select if `:id` is missing.
   #
   # @see #show_manifest_path          Route helper
   #

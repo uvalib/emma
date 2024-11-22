@@ -185,9 +185,9 @@ module Upload::FileMethods
   # === Usage Notes
   # This method is not necessary for an Upload instance which is persisted to
   # the database because Shrine adds event handlers which cause the file to be
-  # copied to storage.  This method is allows this action for a "free-standing"
-  # Upload instance (without needing to execute #save in order to engage Shrine
-  # event handlers to copy the file to storage).
+  # copied to storage.  This method allows for a "free-standing" Upload
+  # instance (without needing to execute #save in order to engage Shrine event
+  # handlers to copy the file to storage).
   #
   def fetch_and_upload_file: (String file_path, **untyped opt) -> FileUploader::UploadedFile
 

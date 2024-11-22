@@ -260,7 +260,7 @@ module Emma::Common::FormatMethods
   def deep_interpolate: [T] (T item, **untyped opt) -> T
 
   # If possible, make a copy of *text* with #sprintf named references replaced
-  # by the matching values extracted from *src* or *opt*.  Otherwise return
+  # by the matching values extracted from *src* or *opt*.  Otherwise, return
   # *text* unchanged.
   #
   # If the name is capitalized or all uppercase (e.g. "%{Name}" or "%{NAME}")

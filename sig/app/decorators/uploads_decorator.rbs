@@ -86,7 +86,7 @@ class UploadsDecorator < BaseCollectionDecorator
   #
   def delete_submit_path: (?(Upload|String|Array[Upload|String]|nil) ids, **untyped opt) -> (String | nil)
 
-  # item_ids
+  # The record IDs extracted from `*items*`.
   #
   # @param [Array<Upload,String>, Upload, String, nil] items  Def: `#object`
   # @param [Hash]                                      opt
@@ -189,6 +189,8 @@ class UploadsDecorator < BaseCollectionDecorator
   # @param [Hash]                             opt
   #
   # @return [ActiveSupport::SafeBuffer]
+  #
+  # @note Currently unused.
   #
   def bulk_op_option: (ActionView::Helpers::FormBuilder f, Symbol param, ?untyped value, **untyped opt) -> ActiveSupport::SafeBuffer
 

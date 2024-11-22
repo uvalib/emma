@@ -29,7 +29,8 @@ module BaseDecorator::Configuration
   #
   def ar_class: () -> (Class | nil)
 
-  # null_object
+  # Establish a specific object as "the" null object (for use with the "=="
+  # operator).
   #
   # @return [Object]
   #
@@ -140,7 +141,7 @@ module BaseDecorator::Configuration
   #
   def field_configuration_for_label: ((String|Symbol|nil) label, ?(Symbol|String|nil) action, **untyped _ignored) -> FieldConfig
 
-  # config_lookup
+  # Find the best match from config/locales for the given partial path.
   #
   # @param [String, Array] path       Partial I18n path.
   # @param [Hash]          opt        To ConfigurationHelper#config_lookup

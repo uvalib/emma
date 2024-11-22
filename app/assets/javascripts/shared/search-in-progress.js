@@ -23,9 +23,9 @@ AppDebug.file("shared/search-in-progress", MODULE, DEBUG);
  * on all pages. <p/>
  *
  * Due to the CSS definition, nothing will appear immediately; it shouldn't be
- * be perceptible on quick page transitions, however the overlay is still
- * present to prevent further interaction with the current page until it is
- * replaced by the new page.
+ * perceptible on quick page transitions, however the overlay is still present
+ * to prevent further interaction with the current page until it is replaced by
+ * the new page.
  *
  * @extends Overlay
  */
@@ -71,7 +71,7 @@ export class SearchInProgress extends Overlay {
      * specific long-running operations, but in general modules do not have to
      * be aware of the overlay.  In particular, this sets up display of the
      * overlay on page exit (although this may be suppressed at any point via
-     * *`SearchInProgress.showOnPageExit = false`*.
+     * *`SearchInProgress.showOnPageExit = false`*).
      *
      * @param {boolean} [no_on_page_exit]
      */

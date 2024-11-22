@@ -7,7 +7,7 @@ module Lookup::GoogleBooks::Api::Schema
 
   include Lookup::RemoteService::Api::Schema
 
-  # service_name
+  # The class name of the related service for logging.
   #
   # @return [String]
   #

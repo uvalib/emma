@@ -154,9 +154,12 @@ module ApiService::Properties
   #
   # @return [String, nil]
   #
+  # @note Currently unused.
+  # :nocov:
   def api_password
     configuration[:api_password]
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -184,6 +187,7 @@ module ApiService::Properties
   # @see "en.emma.service.*.endpoint"
   #
   def engines
+    # noinspection RubyUnusedLocalVariable
     meth = "#{service_name}.#{__method__}"
     prop = configuration[:endpoint]
     prop = { default_engine_key => prop } unless prop.is_a?(Hash)

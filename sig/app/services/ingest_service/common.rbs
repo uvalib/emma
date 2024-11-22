@@ -44,7 +44,7 @@ module IngestService::Common
   # @return [nil]
   #
   # === Usage Notes
-  # Sets @response as a side-effect.
+  # Sets @response as a side effect.
   #
   def transmit: (Symbol verb, String action, (symHash|String|nil) params, (strHash|nil) headers, **untyped opt) -> (Faraday::Response | nil)
 

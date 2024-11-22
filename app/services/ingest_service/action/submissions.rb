@@ -25,7 +25,7 @@ module IngestService::Action::Submissions
   # Inserts or updates one or more metadataRecords in the search index. For the
   # "upsert" operation, if no such record exists for the emma_repository,
   # emma_repositoryRecordId, dc_format, and (optionally) emma_formatVersion, a
-  # record is created. Otherwise the existing record is updated.
+  # record is created. Otherwise, the existing record is updated.
   #
   # The number of records to be updated at once is capped at 1000.
   #
@@ -176,7 +176,7 @@ module IngestService::Action::Submissions
   # @return [void]
   #
   # === Usage Notes
-  # Clears and/or sets @exception as a side-effect.
+  # Clears and/or sets @exception as a side effect.
   #
   def api_send(verb, endpoint, body, **opt)
     body = Array.wrap(body).compact.uniq
@@ -345,7 +345,7 @@ module IngestService::Action::Submissions
     value.nil? || !digits_only?(value)
   end
 
-  # Indicate whether the value appears to be acceptable as a index record ID.
+  # Indicate whether the value appears to be acceptable as an index record ID.
   #
   # @param [String, nil] value
   #

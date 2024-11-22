@@ -5,7 +5,7 @@ class UserSessionsControllerTest < ActionDispatch::IntegrationTest
 
   TEST_USER: Symbol
 
-  READ_FORMATS: Symbol | symArray
+  READ_FORMATS: symArray | Symbol
 
   @user: User | nil
 end

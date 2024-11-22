@@ -74,6 +74,8 @@ module Record::Updatable
     #
     # @see #set_fields_direct
     #
+    # @note Currently unused.
+    # :nocov:
     def enum_methods(cols, vals = nil)
       columns_and_values = cols.is_a?(Hash) ? cols : { cols => vals }
       columns_and_values.each_pair do |column, values|
@@ -121,6 +123,7 @@ module Record::Updatable
         HEREDOC
       end
     end
+    # :nocov:
 
   end
 

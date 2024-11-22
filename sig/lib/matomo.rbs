@@ -249,7 +249,7 @@ module Matomo
   #
   NO_GET_EVOLUTION: symArray
 
-  # process_report_result
+  # Create a table of graph images from an analytics report.
   #
   # @param [Array<Hash>, Hash, nil] values
   # @param [Symbol, nil]            target

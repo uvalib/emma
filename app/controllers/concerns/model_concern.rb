@@ -36,14 +36,28 @@ module ModelConcern
 
   delegate :model_class, :model_key, :model_id_key, to: :model_options
 
+  # Option keys involved in constraining record searches.
+  #
+  # @return [Array<Symbol>]
+  #
+  # @see Record::Searchable#search_records
+  #
   def search_records_keys
     model_class.const_get(:SEARCH_RECORDS_OPT)
   end
 
+  # Option keys constraining record searches not related to pagination.
+  #
+  # @return [Array<Symbol>]
+  #
   def search_only_keys
     search_records_keys.excluding(:offset, :limit)
   end
 
+  # Option keys involved in filtering record searches.
+  #
+  # @return [Array<Symbol>]
+  #
   def find_or_match_keys(*added)
     search_records_keys.dup.push(
       model_key, model_id_key,
@@ -134,7 +148,7 @@ module ModelConcern
 
   protected
 
-  # extract_identifier
+  # Extract a record identifier from parameters matching `#identifier_keys`.
   #
   # @param [Hash] prm
   #
@@ -501,7 +515,7 @@ module ModelConcern
   # Persist changes to an existing model record.
   #
   # @param [any, nil] item            Default: the record for #identifier.
-  # @param [Boolean]  fatal           If *false* use #update not #update!.
+  # @param [Boolean]  fatal           If *false*, use #update not #update!.
   # @param [Hash]     opt             Field values (#current_params) except:
   #
   # @option opt [Boolean] recaptcha   Require reCAPTCHA verification.
@@ -538,7 +552,7 @@ module ModelConcern
   #
   # @return [Paginator::Result]
   #
-  # @yield [items, opt] Raise an exception unless the *items* are acceptable.
+  # @yield [items, opt] Raise an exception unless the `*items*` are acceptable.
   # @yieldparam [Array] items         Identifiers of items to be deleted.
   # @yieldparam [Hash]  options       Options to #search_records.
   # @yieldreturn [void]               Block not called if *record* is *nil*.
@@ -554,7 +568,7 @@ module ModelConcern
   # Remove the indicated model record(s).
   #
   # @param [any, nil] items
-  # @param [Boolean]  fatal           If *false* do not #raise_failure.
+  # @param [Boolean]  fatal           If *false*, do not #raise_failure.
   # @param [Hash]     opt             Default: `#current_params` except:
   #
   # @option opt [Boolean] recaptcha   Require reCAPTCHA verification.
@@ -593,7 +607,7 @@ module ModelConcern
 
   public
 
-  # Action permitted if the current user is signed-in unless *record* is *nil*.
+  # Action permitted if the current user is signed in unless *record* is *nil*.
   #
   # @param [Model, Hash, nil] record
   # @param [Hash]             opt     Passed to #unauthorized.
@@ -649,9 +663,9 @@ module ModelConcern
   # @return [Boolean]                 *false* only if `opt[:fatal]` is *false*
   #
   # == Usage Notes
-  # Technically this yields the same result as #authorized_org_member but it is
-  # preferred in cases like ManifestItem where determining the associated user
-  # is less costly than determining the associated organization.
+  # Technically this yields the same result as #authorized_org_member, but it
+  # is preferred in cases like ManifestItem where determining the associated
+  # user is less costly than determining the associated organization.
   #
   def authorized_self_or_org_member(record, **opt)
     authorized(record, **opt) do |rec|

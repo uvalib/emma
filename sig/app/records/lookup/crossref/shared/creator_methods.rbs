@@ -16,6 +16,8 @@ module Lookup::Crossref::Shared::CreatorMethods
   #
   # @return [Array<String>]
   #
+  # @note Currently unused.
+  #
   def author_list: (**untyped opt) -> strArray
 
   # The editor(s) of this catalog title.
@@ -24,6 +26,8 @@ module Lookup::Crossref::Shared::CreatorMethods
   #
   # @return [Array<String>]
   #
+  # @note Currently unused.
+  #
   def editor_list: (**untyped opt) -> strArray
 
   # The translator(s) of this catalog title.
@@ -31,6 +35,8 @@ module Lookup::Crossref::Shared::CreatorMethods
   # @param [Hash] opt                 Passed to #creator_list.
   #
   # @return [Array<String>]
+  #
+  # @note Currently unused.
   #
   def translator_list: (**untyped opt) -> strArray
 

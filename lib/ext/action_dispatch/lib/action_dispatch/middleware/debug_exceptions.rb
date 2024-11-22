@@ -13,7 +13,7 @@ module ActionDispatch
 
   module DebugExceptionsExt
 
-    # This gets rid of the "noise" from #log_error which causes extra blank
+    # This gets rid of the "noise" from `#log_error` which causes extra blank
     # lines to be logged around every error.
     #
     def log_array(logger, lines, request)

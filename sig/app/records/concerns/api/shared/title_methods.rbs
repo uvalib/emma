@@ -121,6 +121,8 @@ module Api::Shared::TitleMethods
   #
   # @return [String, nil]
   #
+  # @note Currently unused.
+  #
   def full_journal_title: () -> (String | nil)
 
   # Name of publisher.

@@ -43,7 +43,7 @@ class AccountsDecorator < BaseCollectionDecorator
 
   protected
 
-  # item_ids
+  # The record IDs extracted from `*items*`.
   #
   # @param [Array<User,String>, User, String, nil] items  Def: `#object`.
   #

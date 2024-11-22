@@ -52,8 +52,6 @@ module Record::FileData
   #
   # @return [Hash{String=>any,nil}]
   #
-  # @note Only used by #file_attacher_load
-  #
   def make_file_record(data, **opt)
     json_parse(data, symbolize_keys: false, **opt) || {}
   end
@@ -65,8 +63,8 @@ module Record::FileData
   #
   # @return [Hash]
   #
-  # @note Invoked only from methods which are currently unused.
-  #
+  # @note Currently used only by unused methods.
+  # :nocov:
   def parse_file_data(data, allow_blank = false)
     return {} if data.blank?
     result = make_file_record(data, fatal: true)
@@ -81,6 +79,7 @@ module Record::FileData
     end
     re_raise_if_internal_exception(error) or {}
   end
+  # :nocov:
 
   # generate_file_data
   #
@@ -90,12 +89,13 @@ module Record::FileData
   # @return [Hash]
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def generate_file_data(data, attr)
     data = parse_file_data(data)
     afd  = parse_file_data(attr&.dig(:file_data))
     data.merge!(afd)
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -138,20 +138,22 @@ module Record::FileData
     # @return [Hash] # TODO: ???
     #
     # @note Currently unused.
-    #
+    # :nocov:
     def emma_file_record
       @emma_file_record ||= make_file_record(emma_file_data)
     end
+    # :nocov:
 
     # Present :file_data as a hash (if it is present).
     #
     # @return [Hash]
     #
-    # @note Invoked only from methods which are currently unused.
-    #
+    # @note Currently used only by unused methods.
+    # :nocov:
     def emma_file_data
       @emma_file_data ||= parse_file_data(file_data, true)
     end
+    # :nocov:
 
     # Set the :file_data field value (if not #FILE_DATA_HASH).
     #
@@ -162,7 +164,7 @@ module Record::FileData
     # @return [nil]                   ...if *data* is *nil*.
     #
     # @note Currently unused.
-    #
+    # :nocov:
     def set_file_data(data, allow_blank = true)
       @emma_file_record = nil # Force regeneration.
       @emma_file_data   = parse_file_data(data, allow_blank)
@@ -173,6 +175,7 @@ module Record::FileData
           else             @emma_file_data.to_json
         end
     end
+    # :nocov:
 
     # Selectively modify the :file_data field value (if not #FILE_DATA_HASH).
     #
@@ -183,7 +186,7 @@ module Record::FileData
     # @return [nil]                   If no change and :file_data was *nil*.
     #
     # @note Currently unused.
-    #
+    # :nocov:
     def modify_file_data(data, allow_blank = true)
       if (new_file_data = parse_file_data(data, allow_blank)).present?
         @emma_file_record = nil # Force regeneration.
@@ -192,6 +195,7 @@ module Record::FileData
       end
       self[:file_data]
     end
+    # :nocov:
 
   end
 
@@ -206,12 +210,13 @@ module Record::FileData
     # @return [nil]                   ...if *data* is *nil*.
     #
     # @note Currently unused.
-    #
+    # :nocov:
     def set_file_data(data, allow_blank = true)
       @emma_file_record = nil # Force regeneration.
       @emma_file_data   = parse_file_data(data, allow_blank)
       self[:file_data]  = data && @emma_file_data.deep_stringify_keys
     end
+    # :nocov:
 
     # Selectively modify the :file_data field value hash.
     #
@@ -222,7 +227,7 @@ module Record::FileData
     # @return [nil]                   If no change and :file_data was *nil*.
     #
     # @note Currently unused.
-    #
+    # :nocov:
     def modify_file_data(data, allow_blank = true)
       if (new_file_data = parse_file_data(data, allow_blank)).present?
         @emma_file_record = nil # Force regeneration.
@@ -231,6 +236,7 @@ module Record::FileData
       end
       self[:file_data]
     end
+    # :nocov:
 
   end if FILE_DATA_HASH
 

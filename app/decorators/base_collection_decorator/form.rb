@@ -64,12 +64,15 @@ module BaseCollectionDecorator::Form
   #
   # @return [Hash]
   #
+  # @note Currently unused.
+  # :nocov:
   def delete_submit_options(**opt)
     keys = delete_submit_option_keys
     opt.slice!(*keys)
     opt.merge!(options.slice(*keys)) if (keys -= opt.keys).present?
     opt
   end
+  # :nocov:
 
   # delete_submit_path
   #
@@ -87,7 +90,7 @@ module BaseCollectionDecorator::Form
   #
   # @param [String, Symbol, nil] action
   # @param [String, nil]         label    Override button label.
-  # @param [String, Hash, nil]   url
+  # @param [String, Hash, nil]   url      Default: `#delete_submit_path`.
   # @param [String]              css      Characteristic CSS class/selector.
   # @param [Hash]                opt      Passed to #button_to.
   #
@@ -104,7 +107,6 @@ module BaseCollectionDecorator::Form
     url          ||= delete_submit_path(**path_opt)
     if_enabled     = (:if_enabled if url)
     action         = action&.to_sym || :delete
-    # noinspection RubyMismatchedArgumentType
     config         = form_actions.dig(action, :submit) || {}
     label        ||= config[:label]
     opt[:title]  ||= config.dig((if_enabled || :if_disabled), :tooltip)
@@ -134,7 +136,7 @@ module BaseCollectionDecorator::Form
 
   protected
 
-  # item_ids
+  # The record IDs extracted from `*items*`.
   #
   # @param [Array<Model,String>, Model, String, nil] items  Def: `#object`.
   #

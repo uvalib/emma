@@ -120,8 +120,8 @@ module Emma::Common::HashMethods
   #     b = a.deep_dup
   #     (a[:c] != b[:c])        # Different classes with the same attributes...
   #     !(b[:c] <= a[:c])       # ... which are completely unrelated.
-  #     a[:c].new.is_a?(User)
-  #     !b[:c].new.is_a?(User)
+  #     a[:c].new.is_a? (User)
+  #     !b[:c].new.is_a? (User)
   #   ```
   #
   def _remove_blanks

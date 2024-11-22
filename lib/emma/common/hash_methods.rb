@@ -76,7 +76,7 @@ module Emma::Common::HashMethods
   # @return [Hash{Symbol=>any,nil}]   Modified item itself if *item* is a Hash.
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def normalize_hash!(item)
     # noinspection RubyMismatchedReturnType
     if item.class != ::Hash
@@ -87,6 +87,7 @@ module Emma::Common::HashMethods
       item
     end
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -195,8 +196,8 @@ module Emma::Common::HashMethods
   #     b = a.deep_dup
   #     (a[:c] != b[:c])        # Different classes with the same attributes...
   #     !(b[:c] <= a[:c])       # ... which are completely unrelated.
-  #     a[:c].new.is_a?(User)
-  #     !b[:c].new.is_a?(User)
+  #     a[:c].new.is_a? (User)
+  #     !b[:c].new.is_a? (User)
   #   ```
   #
   def _remove_blanks(item, squeeze: false, dup: false, **)

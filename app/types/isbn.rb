@@ -84,7 +84,7 @@ class Isbn < PublicationIdentifier
 
     public
 
-    # Indicate whether *v* would be a valid value for an item of this type.
+    # Indicate whether `*v*` would be a valid value for an item of this type.
     #
     # @param [any, nil] v
     #
@@ -273,8 +273,8 @@ class Isbn < PublicationIdentifier
     # @param [Boolean] validate         If *true* an exception is raised if the
     #                                     check digit is erroneous.
     #
-    # @raise [RuntimeError]             If *isbn* contains a check digit but it
-    #                                     is not valid.
+    # @raise [RuntimeError]             If *isbn* contains a check digit, but
+    #                                     it is not valid.
     #
     # @return [String, nil]
     #
@@ -308,7 +308,7 @@ class Isbn < PublicationIdentifier
       check
     end
 
-    # Calculate the ISBN-13 checksum for the supplied array of digits.
+    # Calculate the "ISBN-13" checksum for the supplied array of digits.
     #
     # @param [String, Array<String,Integer>] digits
     #
@@ -328,7 +328,7 @@ class Isbn < PublicationIdentifier
       ((10 - remainder) % 10).to_s
     end
 
-    # Calculate the ISBN-10 checksum for the supplied array of digits.
+    # Calculate the "ISBN-10" checksum for the supplied array of digits.
     #
     # @param [String, Array<String,Integer>] digits
     #

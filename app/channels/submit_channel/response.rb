@@ -5,6 +5,8 @@
 
 __loading_begin(__FILE__)
 
+# The base class for SubmitJob responses.
+#
 class SubmitChannel::Response < ApplicationCable::Response
 
   # Allowed status values.
@@ -33,7 +35,7 @@ class SubmitChannel::Response < ApplicationCable::Response
   }.deep_freeze
 
   # ===========================================================================
-  # :section: ApplicationCable::Response::Payload overrides
+  # :section: ApplicationCable::Payload overrides
   # ===========================================================================
 
   public
@@ -61,12 +63,17 @@ class SubmitChannel::Response < ApplicationCable::Response
 
   # Indicate whether this response is part of a simulation.
   #
+  # @note Currently unused.
+  # :nocov:
   def simulation?
     self[:simulation].present?
   end
+  # :nocov:
 
 end
 
+# The base class for SubmitJob responses indicating submission status.
+#
 class SubmitChannel::SubmitResponse < SubmitChannel::Response
 
   TEMPLATE = {
@@ -75,7 +82,7 @@ class SubmitChannel::SubmitResponse < SubmitChannel::Response
   }.deep_freeze
 
   # ===========================================================================
-  # :section: ApplicationCable::Response::Payload overrides
+  # :section: ApplicationCable::Payload overrides
   # ===========================================================================
 
   public
@@ -84,10 +91,12 @@ class SubmitChannel::SubmitResponse < SubmitChannel::Response
 
 end
 
+# A response sent to indicate that the SubmitJob has started.
+#
 class SubmitChannel::InitialResponse < SubmitChannel::SubmitResponse
 
   # ===========================================================================
-  # :section: ApplicationCable::Response::Payload overrides
+  # :section: ApplicationCable::Payload overrides
   # ===========================================================================
 
   public
@@ -96,6 +105,8 @@ class SubmitChannel::InitialResponse < SubmitChannel::SubmitResponse
 
 end
 
+# A response sent to when a SubmitJob submission step has completed.
+#
 class SubmitChannel::StepResponse < SubmitChannel::SubmitResponse
 
   TEMPLATE = {
@@ -113,7 +124,7 @@ class SubmitChannel::StepResponse < SubmitChannel::SubmitResponse
   }.deep_freeze
 
   # ===========================================================================
-  # :section: ApplicationCable::Response::Payload overrides
+  # :section: ApplicationCable::Payload overrides
   # ===========================================================================
 
   public
@@ -123,10 +134,12 @@ class SubmitChannel::StepResponse < SubmitChannel::SubmitResponse
 
 end
 
+# A response sent to indicate that the SubmitJob has finished.
+#
 class SubmitChannel::FinalResponse < SubmitChannel::StepResponse
 
   # ===========================================================================
-  # :section: ApplicationCable::Response::Payload overrides
+  # :section: ApplicationCable::Payload overrides
   # ===========================================================================
 
   public
@@ -135,6 +148,10 @@ class SubmitChannel::FinalResponse < SubmitChannel::StepResponse
 
 end
 
+# A response sent to return feedback from a client-issued SubmitJob action.
+#
+# @note Currently unused.
+# :nocov:
 class SubmitChannel::ControlResponse < SubmitChannel::Response
 
   TEMPLATE = {
@@ -144,7 +161,7 @@ class SubmitChannel::ControlResponse < SubmitChannel::Response
   }.deep_freeze
 
   # ===========================================================================
-  # :section: ApplicationCable::Response::Payload overrides
+  # :section: ApplicationCable::Payload overrides
   # ===========================================================================
 
   public
@@ -167,5 +184,6 @@ class SubmitChannel::ControlResponse < SubmitChannel::Response
   end
 
 end
+# :nocov:
 
 __loading_end(__FILE__)

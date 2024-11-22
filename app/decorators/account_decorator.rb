@@ -238,7 +238,7 @@ class AccountDecorator
 
   public
 
-  # Fields and configurations augmented with a :value entry containing the
+  # Fields and configurations augmented with a `:value` entry containing the
   # current field value.
   #
   # @param [Hash] opt                 Passed to super.
@@ -266,7 +266,7 @@ class AccountDecorator
   #
   FIELD_FILTERS = %w[token password remember].freeze
 
-  # Fields and configurations augmented with a :value entry containing the
+  # Fields and configurations augmented with a `:value` entry containing the
   # current field value.
   #
   # @param [Hash] opt                 Passed to super
@@ -330,7 +330,7 @@ class AccountDecorator
     super(name, value, **opt)
   end
 
-  # render_form_email
+  # Render an `<input>` element which receives an email address.
   #
   # @param [String]   name
   # @param [any, nil] value
@@ -347,7 +347,7 @@ class AccountDecorator
     super
   end
 
-  # render_form_password
+  # Render an `<input>` element which receives a password.
   #
   # @param [String]   name
   # @param [any, nil] value

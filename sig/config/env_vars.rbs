@@ -24,7 +24,7 @@ CONSOLE_DEBUGGING: bool
 # Control console output.
 #
 # Normally __output (and __debug) are not displayed in non-Rails invocations of
-# the code (e.g. rake, irb, etc) unless CONSOLE_DEBUGGING is *true*.
+# the code (e.g. rake, irb, etc.) unless CONSOLE_DEBUGGING is *true*.
 #
 CONSOLE_OUTPUT: bool
 

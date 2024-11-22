@@ -56,7 +56,7 @@ module ArrayExt
   # === Usage Notes
   # It is assumed that *other* is a flat array (that is, that its elements are
   # not arrays); if it is not flat, any sub-arrays will be duplicated and
-  # appended to *self* unconditionally.
+  # appended to `*self*` unconditionally.
   #
   def rmerge!: (untyped other) -> self
 

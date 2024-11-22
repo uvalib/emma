@@ -84,7 +84,7 @@ module SessionConcern
     redirect_to path
   end
 
-  # Set `flash[:notice]` based on the current action and user name.
+  # Set `flash[:notice]` based on the current action and username.
   #
   # @param [any, nil]                message  String
   # @param [Symbol, nil]             action   Default: `params[:action]`.
@@ -98,7 +98,7 @@ module SessionConcern
     flash_notice(*message, **opt)
   end
 
-  # Set `flash[:alert]` based on the current action and user name.
+  # Set `flash[:alert]` based on the current action and username.
   #
   # @param [any, nil]                message  String
   # @param [Symbol, nil]             action   Default: `params[:action]`.
@@ -239,7 +239,7 @@ module SessionConcern
     result
   end
 
-  # abbreviate_param
+  # Generate an abbreviated representation of a value for diagnostics.
   #
   # @param [any, nil] item
   # @param [Integer]  p_max           Maximum size of representation.

@@ -23,49 +23,67 @@ module Api::Shared::CreatorMethods
   #
   # @return [Array<String>]
   #
+  # @note Currently unused.
+  # :nocov:
   def author_list(**opt)
     creator_list(**opt)
   end
+  # :nocov:
 
   # The editor(s) of this catalog title.
   #
   # @return [Array<String>]
   #
+  # @note Currently unused.
+  # :nocov:
   def editor_list(**)
     []
   end
+  # :nocov:
 
   # The composer(s) of this catalog title.
   #
   # @return [Array<String>]
   #
+  # @note Currently unused.
+  # :nocov:
   def composer_list(**)
     []
   end
+  # :nocov:
 
   # The lyricist(s) of this catalog title.
   #
   # @return [Array<String>]
   #
+  # @note Currently unused.
+  # :nocov:
   def lyricist_list(**)
     []
   end
+  # :nocov:
 
   # The arranger(s) of this catalog title.
   #
   # @return [Array<String>]
   #
+  # @note Currently unused.
+  # :nocov:
   def arranger_list(**)
     []
   end
+  # :nocov:
 
   # The translator(s) of this catalog title.
   #
   # @return [Array<String>]
   #
+  # @note Currently unused.
+  # :nocov:
   def translator_list(**)
     []
   end
+  # :nocov:
 
   # The creator(s) of this catalog title.
   #
@@ -73,9 +91,12 @@ module Api::Shared::CreatorMethods
   #
   # @return [Array<String>]
   #
+  # @note Currently unused.
+  # :nocov:
   def creators(**opt)
     creator_list(**opt)
   end
+  # :nocov:
 
   # The author(s)/creator(s) of this catalog title.
   #

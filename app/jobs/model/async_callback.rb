@@ -128,7 +128,7 @@ class Model::AsyncCallback
   #
   # @param [Hash] opt
   #
-  # @return [Boolean]                 *true* if queued; *false* if not.
+  # @return [Boolean]                 `*true*` if queued; `*false*` if not.
   #
   def cb_perform_later(**opt)
     __debug { "#{__method__} | opt = #{opt.inspect}" } # TODO: remove

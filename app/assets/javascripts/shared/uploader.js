@@ -1461,8 +1461,8 @@ class BaseUploader extends BaseClass {
 
     /**
      * The element starts with `aria-hidden="true"` (so that attribute alone
-     * alone isn't sufficient for conditional styling), however the element
-     * (and its children) are not invisible.
+     * isn't sufficient for conditional styling), however the element (and its
+     * children) are not invisible.
      *
      * @protected
      *

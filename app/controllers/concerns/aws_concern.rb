@@ -41,8 +41,6 @@ module AwsConcern
   #
   # @return [AwsS3Service]
   #
-  # @note Currently unused.
-  #
   def aws_api
     # noinspection RubyMismatchedReturnType
     api_service(AwsS3Service)
@@ -54,7 +52,7 @@ module AwsConcern
 
   public
 
-  # get_aws_repositories
+  # Get a list of the partner repositories indicated.
   #
   # - If :emma is included it will be moved to the end of the list.
   # - If :ace is included it is replaced with :internetArchive since ACE items
@@ -83,7 +81,7 @@ module AwsConcern
     end
   end
 
-  # get_aws_deployments
+  # Get a list of deployments indicated.
   #
   # @param [String, Symbol, Array, nil] default   Default: '*'
   # @param [Hash]                       prm       Passed to #params_values.
@@ -125,7 +123,7 @@ module AwsConcern
     prm.values_at(*keys).compact_blank.first.to_s.downcase.split(/\s*,\s*/)
   end
 
-  # aws_params
+  # Extract AWS S3 related parameters.
   #
   # @param [Hash, nil] opt            Default: `#url_parameters`.
   #
@@ -143,7 +141,7 @@ module AwsConcern
 
   public
 
-  # repo_bucket
+  # Get the name of the indicated S3 bucket.
   #
   # @param [Symbol, String]      repository
   # @param [Symbol, String, nil] deployment   Def: `#aws_deployment`.
@@ -158,7 +156,7 @@ module AwsConcern
     aws_s3.bucket_for(repository, deployment)
   end
 
-  # get_repo_bucket
+  # Get the indicated S3 bucket.
   #
   # @param [Symbol, String]      repository
   # @param [Symbol, String, nil] deployment   Def: `#aws_deployment`.
@@ -171,14 +169,15 @@ module AwsConcern
   # @return [Aws::S3::Bucket]
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def get_repo_bucket(repository, deployment = nil, **opt)
     opt  = aws_params(opt)
     name = repo_bucket(repository, deployment, **opt)
     get_s3_bucket(name, **opt)
   end
+  # :nocov:
 
-  # get_repo_objects
+  # Get all files (object keys) associated with the indicated S3 bucket.
   #
   # @param [Symbol, String]      repository
   # @param [Symbol, String, nil] deployment   Def: `#aws_deployment`.
@@ -191,14 +190,15 @@ module AwsConcern
   # @return [Array<Aws::S3::Object>]
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def get_repo_objects(repository, deployment = nil, **opt)
     opt  = aws_params(opt)
     name = repo_bucket(repository, deployment, **opt)
     get_s3_objects(name, **opt)
   end
+  # :nocov:
 
-  # get_s3_bucket_table
+  # Get a table of all AWS S3 buckets.
   #
   # @param [Hash] opt
   #
@@ -209,7 +209,7 @@ module AwsConcern
   # @return [Hash{String=>Aws::S3::Bucket}]
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def get_s3_bucket_table(**opt)
     repos   = get_aws_repositories(**opt)
     deploys = get_aws_deployments(**opt)
@@ -222,8 +222,9 @@ module AwsConcern
       end
     }.to_h
   end
+  # :nocov:
 
-  # get_s3_object_table
+  # Get a table of all AWS S3 buckets and their files (object keys).
   #
   # @param [Hash] opt
   #
@@ -252,7 +253,7 @@ module AwsConcern
 
   public
 
-  # get_s3_bucket
+  # Get the named AWS S3 bucket.
   #
   # @param [String] name
   # @param [Hash]   opt                       Passed to #s3_bucket except for:
@@ -261,13 +262,16 @@ module AwsConcern
   #
   # @return [Aws::S3::Bucket]
   #
+  # @note Currently used only by unused methods.
+  # :nocov:
   def get_s3_bucket(name, **opt)
     opt    = aws_params(opt)
     aws_s3 = opt.delete(:service)
     aws_s3.s3_bucket(name, **opt)
   end
+  # :nocov:
 
-  # get_s3_objects
+  # List files (object keys) in `*bucket*`.
   #
   # @param [String, Aws::S3::Bucket] bucket
   # @param [Hash]   opt                       Passed to #s3_bucket except for:

@@ -70,7 +70,7 @@ module Record::Submittable
       item.try(:new_submission?) || false
     end
 
-    # Create a new free-standing (un-persisted) record instance.
+    # Create a new freestanding (un-persisted) record instance.
     #
     # @param [Hash, Model, nil] data  Passed to record class initializer.
     #
@@ -772,6 +772,8 @@ module Record::Submittable
     #
     # @note From UploadWorkflow::External#batch_upload_remove
     #
+    # @note Currently unused.
+    # :nocov:
     def batch_entry_remove(ids, index: true, atomic: true, force: nil, **opt)
       __debug_items("ENTRY WF #{__method__}", binding)
       ids = Array.wrap(ids)
@@ -812,6 +814,7 @@ module Record::Submittable
 
       return succeeded, failed
     end
+    # :nocov:
 
     # Process *entries* in batches by calling *op* on successive subsets.
     #
@@ -912,13 +915,13 @@ module Record::Submittable
     # @see #db_insert
     # @see #add_to_index
     #
-    # @note Currently unused.
-    #
     # @note From UploadWorkflow::External#upload_create
     #
     # === Implementation Notes
     # Compare with #bulk_entry_create
     #
+    # @note Currently unused.
+    # :nocov:
     def entry_create(index: nil, atomic: true, **data)
       __debug_items("ENTRY WF #{__method__}", binding)
       type = record_class
@@ -937,6 +940,7 @@ module Record::Submittable
       succeeded, failed, _ = add_to_index(item, atomic: atomic)
       return succeeded.first, failed
     end
+    # :nocov:
 
     # Update an existing database Upload record and update its associated index
     # entry (if explicitly requested).
@@ -951,13 +955,13 @@ module Record::Submittable
     # @see #db_update
     # @see #update_in_index
     #
-    # @note Currently unused.
-    #
     # @note From UploadWorkflow::External#upload_edit
     #
     # === Implementation Notes
     # Compare with #bulk_entry_edit
     #
+    # @note Currently unused.
+    # :nocov:
     def entry_edit(index: nil, atomic: true, **data)
       __debug_items("ENTRY WF #{__method__}", binding)
       if (id = data[:id]).blank?
@@ -981,6 +985,7 @@ module Record::Submittable
       succeeded, failed, _ = update_in_index(*item, atomic: atomic)
       return succeeded.first, failed
     end
+    # :nocov:
 
     # Remove records from the database and from the index.
     #
@@ -1005,9 +1010,6 @@ module Record::Submittable
     # attempt.  If a later item fails, the successfully-destroyed items will
     # still be removed from the index.
     #
-    #--
-    # noinspection RubyMismatchedArgumentType
-    #++
     def entry_remove(*items, index: nil, atomic: true, force: nil, **opt)
       __debug_items("ENTRY WF #{__method__}", binding)
       type = record_class

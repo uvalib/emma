@@ -1,10 +1,12 @@
+# Bulk upload submission WebSocket channels.
+#
 class SubmitChannel < ApplicationCable::Channel
   include SubmissionConcern
 
   # @see file:javascripts/channels/submit-channel.js *DEFAULT_ACTION*
   DEFAULT_ACTION: Symbol
 
-  # stream_name
+  # The channel for the session.
   #
   # @return [String]
   #
@@ -82,7 +84,7 @@ class SubmitChannel < ApplicationCable::Channel
   #
   def self.step_response: (symHash data, **untyped opt) -> void
 
-  # Invoked from another thread to push acquired data back to the client.
+  # Invoked from another thread to push control status back to the client.
   #
   # @param [Hash] data                Payload data.
   # @param [Hash] opt
@@ -94,6 +96,8 @@ class SubmitChannel < ApplicationCable::Channel
   #
   # @see file:javascripts/shared/cable-channel.js    *response()*
   # @see file:javascripts/channels/submit-channel.js *_createResponse()*
+  #
+  # @note Currently unused.
   #
   def self.control_response: (symHash data, **untyped opt) -> void
 end

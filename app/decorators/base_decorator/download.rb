@@ -214,7 +214,6 @@ module BaseDecorator::Download
 
       else
         # The link surrogate.
-        # noinspection RubyMismatchedArgumentType
         parts << download_probe(url, label: file, path: url, **opt)
 
         # Auxiliary control elements which are initially hidden.

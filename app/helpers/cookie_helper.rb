@@ -47,9 +47,12 @@ module CookieHelper
   #
   # @return [void]
   #
+  # @note Currently used only by DevHelper#forget_dev.
+  # :nocov:
   def delete_cookie(key)
     cookies.encrypted[key.to_s] = nil
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:

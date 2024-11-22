@@ -34,7 +34,7 @@ class SubmitJob < ApplicationJob
   # contain a SubmissionService::BatchSubmitRequest.
   #
   # Unlike the (current) implementation of LookupJob, the "worker task" is not
-  # defined as an instance method.  Instead #perform_later is overridden to
+  # defined as an instance method.  Instead, #perform_later is overridden to
   # create a GoodJob::Batch which handles that functionality.
   #
   # Expected ActiveJob arguments:
@@ -219,9 +219,9 @@ end
 
 # The job invoked when the batch job queued in SubmitJob::perform_later is run.
 #
-# GoodJob::Batch allows for distinct job classes to handle the :discard,
-# :success, and :finish events, but also supports the ability of a single class
-# to be defined to handle any of them.
+# GoodJob::Batch allows for distinct job classes to handle the `:discard`,
+# `:success`, and `:finish` events, but also supports the ability of a single
+# class to be defined to handle any of them.
 #
 class SubmitJobCallbackJob < ApplicationJob
 

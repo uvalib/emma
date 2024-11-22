@@ -1013,7 +1013,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Setup the element which shows intermediate results during a bulk upload.
+     * Set up the element which shows intermediate results during bulk upload.
      *
      * @param {ElementEvt} [event]
      */
@@ -2591,7 +2591,7 @@ appSetup(MODULE, function() {
         value = value.join(",");
 
         // If the URL is expecting to be completed, append the value string.
-        // Otherwise provide it as a generic "value" URL parameter.
+        // Otherwise, provide it as a generic "value" URL parameter.
         if (url.endsWith("=")) {
             url += value;
         } else if (url.includes("?")) {
@@ -3744,7 +3744,7 @@ appSetup(MODULE, function() {
 
         /**
          * Respond to key presses only after the user has paused, rather than
-         * re-validating the entire form with every key stroke.  This also
+         * re-validating the entire form with every keystroke.  This also
          * applies to cut, paste, drag, drop, and delete input event types.
          *
          * @param {InputEvt} event

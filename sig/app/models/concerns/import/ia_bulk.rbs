@@ -20,7 +20,7 @@ module Import::IaBulk
   #       items.
   #
   # - [2] The name of the contributed file is always the basename of the URL in
-  #       the :download field if it is present.  Otherwise it can be derived
+  #       the :download field if it is present.  Otherwise, it can be derived
   #       from :identifier and :contributed_file.
   #
   # - [3] Items that are only for IA internal use can be ignored since they are

@@ -34,7 +34,7 @@ module PopupHelper
 
   public
 
-  # Render a free-standing popup element.
+  # Render a freestanding popup element.
   #
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               Passed to #make_popup_panel.

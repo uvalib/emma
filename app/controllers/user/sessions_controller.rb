@@ -125,7 +125,7 @@ class User::SessionsController < Devise::SessionsController
   # === GET /users/sign_in_as?uid=NAME&token=AUTH_TOKEN
   # === GET /users/sign_in_as?auth=(OmniAuth::AuthHash)
   #
-  # Sign in using authorization information supplied outside of the normal
+  # Sign in using authorization information supplied outside the normal
   # authorization flow.
   #
   # @see #sign_in_as_path             Route helper

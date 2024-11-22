@@ -47,7 +47,6 @@ module Emma::Common::MethodMethods
       depth = call_stack if call_stack > depth
       call_stack = nil
     end
-    # noinspection RubyMismatchedArgumentType
     call_stack ||= caller(depth)
     call_stack&.find { |line|
       name = line.to_s.sub(/^.*:in `(.*?)'$/, '\1')

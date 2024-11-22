@@ -81,6 +81,8 @@ module Record::Reportable
   #
   # @return [ExecReport]                    New value of `#exec_report`.
   #
+  # @note Currently unused.
+  # :nocov:
   def set_exec_report(value = nil)
     @exec_report ||= ExecReport.new(self)
     # noinspection RubyMismatchedArgumentType
@@ -88,15 +90,19 @@ module Record::Reportable
     set_report_column(@exec_report.serialize)
     @exec_report
   end
+  # :nocov:
 
   # Clear the current value of #REPORT_COLUMN for the current record.
   #
   # @return [nil]
   #
+  # @note Currently unused.
+  # :nocov:
   def clear_exec_report(...)
     set_report_column(nil)
     exec_report.clear
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -125,6 +131,8 @@ module Record::Reportable
   #
   # @return [Boolean]
   #
+  # @note Currently used only by unused methods.
+  # :nocov:
   def set_report_column(value, meth: nil, fatal: false, col: REPORT_COLUMN)
     result = set_field_direct(col, value) and return result
     result = result.nil?
@@ -136,6 +144,7 @@ module Record::Reportable
     raise err if fatal
     result
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:

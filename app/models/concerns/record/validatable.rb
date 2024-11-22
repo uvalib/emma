@@ -63,6 +63,8 @@ module Record::Validatable
   #
   # @note From Upload#emma_data_valid?
   #
+  # @note Currently unused.
+  # :nocov:
   def emma_data_valid?
     if emma_data.blank?
       error(:emma_data, :missing)
@@ -71,6 +73,7 @@ module Record::Validatable
     end
     errors.empty?
   end
+  # :nocov:
 
   # Compare the source fields against configured requirements.
   #

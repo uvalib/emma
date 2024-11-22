@@ -230,7 +230,7 @@ class ManifestDecorator
   #
   def row_skipped_columns: () -> symArray
 
-  # Fields and configurations augmented with a :value entry containing the
+  # Fields and configurations augmented with a `:value` entry containing the
   # current field value.
   #
   # @param [Hash] opt                 Passed to super.

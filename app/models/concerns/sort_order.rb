@@ -134,10 +134,13 @@ class SortOrder < Hash
   #
   # @return [Hash{Symbol=>Symbol}, String, nil]
   #
+  # @note Currently unused.
+  # :nocov:
   def sql_order
     validate
     raw_sql.presence || to_h.presence
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -290,7 +293,7 @@ class SortOrder < Hash
       rev = key.delete_suffix!(REVERSE_SUFFIX).present?
       val = (val == :desc) ? :asc : :desc if rev
 
-      # Restore short-hand URL parameters to actual field names.
+      # Restore shorthand URL parameters to actual field names.
       if record
         case key
           when *ID_FIELD    then key = "#{key}_id"

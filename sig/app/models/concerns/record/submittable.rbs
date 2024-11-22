@@ -40,7 +40,7 @@ module Record::Submittable
     #
     def incomplete?: (untyped item) -> bool
 
-    # Create a new free-standing (un-persisted) record instance.
+    # Create a new freestanding (un-persisted) record instance.
     #
     # @param [Hash, Model, nil] data  Passed to record class initializer.
     #
@@ -417,6 +417,8 @@ module Record::Submittable
     #
     # @note From UploadWorkflow::External#batch_upload_remove
     #
+    # @note Currently unused.
+    #
     def batch_entry_remove: ((Array[symHash|String|Integer|Model]|nil) ids, ?index: bool, ?atomic: bool, ?force: bool|nil, **untyped opt) -> [Array[String|Model], Array[Record::Exceptions::FlashPart]]
 
     # Process *entries* in batches by calling *op* on successive subsets.
@@ -477,12 +479,12 @@ module Record::Submittable
     # @see #db_insert
     # @see #add_to_index
     #
-    # @note Currently unused.
-    #
     # @note From UploadWorkflow::External#upload_create
     #
     # === Implementation Notes
     # Compare with #bulk_entry_create
+    #
+    # @note Currently unused.
     #
     def entry_create: (?index: bool|nil, ?atomic: bool|nil, **untyped data) -> [(Upload | nil), Array[Record::Exceptions::FlashPart]]
 
@@ -499,12 +501,12 @@ module Record::Submittable
     # @see #db_update
     # @see #update_in_index
     #
-    # @note Currently unused.
-    #
     # @note From UploadWorkflow::External#upload_edit
     #
     # === Implementation Notes
     # Compare with #bulk_entry_edit
+    #
+    # @note Currently unused.
     #
     def entry_edit: (?index: bool|nil, ?atomic: bool|nil, **untyped data) -> [(Upload | nil), Array[Record::Exceptions::FlashPart]]
 

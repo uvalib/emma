@@ -30,6 +30,8 @@ module LookupService::Crossref::Action::Journal
   #
   # @see https://api.crossref.org/swagger-ui/index.html#operations-Journals-get_journals__issn_
   #
+  # @note Currently unused.
+  # :nocov:
   def get_journal(issn, **opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'journals', issn, **opt)
@@ -40,6 +42,7 @@ module LookupService::Crossref::Action::Journal
         role: :anonymous, # Should succeed for any user.
       }
     end
+  # :nocov:
 
   # === GET https://api.crossref.org/journals?query=...
   #
@@ -49,6 +52,8 @@ module LookupService::Crossref::Action::Journal
   #
   # @see https://api.crossref.org/swagger-ui/index.html#operations-Journals-get_journals
   #
+  # @note Currently unused.
+  # :nocov:
   def get_journal_list(**opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'journals', **opt)
@@ -75,6 +80,7 @@ module LookupService::Crossref::Action::Journal
         role:       :anonymous, # Should succeed for any user.
       }
     end
+  # :nocov:
 
 end
 

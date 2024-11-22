@@ -86,7 +86,7 @@ module ArrayExt
   # === Usage Notes
   # It is assumed that *other* is a flat array (that is, that its elements are
   # not arrays); if it is not flat, any sub-arrays will be duplicated and
-  # appended to *self* unconditionally.
+  # appended to `*self*` unconditionally.
   #
   def rmerge!(other)
     added = (Array.wrap(other) - to_a).presence

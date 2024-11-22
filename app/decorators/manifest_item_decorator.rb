@@ -190,7 +190,7 @@ class ManifestItemDecorator < BaseDecorator
       ICONS
     end
 
-    # control_icon_button
+    # Produce an action icon based on either :path or :id.
     #
     # @param [Symbol]             action    One of #icon_definitions.keys.
     # @param [GridIndex, Integer] index
@@ -687,7 +687,7 @@ class ManifestItemDecorator < BaseDecorator
     # @param [String]  css
     # @param [Hash]    opt
     #
-    # @option opt [Boolean] :wrap     If *false* don't wrap in `<thead>`.
+    # @option opt [Boolean] :wrap     If *false*, don't wrap in `<thead>`.
     #
     # @return [ActiveSupport::SafeBuffer]
     #
@@ -1177,7 +1177,7 @@ class ManifestItemDecorator < BaseDecorator
       context[:options] || ManifestItem::Options.new
     end
 
-    # row_indicators
+    # A set of status indicator icons and descriptive labels.
     #
     # @param [ManifestItem, nil] item   Default: `#object`.
     # @param [Hash]              opt    Passed to super
@@ -1189,7 +1189,8 @@ class ManifestItemDecorator < BaseDecorator
       super
     end
 
-    # row_details
+    # A collapsible element listing values for ManifestItem fields that are not
+    # related to grid columns.
     #
     # @param [ManifestItem, nil] item   Default: `#object`.
     # @param [Hash]              opt    Passed to super
@@ -1534,7 +1535,7 @@ class ManifestItemDecorator
 
   public
 
-  # details_container
+  # Render an element containing a metadata listing of a model instance.
   #
   # @param [Array] before             Optional elements before the details.
   # @param [Hash]  opt                Passed to super except:

@@ -92,9 +92,12 @@ class LookupService::RemoteService < ApiService
 
   # Indicate whether the request sequence has begun.
   #
+  # @note Currently used only by unused methods.
+  # :nocov:
   def started?
     !start_time.nil?
   end
+  # :nocov:
 
   # Indicate whether the request sequence has finished.
   #
@@ -122,28 +125,40 @@ class LookupService::RemoteService < ApiService
 
   # Indicate whether the request has been sent and a response received.
   #
+  # @note Currently used only by unused methods.
+  # :nocov:
   def request_sent?
     !response.nil?
   end
+  # :nocov:
 
   # Indicate whether the external service reported a successful request.
   #
+  # @note Currently unused.
+  # :nocov:
   def succeeded?
     request_sent? && response.success?
   end
+  # :nocov:
 
   # Indicate whether the request was not successful.
   #
+  # @note Currently unused.
+  # :nocov:
   def failed?
     request_sent? && !response.success?
   end
+  # :nocov:
 
   # Indicate whether the request has been sent but a response has not yet
   # been received.
   #
+  # @note Currently unused.
+  # :nocov:
   def in_progress?
     started? && response.nil?
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:

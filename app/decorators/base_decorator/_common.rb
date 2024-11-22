@@ -57,9 +57,6 @@ module BaseDecorator::Common
   #
   # @return [Boolean]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def check_setting(value, default: true)
     case value
       when nil    then default

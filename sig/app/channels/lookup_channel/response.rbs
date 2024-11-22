@@ -1,3 +1,5 @@
+# The base class for LookupJob responses.
+#
 class LookupChannel::Response < ApplicationCable::Response
   # @see file://app/assets/javascripts/shared/lookup-response.js *TEMPLATE*
   TEMPLATE: symHash
@@ -7,9 +9,13 @@ class LookupChannel::Response < ApplicationCable::Response
   def self.data_url_base_path: () -> String
 end
 
+# A response sent to return a result from the LookupJob.
+#
 class LookupChannel::LookupResponse < LookupChannel::Response
 end
 
+# The base class for informational LookupJob responses.
+#
 class LookupChannel::StatusResponse < LookupChannel::Response
   # Create a new instance.
   #
@@ -21,6 +27,8 @@ class LookupChannel::StatusResponse < LookupChannel::Response
   def payload_normalize: (untyped value, ?except: symArray|Symbol|nil) -> symHash
 end
 
+# A response sent to indicate that the LookupJob has started.
+#
 class LookupChannel::InitialResponse < LookupChannel::StatusResponse
   def self.default_status: () -> String
 end

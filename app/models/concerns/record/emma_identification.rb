@@ -31,7 +31,6 @@ module Record::EmmaIdentification
   SID_LETTERS = ('g'..'z').minmax.map(&:ord).deep_freeze
 
   # @type [Integer]
-  # noinspection RubyMismatchedArgumentType
   SID_LETTER_SPAN = SID_LETTERS.then { _1.last - _1.first + 1 }
 
   # @type [String]
@@ -80,7 +79,7 @@ module Record::EmmaIdentification
     sid if match_sid?(sid)
   end
 
-  # Indicate whether *value* could be an EMMA submission ID.
+  # Indicate whether `*value*` could be an EMMA submission ID.
   #
   # @param [any, nil] value           String
   #
@@ -94,7 +93,7 @@ module Record::EmmaIdentification
 
   protected
 
-  # Indicate whether *value* could be an EMMA submission ID.
+  # Indicate whether `*value*` could be an EMMA submission ID.
   #
   # (Unlike #valid_sid? this is not overridden in InstanceMethods so it is not
   # subject to problems with recursive definitions.)
@@ -227,7 +226,7 @@ module Record::EmmaIdentification
   # occurs on a single thread) to be able to generate unique IDs in rapid
   # succession.
   #
-  # Leading with a non-hex-digit guarantees that submission ID's are distinct
+  # Leading with a non-hex-digit guarantees that submission IDs are distinct
   # from database ID's (which are only decimal digits).
   #
   def generate_submission_id(time = nil, prefix: true)
@@ -263,7 +262,7 @@ module Record::EmmaIdentification
   public
 
   # Return with the specified record or *nil* if one could not be found.
-  # If *item* is a *self*, it is returned; otherwise an instance is generated
+  # If *item* is a `*self*`, it is returned; otherwise an instance is generated
   # from a database lookup.
   #
   # @param [any, nil]    item         String, Integer, Hash, Model
@@ -355,9 +354,9 @@ module Record::EmmaIdentification
 
   # Interpret an ID string as a range of IDs if possible.
   #
-  # The method supports a mixture of database IDs (which are comprised only of
-  # decimal digits) and submission IDs (which always start with a non-digit),
-  # however a submission ID cannot be part of a range.
+  # The method supports a mixture of database IDs (which are only decimal
+  # digits) and submission IDs (which always start with a non-digit), however a
+  # submission ID cannot be part of a range.
   #
   # @param [String, Integer, Model] id
   # @param [Hash]                   opt

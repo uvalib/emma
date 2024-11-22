@@ -46,7 +46,7 @@ module SessionConcern
   #
   def auth_failure_redirect: (?(String|nil) path, ?user: User|nil, ?message: flashArgs, **untyped opt) -> void
 
-  # Set `flash[:notice]` based on the current action and user name.
+  # Set `flash[:notice]` based on the current action and username.
   #
   # @param [any, nil]                message  String
   # @param [Symbol, nil]             action   Default: `params[:action]`.
@@ -57,7 +57,7 @@ module SessionConcern
   #
   def set_flash_notice: (?flashArgs message, ?action: Symbol|nil, ?user: String|anyHash|User|nil, **untyped opt) -> void
 
-  # Set `flash[:alert]` based on the current action and user name.
+  # Set `flash[:alert]` based on the current action and username.
   #
   # @param [any, nil]                message  String
   # @param [Symbol, nil]             action   Default: `params[:action]`.
@@ -140,7 +140,7 @@ module SessionConcern
   #
   def abbreviate_params!: (symHash h, ?max: Integer, ?p_max: Integer) -> strHash
 
-  # abbreviate_param
+  # Generate an abbreviated representation of a value for diagnostics.
   #
   # @param [any, nil] item
   # @param [Integer]  p_max           Maximum size of representation.

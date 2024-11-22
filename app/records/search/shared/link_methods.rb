@@ -27,7 +27,7 @@ module Search::Shared::LinkMethods
 
   public
 
-  # URL of the associated work on the web site of the original repository.
+  # URL of the associated work on the website of the original repository.
   #
   # @return [String, nil]
   #
@@ -52,7 +52,7 @@ module Search::Shared::LinkMethods
   public
 
   # Create a URL manufactured from "en.emma.repository.*.title_path" for the
-  # associated work on the web site of the original repository.
+  # associated work on the website of the original repository.
   #
   # @raise [RuntimeError]             If EmmaRepository#ACTIVE entry is invalid
   #

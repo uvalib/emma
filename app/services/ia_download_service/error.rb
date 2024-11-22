@@ -21,7 +21,7 @@ __loading_begin(__FILE__)
 #   `IaDownloadService::UniqueError < IaDownloadService::Error`
 #
 # An exception in the IaDownloadService namespace can be identified by checking
-# for `exception.is_a?(IaDownloadService::Error::ClassType)`.
+# for `exception.is_a? (IaDownloadService::Error::ClassType)`.
 #
 class IaDownloadService::Error < ApiService::Error
 

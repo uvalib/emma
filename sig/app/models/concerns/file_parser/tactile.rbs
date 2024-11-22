@@ -3,7 +3,7 @@
 class FileParser::Tactile < FileParser
   include FileFormat::Tactile
 
-  # metadata
+  # Metadata extracted from the file format instance.
   #
   # @return [OpenStruct]
   #

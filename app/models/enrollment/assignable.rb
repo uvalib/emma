@@ -94,7 +94,7 @@ module Enrollment::Assignable
     Array.wrap(arg).compact_blank
   end
 
-  # Normalize a value for the :request_notes or :admin_notes attributes.
+  # Normalize a value for the `:request_notes` or `:admin_notes` attributes.
   #
   # @param [String, Array, nil] arg
   #

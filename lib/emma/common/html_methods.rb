@@ -57,7 +57,8 @@ module Emma::Common::HtmlMethods
 
   # Combine parts into a value safe for use as an HTML ID (or class name).
   #
-  # A 'Z' is prepended if the result would not have started with a letter.
+  # A 'Z' is prepended if required to ensure that the result starts with a
+  # letter and not a decimal digit.
   #
   # @param [Array]   parts
   # @param [String]  separator        Separator between parts.

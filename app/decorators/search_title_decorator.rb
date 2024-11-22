@@ -51,7 +51,7 @@ class SearchTitleDecorator < SearchDecorator
 
   # Include control icons below the entry number.
   #
-  # @param [Boolean] edit             If *false* do not add edit controls.
+  # @param [Boolean] edit             If *false*, do not add edit controls.
   # @param [Hash]    opt              Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]

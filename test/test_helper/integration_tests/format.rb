@@ -98,11 +98,12 @@ module TestHelper::IntegrationTests::Format
   #
   # @return [true]
   #
-  # @note Currently unused
-  #
+  # @note Currently unused.
+  # :nocov:
   def assert_json_result(status, **opt)
     assert_result(status, format: :json, **opt)
   end
+  # :nocov:
 
   # Assert that the response is 'application/xml'.
   #
@@ -113,11 +114,12 @@ module TestHelper::IntegrationTests::Format
   #
   # @return [true]
   #
-  # @note Currently unused
-  #
+  # @note Currently unused.
+  # :nocov:
   def assert_xml_result(status, **opt)
     assert_result(status, format: :xml, **opt)
   end
+  # :nocov:
 
   # Assert that the response is 'text/plain'.
   #
@@ -128,11 +130,12 @@ module TestHelper::IntegrationTests::Format
   #
   # @return [true]
   #
-  # @note Currently unused
-  #
+  # @note Currently unused.
+  # :nocov:
   def assert_text_result(status, **opt)
     assert_result(status, format: :text, **opt)
   end
+  # :nocov:
 
   # Assert that the response matches the given criteria.
   #

@@ -60,7 +60,7 @@ module IaDownloadService::Common
   #
   # @param [Symbol]            verb     Should always be :get.
   # @param [String]            action   Path to IA download.
-  # @param [Hash, String, nil] params   Should always be blank.
+  # @param [Hash, String, nil] params
   # @param [Hash, nil]         headers
   # @param [Hash]              opt
   #
@@ -76,7 +76,7 @@ module IaDownloadService::Common
   # @return [nil]
   #
   # === Usage Notes
-  # Sets @response as a side-effect.
+  # Sets @response as a side effect.
   #
   def transmit(verb, action, params, headers, **opt)
     dbg, t1 = "... #{__method__}", Time.now

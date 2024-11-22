@@ -86,9 +86,12 @@ module FlashHelper
   #
   # @return [Boolean]
   #
+  # @note Currently unused.
+  # :nocov:
   def set_flash_floating(on = true)
     @flash_floating = on
   end
+  # :nocov:
 
   # Specify that the flash container should be cleared on page refresh.
   #
@@ -302,11 +305,12 @@ module FlashHelper
   # @return [Array<String>]     Current flash.now notice messages.
   #
   # @note Currently unused.
-  #
+  # :nocov:
   def flash_now_success(*args, **opt)
     prepend_flash_caller!(args, opt)
     flash_now_notice(*args, topic: :success, **opt)
   end
+  # :nocov:
 
   # Failure flash now.
   #
@@ -328,10 +332,13 @@ module FlashHelper
   #
   # @return [Array<String>]     Current flash.now notice messages.
   #
+  # @note Currently used only by #flash_now_success.
+  # :nocov:
   def flash_now_notice(*args, topic: nil, **opt)
     prepend_flash_caller!(args, opt)
     set_flash_now(*args, topic: topic, type: :notice, **opt)
   end
+  # :nocov:
 
   # Flash now alert.
   #
@@ -392,7 +399,7 @@ module FlashHelper
   FLASH_TARGETS = %i[notice alert].freeze
 
   # Prepend the method invoking flash if there is not already one at the start
-  # of *args* and ensure that `opt[:meth]` is removed (whether used or or).
+  # of *args* and ensure that `opt[:meth]` is removed (whether used or not).
   #
   # @param [Array] args
   # @param [Hash]  opt
@@ -703,7 +710,7 @@ module FlashHelper
     html ? ERB::Util.h(res) : res
   end
 
-  # If a :topic was specified, it is used as part of a set of I18n paths used
+  # If a `:topic` was specified, it is used as part of a set of I18n paths used
   # to locate a template to which the flash message is applied.
   #
   # @param [String, Array<String>] msg

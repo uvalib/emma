@@ -70,7 +70,7 @@ module IngestService::Common
   # @return [nil]
   #
   # === Usage Notes
-  # Sets @response as a side-effect.
+  # Sets @response as a side effect.
   #
   def transmit(verb, action, params, headers, **opt)
     super.tap do |resp|

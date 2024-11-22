@@ -52,6 +52,8 @@ module ApiService::Common
   #   @param [Symbol, String] http_method
   #   @return [String]                      Type derived from *http_method*.
   #
+  # @note Currently unused.
+  #
   def request_type: (?(Symbol|String|nil) http_method) -> String
 
   # Indicate whether the latest API request is an update (PUT, POST, or PATCH).
@@ -89,6 +91,8 @@ module ApiService::Common
   #   Get the URL derived from provided *hash*.
   #   @param [Hash]    hash           Parameters to check instead of @params.
   #   @param [Boolean] complete       If *true* return :api_key parameter.
+  #
+  # @note Currently unused.
   #
   def latest_endpoint: (?(symHash|nil) prm) -> String
 
@@ -158,8 +162,10 @@ module ApiService::Common
 
   # Form a normalized API path from one or more path fragments.
   #
-  # If *args* represents a full path which is different than `#base_url` then
-  # an absolute path is returned.
+  # If *args* represents a full path which is different from `#base_url` then
+  # an absolute path is returned.  Otherwise, `#base_uri`.path exists, the
+  # resultant full or partial path may be modified to ensure that it is
+  # included exactly once.
   #
   # @param [Array<String,Array>] args
   #
@@ -178,8 +184,8 @@ module ApiService::Common
   #
   def api_options: (?(symHash|nil) params) -> symHash
 
-  # Determine whether the HTTP method indicates a write rather than a read and
-  # prepare the HTTP headers accordingly.
+  # Determine whether the HTTP method indicates a `write` rather than a `read`
+  # and prepare the HTTP headers accordingly.
   #
   # @param [Hash, nil]         params   Default: @params.
   # @param [Hash, nil]         headers  Default: {}.
@@ -239,7 +245,7 @@ module ApiService::Common
   # @return [nil]
   #
   # === Usage Notes
-  # Sets @response as a side-effect.
+  # Sets @response as a side effect.
   #
   def transmit: (Symbol verb, String action, (symHash|String|nil) params, (anyHash|nil) headers, **untyped opt) -> (Faraday::Response | nil)
 
@@ -270,6 +276,8 @@ module ApiService::Common
   #
   # @return [Hash]                    A modified copy of *prm*.
   #
+  # @note Currently unused.
+  #
   def encode_parameters: (**untyped prm) -> symHash
 
   # Preserve keys that would be mistaken for an ignored system parameter.
@@ -293,6 +301,8 @@ module ApiService::Common
   # @param [Hash] prm
   #
   # @return [Hash]                    A modified copy of *prm*.
+  #
+  # @note Currently unused.
   #
   def decode_parameters: (**untyped prm) -> symHash
 

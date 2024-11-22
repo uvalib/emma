@@ -39,7 +39,7 @@ module Search::Shared::TransformMethods
 
   protected
 
-  # Set the URL of the associated work on the web site of the original
+  # Set the URL of the associated work on the website of the original
   # repository if not already present.
   #
   # @param [Search::Api::Record, Hash, nil] data  Default: *self*.

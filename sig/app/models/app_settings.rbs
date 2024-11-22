@@ -189,7 +189,7 @@ class AppSettings < AppGlobal
     # @param [Boolean] replace        If *true* erase current settings first.
     #
     # @return [Hash]                  The new settings.
-    # @return [nil]                   If the write failed.
+    # @return [nil]                   If the `write` failed.
     #
     def set_item: (symHash values, ?replace: bool, **untyped opt) -> (symHash | nil)
 
@@ -198,7 +198,7 @@ class AppSettings < AppGlobal
     # @param [Hash, nil] values
     #
     # @return [Hash]                  The new settings.
-    # @return [nil]                   If the write failed.
+    # @return [nil]                   If the `write` failed.
     #
     def reset_item: (?(symHash|nil) values) -> (symHash | nil)
 
@@ -248,7 +248,7 @@ class AppSettings < AppGlobal
     #
     # @return [String]
     #
-    # @note Currently unused
+    # @note Currently unused.
     #
     def inspect_all: (?(symHash|nil) values, **untyped opt) -> String
 
@@ -257,6 +257,8 @@ class AppSettings < AppGlobal
     # @param [any, nil] item
     #
     # @return [any, nil]
+    #
+    # @note Currently used only by #inspect_all.
     #
     def encode_symbols
       :     (Symbol item) -> String
@@ -269,6 +271,8 @@ class AppSettings < AppGlobal
     #
     # @return [String]
     #
+    # @note Currently used only by #encode_symbols.
+    #
     def encode_symbol: (Symbol symbol) -> String
 
     # decode_symbols
@@ -276,6 +280,8 @@ class AppSettings < AppGlobal
     # @param [String] string
     #
     # @return [String]
+    #
+    # @note Currently used only by #inspect_all.
     #
     def decode_symbols: (String string) -> String
 

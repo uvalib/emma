@@ -24,6 +24,8 @@ module Emma::Unicode
   #
   # @return [String]
   #
+  # @note Currently used only by #pad_char.
+  #
   def char: ((String|Integer) v) -> String
 
   # Pad a character with thin spaces.

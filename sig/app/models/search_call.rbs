@@ -125,7 +125,7 @@ class SearchCall < ApplicationRecord
   #
   def get_user_id: ((User|String|Numeric) src) -> (String | nil)
 
-  # Generate a :record attribute value from the given item.
+  # Generate a `:record` attribute value from the given item.
   #
   # @param [Api::Message, Hash, Array, Numeric, String] src
   #
