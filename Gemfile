@@ -13,7 +13,7 @@ ruby '3.3.0'
 # =============================================================================
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 7'
+gem 'rails', '~> 8'
 
 # Use Postgres as the database for Active Record.
 gem 'pg'

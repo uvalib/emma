@@ -14,7 +14,7 @@ class ApplicationRecord < ActiveRecord::Base
 
   include Emma::TypeMethods
 
-  self.abstract_class = true
+  primary_abstract_class
 
   # ===========================================================================
   # :section:

@@ -11,12 +11,12 @@ require 'rails/code_statistics_calculator'
 
 module CodeStatisticsCalculatorExt
 
-  # Replacement for CodeStatisticsCalculator#PATTERNS to include CSS.
+  # Replacement for Rails::CodeStatisticsCalculator#PATTERNS to include CSS.
   #
   # @type [Hash{Symbol=>Hash{Symbol=>Regexp}}]
   #
   PATTERNS =
-    CodeStatisticsCalculator::PATTERNS.dup.tap { |pat|
+    Rails::CodeStatisticsCalculator::PATTERNS.dup.tap { |pat|
       pat[:yml] = pat[:yaml] = { line_comment: /^\s*#/ }
       pat[:css] = pat[:scss] = pat[:sass] = pat[:js].except(:method)
       pat[:js]  = pat[:js].merge(begin_block_comment: %r{(^|\s+)/\*})
@@ -81,6 +81,6 @@ end
 # Override gem definitions
 # =============================================================================
 
-override CodeStatisticsCalculator => CodeStatisticsCalculatorExt
+override Rails::CodeStatisticsCalculator => CodeStatisticsCalculatorExt
 
 __loading_end(__FILE__)

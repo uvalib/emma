@@ -27,7 +27,7 @@ module Emma
     require 'emma'
 
     # Initialize configuration defaults.
-    config.load_defaults 7.1
+    config.load_defaults 8.0
 
     # Eager load code on boot.
     config.eager_load = true

@@ -1,0 +1,9 @@
+class CreateActiveStorageVariantRecords < ActiveRecord::Migration
+  def change: () -> untyped
+
+  private
+
+  def primary_key_type: () -> untyped
+
+  def blobs_primary_key_type: () -> untyped
+end

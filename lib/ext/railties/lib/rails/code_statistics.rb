@@ -3,7 +3,7 @@
 # frozen_string_literal: true
 # warn_indent:           true
 #
-# Add CSS/SCSS to CodeStatistics
+# Add CSS/SCSS to Rails::CodeStatistics
 
 __loading_begin(__FILE__)
 
@@ -40,6 +40,6 @@ end
 # Override gem definitions
 # =============================================================================
 
-override CodeStatistics => CodeStatisticsExt
+override Rails::CodeStatistics => CodeStatisticsExt
 
 __loading_end(__FILE__)

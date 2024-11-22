@@ -20,3 +20,4 @@ run ->(*) { [200, { 'Content-Type' => 'text/html' }, %w[OK]] }
 # =============================================================================
 
 run Rails.application
+Rails.application.load_server

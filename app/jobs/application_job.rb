@@ -21,9 +21,15 @@ class ApplicationJob < ActiveJob::Base
     __debug_job(job) { "DATABASE ERROR - #{error.inspect}" }
   end
 
+  # Most jobs are safe to ignore if underlying records are no longer available.
+  #discard_on ActiveJob::DeserializationError
+
   retry_on ActiveRecord::ConnectionTimeoutError do |job, error|
     __debug_job(job) { "RETRY FAILED - #{error.inspect}" }
   end
+
+  # Automatically retry jobs that encountered a deadlock
+  #retry_on ActiveRecord::Deadlocked
 
   # ===========================================================================
   # :section: ActiveJob callbacks

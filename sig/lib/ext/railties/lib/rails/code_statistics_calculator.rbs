@@ -1,5 +1,5 @@
 module CodeStatisticsCalculatorExt
-  # Replacement for CodeStatisticsCalculator#PATTERNS to include CSS.
+  # Replacement for Rails::CodeStatisticsCalculator#PATTERNS to include CSS.
   #
   # @type [Hash{Symbol=>Hash{Symbol=>Regexp}}]
   #

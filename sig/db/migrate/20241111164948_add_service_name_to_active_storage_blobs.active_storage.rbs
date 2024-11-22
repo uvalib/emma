@@ -1,0 +1,5 @@
+class AddServiceNameToActiveStorageBlobs < ActiveRecord::Migration
+  def up: () -> untyped
+
+  def down: () -> untyped
+end

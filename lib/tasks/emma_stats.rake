@@ -9,7 +9,7 @@ namespace :emma do
 
   desc 'Report code statistics (KLOCs, etc) from the application or engine'
   task :stats do
-    CodeStatistics.new(*EMMA_STATS_DIRECTORIES).to_s
+    Rails::CodeStatistics.new(*EMMA_STATS_DIRECTORIES).to_s
   end
 
 end
@@ -20,8 +20,8 @@ end
 # @type [Array<(String,String)>]
 #
 # === Implementation Notes
-# Overrides of ::CodeStatistics and ::CodeStatisticsCalculator are required
-# to report on CSS/SCSS/SASS.
+# Overrides of Rails::CodeStatistics and Rails::CodeStatisticsCalculator are
+# required to report on CSS/SCSS/SASS.
 #
 EMMA_STATS_DIRECTORIES ||= [
   %w[Controllers        app/controllers],

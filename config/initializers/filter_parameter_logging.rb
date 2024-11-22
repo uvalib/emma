@@ -10,5 +10,5 @@
 # documentation for supported notations and behaviors.
 # noinspection SpellCheckingInspection
 Rails.configuration.filter_parameters +=
-  %i[passw secret token _key crypt salt certificate otp ssn]
+  %i[passw email secret token _key crypt salt certificate otp ssn cvv cvc]
 Rails.configuration.filter_parameters = [] if not_deployed?
