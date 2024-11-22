@@ -173,6 +173,8 @@ module AccountConcern
       acct = attr[:email].presence
 
       if administrator?
+
+        # == Validate :org_id
         if oid.nil?
           attr[:org_id] = Org.none.id
           @new_admin   = true
@@ -185,6 +187,25 @@ module AccountConcern
           @new_user    = true
           Log.error("#{self}.#{__method__}: invalid: org_id #{oid.inspect}")
         end
+
+        # == Validate :role
+        if (role = RolePrototype(attr[:role])).nil?
+          attr[:role] = @new_admin ? :administrator : :standard
+        else
+          non_org   = %w[developer administrator]
+          org_roles = (RolePrototype.values - non_org).excluding('anonymous')
+          error =
+            if @new_admin && !(roles = non_org).include?(role)
+              'role must be %{roles} if no organization'
+            elsif !(roles = org_roles).include?(role)
+              "role must be %{roles} for organization #{oid}"
+            end
+          if error
+            roles = roles.map { RolePrototype(_1).label }.join(' or ')
+            invalid_attr(:role, role.label, error % { roles: roles })
+          end
+        end
+
       else # if manager?
         if oid.nil?
           attr[:org_id] = current_org_id
@@ -266,6 +287,7 @@ module AccountConcern
       skip = []
       oid  = Org.oid(attr[:org_id])
       acct = attr[:email].presence
+      role = RolePrototype(attr[:role])
 
       if administrator?
 
@@ -290,6 +312,26 @@ module AccountConcern
           # No account was specified.
         elsif acct == record.account
           skip << :email
+        end
+
+        # == Validate :role
+        if role.nil?
+          # No role was specified.
+        elsif role == record.role
+          skip << :role
+        else
+          non_org   = %w[developer administrator]
+          org_roles = (RolePrototype.values - non_org).excluding('anonymous')
+          error =
+            if @new_admin && !(roles = non_org).include?(role)
+              'role must be %{roles} if no organization'
+            elsif !(roles = org_roles).include?(role)
+              "role must be %{roles} for organization #{oid}"
+            end
+          if error
+            roles = roles.map { RolePrototype(_1).label }.join(' or ')
+            invalid_attr(:role, role.label, error % { roles: roles })
+          end
         end
 
       else
