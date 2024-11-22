@@ -41,6 +41,22 @@ class EnrollmentController < ApplicationController
   authorize_resource instance_name: :item
 
   # ===========================================================================
+  # :section: Callbacks
+  # ===========================================================================
+
+  MENUS = %i[show_select edit_select delete_select].freeze
+  OPS   = %i[new edit delete].freeze
+
+  # None
+
+  # ===========================================================================
+  # :section: Formats
+  # ===========================================================================
+
+  respond_to :html
+  respond_to :json, :xml, except: [*MENUS, *OPS]
+
+  # ===========================================================================
   # :section: Values
   # ===========================================================================
 
@@ -137,7 +153,8 @@ class EnrollmentController < ApplicationController
   #
   # @see #create_enrollment_path                  Route helper
   #
-  def create(back: welcome_path)
+  def create
+    redir = post_redirect(welcome_path)
     __log_activity
     __debug_route
     @item = create_record
@@ -145,14 +162,15 @@ class EnrollmentController < ApplicationController
     if request_xhr?
       render json: @item.as_json
     else
-      post_response(@item, redirect: back)
+      post_response(@item, redirect: redir)
     end
   rescue CanCan::AccessDenied => error
     post_response(:forbidden, error)
   rescue Record::SubmitError => error
-    post_response(:conflict, error, redirect: redir_params(action: :new))
+    redir &&= redir_params(action: :new)
+    post_response(:conflict, error, redirect: redir)
   rescue => error
-    post_response(error, redirect: back)
+    post_response(error, redirect: redir)
   end
 
   # === GET /enrollment/edit/(:id)
@@ -182,6 +200,7 @@ class EnrollmentController < ApplicationController
   # @see #update_enrollment_path          Route helper
   #
   def update
+    redir = post_redirect(edit_select_enrollment_path)
     __log_activity
     __debug_route
     __debug_request
@@ -189,7 +208,7 @@ class EnrollmentController < ApplicationController
     if request_xhr?
       render json: @item.as_json
     else
-      post_response(:ok, @item, redirect: enrollment_index_path)
+      post_response(:ok, @item, redirect: redir)
     end
   rescue CanCan::AccessDenied => error
     post_response(:forbidden, error)
@@ -223,17 +242,18 @@ class EnrollmentController < ApplicationController
   #
   # @see #destroy_enrollment_path           Route helper
   #
-  def destroy(back: delete_select_enrollment_path)
+  def destroy
+    redir = post_redirect(delete_select_enrollment_path)
     __log_activity
     __debug_route
     @list = destroy_records
-    post_response(:ok, @list, redirect: back)
+    post_response(:ok, @list, redirect: redir)
   rescue CanCan::AccessDenied => error
     post_response(:forbidden, error)
   rescue Record::SubmitError => error
-    post_response(:conflict, error, redirect: back)
+    post_response(:conflict, error, redirect: redir)
   rescue => error
-    post_response(error, redirect: back)
+    post_response(error, redirect: redir)
   end
 
   # ===========================================================================

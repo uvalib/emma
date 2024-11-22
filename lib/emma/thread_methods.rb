@@ -24,8 +24,9 @@ module Emma::ThreadMethods
   # @return [String]
   #
   def thread_name(thread = nil)
-    thread ||= Thread.current
-    thread.name.sub(/^GoodJob::Scheduler[^)]+\)/, 'GoodJob')
+    thread ||= Thread.current or return '-'
+    name     = thread.name    or return '(thread)'
+    name.sub(/^GoodJob::Scheduler[^)]+\)/, 'GoodJob')
   end
 
 end

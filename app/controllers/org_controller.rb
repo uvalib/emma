@@ -145,6 +145,7 @@ class OrgController < ApplicationController
   # @see #create_org_path                     Route helper
   #
   def create
+    redir = post_redirect
     __log_activity
     __debug_route
     @item = create_record
@@ -152,14 +153,14 @@ class OrgController < ApplicationController
     if request_xhr?
       render json: @item.as_json
     else
-      post_response(@item, redirect: org_index_path)
+      post_response(@item, redirect: redir)
     end
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error)
+    post_response(:forbidden, error, redirect: redir)
   rescue Record::SubmitError => error
-    post_response(:conflict, error)
+    post_response(:conflict, error, redirect: redir)
   rescue => error
-    post_response(error)
+    post_response(error, redirect: redir)
   end
 
   # === GET /org/edit/(:id)
@@ -191,6 +192,7 @@ class OrgController < ApplicationController
   # @see #update_org_path                     Route helper
   #
   def update
+    redir = post_redirect(edit_select_org_path)
     __log_activity
     __debug_route
     __debug_request
@@ -199,14 +201,14 @@ class OrgController < ApplicationController
     if request_xhr?
       render json: @item.as_json
     else
-      post_response(:ok, @item, redirect: org_index_path)
+      post_response(:ok, @item, redirect: redir)
     end
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error)
+    post_response(:forbidden, error, redirect: redir)
   rescue Record::SubmitError => error
-    post_response(:conflict, error)
+    post_response(:conflict, error, redirect: redir)
   rescue => error
-    post_response(error)
+    post_response(error, redirect: redir)
   end
 
   # === GET /org/delete/(:id)
@@ -234,18 +236,19 @@ class OrgController < ApplicationController
   #
   # @see #destroy_org_path            Route helper
   #
-  def destroy(back: delete_select_org_path)
+  def destroy
+    redir = post_redirect(delete_select_org_path)
     __log_activity
     __debug_route
     raise config_term(:org, :self_delete) if current_id?
     @list = destroy_records
-    post_response(:ok, @list, redirect: back)
+    post_response(:ok, @list, redirect: redir)
   rescue CanCan::AccessDenied => error
     post_response(:forbidden, error)
   rescue Record::SubmitError => error
-    post_response(:conflict, error, redirect: back)
+    post_response(:conflict, error, redirect: redir)
   rescue => error
-    post_response(error, redirect: back)
+    post_response(error, redirect: redir)
   end
 
   # ===========================================================================

@@ -354,12 +354,16 @@ module SessionConcern
   #
   def fallback_error_handler(exception)
     __debug_exception('[fallback] RESCUE_FROM', exception, trace: true)
-    self.status = :internal_server_error
-    if rendering_html?
+    self.status = :not_found
+    if posting_html?
+      redirect_back_or_to(root_path, alert: exception.message)
+    elsif rendering_html?
       flash_now_alert(exception)
       render
-    elsif posting_html?
-      redirect_back_or_to(root_path, alert: exception.message)
+    elsif rendering_json?
+      render json: { ERROR: exception.message }
+    elsif rendering_xml?
+      render xml: make_xml({ ERROR: exception.message })
     end
   rescue => error
     error_handler_deep_fallback(__method__, error)

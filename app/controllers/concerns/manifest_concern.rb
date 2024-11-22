@@ -110,9 +110,10 @@ module ManifestConcern
     return super if blk
     authorized_session
     super do |attr|
+      current_user_id  = current_user.id.to_s
+      attr[:user_id] ||= current_user_id
       attr[:name]    ||= Manifest.default_name
-      attr[:user_id] ||= current_user.id
-      authorized_org_manager(attr) unless attr[:user_id] == current_user.id
+      authorized_org_manager(attr) unless attr[:user_id] == current_user_id
     end
   end
 
@@ -187,8 +188,9 @@ module ManifestConcern
   def update_record(item = nil, fatal: true, **opt, &blk)
     return super if blk
     super do |_record, attr|
-      attr[:user_id] ||= current_user.id
-      unless attr[:user_id] == current_user.id
+      current_user_id  = current_user.id.to_s
+      attr[:user_id] ||= current_user_id
+      unless attr[:user_id] == current_user_id
         user = User.find_by(id: attr[:user_id])
         authorized_org_member(user)
       end

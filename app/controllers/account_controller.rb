@@ -203,17 +203,18 @@ class AccountController < ApplicationController
   # @see #update_account_path                 Route helper
   #
   def update
+    redir = post_redirect(edit_select_account_path)
     __log_activity
     __debug_route
     __debug_request
     @item = update_record
     generate_new_org_email(@item) if new_org_email?
     generate_new_man_email(@item) if new_man_email?
-    post_response(:ok, @item)
+    post_response(:ok, @item, redirect: redir)
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error)
+    post_response(:forbidden, error, redirect: redir)
   rescue => error
-    post_response(error, redirect: edit_select_account_path)
+    post_response(error, redirect: redir)
   end
 
   # === GET /account/delete/(:id)
@@ -245,18 +246,19 @@ class AccountController < ApplicationController
   #
   # @see #destroy_account_path            Route helper
   #
-  def destroy(back: delete_select_account_path)
+  def destroy
+    redir = post_redirect(delete_select_account_path)
     __log_activity
     __debug_route
     raise config_term(:account, :self_delete) if current_id?
     @list = destroy_records
-    post_response(:ok, @list, redirect: back)
+    post_response(:ok, @list, redirect: redir)
   rescue CanCan::AccessDenied => error
     post_response(:forbidden, error)
   rescue Record::SubmitError => error
-    post_response(:conflict, error, redirect: back)
+    post_response(:conflict, error, redirect: redir)
   rescue => error
-    post_response(error, redirect: back)
+    post_response(error, redirect: redir)
   end
 
   # ===========================================================================

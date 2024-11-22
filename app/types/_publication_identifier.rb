@@ -146,6 +146,10 @@ class PublicationIdentifier < ScalarType
 
     # Create a new instance.
     #
+    # If *v* is an un-prefixed 10-digit value (which could be interpreted as
+    # either an OCLC or an LCCN missing its alphabetic prefix), if the leading
+    # digits could indicate a 4-digit year then LCCN is favored.
+    #
     # @param [any, nil]       v       Identifier number.
     # @param [Symbol, String] type    Determined from *v* if missing.
     #
@@ -154,9 +158,23 @@ class PublicationIdentifier < ScalarType
     #
     def create(v, type = nil, **)
       prefix, value = type ? [type, v] : parts(v)
-      return                       if value.blank?
-      value = "#{prefix}:#{value}" if prefix.present?
-      identifier_classes.find { _1.candidate?(value) }&.new(value)
+      if value.present?
+        value = "#{prefix}:#{value}" if prefix.present?
+        candidates = identifier_classes.select { _1.candidate?(value) }
+        if candidates.present?
+          ambiguous = prefix.blank?
+          ambiguous &&= candidates.include?(Oclc) && candidates.include?(Lccn)
+          candidates.map! { _1.new(value) }
+          valid_candidates = candidates.select(&:valid?)
+          if ambiguous && (lccn = valid_candidates.find { _1.is_a?(Lccn) })
+            n = lccn.value
+            if (n.size == 10) && (n.start_with?('1') || n.start_with?('20'))
+              valid_candidates = [lccn]
+            end
+          end
+          valid_candidates.first || candidates.first
+        end
+      end
     end
 
     # =========================================================================

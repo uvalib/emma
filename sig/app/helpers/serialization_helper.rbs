@@ -9,27 +9,15 @@ module SerializationHelper
   #
   def rendering_html?: (?(symHash|nil) p) -> bool
 
-  # Indicate whether the ultimate target format is something other than HTML.
-  #
-  # @param [Hash, nil] p              Default: `params`.
-  #
-  # @note Currently unused.
-  #
-  def rendering_non_html?: (?(symHash|nil) p) -> bool
-
   # Indicate whether the ultimate target format is JSON.
   #
   # @param [Hash, nil] p              Default: `params`.
-  #
-  # @note Currently unused.
   #
   def rendering_json?: (?(symHash|nil) p) -> bool
 
   # Indicate whether the ultimate target format is XML.
   #
   # @param [Hash, nil] p              Default: `params`.
-  #
-  # @note Currently unused.
   #
   def rendering_xml?: (?(symHash|nil) p) -> bool
 

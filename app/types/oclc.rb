@@ -128,8 +128,11 @@ class Oclc < PublicationIdentifier
     #
     def candidate?(v)
       v = v.to_s.strip
-      v.sub!(OCLC_PREFIX, '')
-      v.match?(OCLC_CANDIDATE)
+      if v.sub!(/^on:?\s*/i, '')
+        v.match?(/^\d{10}$/)
+      else
+        v.sub!(OCLC_PREFIX, '').present? || v.match?(OCLC_CANDIDATE)
+      end
     end
 
     # Extract the base identifier of a possible OCN.

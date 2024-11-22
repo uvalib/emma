@@ -218,16 +218,17 @@ class UploadController < ApplicationController
   # @see UploadController#new
   #
   def create
+    redir = post_redirect
     __log_activity
     __debug_route
     @item = create_record
-    post_response(:ok, @item, redirect: upload_index_path)
+    post_response(@item, redirect: redir)
   rescue CanCan::AccessDenied => error
-    post_response(:forbidden, error)
+    post_response(:forbidden, error, redirect: redir)
   rescue UploadWorkflow::SubmitError, Record::SubmitError => error
-    post_response(:conflict, error)
+    post_response(:conflict, error, redirect: redir)
   rescue => error
-    post_response(error)
+    post_response(error, redirect: redir)
   end
 
   # === GET /upload/edit/(:id)
@@ -260,11 +261,12 @@ class UploadController < ApplicationController
   # @see UploadController#edit
   #
   def update
+    redir = post_redirect(edit_select_org_path)
     __log_activity
     __debug_route
     __debug_request
     @item = update_record
-    post_response(:ok, @item, redirect: upload_index_path)
+    post_response(:ok, @item, redirect: redir)
   rescue CanCan::AccessDenied => error
     post_response(:forbidden, error)
   rescue UploadWorkflow::SubmitError, Record::SubmitError => error
@@ -307,18 +309,19 @@ class UploadController < ApplicationController
   # @see #destroy_upload_path         Route helper
   # @see UploadController#delete
   #
-  def destroy(back: delete_select_upload_path)
+  def destroy
+    redir = post_redirect(delete_select_upload_path)
     __log_activity
     __debug_route
     @list = destroy_records
     raise_failure(:file_id) if @list.blank?
-    post_response(:ok, @list, redirect: back)
+    post_response(:ok, @list, redirect: redir)
   rescue CanCan::AccessDenied => error
     post_response(:forbidden, error)
   rescue UploadWorkflow::SubmitError, Record::SubmitError => error
-    post_response(:conflict, error, redirect: back)
+    post_response(:conflict, error, redirect: redir)
   rescue => error
-    post_response(:not_found, error, redirect: back)
+    post_response(:not_found, error, redirect: redir)
   end
 
   # ===========================================================================

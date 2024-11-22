@@ -199,6 +199,18 @@ module ResponseConcern
     end
   end
 
+  # The redirect to perform after completing a POST/PUT/PATCH.
+  #
+  # @param [String] fallback          If `params[:redirect]` is not present.
+  #
+  # @return [String]
+  # @return [false]                   If responding with JSON or XML.
+  #
+  def post_redirect(fallback = nil, &blk)
+    return false unless request.format.html?
+    params[:redirect] || fallback || blk&.call || default_fallback_location
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
