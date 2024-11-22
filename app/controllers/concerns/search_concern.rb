@@ -70,12 +70,26 @@ module SearchConcern
   # service and *false* everywhere else.
   #
   def index_search(titles: nil, save: true, scores: nil, canonical: nil, **opt)
-
+    save_search(**opt)      if save
     titles = title_results? if titles.nil?
     scores = search_debug?  if scores.nil? && SEARCH_GENERATE_SCORES
 
-    save_search(**opt)      if save
+    # Replace "page" parameter with paginator offset unless an explicit
+    # "offset" parameter was given.
+    if (off = positive(opt[:offset]))
+      unless off == (o = paginator.page_offset)
+        Log.warn { "#{__method__}: URL offset #{off} but paginator has #{o}" }
+      end
+    end
+    if (page = positive(opt.delete(:page)))
+      unless page == (p = paginator.page_number)
+        Log.error { "#{__method__}: URL page #{page} but paginator has #{p}" }
+      end
+      opt[:offset] = paginator.page_offset unless off
+      opt[:limit]  = paginator.page_size   unless opt.key?(:limit)
+    end
 
+    # Get the search results from the EMMA Unified Index.
     list = search_api.get_records(**opt)
     if list.error?
       flash_now_alert(list.exec_report)
