@@ -57,6 +57,8 @@ GOOD_JOB_ENV_KEY_MAP = {
 
 Rails.application.configure do
 
+  testing = Rails.env.test? || in_debugger?
+
   false_or_integer = ->(val) {
     case
       when true?(val)  then nil
@@ -76,9 +78,9 @@ Rails.application.configure do
           when :cleanup_interval_seconds                  then false_or_integer.(val)
           when :cleanup_preserved_jobs_before_seconds_ago then val&.to_i
           when :cron                                      then val
-          when :enable_cron                               then !false?(val) unless in_debugger? || Rails.env.test?
+          when :enable_cron                               then !false?(val) unless testing
           when :enable_listen_notify                      then !false?(val) unless val.nil?
-          when :execution_mode                            then val&.to_sym || (in_debugger? ? :inline : :async)
+          when :execution_mode                            then val&.to_sym || (testing ? :inline : :async)
           when :idle_timeout                              then val&.to_i
           when :max_cache                                 then val&.to_i
           when :max_threads                               then nil # NOTE: must be set from config/env_vars.rb

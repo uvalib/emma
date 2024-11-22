@@ -442,9 +442,9 @@ module SubmissionService::Action::Submit
   # @return [StepResult]
   #
   def await_upload(records, wait: 1, **opt)
-    $stderr.puts "=== STEP #{__method__} | #{Emma::ThreadMethods.thread_name} | #{records.size} recs = #{records.map { manifest_item_id(_1) }} = #{records.inspect.truncate(1024)}" # TODO: testing - remove
     opt[:meth]    = __method__
     opt[:success] = config_term(:submission, :service, :uploaded)
+    trace_step(records, **opt)
     run_step(records, wait: wait, **opt) do |_id, rec|
       rec.file_uploaded_now?
     end
@@ -458,9 +458,9 @@ module SubmissionService::Action::Submit
   # @return [StepResult]
   #
   def promote_file(records, **opt)
-    $stderr.puts "=== STEP #{__method__} | #{Emma::ThreadMethods.thread_name} | #{records.size} recs = #{records.map { manifest_item_id(_1) }} = #{records.inspect.truncate(1024)}" # TODO: testing - remove
     opt[:meth]    = __method__
     opt[:success] = config_term(:submission, :service, :stored)
+    trace_step(records, **opt)
     run_step(records, **opt) do |_id, rec|
       rec.promote_file(fatal: true)
       rec.update_columns(file_data: rec.file_data)
@@ -486,7 +486,7 @@ module SubmissionService::Action::Submit
   #
   def add_to_index(records, **opt)
     fields = records.map(&:emma_metadata)
-    $stderr.puts "=== STEP #{__method__} | #{Emma::ThreadMethods.thread_name} | #{records.size} recs = #{records.map { manifest_item_id(_1) }} | #{fields.size} fields = #{fields.inspect.truncate(1024)}" # TODO: testing - remove
+    trace_step(records, fields, meth: __method__)
     result = IngestService.instance.put_records(*fields)
     remaining, failure = process_ingest_errors(result, *records)
 
@@ -584,7 +584,7 @@ module SubmissionService::Action::Submit
     user    = user_id(user) unless user.is_a?(Integer)
     sid_rec = records.map { [_1.submission_id, _1] }.to_h
     fields  = records.map { entry_fields(_1, user: user) }
-    $stderr.puts "=== STEP #{__method__} | #{Emma::ThreadMethods.thread_name} | #{records.size} recs = #{records.map { manifest_item_id(_1) }} | #{fields.size} fields = #{fields.inspect.truncate(1024)}" # TODO: testing - remove
+    trace_step(records, fields, meth: __method__)
     rows    = Upload.insert_all(fields, returning: ENTRY_COLUMNS).rows
 
     # Add successful submissions to the method result, and update and persist
@@ -757,6 +757,30 @@ module SubmissionService::Action::Submit
     failure.merge!(remaining.transform_values { msg[:timeout] })
     success.except!(*failure.keys).transform_values! { msg[:success] }
     StepResult.new(success: success, failure: failure)
+  end
+
+  # Emit a console line tracing the *meth* submission step.
+  #
+  # @param [Array]      records
+  # @param [Array, nil] fields
+  # @param [Symbol]     meth
+  #
+  # @return [void]
+  #
+  def trace_step(records, fields = nil, meth:, **)
+    thread = Emma::ThreadMethods.thread_name
+    r_cnt  = records.size
+    r_ids  = records.map { manifest_item_id(_1) }
+    r_data = records.inspect.truncate(1024)
+    value  =
+      if fields
+        f_cnt  = fields.size
+        f_data = fields.inspect.truncate(1024)
+        "#{r_cnt} recs = #{r_ids} | #{f_cnt} fields = #{f_data}"
+      else
+        "#{r_cnt} recs = #{r_ids} = #{r_data}"
+      end
+    $stderr.puts "=== STEP #{meth} | #{thread} | #{value}"
   end
 
   # ===========================================================================

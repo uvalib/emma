@@ -547,6 +547,7 @@ module GoodJob
     end
   end
   class Batch
+    def self.enqueue: (?Array[ActiveJob::Base] active_jobs, **untyped properties) ?{ (GoodJob::Batch batch) -> Array[ActiveJob::Base] } -> GoodJob::Batch
   end
   class BaseRecord
   end

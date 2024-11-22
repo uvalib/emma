@@ -174,7 +174,7 @@ class SubmitJob < ApplicationJob
   # @param [Array] args               Assigned to ActiveJob::Core#arguments.
   # @param [Hash]  opt
   #
-  # @return [GoodJob::BatchRecord]
+  # @return [GoodJob::Batch]
   # @return [SubmitJob, false]
   #
   def self.perform_later(*args, **opt)
@@ -194,25 +194,34 @@ class SubmitJob < ApplicationJob
     manifest = job_opt[:manifest_id] ||= request.manifest_id
     job_opt.merge!(opt)
 
-    # Spawn a job for each batch.
+    # Create the batch.
     properties = job_opt.merge(count: count, on_finish: SubmitJobCallbackJob)
     properties[:on_success] = properties[:on_finish] # NOTE: trial; may go away
     properties[:on_discard] = properties[:on_finish] # NOTE: trial; may go away
-    GoodJob::Batch.enqueue(**properties) {
-      requests.each do |req|
-        perform_later(req, *args, **job_opt, job_type: :worker)
-      end
-    }.tap { |batch|
+    GoodJob::Batch.new(**properties).tap do |batch|
+
+      # Generate the record ID that will be reported as the batch :job_id
+      # (which is not the same as the ActiveJob identity).
+      batch.save
+
       # Send an initial response back to the client.
       payload = {
         data:        requests,
-        job_id:      batch.id, # NOTE: not correlated with ActiveJob identity
+        job_id:      batch.id,
         job_type:    job_type,
         manifest_id: manifest,
         start_time:  start,
       }
       SubmitChannel.initial_response(payload, **opt)
-    }
+
+      # Spawn a job for each sub-request.
+      batch.enqueue do
+        requests.each do |req|
+          perform_later(req, *args, **job_opt, job_type: :worker)
+        end
+      end
+
+    end
   end
 
 end

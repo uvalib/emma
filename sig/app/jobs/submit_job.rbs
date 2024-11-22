@@ -49,11 +49,11 @@ class SubmitJob < ApplicationJob
   # @param [Array] args               Assigned to ActiveJob::Core#arguments.
   # @param [Hash]  opt
   #
-  # @return [GoodJob::BatchRecord]
+  # @return [GoodJob::Batch]
   # @return [SubmitJob, false]
   #
   def self.perform_later
-    : (SubmissionService::BatchSubmitRequest first, *untyped rest, **untyped opt) -> GoodJob::BatchRecord
+    : (SubmissionService::BatchSubmitRequest first, *untyped rest, **untyped opt) -> GoodJob::Batch
     | (                                             *untyped args, **untyped opt) -> (SubmitJob | false)
 end
 

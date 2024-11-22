@@ -97,7 +97,7 @@ Rails.application.configure do
   # ActiveJob
   # ===========================================================================
 
-  config.active_job.queue_adapter = :test
+  # See config/application.rb
 
   # ===========================================================================
   # ActionCable

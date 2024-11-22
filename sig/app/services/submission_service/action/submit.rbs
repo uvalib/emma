@@ -277,6 +277,16 @@ module SubmissionService::Action::Submit
   #
   def run_step: (Array[ManifestItem] records, ?wait: Integer|Float|nil, **untyped opt) -> StepResult
 
+  # Emit a console line tracing the *meth* submission step.
+  #
+  # @param [Array]      records
+  # @param [Array, nil] fields
+  # @param [Symbol]     meth
+  #
+  # @return [void]
+  #
+  def trace_step: (anyArray records, ?(anyArray|nil) fields, meth: Symbol, **untyped _ignored) -> void
+
   # Encapsulates the properties of a submission step.
   #
   class StepResult < ::Hash[Symbol,untyped]
