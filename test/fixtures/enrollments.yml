@@ -1,0 +1,40 @@
+# test/fixtures/enrollments.yml
+#
+# @see https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:              &ONE
+  short_name:     'ONE'
+  long_name:      'University of One'
+  ip_domain:      ['one_university.edu']
+  org_users:      [{ email: 'user@one_university.edu', first_name: 'Guy', last_name: 'Caballero' }]
+  request_notes:  'line_1; line_2; line_3'
+
+two:              &TWO
+  short_name:     'TWO'
+  long_name:      'Two University'
+  ip_domain:      ['two_university.edu']
+  org_users:      [{ email: 'user@two_university.edu', first_name: 'Guy', last_name: 'Caballero' }]
+  request_notes:  'line_1; line_2; line_3'
+
+three:            &THREE
+  short_name:     'THR'
+  long_name:      'Third University'
+  ip_domain:      ['three_university.edu']
+  org_users:      [{ email: 'user@three_university.edu', first_name: 'Guy', last_name: 'Caballero' }]
+  request_notes:  'line_1; line_2; line_3'
+
+# =============================================================================
+# Examples
+# =============================================================================
+
+example:
+  <<:           *ONE
+  long_name:    'University of One - example'
+
+edit_example:
+  <<:           *TWO
+  long_name:    'Two University - edit example'
+
+delete_example:
+  <<:           *THREE
+  long_name:    'Third University - delete example'

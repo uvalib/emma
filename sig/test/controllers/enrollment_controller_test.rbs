@@ -1,0 +1,37 @@
+class EnrollmentControllerTest < ApplicationControllerTestCase
+  MODEL: Class
+
+  CTRLR: Symbol
+
+  PRM: symHash
+
+  OPT: symHash
+
+  TEST_READERS: symArray
+
+  TEST_WRITERS: symArray
+
+  READ_FORMATS: symArray | Symbol
+
+  WRITE_FORMATS: symArray | Symbol
+
+  NO_READ: symArray
+
+  NO_WRITE: symArray
+
+  # The organization for users in #ALL_TEST_USERS.
+  TEST_ORG: Symbol
+
+  # An organization different from #TEST_ORG.
+  OTHER_ORG: Symbol
+
+  @readers: Array[User|nil]
+
+  @writers: Array[User|nil]
+
+  @generate: OrgSampleGenerator
+
+  @test_org: Enrollment
+
+  @other_org: Enrollment
+end
