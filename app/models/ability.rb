@@ -171,9 +171,9 @@ class Ability
       when :developer     then act_as_developer(user)
       when :administrator then act_as_administrator(user)
       when :manager       then act_as_manager(user)
-      when :member        then act_as_full_member(user)
-      when :staff         then act_as_staff(user)
-      when :guest         then act_as_guest(user)
+      when :standard      then act_as_standard(user)
+      when :uploadOnly    then act_as_upload_only(user)
+      when :observer      then act_as_observer(user)
       else                     act_as_anonymous
     end
   end
@@ -238,7 +238,7 @@ class Ability
   def act_as_manager(user, **constraints)
     constraints[:meth] ||= __method__
     set_org!(constraints, user) or return
-    act_as_full_member(user, **constraints)
+    act_as_standard(user, **constraints)
     can_manage_user(**constraints)
     can_manage_org(**constraints)
     cannot :edit_select,   Org
@@ -253,24 +253,24 @@ class Ability
   #
   # @return [void]
   #
-  def act_as_full_member(user, **constraints)
+  def act_as_standard(user, **constraints)
     constraints[:meth] ||= __method__
-    act_as_staff(user, **constraints)
+    act_as_upload_only(user, **constraints)
     can :download, Upload
     can :retrieve, Upload
   end
 
-  # Assign the ability to perform as an EMMA member organization staff user who
-  # is able to upload items but without the permission to download.
+  # Assign the ability to perform as an EMMA member organization user who is
+  # able to upload items but without the permission to download.
   #
   # @param [User] user
   # @param [Hash] constraints
   #
   # @return [void]
   #
-  def act_as_staff(user, **constraints)
+  def act_as_upload_only(user, **constraints)
     constraints[:meth] ||= __method__
-    act_as_guest(user, **constraints)
+    act_as_observer(user, **constraints)
     can_manage_account(user, **constraints)
     can_manage_user_submissions(user, **constraints)
     can_manage_group_submissions(user, **constraints)
@@ -283,7 +283,7 @@ class Ability
   #
   # @return [void]
   #
-  def act_as_guest(user, **constraints)
+  def act_as_observer(user, **constraints)
     constraints[:meth] ||= __method__
     act_as_anonymous(user, **constraints)
     act_as_org_user(user, **constraints)

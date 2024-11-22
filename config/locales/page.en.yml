@@ -2044,7 +2044,7 @@ en:
 
             success:        'Created manifest %{name}'
             failure:        'Could not save manifest: %{error}'
-            role:           staff
+            role:           uploadOnly
 
           # ===================================================================
 
@@ -2084,7 +2084,7 @@ en:
 
             success:        'Updated manifest %{name}'
             failure:        'Could not save changes: %{error}'
-            role:           staff
+            role:           uploadOnly
 
           # ===================================================================
 
@@ -2123,7 +2123,7 @@ en:
 
             success:        'Removed manifest %{name}'
             failure:        'Could not remove manifest: %{error}'
-            role:           staff
+            role:           uploadOnly
 
           # ===================================================================
 
@@ -2169,7 +2169,7 @@ en:
 
             success:        'Manifest submission started'
             failure:        'Could not submit manifest: %{error}'
-            role:           staff
+            role:           uploadOnly
 
           # ===================================================================
 
@@ -2338,7 +2338,7 @@ en:
 
             success:        'Item created'
             failure:        'Could not create item: %{error}'
-            role:           staff
+            role:           uploadOnly
 
           # ===================================================================
 
@@ -2359,7 +2359,7 @@ en:
 
             success:        'Changes saved'
             failure:        'Could not save changes: %{error}'
-            role:           staff
+            role:           uploadOnly
 
           # ===================================================================
 
@@ -2377,7 +2377,7 @@ en:
 
             success:        'Item removed'
             failure:        'Could not remove item: %{error}'
-            role:           staff
+            role:           uploadOnly
 
           # ===================================================================
 
@@ -2412,7 +2412,7 @@ en:
 
             success:        'Added manifest items from: %{names}'
             failure:        'Could not create items: %{error}'
-            role:           staff
+            role:           uploadOnly
 
           # ===================================================================
 
@@ -2450,7 +2450,7 @@ en:
 
             success:        'Modified manifest items from: %{names}'
             failure:        'Could not modify items: %{error}'
-            role:           staff
+            role:           uploadOnly
 
           # ===================================================================
 
@@ -2482,7 +2482,7 @@ en:
             cancel:
               <<:           *MANIFEST_ITEM_BULK_FORM_CANCEL
 
-            role:           staff
+            role:           uploadOnly
 
           # ===================================================================
 
@@ -3894,7 +3894,7 @@ en:
 
             success:        'Created EMMA entry %{name}'
             failure:        'Could not create EMMA entry: %{error}'
-            role:           staff
+            role:           uploadOnly
 
           # ===================================================================
 
@@ -3946,7 +3946,7 @@ en:
 
             success:        'Updated EMMA entry %{name}'
             failure:        'Could not update EMMA entry: %{error}'
-            role:           staff
+            role:           uploadOnly
 
           # ===================================================================
 
@@ -4005,7 +4005,7 @@ en:
 
             success:        'Removed EMMA entry %{name}'
             failure:        'Could not remove EMMA entry: %{error}'
-            role:           staff
+            role:           uploadOnly
 
           # ===================================================================
 
@@ -4058,7 +4058,7 @@ en:
 
             <<: *EXPERIMENTAL
 
-            role:           staff
+            role:           uploadOnly
 
           # ===================================================================
 
@@ -4090,7 +4090,7 @@ en:
 
             <<: *EXPERIMENTAL
 
-            role:           staff
+            role:           uploadOnly
 
           # ===================================================================
 
@@ -4137,7 +4137,7 @@ en:
 
             <<: *EXPERIMENTAL
 
-            role:           staff
+            role:           uploadOnly
 
           # ===================================================================
 
@@ -4149,7 +4149,7 @@ en:
               >-
               Update submissions' entries in the EMMA Unified Index.
             description:    'TODO: ???'
-            role:           staff
+            role:           uploadOnly
 
           # ===================================================================
 

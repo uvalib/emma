@@ -97,6 +97,7 @@ class Field::Type
     @base   = self.class.base             unless @base.is_a?(Class)
     @value  = clean(value)
     @value  = @range.presence             if @value.nil?
+    @value  = @base.cast(@value)          if @base == RolePrototype
     @valid  = !@value.nil?
     @option = opt
   end

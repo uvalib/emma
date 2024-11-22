@@ -117,13 +117,13 @@ module UserConcern
       warden.user || warden.set_user(user_from_session, run_callbacks: false)
   end
 
-  # Authenticate then ensure that the user does not have the :staff role.
+  # Authenticate then ensure that the user does not have the :uploadOnly role.
   #
   # @param [Hash] opt                 Passed to #authenticate_user!
   #
   def authenticate_download!(**opt)
     authenticate_user!(**opt)
-    role_failure if current_user.role_prototype == :staff
+    role_failure if current_user.role_prototype == :uploadOnly
   end
 
   # Authenticate then ensure that the user has the :administrator role.

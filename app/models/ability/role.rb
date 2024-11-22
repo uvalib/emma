@@ -40,7 +40,7 @@ module Ability::Role
   #
   CAPABILITY_ROLE =
     CAPABILITY_CONFIG.transform_values { |entry|
-      entry[:prototype]&.to_sym || :guest
+      entry[:prototype]&.to_sym || :observer
     }.deep_freeze
 
   if sanity_check?

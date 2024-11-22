@@ -17,27 +17,35 @@ test_guest_1:   &GUEST
   email:        test_guest_1@one_university.edu
   first_name:   EMMA Automated
   last_name:    Test Organization Guest
+  phone:        '500-555-0001'
+  address:      'City, ST 90001'
   org:          one
-  role:         guest
+  role:         observer
 
 test_staff_1:   &STAFF
   email:        test_staff_1@one_university.edu
   first_name:   EMMA Automated
   last_name:    Test Organization Staff
+  phone:        '500-555-0002'
+  address:      'City, ST 90002'
   org:          one
-  role:         staff
+  role:         uploadOnly
 
 test_dso_1:     &MEMBER
   email:        test_dso_1@one_university.edu
   first_name:   EMMA Automated
   last_name:    Test Organization DSO
+  phone:        '500-555-0003'
+  address:      'City, ST 90003'
   org:          one
-  role:         member
+  role:         standard
 
 test_man_1:     &MAN
   email:        test_man_1@one_university.edu
   first_name:   EMMA Automated
   last_name:    Test Organization Manager
+  phone:        '500-555-0004'
+  address:      'City, ST 90004'
   org:          one
   role:         manager
 
@@ -73,14 +81,14 @@ test_adm:       &ADM
   email:        test_adm@virginia.edu
   first_name:   EMMA Automated
   last_name:    Test EMMA Administrator
-  org:          ~
   role:         administrator
+  org_id:       0 # NOTE: using "org: ~" doesn't work properly.
 
 test_dev:       &DEV
+  <<:           *ADM
   email:        test_dev@virginia.edu
   first_name:   EMMA Automated
   last_name:    Test EMMA Developer
-  org:          ~
   role:         developer
 
 # =============================================================================
@@ -89,15 +97,15 @@ test_dev:       &DEV
 
 example:        &EXAMPLE
   <<:           *MAN
-  email:        test_example@three_university.edu
-  org:          three
+  email:        test_example@one_university.edu
+  org:          one
 
 edit_example:
   <<:           *MEMBER
-  email:        test_edit_example@three_university.edu
-  org:          three
+  email:        test_edit_example@one_university.edu
+  org:          one
 
 delete_example:
   <<:           *STAFF
-  email:        test_delete_example@three_university.edu
-  org:          three
+  email:        test_delete_example@one_university.edu
+  org:          one

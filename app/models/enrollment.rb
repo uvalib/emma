@@ -109,7 +109,7 @@ class Enrollment < ApplicationRecord
   #
   def prepare_user_list(users)
     users = Array.wrap(users).compact_blank.presence or return [{}]
-    users.map! { json_parse(_1, log: false).reverse_merge!(role: 'member') }
+    users.map! { json_parse(_1, log: false).reverse_merge!(role: 'standard') }
     users.first[:role] = 'manager' if users.none? { _1[:role] == 'manager' }
     # noinspection RubyMismatchedReturnType
     users

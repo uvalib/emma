@@ -70,7 +70,7 @@ class AccountMailerPreview < ActionMailer::Preview
       phone:        '(500) 555-1212',
       address:      'City, ST 12345',
       status:       :active,
-      role:         :member,
+      role:         :standard,
       created_at:   (now = DateTime.now),
       updated_at:   now,
       status_date:  now,

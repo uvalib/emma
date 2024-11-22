@@ -59,7 +59,7 @@ module UserConcern
   #
   def update_user: () -> void
 
-  # Authenticate then ensure that the user does not have the :staff role.
+  # Authenticate then ensure that the user does not have the :uploadOnly role.
   #
   # @param [Hash] opt                 Passed to #authenticate_user!
   #

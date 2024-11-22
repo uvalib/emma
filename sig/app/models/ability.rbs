@@ -149,17 +149,17 @@ class Ability
   #
   # @return [void]
   #
-  def act_as_full_member: (User user, **untyped constraints) -> void
+  def act_as_standard: (User user, **untyped constraints) -> void
 
-  # Assign the ability to perform as an EMMA member organization staff user who
-  # is able to upload items but without the permission to download.
+  # Assign the ability to perform as an EMMA member organization user who is
+  # able to upload items but without the permission to download.
   #
   # @param [User] user
   # @param [Hash] constraints
   #
   # @return [void]
   #
-  def act_as_staff: (User user, **untyped constraints) -> void
+  def act_as_upload_only: (User user, **untyped constraints) -> void
 
   # Assign the ability to perform as a guest of an EMMA member organization.
   #
@@ -168,7 +168,7 @@ class Ability
   #
   # @return [void]
   #
-  def act_as_guest: (User user, **untyped constraints) -> void
+  def act_as_observer: (User user, **untyped constraints) -> void
 
   # Assign the ability to perform as an anonymous (unauthenticated) user.
   #

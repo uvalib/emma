@@ -8,4 +8,14 @@
 # @see Ability
 #
 class RolePrototype < EnumType
+  # This override is a stopgap to allow existing database records with the old
+  # value to be interpreted as the new value.
+  #
+  # @param [String, Symbol, nil] key
+  #
+  # @return [String]
+  #
+  def self.comparable: ((String|Symbol|nil) v) -> String
+
+  def comparable: ((String|Symbol|nil) v) -> String
 end

@@ -21,24 +21,24 @@ en:
             capability:
               - searching
 
-          guest:
-            label:        'Guest'
-            brief:        'Guest'
+          observer:
+            label:        'Observer'
+            brief:        'Obs'
             description:  'An organization user not involved in submitting to EMMA'
             capability:
               - searching
 
-          staff:
-            label:        'Staff'
-            brief:        'Staff'
+          uploadOnly:
+            label:        'UploadOnly'
+            brief:        'Upl'
             description:  'An organization user involved in submitting to EMMA but not authorized to download'
             capability:
               - searching
               - submitting
 
-          member:
-            label:        'Member'
-            brief:        'Member'
+          standard:
+            label:        'Standard'
+            brief:        'Std'
             description:  'A full organization user'
             capability:
               - searching
@@ -57,7 +57,7 @@ en:
 
           administrator:
             label:        'Administrator'
-            brief:        'Admin'
+            brief:        'Adm'
             description:  'An EMMA project team member'
             capability:
               - searching
@@ -86,17 +86,17 @@ en:
           searching:
             label:        'Searching'
             description:  'get search results from the EMMA Federated Index'
-            prototype:    guest
+            prototype:    observer
 
           submitting:
             label:        'Submitting'
             description:  'create/edit/delete EMMA submissions'
-            prototype:    staff
+            prototype:    uploadOnly
 
           downloading:
             label:        'Downloading'
             description:  'create/edit/delete EMMA submissions'
-            prototype:    member
+            prototype:    standard
 
           managing:
             label:        'Managing'
