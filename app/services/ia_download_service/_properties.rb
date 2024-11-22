@@ -23,16 +23,6 @@ module IaDownloadService::Properties
   #
   CONFIGURATION = config_section(:service, :ia_download).deep_freeze
 
-  # Maximum length of redirection chain.
-  #
-  # In the case of IA downloads, this includes both redirections driven by the
-  # HTTP redirects and variations attempted within #transmit in order to find
-  # a suitable fall-back download format.
-  #
-  # @type [Integer]
-  #
-  MAX_REDIRECTS = CONFIGURATION[:max_redirects]
-
   # Authorization header for IA download requests.
   #
   # @type [String]
