@@ -1062,6 +1062,7 @@ module BaseDecorator::Form
     opt.reverse_merge!(disabled: true) if state == :disabled
     trace_attrs!(opt, __method__)
     prepend_css!(opt, css, "#{type}-button")
+    append_css!(opt, 'disabled') if opt[:disabled]
     case
       when control.is_a?(Proc)     then control.call(label: label, **opt)
       when (input_type == :submit) then h.submit_tag(label, opt)

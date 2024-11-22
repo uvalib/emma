@@ -782,10 +782,6 @@ appSetup(MODULE, function() {
     /**
      * Save updated row(s). <p/>
      *
-     * If there is a cell being edited, that edit is abandoned since completing
-     * it could change the validation state so that it's not longer safe to
-     * save the updates that have been made so far.
-     *
      * @param {ElementEvt} event
      *
      * @see "ManifestConcern#save_changes"
@@ -796,7 +792,6 @@ appSetup(MODULE, function() {
         const manifest = manifestId();
         OUT.debug(`${func}: manifest = ${manifest}; event =`, event);
 
-        cancelActiveCell();             // Abandon any active edit.
         finalizeDataRows("original");   // Update "original" cell values.
 
         // It should not be possible to get here unless the form is associated
@@ -3993,7 +3988,8 @@ appSetup(MODULE, function() {
         let was_changed = changed;
         if (notDefined(original)) {
             setCellOriginalValue($cell, value);
-        } else if (notDefined(was_changed)) {
+        }
+        if (notDefined(was_changed)) {
             was_changed = value.differsFrom(original);
         }
         setCellCurrentValue($cell, value);
@@ -4818,6 +4814,7 @@ appSetup(MODULE, function() {
         setCellEditMode($cell, true);
         cellEditBegin($cell);
         postStartEdit($cell);
+        enableSave(true);
         return true;
     }
 
@@ -4922,6 +4919,9 @@ appSetup(MODULE, function() {
             const $row        = dataRow($cell);
             const row_change  = getRowChanged($row);
             const cell_change = dataCellUpdate($cell, new_value);
+            if (cell_change) {
+                updateCellChanged($cell, true);
+            }
             if (cell_change !== row_change) {
                 updateRowChanged($row);
                 updateFormChanged();
@@ -5208,8 +5208,12 @@ appSetup(MODULE, function() {
      */
     function registerActiveCell(cell) {
         OUT.debug("registerActiveCell: cell =", cell);
-        deregisterActiveCell();
-        setActiveCell(cell);
+        const $cell  = dataCell(cell);
+        const active = getActiveCell();
+        if (active && ($cell[0] !== active)) {
+            deregisterActiveCell();
+        }
+        setActiveCell($cell);
     }
 
     /**
@@ -6268,8 +6272,6 @@ appSetup(MODULE, function() {
     handleEvent($import, "change",  importRows);
 
     // Cell editing.
-    windowEvent("focus",     deregisterActiveCell, true);
-    windowEvent("mousedown", deregisterActiveCell, true);
     onPageExit(deregisterActiveCell, OUT.debugging());
 
     // ========================================================================
