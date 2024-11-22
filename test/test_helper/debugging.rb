@@ -29,6 +29,7 @@ module TestHelper::Debugging
     test = show_test_part(TEST_START, test: test, part: part)
     emit_lines(nil, test, **opt)
   end
+    .tap { neutralize(_1) unless DEBUG_TESTS }
 
   # Produce the bottom frame of debug output for a test.
   #
@@ -42,6 +43,7 @@ module TestHelper::Debugging
     test = show_test_part(TEST_END, test: test, part: part)
     emit_lines(test, nil, **opt)
   end
+    .tap { neutralize(_1) unless DEBUG_TESTS }
 
   # Produce a framing line for debug test output.
   #
@@ -56,6 +58,7 @@ module TestHelper::Debugging
     test = "#{test} - #{part}" if part
     "#{tag} | #{test} | #{tag}"
   end
+    .tap { neutralize(_1) unless DEBUG_TESTS }
 
   # Local options for #show_test_start and #show_test_end.
   #
@@ -82,6 +85,7 @@ module TestHelper::Debugging
     parts = reflections ? ["\nREFLECTIONS", reflections] : []
     show_item(item.pretty_inspect, *parts, **opt)
   end
+    .tap { neutralize(_1) unless DEBUG_TESTS }
 
   # Display item model associations in output.
   #
@@ -98,6 +102,7 @@ module TestHelper::Debugging
       "\n#{key} (#{count}) [#{entry.class}]#{items}"
     }.then { |parts| show_item(*parts, **opt) if parts.present? }
   end
+    .tap { neutralize(_1) unless DEBUG_TESTS }
 
   # Display a URL in output.
   #
@@ -111,6 +116,7 @@ module TestHelper::Debugging
     url = opt.delete(:url) || url || current_url
     show_item("URL = #{url}", join: ' ', **opt) { note.compact }
   end
+    .tap { neutralize(_1) unless DEBUG_TESTS }
 
   # Display a user in output.
   #
@@ -124,6 +130,7 @@ module TestHelper::Debugging
     user = user && find_user(user) || :anonymous
     show_item(user.to_s, **opt)
   end
+    .tap { neutralize(_1) unless DEBUG_TESTS }
 
   # ===========================================================================
   # :section:
@@ -182,6 +189,7 @@ module TestHelper::Debugging
       emit_lines(result, **e_opt) if output
     }
   end
+    .tap { neutralize(_1) unless DEBUG_TESTS }
 
   # ===========================================================================
   # :section:
@@ -217,6 +225,7 @@ module TestHelper::Debugging
     lines.each { $stderr.puts _1 }
     $stderr.flush
   end
+    .tap { neutralize(_1) unless DEBUG_TESTS }
 
   # ===========================================================================
   # :section:
@@ -253,6 +262,7 @@ module TestHelper::Debugging
       lines.transform_values! { |v| v || '-' }.reverse_merge!(TRACE_SEPARATOR)
     end
   end
+    .tap { neutralize(_1) unless DEBUG_TESTS }
 
   # Display conditions after invoking an HTTP method.
   #
@@ -276,6 +286,7 @@ module TestHelper::Debugging
       lines.transform_values! { |v| v || '-' }.merge!(TRACE_SEPARATOR)
     end
   end
+    .tap { neutralize(_1) unless DEBUG_TESTS }
 
   # Display output before or after invoking an HTTP method.
   #
@@ -294,6 +305,7 @@ module TestHelper::Debugging
     format = "*** %-#{width}s = %s"
     show_item(**opt) { pairs.map { sprintf(format, _1, _2) } }
   end
+    .tap { neutralize(_1) unless DEBUG_TESTS }
 
   # Execute the provided block with tracing turned off to allow for executions
   # which do not clutter the output.
@@ -309,15 +321,6 @@ module TestHelper::Debugging
   # @return [Boolean]
   #
   attr_accessor :silence_tracing
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Neutralize debugging methods when not debugging.
-  neutralize(*instance_methods(false)) unless DEBUG_TESTS
 
 end
 
@@ -344,27 +347,26 @@ end
 #
 module TestHelper::Debugging::Trace
 
-  if DEBUG_TESTS
+  include TestHelper::Debugging
 
-    include TestHelper::Debugging
+  PRE_OPT   = (SHOW_TRACE_OPT + SHOW_PRE_SEND_OPT).freeze
+  POST_OPT  = (SHOW_TRACE_OPT + SHOW_POST_SEND_OPT).freeze
+  TRACE_OPT = (PRE_OPT + POST_OPT).uniq.freeze
 
-    PRE_OPT   = (SHOW_TRACE_OPT + SHOW_PRE_SEND_OPT).freeze
-    POST_OPT  = (SHOW_TRACE_OPT + SHOW_POST_SEND_OPT).freeze
-    TRACE_OPT = (PRE_OPT + POST_OPT).uniq.freeze
-
-    # Override HTTP methods defined in ActionDispatch::Integration::Runner in
-    # order to surround the method calls with trace debugging information.
-    #
-    # No override methods are created if *base* is some other class/module
-    # which doesn't define these methods.
-    #
-    # @param [Module] base
-    #
-    def self.included(base)
-      base.class_eval do
-        %i[get put post patch delete head].each do |meth|
-          next unless method_defined?(meth)
-          alias_method :"original_#{meth}", meth
+  # Override HTTP methods defined in ActionDispatch::Integration::Runner in
+  # order to surround the method calls with trace debugging information.
+  #
+  # No override methods are created if *base* is some other class/module
+  # which doesn't define these methods.
+  #
+  # @param [Module] base
+  #
+  def self.included(base)
+    base.class_eval do
+      %i[get put post patch delete head].each do |meth|
+        next unless method_defined?(meth)
+        alias_method :"original_#{meth}", meth
+        if DEBUG_TESTS
           define_method(meth) do |*args, **opt|
             # Extract any options specific to the tracing methods.  Remaining
             # options are passed to the underlying HTTP method call.
@@ -376,10 +378,14 @@ module TestHelper::Debugging::Trace
             super(*args, **opt)
             show_post_send(**post_opt, response: response)
           end
+        else
+          define_method(meth) do |*args, **opt|
+            # Clean up tracing method options for the underlying HTTP method.
+            super(*args, **opt.except(*TRACE_OPT))
+          end
         end
       end
     end
-
   end
 
 end

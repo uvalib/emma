@@ -18,6 +18,8 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 
   HEADLESS: bool
 
+  FAMILY: Symbol
+
   BROWSER: Symbol
 
   SCREEN_SIZE: [Integer,Integer]

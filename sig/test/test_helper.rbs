@@ -48,6 +48,17 @@ module TestHelper
   def self.included: (Module base) -> void
 end
 
+# Indicate whether tests should be run in parallel across all available
+# processors.
+#
+# NOTE: Within RubyMine the cumulative time for all tests roughly correlates
+#   to the number of processors times the wall clock time for the run.
+#   to the wall clock time multiplied by the number of processors.
+#
+# @type [Boolean]
+#
+PARALLEL_TESTS: bool
+
 # The output format(s) to test.
 #
 # The current test task may have already set this constant; if not the default
@@ -82,4 +93,33 @@ end
 # Make relative paths expand correctly.
 #
 class ActionDispatch::Integration::Session
+end
+
+module Minitest
+  # Overrides to allow RubyMine to handle parallel tests properly.
+  #
+  module MinitestExt
+    # @private
+    SUPERCLASSES: strArray
+
+    # Override to accommodate the fact that *klass* will be supplied as a
+    # Struct instance.
+    #
+    # @param [Class, Struct, nil] klass
+    #
+    # @return [String]
+    #
+    def class_nesting: (Class|Struct[:name]|nil klass) -> String
+  end
+
+  extend MinitestExt
+
+  # Overrides to allow RubyMine to handle parallel tests properly.
+  #
+  module RubymineTestDataExt
+    def klass=
+      : (Struct[:name] klass) -> Struct[:name]
+      | (Class         klass) -> Class
+      | (nil           klass) -> nil
+  end
 end

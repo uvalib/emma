@@ -31,7 +31,8 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   else
 
     HEADLESS    = true
-    BROWSER     = HEADLESS ? :headless_firefox   : :firefox
+    FAMILY      = :firefox
+    BROWSER     = HEADLESS ? :"headless_#{FAMILY}"   : FAMILY
     SCREEN_SIZE = HEADLESS ? [1920, 1080].freeze : [1024, 768].freeze
 
     driven_by :selenium, using: BROWSER, screen_size: SCREEN_SIZE do |drv_opt|
@@ -42,11 +43,14 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 
   end
 
+  self.use_transactional_tests = false
+
   # ===========================================================================
   # :section:
   # ===========================================================================
 
-  public
+  Capybara::Lockstep.debug   = true?(ENV_VAR['DEBUG_LOCKSTEP'])
+  Capybara::Lockstep.timeout = 2 * Capybara.default_max_wait_time
 
   setup do
     CapybaraLockstep.active = true
@@ -55,8 +59,5 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   teardown do
     CapybaraLockstep.active = false
   end
-
-  Capybara::Lockstep.debug   = true?(ENV_VAR['DEBUG_LOCKSTEP'])
-  Capybara::Lockstep.timeout = 2 * Capybara.default_max_wait_time
 
 end
