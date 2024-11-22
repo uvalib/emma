@@ -1,0 +1,27 @@
+# Common base for mailer tests.
+#
+class ApplicationMailerTestCase < ActionMailer::TestCase
+  # Verify that the given email is queued and is well-formed.
+  #
+  # @param [Symbol]             type
+  # @param [Mail::Message, nil] email
+  # @param [Hash]               opt
+  #
+  # @option opt [String, Array<String>] :to     Required.
+  # @option opt [String, Array<String>] :from   Required.
+  #
+  # @return [void]
+  #
+  def validate_email
+    : (Symbol `type`, ?nil          email, to: String|strArray, from: String|strArray, **untyped opt) { () -> Mail::Message } -> void
+    | (Symbol `type`, Mail::Message email, to: String|strArray, from: String|strArray, **untyped opt) -> void
+
+  # Verify that *email* is well-formed.
+  #
+  # @param [Mail::Message] email
+  # @param [Hash]          opt
+  #
+  # @return [void]
+  #
+  def check_email: (Mail::Message email, **untyped opt) -> void
+end
