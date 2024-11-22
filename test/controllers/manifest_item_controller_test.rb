@@ -78,4 +78,32 @@ class ManifestItemControllerTest < ApplicationControllerTestCase
     end
   end
 
+  # ===========================================================================
+  # :section: Meta tests
+  # ===========================================================================
+
+  test 'manifest controller test coverage' do
+    # Endpoints covered by ManifestsTest system tests:
+    skipped = %i[
+      bulk_create
+      bulk_delete
+      bulk_destroy
+      bulk_edit
+      bulk_fields
+      bulk_new
+      bulk_update
+      create
+      delete
+      destroy
+      edit
+      finish_edit
+      new
+      row_update
+      start_edit
+      update
+      upload
+    ]
+    check_controller_coverage ManifestItemController, except: skipped
+  end
+
 end

@@ -212,10 +212,32 @@ class ManifestControllerTest < ApplicationControllerTestCase
   end
 
   # ===========================================================================
+  # :section: Meta tests
+  # ===========================================================================
+
+  test 'manifest controller test coverage' do
+    # Endpoints covered by system tests:
+    skipped = %i[
+      cancel
+      delete_select
+      edit_select
+      get_job_result
+      list_all
+      list_org
+      list_own
+      remit
+      remit_select
+      save
+      show_select
+    ]
+    check_controller_coverage ManifestController, except: skipped
+  end
+
+  # ===========================================================================
   # :section: TestHelper::Utility overrides
   # ===========================================================================
 
-  public
+  protected
 
   # The default :index action redirects to :list_own.
   #

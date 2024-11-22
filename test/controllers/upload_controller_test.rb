@@ -212,6 +212,42 @@ class UploadControllerTest < ApplicationControllerTestCase
   end
 
   # ===========================================================================
+  # :section: Meta tests
+  # ===========================================================================
+
+  test 'upload controller test coverage' do
+    # Endpoints covered by system tests:
+    skipped = %i[
+      api_migrate
+      bulk_create
+      bulk_delete
+      bulk_destroy
+      bulk_edit
+      bulk_index
+      bulk_new
+      bulk_reindex
+      bulk_update
+      cancel
+      check
+      delete_select
+      download
+      edit_select
+      list_all
+      list_org
+      list_own
+      probe_retrieval
+      records
+      reedit
+      renew
+      retrieval
+      s3_object_table
+      show_select
+      upload
+    ]
+    check_controller_coverage UploadController, except: skipped
+  end
+
+  # ===========================================================================
   # :section: Methods
   # ===========================================================================
 
@@ -221,7 +257,7 @@ class UploadControllerTest < ApplicationControllerTestCase
   # :section: TestHelper::Utility overrides
   # ===========================================================================
 
-  public
+  protected
 
   # The default :index action redirects to :list_own.
   #

@@ -29,23 +29,36 @@ class ToolControllerTest < ApplicationControllerTestCase
   # :section: Read tests
   # ===========================================================================
 
-  test 'tool - index' do
+  test 'tool index' do
     read_test(:index, meth: __method__, anonymous: true)
   end
 
-  test 'tool - Math Detective' do
+  test 'tool md - Math Detective' do
     read_test(:md, meth: __method__)
   end
 
-  test 'tool - bibliographic lookup' do
+  test 'tool lookup - bibliographic lookup' do
     read_test(:lookup, meth: __method__)
+  end
+
+  # ===========================================================================
+  # :section: Meta tests
+  # ===========================================================================
+
+  test 'tool controller test coverage' do
+    # Endpoints covered by system tests:
+    skipped = %i[
+      get_job_result
+      md_proxy
+    ]
+    check_controller_coverage ToolController, except: skipped
   end
 
   # ===========================================================================
   # :section: Methods
   # ===========================================================================
 
-  public
+  protected
 
   # Perform a ToolController test for #TEST_READERS in all #TEST_FORMATS to
   # verify expected response status.

@@ -25,7 +25,7 @@ class HomeControllerTest < ApplicationControllerTestCase
   # :section: Read tests
   # ===========================================================================
 
-  test 'home main as anonymous' do
+  test 'home main - as anonymous' do
     # action  = :main
     # options = OPT.merge(action: action)
     params = PRM
@@ -40,7 +40,7 @@ class HomeControllerTest < ApplicationControllerTestCase
     end
   end
 
-  test 'home main as test_dso_1' do
+  test 'home main - as test_dso_1' do
     # action  = :main
     # options = OPT.merge(action: action)
     params = PRM
@@ -92,6 +92,15 @@ class HomeControllerTest < ApplicationControllerTestCase
         get_as(user, url, **opt)
       end
     end
+  end
+
+  # ===========================================================================
+  # :section: Meta tests
+  # ===========================================================================
+
+  test 'home controller test coverage' do
+    skipped = []
+    check_controller_coverage HomeController, except: skipped
   end
 
 end

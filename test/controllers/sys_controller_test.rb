@@ -29,31 +29,31 @@ class SysControllerTest < ApplicationControllerTestCase
   # :section: Read tests
   # ===========================================================================
 
-  test 'system - list pages' do
+  test 'system index' do
     read_test(:index, meth: __method__)
   end
 
-  test 'system - disk_space' do
+  test 'system disk_space' do
     read_test(:disk_space, meth: __method__)
   end
 
-  test 'system - environment' do
+  test 'system environment' do
     read_test(:environment, meth: __method__)
   end
 
-  test 'system - headers' do
+  test 'system headers' do
     read_test(:headers, meth: __method__)
   end
 
-  test 'system - internals' do
+  test 'system internals' do
     read_test(:internals, meth: __method__)
   end
 
-  test 'system - loggers' do
+  test 'system loggers' do
     read_test(:loggers, meth: __method__)
   end
 
-  test 'system - settings' do
+  test 'system settings' do
     read_test(:settings, meth: __method__)
   end
 
@@ -62,10 +62,19 @@ class SysControllerTest < ApplicationControllerTestCase
   end
 
   # ===========================================================================
+  # :section: Meta tests
+  # ===========================================================================
+
+  test 'system controller test coverage' do
+    skipped = []
+    check_controller_coverage SysController, prefix: 'system', except: skipped
+  end
+
+  # ===========================================================================
   # :section: Methods
   # ===========================================================================
 
-  public
+  protected
 
   # Perform a SysController test for #TEST_READERS in all #TEST_FORMATS to
   # verify expected response status.

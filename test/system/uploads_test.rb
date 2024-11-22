@@ -140,10 +140,41 @@ class UploadsTest < ApplicationSystemTestCase
   end
 
   # ===========================================================================
+  # :section: Meta tests
+  # ===========================================================================
+
+  test 'uploads system test coverage' do
+    skipped = [
+      :download,        # @see 'search - download - EMMA native item'
+      :retrieval,       # @see 'search - download - BiblioVault item'
+      :probe_retrieval, # @see 'search - download - InternetArchive item'
+    ]
+    skipped += %i[
+      admin
+      api_migrate
+      bulk_create
+      bulk_delete
+      bulk_destroy
+      bulk_edit
+      bulk_index
+      bulk_new
+      bulk_reindex
+      bulk_update
+      cancel
+      check
+      reedit
+      renew
+      s3_object_table
+      upload
+    ] # TODO: still needed for UploadsTest
+    check_system_coverage UploadController, except: skipped
+  end
+
+  # ===========================================================================
   # :section: Methods
   # ===========================================================================
 
-  public
+  protected
 
   # Perform a test to list EMMA submissions visible to *user*.
   #
@@ -531,7 +562,7 @@ class UploadsTest < ApplicationSystemTestCase
   # :section: TestHelper::Utility overrides
   # ===========================================================================
 
-  public
+  protected
 
   # The default :index action redirects to :list_own.
   #

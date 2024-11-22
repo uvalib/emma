@@ -15,7 +15,7 @@ class HomeTest < ApplicationSystemTestCase
   # :section: Read tests
   # ===========================================================================
 
-  test 'home - main page (anonymous)' do
+  test 'home - main - anonymous' do
     url = home_url
     run_test(__method__) do
       visit url
@@ -24,7 +24,7 @@ class HomeTest < ApplicationSystemTestCase
     end
   end
 
-  test 'home - welcome page (anonymous)' do
+  test 'home - welcome - anonymous' do
     url = welcome_url
     run_test(__method__) do
       visit url
@@ -33,13 +33,22 @@ class HomeTest < ApplicationSystemTestCase
     end
   end
 
-  test 'home - dashboard page (anonymous)' do
+  test 'home - dashboard - anonymous' do
     url = dashboard_url
     run_test(__method__) do
       visit url
       screenshot
       assert_flash(alert: AUTH_FAILURE)
     end
+  end
+
+  # ===========================================================================
+  # :section: Meta tests
+  # ===========================================================================
+
+  test 'home system test coverage' do
+    skipped = []
+    check_system_coverage HomeController, prefix: 'home', except: skipped
   end
 
 end

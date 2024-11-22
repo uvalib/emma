@@ -15,7 +15,7 @@ class UserSessionsTest < ApplicationSystemTestCase
   # :section: Read tests
   # ===========================================================================
 
-  test 'user session - sign in' do
+  test 'user/sessions - sign_in' do
 
     user      = @member
     start_url = root_url
@@ -40,7 +40,7 @@ class UserSessionsTest < ApplicationSystemTestCase
     end
   end
 
-  test 'user session - sign out' do
+  test 'user/sessions - sign_out' do
 
     user      = @member
     start_url = root_url
@@ -58,6 +58,16 @@ class UserSessionsTest < ApplicationSystemTestCase
       sign_out
 
     end
+  end
+
+  # ===========================================================================
+  # :section: Meta tests
+  # ===========================================================================
+
+  test 'user/sessions system test coverage' do
+    # Endpoints covered by controller tests:
+    skipped = %i[new sign_in_as sign_in_local]
+    check_system_coverage User::SessionsController, except: skipped
   end
 
 end

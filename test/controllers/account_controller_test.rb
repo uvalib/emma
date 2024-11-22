@@ -239,10 +239,26 @@ class AccountControllerTest < ApplicationControllerTestCase
   end
 
   # ===========================================================================
+  # :section: Meta tests
+  # ===========================================================================
+
+  test 'account controller test coverage' do
+    # Endpoints covered by system tests:
+    skipped = %i[
+      delete_select
+      edit_select
+      list_all
+      list_org
+      show_select
+    ]
+    check_controller_coverage AccountController, except: skipped
+  end
+
+  # ===========================================================================
   # :section: Methods
   # ===========================================================================
 
-  public
+  protected
 
   # Return a user which is in the same member organization as the given user.
   #
@@ -264,7 +280,7 @@ class AccountControllerTest < ApplicationControllerTestCase
   # :section: TestHelper::Utility overrides
   # ===========================================================================
 
-  public
+  protected
 
   # The default :index action redirects to :list_org for an organization user.
   #

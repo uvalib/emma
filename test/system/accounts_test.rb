@@ -135,10 +135,19 @@ class AccountsTest < ApplicationSystemTestCase
   end
 
   # ===========================================================================
+  # :section: Meta tests
+  # ===========================================================================
+
+  test 'accounts system test coverage' do
+    skipped = []
+    check_system_coverage AccountController, except: skipped
+  end
+
+  # ===========================================================================
   # :section: Methods - read tests
   # ===========================================================================
 
-  public
+  protected
 
   # Perform a test to list accounts visible to *user*.
   #

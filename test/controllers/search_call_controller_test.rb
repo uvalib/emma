@@ -26,23 +26,32 @@ class SearchCallControllerTest < ApplicationControllerTestCase
   # :section: Read tests
   # ===========================================================================
 
-  test 'search call index - no search' do
+  test 'search_call index - no search' do
     read_test(:index, meth: __method__)
   end
 
-  test 'search call index - sample search' do
+  test 'search_call index - sample search' do
     read_test(:index, meth: __method__, search_call: search_calls(:example))
   end
 
-  test 'search call show - details search call item' do
+  test 'search_call show - details search call item' do
     read_test(:show, meth: __method__, id: search_calls(:example).id)
+  end
+
+  # ===========================================================================
+  # :section: Meta tests
+  # ===========================================================================
+
+  test 'search_call controller test coverage' do
+    skipped = []
+    check_controller_coverage SearchCallController, except: skipped
   end
 
   # ===========================================================================
   # :section: Methods
   # ===========================================================================
 
-  public
+  protected
 
   # Perform a SearchCallController test for #TEST_READERS in all #TEST_FORMATS
   # to verify expected response status.

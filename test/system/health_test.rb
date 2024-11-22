@@ -12,7 +12,7 @@ class HealthTest < ApplicationSystemTestCase
   # :section: Read tests
   # ===========================================================================
 
-  test 'health - visit version' do
+  test 'health - version - visit version' do
     url = version_url
     run_test(__method__) do
       visit url
@@ -20,12 +20,23 @@ class HealthTest < ApplicationSystemTestCase
     end
   end
 
-  test 'health - visit health check' do
+  test 'health - check - visit health check' do
     url = healthcheck_url
     run_test(__method__) do
       visit url
       assert_text 'healthy'
     end
+  end
+
+  # ===========================================================================
+  # :section: Meta tests
+  # ===========================================================================
+
+  test 'health system test coverage' do
+    # Endpoints covered by controller tests:
+    skipped = %i[run_state]
+    skipped += %i[set_run_state] # Unimplemented endpoints.
+    check_system_coverage HealthController, prefix: 'health', except: skipped
   end
 
 end

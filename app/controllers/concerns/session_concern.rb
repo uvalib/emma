@@ -512,6 +512,8 @@ module SessionConcern
 
     if ancestors.include?(DeviseController)
 
+      protected
+
       # This overrides the DeviseController message to allow the standard
       # 'already_authenticated' flash message to be overridden by
       # `session['app.devise.failure.message']`.

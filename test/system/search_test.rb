@@ -53,10 +53,20 @@ class SearchTest < ApplicationSystemTestCase
   end
 
   # ===========================================================================
+  # :section: Meta tests
+  # ===========================================================================
+
+  test 'search system test coverage' do
+    skipped = %i[advanced]    # This may go away as a distinct endpoint.
+    skipped += %i[image show] # Unimplemented endpoints.
+    check_system_coverage SearchController, prefix: 'search', except: skipped
+  end
+
+  # ===========================================================================
   # :section: Methods
   # ===========================================================================
 
-  public
+  protected
 
   # Await the indicated page then output its :prev and :next links.
   #

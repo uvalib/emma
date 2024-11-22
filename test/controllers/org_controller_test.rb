@@ -269,10 +269,25 @@ class OrgControllerTest < ApplicationControllerTestCase
   end
 
   # ===========================================================================
+  # :section: Meta tests
+  # ===========================================================================
+
+  test 'org controller test coverage' do
+    # Endpoints covered by system tests:
+    skipped = %i[
+      delete_select
+      edit_current
+      edit_select
+      show_select
+    ]
+    check_controller_coverage OrgController, except: skipped
+  end
+
+  # ===========================================================================
   # :section: TestHelper::Utility overrides
   # ===========================================================================
 
-  public
+  protected
 
   # The default :index action redirects to :list_all for Administrator and
   # :show for everyone else.

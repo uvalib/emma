@@ -72,10 +72,22 @@ class HealthControllerTest < ApplicationControllerTestCase
   end
 
   # ===========================================================================
+  # :section: Meta tests
+  # ===========================================================================
+
+  test 'health controller test coverage' do
+    # Endpoints covered by system tests:
+    skipped = %i[
+      set_run_state
+    ]
+    check_controller_coverage HealthController, except: skipped
+  end
+
+  # ===========================================================================
   # :section: Methods
   # ===========================================================================
 
-  public
+  protected
 
   # Perform a HealthController test.
   #

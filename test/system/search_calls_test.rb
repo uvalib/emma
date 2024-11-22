@@ -44,4 +44,14 @@ class SearchCallsTest < ApplicationSystemTestCase
     end
   end
 
+  # ===========================================================================
+  # :section: Meta tests
+  # ===========================================================================
+
+  test 'search_calls system test coverage' do
+    # Endpoints covered by controller tests:
+    skipped = %i[show]
+    check_system_coverage SearchCallController, except: skipped
+  end
+
 end

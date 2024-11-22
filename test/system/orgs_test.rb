@@ -116,10 +116,19 @@ class OrgsTest < ApplicationSystemTestCase
   end
 
   # ===========================================================================
+  # :section: Meta tests
+  # ===========================================================================
+
+  test 'orgs system test coverage' do
+    skipped = []
+    check_system_coverage OrgController, except: skipped
+  end
+
+  # ===========================================================================
   # :section: Methods
   # ===========================================================================
 
-  public
+  protected
 
   # Perform a test to list organizations visible to *user*.
   #
@@ -493,7 +502,7 @@ class OrgsTest < ApplicationSystemTestCase
   # :section: TestHelper::Utility overrides
   # ===========================================================================
 
-  public
+  protected
 
   # The default :index action redirects to :list_all for Administrator and
   # :show_current for everyone else.

@@ -247,6 +247,71 @@ module TestHelper::Utility
   #
   def get_model_count: (?untyped model, **untyped constraints) -> Integer
 
+  # Controller methods which do not relate to controller endpoints, including
+  # attributes defined directly within ApplicationController subclasses.
+  #
+  # @type [Array<Symbol>]
+  #
+  NON_PAGE_METHODS: symArray
+
+  # Methods which are not applicable to system tests.
+  #
+  # @type [Array<Symbol>]
+  #
+  NON_SYSTEM_METHODS: symArray
+
+  # Fail if the current test class does not have controller tests covering all
+  # of the endpoints of *ctrlr*.
+  #
+  # Controller tests are expected to be named like
+  # * `test 'controller endpoint'` or
+  # * `test 'controller endpoint - additional text'`.
+  #
+  # @param [Class]               ctrlr    Controller class
+  # @param [Array<Symbol>, nil]  tests    Default: all tests in caller's class
+  # @param [Array<Symbol>, nil]  except   Controller methods to skip.
+  # @param [String, Symbol, nil] prefix   Instead of derived from *ctrlr*.
+  #
+  # @return [Integer]
+  #
+  def check_controller_coverage: (Class ctrlr, tests: symArray|nil, except: symArray|nil, prefix: String|Symbol|nil) -> void
+
+  # Fail if the current test class does not have system tests covering all of
+  # the endpoints of *ctrlr*.
+  #
+  # System tests are expected to be named like
+  # * `test 'models - action'` or
+  # * `test 'models - action - additional text'`.
+  #
+  # @param [Class]               ctrlr    Controller class
+  # @param [Array<Symbol>, nil]  tests    Default: all tests in caller's class
+  # @param [Array<Symbol>, nil]  except   Controller methods to skip.
+  # @param [String, Symbol, nil] prefix   Instead of derived from *ctrlr*.
+  #
+  def check_system_coverage: (Class ctrlr, tests: symArray|nil, except: symArray|nil, prefix: String|Symbol|nil) -> void
+
+  # Fail if the current test class does not have mailer tests covering all of
+  # the methods of *mailer*.
+  #
+  # Mailer tests are expected to be named like
+  # * `test 'mailer model - method'` or
+  # * `test 'mailer model - method - additional text'`.
+  #
+  # @param [Class]               mailer   Mailer class
+  # @param [Array<Symbol>, nil]  tests    Default: all tests in caller's class
+  # @param [Array<Symbol>, nil]  except   Controller methods to skip.
+  # @param [String, Symbol, nil] prefix   Instead of derived from *ctrlr*.
+  #
+  def check_mailer_coverage: (Class mailer, tests: symArray|nil, except: symArray|nil, prefix: String|Symbol|nil) -> void
+
+  # Potential endpoint methods defined by the indicated controller.
+  #
+  # @param [Class, Symbol, String] ctrlr
+  #
+  # @return [Array<Symbol>]
+  #
+  def methods_for: (Class|Symbol|String ctrlr) -> symArray
+
   # Generate a string of random hex digits.
   #
   # @return [String]

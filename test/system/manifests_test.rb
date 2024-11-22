@@ -122,10 +122,24 @@ class ManifestsTest < ApplicationSystemTestCase
   end
 
   # ===========================================================================
+  # :section: Meta tests
+  # ===========================================================================
+
+  test 'manifests system test coverage' do
+    skipped = []
+    skipped += %i[get_job_result] # Client-only endpoints.
+    skipped += %i[
+      cancel
+      save
+    ] # TODO: still needed for ManifestsTest
+    check_system_coverage ManifestController, except: skipped
+  end
+
+  # ===========================================================================
   # :section: Methods
   # ===========================================================================
 
-  public
+  protected
 
   # Perform a test to list manifests visible to *user*.
   #

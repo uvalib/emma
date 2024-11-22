@@ -37,4 +37,16 @@ class MetricsControllerTest < ApplicationControllerTestCase
     end
   end
 
+  # ===========================================================================
+  # :section: Meta tests
+  # ===========================================================================
+
+  test 'metrics controller test coverage' do
+    # Endpoints covered by system tests:
+    skipped = %i[
+      index
+    ]
+    check_controller_coverage MetricsController, except: skipped
+  end
+
 end

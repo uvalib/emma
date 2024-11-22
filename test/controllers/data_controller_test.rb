@@ -29,7 +29,7 @@ class DataControllerTest < ApplicationControllerTestCase
     read_test(:index, meth: __method__)
   end
 
-  test 'data show orgs table' do
+  test 'data show - orgs table' do
     read_test(:show, meth: __method__, id: :orgs)
   end
 
@@ -37,15 +37,24 @@ class DataControllerTest < ApplicationControllerTestCase
     read_test(:submissions, meth: __method__, anonymous: true)
   end
 
-  test 'data field counts' do
+  test 'data counts - distinct values per submission field' do
     read_test(:counts, meth: __method__, anonymous: true)
+  end
+
+  # ===========================================================================
+  # :section: Meta tests
+  # ===========================================================================
+
+  test 'data controller test coverage' do
+    skipped = []
+    check_controller_coverage DataController, except: skipped
   end
 
   # ===========================================================================
   # :section: Methods
   # ===========================================================================
 
-  public
+  protected
 
   # Perform a DataController test for #TEST_READERS in all #TEST_FORMATS to
   # verify expected response status.

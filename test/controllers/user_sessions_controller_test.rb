@@ -110,4 +110,16 @@ class UserSessionsControllerTest < ApplicationControllerTestCase
     end
   end
 
+  # ===========================================================================
+  # :section: Meta tests
+  # ===========================================================================
+
+  test 'user/sessions controller test coverage' do
+    # Endpoints covered by system tests:
+    skipped = %i[
+      sign_in_local
+    ]
+    check_controller_coverage User::SessionsController, except: skipped
+  end
+
 end

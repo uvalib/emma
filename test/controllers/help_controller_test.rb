@@ -16,4 +16,13 @@ class HelpControllerTest < ApplicationControllerTestCase
     assert_response :success
   end
 
+  # ===========================================================================
+  # :section: Meta tests
+  # ===========================================================================
+
+  test 'help controller test coverage' do
+    skipped = []
+    check_controller_coverage HelpController, except: skipped
+  end
+
 end

@@ -78,4 +78,20 @@ class SearchControllerTest < ApplicationControllerTestCase
   end
 =end
 
+  # ===========================================================================
+  # :section: Meta tests
+  # ===========================================================================
+
+  test 'search controller test coverage' do
+    # Endpoints covered by system tests:
+    skipped = %i[
+      advanced
+      direct
+      image
+      show
+      validate
+    ]
+    check_controller_coverage SearchController, except: skipped
+  end
+
 end
