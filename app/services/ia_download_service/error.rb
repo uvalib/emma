@@ -63,6 +63,10 @@ class IaDownloadService::Error < ApiService::Error
     def extract_message(src)
       result = []
       if (body = extract_body(src)).present?
+        if body.start_with?('<')
+          doc  = Nokogiri.parse(body)
+          body = extract_html(doc).first || ''
+        end
         c_opt = { service: service_name, body: body }
         result << config_term(:ia_download, :response, **c_opt)
         if (notes = added_messages(body)).present?

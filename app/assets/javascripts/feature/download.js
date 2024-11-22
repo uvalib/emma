@@ -241,7 +241,7 @@ appSetup(MODULE, function() {
                 } else if (info.waiting) {
                     OUT.debug(`${func}:`, info.message);
                 } else {
-                    error = `reported error: "${info.message}" (${info.status})`;
+                    error = `${info.message} (${info.status})`;
                 }
             }
         }

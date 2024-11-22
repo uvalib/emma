@@ -50,10 +50,27 @@ class IaDownload::Message::ProbeResponse < IaDownload::Api::Message
   def initialize(src, opt = nil)
     @waiting = @ready = @error = false
     super(src, opt)
+    if status.to_i.zero?
+      self.status =
+        case src
+          when Hash              then src[:status]
+          when Faraday::Response then src.status
+        end
+    end
     case status
       when 202      then @waiting = true
       when 200..299 then @ready   = true
       else               @error   = true
+    end
+    if @error && message.blank?
+      # noinspection RubyMismatchedArgumentType
+      self.message =
+        case src
+          when Hash
+            src[:message]
+          when Faraday::Response
+            IaDownloadService::Error.extract_message(src)
+        end
     end
   end
 
