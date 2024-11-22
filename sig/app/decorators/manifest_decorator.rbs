@@ -468,6 +468,17 @@ class ManifestDecorator
   #
   def submission_remote: (?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
+  # A (dummy) button and text panel to display to indicate that all manifest
+  # items have been successfully submitted prior to the current visit to this
+  # submission page.
+  #
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to #submission_files.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def submission_completed: (?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
   # A button and text panel.
   #
   # @param [Boolean] hidden           If *false* show initially.

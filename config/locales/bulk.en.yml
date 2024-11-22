@@ -315,3 +315,13 @@ en:
               the items below.
               <em>NOTE: NOT YET IMPLEMENTED</em>
             enabled:     true
+
+          completed:
+            label:       'X'
+            tooltip:     '(This dummy button should not be accessible)'
+            description:
+              >-
+              All items in this manifest have been successfully submitted.
+              The manifest can be safely deleted unless you would like to
+              retain it for your own information.
+            enabled:     true

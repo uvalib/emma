@@ -796,7 +796,7 @@ class ManifestDecorator
   def auxiliary_button_tray(*added, css: '.auxiliary-buttons', **opt)
     prepend_css!(opt, css)
     opt[:'data-manifest'] ||= object.id
-    buttons = [submission_remote, submission_local]
+    buttons = [submission_remote, submission_local, submission_completed]
     form_button_tray(*buttons, *added, **opt)
   end
 
@@ -826,6 +826,20 @@ class ManifestDecorator
   def submission_remote(css: '.remote-file', **opt)
     opt[:config] ||= SUBMISSION_AUXILIARY[:remote]
     submission_files(css: css, multiple: true, **opt)
+  end
+
+  # A (dummy) button and text panel to display to indicate that all manifest
+  # items have been successfully submitted prior to the current visit to this
+  # submission page.
+  #
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to #submission_files.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def submission_completed(css: '.completed', **opt)
+    opt[:config] ||= SUBMISSION_AUXILIARY[:completed]
+    submission_files(css: css, 'aria-hidden': true, **opt)
   end
 
   # ===========================================================================

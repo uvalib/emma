@@ -3,7 +3,6 @@
 
 import { AppDebug }                             from "../application/debug";
 import { appSetup }                             from "../application/setup";
-import { handleClickAndKeypress }               from "../shared/accessibility";
 import { arrayWrap, uniq }                      from "../shared/arrays";
 import { Emma }                                 from "../shared/assets";
 import { BaseClass }                            from "../shared/base-class";
@@ -14,6 +13,10 @@ import { initializeGridNavigation }             from "../shared/grids";
 import { capitalize, pluralize }                from "../shared/strings";
 import { SubmitModal }                          from "../shared/submit-modal";
 import { BulkUploader }                         from "../shared/uploader";
+import {
+    handleClickAndKeypress,
+    toggleVisibility,
+} from "../shared/accessibility";
 import {
     isDefined,
     isEmpty,
@@ -117,6 +120,7 @@ appSetup(MODULE, function() {
     const MONITOR_BUTTON_CLASS      = "monitor-button";
 
     const AUXILIARY_TRAY_CLASS      = "auxiliary-buttons";
+    const COMPLETED_CLASS           = "completed";
     const REMOTE_FILE_CLASS         = "remote-file";
     const LOCAL_FILE_CLASS          = "local-file";
     const FILE_BUTTON_CLASS         = "file-button";
@@ -155,6 +159,7 @@ appSetup(MODULE, function() {
     const MONITOR_BUTTON        = selector(MONITOR_BUTTON_CLASS);
 
     const AUXILIARY_TRAY        = selector(AUXILIARY_TRAY_CLASS);
+    const COMPLETED             = selector(COMPLETED_CLASS);
     const REMOTE_FILE           = selector(REMOTE_FILE_CLASS);
     const LOCAL_FILE            = selector(LOCAL_FILE_CLASS);
     const FILE_BUTTON           = selector(FILE_BUTTON_CLASS);
@@ -643,6 +648,9 @@ appSetup(MODULE, function() {
     /** @type {jQuery} */
     const $auxiliary_tray = $(AUXILIARY_TRAY);
 
+    const $completed_area = $auxiliary_tray.find(COMPLETED);
+    const $completed_btn  = $completed_area.filter(FILE_BUTTON);
+
     const $remote_prompt  = $auxiliary_tray.find(REMOTE_FILE);
     const $remote_button  = $remote_prompt.filter(FILE_BUTTON);
     const $remote_input   = $remote_button.find('input[type="file"]');
@@ -711,6 +719,21 @@ appSetup(MODULE, function() {
             $local_input.prop("disabled", !first);
         }
         toggleHidden($local_prompt, !visible);
+    }
+
+    /**
+     * Display a message panel indicating that all items in this manifest have
+     * already been successfully submitted.
+     *
+     * @param {boolean} [show]        If *false*, hide the panel.
+     */
+    function showAllSubmitted(show) {
+        //OUT.debug("showAllSubmitted:", visible);
+        const visible = notDefined(show) || show;
+        if (visible) {
+            toggleVisibility($completed_btn, false);
+        }
+        toggleHidden($completed_area, !visible);
     }
 
     // ========================================================================
@@ -853,44 +876,53 @@ appSetup(MODULE, function() {
         OUT.debug("initializeItems");
         const local = {}, remote = {};
         let unsaved = false;
+        let all_submitted = true;
         allItems().each((_, item) => {
             /** @type {jQuery} */
-            const $item     = $(item);
-            const item_id   = manifestItemId($item);
-            const submitted = isAlreadySubmitted($item);
-            STATUS_SELECTORS.forEach(status => {
-                /** @type {jQuery} */
-                const $status = $item.find(status);
-                let name;
-                if ($status.is(FILE_NEEDED) && !submitted) {
-                    const path = $item.attr(FILE_NAME_ATTR) || "";
-                    if ((name = path.split("\\").pop().split("/").pop())) {
-                        local[item_id] = name;
-                    } else if ((name = $item.attr(FILE_URL_ATTR))) {
-                        remote[item_id] = name;
-                    }
-                }
-                if (unsaved) {
-                    $status.attr("aria-disabled", true);
-                } else {
-                    $status.removeAttr("aria-disabled");
-                    unsaved = $status.is(UNSAVED);
-                }
-                initializeStatusFor($item, status, name);
-            });
-            if (submitted) {
+            const $item = $(item);
+            if (isAlreadySubmitted($item)) {
+                STATUS_SELECTORS.forEach(status => {
+                    setStatusFor(item, status, SUCCEEDED_MARKER);
+                    initializeStatusFor($item, status);
+                });
                 $item.attr('title', Emma.Terms.submission.completed);
                 disableItemSelect($item);
             } else {
+                all_submitted = false;
+                const item_id = manifestItemId($item);
+                STATUS_SELECTORS.forEach(status => {
+                    /** @type {jQuery} */
+                    const $status = $item.find(status);
+                    let name;
+                    if ($status.is(FILE_NEEDED)) {
+                        const path = $item.attr(FILE_NAME_ATTR) || "";
+                        if ((name = path.split("\\").pop().split("/").pop())) {
+                            local[item_id] = name;
+                        } else if ((name = $item.attr(FILE_URL_ATTR))) {
+                            remote[item_id] = name;
+                        }
+                    }
+                    if (unsaved) {
+                        $status.attr("aria-disabled", true);
+                    } else {
+                        $status.removeAttr("aria-disabled");
+                        unsaved = $status.is(UNSAVED);
+                    }
+                    initializeStatusFor($item, status, name);
+                });
                 updateItemSelect($item);
             }
             $item.children().each((_, column) => setupCellNavGroup(column));
         });
-        OUT.debug("INITIAL file_references.local  =", local);
-        OUT.debug("INITIAL file_references.remote =", remote);
-        file_references.local  = local;
-        file_references.remote = remote;
-        setFilesRemaining();
+        if (all_submitted) {
+            showAllSubmitted();
+        } else {
+            OUT.debug("INITIAL file_references.local  =", local);
+            OUT.debug("INITIAL file_references.remote =", remote);
+            file_references.local  = local;
+            file_references.remote = remote;
+            setFilesRemaining();
+        }
     }
 
     /**
