@@ -1,2 +1,3 @@
-class ManifestItemDecoratorTest < Draper::TestCase
+class ManifestItemDecoratorTest < ApplicationDecoratorTestCase
+  DEC: Class
 end

@@ -3,7 +3,14 @@
 # frozen_string_literal: true
 # warn_indent:           true
 
-require 'test_helper'
+require 'application_decorator_test_case'
 
-class UploadDecoratorTest < Draper::TestCase
+class UploadDecoratorTest < ApplicationDecoratorTestCase
+
+  DEC = UploadDecorator
+
+  test 'upload decorator - js_properties' do
+    validate_js_properties(DEC)
+  end
+
 end

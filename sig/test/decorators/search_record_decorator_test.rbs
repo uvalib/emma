@@ -1,2 +1,3 @@
-class SearchRecordDecoratorTest < Draper::TestCase
+class SearchRecordDecoratorTest < ApplicationDecoratorTestCase
+  DEC: Class
 end

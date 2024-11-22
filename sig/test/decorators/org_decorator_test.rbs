@@ -1,0 +1,3 @@
+class OrgDecoratorTest < ApplicationDecoratorTestCase
+  DEC: Class
+end

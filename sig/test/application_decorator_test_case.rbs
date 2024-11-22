@@ -1,0 +1,11 @@
+# Common base for decorator tests.
+#
+class ApplicationDecoratorTestCase < Draper::TestCase
+  # Check that properties used in asset pre-compilation are well-formed.
+  #
+  # @param [BaseDecorator, Class] dec
+  #
+  # @return [void]
+  #
+  def validate_js_properties: (BaseDecorator|Class dec) -> void
+end

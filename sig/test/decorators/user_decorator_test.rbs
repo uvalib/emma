@@ -1,2 +1,3 @@
-class UserDecoratorTest < Draper::TestCase
+class UserDecoratorTest < ApplicationDecoratorTestCase
+  DEC: Class
 end
