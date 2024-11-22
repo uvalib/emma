@@ -4391,9 +4391,11 @@ appSetup(MODULE, function() {
     function fieldDisplayOnly(match, form) {
         const $fields    = fieldContainer(form).children().hide();
         const $visible   = $fields.filter(match);
+        const $select2   = $fields.filter(`${match} + .select2-container`);
         const $no_fields = $fields.filter('.no-fields');
         if (isPresent($visible)) {
             $visible.show();
+            $select2.show();
             $no_fields.hide();
         } else {
             $no_fields.show();
