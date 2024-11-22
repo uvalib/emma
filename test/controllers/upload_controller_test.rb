@@ -212,6 +212,28 @@ class UploadControllerTest < ApplicationControllerTestCase
   end
 
   # ===========================================================================
+  # :section: Administrative tests
+  # ===========================================================================
+
+  test 'upload admin - view S3 buckets' do
+    action  = :admin
+    params  = PRM.merge(action: action)
+    options = OPT.merge(action: action, test: __method__, expect: :success)
+
+    @readers.each do |user|
+      able  = permitted?(action, user)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
+      u_prm = params
+
+      foreach_format(user, **u_opt) do |fmt|
+        url = make_path('/upload/admin', **u_prm, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        get_as(user, url, **opt, only: READ_FORMATS)
+      end
+    end
+  end
+
+  # ===========================================================================
   # :section: Meta tests
   # ===========================================================================
 

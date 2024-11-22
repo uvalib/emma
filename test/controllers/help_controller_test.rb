@@ -16,6 +16,11 @@ class HelpControllerTest < ApplicationControllerTestCase
     assert_response :success
   end
 
+  test 'help show - search' do
+    get(help_url(id: :search))
+    assert_response :success
+  end
+
   # ===========================================================================
   # :section: Meta tests
   # ===========================================================================

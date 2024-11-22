@@ -58,6 +58,24 @@ class SearchControllerTest < ApplicationControllerTestCase
     end
   end
 
+  test 'search direct - sample search' do
+    action  = :direct
+    item    = search_calls(:example)
+    params  = PRM.merge(action: action).merge!(item.query.symbolize_keys)
+    options = OPT.merge(action: action, test: __method__, expect: :success)
+
+    @readers.each do |user|
+      u_opt = options
+      u_prm = params
+
+      foreach_format(user, **u_opt) do |fmt|
+        url = url_for(**u_prm, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        get_as(user, url, **opt, only: READ_FORMATS)
+      end
+    end
+  end
+
 =begin # NOTE: Per SearchController#show, this endpoint can't be implemented.
   test 'search show - details search result item' do
     action  = :show

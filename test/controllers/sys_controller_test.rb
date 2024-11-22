@@ -33,12 +33,24 @@ class SysControllerTest < ApplicationControllerTestCase
     read_test(:index, meth: __method__)
   end
 
+  test 'system analytics' do
+    read_test(:analytics, meth: __method__)
+  end
+
+  test 'system database' do
+    read_test(:database, meth: __method__, redirect: true)
+  end
+
   test 'system disk_space' do
     read_test(:disk_space, meth: __method__)
   end
 
   test 'system environment' do
     read_test(:environment, meth: __method__)
+  end
+
+  test 'system files' do
+    read_test(:files, meth: __method__)
   end
 
   test 'system headers' do
@@ -49,16 +61,28 @@ class SysControllerTest < ApplicationControllerTestCase
     read_test(:internals, meth: __method__)
   end
 
+  test 'system jobs' do
+    read_test(:jobs, meth: __method__, redirect: true)
+  end
+
   test 'system loggers' do
     read_test(:loggers, meth: __method__)
+  end
+
+  test 'system mailers' do
+    read_test(:mailers, meth: __method__, redirect: true )
+  end
+
+  test 'system processes' do
+    read_test(:processes, meth: __method__)
   end
 
   test 'system settings' do
     read_test(:settings, meth: __method__)
   end
 
-  test 'system - database' do
-    read_test(:database, meth: __method__, redirect: true )
+  test 'system var' do
+    read_test(:var, meth: __method__)
   end
 
   # ===========================================================================

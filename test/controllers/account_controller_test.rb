@@ -147,6 +147,27 @@ class AccountControllerTest < ApplicationControllerTestCase
     end
   end
 
+  test 'account edit_current - user account form' do
+    action  = :edit_current
+    params  = PRM.merge(action: action)
+    options = OPT.merge(action: action, test: __method__, expect: :success)
+
+    @writers.each do |user|
+      able  = permitted?(action, user)
+      u_opt = able ? options : options.except(:controller, :action, :expect)
+      u_prm = params
+
+      foreach_format(user, **u_opt) do |fmt|
+        url = url_for(**u_prm, format: fmt)
+        opt = u_opt.merge(format: fmt)
+        if NO_WRITE.include?(fmt)
+          opt[:expect] = :not_found if able
+        end
+        get_as(user, url, **opt)
+      end
+    end
+  end
+
   test 'account edit - user account edit form' do
     action  = :edit
     params  = PRM.merge(action: action)
