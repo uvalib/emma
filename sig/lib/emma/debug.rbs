@@ -127,6 +127,8 @@ module Emma::Debug
     def self.included: (Module base) -> void
   end
 
+  include FormatMethods
+
   # Methods for emitting debug output.
   #
   module OutputMethods
@@ -249,21 +251,7 @@ module Emma::Debug
     def __debug_banner: (String text, **untyped opt) -> nil
   end
 
-  include FormatMethods
-
   include OutputMethods
-
-  include FormatMethods
-
-  private
-
-  # If CONSOLE_DEBUGGING is *false*, all of the debug output methods are
-  # neutralized so that debug statements are syntactically correct but will
-  # not emit output and their blocks will not be evaluated.
-  #
-  # @param [Module] base
-  #
-  def self.included: (Module base) -> void
 
   public
 

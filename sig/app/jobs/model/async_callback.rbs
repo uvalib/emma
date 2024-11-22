@@ -68,7 +68,7 @@ class Model::AsyncCallback
   #
   # @param [Hash] opt
   #
-  # @return [Boolean]                 Always *true* # TODO: ???
+  # @return [Boolean]                 Always *true*.
   #
   def cb_perform_now: (**untyped opt) -> bool
 

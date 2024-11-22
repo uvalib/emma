@@ -16,7 +16,9 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   # :section: Exceptions
   # ===========================================================================
 
-  rescue_from 'MyError', with: :deliver_error_message # TODO: ???
+=begin # TODO: channel exception handling ?
+  rescue_from 'MyError', with: :deliver_error_message
+=end
 
   # ===========================================================================
   # :section: ActionCable callbacks
@@ -25,19 +27,19 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   if DEBUG_CABLE
 
     before_subscribe do
-      __debug_cable('--->>> CABLE SUB', params.inspect)
+      __debug_cable('--->>> CABLE SUB') { params.inspect }
     end
 
     after_subscribe do
-      __debug_cable('<<<--- CABLE SUB', params.inspect)
+      __debug_cable('<<<--- CABLE SUB') { params.inspect }
     end
 
     before_unsubscribe do
-      __debug_cable('--->>> CABLE UNSUB', params.inspect)
+      __debug_cable('--->>> CABLE UNSUB') { params.inspect }
     end
 
     after_unsubscribe do
-      __debug_cable('<<<--- CABLE UNSUB', params.inspect)
+      __debug_cable('<<<--- CABLE UNSUB') { params.inspect }
     end
 
   end
@@ -172,9 +174,11 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
 
   protected
 
+=begin # TODO: channel exception handling ?
   def deliver_error_message(e)
     broadcast_to('errors', e.message) # E.g., send to "lookup:errors"
   end
+=end
 
 end
 

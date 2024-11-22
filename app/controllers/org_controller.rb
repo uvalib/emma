@@ -37,9 +37,8 @@ class OrgController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  MENUS    = %i[show_select edit_select delete_select].freeze
-  UNIT_OPS = %i[new edit delete].freeze
-  OPS      = UNIT_OPS
+  MENUS = %i[show_select edit_select delete_select].freeze
+  OPS   = %i[new edit delete].freeze
 
   # None
 

@@ -73,5 +73,5 @@ class ApplicationCable::Channel < ActionCable::Channel::Base
   #
   def self.stream_send: (ApplicationCable::Response payload, ?fatal: bool, **untyped opt) -> void
 
-  def deliver_error_message: (Exception e) -> void
+  #def deliver_error_message: (Exception e) -> void
 end

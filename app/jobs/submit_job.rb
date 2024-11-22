@@ -178,7 +178,7 @@ class SubmitJob < ApplicationJob
   # @return [SubmitJob, false]
   #
   def self.perform_later(*args, **opt)
-    __debug_job(__method__) { { args: args, opt: opt } } # TODO: remove
+    __debug_job(__method__) { { args: args, opt: opt } }
     return super unless args.first.is_a?(SubmissionService::BatchSubmitRequest)
 
     # Extract batch sub-requests.

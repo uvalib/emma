@@ -19,8 +19,6 @@ class OrgController < ApplicationController
 
   MENUS: symArray
 
-  UNIT_OPS: symArray
-
   OPS: symArray
 
   @list: Array[Org] | Array[Integer] | Array[String] | nil

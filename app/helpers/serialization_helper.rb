@@ -64,9 +64,10 @@ module SerializationHelper
   # Indicate whether an update request originated from an HTML page.
   #
   def posting_html?
-    return false unless respond_to?(:request) && !request.get?
+    return false unless respond_to?(:request)
+    return false unless request.post? || request.put? || request.patch?
     # noinspection RubyResolve
-    request.format.html? || (request.format.js? && !!request.xhr?)
+    request.format.html? || (request.format.js? && request.xhr?)
   end
 
   # ===========================================================================

@@ -48,11 +48,6 @@ module SearchCallConcern
   # @return [Hash]
   #
   def search_call_params(p = nil)
-=begin
-    params.require(:search_call).permit!
-    # noinspection RubyMismatchedReturnType
-    params.fetch(:search_call, {})
-=end
     url_parameters(p).slice(*SC_PARAMETERS)
   end
 

@@ -2,8 +2,7 @@
 <%-
   # Developer-only short-cuts to sign in as a test user.
 
-  return unless SIGN_IN_AS
-  return unless session_debug? || dev_client?
+  return unless SIGN_IN_AS || session_debug? || dev_client?
 
   view_debug(__FILE__)
 

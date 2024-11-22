@@ -320,6 +320,8 @@ module Emma::Debug
 
   end
 
+  include FormatMethods
+
   # Methods for emitting debug output.
   #
   module OutputMethods
@@ -343,6 +345,7 @@ module Emma::Debug
     def __debug_line(*args, **opt, &blk)
       __debug_impl(*args, separator: DEBUG_SEPARATOR, **opt, &blk)
     end
+      .tap { neutralize(_1) unless CONSOLE_DEBUGGING }
 
     # Output each data item on its own line, with special handling to inject
     # the parameter values of the calling method if a Binding is given.
@@ -403,6 +406,7 @@ module Emma::Debug
       items = blk ? __debug_inspect_items(**opt, &blk) : []
       __debug_line(*args, *items, **opt)
     end
+      .tap { neutralize(_1) unless CONSOLE_DEBUGGING }
 
     # Exception console debugging output.
     #
@@ -438,6 +442,7 @@ module Emma::Debug
       __debug_line(*args, leader: '!!!', **opt, &blk)
       Log.warn { exception.full_message(order: :top) } if trace
     end
+      .tap { neutralize(_1) unless CONSOLE_DEBUGGING }
 
     # Output a line for invocation of a route method.
     #
@@ -458,6 +463,7 @@ module Emma::Debug
       __debug_line(leader, "params = #{prms}", **opt)
       __debug_items(**opt, &blk) if blk
     end
+      .tap { neutralize(_1) unless CONSOLE_DEBUGGING }
 
     # Output request values and contents.
     #
@@ -515,6 +521,7 @@ module Emma::Debug
       end
       __debug_items(*args, **opt, &blk) if blk || args.present?
     end
+      .tap { neutralize(_1) unless CONSOLE_DEBUGGING }
 
     # Output a box which highlights the given text.
     #
@@ -528,40 +535,11 @@ module Emma::Debug
       __debug_impl(__debug_box(text, **opt))
       __debug_impl("\n")
     end
+      .tap { neutralize(_1) unless CONSOLE_DEBUGGING }
 
   end
 
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  if CONSOLE_DEBUGGING
-
-    include FormatMethods
-    include OutputMethods
-
-  else
-
-    include FormatMethods
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    private
-
-    # If CONSOLE_DEBUGGING is *false*, all of the debug output methods are
-    # neutralized so that debug statements are syntactically correct but will
-    # not emit output and their blocks will not be evaluated.
-    #
-    # @param [Module] base
-    #
-    def self.included(base)
-      base.neutralize(*OutputMethods.instance_methods(false))
-      base
-    end
-
-  end
+  include OutputMethods
 
   # ===========================================================================
   # :section:

@@ -568,7 +568,10 @@ $title-focus: darker( $uva-teal, 27.5%);
             display:        flex;
             flex-direction: row;
             align-items:    center;
-            height:         100%;
+
+            @media #{$not-wide-screen} {
+                height:     100%;
+            }
         }
 
         &.textbox {

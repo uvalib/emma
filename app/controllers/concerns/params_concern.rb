@@ -112,7 +112,7 @@ module ParamsConcern
   # Indicate whether the current request is from client-side scripting.
   #
   def request_xhr?
-    !!request.xhr?
+    request.xhr?
   end
 
   # Indicate whether the current request is a normal HTTP GET that coming from

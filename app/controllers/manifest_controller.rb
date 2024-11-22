@@ -48,10 +48,9 @@ class ManifestController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  LISTS    = %i[index bulk_index list_all list_org list_own].freeze
-  MENUS    = %i[show_select edit_select delete_select remit_select].freeze
-  UNIT_OPS = %i[new edit delete remit].freeze
-  OPS      = UNIT_OPS
+  LISTS = %i[index bulk_index list_all list_org list_own].freeze
+  MENUS = %i[show_select edit_select delete_select remit_select].freeze
+  OPS   = %i[new edit delete remit].freeze
 
   before_action :set_ingest_engine, only: [*LISTS, *OPS]
 

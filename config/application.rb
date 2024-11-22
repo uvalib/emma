@@ -156,9 +156,6 @@ module Emma
     # @see config/initializers/good_job.rb
     config.active_job.queue_adapter = :good_job
     # config.active_job.queue_name_prefix = "emma_#{Rails.env}"
-=begin # NOTE: deprecated in Rails 7.1
-    config.active_job.skip_after_callbacks_if_terminated = !DEBUG_JOB
-=end
 
     # =========================================================================
     # ActiveStorage

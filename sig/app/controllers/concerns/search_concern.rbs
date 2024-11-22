@@ -37,7 +37,7 @@ module SearchConcern
   #
   SEARCH_GENERATE_SCORES: bool
 
-  # index_search
+  # Get search result records from the EMMA Unified Index.
   #
   # @param [Boolean] titles           If *false*, return records not titles.
   # @param [Boolean] save             If *false*, do not save search terms.
@@ -56,13 +56,16 @@ module SearchConcern
     : (?titles: true|nil, ?save: bool, ?scores: bool|nil, ?canonical: bool|nil, **untyped opt) -> Search::Message::SearchTitleList
     | ( titles: false,    ?save: bool, ?scores: bool|nil, ?canonical: bool|nil, **untyped opt) -> Search::Message::SearchRecordList
 
-  # index_record
+  # Get a single search result record from the EMMA Unified Index.
   #
   # @param [Hash] **opt
   #
   # @return [Search::Message::SearchRecord]
   #
   # @see SearchService::Action::Records#get_record
+  #
+  # @note This method is not actually functional because it depends on an EMMA
+  #   Unified Search endpoint which does not exist.
   #
   def index_record: (**untyped opt) -> Search::Message::SearchRecord
 
@@ -97,19 +100,13 @@ module SearchConcern
   #
   # @return [any, nil]
   #
+  # @note Currently used only by #show_values.
+  #
   def sanitize_keys
     :     (anyHash  value) -> symHash
     |     (anyArray value) -> (anyArray | untyped)
     |     (String   value) -> (strArray | String)
     | [T] (T        value) -> T
-
-  # Indicate whether the argument contains only valid identifiers.
-  #
-  # @param [String, Array<String>] value
-  #
-  # @note Currently unused.
-  #
-  def valid_identifiers?: ((String|strArray) value) -> bool
 
   # Indicate whether the argument contains only valid identifiers and provide
   # a list of individual validation problems.
@@ -124,6 +121,8 @@ module SearchConcern
   #
   # @return [String]                  Value of `params[:id]`.
   # @return [nil]                     No :id, :recordId found.
+  #
+  # @note Currently used only by SearchController#show.
   #
   def set_record_id: () -> (String | nil)
 
@@ -192,7 +191,7 @@ module SearchConcern
 
   private
 
-  # set_search_feature
+  # Persist the `*param_key*` setting in the session.
   #
   # @param [Symbol]               param_key
   # @param [any, nil]             value
@@ -230,6 +229,8 @@ module SearchConcern
   # @param [Hash]                                opt
   #
   # @return [Hash{Symbol=>Hash}]
+  #
+  # @note Currently used only by SearchController#show.
   #
   def show_values: (?(Search::Message::SearchRecord|anyHash) item, **untyped opt) -> symHash
 

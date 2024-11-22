@@ -116,10 +116,10 @@ class Model::AsyncCallback
   #
   # @param [Hash] opt
   #
-  # @return [Boolean]                 Always *true* # TODO: ???
+  # @return [Boolean]                 Always *true*.
   #
   def cb_perform_now(**opt)
-    __debug { "#{__method__} | opt = #{opt.inspect}" } # TODO: remove
+    __debug { "#{__method__} | opt = #{opt.inspect}" }
     receiver.job_class.perform_now(receiver, meth, **opt)
     true # TODO: return from #perform ???
   end
@@ -131,7 +131,7 @@ class Model::AsyncCallback
   # @return [Boolean]                 `*true*` if queued; `*false*` if not.
   #
   def cb_perform_later(**opt)
-    __debug { "#{__method__} | opt = #{opt.inspect}" } # TODO: remove
+    __debug { "#{__method__} | opt = #{opt.inspect}" }
     receiver.job_class.perform_later(receiver, meth, **opt).present?
   end
 

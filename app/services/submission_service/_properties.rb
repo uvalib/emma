@@ -170,7 +170,7 @@ module SubmissionService::Properties
 
   public
 
-  SIMULATION_ALLOWED = true
+  SIMULATION_ALLOWED = false
   SIMULATION_ONLY    = false
 
   if sanity_check?

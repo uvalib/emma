@@ -188,17 +188,6 @@ module SearchConcern
 
   public
 
-  # Indicate whether the argument contains only valid identifiers.
-  #
-  # @param [String, Array<String>] value
-  #
-  # @note Currently unused.
-  #
-  def valid_identifiers?(value)
-    ids = PublicationIdentifier.objects(value)
-    ids.present? && ids.all? { _1&.valid? }
-  end
-
   # Indicate whether the argument contains only valid identifiers and provide
   # a list of individual validation problems.
   #

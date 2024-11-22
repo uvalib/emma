@@ -31,8 +31,6 @@ class ManifestController < ApplicationController
 
   MENUS: symArray
 
-  UNIT_OPS: symArray
-
   OPS: symArray
 
   @list: Array[Manifest] | Array[Integer] | Array[String] | nil

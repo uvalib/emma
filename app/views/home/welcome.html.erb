@@ -12,9 +12,6 @@
     set_page_description(title)
   end
 
-  sign_in = config_page(:user_sessions, :new, :label)
-  sign_in = link_to(sign_in, new_user_session_path)
-
 -%>
 
 <%= page_heading(title, help: help) %>

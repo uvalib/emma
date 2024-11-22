@@ -71,7 +71,7 @@ module ManifestItemConcern
   #
   def current_get_params
     super do |prm|
-      prm[:user] = @user if @user && !prm[:user] && !prm[:user_id] # TODO: should this be here?
+      prm[:user] = @user if @user && !prm[:user] && !prm[:user_id]
       @manifest_id ||= extract_manifest_id(prm)
     end
   end

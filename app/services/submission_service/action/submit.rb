@@ -378,9 +378,10 @@ module SubmissionService::Action::Submit
     recs   = manifest_items(items)
     start_time ||= timestamp
 
-    sim = (opt[:sim_opt] if opt[:simulation] && SIMULATION_ALLOWED)
-    tag = sim && "*** SUBMIT --- #{self_class}.#{meth}"
-    sim&.simulate_work(recs, tag, time: start_time, step: step, **opt)
+    if SIMULATION_ALLOWED && opt[:simulation] && (sim = opt[:sim_opt])
+      tag = "*** SUBMIT --- #{self_class}.#{meth}"
+      sim.simulate_work(recs, tag, time: start_time, step: step, **opt)
+    end
 
     case step
       when :cache   then result = await_upload(recs, **opt)
@@ -823,7 +824,9 @@ module SubmissionService::Action::Submit
 
     protected
 
-    def ids(arg) = arg.is_a?(Hash) ? arg.keys : Array.wrap(arg)
+    def ids(arg)
+      arg.is_a?(Hash) ? arg.keys : Array.wrap(arg)
+    end
 
     def normalize!(opt)
       opt.slice!(*TEMPLATE.keys)

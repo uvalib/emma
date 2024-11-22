@@ -18,11 +18,11 @@ class ApplicationJob < ActiveJob::Base
   # ===========================================================================
 
   discard_on ActiveRecord::ActiveRecordError do |job, error|
-    __debug_job(job) { "DATABASE ERROR - #{error.inspect}" } # TODO: remove block
+    __debug_job(job) { "DATABASE ERROR - #{error.inspect}" }
   end
 
   retry_on ActiveRecord::ConnectionTimeoutError do |job, error|
-    __debug_job(job) { "RETRY FAILED - #{error.inspect}" } # TODO: remove block
+    __debug_job(job) { "RETRY FAILED - #{error.inspect}" }
   end
 
   # ===========================================================================
@@ -81,7 +81,7 @@ class ApplicationJob < ActiveJob::Base
   # @return [ApplicationJob]          Otherwise *self* is returned.
   #
   def perform_later(*args, **options)
-    __debug_job(__method__) { "options = #{item_inspect(options)}" } # TODO: remove
+    __debug_job(__method__) { "options = #{item_inspect(options)}" }
     job_warn { "ignoring method args #{args.inspect}" } if args.present?
     enqueue(options)
   end
