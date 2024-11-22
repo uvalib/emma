@@ -1,13 +1,30 @@
 class SearchTest < ApplicationSystemTestCase
-  CONTROLLER: Symbol
+  CTRLR: Symbol
 
-  PARAMS: symHash
+  PRM: symHash
+
+  PAGE_SIZE: Integer
 
   PAGE_COUNT: Integer
 
   TITLE_SEARCH: String
 
-  # Await the indicated page then output its :prev and :next links.
+  # Perform a test to visit multiple pages of search results.
+  #
+  # @param [Symbol] meth              Calling test method.
+  # @param [Hash]   opt               URL parameters.
+  #
+  # @return [void]
+  #
+  def list_test: (meth: Symbol|nil, **untyped opt) { (Integer index) -> untyped } -> void
+
+  # Indicate whether the options include search term specifier(s).
+  #
+  # @param [Hash] opt
+  #
+  def search_terms?: (**untyped opt) -> bool
+
+  # Await the indicated page then output its `:prev` and `:next` links.
   #
   # @param [Integer] index
   # @param [String]  base_url
@@ -21,5 +38,46 @@ class SearchTest < ApplicationSystemTestCase
   # rendered.  For that reason, there is an extra layer of indirection which
   # re-waits for the page if neither :prev nor :next can be found.
   #
-  def show_page: (Integer index, ?base_url: String|nil, ?expected_url: String|nil, ?max: Integer) -> void
+  def go_to_index_page: (Integer index, ?base_url: String|nil, ?expected_url: String|nil, ?max: Integer) -> void
+
+  # For a "Results By Title" search result page, ensure that the entries are
+  # valid.
+  #
+  # @param [Integer, nil] index       Zero-based page index.
+  # @param [Integer, nil] page        One-based page number.
+  # @param [Integer]      size        Entries per page.
+  #
+  # @return [void]
+  #
+  def validate_title_entries
+    : ( index: Integer, ?page: nil,     ?size: Integer) -> void
+    | (?index: nil,      page: Integer, ?size: Integer) -> void
+
+  # For a "Results By File" search result page, ensure that the entries are
+  # numbered correctly.
+  #
+  # @param [Integer, nil] index       Zero-based page index.
+  # @param [Integer, nil] page        One-based page number.
+  # @param [Integer]      size        Entries per page.
+  #
+  # @return [void]
+  #
+  def validate_file_entries
+    : ( index: Integer, ?page: nil,     ?size: Integer) -> void
+    | (?index: nil,      page: Integer, ?size: Integer) -> void
+
+  # Click on a download link to retrieve a remediated file from search results.
+  #
+  # In the case of "ACE" and "Internet Archive" items, this is explicitly
+  # limited to PDFs because DAISY and EPUB formats are generated "on-the-fly"
+  # and that process is currently *extremely* slow on the archive.org side.
+  #
+  # @param [User, nil] user
+  # @param [Symbol]    repo
+  # @param [Symbol]    meth
+  # @param [Hash]      opt
+  #
+  # @return [void]
+  #
+  def download_item: (User|nil user, Symbol repo, meth: Symbol, **untyped opt) -> void
 end

@@ -85,6 +85,54 @@ class ManifestsTest < ApplicationSystemTestCase
     show_test(@admin, meth: __method__)
   end
 
+  test 'manifests - show_select - anonymous' do
+    show_select_test(nil, meth: __method__)
+  end
+
+  test 'manifests - show_select - member' do
+    show_select_test(@member, meth: __method__)
+  end
+
+  test 'manifests - show_select - admin' do
+    show_select_test(@admin, meth: __method__)
+  end
+
+  test 'manifests - edit_select - anonymous' do
+    edit_select_test(nil, meth: __method__)
+  end
+
+  test 'manifests - edit_select - member' do
+    edit_select_test(@member, meth: __method__)
+  end
+
+  test 'manifests - edit_select - admin' do
+    edit_select_test(@admin, meth: __method__)
+  end
+
+  test 'manifests - delete_select - anonymous' do
+    delete_select_test(nil, meth: __method__)
+  end
+
+  test 'manifests - delete_select - member' do
+    delete_select_test(@member, meth: __method__)
+  end
+
+  test 'manifests - delete_select - admin' do
+    delete_select_test(@admin, meth: __method__)
+  end
+
+  test 'manifests - remit_select - anonymous' do
+    remit_select_test(nil, meth: __method__)
+  end
+
+  test 'manifests - remit_select - member' do
+    remit_select_test(@member, meth: __method__)
+  end
+
+  test 'manifests - remit_select - admin' do
+    remit_select_test(@admin, meth: __method__)
+  end
+
   # ===========================================================================
   # :section: Write tests
   # ===========================================================================
@@ -113,12 +161,32 @@ class ManifestsTest < ApplicationSystemTestCase
     delete_test(@member, meth: __method__)
   end
 
-  test 'manifests - delete (select)' do
-    delete_select_test(meth: __method__, direct: true)
+  test 'manifests - import - csv - create' do
+    new_test(@member, meth: __method__, file: @csv)
   end
 
-  test 'manifests - delete (select) from index' do
-    delete_select_test(meth: __method__, direct: false)
+  test 'manifests - import - json - create' do
+    new_test(@member, meth: __method__, file: @json)
+  end
+
+  test 'manifests - import - csv - edit' do
+    edit_test(@member, meth: __method__, file: @csv)
+  end
+
+  test 'manifests - import - json - edit' do
+    edit_test(@member, meth: __method__, file: @json)
+  end
+
+  # ===========================================================================
+  # :section: Other tests
+  # ===========================================================================
+
+  test 'manifests - remit - anonymous' do
+    remit_test(nil, meth: __method__)
+  end
+
+  test 'manifests - remit - member' do
+    remit_test(@member, meth: __method__)
   end
 
   # ===========================================================================
@@ -136,7 +204,7 @@ class ManifestsTest < ApplicationSystemTestCase
   end
 
   # ===========================================================================
-  # :section: Methods
+  # :section: Methods - read tests
   # ===========================================================================
 
   protected
@@ -266,6 +334,115 @@ class ManifestsTest < ApplicationSystemTestCase
 
     end
   end
+
+  # Perform a test to invoke the menu for selecting a manifest to display.
+  #
+  # @param [User, nil] user
+  # @param [Hash]      opt            Passed to #page_select_test.
+  #
+  # @return [void]
+  #
+  def show_select_test(user, **opt)
+    page_select_test(user, action: :show, **opt)
+  end
+
+  # Perform a test to invoke the menu for selecting a manifest to modify.
+  #
+  # @param [User, nil] user
+  # @param [Hash]      opt            Passed to #page_select_test.
+  #
+  # @return [void]
+  #
+  def edit_select_test(user, **opt)
+    page_select_test(user, action: :edit, **opt)
+  end
+
+  # Perform a test to invoke the menu for selecting a manifest to remove.
+  #
+  # @param [User, nil] user
+  # @param [Hash]      opt            Passed to #page_select_test.
+  #
+  # @return [void]
+  #
+  def delete_select_test(user, **opt)
+    page_select_test(user, action: :delete, **opt)
+  end
+
+  # Perform a test to invoke the menu for selecting a manifest to submit.
+  #
+  # @param [User, nil] user
+  # @param [Hash]      opt            Passed to #page_select_test.
+  #
+  # @return [void]
+  #
+  def remit_select_test(user, **opt)
+    page_select_test(user, action: :remit, **opt)
+  end
+
+  # Perform a test to invoke the menu for selecting a manifest.
+  #
+  # @param [User, nil]   user
+  # @param [Symbol]      action
+  # @param [String, nil] title
+  # @param [Symbol]      meth         Calling test method.
+  # @param [Hash]        opt          URL parameters.
+  #
+  # @return [void]
+  #
+  def page_select_test(user, action:, title: nil, meth: nil, **opt)
+    form_url  = url_for(**PRM, action: action)
+    action    = :"#{action}_select"
+    params    = PRM.merge(action: action, **opt)
+
+    start_url = url_for(**params)
+
+    run_test(meth || __method__) do
+
+      if permitted?(action, user)
+
+        title   ||= page_title(**params, name: '')
+        final_url = start_url
+
+        # Successful sign-in should redirect back to the action page.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
+
+        # The page should show manifest menus.
+        show_url
+        screenshot
+        assert_current_url(final_url)
+        assert_valid_page(heading: title)
+
+        # Check that the first menu contains the user's manifests and that the
+        # second menu contains all manifests visible to the user.
+        adm = user.administrator?
+        own = fixture_count_for_user(MODEL, user)
+        all = adm ? fixture_count(MODEL) : fixture_count_for_org(MODEL, user)
+        u   = form_url
+        check_page_select_menu('.select-menu.own-items', count: own, action: u)
+        check_page_select_menu('.select-menu.all-items', count: all, action: u)
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from #{action} manifest." }
+        assert_no_visit(start_url, action, as: user)
+
+      else
+
+        show_item { "Anonymous user blocked from #{action} manifest." }
+        assert_no_visit(start_url, :sign_in)
+
+      end
+
+    end
+  end
+
+  # ===========================================================================
+  # :section: Methods - write tests
+  # ===========================================================================
+
+  protected
 
   # Perform a test to create a new bulk operation manifest.
   #
@@ -509,6 +686,103 @@ class ManifestsTest < ApplicationSystemTestCase
       else
 
         show_item { 'Anonymous user blocked from removing manifest.' }
+        assert_no_visit(form_url, :sign_in)
+
+      end
+
+    end
+  end
+
+  # ===========================================================================
+  # :section: Methods - other tests
+  # ===========================================================================
+
+  protected
+
+  # Perform a test to select then submit a bulk operation manifest.
+  #
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
+  #
+  # @return [void]
+  #
+  def remit_test(user, meth: nil, **opt)
+    button   = 'Submit'
+    action   = :remit
+    params   = PRM.merge(action: action, **opt)
+
+    # Find the item to be submitted.
+    record   = user&.manifests&.first || manifests(:edit_example)
+    form_url = form_page_url(record.id, **params)
+
+    run_test(meth || __method__) do
+
+      if permitted?(action, user, record)
+
+        admin     = user.administrator?
+        records   = (fixture_count(MODEL) if admin)
+        total     = (fixture_count_for_user(MODEL, user) unless records)
+
+        index_url = url_for(**params, action: :index)
+        all_url   = url_for(**params, action: :list_all)
+        own_url   = url_for(**params, action: :list_own)
+        org_url   = url_for(**params, action: :list_org)
+        menu_url  = url_for(**params, action: menu_action(action))
+
+        start_url = index_url
+        final_url = [index_url, all_url, own_url, org_url]
+
+        # Identify the item to be submitted.
+        item_name = record.name
+
+        # Start on the index page showing the current number of items.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
+
+        # Go to the menu page and choose the item to submit.
+        select_action(button, wait_for: menu_url)
+        select_item(item_name, wait_for: form_url)
+
+        # Resolve manifest item files by supplying fixture files.
+        button = find('.file-button.local-file')
+        files  = record.manifest_items.map { file_fixture(_1.filename) }
+        attach_file(files) { button.click }
+        screenshot
+        close_flash
+        screenshot
+
+        # Submit the manifest items.
+        click_on 'Start'
+
+        # Wait for completion.
+        statuses = all('.entry-status[role="gridcell"]').to_ary
+        end_stat = %w[succeeded failed]
+        complete =
+          wait_for_condition do
+            statuses.all? { _1[:class].split(' ').intersect?(end_stat) }
+          end
+        unless complete
+          click_on 'Results'
+          screenshot
+          flunk 'Some items were not submitted successfully'
+        end
+
+        # There should be the same number of items as before on the index page.
+        visit final_url.first unless final_url.include?(current_url)
+        assert_valid_page(heading: TITLE)
+        displayed_manifest_total(expected: total)    if total
+        assert_model_count(MODEL, expected: records) if records
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from submitting manifest." }
+        assert_no_visit(form_url, action, as: user)
+
+      else
+
+        show_item { 'Anonymous user blocked from submitting manifest.' }
         assert_no_visit(form_url, :sign_in)
 
       end

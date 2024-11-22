@@ -97,3 +97,7 @@ edit_example:
 delete_example:
   <<:           *CSV
   name:         'Example manifest for deleting'
+
+remit_example:
+  <<:           *CSV
+  name:         'Example manifest for remit'

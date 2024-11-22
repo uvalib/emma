@@ -1,0 +1,19 @@
+class SysTest < ApplicationSystemTestCase
+  # Visit an email preview page.
+  #
+  # @param [Array] arg
+  # @param [Hash]  opt                Passed to #check_mail_preview
+  #
+  # @return [void]
+  #
+  def mail_preview: (*untyped arg, **untyped opt) -> void
+
+  # Validate email preview content.
+  #
+  # @param [Boolean,Symbol] format    Either *true*, *false*, :html, or :text.
+  # @param [Integer]        min_size  Minimum expected message size.
+  #
+  # @return [void]
+  #
+  def check_mail_preview: (?format: bool|:html|:text, ?min_size: Integer, **untyped _ignored) -> void
+end

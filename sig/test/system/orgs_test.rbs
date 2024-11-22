@@ -43,6 +43,45 @@ class OrgsTest < ApplicationSystemTestCase
   #
   def show_test: ((User|nil) user, ?target: Org|nil, ?title: String|nil, ?meth: Symbol|nil, **untyped opt) -> void
 
+  # Perform a test to invoke the menu for selecting an organization to display.
+  #
+  # @param [User, nil] user
+  # @param [Hash]      opt            Passed to #page_select_test.
+  #
+  # @return [void]
+  #
+  def show_select_test: ((User|nil) user, **untyped opt) -> void
+
+  # Perform a test to invoke the menu for selecting an organization to modify.
+  #
+  # @param [User, nil] user
+  # @param [Hash]      opt            Passed to #page_select_test.
+  #
+  # @return [void]
+  #
+  def edit_select_test: ((User|nil) user, **untyped opt) -> void
+
+  # Perform a test to invoke the menu for selecting an organization to remove.
+  #
+  # @param [User, nil] user
+  # @param [Hash]      opt            Passed to #page_select_test.
+  #
+  # @return [void]
+  #
+  def delete_select_test: ((User|nil) user, **untyped opt) -> void
+
+  # Perform a test to invoke the menu for selecting an organization.
+  #
+  # @param [User, nil]   user
+  # @param [Symbol]      action
+  # @param [String, nil] title
+  # @param [Symbol]      meth         Calling test method.
+  # @param [Hash]        opt          URL parameters.
+  #
+  # @return [void]
+  #
+  def page_select_test: ((User|nil) user, action: Symbol, ?title: String|nil, ?meth: Symbol|nil, **untyped opt) -> void
+
   # Perform a test to create a new organization.
   #
   # @param [User, nil]   user
@@ -62,6 +101,16 @@ class OrgsTest < ApplicationSystemTestCase
   # @return [void]
   #
   def edit_test: ((User|nil) user, ?meth: Symbol|nil, **untyped opt) -> void
+
+  # Perform a test to modify the organization of *user* directly.
+  #
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
+  #
+  # @return [void]
+  #
+  def edit_current_test: ((User|nil) user, ?meth: Symbol|nil, **untyped opt) -> void
 
   # Perform a test to select then remove an organization.
   #

@@ -87,6 +87,42 @@ class UploadsTest < ApplicationSystemTestCase
     show_test(@admin, meth: __method__)
   end
 
+  test 'uploads - show_select - anonymous' do
+    show_select_test(nil, meth: __method__)
+  end
+
+  test 'uploads - show_select - member' do
+    show_select_test(@member, meth: __method__)
+  end
+
+  test 'uploads - show_select - admin' do
+    show_select_test(@admin, meth: __method__)
+  end
+
+  test 'uploads - edit_select - anonymous' do
+    edit_select_test(nil, meth: __method__)
+  end
+
+  test 'uploads - edit_select - member' do
+    edit_select_test(@member, meth: __method__)
+  end
+
+  test 'uploads - edit_select - admin' do
+    edit_select_test(@admin, meth: __method__)
+  end
+
+  test 'uploads - delete_select - anonymous' do
+    delete_select_test(nil, meth: __method__)
+  end
+
+  test 'uploads - delete_select - member' do
+    delete_select_test(@member, meth: __method__)
+  end
+
+  test 'uploads - delete_select - admin' do
+    delete_select_test(@admin, meth: __method__)
+  end
+
   # ===========================================================================
   # :section: Write tests
   # ===========================================================================
@@ -140,6 +176,38 @@ class UploadsTest < ApplicationSystemTestCase
   end
 
   # ===========================================================================
+  # :section: Other tests
+  # ===========================================================================
+
+  test 'uploads - records - APTrust backup' do
+    params    = PRM.merge(action: :records, format: :json)
+    start_url = url_for(**params)
+
+    run_test(__method__) do
+
+      # Available anonymously.
+      visit start_url
+      screenshot
+
+      # Check data.
+      data = json_parse(page.text)
+      show_item { "data = #{data.pretty_inspect}" }
+      flunk 'Missing top-level "entries"' unless (ent  = data[:entries])
+      flunk 'Missing "list"'              unless (list = ent[:list])
+      flunk 'Missing "properties"'        unless (prop = ent[:properties])
+
+      # Ensure that the total count matches the number of list items.
+      total = prop[:total].to_i
+      assert_equal total, list.size
+      assert_predicate total, :positive?
+
+      # Ensure the list items are well-formed.
+      validate_record(list.first)
+
+    end
+  end
+
+  # ===========================================================================
   # :section: Meta tests
   # ===========================================================================
 
@@ -171,7 +239,7 @@ class UploadsTest < ApplicationSystemTestCase
   end
 
   # ===========================================================================
-  # :section: Methods
+  # :section: Methods - read tests
   # ===========================================================================
 
   protected
@@ -300,6 +368,104 @@ class UploadsTest < ApplicationSystemTestCase
 
     end
   end
+
+  # Perform a test to invoke the menu for selecting a submission to display.
+  #
+  # @param [User, nil] user
+  # @param [Hash]      opt            Passed to #page_select_test.
+  #
+  # @return [void]
+  #
+  def show_select_test(user, **opt)
+    page_select_test(user, action: :show, **opt)
+  end
+
+  # Perform a test to invoke the menu for selecting a submission to modify.
+  #
+  # @param [User, nil] user
+  # @param [Hash]      opt            Passed to #page_select_test.
+  #
+  # @return [void]
+  #
+  def edit_select_test(user, **opt)
+    page_select_test(user, action: :edit, **opt)
+  end
+
+  # Perform a test to invoke the menu for selecting a submission to remove.
+  #
+  # @param [User, nil] user
+  # @param [Hash]      opt            Passed to #page_select_test.
+  #
+  # @return [void]
+  #
+  def delete_select_test(user, **opt)
+    page_select_test(user, action: :delete, **opt)
+  end
+
+  # Perform a test to invoke the menu for selecting an EMMA submission.
+  #
+  # @param [User, nil]   user
+  # @param [Symbol]      action
+  # @param [String, nil] title
+  # @param [Symbol]      meth         Calling test method.
+  # @param [Hash]        opt          URL parameters.
+  #
+  # @return [void]
+  #
+  def page_select_test(user, action:, title: nil, meth: nil, **opt)
+    form_url  = url_for(**PRM, action: action)
+    action    = :"#{action}_select"
+    params    = PRM.merge(action: action, **opt)
+
+    start_url = url_for(**params)
+
+    run_test(meth || __method__) do
+
+      if permitted?(action, user)
+
+        title   ||= page_title(**params, name: '')
+        final_url = start_url
+
+        # Successful sign-in should redirect back to the action page.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
+
+        # The page should show submission menus.
+        show_url
+        screenshot
+        assert_current_url(final_url)
+        assert_valid_page(heading: title)
+
+        # Check that the first menu contains the user's submissions and that
+        # the second menu contains all submissions visible to the user.
+        adm = user.administrator?
+        own = fixture_count_for_user(MODEL, user)
+        all = adm ? fixture_count(MODEL) : fixture_count_for_org(MODEL, user)
+        u   = form_url
+        check_page_select_menu('.select-menu.own-items', count: own, action: u)
+        check_page_select_menu('.select-menu.all-items', count: all, action: u)
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from #{action} submission." }
+        assert_no_visit(start_url, action, as: user)
+
+      else
+
+        show_item { "Anonymous user blocked from #{action} submission." }
+        assert_no_visit(start_url, :sign_in)
+
+      end
+
+    end
+  end
+
+  # ===========================================================================
+  # :section: Methods - write tests
+  # ===========================================================================
+
+  protected
 
   # Perform a test to create a new EMMA submission.
   #
@@ -555,6 +721,81 @@ class UploadsTest < ApplicationSystemTestCase
 
       end
 
+    end
+  end
+
+  # ===========================================================================
+  # :section: Methods - other tests
+  # ===========================================================================
+
+  protected
+
+  # A minimal "/upload/records" list item.
+  #
+  # @type [Hash{Symbol=>nil,Hash}]
+  #
+  RECORD_TEMPLATE = {
+    submission_id:  nil,
+    created_at:     nil,
+    updated_at:     nil,
+    file_url:       nil,
+    file_data: {
+      id:       nil,
+      storage:  nil,
+      metadata: {
+        filename:   nil,
+        size:       nil,
+        mime_type:  nil,
+      }
+    },
+    emma_data: {
+      emma_repository:          nil,
+      emma_repositoryRecordId:  nil,
+      dc_title:                 nil,
+      dc_creator:               nil,
+      dc_language:              nil,
+      dc_type:                  nil,
+      dc_format:                nil,
+      rem_complete:             nil,
+      rem_coverage:             nil,
+      rem_status:               nil,
+      rem_comments:             nil,
+    },
+  }.deep_freeze
+
+  # Verify that a "/upload/records" list item is well-formed.
+  #
+  # @param [Hash] item
+  #
+  def validate_record(item)
+
+    # Adjust items that come from "test/fixtures/uploads.yml".
+    item     = item.deep_dup
+    complete = item[:emma_data][:rem_complete]
+    item[:emma_data][:emma_repositoryRecordId] ||= item[:submission_id]
+
+    # Adjust template to ignore :rem_coverage if it is not actually required.
+    template = RECORD_TEMPLATE.deep_dup
+    template[:emma_data].delete(:rem_coverage) if complete
+
+    # Verify that *item* has each expected field and sub-field.
+    template.each_pair do |key, val|
+      assert item[key].present?, "Item missing :#{key}"
+
+      # === item[:file_data] or item[:emma_data]
+      next unless val.is_a?(Hash)
+      name = "Item [:#{key}]"
+      val.each_pair do |k, _|
+        assert item.dig(key, k).present?, "#{name} missing :#{k}"
+      end
+
+      # === item[:file_data][:metadata]
+      next unless key == :file_data
+      sub  = :metadata
+      name = "Item [:#{key}][:#{sub}]"
+      val[:metadata].each_pair do |k, _|
+        assert item.dig(key, sub, k).present?, "#{name} missing :#{k}"
+      end
     end
   end
 

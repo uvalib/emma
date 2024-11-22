@@ -1,0 +1,33 @@
+class ToolTest < ApplicationSystemTestCase
+  CTRLR: Symbol
+
+  PRM: symHash
+
+  # Perform a test to use Math Detective to interpret the image of an equation.
+  #
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
+  #
+  # @return [void]
+  #
+  def md_test: (User|nil user, ?meth: Symbol|nil, **untyped opt) -> void
+
+  # Perform a test to use bibliographic lookup.
+  #
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
+  #
+  # @return [void]
+  #
+  def lookup_test: (User|nil user, ?meth: Symbol|nil, **untyped opt) -> void
+
+  # Perform a lookup on the bibliographic lookup page.
+  #
+  # @param [String] query
+  #
+  # @return [String]
+  #
+  def check_lookup: (String query) -> String
+end

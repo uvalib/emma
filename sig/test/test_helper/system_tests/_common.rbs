@@ -103,6 +103,17 @@ module TestHelper::SystemTests::Common
 
   DEF_WAIT_MAX_TIME: Numeric
 
+  # Block until the supplied condition is met.
+  #
+  # @param [Boolean] fatal            If *true*, then assert.
+  # @param [Numeric] wait             Overall time limit.
+  #
+  # @raise [Minitest::Assertion]      If failed and *fatal* is *true*.
+  #
+  # @return [Boolean]
+  #
+  def wait_for_condition: (?fatal: bool, ?wait: Numeric) { (Integer pass) -> untyped } -> bool
+
   # Block until the browser can confirm that it is on the target page.
   #
   # @param [Array, nil] targets       One or more acceptable target URLs, or

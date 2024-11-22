@@ -174,6 +174,36 @@ module TestHelper::SystemTests::Common
   DEF_WAIT_MAX_PASS = 5
   DEF_WAIT_MAX_TIME = Capybara::Lockstep.timeout * DEF_WAIT_MAX_PASS * 2
 
+  # Block until the supplied condition is met.
+  #
+  # @param [Boolean] fatal            If *true*, then assert.
+  # @param [Numeric] wait             Overall time limit.
+  #
+  # @raise [Minitest::Assertion]      If failed and *fatal* is *true*.
+  #
+  # @return [Boolean]
+  #
+  def wait_for_condition(fatal: false, wait: DEF_WAIT_MAX_TIME)
+    pass    = -1
+    timer   = Capybara::Helpers::Timer.new(wait)
+    timeout = nil
+
+    # Retry until the condition is met or the timer expires.
+    until (found = yield(pass += 1))
+      break if (timeout = timer.expired?)
+      show_item { "[waiting] pass #{pass}" }
+      screenshot
+      sleep Capybara::Lockstep.timeout
+    end
+
+    # Done waiting and now either *found* or *timeout* is true.
+    show_item { "[timeout] pass #{pass}" } if timeout && !fatal
+    screenshot
+    flunk "[timeout] pass #{pass}"         if timeout && fatal
+
+    !!found
+  end
+
   # Block until the browser can confirm that it is on the target page.
   #
   # @param [Array, nil] targets       One or more acceptable target URLs, or

@@ -63,6 +63,66 @@ class OrgsTest < ApplicationSystemTestCase
     show_test(@admin, meth: __method__)
   end
 
+  test 'orgs - show_current - anonymous' do
+    show_test(nil, meth: __method__)
+  end
+
+  test 'orgs - show_current - member' do
+    show_test(@member, meth: __method__)
+  end
+
+  test 'orgs - show_current - admin' do
+    show_test(@admin, meth: __method__)
+  end
+
+  test 'orgs - show_select - anonymous' do
+    show_select_test(nil, meth: __method__)
+  end
+
+  test 'orgs - show_select - member' do
+    show_select_test(@member, meth: __method__)
+  end
+
+  test 'orgs - show_select - manager' do
+    show_select_test(@manager, meth: __method__)
+  end
+
+  test 'orgs - show_select - admin' do
+    show_select_test(@admin, meth: __method__)
+  end
+
+  test 'orgs - edit_select - anonymous' do
+    edit_select_test(nil, meth: __method__)
+  end
+
+  test 'orgs - edit_select - member' do
+    edit_select_test(@member, meth: __method__)
+  end
+
+  test 'orgs - edit_select - manager' do
+    edit_select_test(@manager, meth: __method__)
+  end
+
+  test 'orgs - edit_select - admin' do
+    edit_select_test(@admin, meth: __method__)
+  end
+
+  test 'orgs - delete_select - anonymous' do
+    delete_select_test(nil, meth: __method__)
+  end
+
+  test 'orgs - delete_select - member' do
+    delete_select_test(@member, meth: __method__)
+  end
+
+  test 'orgs - delete_select - manager' do
+    delete_select_test(@manager, meth: __method__)
+  end
+
+  test 'orgs - delete_select - admin' do
+    delete_select_test(@admin, meth: __method__)
+  end
+
   # ===========================================================================
   # :section: Write tests
   # ===========================================================================
@@ -99,6 +159,22 @@ class OrgsTest < ApplicationSystemTestCase
     edit_test(@admin, meth: __method__)
   end
 
+  test 'orgs - edit_current - anonymous' do
+    edit_current_test(nil, meth: __method__)
+  end
+
+  test 'orgs - edit_current - member' do
+    edit_current_test(@member, meth: __method__)
+  end
+
+  test 'orgs - edit_current - manager' do
+    edit_current_test(@manager, meth: __method__)
+  end
+
+  test 'orgs - edit_current - admin' do
+    edit_current_test(@admin, meth: __method__)
+  end
+
   test 'orgs - delete - anonymous' do
     delete_test(nil, meth: __method__)
   end
@@ -125,7 +201,7 @@ class OrgsTest < ApplicationSystemTestCase
   end
 
   # ===========================================================================
-  # :section: Methods
+  # :section: Methods - read tests
   # ===========================================================================
 
   protected
@@ -260,6 +336,101 @@ class OrgsTest < ApplicationSystemTestCase
 
     end
   end
+
+  # Perform a test to invoke the menu for selecting an organization to display.
+  #
+  # @param [User, nil] user
+  # @param [Hash]      opt            Passed to #page_select_test.
+  #
+  # @return [void]
+  #
+  def show_select_test(user, **opt)
+    page_select_test(user, action: :show, **opt)
+  end
+
+  # Perform a test to invoke the menu for selecting an organization to modify.
+  #
+  # @param [User, nil] user
+  # @param [Hash]      opt            Passed to #page_select_test.
+  #
+  # @return [void]
+  #
+  def edit_select_test(user, **opt)
+    page_select_test(user, action: :edit, **opt)
+  end
+
+  # Perform a test to invoke the menu for selecting an organization to remove.
+  #
+  # @param [User, nil] user
+  # @param [Hash]      opt            Passed to #page_select_test.
+  #
+  # @return [void]
+  #
+  def delete_select_test(user, **opt)
+    page_select_test(user, action: :delete, **opt)
+  end
+
+  # Perform a test to invoke the menu for selecting an organization.
+  #
+  # @param [User, nil]   user
+  # @param [Symbol]      action
+  # @param [String, nil] title
+  # @param [Symbol]      meth         Calling test method.
+  # @param [Hash]        opt          URL parameters.
+  #
+  # @return [void]
+  #
+  def page_select_test(user, action:, title: nil, meth: nil, **opt)
+    form_url  = url_for(**PRM, action: action)
+    action    = :"#{action}_select"
+    params    = PRM.merge(action: action, **opt)
+
+    start_url = url_for(**params)
+
+    run_test(meth || __method__) do
+
+      if permitted?(action, user)
+
+        title   ||= page_title(**params, name: '')
+
+        final_url = start_url
+
+        # Successful sign-in should redirect back to the action page.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
+
+        # The page should show a menu of organizations.
+        show_url
+        screenshot
+        assert_current_url(final_url)
+        assert_valid_page(heading: title)
+
+        # Check that the menu contains only organizations visible to the user.
+        adm = user.administrator?
+        cnt = adm ? fixture_count(MODEL) : 1
+        check_page_select_menu(count: cnt, action: form_url)
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from #{action} organization." }
+        assert_no_visit(start_url, action, as: user)
+
+      else
+
+        show_item { "Anonymous user blocked from #{action} organization." }
+        assert_no_visit(start_url, :sign_in)
+
+      end
+
+    end
+  end
+
+  # ===========================================================================
+  # :section: Methods - write tests
+  # ===========================================================================
+
+  protected
 
   # Perform a test to create a new organization.
   #
@@ -419,6 +590,68 @@ class OrgsTest < ApplicationSystemTestCase
       else
 
         show_item { 'Anonymous user blocked from modifying organization.' }
+        assert_no_visit(form_url, :sign_in)
+
+      end
+
+    end
+  end
+
+  # Perform a test to modify the organization of *user* directly.
+  #
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
+  #
+  # @return [void]
+  #
+  def edit_current_test(user, meth: nil, **opt)
+    button   = 'Modify'
+    action   = :edit_current
+    params   = PRM.merge(action: action, **opt)
+
+    form_url = url_for(**params)
+
+    run_test(meth || __method__) do
+
+      if permitted?(action, user)
+
+        start_url = url_for(**params, action: :show_current)
+        final_url = start_url
+
+        # Generate new field data for the item to edit.
+        record    = find_org(user) || orgs(:edit_example)
+        tag       = user&.role&.upcase || 'ANON'
+        fields    = @generate.fields(record, tag: tag)
+        item_name = record.long_name
+
+        # Start on the index page showing the current number of items.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
+
+        # Edit the item.
+        select_action(button, wait_for: form_url)
+
+        # Modify field data.
+        fill_in 'value-LongName', with: fields[:long_name]
+
+        # Update the item.
+        show_item { "Updating organization #{item_name.inspect}..." }
+        form_submit
+
+        # Verify that success was indicated.
+        wait_for_page(final_url)
+        assert_flash('SUCCESS')
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from #{action} organization." }
+        assert_no_visit(form_url, action, as: user)
+
+      else
+
+        show_item { "Anonymous user blocked from #{action} organization." }
         assert_no_visit(form_url, :sign_in)
 
       end

@@ -82,6 +82,58 @@ class AccountsTest < ApplicationSystemTestCase
     show_test(@admin, meth: __method__)
   end
 
+  test 'accounts - show_select - anonymous' do
+    show_select_test(nil, meth: __method__)
+  end
+
+  test 'accounts - show_select - member' do
+    show_select_test(@member, meth: __method__)
+  end
+
+  test 'accounts - show_select - manager' do
+    show_select_test(@manager, meth: __method__)
+  end
+
+  test 'accounts - show_select - admin' do
+    show_select_test(@admin, meth: __method__)
+  end
+
+  test 'accounts - edit_select - anonymous' do
+    edit_select_test(nil, meth: __method__)
+  end
+
+  test 'accounts - edit_select - member' do
+    # NOTE: This should either be rejected for a non-manager user or it should
+    #   limit the menu to just that user.  Right now, it's showing all users
+    #   in the organization although any selection other than the user itself
+    #   will result in an error.
+    edit_select_test(@member, meth: __method__)
+  end
+
+  test 'accounts - edit_select - manager' do
+    edit_select_test(@manager, meth: __method__)
+  end
+
+  test 'accounts - edit_select - admin' do
+    edit_select_test(@admin, meth: __method__)
+  end
+
+  test 'accounts - delete_select - anonymous' do
+    delete_select_test(nil, meth: __method__)
+  end
+
+  test 'accounts - delete_select - member' do
+    delete_select_test(@member, meth: __method__)
+  end
+
+  test 'accounts - delete_select - manager' do
+    delete_select_test(@manager, meth: __method__)
+  end
+
+  test 'accounts - delete_select - admin' do
+    delete_select_test(@admin, meth: __method__)
+  end
+
   # ===========================================================================
   # :section: Write tests
   # ===========================================================================
@@ -116,6 +168,22 @@ class AccountsTest < ApplicationSystemTestCase
 
   test 'accounts - edit - admin' do
     edit_test(@admin, meth: __method__)
+  end
+
+  test 'accounts - edit_current - anonymous' do
+    edit_current_test(nil, meth: __method__)
+  end
+
+  test 'accounts - edit_current - member' do
+    edit_current_test(@member, meth: __method__)
+  end
+
+  test 'accounts - edit_current - manager' do
+    edit_current_test(@manager, meth: __method__)
+  end
+
+  test 'accounts - edit_current - admin' do
+    edit_current_test(@admin, meth: __method__)
   end
 
   test 'accounts - delete - anonymous' do
@@ -277,6 +345,101 @@ class AccountsTest < ApplicationSystemTestCase
 
     end
   end
+
+  # Perform a test to invoke the menu for selecting an account to display.
+  #
+  # @param [User, nil] user
+  # @param [Hash]      opt            Passed to #page_select_test.
+  #
+  # @return [void]
+  #
+  def show_select_test(user, **opt)
+    page_select_test(user, action: :show, **opt)
+  end
+
+  # Perform a test to invoke the menu for selecting an account to modify.
+  #
+  # @param [User, nil] user
+  # @param [Hash]      opt            Passed to #page_select_test.
+  #
+  # @return [void]
+  #
+  def edit_select_test(user, **opt)
+    page_select_test(user, action: :edit, **opt)
+  end
+
+  # Perform a test to invoke the menu for selecting an account to remove.
+  #
+  # @param [User, nil] user
+  # @param [Hash]      opt            Passed to #page_select_test.
+  #
+  # @return [void]
+  #
+  def delete_select_test(user, **opt)
+    page_select_test(user, action: :delete, **opt)
+  end
+
+  # Perform a test to invoke the menu for selecting an account.
+  #
+  # @param [User, nil]   user
+  # @param [Symbol]      action
+  # @param [String, nil] title
+  # @param [Symbol]      meth         Calling test method.
+  # @param [Hash]        opt          URL parameters.
+  #
+  # @return [void]
+  #
+  def page_select_test(user, action:, title: nil, meth: nil, **opt)
+    form_url  = url_for(**PRM, action: action)
+    action    = :"#{action}_select"
+    params    = PRM.merge(action: action, **opt)
+
+    start_url = url_for(**params)
+
+    run_test(meth || __method__) do
+
+      if permitted?(action, user)
+
+        title   ||= page_title(**params, name: '')
+
+        final_url = start_url
+
+        # Successful sign-in should redirect back to the action page.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
+
+        # The page should show a menu of user accounts.
+        show_url
+        screenshot
+        assert_current_url(final_url)
+        assert_valid_page(heading: title)
+
+        # Check that the menu contains only accounts visible to the user.
+        adm = user.administrator?
+        cnt = adm ? fixture_count(MODEL) : fixture_count_for_org(MODEL, user)
+        check_page_select_menu(count: cnt, action: form_url)
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from #{action} user account." }
+        assert_no_visit(start_url, action, as: user)
+
+      else
+
+        show_item { "Anonymous user blocked from #{action} user account." }
+        assert_no_visit(start_url, :sign_in)
+
+      end
+
+    end
+  end
+
+  # ===========================================================================
+  # :section: Methods - write tests
+  # ===========================================================================
+
+  protected
 
   # Perform a test to create a new account.
   #
@@ -455,6 +618,75 @@ class AccountsTest < ApplicationSystemTestCase
       else
 
         show_item { 'Anonymous user blocked from modifying user account.' }
+        assert_no_visit(form_url, :sign_in)
+
+      end
+
+    end
+  end
+
+  # Perform a test to modify the account of *user* directly.
+  #
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
+  #
+  # @return [void]
+  #
+  def edit_current_test(user, meth: nil, **opt)
+    button   = 'Modify'
+    action   = :edit_current
+    params   = PRM.merge(action: action, **opt)
+
+    form_url = url_for(**params)
+
+    run_test(meth || __method__) do
+
+      if permitted?(action, user)
+
+        start_url = url_for(**params, action: :show_current)
+        final_url = start_url
+
+        # Generate new field data for the item to edit.
+        record    = user || users(:edit_example)
+        tag       = user&.role&.upcase || 'ANON'
+        fields    = @generate.fields(record, tag: tag)
+        item_name = record.email
+
+        # Start on the index page showing the current number of items.
+        visit start_url
+        assert_flash(alert: AUTH_FAILURE)
+        sign_in_as(user)
+
+        # Edit the item.
+        select_action(button, wait_for: form_url)
+
+        # On the form page:
+        assert_selector '[data-field="id"]', visible: false #admin
+
+        # Modify field data.
+        fill_in 'value-FirstName',      with: fields[:first_name]
+        fill_in 'value-LastName',       with: fields[:last_name]
+        fill_in 'value-PreferredEmail', with: fields[:preferred_email]
+        fill_in 'value-Phone',          with: fields[:phone]
+        fill_in 'value-Address',        with: fields[:address]
+
+        # Update the item.
+        show_item { "Updating user #{item_name.inspect}..." }
+        form_submit
+
+        # Verify that success was indicated.
+        wait_for_page(final_url)
+        assert_flash('Updated EMMA user account')
+
+      elsif user
+
+        show_item { "User '#{user}' blocked from #{action} user account." }
+        assert_no_visit(form_url, action, as: user)
+
+      else
+
+        show_item { "Anonymous user blocked from #{action} user account." }
         assert_no_visit(form_url, :sign_in)
 
       end

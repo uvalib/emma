@@ -1,0 +1,10 @@
+class HelpTest < ApplicationSystemTestCase
+  # Perform a test to display a help topic.
+  #
+  # @param [Symbol, String] id
+  # @param [String, nil]    topic
+  #
+  # @return [void]
+  #
+  def help_test: (Symbol|String id, ?topic: String|nil) -> void
+end

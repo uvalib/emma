@@ -1,0 +1,36 @@
+class DataTest < ApplicationSystemTestCase
+  CTRLR: Symbol
+
+  PRM: symHash
+
+  @admin: User
+
+  @member: User
+
+  # Important tables expected to be listed.
+  #
+  # @type [Array<String>]
+  #
+  KEY_TABLES: strArray
+
+  # Perform a test to list database tables.
+  #
+  # @param [User, nil] user
+  # @param [Symbol]    meth           Calling test method.
+  # @param [Hash]      opt            URL parameters.
+  #
+  # @return [void]
+  #
+  def list_test: ((User|nil) user, ?meth: Symbol|nil, **untyped opt) -> void
+
+  # Perform a test to show a database table.
+  #
+  # @param [User, nil]     user
+  # @param [Class, String] table
+  # @param [Symbol]        meth       Calling test method.
+  # @param [Hash]          opt        URL parameters.
+  #
+  # @return [void]
+  #
+  def show_test: ((User|nil) user, String|Class table, ?meth: Symbol|nil, **untyped opt) -> void
+end
