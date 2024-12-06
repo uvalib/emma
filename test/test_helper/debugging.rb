@@ -197,9 +197,6 @@ module TestHelper::Debugging
 
   protected
 
-  # @private
-  EMIT_LINES_OPT = %i[prefix suffix start finish].freeze
-
   # Send one or more lines to $stderr.
   #
   # @param [Array, nil]  lines        Nil elements are interpreted as newlines.
@@ -225,7 +222,12 @@ module TestHelper::Debugging
     lines.each { $stderr.puts _1 }
     $stderr.flush
   end
-    .tap { neutralize(_1) unless DEBUG_TESTS }
+
+  # Local options for #emit_lines.
+  #
+  # @type [Array<Symbol>]
+  #
+  EMIT_LINES_OPT = method_key_params(:emit_lines).freeze
 
   # ===========================================================================
   # :section:

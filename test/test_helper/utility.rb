@@ -670,7 +670,8 @@ module TestHelper::Utility
   # @return [void]
   #
   def show_skipped(*msg, **opt)
-    show_item('TEST SKIPPED', join: ' - ', **opt) { msg.compact }
+    line = ['TEST SKIPPED', *msg].compact.join(' - ')
+    emit_lines(line, **opt)
   end
 
   # Note in the output that a test was skipped because it was not applicable.
@@ -681,7 +682,7 @@ module TestHelper::Utility
   # @return [true]
   #
   def not_applicable(note = nil, **opt)
-    show_skipped(note, indent: false, **opt)
+    show_skipped(note, **opt)
     self.assertions += 1 # Suppress complaints about the test being skipped.
     true
   end

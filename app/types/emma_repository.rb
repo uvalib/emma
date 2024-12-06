@@ -54,7 +54,17 @@ class EmmaRepository < EnumType
   # @see "en.emma.repository"
   # @see https://api.swaggerhub.com/domains/bus/emma-federated-shared-components/0.0.6#/components/schemas/EmmaRepository  JSON schema specification
   #
-  ACTIVE = ENTRY.select { |_, config| config[:active] }.deep_freeze
+  ACTIVE =
+    ENTRY.select { |_, config|
+      active = config[:active]
+      if active.is_a?(String)
+        case
+          when !(env = ENV_VAR[active]).nil?        then active = env
+          when !(con = safe_const_get(active)).nil? then active = con
+        end
+      end
+      true?(active)
+    }.deep_freeze
 
   # The repositories that require the "partner repository workflow".
   #

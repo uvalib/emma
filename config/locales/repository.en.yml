@@ -59,6 +59,7 @@ en:
         download_src:   'Internet Archive'
         download_path:  'retrieval' # @see retrieval_path
         download_url:   '%{download_path}?identifier=%{id}&type=%{fmt}'
+        active:         IA_DOWNLOADS_SUPPORTED
 
       _remote:          &PARTNER_TEMPLATE
         partner:        true  # Submitted via the "partner repository workflow"

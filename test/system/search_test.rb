@@ -19,11 +19,6 @@ class SearchTest < ApplicationSystemTestCase
     @staff  = find_user(:test_staff_1)
   end
 
-  # TODO: This is a temporary flag in order to allow IA download tests to pass
-  #   while Internet Archive is currently offline.  This should be removed when
-  #   IA is back to normal.
-  IA_DOWNLOADS_FAILING = true
-
   # ===========================================================================
   # :section: Read tests
   # ===========================================================================
@@ -309,6 +304,7 @@ class SearchTest < ApplicationSystemTestCase
   # @return [void]
   #
   def download_item(user, repo, meth:, **opt)
+    return not_applicable('IA downloads unavailable') if IA_DOWNLOADS_FAILING
     opt[:title] = 'the' unless search_terms?(**opt)
     start_url = url_for(**PRM, action: :index, repository: repo, **opt)
 
@@ -362,10 +358,10 @@ class SearchTest < ApplicationSystemTestCase
         show_item { "User '#{user}' downloads item." }
         if (alert = entry.all('.failure').first)
           screenshot
-          if IA_DOWNLOADS_FAILING
-            assert_match 'Item not available', alert.text
-          else
+          if IA_DOWNLOADS_SUPPORTED
             flunk "Failure alert displayed: #{alert.text.inspect}"
+          else
+            assert_match 'Item not available', alert.text
           end
         end
 
