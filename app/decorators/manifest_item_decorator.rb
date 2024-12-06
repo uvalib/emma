@@ -551,7 +551,7 @@ class ManifestItemDecorator < BaseDecorator
 
     public
 
-    # A button for expanding/contracting the controls column.
+    # A button for expanding/contracting the "controls" column.
     #
     # @param [String] css             Characteristic CSS class/selector.
     # @param [Hash]   opt             Passed to #grid_control

@@ -33,7 +33,6 @@ import {
     handleHoverAndFocus,
     isEvent,
     onPageExit,
-    windowEvent,
 } from "../shared/events";
 import {
     addFlashError,
@@ -1155,7 +1154,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Expand/contract the controls column.
+     * Expand/contract the "controls" column.
      *
      * @param {Selector} [button]
      * @param {boolean}  [expand]
@@ -5344,7 +5343,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Control to expand/contract the controls column.
+     * Control to expand/contract the "controls" column.
      *
      * @returns {jQuery}
      */
@@ -5353,7 +5352,7 @@ appSetup(MODULE, function() {
     }
 
     /**
-     * Finalize the control for expanding/contracting the controls column.
+     * Finalize the control for expanding/contracting the "controls" column.
      *
      * ({@link setupRowOperations} is relied upon to update `aria-controls`
      * initially and for rows added subsequently.)

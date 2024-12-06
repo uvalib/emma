@@ -238,7 +238,7 @@ class ManifestItemDecorator < BaseDecorator
     #
     def type_details: ((Symbol|nil) col, ?(FieldConfig|nil) prop, **untyped opt) ?{ () -> (strArray|String|nil) } -> ActiveSupport::SafeBuffer
 
-    # A button for expanding/contracting the controls column.
+    # A button for expanding/contracting the "controls" column.
     #
     # @param [String] css             Characteristic CSS class/selector.
     # @param [Hash]   opt             Passed to #grid_control

@@ -161,7 +161,7 @@ module Emma::Debug
     #   Injects the parameters of the calling method as indicated by *bind*.
     #   @param [Symbol, Method] meth    Start of the output line.
     #   @param [Binding]        bind    Source of appended parameter values.
-    #   @param [Array<*>]       parts   Parts of the output line.
+    #   @param [Array<*>]       parts   The parts of the output line.
     #   @param [Hash]           opt     Passed to #__debug_line except for:
     #   @option opt [any] :only         Passed to #get_params.
     #   @option opt [any] :except       Passed to #get_params.
@@ -169,14 +169,14 @@ module Emma::Debug
     # @overload __debug_items(bind, *parts, **opt)
     #   Injects the parameters of the calling method as indicated by *bind*.
     #   @param [Binding]        bind    Source of appended parameter values.
-    #   @param [Array<*>]       parts   Parts of the output line.
+    #   @param [Array<*>]       parts   The parts of the output line.
     #   @param [Hash]           opt     Passed to #__debug_line except for:
     #   @option opt [any] :only         Passed to #get_params.
     #   @option opt [any] :except       Passed to #get_params.
     #
     # @overload __debug_items(*parts, **opt)
     #   The normal case with *parts* on a single output line.
-    #   @param [Array<*>]       parts   Parts of the output line.
+    #   @param [Array<*>]       parts   The parts of the output line.
     #   @param [Hash]           opt     Passed to #__debug_line.
     #
     def __debug_items: (*untyped args, **untyped opt) ?{ () -> untyped } -> nil

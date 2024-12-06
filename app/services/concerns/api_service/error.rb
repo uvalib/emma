@@ -449,7 +449,7 @@ unless ONLY_FOR_DOCUMENTATION
   end
 
   # Exception raised to indicate that a valid message was received, but it had
-  # no body or its body was empty.
+  # no message body or its body was empty.
   #
   # @see "en.emma.error.api.empty_result"
   #

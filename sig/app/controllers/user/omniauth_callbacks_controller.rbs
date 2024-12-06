@@ -18,7 +18,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   # === GET  /users/auth/shibboleth/callback
   # === POST /users/auth/shibboleth/callback
   #
-  # Callback from Shibboleth to finalize authentication.
+  # The callback from Shibboleth to finalize authentication.
   #
   # @see #user_shibboleth_omniauth_callback_path
   # @see AuthConcern#set_auth_data

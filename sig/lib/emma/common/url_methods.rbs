@@ -13,8 +13,8 @@ module Emma::Common::UrlMethods
   # Generate a URL or partial path.
   #
   # The result will have query parameters in sorted order.  Query parameters
-  # are assumed to have the form "key=value" with the exception of the first
-  # parameter after the '?' -- this is a concession to Bookshare URLs like
+  # are assumed to have the form "key=value" except for the first parameter
+  # after the '?' -- this is a concession to Bookshare URLs like
   # "myReadingLists/(id)?delete".
   #
   # @param [Array<*>] args            URL path components.

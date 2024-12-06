@@ -333,22 +333,22 @@ end
 # of HTTP method calls.
 #
 # @!method original_get
-#   The superclass :get method (without pre/post trace output).
+#   The superclass :get method (without pre-/post-trace output).
 #
 # @!method original_put
-#   The superclass :put method (without pre/post trace output).
+#   The superclass :put method (without pre-/post-trace output).
 #
 # @!method original_post
-#   The superclass :post method (without pre/post trace output).
+#   The superclass :post method (without pre-/post-trace output).
 #
 # @!method original_patch
-#   The superclass :patch method (without pre/post trace output).
+#   The superclass :patch method (without pre-/post-trace output).
 #
 # @!method original_delete
-#   The superclass :delete method (without pre/post trace output).
+#   The superclass :delete method (without pre-/post-trace output).
 #
 # @!method original_head
-#   The superclass :head method (without pre/post trace output).
+#   The superclass :head method (without pre-/post-trace output).
 #
 module TestHelper::Debugging::Trace
 

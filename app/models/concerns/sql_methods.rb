@@ -567,7 +567,7 @@ module SqlMethods
     # @param [String, Array, Hash] terms
     # @param [Array<Symbol>]       columns    Limit fields to match.
     # @param [Symbol]              type       Ignored unless :json.
-    # @param [Boolean]             sanitize   If *false* do not escape '%', '_'
+    # @param [Boolean]             sanitize   If *false*, don't escape '%', '_'
     #
     # @return [Hash{Symbol=>Array<String>}] The modified *dst* hash.
     #

@@ -156,9 +156,8 @@ appSetup(MODULE, function() {
      * @param {ElementEvt} event
      */
     function beforeDownload(event) {
-        const func    = "beforeDownload";
         const $button = $(event.currentTarget || event.target);
-        //OUT.debug(`${func}: event =`, event, "; $button=", $button);
+        //OUT.debug("beforeDownload: event =", event, "; $button=", $button);
         $button.attr("title", Emma.Download.download.text);
         $button.attr("disabled", true);
         $button.attr("aria-disabled", true);

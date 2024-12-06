@@ -270,7 +270,7 @@ en:
         DEBUG_WORKFLOW:               true
         DEBUG_XML_PARSE:              ~
         DEBUG_ZEITWERK:               ~
-        UPLOAD_DEV_TITLE_PREFIX:             'RWL'
+        UPLOAD_DEV_TITLE_PREFIX:      'RWL'
         DISABLE_UPLOAD_INDEX_UPDATE:  ~
         DOWNLOAD_EXPIRATION:          3600 # seconds
         EMMA_LOG_AWS_FORMATTING:      true
