@@ -299,6 +299,8 @@ module ManifestItemConcern
   # noinspection RubyMismatchedReturnType
   #++
   def create_record(prm = nil, fatal: true, **opt, &blk)
+    revalidate = { revalidate: true }
+    opt[:attr_opt] = opt[:attr_opt]&.reverse_merge!(revalidate) || revalidate
     return super if blk
     authorized_session
     super do |attr|
