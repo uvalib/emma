@@ -462,22 +462,6 @@ en:
             type:         date
             origin:       system
 
-          emma_publicationDate:
-            # FMM5: "Publication Date", Required, Non-repeatable
-            # IA:   "date"
-            # SR:   IsoDay
-            # IR:   IsoDay
-            # TODO: interrelate with dcterms_dateCopyright
-            min:          0
-            max:          1
-            label:        'Publication Date'
-            tooltip:
-              >-
-              Copyright or publication date of the creative work represented
-              by the remediated content file
-            type:         date
-            origin:       system
-
           emma_lastRemediationNote:
             # NOTE: superseded by rem_comments
             min:          0
@@ -498,6 +482,22 @@ en:
             tooltip:      'Format version of remediated content file'
             notes_html:   '<em>DEPRECATED</em>'
             placeholder:  'Enter format version'
+
+          dcterms_dateAccepted:
+            # FMM5: *missing*
+            # IA:   *missing*
+            # SR:   IsoDay
+            # IR:   IsoDay
+            min:          0
+            max:          1
+            label:        'Date Accepted'
+            tooltip:
+              >-
+              Date in which the remediated content file was added to its
+              repository
+            placeholder:  'Enter date file added to repository'
+            type:         date
+            origin:       system
 
           # ===================================================================
           # emma_data JSON keys - Bibliographic information
@@ -767,21 +767,6 @@ en:
               content file
             type:         !ruby/symbol FormatFeature
 
-          dcterms_dateAccepted:
-            # FMM5: *missing*
-            # IA:   *missing*
-            # SR:   IsoDay
-            # IR:   IsoDay
-            min:          0
-            max:          1
-            label:        'Date Accepted'
-            tooltip:
-              >-
-              Date in which the remediated content file was added to its
-              repository
-            placeholder:  'Enter date file added to repository'
-            type:         date
-
           dcterms_dateCopyright:
             # FMM5: "Publication Date", Required, Non-repeatable
             # IA:   "date"
@@ -789,15 +774,30 @@ en:
             # IR:   IsoYear
             # NOTE: Effective type is "String" in order to allow for values
             # NOTE:   like "[c1884]"
-            # TODO: interrelate with emma_publicationDate
+            # NOTE: interrelated with emma_publicationDate
             min:          0
             max:          1
-            label:        'Copyright Date'
+            label:        'Copyright Year'
             tooltip:
               >-
-              The year of copyright (or publication) of the creative work
-              represented by the remediated content file
-            placeholder:  'Enter date of the creative work'
+              The year of copyright of the creative work represented by the
+              remediated content file (typically for books)
+            placeholder:  'Enter year of the creative work'
+
+          emma_publicationDate:
+            # FMM5: "Publication Date", Required, Non-repeatable
+            # IA:   "date"
+            # SR:   IsoDay
+            # IR:   IsoDay
+            # NOTE: interrelated with dcterms_dateCopyright
+            min:          0
+            max:          1
+            label:        'Publication Date'
+            tooltip:
+              >-
+              The date of publication of the creative work represented by the
+              remediated content file (typically for journal articles)
+            type:         date
 
           # ===================================================================
           # emma_data JSON keys - Remediation information

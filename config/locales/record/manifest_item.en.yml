@@ -422,18 +422,18 @@ en:
         dcterms_dateCopyright:
           min:          0
           max:          1
-          label:        'Copyright Date'
+          label:        'Copyright Year'
           tooltip:
             >-
-            The year of copyright (or publication) of the creative work
-            represented by the remediated content file.
+            The year of copyright of the creative work represented by the
+            remediated content file (typically for books)
           notes_html:
             >-
             <p>
-              The year of copyright (or publication) of the creative work
-              represented by the remediated content file.
+              The year of copyright of the creative work represented by the
+              remediated content file (typically for books)
             </p>
-          placeholder:  'Enter date of the creative work'
+          placeholder:  'Enter year of the creative work'
           category:     bibliographic
 
         emma_publicationDate:
@@ -442,13 +442,13 @@ en:
           label:        'Publication Date'
           tooltip:
             >-
-            Copyright or publication date of the creative work represented
-            by the remediated content file.
+            The date of publication of the creative work represented by the
+            remediated content file (typically for journal articles).
           notes_html:
             >-
             <p>
-              Copyright or publication date of the creative work represented
-              by the remediated content file.
+              The date of publication of the creative work represented by the
+              remediated content file (typically for journal articles).
             </p>
           type:         date
           category:     bibliographic
