@@ -346,8 +346,6 @@ class ManifestItemDecorator < BaseDecorator
 
     public
 
-    SKIPPED_FIELDS = ManifestItem::NO_SHOW_COLS
-
     # The fields which are displayed in the expandable "Item Details" panel.
     #
     # @type [Array<Symbol>]
@@ -359,8 +357,20 @@ class ManifestItemDecorator < BaseDecorator
       last_submit
     ].freeze
 
-    HIDDEN_FIELDS = [*ManifestItem::STATUS_COLUMNS, *DETAILS_FIELDS].freeze
+    # The fields which do not have a grid column.
+    #
+    # @type [Array<Symbol>]
+    #
+    SKIPPED_FIELDS = [
+      *ManifestItem::STATUS_COLUMNS,
+      *DETAILS_FIELDS,
+      :dcterms_dateAccepted,
+    ].freeze
 
+    # The fields which have a grid column, but the column is not visible.
+    #
+    # @type [Array<Symbol>]
+    #
     UNDISPLAYED_FIELDS = [
       (:repository unless ManifestItem::ALLOW_NIL_REPOSITORY)
     ].compact.freeze
@@ -373,7 +383,7 @@ class ManifestItemDecorator < BaseDecorator
     # @return [Array<Symbol>]
     #
     def row_skipped_columns
-      super + SKIPPED_FIELDS
+      super + ManifestItem::NO_SHOW_COLS
     end
 
     # =========================================================================
@@ -387,7 +397,7 @@ class ManifestItemDecorator < BaseDecorator
     # @return [Array<Symbol>]
     #
     def grid_row_skipped_columns
-      super + HIDDEN_FIELDS
+      super + SKIPPED_FIELDS
     end
 
     # The names of each grid data column which is rendered but not visible.
@@ -409,7 +419,7 @@ class ManifestItemDecorator < BaseDecorator
     def grid_head_control_headers(css: CONTROLS_CELL_CLASS, **opt)
       h_opt  = append_css(opt, 'hidden').except(:tag, :css, :'aria-colindex')
       hidden =
-        HIDDEN_FIELDS.map do |f|
+        SKIPPED_FIELDS.map do |f|
           grid_head_cell(nil, **h_opt, prop: field_configuration(f))
         end
       idx  = opt[:'aria-colindex'] ||= 1

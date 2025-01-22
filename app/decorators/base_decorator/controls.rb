@@ -147,20 +147,23 @@ module BaseDecorator::Controls
     end
     return if path.blank?
 
+    if_state = enabled ? :if_enabled : :if_disabled
     uniq_opt = { index: index, unique: unique }.compact
     opt[:id] = unique_id(*opt[:id], **uniq_opt) if uniq_opt.present?
 
-    if opt[:title].blank? && (tip = prop[:tooltip]).present?
-      tip = interpolate!(tip, item: model_type) || tip.dup
-      tip = "#{tip} #{index.next}" if index && tip.sub!(' this ', ' ')
-      opt[:title] = tip
+    if opt[:title].blank?
+      if (tip = prop.dig(if_state, :tooltip) || prop[:tooltip]).present?
+        tip = interpolate!(tip, item: model_type) || tip.dup
+        tip = "#{tip} #{index.next}" if index && tip.sub!(' this ', ' ')
+        opt[:title] = tip
+      end
     end
 
     opt[ACTION_ATTR] ||= action
 
     return yield(path, opt) if block_given?
 
-    icon    = prop[:icon] || DEFAULT_ICON
+    icon    = prop.dig(if_state, :icon) || prop[:icon] || DEFAULT_ICON
     icon    = symbol_icon(icon)
     visible = check_setting(prop[:visible])
 

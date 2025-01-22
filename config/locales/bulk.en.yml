@@ -163,7 +163,7 @@ en:
               tooltip:
                 >-
                 Please supply either a standard identifier (ISBN, DOI, etc) or
-                a title and an author
+                a title and an author for this item
             icon:         "\U0001F50D" # 🔍 LEFT-POINTING MAGNIFYING GLASS
 
           delete:
@@ -174,7 +174,7 @@ en:
             if_disabled:
               tooltip:
                 >-
-                Cannot delete the last item of a manifest.
+                Cannot delete the last remaining item of a manifest.
                 If this item really needs to be deleted, insert an empty item
                 before deleting this one.
             icon:         "\u2716" # ✖ HEAVY MULTIPLICATION X

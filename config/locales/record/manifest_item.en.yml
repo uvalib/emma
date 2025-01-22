@@ -619,24 +619,6 @@ en:
           type:         !ruby/symbol FormatFeature
           category:     bibliographic
 
-        dcterms_dateAccepted:
-          min:          0
-          max:          1
-          label:        'Date Accepted'
-          tooltip:
-            >-
-            Date in which the remediated content file was added to its
-            repository.
-          notes_html:
-            >-
-            <p>
-              Date in which the remediated content file was added to its
-              repository.
-            </p>
-          placeholder:  'Enter date file added to repository'
-          type:         date
-          category:     bibliographic
-
         # =====================================================================
         # Remediation information (emma_data)
         # =====================================================================
@@ -952,3 +934,21 @@ en:
           label:        'Import Errors'
           tooltip:      'One or more error messages per problematic field'
           type:         json
+
+        dcterms_dateAccepted:
+          <<:           *INTERNAL_FIELD
+          min:          0
+          max:          1
+          label:        'Date Accepted'
+          tooltip:
+            >-
+            Date in which the remediated content file was added to its
+            repository.
+          notes_html:
+            >-
+            <p>
+              Date in which the remediated content file was added to its
+              repository.
+            </p>
+          placeholder:  'Enter date file added to repository'
+          type:         date

@@ -1,58 +1,58 @@
-ignored_0,file_data,ignored_1,dc_title,ignored_2,dc_creator,ignored_3,dc_language,ignored_4,repository,ignored_5,dc_type,ignored_6,dc_format,ignored_7,rem_complete,ignored_8,rem_coverage,ignored_9,rem_status,ignored_10,rem_comments,ignored_11,dc_identifier,ignored_12,emma_publicationDate,ignored_13,emma_version,ignored_14,bib_seriesType,ignored_15,bib_series,ignored_16,bib_seriesPosition,ignored_17,dc_publisher,ignored_18,dc_relation,ignored_19,dc_rights,ignored_20,dc_description,ignored_21,dc_subject,ignored_22,dcterms_dateCopyright,ignored_23,dcterms_dateAccepted,ignored_24,emma_formatFeature,ignored_25,rem_source,ignored_26,rem_metadataSource,ignored_27,rem_remediationDate,ignored_28,rem_remediatedBy,ignored_29,rem_remediatedAspects,ignored_30,rem_textQuality,ignored_31,s_accessibilityFeature,ignored_32,s_accessibilityControl,ignored_33,s_accessibilityHazard,ignored_34,s_accessMode,ignored_35,s_accessModeSufficient,ignored_36,s_accessibilitySummary,ignored_37
+ignored_0,file_data,ignored_1,dc_title,ignored_2,dc_creator,ignored_3,dc_language,ignored_4,repository,ignored_5,dc_type,ignored_6,dc_format,ignored_7,rem_complete,ignored_8,rem_coverage,ignored_9,rem_status,ignored_10,rem_comments,ignored_11,dc_identifier,ignored_12,emma_publicationDate,ignored_13,emma_version,ignored_14,bib_seriesType,ignored_15,bib_series,ignored_16,bib_seriesPosition,ignored_17,dc_publisher,ignored_18,dc_relation,ignored_19,dc_rights,ignored_20,dc_description,ignored_21,dc_subject,ignored_22,dcterms_dateCopyright,ignored_23,emma_formatFeature,ignored_24,rem_source,ignored_25,rem_metadataSource,ignored_26,rem_remediationDate,ignored_27,rem_remediatedBy,ignored_28,rem_remediatedAspects,ignored_29,rem_textQuality,ignored_30,s_accessibilityFeature,ignored_31,s_accessibilityControl,ignored_32,s_accessibilityHazard,ignored_33,s_accessMode,ignored_34,s_accessModeSufficient,ignored_35,s_accessibilitySummary,ignored_36
 ignored_1_0,{ name: 'file_a.txt' },ignored_1_1,csv import 1 dc_title,ignored_1_2,csv import 1 dc_creator,ignored_1_3,"arm
 afr",ignored_1_4,emma,ignored_1_5,text,ignored_1_6,epub,ignored_1_7,true,ignored_1_8,csv import 1 rem_coverage,ignored_1_9,bornAccessible,ignored_1_10,csv import 1 rem_comments,ignored_1_11,"9785485996185
 9781951717148",ignored_1_12,2024-11-06 10:28:41.450324251 -0500,ignored_1_13,csv import 1 emma_version,ignored_1_14,newspaper,ignored_1_15,csv import 1 bib_series,ignored_1_16,csv import 1 bib_seriesPosition,ignored_1_17,csv import 1 dc_publisher,ignored_1_18,"9787034650203
-9781325604692",ignored_1_19,creativeCommons,ignored_1_20,csv import 1 dc_description,ignored_1_21,csv import 1 dc_subject,ignored_1_22,2024-11-06 10:28:41.450324251 -0500,ignored_1_23,2024-11-06 10:28:41.450324251 -0500,ignored_1_24,"grade2
+9781325604692",ignored_1_19,creativeCommons,ignored_1_20,csv import 1 dc_description,ignored_1_21,csv import 1 dc_subject,ignored_1_22,2024-11-06 10:28:41.450324251 -0500,ignored_1_23,"grade2
 ueb
-tts",ignored_1_25,publisher,ignored_1_26,"csv import 1 rem_metadataSource
+tts",ignored_1_24,publisher,ignored_1_25,"csv import 1 rem_metadataSource
 second
-third",ignored_1_27,2024-11-06 10:28:41.450324251 -0500,ignored_1_28,"csv import 1 rem_remediatedBy
+third",ignored_1_26,2024-11-06 10:28:41.450324251 -0500,ignored_1_27,"csv import 1 rem_remediatedBy
 second
-third",ignored_1_29,"linkedToc
+third",ignored_1_28,"linkedToc
 addedMathMl
-taggedPdf",ignored_1_30,rekeyed,ignored_1_31,"index
+taggedPdf",ignored_1_29,rekeyed,ignored_1_30,"index
 latex
-MathML",ignored_1_32,"fullKeyboardControl
-fullMouseControl",ignored_1_33,"flashing
-noMotionSimulationHazard",ignored_1_34,"textual
+MathML",ignored_1_31,"fullKeyboardControl
+fullMouseControl",ignored_1_32,"flashing
+noMotionSimulationHazard",ignored_1_33,"textual
 visual
-textOnVisual",ignored_1_35,"textual
-visual",ignored_1_36,csv import 1 s_accessibilitySummary,ignored_1_37
+textOnVisual",ignored_1_34,"textual
+visual",ignored_1_35,csv import 1 s_accessibilitySummary,ignored_1_36
 ignored_2_0,{ name: 'file_b.txt' },ignored_2_1,csv import 2 dc_title,ignored_2_2,csv import 2 dc_creator,ignored_2_3,"arm
 afr",ignored_2_4,bookshare,ignored_2_5,text,ignored_2_6,pdf,ignored_2_7,true,ignored_2_8,csv import 2 rem_coverage,ignored_2_9,bornAccessible,ignored_2_10,csv import 2 rem_comments,ignored_2_11,"9785485996185
 9781951717148",ignored_2_12,2024-11-06 10:28:41.450324251 -0500,ignored_2_13,csv import 2 emma_version,ignored_2_14,newspaper,ignored_2_15,csv import 2 bib_series,ignored_2_16,csv import 2 bib_seriesPosition,ignored_2_17,csv import 2 dc_publisher,ignored_2_18,"9787034650203
-9781325604692",ignored_2_19,creativeCommons,ignored_2_20,csv import 2 dc_description,ignored_2_21,csv import 2 dc_subject,ignored_2_22,2024-11-06 10:28:41.450324251 -0500,ignored_2_23,2024-11-06 10:28:41.450324251 -0500,ignored_2_24,"grade2
+9781325604692",ignored_2_19,creativeCommons,ignored_2_20,csv import 2 dc_description,ignored_2_21,csv import 2 dc_subject,ignored_2_22,2024-11-06 10:28:41.450324251 -0500,ignored_2_23,"grade2
 ueb
-tts",ignored_2_25,publisher,ignored_2_26,"csv import 2 rem_metadataSource
+tts",ignored_2_24,publisher,ignored_2_25,"csv import 2 rem_metadataSource
 second
-third",ignored_2_27,2024-11-06 10:28:41.450324251 -0500,ignored_2_28,"csv import 2 rem_remediatedBy
+third",ignored_2_26,2024-11-06 10:28:41.450324251 -0500,ignored_2_27,"csv import 2 rem_remediatedBy
 second
-third",ignored_2_29,"linkedToc
+third",ignored_2_28,"linkedToc
 addedMathMl
-taggedPdf",ignored_2_30,rekeyed,ignored_2_31,"index
+taggedPdf",ignored_2_29,rekeyed,ignored_2_30,"index
 latex
-MathML",ignored_2_32,"fullKeyboardControl
-fullMouseControl",ignored_2_33,"flashing
-noMotionSimulationHazard",ignored_2_34,"textual
+MathML",ignored_2_31,"fullKeyboardControl
+fullMouseControl",ignored_2_32,"flashing
+noMotionSimulationHazard",ignored_2_33,"textual
 visual
-textOnVisual",ignored_2_35,"textual
-visual",ignored_2_36,csv import 2 s_accessibilitySummary,ignored_2_37
+textOnVisual",ignored_2_34,"textual
+visual",ignored_2_35,csv import 2 s_accessibilitySummary,ignored_2_36
 ignored_3_0,{ name: 'file_c.txt' },ignored_3_1,csv import 3 dc_title,ignored_3_2,csv import 3 dc_creator,ignored_3_3,"arm
 afr",ignored_3_4,internetArchive,ignored_3_5,text,ignored_3_6,PDF,ignored_3_7,false,ignored_3_8,csv import 3 rem_coverage,ignored_3_9,bornAccessible,ignored_3_10,csv import 3 rem_comments,ignored_3_11,"9785485996185
 9781951717148",ignored_3_12,2024-11-06 10:28:41.450324251 -0500,ignored_3_13,csv import 3 emma_version,ignored_3_14,newspaper,ignored_3_15,csv import 3 bib_series,ignored_3_16,csv import 3 bib_seriesPosition,ignored_3_17,csv import 3 dc_publisher,ignored_3_18,"9787034650203
-9781325604692",ignored_3_19,creativeCommons,ignored_3_20,csv import 3 dc_description,ignored_3_21,csv import 3 dc_subject,ignored_3_22,2024-11-06 10:28:41.450324251 -0500,ignored_3_23,2024-11-06 10:28:41.450324251 -0500,ignored_3_24,"grade2
+9781325604692",ignored_3_19,creativeCommons,ignored_3_20,csv import 3 dc_description,ignored_3_21,csv import 3 dc_subject,ignored_3_22,2024-11-06 10:28:41.450324251 -0500,ignored_3_23,"grade2
 ueb
-tts",ignored_3_25,publisher,ignored_3_26,"csv import 3 rem_metadataSource
+tts",ignored_3_24,publisher,ignored_3_25,"csv import 3 rem_metadataSource
 second
-third",ignored_3_27,2024-11-06 10:28:41.450324251 -0500,ignored_3_28,"csv import 3 rem_remediatedBy
+third",ignored_3_26,2024-11-06 10:28:41.450324251 -0500,ignored_3_27,"csv import 3 rem_remediatedBy
 second
-third",ignored_3_29,"linkedToc
+third",ignored_3_28,"linkedToc
 addedMathMl
-taggedPdf",ignored_3_30,rekeyed,ignored_3_31,"index
+taggedPdf",ignored_3_29,rekeyed,ignored_3_30,"index
 latex
-MathML",ignored_3_32,"fullKeyboardControl
-fullMouseControl",ignored_3_33,"flashing
-noMotionSimulationHazard",ignored_3_34,"textual
+MathML",ignored_3_31,"fullKeyboardControl
+fullMouseControl",ignored_3_32,"flashing
+noMotionSimulationHazard",ignored_3_33,"textual
 visual
-textOnVisual",ignored_3_35,"textual
-visual",ignored_3_36,csv import 3 s_accessibilitySummary,ignored_3_37
+textOnVisual",ignored_3_34,"textual
+visual",ignored_3_35,csv import 3 s_accessibilitySummary,ignored_3_36

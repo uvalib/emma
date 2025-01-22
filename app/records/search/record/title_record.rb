@@ -91,7 +91,6 @@ class Search::Record::TitleRecord < Search::Api::Record
       dc_format
       emma_collection
       item_date
-      dcterms_dateAccepted
       emma_repositoryRecordId
     ].excluding(*IGNORED_FIELDS).freeze
 

@@ -190,7 +190,7 @@ appSetup(MODULE, function() {
      * @property {singleString} dc_format
      * @property {singleString} dc_type
      * @property {multiString}  dc_subject
-     * @property {singleString} dcterms_dateAccepted
+     * @property {singleString} [dcterms_dateAccepted]
      * @property {singleString} dcterms_dateCopyright
      * @property {multiString}  s_accessibilityFeature
      * @property {multiString}  s_accessibilityControl

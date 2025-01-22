@@ -196,7 +196,6 @@ module IngestService::Testing
         tests += 1
         item.rem_remediationDate       = 'bad date'
         item.emma_repositoryUpdateDate = '.bad,date;with/punct'
-        item.dcterms_dateAccepted      = %w[2021-04-18 2021-04-19]
       end
 
       # === PDF-style dates.

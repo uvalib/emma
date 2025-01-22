@@ -43,7 +43,6 @@ manifest_grid_new_example:  &ROW_DATA
   dc_subject:               'FAKE dc_subject; second; third'
   dc_title:                 'FAKE dc_title - do not use'
   dc_type:                  'movingImage'
-  dcterms_dateAccepted:     '2010-01-02'
   dcterms_dateCopyright:    1849
   emma_formatFeature:       ['grade2', 'ueb', 'tts']
   emma_publicationDate:     'Jan 02, 2010'

@@ -161,8 +161,6 @@ class ManifestItemDecorator < BaseDecorator
     #
     def render_form_menu_multi: (String name, anyArray value, range: Class, **untyped opt) -> ActiveSupport::SafeBuffer
 
-    SKIPPED_FIELDS: symArray
-
     # The fields which are displayed in the expandable "Item Details" panel and
     # the HTML element type used to contain its value(s).
     #
@@ -170,8 +168,16 @@ class ManifestItemDecorator < BaseDecorator
     #
     DETAILS_FIELDS: symArray
 
-    HIDDEN_FIELDS: symArray
+    # The fields which do not have a grid column.
+    #
+    # @type [Array<Symbol>]
+    #
+    SKIPPED_FIELDS: symArray
 
+    # The fields which have a grid column, but the column is not visible.
+    #
+    # @type [Array<Symbol>]
+    #
     UNDISPLAYED_FIELDS: symArray
 
     FIELD: String
