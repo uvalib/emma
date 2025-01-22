@@ -10,7 +10,7 @@
 # @see https://git.alpinelinux.org/aports/tree/main/build-base/APKBUILD
 
 # NOTE: The Ruby version is intentionally clamped to this point release.
-FROM public.ecr.aws/docker/library/ruby:3.3.0-alpine3.19
+FROM public.ecr.aws/docker/library/ruby:3.4.1-alpine3.21
 
 RUN apk upgrade && \
     apk add --no-cache \

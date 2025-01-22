@@ -6,7 +6,7 @@
 source 'https://rubygems.org'
 git_source(:github) { "https://github.com/#{_1}.git" }
 
-ruby '3.3.0'
+ruby '3.4.1'
 
 # =============================================================================
 # Rails and related gems
@@ -174,5 +174,8 @@ group :test do
 
   # For test coverage.
   gem 'simplecov'
+
+  # Needed by minitest but not an implicit part of Ruby 3.4.
+  gem 'mutex_m'
 
 end

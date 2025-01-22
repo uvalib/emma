@@ -214,7 +214,7 @@ module Record::Assignable
 
       k_alt =
         %w[_id].map do |suffix|
-          k.to_s.delete_suffix!(suffix)&.to_sym || "#{k}#{suffix}".to_sym
+          k.to_s.dup.delete_suffix!(suffix)&.to_sym || "#{k}#{suffix}".to_sym
         end
       array = col.slice(k, *k_alt).values.first&.array
       field = fld.slice(k, *k_alt).values.first || {}

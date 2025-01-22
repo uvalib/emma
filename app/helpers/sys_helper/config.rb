@@ -107,7 +107,7 @@ module SysHelper::Config
   def rails_config_entries
     cfg   = Rails.configuration
     meths = cfg.public_methods(false)
-    names = meths.map { _1.to_s.delete_suffix!('=') }.compact
+    names = meths.map { _1.to_s.dup.delete_suffix!('=') }.compact
     names.sort.map { [_1, cfg.instance_variable_get(:"@#{_1}")] }.to_h
   end
 

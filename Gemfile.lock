@@ -230,6 +230,7 @@ GEM
     minitest (5.25.4)
     msgpack (1.7.5)
     multi_json (1.15.0)
+    mutex_m (0.3.0)
     net-http (0.6.0)
       uri
     net-imap (0.5.5)
@@ -433,6 +434,7 @@ DEPENDENCIES
   jsbundling-rails
   listen
   multi_json
+  mutex_m
   nokogiri
   oj
   omniauth (~> 2.1)
@@ -460,7 +462,7 @@ DEPENDENCIES
   workflow (< 3.0)
 
 RUBY VERSION
-   ruby 3.3.0p0
+   ruby 3.4.1p0
 
 BUNDLED WITH
    2.5.3

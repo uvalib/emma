@@ -7,6 +7,9 @@ module Emma::Common::MethodMethods
 
   # Return the name of the calling method.
   #
+  # NOTE: Callers expect only the method name and not something of the form
+  #   "class#method" (as produced by Ruby 3.4+).
+  #
   # @param [Array<String>, Integer, nil] call_stack
   #
   # @return [Symbol, nil]

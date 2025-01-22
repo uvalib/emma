@@ -21,6 +21,9 @@ module Emma::Common::MethodMethods
 
   # Return the name of the calling method.
   #
+  # NOTE: Callers expect only the method name and not something of the form
+  #   "class#method" (as produced by Ruby 3.4+).
+  #
   # @param [Array<String>, Integer, nil] call_stack
   #
   # @return [Symbol, nil]
@@ -49,8 +52,9 @@ module Emma::Common::MethodMethods
     end
     call_stack ||= caller(depth)
     call_stack&.find { |line|
-      name = line.to_s.sub(/^.*:in `(.*?)'$/, '\1')
+      name = line.to_s.sub(/^.*:in [`'](.*?)'$/, '\1')
       next if name.blank? || %w[each map __output __output_impl].include?(name)
+      name = name.split('#').last
       break name.sub(BLOCK_RESCUE_RE, '\3')
     }&.to_sym
   end
