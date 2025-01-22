@@ -680,8 +680,8 @@ class ManifestDecorator
 
   # ManifestItem entries to be submitted.
   #
-  # By default, all items are selected -- given the client the responsibility
-  # of prevent submission of non-submittable items.
+  # By default, all items are selected -- giving the client the responsibility
+  # of preventing submission of non-submittable items.
   #
   # @param [Boolean] limit            If *true* select only eligible items.
   #

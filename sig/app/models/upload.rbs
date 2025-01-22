@@ -266,8 +266,8 @@ class Upload < ApplicationRecord
     # Counter for the trailing portion of the generated submission ID.
     #
     # This provides a per-thread value in the range 0..99 which can be used to
-    # differentiate submission IDs which are generated in rapid succession (e.g.,
-    # for bulk upload).
+    # differentiate submission IDs which are generated in rapid succession
+    # (e.g., for bulk upload).
     #
     # @return [Integer]
     #
