@@ -146,7 +146,7 @@ module Configuration
     #
     def initialize(update_env: true, check_env: sanity_check?)
       env, cred, yaml = from_env, from_credentials, from_yaml
-      [*cred.keys, *yaml.keys].sort.uniq.map do |key|
+      [*env.keys, *cred.keys, *yaml.keys].sort.uniq.map do |key|
         val = env_value(env[key]).freeze
         val = cred[key] if val.nil?
         val = yaml[key] if val.nil?
