@@ -7,6 +7,8 @@
   cfg   ||= current_config_page_section
   help  ||= nil # %i[about members]
   title ||= cfg[:title]
+  count ||= org_names.count
+  title = "#{title} (#{count})"
 -%>
 
 <%= page_heading(title, help: help) %>
