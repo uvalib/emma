@@ -19,6 +19,24 @@ module Faraday
   # end
   #
   module Logging::FormatterExt
+    # Override request log entry to prefix with `@logger.progname`.
+    #
+    # @param [Faraday::Env] env
+    #
+    def request: (Faraday::Env env) -> void
+
+    # Override response log entry to prefix with `@logger.progname`.
+    #
+    # @param [Faraday::Env] env
+    #
+    def response: (Faraday::Env env) -> void
+
+    # Override exception log entry to prefix with `@logger.progname`.
+    #
+    # @param [Faraday::Error] exc
+    #
+    def exception: (Faraday::Error exc) -> void
+
     # Render request headers.
     #
     # @param [Hash] headers
@@ -38,14 +56,5 @@ module Faraday
     # @see Faraday::Logging::Formatter#dump_body
     #
     def dump_body: (anyHash body) -> String
-
-    # Faraday disregards Logger#progname by replacing with an explicit
-    # 'request' or 'response' tag.  This corrects that by appending the tag to
-    # the progname if it is present.
-    #
-    # @param [Symbol] log_method    :debug, :info, :warn, etc
-    # @param [String] type          'request' or 'response'
-    #
-    def public_send: (Symbol log_method, String `type`) { (*untyped) -> untyped } -> untyped
   end
 end
