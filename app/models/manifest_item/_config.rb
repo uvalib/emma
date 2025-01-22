@@ -43,8 +43,8 @@ module ManifestItem::Config
   #
   STATUS_READY = {
     file_status:  %i[complete name_only],
-    data_status:  %i[complete min_bib min_rem],
-    ready_status: %i[ready],
+    data_status:  %i[complete minimal min_bib min_rem],
+    ready_status: %i[complete ready],
   }.deep_freeze
 
   # Values for each status column which indicate an "OK" status.
@@ -53,8 +53,8 @@ module ManifestItem::Config
   #
   STATUS_VALID = {
     file_status:  %i[complete name_only url_only],
-    data_status:  %i[complete min_bib min_rem],
-    ready_status: %i[ready complete],
+    data_status:  %i[complete minimal min_bib min_rem],
+    ready_status: %i[complete ready],
   }.deep_freeze
 
   if sanity_check?

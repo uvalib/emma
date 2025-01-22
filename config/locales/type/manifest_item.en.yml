@@ -29,11 +29,13 @@ en:
 
         data_status:
           missing:      'No information has been provided'
-          invalid:      'Required data field(s) are missing or invalid'
+          invalid:      'One or more data field(s) are invalid'
           minimal:      'Only minimal information has been provided'
           no_bib:       'No bibliographic information has been provided'
-          min_bib:      'Minimal bibliographic information has been provided; have you tried \u2605 Lookup?'
+          need_bib:     'Required bibliographic information is still needed'
+          min_bib:      "Minimal bibliographic information has been provided; have you tried \U0001F50D Lookup?"
           no_rem:       'No remediation information has been provided'
+          need_rem:     'Required remediation information is still needed'
           min_rem:      'Minimal remediation information has been provided'
           complete:     'Sufficient bibliographic and remediation information'
 

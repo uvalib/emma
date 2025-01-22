@@ -142,9 +142,10 @@ module ManifestItem::StatusMethods
 
     return status.(:complete) if complete_rem && complete_bib
     return status.(:min_bib)  if complete_rem && adequate_bib
-    return status.(:min_rem)  if adequate_rem && adequate_bib
+    return status.(:min_rem)  if adequate_rem && complete_bib
+    return status.(:minimal)  if adequate_rem && adequate_bib
 
-    status.(:invalid)
+    status.(adequate_rem ? :need_bib : :need_rem)
   end
 
   # ===========================================================================

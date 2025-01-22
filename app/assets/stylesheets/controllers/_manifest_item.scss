@@ -304,21 +304,9 @@ table.manifest_item-grid {
         //=====================================================================
 
         $indicator-icon: (
-            file_status: (
-                emoji:  emoji.$OPEN_FILE_FOLDER,
-                base:   yellow,
-                size:   x-large,
-            ),
-            data_status: (
-                emoji:  emoji.$SCROLL,
-                base:   orange,
-                size:   larger,
-            ),
-            ready_status: (
-                emoji:  emoji.$DELIVERY_TRUCK,
-                base:   red,
-                size:   x-large,
-            ),
+            file_status:  (type: "folder"),
+            data_status:  (type: "scroll"),
+            ready_status: (type: "truck"),
         );
 
         $indicators: map.keys($indicator-icon);
@@ -407,45 +395,57 @@ table.manifest_item-grid {
 
             .indicators {
 
-                @mixin emoji_before($color, $prop) {
-                    $base:  map.get($prop, "base");
-                    $emoji: map.get($prop, "emoji");
-                    $size:  map.get($prop, "size");
+                @mixin status-icon($color, $prop) {
+                    $type: map.get($prop, "type");
+                    $icon: "#{$type}-#{$color}.svg";
+                    $size: 2rem;
                     &::before {
-                        content:   $emoji;
-                        font-size: $size;
-                        @if $color == red {
-                            @include emoji.red($base: $base);
-                        } @else if $color == green {
-                            @include emoji.green($base: $base);
-                        } @else if $color == gray {
-                            @include emoji.gray($base: $base);
-                        }
+                        display:           block;
+                        height:            $size;
+                        width:             $size;
+                        content:           $NBSP;
+                        background-image:  url($icon);
+                        background-size:   $size;
+                        background-repeat: no-repeat;
+                        border-bottom:     3px double transparent;
+                    }
+                }
+
+                @mixin satisfied() {
+                    &::before {
+                        border-bottom-color: initial;
                     }
                 }
 
                 @mixin initial($prop) {
-                    @include emoji_before(gray, $prop);
+                    @include status-icon(gray, $prop);
+                }
+
+                @mixin inadequate($prop) {
+                    @include status-icon(yellow, $prop);
+                }
+
+                @mixin adequate($prop) {
+                    @include status-icon(green, $prop);
                 }
 
                 @mixin error($prop) {
-                    @include emoji_before(red, $prop);
+                    @include status-icon(red, $prop);
                 }
 
                 @mixin warning($prop) {
-                    @include emoji_before(green, $prop);
+                    @include status-icon(yellow, $prop);
                 }
 
                 @mixin complete($prop) {
-                    @include emoji_before(green, $prop);
+                    @include status-icon(green, $prop);
                 }
 
                 @each $indicator in $indicators {
 
                     .#{$indicator} {
 
-                        margin:       0;
-                        aspect-ratio: 1/1;
+                        margin: 0;
 
                         $prop: map.get($indicator-icon, $indicator);
 
@@ -463,15 +463,17 @@ table.manifest_item-grid {
                         &.value-hidden      { @include error    ($prop); }
                         &.value-corrupt     { @include error    ($prop); }
                         &.value-bad_read    { @include error    ($prop); }
-                        &.value-name_only   { @include warning  ($prop); }
-                        &.value-url_only    { @include warning  ($prop); }
+                        &.value-name_only   { @include adequate ($prop); }
+                        &.value-url_only    { @include adequate ($prop); }
 
                         // @see "en.emma.type.manifest_item.data_status"
-                        &.value-minimal     { @include warning  ($prop); }
-                        &.value-no_bib      { @include error    ($prop); }
-                        &.value-min_bib     { @include warning  ($prop); }
-                        &.value-no_rem      { @include error    ($prop); }
-                        &.value-min_rem     { @include warning  ($prop); }
+                        &.value-minimal     { @include adequate   ($prop); }
+                        &.value-no_bib      { @include inadequate ($prop); }
+                        &.value-need_bib    { @include inadequate ($prop); }
+                        &.value-min_bib     { @include adequate   ($prop); }
+                        &.value-no_rem      { @include inadequate ($prop); }
+                        &.value-need_rem    { @include inadequate ($prop); }
+                        &.value-min_rem     { @include adequate   ($prop); }
 
                         // @see "en.emma.type.manifest_item.ready_status"
                         &.value-unsaved     { @include initial  ($prop); }
@@ -480,27 +482,36 @@ table.manifest_item-grid {
                         &.value-store_fail  { @include error    ($prop); }
                         &.value-index_fail  { @include error    ($prop); }
 
-                        &.value-complete::after {
-                            content:        $HEAVY_PLUS;
-                            font-size:      small;
-                            position:       absolute;
-                        }
-
-                        &.value-ready::before {
-                            padding-bottom: 0.125rem;
-                            border-bottom:  0.1875rem dotted;
-                        }
+                        &.value-complete    { @include satisfied; }
+                        &.value-name_only   { @include satisfied; }
+                        &.value-url_only    { @include satisfied; }
+                        &.value-minimal     { @include satisfied; }
+                        &.value-min_bib     { @include satisfied; }
+                        &.value-min_rem     { @include satisfied; }
+                        &.value-ready       { @include satisfied; }
                     }
                 }
 
+                .ready_status.value::before {
+                    background-position-y: 2px;
+                }
+
+                .value-complete::after {
+                    content:     $CHECK;
+                    font-size:   large;
+                    line-height: 0;
+                    position:    absolute;
+                }
+
                 .file_status.value-complete::after {
-                    margin-top:  1.125rem;
-                    margin-left: -1.125rem;
+                    margin-top:  -1.125rem;
+                    margin-left: 0.625rem;
+                    font-weight: bold;
                 }
 
                 .data_status.value-complete::after {
-                    margin-top:  0.75rem;
-                    margin-left: -1rem;
+                    margin-top: -1.25rem;
+                    margin-left: 0.75rem;
                 }
             }
         }
@@ -948,21 +959,22 @@ table.manifest_item-grid {
                     .indicators {
 
                         .file_status {
-                            line-height: 1.25;
+                            padding-top: 0.25rem;
                         }
 
                         .data_status {
-                            line-height: 1.75;
+                            padding-top: 0.25rem;
                         }
 
                         .ready_status {
-                            line-height: 1.125;
+                            padding-top: 0.25rem;
                         }
 
-                        .error, .warning, .value-invalid, .value-hidden,
-                        .value-corrupt, .value-bad_read, .value-no_bib,
-                        .value-no_rem, .value-db_fail, .value-store_fail,
-                        .value-index_fail {
+                        .error, .warning, .value-invalid,
+                        .value-hidden, .value-corrupt, .value-bad_read,
+                        .value-no_bib, .value-need_bib,
+                        .value-no_rem, .value-need_rem,
+                        .value-db_fail, .value-store_fail, .value-index_fail {
                             & + .label {
                                 @include hover-bold;
                             }
@@ -978,7 +990,7 @@ table.manifest_item-grid {
                         grid-auto-flow: column;
 
                         > * {
-                            margin: auto;
+                            height: 100%;
                         }
 
                         .label {
@@ -993,18 +1005,6 @@ table.manifest_item-grid {
 
                         > * {
                             margin-bottom:  0;
-                        }
-
-                        .file_status {
-                            line-height:    1.3125;
-                        }
-
-                        .data_status {
-                            line-height:    1.125;
-                        }
-
-                        .ready_status {
-                            line-height:    1.125;
                         }
                     }
 
