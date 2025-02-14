@@ -101,13 +101,9 @@ end
 
 # Indicate whether IA downloads should not be attempted.
 #
-# NOTE: This is temporarily defaulting to *true* while the Internet Archive
-#   "Printdisabled Unencrypted Ebook API" continues to fail.  When this is
-#   resolved, `!false?` should be replaced with `true?`.
-#
 # @type [Boolean]
 #
-IA_DOWNLOADS_FAILING = !false?(ENV_VAR['IA_DOWNLOADS_FAILING'])
+IA_DOWNLOADS_FAILING = true?(ENV_VAR['IA_DOWNLOADS_FAILING'])
 
 # Indicate whether IA downloads should be allowable.
 #

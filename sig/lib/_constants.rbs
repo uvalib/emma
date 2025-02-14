@@ -48,10 +48,6 @@ SEARCH_API_VERSION: String
 
 # Indicate whether IA downloads should not be attempted.
 #
-# NOTE: This is temporarily defaulting to *true* while the Internet Archive
-#   "Printdisabled Unencrypted Ebook API" continues to fail.  When this is
-#   resolved, `!false?` should be replaced with `true?`.
-#
 # @type [Boolean]
 #
 IA_DOWNLOADS_FAILING: bool
