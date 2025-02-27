@@ -246,8 +246,6 @@ class AppSettings < AppGlobal
     :IA_DOWNLOAD_API_URL,
     :IA_ACCESS,
     :IA_SECRET,
-    :IA_USER_COOKIE,
-    :IA_SIG_COOKIE,
     nil,
 
     # === Lookup API keys

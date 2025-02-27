@@ -129,24 +129,6 @@ IA_ACCESS = ENV_VAR['IA_ACCESS'].freeze
 #
 IA_SECRET = ENV_VAR['IA_SECRET'].freeze
 
-# IA server cookie for generation of "on-the-fly" content as Internet Archive
-# user "emma_pull@archive.org".
-#
-# @type [String, nil]
-#
-# @see IaDownloadConcern#IA_COOKIES
-#
-IA_USER_COOKIE = ENV_VAR['IA_USER_COOKIE'].freeze
-
-# IA server cookie for generation of "on-the-fly" content as Internet Archive
-# user "emma_pull@archive.org".
-#
-# @type [String, nil]
-#
-# @see IaDownloadConcern#IA_COOKIES
-#
-IA_SIG_COOKIE = ENV_VAR['IA_SIG_COOKIE'].freeze
-
 # Internet Archive "Printdisabled Unencrypted Ebook API" endpoint.
 #
 # @type [String]

@@ -90,8 +90,6 @@ en:
         GOOGLE_API_KEY:               ~
         IA_ACCESS:                    ~
         IA_SECRET:                    ~
-        IA_SIG_COOKIE:                ~
-        IA_USER_COOKIE:               ~
         INGEST_API_KEY:               ~
         MD_API_KEY:                   ~
         RECAPTCHA_SECRET_KEY:         ~

@@ -76,24 +76,6 @@ IA_ACCESS: String | nil
 #
 IA_SECRET: String | nil
 
-# IA server cookie for generation of "on-the-fly" content as Internet Archive
-# user "emma_pull@archive.org".
-#
-# @type [String, nil]
-#
-# @see IaDownloadConcern#IA_COOKIES
-#
-IA_USER_COOKIE: String | nil
-
-# IA server cookie for generation of "on-the-fly" content as Internet Archive
-# user "emma_pull@archive.org".
-#
-# @type [String, nil]
-#
-# @see IaDownloadConcern#IA_COOKIES
-#
-IA_SIG_COOKIE: String | nil
-
 # Internet Archive "Printdisabled Unencrypted Ebook API" endpoint.
 #
 # @type [String]

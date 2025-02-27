@@ -18,19 +18,6 @@ module IaDownloadService::Properties
   #
   IA_AUTH: String
 
-  # Cookies to be sent to the IA server.
-  #
-  # === Implementation Notes
-  # These values were obtained from a desktop development VM after installing
-  # the "ia" Python script and running "ia configure" with the Email address
-  # "emmadso@bookshare.org".  This generates a configuration file ~/.ia which
-  # contains an "[s3]" section with the S3 access key and secret, and a
-  # "[cookies]" section which contains these values.
-  #
-  # @see https://archive.org/services/docs/api/internetarchive/quickstart.html#configuring
-  #
-  IA_COOKIES: String
-
   # Headers needed to authenticate with the IA server.
   #
   # @type [Hash{String=>String}]
