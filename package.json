@@ -9,17 +9,17 @@
     "@uppy/file-input":   "^4.1.1",
     "@uppy/informer":     "^4.2.1",
     "@uppy/progress-bar": "^4.2.1",
-    "@uppy/xhr-upload":   "^4.3.2",
+    "@uppy/xhr-upload":   "^4.3.3",
     "esbuild":            "^0.25.0",
     "jquery":             "^3.7.1",
-    "sass":               "^1.85.0",
+    "sass":               "^1.85.1",
     "select2":            "^4.1.0-rc.0",
     "turbolinks":         "^5.2.0"
   },
   "unused-dependencies": {
     "@uppy/aws-s3":               "^4.2.1",
     "@uppy/box":                  "^3.2.1",
-    "@uppy/dashboard":            "^4.3.1",
+    "@uppy/dashboard":            "^4.3.2",
     "@uppy/drag-drop":            "^4.1.1",
     "@uppy/dropbox":              "^4.2.1",
     "@uppy/google-drive":         "^4.3.1",
@@ -27,7 +27,7 @@
     "@uppy/status-bar":           "^4.1.1",
     "@uppy/thumbnail-generator":  "^4.1.1",
     "@uppy/url":                  "^4.2.2",
-    "uppy":                       "^4.13.2"
+    "uppy":                       "^4.13.3"
   },
   "scripts": {
     "build":     "bin/asset_build esbuild",
