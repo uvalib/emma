@@ -1,0 +1,122 @@
+# View helper methods for the Downloads page.
+#
+module AboutHelper::Downloads
+  include AboutHelper::Common
+
+  # About Downloads configuration.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  ABOUT_DOWNLOADS_CONFIG: Hash[Symbol,symHash]
+
+  # About Downloads sections configuration.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  ABOUT_DOWNLOADS: Hash[Symbol,symHash]
+
+  # A list of in-page links to the section groups on the page.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def about_downloads_toc: () -> ActiveSupport::SafeBuffer
+
+  # A page section target that is independent of the set of the related
+  # page sections that follow it.
+  #
+  # @param [Symbol] by
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def downloads_section: (by: Symbol, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # A page section for recent EMMA downloads, if any.
+  #
+  # @param [Boolean] heading          If *false*, do not include `<h2>` heading
+  # @param [Hash]    opt              Passed to #project_downloads.
+  #
+  # @option opt [ActiveSupport::Duration, Date, Integer] :since   Default:
+  #                                                               #recent_date
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def recent_downloads_section: (heading: bool, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # A page section for all EMMA downloads.
+  #
+  # @param [Boolean] heading          If *false*, do not include `<h2>` heading
+  # @param [Hash]    opt              Passed to #project_submissions.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def total_downloads_section: (heading: bool, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # An element containing a list of EMMA downloads.
+  #
+  # @param [ActiveSupport::Duration, Date, Integer, nil] since
+  # @param [Symbol] by                Either :org or :source
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to the container element.
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def project_downloads: (?since: ActiveSupport::Duration|Date|Integer|nil, ?by: Symbol, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Generate a table of download counts in descending order.
+  #
+  # @param [Symbol] by                Either :org or :source
+  # @param [Hash]   opt
+  #
+  # @return [Hash{Org=>Integer}]
+  #
+  def download_counts: (?by: Symbol, **untyped opt) -> Hash[Org,Integer]
+
+  # Generate a table of organizations and their download counts in descending
+  # order.
+  #
+  # @param [Hash] opt                 Passed to #filter_downloads.
+  #
+  # @return [Hash{Org=>Integer}]
+  #
+  def org_download_counts: (**untyped opt) -> Hash[Org,Integer]
+
+  # Generate a table of repository sources and their download counts in
+  # descending order.
+  #
+  # @param [Hash] opt                 Passed to #filter_downloads.
+  #
+  # @return [Hash{Org=>Integer}]
+  #
+  def src_download_counts: (**untyped opt) -> Hash[Org,Integer]
+
+  # Generate a table of publishers and their download counts in descending
+  # order.
+  #
+  # @param [Hash] opt                 Passed to #filter_downloads.
+  #
+  # @return [Hash{Org=>Integer}]
+  #
+  def pub_download_counts: (**untyped opt) -> Hash[Org,Integer]
+
+  private
+
+  # Create a query to filter download items.
+  #
+  # @param [ActiveRecord::Relation]                      items
+  # @param [ActiveSupport::Duration, Date, Integer, nil] since
+  # @param [Hash]                                        opt    Added terms.
+  #
+  # @return [ActiveRecord::Relation, ActiveRecord::QueryMethods::WhereChain]
+  #
+  def filter_downloads: (ActiveRecord::Relation items, ?since: ActiveSupport::Duration|Date|Integer|nil, **untyped opt) -> (ActiveRecord::Relation | ActiveRecord::QueryMethods::WhereChain[ActiveRecord::Relation])
+
+  # Generate a table of formats and their counts in descending order.
+  #
+  # @param [*] items
+  #
+  # @return [Hash{String=>Integer}]
+  #
+  def format_counts: (ActiveRecord::Relation|ActiveRecord::QueryMethods::WhereChain[ActiveRecord::Relation] items) -> Hash[String,Integer]
+end

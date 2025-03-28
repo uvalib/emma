@@ -19,13 +19,25 @@ module AboutConcern
 
   public
 
+  # System information pages configuration.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # @see "en.emma.page.about.action"
+  #
+  ABOUT_CONFIG = CONTROLLER_CONFIGURATION.dig(:about, :action).deep_freeze
+
   # System information pages (including for :index).
   #
   # @type [Array<Symbol>]
   #
-  # @see "en.emma.page.about.action"
+  ABOUT_PAGES = ABOUT_CONFIG.keys.freeze
+
+  # System information pages available to anonymous users.
   #
-  ABOUT_PAGES = CONTROLLER_CONFIGURATION.dig(:about, :action).keys.freeze
+  # @type [Array<Symbol>]
+  #
+  ANON_ABOUT_PAGES = ABOUT_CONFIG.reject { |_, prop| prop[:role] }.keys.freeze
 
   # ===========================================================================
   # :section:

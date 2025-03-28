@@ -109,8 +109,9 @@ class Ability
   #
   ACTION_ALIAS = PREDEFINED_ALIAS.merge(LOCAL_ACTION_ALIAS).freeze
 
-  # Models which are managed by CanCan (that is the model names implied by all
-  # of the controllers which have "authorize_resource").
+  # Models which are managed by CanCan (that is, the model names implied by all
+  # of the controllers that have "authorize_resource" except AboutController,
+  # which is a special case).
   #
   # For consistency, each of these should have an entry in
   # "en.unauthorized.manage" (config/locales/cancan.en.yml).
@@ -300,6 +301,7 @@ class Ability
   # @return [void]
   #
   def act_as_anonymous(...)
+    can_view_about_pages
     can :show,   Upload
     can :backup, Upload
     can :create, Enrollment
@@ -510,6 +512,17 @@ class Ability
   #
   def can_view_submissions(model = Upload, **constraints)
     can_view_content(model, **constraints)
+  end
+
+  # Works with `authorize_resource class: false` in AboutController to make all
+  # pages except "/about/downloads" visible.
+  #
+  # @return [void]
+  #
+  def can_view_about_pages(...)
+    AboutConcern::ANON_ABOUT_PAGES.each do |action|
+      can action, :about
+    end
   end
 
   # ===========================================================================

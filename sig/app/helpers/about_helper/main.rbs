@@ -1,0 +1,95 @@
+# View helper methods for the main About page.
+#
+module AboutHelper::Main
+  include AboutHelper::Common
+
+  # Default source for #external_content_section.
+  #
+  # @type [String]
+  #
+  EXTERNAL_CONTENT_URL: String
+
+  # An element containing content acquired from an external source.
+  #
+  # By default, a section heading is prepended only if the content does not
+  # have a heading element.
+  #
+  # @param [Boolean,nil] heading      If *false*, do not include `<h2>` heading
+  # @param [String]      css          Characteristic CSS class/selector.
+  # @param [Hash]        opt          Passed to the container element.
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def external_content_section: (heading: bool|nil, ?css: String, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # An element containing useful project-related links.
+  #
+  # @param [Boolean] heading          If *false*, do not include `<h2>` heading
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to the container element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def project_links_section: (heading: bool, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # An element containing links to project-related reference material.
+  #
+  # @param [Boolean] heading          If *false*, do not include `<h2>` heading
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to the container element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def project_references_section: (heading: bool, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Generate a table of useful project-related links.
+  #
+  # @param [Hash] opt                 Passed to #project_table.
+  #
+  # @return [Hash]
+  #
+  def project_links: (**untyped opt) -> Hash[String,String]
+
+  # Generate a table of links to project-related reference material.
+  #
+  # @param [Hash] opt                 Passed to #project_table.
+  #
+  # @return [Hash]
+  #
+  def project_refs: (**untyped opt) -> Hash[String,String]
+
+  private
+
+  # A scrubber for ensuring that the content does not have `<h1>`.
+  #
+  # @type [Loofah::Scrubber]
+  #
+  SCRUB_H1: Loofah::Scrubber
+
+  # Remove undesirable HTML from received content.
+  #
+  # @param [String] body
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def scrub_content: (String body) -> ActiveSupport::SafeBuffer
+
+  # Generate a table of values with keys modified according to the *format*.
+  #
+  # @param [Hash]        data
+  # @param [Symbol, nil] format       One of :json, :xml, or :html (default).
+  #
+  # @return [Hash]
+  #
+  def project_table: (anyHash data, format: Symbol|nil, **untyped _ignored) -> Hash[String,String]
+
+  # An element containing a table of project-related information.
+  #
+  # @param [Hash, nil]   content
+  # @param [String, nil] heading
+  # @param [Hash]        opt          Passed to the container element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def project_table_section: ((symHash|nil) content, ?(String|nil) heading, **untyped opt) -> ActiveSupport::SafeBuffer
+end

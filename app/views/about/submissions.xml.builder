@@ -5,25 +5,22 @@
 #
 # Leaderboard of EMMA submissions as XML.
 
-recent ||= org_submission_counts(since: recent_date)
-total  ||= org_submission_counts
+date   = recent_date
+recent = org_submission_counts(since: date).transform_keys { _1.long_name }
+total  = org_submission_counts.transform_keys { _1.long_name }
+
+entries_for = ->(items) do
+  items.each do |name, counts|
+    xml.entry(name: name, total: counts.values.sum) do
+      counts.each do |format, count|
+        xml.format(name: format, count: count)
+      end
+    end
+  end
+end
 
 xml.instruct!
 xml.about do
-  xml.recent do
-    recent.each do |name, count|
-      xml.member do
-        xml.tag! :name,  name
-        xml.tag! :count, count
-      end
-    end
-  end
-  xml.total do
-    total.each do |name, count|
-      xml.member do
-        xml.tag! :name,  name
-        xml.tag! :count, count
-      end
-    end
-  end
+  xml.recent { entries_for.(recent) }
+  xml.total  { entries_for.(total) }
 end

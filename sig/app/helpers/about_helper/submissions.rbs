@@ -1,0 +1,46 @@
+# View helper methods for the Submissions page.
+#
+module AboutHelper::Submissions
+  include AboutHelper::Common
+
+  # A page section for recent EMMA submissions, if any.
+  #
+  # @param [Boolean] heading          If *false*, do not include `<h2>` heading
+  # @param [Hash]    opt              Passed to #project_submissions.
+  #
+  # @option opt [ActiveSupport::Duration, Date, Integer] :since   Default:
+  #                                                               #recent_date
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def recent_submissions_section: (heading: bool, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # A page section for all EMMA submissions.
+  #
+  # @param [Boolean] heading          If *false*, do not include `<h2>` heading
+  # @param [Hash]    opt              Passed to #project_submissions.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def total_submissions_section: (heading: bool, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # An element containing a list of EMMA submissions.
+  #
+  # @param [ActiveSupport::Duration, Date, Integer, nil] since
+  # @param [String] css               Characteristic CSS class/selector.
+  # @param [Hash]   opt               Passed to the container element.
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def project_submissions: (?since: ActiveSupport::Duration|Date|Integer|nil, ?css: String, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+
+  # Generate a table of organizations and their submission counts in descending
+  # order.
+  #
+  # @param [ActiveSupport::Duration, Date, Integer, nil] since
+  # @param [Hash] opt                 Passed to 'uploads' #where clause.
+  #
+  # @return [Hash{Org=>Integer}]
+  #
+  def org_submission_counts: (?since: ActiveSupport::Duration|Date|Integer|nil, **untyped opt) -> Hash[Org,Integer]
+end

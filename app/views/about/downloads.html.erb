@@ -1,0 +1,29 @@
+<%# app/views/about/downloads.html.erb -%>
+<%-
+  # Leaderboard of EMMA downloads.
+
+  view_debug(__FILE__)
+
+  cfg   ||= current_config_page_section
+  help  ||= nil # %i[about downloads]
+  title ||= cfg[:title]
+-%>
+
+<%= page_heading(title, help: help) %>
+<%= page_description_section(about_downloads_toc) %>
+<%= page_description_section %>
+<%= page_directions_section %>
+
+<%= downloads_section(by: :org) %>
+<%= recent_downloads_section(by: :org) %>
+<%= total_downloads_section(by: :org) %>
+
+<%= downloads_section(by: :source) %>
+<%= recent_downloads_section(by: :source) %>
+<%= total_downloads_section(by: :source) %>
+
+<%= downloads_section(by: :publisher) %>
+<%= recent_downloads_section(by: :publisher) %>
+<%= total_downloads_section(by: :publisher) %>
+
+<%= page_notes_section %>

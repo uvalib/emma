@@ -1,4 +1,6 @@
 class AboutController < ApplicationController
+  include UserConcern
+
   include ParamsConcern
 
   include SessionConcern
@@ -6,6 +8,8 @@ class AboutController < ApplicationController
   include RunStateConcern
 
   include AboutConcern
+
+  ADMIN_OPS: symArray
 
   # === GET /about
   #
@@ -25,4 +29,5 @@ class AboutController < ApplicationController
 
   def members:      () -> void
   def submissions:  () -> void
+  def downloads:    () -> void
 end

@@ -49,8 +49,9 @@ class Ability
   #
   ACTION_ALIAS: Hash[Symbol,symArray]
 
-  # Models which are managed by CanCan (that is the model names implied by all
-  # of the controllers which have "authorize_resource").
+  # Models which are managed by CanCan (that is, the model names implied by all
+  # of the controllers that have "authorize_resource" except AboutController,
+  # which is a special case).
   #
   # For consistency, each of these should have an entry in
   # "en.unauthorized.manage" (config/locales/cancan.en.yml).
@@ -295,6 +296,13 @@ class Ability
   # @return [void]
   #
   def can_view_submissions: (?Class model, **untyped constraints) -> void
+
+  # Works with `authorize_resource class: false` in AboutController to make all
+  # pages except "/about/downloads" visible.
+  #
+  # @return [void]
+  #
+  def can_view_about_pages: (*untyped _ignored) -> void
 
   # Define a set of capabilities on a given model type which allows full
   # control over instances which meet the given constraints.

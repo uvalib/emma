@@ -40,13 +40,23 @@
     font-size:              large;
 }
 
+.section-target {
+    height:     0.125rem;
+    margin-top: calc(5% - 0.125rem);
+}
+
+.project-downloads,
 .project-submissions {
 
-    @include table.grid-table(2);
+    @include table.grid-table(3);
 
-    & {
-        justify-items: start;
+    tbody tr * {
+        justify-self: start;
     }
+}
+
+.section-target + .project-downloads {
+    margin-top: 0;
 }
 
 .project-external {

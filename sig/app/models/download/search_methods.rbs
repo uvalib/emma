@@ -1,0 +1,32 @@
+# Class methods for accessing Download records.
+#
+module Download::SearchMethods
+  include Record::Searchable
+
+  extend ::Download::SearchMethods
+
+  NO_PUBLISHER: String
+
+  # Make sure that #sql_clause does not turn publisher names containing commas
+  # into a list of items.
+  #
+  # @param [Array<String,Array,Hash>] terms
+  # @param [Hash,String,Boolean,nil]  sort  No sort if *nil*, *false* or blank.
+  # @param [Hash]                     opt   Passed to #where except:
+  #
+  # @option opt [Integer, nil]      :offset
+  # @option opt [Integer, nil]      :limit
+  # @option opt [String, Date]      :start_date   Earliest :updated_at.
+  # @option opt [String, Date]      :end_date     Latest :updated_at.
+  # @option opt [String, Date]      :after        All :updated_at after this.
+  # @option opt [String, Date]      :before       All :updated_at before this.
+  # @option opt [String,Symbol,nil] :meth         Caller for diagnostics.
+  #
+  # @return [ActiveRecord::Relation]
+  #
+  def make_relation: (*(String|strArray|nil) terms, sort: symHash|String|bool|nil, **untyped opt) -> ActiveRecord::Relation
+
+  private
+
+  def self.included: (Module base) -> void
+end

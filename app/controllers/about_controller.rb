@@ -7,6 +7,7 @@ __loading_begin(__FILE__)
 
 class AboutController < ApplicationController
 
+  include UserConcern
   include ParamsConcern
   include SessionConcern
   include RunStateConcern
@@ -16,13 +17,18 @@ class AboutController < ApplicationController
   # :section: Authentication
   # ===========================================================================
 
-  # Not applicable.
+  ADMIN_OPS = %i[downloads].freeze
+
+  before_action :update_user
+  before_action :authenticate_admin!, only: ADMIN_OPS
 
   # ===========================================================================
   # :section: Authorization
   # ===========================================================================
 
-  skip_authorization_check
+  skip_authorization_check except: ADMIN_OPS
+
+  authorize_resource class: false
 
   # ===========================================================================
   # :section: Callbacks

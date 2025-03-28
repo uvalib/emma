@@ -747,6 +747,7 @@ en:
             - index
             - members
             - submissions
+            - downloads
 
         # =====================================================================
         # Action pages
@@ -788,11 +789,40 @@ en:
             title:          'EMMA Submissions'
             tooltip:        'EMMA submissions by organization'
             section:
-              recent:       'Recent EMMA Submissions'
+              recent:       'Recent EMMA Submissions (last 30 days)'
               total:        'All EMMA Submissions'
             columns:
               - 'Organization'
               - 'Submissions'
+              - 'Formats'
+
+          # ===================================================================
+
+          downloads:
+            <<:             *ABOUT_GENERIC_ACTION
+            label:          'Downloads'
+            title:          'EMMA Downloads'
+            tooltip:        'EMMA downloads by organization'
+            section:
+              recent:       'Recent EMMA Downloads (last 30 days)'
+              total:        'All EMMA Downloads'
+              org:
+                label:      'By Organization'
+                recent:     'Recent EMMA Downloads By Organization (last 30 days)'
+                total:      'All EMMA Downloads By Organization'
+              source:
+                label:      'By Source'
+                recent:     'Recent EMMA Downloads By Source (last 30 days)'
+                total:      'All EMMA Downloads By Source'
+              publisher:
+                label:      'By Publisher'
+                recent:     'Recent EMMA Downloads By Publisher (last 30 days)'
+                total:      'All EMMA Downloads By Publisher'
+            columns:
+              - 'Organization'
+              - 'Downloads'
+              - 'Formats'
+            role:           administrator
 
           # ===================================================================
 
