@@ -104,6 +104,32 @@ Rails.application.routes.draw do
   get    '/probe_retrieval',  to: 'upload#probe_retrieval', as: 'probe_retrieval'
 
   # ===========================================================================
+  # Download event records
+  # ===========================================================================
+
+  get    '/downloads',                to: 'download#index',         as: 'downloads'
+  get    '/downloads/index',          to: 'download#index',         as: 'download_index'
+  get    '/downloads/list_all',       to: 'download#list_all',      as: 'list_all_download'
+  get    '/downloads/list_org',       to: 'download#list_org',      as: 'list_org_download'
+  get    '/downloads/list_own',       to: 'download#list_own',      as: 'list_own_download'
+
+  get    '/downloads/new',            to: 'download#new',           as: 'new_download'
+  match  '/downloads/create',         to: 'download#create',        as: 'create_download',        **VIA_CREATE
+
+  get    '/downloads/edit_select',    to: 'download#edit_select',   as: 'edit_select_download'
+  get    '/downloads/edit/(:id)',     to: 'download#edit',          as: 'edit_download'
+  match  '/downloads/update/:id',     to: 'download#update',        as: 'update_download',        **VIA_UPDATE
+
+  get    '/downloads/delete_select',  to: 'download#delete_select', as: 'delete_select_download'
+  get    '/downloads/delete/(:id)',   to: 'download#delete',        as: 'delete_download'
+  delete '/downloads/destroy/:id',    to: 'download#destroy',       as: 'destroy_download'
+
+  get    '/downloads/show_select',    to: 'download#show_select',   as: 'show_select_download'
+  get    '/downloads/show/(:id)',     to: 'download#show',          as: 'show_download'
+
+  post   '/downloads/register',       to: 'download#register',      as: 'register_download'
+
+  # ===========================================================================
   # EMMA bulk operations - manifests
   # ===========================================================================
 
@@ -452,6 +478,8 @@ unless ONLY_FOR_DOCUMENTATION
   def confirmation_url(...);                       end
   def create_account_path(...);                    end
   def create_account_url(...);                     end
+  def create_download_path(...);                   end
+  def create_download_url(...);                    end
   def create_enrollment_path(...);                 end
   def create_enrollment_url(...);                  end
   def create_manifest_item_path(...);              end
@@ -480,6 +508,8 @@ unless ONLY_FOR_DOCUMENTATION
   def database_sys_url(...);                       end
   def delete_account_path(...);                    end
   def delete_account_url(...);                     end
+  def delete_download_path(...);                   end
+  def delete_download_url(...);                    end
   def delete_enrollment_path(...);                 end
   def delete_enrollment_url(...);                  end
   def delete_manifest_item_path(...);              end
@@ -490,6 +520,8 @@ unless ONLY_FOR_DOCUMENTATION
   def delete_org_url(...);                         end
   def delete_select_account_path(...);             end
   def delete_select_account_url(...);              end
+  def delete_select_download_path(...);            end
+  def delete_select_download_url(...);             end
   def delete_select_enrollment_path(...);          end
   def delete_select_enrollment_url(...);           end
   def delete_select_manifest_path(...);            end
@@ -506,6 +538,8 @@ unless ONLY_FOR_DOCUMENTATION
   def delete_user_registration_url(...);           end
   def destroy_account_path(...);                   end
   def destroy_account_url(...);                    end
+  def destroy_download_path(...);                  end
+  def destroy_download_url(...);                   end
   def destroy_enrollment_path(...);                end
   def destroy_enrollment_url(...);                 end
   def destroy_manifest_item_path(...);             end
@@ -522,12 +556,18 @@ unless ONLY_FOR_DOCUMENTATION
   def destroy_user_session_url(...);               end
   def disk_space_sys_path(...);                    end
   def disk_space_sys_url(...);                     end
+  def download_index_path(...);                    end
+  def download_index_url(...);                     end
+  def downloads_path(...);                         end
+  def downloads_url(...);                          end
   def edit_account_path(...);                      end
   def edit_account_url(...);                       end
   def edit_current_account_path(...);              end
   def edit_current_account_url(...);               end
   def edit_current_org_path(...);                  end
   def edit_current_org_url(...);                   end
+  def edit_download_path(...);                     end
+  def edit_download_url(...);                      end
   def edit_enrollment_path(...);                   end
   def edit_enrollment_url(...);                    end
   def edit_manifest_item_path(...);                end
@@ -540,6 +580,8 @@ unless ONLY_FOR_DOCUMENTATION
   def edit_password_url(...);                      end
   def edit_select_account_path(...);               end
   def edit_select_account_url(...);                end
+  def edit_select_download_path(...);              end
+  def edit_select_download_url(...);               end
   def edit_select_enrollment_path(...);            end
   def edit_select_enrollment_url(...);             end
   def edit_select_manifest_path(...);              end
@@ -586,6 +628,8 @@ unless ONLY_FOR_DOCUMENTATION
   def jobs_sys_url(...);                           end
   def list_all_account_path(...);                  end
   def list_all_account_url(...);                   end
+  def list_all_download_path(...);                 end
+  def list_all_download_url(...);                  end
   def list_all_manifest_path(...);                 end
   def list_all_manifest_url(...);                  end
   def list_all_org_path(...);                      end
@@ -594,10 +638,14 @@ unless ONLY_FOR_DOCUMENTATION
   def list_all_upload_url(...);                    end
   def list_org_account_path(...);                  end
   def list_org_account_url(...);                   end
+  def list_org_download_path(...);                 end
+  def list_org_download_url(...);                  end
   def list_org_manifest_path(...);                 end
   def list_org_manifest_url(...);                  end
   def list_org_upload_path(...);                   end
   def list_org_upload_url(...);                    end
+  def list_own_download_path(...);                 end
+  def list_own_download_url(...);                  end
   def list_own_manifest_path(...);                 end
   def list_own_manifest_url(...);                  end
   def list_own_upload_path(...);                   end
@@ -620,6 +668,8 @@ unless ONLY_FOR_DOCUMENTATION
   def metrics_test_url(...);                       end
   def new_account_path(...);                       end
   def new_account_url(...);                        end
+  def new_download_path(...);                      end
+  def new_download_url(...);                       end
   def new_enrollment_path(...);                    end
   def new_enrollment_url(...);                     end
   def new_manifest_item_path(...);                 end
@@ -645,6 +695,8 @@ unless ONLY_FOR_DOCUMENTATION
   def processes_sys_url(...);                      end
   def reedit_upload_path(...);                     end
   def reedit_upload_url(...);                      end
+  def register_download_path(...);                 end
+  def register_download_url(...);                  end
   def registration_path(...);                      end
   def registration_url(...);                       end
   def renew_upload_path(...);                      end
@@ -683,6 +735,8 @@ unless ONLY_FOR_DOCUMENTATION
   def show_current_account_url(...);               end
   def show_current_org_path(...);                  end
   def show_current_org_url(...);                   end
+  def show_download_path(...);                     end
+  def show_download_url(...);                      end
   def show_enrollment_path(...);                   end
   def show_enrollment_url(...);                    end
   def show_manifest_item_path(...);                end
@@ -693,6 +747,8 @@ unless ONLY_FOR_DOCUMENTATION
   def show_org_url(...);                           end
   def show_select_account_path(...);               end
   def show_select_account_url(...);                end
+  def show_select_download_path(...);              end
+  def show_select_download_url(...);               end
   def show_select_enrollment_path(...);            end
   def show_select_enrollment_url(...);             end
   def show_select_manifest_path(...);              end
@@ -717,6 +773,8 @@ unless ONLY_FOR_DOCUMENTATION
   def unlock_url(...);                             end
   def update_account_path(...);                    end
   def update_account_url(...);                     end
+  def update_download_path(...);                   end
+  def update_download_url(...);                    end
   def update_enrollment_path(...);                 end
   def update_enrollment_url(...);                  end
   def update_manifest_item_path(...);              end

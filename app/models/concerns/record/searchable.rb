@@ -306,7 +306,7 @@ module Record::Searchable
       lower += 1.month if exclusive && month
       lower += 1.year  if exclusive && year
       on_or_after = (exclusive && !month && !year) ? '>' : '>='
-      terms << "updated_at #{on_or_after} '#{lower}'::date"
+      terms << "#{table_name}.updated_at #{on_or_after} '#{lower}'::date"
     end
 
     # === Update time upper bound
@@ -318,7 +318,7 @@ module Record::Searchable
       upper += 1.month - 1.day if inclusive && month
       upper += 1.year  - 1.day if inclusive && year
       on_or_before = exclusive ? '<' : '<='
-      terms << "updated_at #{on_or_before} '#{upper}'::date"
+      terms << "#{table_name}.updated_at #{on_or_before} '#{upper}'::date"
     end
 
     # === Record limit/offset

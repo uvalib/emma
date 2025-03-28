@@ -1,0 +1,41 @@
+# Controller support methods for download events.
+#
+module DownloadConcern
+  extend ActiveSupport::Concern
+
+  include ApplicationHelper
+
+  include ModelConcern
+
+  # Extract POST parameters that are usable for creating/updating a download
+  # event record instance.
+  #
+  # @return [Hash]
+  #
+  def current_post_params: () -> symHash
+
+  # Option keys involved in filtering record searches.
+  #
+  # @return [Array<Symbol>]
+  #
+  def find_or_match_keys: () -> symArray
+
+  # Create an Options instance from the current parameters.
+  #
+  # @return [Download::Options]
+  #
+  def get_model_options: () -> Download::Options
+
+  # Create a Paginator for the current controller action.
+  #
+  # @param [Class<Paginator>] paginator  Paginator class.
+  # @param [Hash]             opt        Passed to super.
+  #
+  # @return [Download::Paginator]
+  #
+  def pagination_setup: (?paginator: Class, **untyped opt) -> Download::Paginator
+
+  private
+
+  THIS_MODULE: Module
+end

@@ -1,0 +1,5 @@
+# Parameters for pagination of lists of Download records.
+#
+class Download::Paginator < Paginator
+  def initialize: (?(ApplicationController|nil) ctrlr, **untyped opt) -> void
+end

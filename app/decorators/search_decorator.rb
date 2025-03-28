@@ -500,6 +500,7 @@ class SearchDecorator
   # @see BaseDecorator::Download#bv_retrieval_link
   # @see BaseDecorator::Download#ia_retrieval_link
   # @see file:javascripts/feature/download.js *notAuthorizedMessage()*
+  # @see file:javascripts/feature/download.js *beforeDownload()*
   #
   def source_retrieval_link(url: nil, **opt)
     url   ||= object.record_download_url.presence or return
@@ -537,6 +538,16 @@ class SearchDecorator
       end
     opt[:'data-forbid'] ||= tooltip unless allowed
     opt[:title]         ||= tooltip
+
+    # Include data to be used to create a Download entry when the user clicks
+    # on the retrieval link.
+    # noinspection RailsParamDefResolve
+    obj = object.try(:exemplar) || object
+    opt[:'data-dl-src'] ||= obj.emma_repository
+    opt[:'data-dl-rec'] ||= obj.emma_repositoryRecordId
+    opt[:'data-dl-fmt'] ||= obj.dc_format
+    opt[:'data-dl-pub'] ||= obj.dc_publisher
+    opt[:'data-dl-lnk'] ||= url
 
     case repo&.to_s
       when 'emma'             then emma_retrieval_link(url, **opt)

@@ -1,0 +1,174 @@
+# Handle "/downloads" requests for managing download event records.
+#
+# Unlike similar database record controllers, routes here use the plural
+# "/downloads" to avoid conflict with the existing "/download" route.
+#
+# Currently, download event listings are only available to users with the
+# "administrator" role.  Users with the "developer" role are configured to see
+# controls for edit/delete operations, however these are largely untested.
+#
+# @see DownloadDecorator
+# @see DownloadsDecorator
+# @see file:app/views/download/**
+#
+class DownloadController < ApplicationController
+  include UserConcern
+
+  include SessionConcern
+
+  include DownloadConcern
+
+  ADMIN_OPS: symArray
+
+  MENUS: symArray
+
+  # Results for :index.
+  #
+  # @return [Array<Download,String>]
+  # @return [Hash]
+  # @return [nil]
+  #
+  attr_reader list: Array[Download] | Array[String] | nil
+
+  # API results for :show.
+  #
+  # @return [Download, nil]
+  #
+  attr_reader item: Download | nil
+
+  INDEX_PAGE: String
+
+  # == GET /downloads
+  # == GET /downloads/index
+  #
+  # List download event records.
+  #
+  # @see #download_index_path         Route helper
+  #
+  def index: () -> void
+
+  # === GET /downloads/show/(:id)
+  #
+  # Redirects to #show_select if `:id` is missing.
+  #
+  # @see #show_download_path          Route helper
+  #
+  def show: () -> void
+
+  # === GET /downloads/new
+  #
+  # @see #new_download_path           Route helper
+  #
+  def new: () -> void
+
+  # === POST  /downloads/create
+  # === PUT   /downloads/create
+  # === PATCH /downloads/create
+  #
+  # Record creation due to "/downloads/new".
+  #
+  # @see #create_download_path        Route helper
+  #
+  def create: () -> void
+
+  # === GET /downloads/edit/(:id)
+  #
+  # Redirects to #edit_select if :id is not given.
+  #
+  # @see #edit_download_path          Route helper
+  #
+  def edit: () -> void
+
+  # === POST  /downloads/update/:id
+  # === PUT   /downloads/update/:id
+  # === PATCH /downloads/update/:id
+  #
+  # @see #update_download_path        Route helper
+  #
+  def update: () -> void
+
+  # === GET /downloads/delete/(:id)
+  #
+  # Redirects to #delete_select if :id is not given.
+  #
+  # @see #delete_download_path          Route helper
+  #
+  def delete: () -> void
+
+  # === DELETE /downloads/delete/:id
+  #
+  # @see #destroy_download_path           Route helper
+  #
+  def destroy: () -> void
+
+  # === GET /downloads/list_all
+  #
+  # List all download event records.
+  #
+  # @see DownloadController#list_items
+  #
+  def list_all: () -> void
+
+  # === GET /manifest/list_org
+  #
+  # List all download event records associated with users in the same
+  # organization as the current user.
+  #
+  # @see DownloadController#list_items
+  #
+  def list_org: () -> void
+
+  # === GET /manifest/list_own
+  #
+  # List all download event records associated with the current user.
+  #
+  # @see DownloadController#list_items
+  #
+  def list_own: () -> void
+
+  # Setup pagination for lists of download event records.
+  #
+  # @param [Hash, nil] prm            Default: from `paginator`.
+  # @param [Boolean]   for_org
+  # @param [Boolean]   for_user
+  #
+  # @return [Hash]
+  #
+  def list_items: (?(symHash|nil) prm, for_org: bool) -> symHash
+
+  # === GET /downloads/show_select
+  #
+  # Show a menu to select a download event to show.
+  #
+  # @see #show_select_download_path     Route helper
+  #
+  def show_select: () -> void
+
+  # === GET /downloads/edit_select
+  #
+  # Show a menu to select a download event to edit.
+  #
+  # @see #edit_select_download_path     Route helper
+  #
+  def edit_select: () -> void
+
+  # === GET /downloads/delete_select
+  #
+  # Show a menu to select a download event to delete.
+  #
+  # @see #delete_select_download_path   Route helper
+  #
+  def delete_select: () -> void
+
+  # === POST /downloads/register
+  #
+  # Record creation due to client-side registration.
+  #
+  # @see #register_download_path      Route helper
+  #
+  def register: () -> void
+
+  # Create a new download event record.
+  #
+  def create_action: () -> void
+end

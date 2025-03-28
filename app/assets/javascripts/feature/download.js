@@ -14,6 +14,7 @@ import { isHidden, selector, toggleHidden } from "../shared/css";
 import { isMissing }                        from "../shared/definitions";
 import { deepFreeze }                       from "../shared/objects";
 import { SECONDS, secondsSince }            from "../shared/time";
+import * as xhr                             from "../shared/xhr";
 
 
 const MODULE = "Download";
@@ -151,9 +152,12 @@ appSetup(MODULE, function() {
     // ========================================================================
 
     /**
-     * Respond to a live download link being clicked.
+     * Respond to a live download link being clicked, saving the event in the
+     * "downloads" database table.
      *
      * @param {ElementEvt} event
+     *
+     * @see "SearchDecorator#source_retrieval_link"
      */
     function beforeDownload(event) {
         const $button = $(event.currentTarget || event.target);
@@ -161,6 +165,14 @@ appSetup(MODULE, function() {
         $button.attr("title", Emma.Download.download.text);
         $button.attr("disabled", true);
         $button.attr("aria-disabled", true);
+        const prm = {
+            source:     $button.attr("data-dl-src"),
+            record:     $button.attr("data-dl-rec"),
+            fmt:        $button.attr("data-dl-fmt"),
+            publisher:  $button.attr("data-dl-pub"),
+            link:       $button.attr("data-dl-lnk"),
+        };
+        xhr.post("/downloads/register", prm);
     }
 
     /**

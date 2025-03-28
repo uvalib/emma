@@ -1,0 +1,15 @@
+# A record of a download event.
+#
+class Download < ApplicationRecord
+  include Model
+
+  include Record
+
+  include Record::Assignable
+
+  include Record::Searchable
+
+  include Record::Sortable
+
+  include Download::SearchMethods
+end

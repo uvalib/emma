@@ -164,10 +164,16 @@ module SqlMethods
   #   sql_clause(id: %w[123 456 789])  -> "id IN ('123','456','789')"
   #
   def sql_clause(k, v = nil)
-    k, v = *k.first        if k.is_a?(Hash)
-    v = Array.wrap(v)      if v.is_a?(Range)
-    v = v.strip            if v.is_a?(String)
-    v = v.split(/\s*,\s*/) if v.is_a?(String) && v.include?(',')
+    k, v = *k.first   if k.is_a?(Hash)
+    v = Array.wrap(v) if v.is_a?(Range)
+    if v.is_a?(String)
+      v = v.strip
+      if v != (unquoted = strip_quotes(v))
+        v = unquoted
+      elsif v.include?(',')
+        v = v.split(/\s*,\s*/)
+      end
+    end
     return sql_test(k, v)  unless v.is_a?(Array)
     v = v.uniq
     if v.many? && (v.map(&:class).uniq.size == 1)

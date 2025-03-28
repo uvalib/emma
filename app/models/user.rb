@@ -53,6 +53,7 @@ class User < ApplicationRecord
   has_many :search_calls, -> { order(SearchCall.default_sort) }
   has_many :uploads,      -> { order(Upload.default_sort) }
   has_many :manifests,    -> { order(Manifest.default_sort) }
+  has_many :downloads,    -> { order(Download.default_sort) }
 
   # ===========================================================================
   # :section: Authentication

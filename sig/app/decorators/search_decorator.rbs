@@ -281,6 +281,7 @@ class SearchDecorator
   # @see BaseDecorator::Download#bv_retrieval_link
   # @see BaseDecorator::Download#ia_retrieval_link
   # @see file:javascripts/feature/download.js *notAuthorizedMessage()*
+  # @see file:javascripts/feature/download.js *beforeDownload()*
   #
   def source_retrieval_link: (?url: String|nil, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
 

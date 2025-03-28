@@ -47,6 +47,7 @@ class Org < ApplicationRecord
 
   has_many :uploads,   -> { order(Upload.default_sort) },   through: :users
   has_many :manifests, -> { order(Manifest.default_sort) }, through: :users
+  has_many :downloads, -> { order(Download.default_sort) }, through: :users
 
   # ===========================================================================
   # :section: ActiveRecord scopes

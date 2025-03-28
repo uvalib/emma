@@ -217,7 +217,7 @@ module BaseDecorator::Download
         parts << download_probe(url, label: file, path: url, **opt)
 
         # Auxiliary control elements which are initially hidden.
-        l_opt = { class: 'hidden' }
+        l_opt = append_css(opt, 'hidden')
         parts << download_progress(class: 'hidden')
         parts << download_button(fmt: fmt_name, file: file, href: url, **l_opt)
       end

@@ -14,6 +14,7 @@ en:
       all:            'You are not authorized to %{action} %{subject}.'
 #     account:        'You are not authorized to %{action} EMMA accounts.'
 #     data:           'You are not authorized to %{action} EMMA data.'
+      download:       'You are not authorized to %{action} download event records.'
       enrollment:     'You are not authorized to %{action} enrollments.'
       org:            'You are not authorized to %{action} EMMA organizations.'
 #     search:         'You are not authorized to %{action} EMMA searches.'
@@ -25,6 +26,7 @@ en:
 
     list:             &LIST
       <<:             *TEMPLATE
+      download:       'You are not authorized to list download event records.'
       enrollment:     'You are not authorized to list enrollments.'
       org:            'You are not authorized to list EMMA organizations.'
       search_call:    'You are not authorized to list EMMA statistics.'
@@ -35,6 +37,7 @@ en:
 
     view:             &VIEW
       <<:             *TEMPLATE
+      download:       'You are not authorized to view download event records.'
       enrollment:     'You are not authorized to view enrollments.'
       org:            'You are not authorized to view EMMA organizations.'
       search_call:    'You are not authorized to view EMMA statistics.'
@@ -45,6 +48,7 @@ en:
 
     create:           &CREATE
       <<:             *TEMPLATE
+      download:       'You are not authorized to create download event records.'
       enrollment:     'You are not authorized to create enrollments.'
       org:            'You are not authorized to create EMMA organizations.'
       search_call:    'You are not authorized to create EMMA statistics.'
@@ -55,6 +59,7 @@ en:
 
     modify:           &MODIFY
       <<:             *TEMPLATE
+      download:       'You are not authorized to modify download event records.'
       enrollment:     'You are not authorized to modify enrollments.'
       org:            'You are not authorized to modify EMMA organizations.'
       search_call:    'You are not authorized to modify EMMA statistics.'
@@ -65,6 +70,7 @@ en:
 
     remove:           &REMOVE
       <<:             *TEMPLATE
+      download:       'You are not authorized to remove download event records.'
       enrollment:     'You are not authorized to remove enrollments.'
       org:            'You are not authorized to remove EMMA organizations.'
       search_call:    'You are not authorized to remove EMMA statistics.'

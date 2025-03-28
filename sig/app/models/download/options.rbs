@@ -1,0 +1,12 @@
+# URL parameter options related to Download records.
+#
+class Download::Options < Options
+  include Record::Properties
+
+  # Extract POST parameters that are usable for creating/updating a new model
+  # instance.
+  #
+  # @return [Hash]
+  #
+  def model_post_params: () -> symHash
+end

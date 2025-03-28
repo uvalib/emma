@@ -120,6 +120,10 @@ class Object
 
   def create_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
+  def create_download_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def create_download_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
   def create_enrollment_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def create_enrollment_url: (*untyped _ignored) ?{ () -> untyped } -> String
@@ -176,6 +180,10 @@ class Object
 
   def delete_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
+  def delete_download_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def delete_download_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
   def delete_enrollment_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def delete_enrollment_url: (*untyped _ignored) ?{ () -> untyped } -> String
@@ -197,6 +205,10 @@ class Object
   def delete_select_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def delete_select_enrollment_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def delete_select_download_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def delete_select_download_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def delete_select_enrollment_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
@@ -227,6 +239,10 @@ class Object
   def destroy_account_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def destroy_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def destroy_download_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def destroy_download_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def destroy_enrollment_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
@@ -260,6 +276,14 @@ class Object
 
   def disk_space_sys_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
+  def download_index_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def download_index_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def downloads_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def downloads_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
   def edit_account_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def edit_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
@@ -271,6 +295,10 @@ class Object
   def edit_current_org_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def edit_current_org_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def edit_download_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def edit_download_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def edit_enrollment_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
@@ -295,6 +323,10 @@ class Object
   def edit_select_account_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def edit_select_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def edit_select_download_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def edit_select_download_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def edit_select_enrollment_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
@@ -388,6 +420,10 @@ class Object
 
   def list_all_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
+  def list_all_download_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def list_all_download_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
   def list_all_manifest_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def list_all_manifest_url: (*untyped _ignored) ?{ () -> untyped } -> String
@@ -404,6 +440,10 @@ class Object
 
   def list_org_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
+  def list_org_download_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def list_org_download_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
   def list_org_manifest_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def list_org_manifest_url: (*untyped _ignored) ?{ () -> untyped } -> String
@@ -411,6 +451,10 @@ class Object
   def list_org_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def list_org_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def list_own_download_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def list_own_download_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def list_own_manifest_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
@@ -455,6 +499,10 @@ class Object
   def new_account_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def new_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def new_download_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def new_download_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def new_enrollment_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
@@ -505,6 +553,10 @@ class Object
   def reedit_upload_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def reedit_upload_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def register_download_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def register_download_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def registration_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
@@ -582,6 +634,10 @@ class Object
 
   def show_current_org_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
+  def show_download_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def show_download_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
   def show_enrollment_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def show_enrollment_url: (*untyped _ignored) ?{ () -> untyped } -> String
@@ -601,6 +657,10 @@ class Object
   def show_select_account_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def show_select_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def show_select_download_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def show_select_download_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def show_select_enrollment_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
@@ -649,6 +709,10 @@ class Object
   def update_account_path: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def update_account_url: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def update_download_path: (*untyped _ignored) ?{ () -> untyped } -> String
+
+  def update_download_url: (*untyped _ignored) ?{ () -> untyped } -> String
 
   def update_enrollment_path: (*untyped _ignored) ?{ () -> untyped } -> String
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_11_11_164950) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_17_164936) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -101,6 +101,18 @@ ActiveRecord::Schema[8.0].define(version: 2024_11_11_164950) do
     t.bigint "artifact_id", null: false
     t.bigint "title_id", null: false
     t.index ["artifact_id", "title_id"], name: "index_artifacts_titles_on_artifact_id_and_title_id"
+  end
+
+  create_table "downloads", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "source"
+    t.string "record"
+    t.string "fmt"
+    t.string "publisher"
+    t.string "link"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_downloads_on_user_id"
   end
 
   create_table "editions", force: :cascade do |t|

@@ -117,7 +117,12 @@ class Ability
   #
   # @type [Array<Symbol>]
   #
-  MODEL_NAMES = %i[user org upload manifest manifest_item search_call].freeze
+  MODEL_NAMES = %i[
+    user org
+    upload download
+    manifest manifest_item
+    search_call
+  ].freeze
 
   # ===========================================================================
   # :section:
@@ -319,6 +324,7 @@ class Ability
     can_view_content(Org,  **constraints)
     can_view_content(User, **constraints)
     can_view_group_submissions(user, **constraints)
+    can :register, Download
   end
 
   # ===========================================================================

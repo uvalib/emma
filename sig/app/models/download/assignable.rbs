@@ -1,0 +1,20 @@
+module Download::Assignable
+  include Emma::Json
+
+  # :nocov:
+  #include Record::Assignable
+  # :nocov:
+
+  # Ensure that blanks are allowed and that input values are normalized.
+  #
+  # @param [Model, Hash, ActionController::Parameters, nil] attr
+  # @param [Hash]                                           opt
+  #
+  # @return [Hash]
+  #
+  def normalize_attributes: ((Model|prmHash|nil) attr, **untyped opt) -> symHash
+
+  private
+
+  def self.included: (Module base) -> void
+end
