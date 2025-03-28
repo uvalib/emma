@@ -112,7 +112,7 @@ en:
 
         download:
           <<:           *TOPIC_TEMPLATE
-          topic:        'downloads'
+          topic:        'download'
           Topic:        'Download'
           title:        'Downloading from EMMA'
           tooltip:      'Help with downloading files'
@@ -135,6 +135,36 @@ en:
 
           emma:
             title:      'Downloading an EMMA item'
+
+        downloads:
+          <<:           *TOPIC_TEMPLATE
+          topic:        'download events'
+          Topic:        'Download Events'
+          title:        'EMMA Download Events'
+          intro:        'Information on download event records.'
+          tooltip:      'Help with managing download event records'
+          content:      ~ # @see file:app/views/help/topic/_download.html.erb
+
+          list_all:
+            title:      'List all EMMA downloads'
+
+          list_org:
+            title:      "List your organization's downloads"
+
+          list_own:
+            title:      'List your downloads'
+
+          show:
+            title:      'Display details of a download event record'
+
+          new:
+            title:      'Creating a (fake) download event record'
+
+          edit:
+            title:      'Updating an existing download event record'
+
+          delete:
+            title:      'Removing an existing download event record'
 
         upload:
           <<:           *TOPIC_TEMPLATE

@@ -1,0 +1,241 @@
+<%# app/views/help/topic/_downloads.html.erb -%>
+<%-
+  # EMMA download events help page.
+
+  view_debug(__FILE__)
+
+  topic             = config_section('help.topic.downloads')
+  administrator     = current_user&.administrator?
+  developer         = current_user&.developer?
+
+  list_all          = (topic[:list_all]     if administrator)
+  list_org          = (topic[:list_org]     unless administrator)
+  list_own          =  topic[:list_own]
+  show              = (topic[:show]         if developer)
+  new               = (topic[:new]          if developer)
+  edit              = (topic[:edit]         if developer)
+  delete            = (topic[:delete]       if developer)
+
+  list_all_title    = (list_all[:title]     if list_all)
+  list_org_title    = (list_org[:title]     if list_org)
+  list_own_title    = (list_own[:title]     if list_own)
+  show_title        = (show[:title]         if show)
+  new_title         = (new[:title]          if new)
+  edit_title        = (edit[:title]         if edit)
+  delete_title      = (delete[:title]       if delete)
+
+  cfg               = config_page_section(:download, :action)
+  list_all_label    = (cfg.dig(:list_all,    :label) if list_all)
+  list_org_label    = (cfg.dig(:list_org,    :label) if list_org)
+  list_own_label    = (cfg.dig(:list_own,    :label) if list_own)
+  show_label        = (cfg.dig(:show,        :label) if show)
+  new_label         = (cfg.dig(:new,         :label) if new)
+  edit_label        = (cfg.dig(:edit,        :label) if edit)
+  delete_label      = (cfg.dig(:delete,      :label) if delete)
+
+  list_all_btn      = (help_button(list_all_label)    if list_all)
+  list_org_btn      = (help_button(list_org_label)    if list_org)
+  list_own_btn      = (help_button(list_own_label)    if list_own)
+  show_btn          = (help_button(show_label)        if show)
+  new_btn           = (help_button(new_label)         if new)
+  edit_btn          = (help_button(edit_label)        if edit)
+  delete_btn        = (help_button(delete_label)      if delete)
+
+  # Nav action menu
+
+  action_menu_label = 'Record Actions'
+
+  # Form controls
+
+  panel_opener      = help_toggle(PanelHelper::PANEL_OPENER_LABEL)
+
+  delete_submit     = help_button_for(DownloadDecorator, :delete, :submit)
+  delete_cancel     = help_button_for(DownloadDecorator, :delete, :cancel)
+
+  # Page anchors
+
+  list_all_help     = 'downloads_list_all_help'
+  list_org_help     = 'downloads_list_org_help'
+  list_own_help     = 'downloads_list_own_help'
+  show_help         = 'downloads_show_help'
+  new_help          = 'downloads_new_help'
+  edit_help         = 'downloads_edit_help'
+  delete_help       = 'downloads_delete_help'
+
+-%>
+
+<nav role="navigation" aria-labelledby="downloads_help_nav">
+  <div id="downloads_help_nav" class="sr-only">
+    Topics in this section:
+  </div>
+  <ul>
+    <%- if list_own -%>
+      <li><a href="#<%= list_own_help -%>"><%=  list_own_title   -%></a></li>
+    <%- end -%>
+    <%- if list_org -%>
+      <li><a href="#<%= list_org_help -%>"><%=  list_org_title   -%></a></li>
+    <%- end -%>
+    <%- if list_all -%>
+      <li><a href="#<%= list_all_help -%>"><%=  list_all_title   -%></a></li>
+    <%- end -%>
+    <%- if show -%>
+      <li><a href="#<%= show_help-%>"><%=       show_title       -%></a></li>
+    <%- end -%>
+    <%- if new -%>
+      <li><a href="#<%= new_help -%>"><%=       new_title        -%></a></li>
+    <%- end -%>
+    <%- if edit -%>
+      <li><a href="#<%= edit_help -%>"><%=      edit_title       -%></a></li>
+    <%- end -%>
+    <%- if delete -%>
+      <li><a href="#<%= delete_help -%>"><%=    delete_title     -%></a></li>
+    <%- end -%>
+  </ul>
+</nav>
+
+<%- if list_own -%>
+  <section role="region" data-part="list_own" aria-labelledby="<%= list_own_help -%>">
+
+    <h2 class="section" id="<%= list_own_help -%>">
+      <%= list_own_btn -%> <span class="text"><%= list_own_title -%></span>
+    </h2>
+
+    <p>
+      This is a listing of your downloads in descending time order, starting
+      with the one most recent.
+    </p>
+
+  </section>
+<%- end -%>
+
+<%- if list_org -%>
+  <section role="region" data-part="list_org" aria-labelledby="<%= list_org_help -%>">
+
+    <h2 class="section" id="<%= list_org_help -%>">
+      <%= list_org_btn -%> <span class="text"><%= list_org_title -%></span>
+    </h2>
+
+    <p>
+      This is a listing of downloads by all users in your organization in
+      descending time order, starting with the one most recent.
+    </p>
+
+  </section>
+<%- end -%>
+
+<%- if list_all -%>
+  <section role="region" data-part="list_all" aria-labelledby="<%= list_all_help -%>">
+
+    <h2 class="section" id="<%= list_all_help -%>">
+      <%= list_all_btn -%> <span class="text"><%= list_all_title -%></span>
+    </h2>
+
+    <p>
+      This is a listing of all EMMA download events in descending time order,
+      starting with the one most recent.
+    </p>
+
+  </section>
+<%- end -%>
+
+<%- if show -%>
+  <section role="region" data-part="show" aria-labelledby="<%= show_help -%>">
+
+    <h2 class="section" id="<%= show_help -%>">
+      <%= show_btn -%> <span class="text"><%= show_title -%></span>
+    </h2>
+
+    <p>
+      If you arrive at this page through the <%= action_menu_label -%>
+      <%= show_btn -%> button,
+      you will be presented with a dropdown menu of download event records in
+      descending time order, starting with the one most recently created or
+      modified.
+      Select a request from the list to proceed.
+    </p>
+
+    <p>
+      Displays the fields of a specific download event.
+    </p>
+
+  </section>
+<%- end -%>
+
+<%- if new -%>
+
+  <section role="region" data-part="new_enrollment" aria-labelledby="<%= new_help -%>">
+
+    <h2 class="section" id="<%= new_help -%>">
+      <%= new_btn -%> <span class="text"><%= new_title -%></span>
+    </h2>
+
+    <p>
+      This displays a form with download event record fields which can be used
+      to create a new (fake) download event record.
+    </p>
+
+  </section>
+
+<%- end -%>
+
+<%- if edit -%>
+  <section role="region" data-part="edit_enrollment" aria-labelledby="<%= edit_help -%>">
+
+    <h2 class="section" id="<%= edit_help -%>">
+      <%= edit_btn -%> <span class="text"><%= edit_title -%></span>
+    </h2>
+
+    <p>
+      If you arrive at this page through the <%= action_menu_label -%>
+      <%= edit_btn -%> button,
+      you will be presented with a dropdown menu of download event records in
+      descending time order, starting with the one most recently created or
+      modified.
+      Select a request from the list to proceed.
+    </p>
+
+    <p>
+      The form displayed will contain the field values for the selected record,
+      allowing you to modify the values that were used to create the original
+      download event record.
+    </p>
+
+  </section>
+<%- end -%>
+
+<%- if delete -%>
+  <section role="region" data-part="delete_enrollment" aria-labelledby="<%= delete_help -%>">
+
+    <h2 class="section" id="<%= delete_help -%>">
+      <%= delete_btn -%> <span class="text"><%= delete_title -%></span>
+    </h2>
+
+    <p>
+      If you arrive at this page through the <%= action_menu_label -%>
+      <%= delete_btn -%> button,
+      you will be presented with a dropdown menu of download event records in
+      descending time order, starting with the one most recently created or
+      modified.
+      Select a record from the list to proceed.
+    </p>
+
+    <p>
+      To verify that this is really the record you want to delete,
+      you may click on <%= panel_opener -%> to display its details.
+    </p>
+
+    <p>
+      If you decide that you do not want to delete the record, you may click
+      <%= delete_cancel -%>
+      (which will attempt to return you to the previous page),
+      or simply go to any other page in EMMA.
+    </p>
+
+    <p>
+      If you are certain that you want to delete the record, then click
+      <%= delete_submit -%>.
+      This will remove the download event from the database.
+    </p>
+
+  </section>
+<%- end -%>
