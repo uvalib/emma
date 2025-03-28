@@ -1,7 +1,7 @@
 # Methods supporting managed downloads.
 #
-module BaseCollectionDecorator::Downloads
-  include BaseDecorator::Download
+module BaseCollectionDecorator::Retrievals
+  include BaseDecorator::Retrieval
 
   include BaseCollectionDecorator::Common
 

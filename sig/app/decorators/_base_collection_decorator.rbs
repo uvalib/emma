@@ -7,8 +7,6 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
 
   include BaseCollectionDecorator::Controls
 
-  include BaseCollectionDecorator::Downloads
-
   include BaseCollectionDecorator::Fields
 
   include BaseCollectionDecorator::Form
@@ -28,6 +26,8 @@ class BaseCollectionDecorator < Draper::CollectionDecorator
   include BaseCollectionDecorator::Menu
 
   include BaseCollectionDecorator::Pagination
+
+  include BaseCollectionDecorator::Retrievals
 
   include BaseCollectionDecorator::Row
 

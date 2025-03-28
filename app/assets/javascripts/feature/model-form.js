@@ -433,12 +433,21 @@ appSetup(MODULE, function() {
     const MODEL = singularize(CONTROLLER);
 
     /**
+     * Prevent the "downloads" controller from referencing
+     * `PROPERTIES["Download"]`.
+     *
+     * @readonly
+     * @type {string}
+     */
+    const MODEL_KEY = (MODEL === 'download') ? 'Downloads' : camelCase(MODEL);
+
+    /**
      * Page assets.js properties.
      *
      * @readonly
      * @type {ModelProperties}
      */
-    const PROPERTIES = Emma[camelCase(MODEL)];
+    const PROPERTIES = Emma[MODEL_KEY];
 
     /**
      * The value used to denote that a database field has been intentionally

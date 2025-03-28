@@ -1,0 +1,11 @@
+<%# app/views/download/_menu.html.erb -%>
+<%-
+  # Show a menu of download events to operate on per params[:action].
+
+  view_debug(__FILE__)
+
+  dec ||= DownloadDecorator.new(**context)
+
+-%>
+
+<%= render 'layouts/menu_page', dec: dec %>

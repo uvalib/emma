@@ -248,7 +248,8 @@ module BaseDecorator::Links
     end || {}
   end
 
-  # Action links configured for the controller.
+  # Action links configured for the controller, limited to those which are
+  # appropriate for the current user.
   #
   # @param [String, Symbol, nil] action   Default: :index.
   # @param [Hash]                opt      Passed to #config_lookup.
@@ -257,7 +258,8 @@ module BaseDecorator::Links
   #
   def action_links(action: nil, **opt)
     opt[:action] = action || :index
-    config_lookup('action_links', **opt) || {}
+    links = config_lookup('action_links', **opt)
+    links&.select { |_, prop| user_has_role?(prop[:role]) } || {}
   end
 
   # ===========================================================================

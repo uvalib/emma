@@ -111,7 +111,8 @@ module BaseDecorator::Links
   #
   def action_entry: (?(String|Symbol|nil) action, ?current: String|Symbol|nil, ?table: Hash[Symbol,symHash]|nil, **untyped opt) -> Hash[Symbol,String]
 
-  # Action links configured for the controller.
+  # Action links configured for the controller, limited to those which are
+  # appropriate for the current user.
   #
   # @param [String, Symbol, nil] action   Default: :index.
   # @param [Hash]                opt      Passed to #config_lookup.

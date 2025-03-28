@@ -1,0 +1,15 @@
+<%# app/views/download/_details.html.erb -%>
+<%-
+  # A listing of download entry details.
+
+  view_debug(__FILE__)
+
+  item  ||= nil
+  dec   ||= item && DownloadDecorator.new(item, **context) or return
+
+  level ||= 1
+  skip  ||= nil
+
+-%>
+
+<%= dec.details_container(level: level, skip: skip) %>

@@ -1,0 +1,28 @@
+<%# app/views/download/edit.html.erb -%>
+<%-
+  # Modify an existing download event record.
+
+  view_debug(__FILE__)
+
+  item  ||= @item
+  dec     = DownloadDecorator.new(item, **context)
+  item    = dec.object
+
+  help  ||= dec.help_topic
+  title ||= nil
+  name  ||= item&.label.inspect
+  title   = dec.page_title(title, name: name)
+
+  unless modal?
+    label = "#{dec.page_meta_title} - #{title}"
+    set_page_meta_title(label)
+    set_page_description(title)
+  end
+
+-%>
+
+<%= page_heading(title, help: help) %>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+<%= dec.model_form %>

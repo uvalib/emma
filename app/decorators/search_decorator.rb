@@ -497,8 +497,8 @@ class SearchDecorator
   # @return [nil]                       If no `*url*` was provided or found.
   #
   # @see RepositoryHelper#emma_retrieval_link
-  # @see BaseDecorator::Download#bv_retrieval_link
-  # @see BaseDecorator::Download#ia_retrieval_link
+  # @see BaseDecorator::Retrieval#bv_retrieval_link
+  # @see BaseDecorator::Retrieval#ia_retrieval_link
   # @see file:javascripts/feature/download.js *notAuthorizedMessage()*
   # @see file:javascripts/feature/download.js *beforeDownload()*
   #

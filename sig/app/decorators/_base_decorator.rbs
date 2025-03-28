@@ -7,8 +7,6 @@ class BaseDecorator < Draper::Decorator
 
   include BaseDecorator::Controls
 
-  include BaseDecorator::Download
-
   include BaseDecorator::Fields
 
   include BaseDecorator::Form
@@ -28,6 +26,8 @@ class BaseDecorator < Draper::Decorator
   include BaseDecorator::Menu
 
   include BaseDecorator::Pagination
+
+  include BaseDecorator::Retrieval
 
   include BaseDecorator::Row
 
@@ -80,8 +80,6 @@ class BaseDecorator < Draper::Decorator
 
     include BaseDecorator::Controls
 
-    include BaseDecorator::Download
-
     include BaseDecorator::Fields
 
     include BaseDecorator::Form
@@ -101,6 +99,8 @@ class BaseDecorator < Draper::Decorator
     include BaseDecorator::Menu
 
     include BaseDecorator::Pagination
+
+    include BaseDecorator::Retrieval
 
     include BaseDecorator::Row
 

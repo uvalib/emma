@@ -1,4 +1,4 @@
-# app/decorators/base_collection_decorator/downloads.rb
+# app/decorators/base_collection_decorator/retrievals.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
@@ -7,9 +7,9 @@ __loading_begin(__FILE__)
 
 # Methods supporting managed downloads.
 #
-module BaseCollectionDecorator::Downloads
+module BaseCollectionDecorator::Retrievals
 
-  include BaseDecorator::Download
+  include BaseDecorator::Retrieval
 
   include BaseCollectionDecorator::Common
 

@@ -1216,6 +1216,218 @@ en:
           # ===================================================================
 
       # =======================================================================
+      # CONTROLLER: Downloads page definitions
+      # =======================================================================
+
+      download:
+
+        <<:                 *GENERIC
+        <<:                 *DB_SEARCH
+
+        unit:
+          brief:            'download'
+          long:             'download event'
+        label:              'Downloads'
+        title:              'EMMA Downloads'
+        tooltip:            'Show EMMA download events'
+
+        page_controls:
+          label:            'Record Actions:'
+          actions:
+            - list_own
+            - list_org
+            - list_all
+            - show_select
+            - new
+            - edit_select
+            - delete_select
+
+        search_bar:
+          <<:               *DB_SEARCH_BAR
+          enabled:          false
+
+        action_links:
+
+          list_all:
+            label:        'List all EMMA download events'
+
+          list_org:
+            label:        'List organization download events'
+
+          list_own:
+            label:        'List my download events'
+
+          new:
+            label:        'Create %{an} EMMA download event record'
+            role:         developer
+
+          edit_select:
+            label:        'Modify %{an} existing EMMA download event record'
+            role:         developer
+
+          delete_select:
+            label:        'Remove %{an} existing EMMA download event record'
+            role:         developer
+
+        # =====================================================================
+        # Fields
+        # =====================================================================
+
+        display_fields: # Overrides order of "en.emma.record.enrollment"
+          - user
+          - org
+          - fmt:              { label: 'Format'}
+          - source
+          - publisher
+          - record:           { role: developer }
+          - link:             { role: developer }
+          - created_at:       { label: 'Download Timestamp' }
+
+        # =====================================================================
+        # Action pages
+        # =====================================================================
+
+        action:
+
+          _generic:         &DOWNLOAD_GENERIC_ACTION
+            <<:             *GENERIC_ACTION
+            label:          'EMMA Download Event'
+            title:          'EMMA Download Event'
+
+            success:        'EMMA download event was successfully %{actioned}.'
+            failure:        'Failed to %{action} EMMA download event: %{error}'
+
+          # ===================================================================
+
+          index:
+            <<:             *DOWNLOAD_GENERIC_ACTION
+            <<:             *INDEX_ACTION
+            label:          'EMMA Download Events'
+            title:          'EMMA Download Events'
+            tooltip:        'List all EMMA download events'
+
+          # ===================================================================
+
+          list_all:
+            <<:             *DOWNLOAD_GENERIC_ACTION
+            <<:             *LIST_ALL_ACTION
+            label:          'List All'
+            title:          'All EMMA Download Events'
+            tooltip:        'All EMMA Download Events'
+
+          # ===================================================================
+
+          list_org:
+            <<:             *DOWNLOAD_GENERIC_ACTION
+            <<:             *LIST_ORG_ACTION
+            label:          'Org List'
+            title:          '%{name} EMMA Download Events'
+            tooltip:        'All download events associated with your organization'
+            description:    'This is a listing of all download events by users from your organization.'
+
+          # ===================================================================
+
+          list_own:
+            <<:             *DOWNLOAD_GENERIC_ACTION
+            label:          'My List'
+            title:          'Downloads'
+            tooltip:        'Review downloads you have made via EMMA'
+            description:    'This is a listing of all downloads you have performed from EMMA.'
+
+          # ===================================================================
+
+          show:             &DOWNLOAD_SHOW_ACTION
+            <<:             *DOWNLOAD_GENERIC_ACTION
+            <<:             *SHOW_ACTION
+            title:          'Download Event for %{name}'
+            tooltip:        'Details of an EMMA download event'
+
+          # ===================================================================
+
+          show_select:
+            <<:             *SHOW_SELECT_ACTION
+            <<:             *DOWNLOAD_SHOW_ACTION
+            label:          'Select'
+            title:          'Review a download event'
+            tooltip:        'Review a download event'
+            role:           developer
+
+          # ===================================================================
+
+          new:              &DOWNLOAD_NEW_ACTION
+            <<:             *DOWNLOAD_GENERIC_ACTION
+            <<:             *NEW_ACTION
+            label:          'Create'
+            title:          'Insert a download event record'
+            tooltip:        'Create a fake download event'
+            success:        'EMMA download event was successfully created.'
+            failure:        'Failed to create EMMA download event: %{error}'
+            role:           developer
+
+          # ===================================================================
+
+          create:           &DOWNLOAD_CREATE_ACTION
+            <<:             *DOWNLOAD_NEW_ACTION
+
+          # ===================================================================
+
+          edit:             &DOWNLOAD_EDIT_ACTION
+            <<:             *DOWNLOAD_GENERIC_ACTION
+            <<:             *EDIT_ACTION
+            label:          'Change'
+            title:          'Modify download event record %{name}'
+            tooltip:        'Adjust and existing download event record'
+            success:        'EMMA download event was successfully updated.'
+            failure:        'Failed to update EMMA download event: %{error}'
+            role:           developer
+
+          # ===================================================================
+
+          edit_select:
+            <<:             *EDIT_SELECT_ACTION
+            <<:             *DOWNLOAD_EDIT_ACTION
+            title:          'Modify a download event record'
+            directions:     ~
+
+          # ===================================================================
+
+          update:
+            <<:             *DOWNLOAD_EDIT_ACTION
+
+          # ===================================================================
+
+          delete:           &DOWNLOAD_DELETE_ACTION
+            <<:             *DOWNLOAD_GENERIC_ACTION
+            <<:             *DELETE_ACTION
+            label:          'Remove'
+            title:          'Remove download event record %{name}'
+            tooltip:        'Delete a download event record'
+            success:        'EMMA download event was successfully removed.'
+            failure:        'Failed to remove EMMA download event: %{error}'
+            role:           developer
+
+          # ===================================================================
+
+          delete_select:
+            <<:             *DELETE_SELECT_ACTION
+            <<:             *DOWNLOAD_DELETE_ACTION
+            title:          'Delete a download event record'
+            directions:     ~
+
+          # ===================================================================
+
+          destroy:
+            <<:             *DOWNLOAD_DELETE_ACTION
+
+          # ===================================================================
+
+          register:
+            <<:             *DOWNLOAD_CREATE_ACTION
+            role:           nil
+
+          # ===================================================================
+
+      # =======================================================================
       # CONTROLLER: Enrollment page definitions
       # =======================================================================
 
