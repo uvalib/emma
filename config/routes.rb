@@ -41,67 +41,67 @@ Rails.application.routes.draw do
   # NOTE: Avoid "resources :upload" because :action can get turned into :id.
   # ===========================================================================
 
-  get    '/upload',                 to: 'upload#index',           as: 'upload_index'
-  get    '/upload/index',           to: 'upload#index'
-  get    '/upload/list_all',        to: 'upload#list_all',        as: 'list_all_upload'
-  get    '/upload/list_org',        to: 'upload#list_org',        as: 'list_org_upload'
-  get    '/upload/list_own',        to: 'upload#list_own',        as: 'list_own_upload'
+  get    '/upload',               to: 'upload#index',         as: 'upload_index'
+  get    '/upload/index',         to: 'upload#index'
+  get    '/upload/list_all',      to: 'upload#list_all',      as: 'list_all_upload'
+  get    '/upload/list_org',      to: 'upload#list_org',      as: 'list_org_upload'
+  get    '/upload/list_own',      to: 'upload#list_own',      as: 'list_own_upload'
 
-  get    '/upload/show_select',     to: 'upload#show_select',     as: 'show_select_upload'
-  get    '/upload/show/(:id)',      to: 'upload#show',            as: 'show_upload'
+  get    '/upload/show_select',   to: 'upload#show_select',   as: 'show_select_upload'
+  get    '/upload/show/(:id)',    to: 'upload#show',          as: 'show_upload'
 
   # === UploadWorkflow::Single
 
-  get    '/upload/new',             to: 'upload#new',             as: 'new_upload'
-  match  '/upload/create',          to: 'upload#create',          as: 'create_upload',        **VIA_CREATE
+  get    '/upload/new',           to: 'upload#new',           as: 'new_upload'
+  match  '/upload/create',        to: 'upload#create',        as: 'create_upload',        **VIA_CREATE
 
-  get    '/upload/edit_select',     to: 'upload#edit_select',     as: 'edit_select_upload'
-  get    '/upload/edit/(:id)',      to: 'upload#edit',            as: 'edit_upload'
-  match  '/upload/update/:id',      to: 'upload#update',          as: 'update_upload',        **VIA_UPDATE
+  get    '/upload/edit_select',   to: 'upload#edit_select',   as: 'edit_select_upload'
+  get    '/upload/edit/(:id)',    to: 'upload#edit',          as: 'edit_upload'
+  match  '/upload/update/:id',    to: 'upload#update',        as: 'update_upload',        **VIA_UPDATE
 
-  get    '/upload/delete_select',   to: 'upload#delete_select',   as: 'delete_select_upload'
-  get    '/upload/delete/(:id)',    to: 'upload#delete',          as: 'delete_upload'
-  delete '/upload/destroy/:id',     to: 'upload#destroy',         as: 'destroy_upload'
+  get    '/upload/delete_select', to: 'upload#delete_select', as: 'delete_select_upload'
+  get    '/upload/delete/(:id)',  to: 'upload#delete',        as: 'delete_upload'
+  delete '/upload/destroy/:id',   to: 'upload#destroy',       as: 'destroy_upload'
 
   # === UploadWorkflow::Bulk
 
-  get    '/upload/bulk_reindex',    to: 'upload#bulk_reindex',    as: 'bulk_reindex_upload'
+  get    '/upload/bulk_reindex',  to: 'upload#bulk_reindex',  as: 'bulk_reindex_upload'
 
-  get    '/upload/bulk_new',        to: 'upload#bulk_new',        as: 'bulk_new_upload'
-  post   '/upload/bulk',            to: 'upload#bulk_create',     as: 'bulk_create_upload'
+  get    '/upload/bulk_new',      to: 'upload#bulk_new',      as: 'bulk_new_upload'
+  post   '/upload/bulk',          to: 'upload#bulk_create',   as: 'bulk_create_upload'
 
-  get    '/upload/bulk_edit',       to: 'upload#bulk_edit',       as: 'bulk_edit_upload'
-  match  '/upload/bulk',            to: 'upload#bulk_update',     as: 'bulk_update_upload',   **VIA_UPDATE
+  get    '/upload/bulk_edit',     to: 'upload#bulk_edit',     as: 'bulk_edit_upload'
+  match  '/upload/bulk',          to: 'upload#bulk_update',   as: 'bulk_update_upload',   **VIA_UPDATE
 
-  get    '/upload/bulk_delete',     to: 'upload#bulk_delete',     as: 'bulk_delete_upload'
-  delete '/upload/bulk',            to: 'upload#bulk_destroy',    as: 'bulk_destroy_upload'
+  get    '/upload/bulk_delete',   to: 'upload#bulk_delete',   as: 'bulk_delete_upload'
+  delete '/upload/bulk',          to: 'upload#bulk_destroy',  as: 'bulk_destroy_upload'
 
-  get    '/upload/bulk',            to: 'upload#bulk_index',      as: 'bulk_upload_index'
+  get    '/upload/bulk',          to: 'upload#bulk_index',    as: 'bulk_upload_index'
 
   # === UploadWorkflow
 
-  post   '/upload/renew',           to: 'upload#renew',           as: 'renew_upload'
-  post   '/upload/reedit',          to: 'upload#reedit',          as: 'reedit_upload'
-  match  '/upload/cancel',          to: 'upload#cancel',          as: 'cancel_upload',        **VIA_ANY
-  get    '/upload/check/:id',       to: 'upload#check',           as: 'check_upload',         defaults: { modal: true }
-  post   '/upload/upload',          to: 'upload#upload',          as: 'upload_upload'         # Invoked from file-upload.js
+  post   '/upload/renew',         to: 'upload#renew',         as: 'renew_upload'
+  post   '/upload/reedit',        to: 'upload#reedit',        as: 'reedit_upload'
+  match  '/upload/cancel',        to: 'upload#cancel',        as: 'cancel_upload',        **VIA_ANY
+  get    '/upload/check/:id',     to: 'upload#check',         as: 'check_upload',         defaults: { modal: true }
+  post   '/upload/upload',        to: 'upload#upload',        as: 'upload_upload'         # Invoked from file-upload.js
 
   # === Administration
 
-  get    '/upload/admin',           to: 'upload#admin',           as: 'admin_upload'
-  get    '/upload/records',         to: 'upload#records'
+  get    '/upload/admin',         to: 'upload#admin',         as: 'admin_upload'
+  get    '/upload/records',       to: 'upload#records'
 
   # === Other
 
-  get    '/upload/api_migrate',     to: 'upload#api_migrate',     as: 'api_migrate'
+  get    '/upload/api_migrate',   to: 'upload#api_migrate',   as: 'api_migrate'
 
   # ===========================================================================
   # File download operations
   # ===========================================================================
 
-  get    '/download/:id',           to: 'upload#download',        as: 'file_download'
-  get    '/retrieval',              to: 'upload#retrieval',       as: 'retrieval'
-  get    '/probe_retrieval',        to: 'upload#probe_retrieval', as: 'probe_retrieval'
+  get    '/download/:id',     to: 'upload#download',        as: 'file_download'
+  get    '/retrieval',        to: 'upload#retrieval',       as: 'retrieval'
+  get    '/probe_retrieval',  to: 'upload#probe_retrieval', as: 'probe_retrieval'
 
   # ===========================================================================
   # EMMA bulk operations - manifests

@@ -283,6 +283,8 @@ class ManifestController < ApplicationController
   # List all bulk operation manifests associated with users in the same
   # organization as the current user.
   #
+  # @see ManifestController#list_items
+  #
   def list_org
     __log_activity
     __debug_route

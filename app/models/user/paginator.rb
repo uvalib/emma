@@ -23,7 +23,7 @@ class User::Paginator < Paginator
   # @param [Hash]                       opt     Passed to super.
   #
   def initialize(ctrlr = nil, **opt)
-    opt[:action]  = base_action(opt[:action]) if opt[:action]
+    opt[:action]   = base_action(opt[:action]) if opt[:action]
     opt[:disabled] = true unless opt.key?(:disabled)
     super
   end

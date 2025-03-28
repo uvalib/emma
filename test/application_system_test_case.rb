@@ -14,7 +14,7 @@ require 'capybara-lockstep'
 # - :chrome
 # - :chrome_headless
 # - :firefox
-# - :firebox_headless
+# - :firefox_headless
 #
 # Chrome actually seems to have some problems (e.g., 'go_back') so it might not
 # be the best choice in general.

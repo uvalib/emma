@@ -367,10 +367,6 @@ en:
             label:        'Download'
             tooltip:      'Click here to retrieve the %{fmt} file'
 
-        #action_links:            # TODO: ??? restore after comparison
-        #  back:                  # TODO: ??? restore after comparison
-        #    label:        'Back' # TODO: ??? restore after comparison
-
         control_icons:
 
           show:

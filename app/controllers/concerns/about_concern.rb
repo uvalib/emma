@@ -19,7 +19,7 @@ module AboutConcern
 
   public
 
-  # System information pages (except for :index).
+  # System information pages (including for :index).
   #
   # @type [Array<Symbol>]
   #

@@ -174,7 +174,7 @@ class Ability
   #
   # @return [void]
   #
-  def act_as_anonymous: (*untyped _ignored) ?{ () -> untyped } -> void
+  def act_as_anonymous: (*untyped _ignored) -> void
 
   # Allow visibility into an EMMA member organization and its users.
   #

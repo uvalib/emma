@@ -82,7 +82,7 @@ class ManifestItemControllerTest < ApplicationControllerTestCase
   # :section: Meta tests
   # ===========================================================================
 
-  test 'manifest controller test coverage' do
+  test 'manifest_item controller test coverage' do
     # Endpoints covered by ManifestsTest system tests:
     skipped = %i[
       bulk_create

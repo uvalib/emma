@@ -49,7 +49,7 @@ class ManifestItemController < ApplicationController
   #
   # @see #manifest_item_index_path                 Route helper
   #
-  def index: () -> nil
+  def index: () -> void
 
   # === GET /manifest_item/show/:manifest/:id
   #
