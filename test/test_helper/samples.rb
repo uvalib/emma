@@ -384,6 +384,40 @@ class SampleGenerator
 
 end
 
+class DownloadSampleGenerator < SampleGenerator
+
+  # ===========================================================================
+  # :section: SampleGenerator overrides
+  # ===========================================================================
+
+  public
+
+  # Generate field values based on *src*.
+  #
+  # @param [Model,Hash,Symbol,nil] src  An exemplar record or fixture name.
+  # @param [Hash]                  opt  Additional field values except for
+  #                                       #FIELDS_OPT which are passed to the
+  #                                       block.
+  #
+  # @return [Hash]
+  #
+  # @yield [attr] Expose fields for adjustment.
+  # @yieldparam [Hash] attr   Field values for the new record.
+  # @yieldreturn [void]       The block may update *attr* directly.
+  #
+  def fields(src = nil, **opt, &blk)
+    return super if blk
+    # noinspection RubyScope
+    super do |attr, **opt|
+      set_field(attr, **opt) {{
+        record:     -> { unique_name(base: attr[:record]) },
+        publisher:  -> { unique_name(base: attr[:publisher]) },
+      }}
+    end
+  end
+
+end
+
 class ManifestSampleGenerator < SampleGenerator
 
   # ===========================================================================

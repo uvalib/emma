@@ -37,6 +37,10 @@ class AboutControllerTest < ApplicationControllerTestCase
     read_test(:submissions, meth: __method__)
   end
 
+  test 'about downloads' do
+    read_test(:downloads, anonymous: false, meth: __method__)
+  end
+
   # ===========================================================================
   # :section: Meta tests
   # ===========================================================================

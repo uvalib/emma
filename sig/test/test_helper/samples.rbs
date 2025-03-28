@@ -231,6 +231,21 @@ class SampleGenerator
   FIELDS_OPT: symArray
 end
 
+class DownloadSampleGenerator < SampleGenerator
+  # Generate field values based on *src*.
+  #
+  # @param [Model,Hash,Symbol,nil] src  An exemplar record or fixture name.
+  # @param [Hash]                  opt  Additional field values except for
+  #                                       #FIELDS_OPT which are passed to the
+  #                                       block, and local:
+  #
+  # @option opt [User] :user            Calling user.
+  #
+  # @return [Hash]
+  #
+  def fields: (?(Model|symHash|Symbol|nil) src, **untyped opt) ?{ (symHash attr, **untyped opt) -> void } -> symHash
+end
+
 class ManifestSampleGenerator < SampleGenerator
   # Generate field values based on *src*.
   #

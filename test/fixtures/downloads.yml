@@ -1,0 +1,35 @@
+# test/fixtures/downloads.yml
+#
+# @see https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:          &ONE
+  user:       test_dso_1
+  source:     emma
+  fmt:        pdf
+  record:     RecordOne
+  publisher:  PublisherOne
+  link:       LinkOne
+
+two:          &TWO
+  user:       test_dso_1
+  source:     ia
+  fmt:        epub
+  record:     RecordTwo
+  publisher:  PublisherTwo
+  link:       LinkTwo
+
+# =============================================================================
+# Examples
+# =============================================================================
+
+example:
+  <<:           *ONE
+  record:       'record - example'
+
+edit_example:
+  <<:           *ONE
+  record:       'record - edit example'
+
+delete_example:
+  <<:           *TWO
+  record:       'record - delete example'

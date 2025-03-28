@@ -1,0 +1,2 @@
+class DownloadTest < ApplicationModelTestCase
+end

@@ -1,0 +1,27 @@
+class DownloadsControllerTest < ApplicationControllerTestCase
+  MODEL: Class
+
+  CTRLR: Symbol
+
+  PRM: symHash
+
+  OPT: symHash
+
+  TEST_READERS: symArray
+
+  TEST_WRITERS: symArray
+
+  READ_FORMATS: symArray | Symbol
+
+  WRITE_FORMATS: symArray | Symbol
+
+  NO_READ: symArray
+
+  NO_WRITE: symArray
+
+  @readers: Array[User|nil]
+
+  @writers: Array[User|nil]
+
+  @generate: DownloadSampleGenerator
+end

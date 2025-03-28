@@ -1,0 +1,115 @@
+class DownloadsTest < ApplicationSystemTestCase
+  MODEL: Class
+
+  CTRLR: Symbol
+
+  PRM: symHash
+
+  TITLE: String
+
+  @dev: User
+
+  @admin: User
+
+  @manager: User
+
+  @member: User
+
+  @generate: DownloadSampleGenerator
+
+  # Perform a test to list download events visible to *user*.
+  #
+  # @param [User, nil]    user
+  # @param [Integer, nil] total       Expected total number of items.
+  # @param [String, nil]  title       Default based on *user* and opt[:action].
+  # @param [Symbol]       meth        Calling test method.
+  # @param [Hash]         opt         URL parameters.
+  #
+  # @return [void]
+  #
+  def list_test: ((User|nil) user, ?total: Integer|nil, ?title: String|nil, ?meth: Symbol|nil, **untyped opt) -> void
+
+  # Perform a test to show a download event visible to *user*.
+  #
+  # @param [User, nil]     user
+  # @param [Download, nil] target
+  # @param [Symbol]        meth       Calling test method.
+  # @param [Hash]          opt        URL parameters.
+  #
+  # @return [void]
+  #
+  def show_test: ((User|nil) user, ?target: Manifest|nil, ?meth: Symbol|nil, **untyped opt) -> void
+
+  # Perform a test to invoke the menu for selecting a download to display.
+  #
+  # @param [User, nil] user
+  # @param [Hash]      opt            Passed to #page_select_test.
+  #
+  # @return [void]
+  #
+  def show_select_test: ((User|nil) user, **untyped opt) -> void
+
+  # Perform a test to invoke the menu for selecting a download event to modify.
+  #
+  # @param [User, nil] user
+  # @param [Hash]      opt            Passed to #page_select_test.
+  #
+  # @return [void]
+  #
+  def edit_select_test: ((User|nil) user, **untyped opt) -> void
+
+  # Perform a test to invoke the menu for selecting a download event to remove.
+  #
+  # @param [User, nil] user
+  # @param [Hash]      opt            Passed to #page_select_test.
+  #
+  # @return [void]
+  #
+  def delete_select_test: ((User|nil) user, **untyped opt) -> void
+
+  # Perform a test to invoke the menu for selecting a download event.
+  #
+  # @param [User, nil]   user
+  # @param [Symbol]      action
+  # @param [String, nil] title
+  # @param [Symbol]      meth         Calling test method.
+  # @param [Hash]        opt          URL parameters.
+  #
+  # @return [void]
+  #
+  def page_select_test: ((User|nil) user, action: Symbol, ?title: String|nil, ?meth: Symbol|nil, **untyped opt) -> void
+
+  # Perform a test to create a new download event.
+  #
+  # Because :record and :link fields are made developer-only in
+  # "emma.page.download.display_fields" those fields do not appear in the
+  # form for administrator.
+  #
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
+  #
+  # @return [void]
+  #
+  def new_test: ((User|nil) user, ?meth: Symbol|nil, **untyped opt) -> void
+
+  # Perform a test to select then modify a download event.
+  #
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
+  #
+  # @return [void]
+  #
+  def edit_test: ((User|nil) user, ?meth: Symbol|nil, **untyped opt) -> void
+
+  # Perform a test to select then remove a download event.
+  #
+  # @param [User, nil]   user
+  # @param [Symbol, nil] meth         Calling test method.
+  # @param [Hash]        opt          Added to URL parameters.
+  #
+  # @return [void]
+  #
+  def delete_test: ((User|nil) user, ?meth: Symbol|nil, **untyped opt) -> void
+end

@@ -1,0 +1,3 @@
+class DownloadDecoratorTest < ApplicationDecoratorTestCase
+  DEC: Class
+end
