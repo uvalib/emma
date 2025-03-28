@@ -16,8 +16,7 @@ require 'capybara-lockstep'
 # - :firefox
 # - :firefox_headless
 #
-# Chrome actually seems to have some problems (e.g., 'go_back') so it might not
-# be the best choice in general.
+# Firefox webdriver became problematic for use in tests starting in March 2025.
 #
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
 
@@ -31,7 +30,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   else
 
     HEADLESS    = true
-    FAMILY      = :firefox
+    FAMILY      = :chrome
     BROWSER     = HEADLESS ? :"headless_#{FAMILY}"   : FAMILY
     SCREEN_SIZE = HEADLESS ? [1920, 1080].freeze : [1024, 768].freeze
 

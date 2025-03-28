@@ -894,10 +894,10 @@ class ManifestsTest < ApplicationSystemTestCase
     key = key.camelize
 
     # Click the cell to make its edit element visible.
-    find_by_id("cell-#{key}-#{row}").scroll_to(:center).click
+    find_by_id("cell-#{key}-#{row}").scroll_to(:center).click(delay: 0.05)
 
     # Update the edit element based on its type.
-    edit = find_by_id("edit-#{key}-#{row}").scroll_to(:center)
+    edit = find_by_id("edit-#{key}-#{row}", visible: false)
     css  = edit[:class].split(' ')
     if css.include?('menu')
       items = Array.wrap(value).map { %Q([value="#{_1}"]) }.join(',')
@@ -912,9 +912,12 @@ class ManifestsTest < ApplicationSystemTestCase
     else
       flunk "unexpected class combination: #{css.inspect}"
     end
-  rescue Selenium::WebDriver::Error::ElementClickInterceptedError => e
-    $stderr.puts "KEY #{key.inspect} EXCEPTION: #{e.inspect}" # TODO: remove
-    take_screenshot # TODO: remove?
+  rescue Selenium::WebDriver::Error::ElementNotInteractableError => e
+    # For Chrome, sometimes clicking on the cell (even with the added mouse
+    # events delay) does not result in the text edit control being visible.
+    # Fortunately, a second attempt seems to behave correctly.
+    $stderr.puts "RECOVERED #{key.inspect} #{e.inspect}"
+    fill_cell(key, value, row: row)
   end
 
   # Return the path to the CSV import file fixture.

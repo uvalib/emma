@@ -8,8 +8,7 @@
 # - :firefox
 # - :firefox_headless
 #
-# Chrome actually seems to have some problems (e.g., 'go_back') so it might not
-# be the best choice in general.
+# Firefox webdriver became problematic for use in tests starting in March 2025.
 #
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   include TestHelper::SystemTests
