@@ -44,7 +44,8 @@ class UploadController < ApplicationController
 
   ADMIN_OPS = %i[admin api_migrate bulk_reindex].freeze
   ANON_OPS  = %i[show records].freeze
-  DL_OPS    = %i[download retrieval probe_retrieval].freeze
+  DOWNLOAD  = %i[download retrieval].freeze
+  DL_OPS    = [*DOWNLOAD, :probe_retrieval].freeze
 
   before_action :update_user
   before_action :authenticate_user!,     except: ADMIN_OPS + ANON_OPS + DL_OPS
@@ -58,6 +59,8 @@ class UploadController < ApplicationController
   skip_authorization_check only: ANON_OPS
 
   authorize_resource instance_name: :item
+
+  rate_limit to: 1, within: 5.seconds, only: DOWNLOAD unless Rails.env.test?
 
   # ===========================================================================
   # :section: Callbacks

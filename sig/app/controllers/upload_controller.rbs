@@ -39,6 +39,8 @@ class UploadController < ApplicationController
 
   ANON_OPS: symArray
 
+  DOWNLOAD: symArray
+
   DL_OPS: symArray
 
   LISTS: symArray
