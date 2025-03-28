@@ -108,6 +108,14 @@ class UploadController < ApplicationController
   helper_attr :s3_object_table
 
   # ===========================================================================
+  # :section: Constants
+  # ===========================================================================
+
+  public
+
+  INDEX_PAGE = 'upload/index'
+
+  # ===========================================================================
   # :section: Routes
   # ===========================================================================
 
@@ -339,7 +347,7 @@ class UploadController < ApplicationController
     __debug_route
     list_items
     respond_to do |format|
-      format.html { render 'upload/index' }
+      format.html { render INDEX_PAGE }
       format.json { render_json index_values }
       format.xml  { render_xml  index_values(item: :entry) }
     end
@@ -362,7 +370,7 @@ class UploadController < ApplicationController
     list_items(for_org: true)
     opt = { locals: { name: current_org&.label } }
     respond_to do |format|
-      format.html { render 'upload/index', **opt }
+      format.html { render INDEX_PAGE, **opt }
       format.json { render_json index_values }
       format.xml  { render_xml  index_values(item: :entry) }
     end
@@ -383,7 +391,7 @@ class UploadController < ApplicationController
     __debug_route
     list_items(for_user: true)
     respond_to do |format|
-      format.html { render 'upload/index' }
+      format.html { render INDEX_PAGE }
       format.json { render_json index_values }
       format.xml  { render_xml  index_values(item: :entry) }
     end

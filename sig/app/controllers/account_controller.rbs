@@ -29,6 +29,12 @@ class AccountController < ApplicationController
   #
   attr_reader item: User | nil
 
+  INDEX_PAGE: String
+
+  SHOW_PAGE: String
+
+  EDIT_PAGE: String
+
   # === GET /account
   #
   # List user accounts.

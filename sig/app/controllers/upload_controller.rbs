@@ -74,6 +74,8 @@ class UploadController < ApplicationController
   @group_counts: symHash
   @host:         String
 
+  INDEX_PAGE: String
+
   # === GET /upload[?id=(:id|SID|RANGE_LIST)]
   # === GET /upload[?selected=(:id|SID|RANGE_LIST)]
   # === GET /upload[?group=WORKFLOW_GROUP]

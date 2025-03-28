@@ -41,6 +41,8 @@ class ManifestController < ApplicationController
   #
   attr_reader item: Manifest | nil
 
+  INDEX_PAGE: String
+
   # === GET /manifest
   #
   # List bulk operation manifests.

@@ -62,6 +62,16 @@ class AccountController < ApplicationController
   attr_reader :item
 
   # ===========================================================================
+  # :section: Constants
+  # ===========================================================================
+
+  public
+
+  INDEX_PAGE = 'account/index'
+  SHOW_PAGE  = 'account/show'
+  EDIT_PAGE  = 'account/edit'
+
+  # ===========================================================================
   # :section: Routes
   # ===========================================================================
 
@@ -278,9 +288,9 @@ class AccountController < ApplicationController
     __debug_route
     list_items
     respond_to do |format|
-      format.html { render 'account/index' }
-      format.json { render 'account/index' }
-      format.xml  { render 'account/index' }
+      format.html { render INDEX_PAGE }
+      format.json { render INDEX_PAGE }
+      format.xml  { render INDEX_PAGE }
     end
   end
 
@@ -294,9 +304,9 @@ class AccountController < ApplicationController
     list_items(for_org: true)
     opt = { locals: { name: current_org&.label } }
     respond_to do |format|
-      format.html { render 'account/index', **opt }
-      format.json { render 'account/index', **opt }
-      format.xml  { render 'account/index', **opt }
+      format.html { render INDEX_PAGE, **opt }
+      format.json { render INDEX_PAGE, **opt }
+      format.xml  { render INDEX_PAGE, **opt }
     end
   end
 
@@ -345,9 +355,9 @@ class AccountController < ApplicationController
     @item = find_record(current_id)
     raise config_term(:account, :not_found, id: identifier) if @item.blank?
     respond_to do |format|
-      format.html { render 'account/show' }
-      format.json { render 'account/show' }
-      format.xml  { render 'account/show' }
+      format.html { render SHOW_PAGE }
+      format.json { render SHOW_PAGE }
+      format.xml  { render SHOW_PAGE }
     end
   rescue CanCan::AccessDenied => error
     error_response(error)
@@ -368,9 +378,9 @@ class AccountController < ApplicationController
     @item = edit_record(current_id)
     raise config_term(:account, :not_found, id: identifier) if @item.blank?
     respond_to do |format|
-      format.html { render 'account/edit' }
-      format.json { render 'account/edit' }
-      format.xml  { render 'account/edit' }
+      format.html { render EDIT_PAGE }
+      format.json { render EDIT_PAGE }
+      format.xml  { render EDIT_PAGE }
     end
   rescue CanCan::AccessDenied => error
     error_response(error)

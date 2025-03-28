@@ -29,6 +29,12 @@ class OrgController < ApplicationController
   #
   attr_reader item: Org | nil
 
+  INDEX_PAGE: String
+
+  SHOW_PAGE: String
+
+  EDIT_PAGE: String
+
   # === GET /org
   #
   # List all organizations.

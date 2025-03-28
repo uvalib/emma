@@ -62,6 +62,16 @@ class OrgController < ApplicationController
   attr_reader :item
 
   # ===========================================================================
+  # :section: Constants
+  # ===========================================================================
+
+  public
+
+  INDEX_PAGE = 'org/index'
+  SHOW_PAGE  = 'org/show'
+  EDIT_PAGE  = 'org/edit'
+
+  # ===========================================================================
   # :section: Routes
   # ===========================================================================
 
@@ -268,9 +278,9 @@ class OrgController < ApplicationController
     __debug_route
     list_items
     respond_to do |format|
-      format.html { render 'org/index' }
-      format.json { render 'org/index' }
-      format.xml  { render 'org/index' }
+      format.html { render INDEX_PAGE }
+      format.json { render INDEX_PAGE }
+      format.xml  { render INDEX_PAGE }
     end
   rescue CanCan::AccessDenied => error
     error_response(error)
@@ -317,9 +327,9 @@ class OrgController < ApplicationController
     __debug_route
     @item = current_org #or redirect_to action: :show_select
     respond_to do |format|
-      format.html { render 'org/show' }
-      format.json { render 'org/show' }
-      format.xml  { render 'org/show' }
+      format.html { render SHOW_PAGE }
+      format.json { render SHOW_PAGE }
+      format.xml  { render SHOW_PAGE }
     end
   rescue CanCan::AccessDenied => error
     error_response(error)
@@ -343,9 +353,9 @@ class OrgController < ApplicationController
     __debug_route
     @item = current_org or redirect_to action: :edit_select
     respond_to do |format|
-      format.html { render 'org/edit' }
-      format.json { render 'org/edit' }
-      format.xml  { render 'org/edit' }
+      format.html { render EDIT_PAGE }
+      format.json { render EDIT_PAGE }
+      format.xml  { render EDIT_PAGE }
     end
   rescue CanCan::AccessDenied => error
     error_response(error)

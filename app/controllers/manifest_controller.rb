@@ -74,6 +74,14 @@ class ManifestController < ApplicationController
   attr_reader :item
 
   # ===========================================================================
+  # :section: Constants
+  # ===========================================================================
+
+  public
+
+  INDEX_PAGE = 'manifest/index'
+
+  # ===========================================================================
   # :section: Routes
   # ===========================================================================
 
@@ -266,9 +274,9 @@ class ManifestController < ApplicationController
     __debug_route
     list_items
     respond_to do |format|
-      format.html { render 'manifest/index' }
-      format.json { render 'manifest/index' }
-      format.xml  { render 'manifest/index' }
+      format.html { render INDEX_PAGE }
+      format.json { render INDEX_PAGE }
+      format.xml  { render INDEX_PAGE }
     end
   rescue CanCan::AccessDenied => error
     error_response(error)
@@ -291,9 +299,9 @@ class ManifestController < ApplicationController
     list_items(for_org: true)
     opt = { locals: { name: current_org&.label } }
     respond_to do |format|
-      format.html { render 'manifest/index', **opt }
-      format.json { render 'manifest/index', **opt }
-      format.xml  { render 'manifest/index', **opt }
+      format.html { render INDEX_PAGE, **opt }
+      format.json { render INDEX_PAGE, **opt }
+      format.xml  { render INDEX_PAGE, **opt }
     end
   rescue CanCan::AccessDenied => error
     error_response(error)
@@ -314,9 +322,9 @@ class ManifestController < ApplicationController
     __debug_route
     list_items(for_user: true)
     respond_to do |format|
-      format.html { render 'manifest/index' }
-      format.json { render 'manifest/index' }
-      format.xml  { render 'manifest/index' }
+      format.html { render INDEX_PAGE }
+      format.json { render INDEX_PAGE }
+      format.xml  { render INDEX_PAGE }
     end
   rescue CanCan::AccessDenied => error
     error_response(error)
