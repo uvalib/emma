@@ -1,0 +1,150 @@
+<%# app/views/help/topic/_about_downloads.html.erb -%>
+<%-
+  # About EMMA Downloads help.
+
+  view_debug(__FILE__)
+
+  topic           = config_section('help.topic.about_downloads')
+  recent          = AboutHelper::Common::RECENT
+
+  overview        = topic[:overview]
+  org             = topic[:by_organization]
+  src             = topic[:by_source]
+  pub             = topic[:by_publisher]
+
+  overview_title  = overview[:title]
+  org_title       = org[:title]
+  src_title       = src[:title]
+  pub_title       = pub[:title]
+
+  # Page anchors
+
+  nav_help        = 'about_downloads_nav_help'
+  overview_help   = 'about_downloads_overview_help'
+  org_help        = 'about_downloads_by_organization_help'
+  src_help        = 'about_downloads_by_source_help'
+  pub_help        = 'about_downloads_by_publisher_help'
+
+-%>
+
+<nav role="navigation" aria-labelledby="<%= nav_help -%>">
+  <div id="<%= nav_help -%>" class="sr-only">
+    Topics in this section:
+  </div>
+  <ul>
+    <li><a href="#<%= overview_help -%>"><%= overview_title -%></a></li>
+    <li><a href="#<%= org_help      -%>"><%= org_title      -%></a></li>
+    <li><a href="#<%= src_help      -%>"><%= src_title      -%></a></li>
+    <li><a href="#<%= pub_help      -%>"><%= pub_title      -%></a></li>
+  </ul>
+</nav>
+
+<section role="region" data-part="overview" aria-labelledby="<%= overview_help -%>">
+
+  <h2 class="section" id="<%= overview_help -%>">
+    <span class="text"><%= overview_title -%></span>
+  </h2>
+
+  <p>
+    This page displays current and total summaries for items downloaded through
+    EMMA from various sources, with subtotals for the various format types.
+  </p>
+
+  <p>
+    Each section has two parts.
+    The first part shows <strong>recent downloads</strong> in that category
+    which have occurred in the last <%= recent -%> days, in descending order of
+    download count.
+    The second part shows <strong>all-time downloads</strong> in alphabetical
+    order.
+    (This will be the only section shown if there have been no recent
+    downloads.)
+  </p>
+
+  <p>
+    In each table, the row header is also a link which leads to a detailed
+    listing of the individual download events included in the row's total.
+    (Use the browser back button to return to this About page.)
+  </p>
+
+  <%- if production_deployment? -%>
+    <p>
+      Users with the Administrator role are not included in download statistics
+      on the production EMMA system.
+    </p>
+  <%- else -%>
+    <p>
+      Because this is a non-production EMMA system, downloads for users with
+      the Administrator role are included in "By Source" and "By Publisher"
+      download statistics.
+    </p>
+  <%- end -%>
+
+</section>
+
+<section role="region" data-part="org" aria-labelledby="<%= org_help -%>">
+
+  <h2 class="section" id="<%= org_help -%>">
+    <span class="text"><%= org_title -%></span>
+  </h2>
+
+  <p>
+    These tables show downloads from all EMMA users gathered into their
+    respective organizations.
+  </p>
+
+  <p>
+    Clicking on an organization name leads to a detailed listing of the
+    individual download events included in the total for that organization.
+    (Use the browser back button to return to this About page.)
+  </p>
+
+  <p>
+    Because users with the Administrator role do not have an organization,
+    downloads by administrators will not show up in either of these tables.
+  </p>
+
+</section>
+
+<section role="region" data-part="src" aria-labelledby="<%= src_help -%>">
+
+  <h2 class="section" id="<%= src_help -%>">
+    <span class="text"><%= src_title -%></span>
+  </h2>
+
+  <p>
+    These tables show downloads from each EMMA repository source.
+  </p>
+
+  <p>
+    Clicking on a source name leads to a detailed listing of the individual
+    download events included in the total for that source.
+    (Use the browser back button to return to this About page.)
+  </p>
+
+</section>
+
+<section role="region" data-part="pub" aria-labelledby="<%= pub_help -%>">
+
+  <h2 class="section" id="<%= pub_help -%>">
+    <span class="text"><%= pub_title -%></span>
+  </h2>
+
+  <p>
+    These tables show downloads for each publisher as indicated by the EMMA
+    index record for the creative work associated with the downloaded file.
+  </p>
+
+  <p>
+    Clicking on a publisher name leads to a detailed listing of the individual
+    download events included in the total for that publisher.
+    (Use the browser back button to return to this About page.)
+  </p>
+
+  <p>
+    Note that not all items were supplied to their respective sources with a
+    publisher name given.
+    Any such items are aggregated under "<%= Download::NO_PUBLISHER %>".
+  </p>
+
+</section>

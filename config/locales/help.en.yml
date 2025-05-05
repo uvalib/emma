@@ -394,6 +394,25 @@ en:
           delete_select:
             title:      'Removing a selected EMMA enrollment request'
 
+        about_downloads:
+          <<:         *TOPIC_TEMPLATE
+          topic:      'downloads'
+          Topic:      'Downloads'
+          intro:      'A guide to this About page'
+          content:    ~ # @see file:app/views/help/topic/_about_downloads.html.erb
+
+          overview:
+            title:      'OVERVIEW'
+
+          by_organization:
+            title:      'By Organization'
+
+          by_source:
+            title:      'By Source'
+
+          by_publisher:
+            title:      'By Publisher'
+
       # =======================================================================
       # Illustrations
       # =======================================================================
