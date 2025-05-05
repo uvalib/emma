@@ -741,6 +741,7 @@ class UploadDecorator
   #
   def control_icon_button(action, **opt)
     return super unless action == :check
+    # noinspection RubyArgCount (RubyMine analyzer fails here)
     super do |path, link_opt|
       check_status_popup(path, id: object.id, **link_opt)
     end

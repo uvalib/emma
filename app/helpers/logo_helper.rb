@@ -133,7 +133,6 @@ module LogoHelper
     repo = normalize_repository(src)
     logo = repo && EmmaRepository::ACTIVE.dig(repo.to_sym, :logo)
     logo = logo[type&.to_sym] || logo[LOGO_TYPE.first] if logo.is_a?(Hash)
-    # noinspection RubyMismatchedReturnType
     logo
   end
 

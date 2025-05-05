@@ -35,9 +35,6 @@ module ApiHelper
   # @return [ActiveSupport::SafeBuffer] If *html* is *true*.
   # @return [String]                    If *html* is *false*.
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def format_api_result(value, indent: nil, separator: "\n", html: true)
     record = value.is_a?(Api::Record)
     value  = value.body if value.is_a?(Faraday::Response)

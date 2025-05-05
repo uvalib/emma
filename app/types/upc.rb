@@ -159,7 +159,6 @@ class Upc < PublicationIdentifier
         digits = upc[0..(last-1)]
         final  = upc[last]
         added  = upc[(last+1)..]
-        # noinspection RubyMismatchedArgumentType
         check  = checksum(digits)
         if !validate || (check == final)
           "#{digits}#{check}#{added}"

@@ -616,7 +616,7 @@ class Search::Record::TitleRecord < Search::Api::Record
   #
   # @return [Array<Array<(Symbol,Array<Symbol,Integer>)>>]
   #
-  def self.hierarchy_paths: (untyped item, (symArray|nil) path) -> Array[[Symbol, Array[Symbol|Integer]]]
+  def self.hierarchy_paths: (untyped item, ?(symArray|nil) path) -> Array[[Symbol, Array[Symbol|Integer]]]
 
   # @private
   DEBUG_HIERARCHY: bool

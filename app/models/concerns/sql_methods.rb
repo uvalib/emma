@@ -45,7 +45,6 @@ module SqlMethods
   # @param [ApplicationRecord] rec_2
   #
   def match?(rec_1, rec_2)
-    # noinspection RailsParamDefResolve
     (rec_1.is_a?(ApplicationRecord) || rec_2.is_a?(ApplicationRecord)) &&
       (rec_1.class.try(:base_class) == rec_2.class.try(:base_class)) &&
       (rec_1.attributes == rec_2.attributes)
@@ -105,7 +104,6 @@ module SqlMethods
   def sql_terms(*terms, join: :and, **other)
     terms = terms.flatten.compact_blank
     terms << other if other.present?
-    # noinspection RubyMismatchedArgumentType
     terms.map! { _1.is_a?(Hash) ? sql_clauses(_1, join: join) : _1 }
     sql_join(*terms, join)
   end
@@ -214,7 +212,6 @@ module SqlMethods
   #
   def sql_join(*terms, join)
     terms = terms.flatten.compact_blank
-    # noinspection RubyMismatchedReturnType
     return terms             if join.nil?
     return terms.first || '' unless terms.many?
     terms.map! { _1.start_with?('(') ? _1 : "(#{_1})" }
@@ -308,7 +305,6 @@ module SqlMethods
   #
   def sql_json_table(column, name: nil, fields: nil, field_map: nil)
     alias_name   = name   || "#{column}_columns"
-    # noinspection RubyMismatchedArgumentType
     json_fields  = fields || field_map&.dig(column)
     json_columns =
       Array.wrap(json_fields).map { |key|
@@ -481,7 +477,6 @@ module SqlMethods
     return 'TRUE'      if true?(value)
     return 'FALSE'     if false?(value)
     value = value.to_s if value.is_a?(Symbol)
-    # noinspection RubyMismatchedReturnType
     case value
       when nil, 'nil', 'null', 'NULL' then null
       when /^-?\d+$/                  then value.to_i
@@ -544,7 +539,6 @@ module SqlMethods
     #
     def sql_match(*terms, join: :and, **opt)
       json = (opt[:type] == :json)
-      # noinspection RubyMismatchedReturnType
       merge_match_terms(*terms, **opt).flat_map { |field, matches|
         matches.map do |value|
           json ? sql_match_json(field, value) : sql_match_pattern(field, value)
@@ -729,7 +723,6 @@ module SqlMethods
     # @return [ActiveRecord::Relation]
     #
     def matching(*terms, sort: nil, **opt)
-      # noinspection RubyMismatchedReturnType
       where(sql_match(*terms, **opt)).tap do |relation|
         relation.order!(sort) if sort
       end

@@ -345,8 +345,9 @@ class BaseDecorator < Draper::Decorator
   # can be created.
   def self.new: (?(untyped|nil) obj, **untyped opt) -> untyped
 
-  @ar_class:    Class | nil
-  @other_class: Array[Class]
+  self.@ar_class:    Class | nil
+
+  self.@other_class: Array[Class]
 
   # Set @model_type and @ctrlr_type based on *mt*.
   #
@@ -356,9 +357,9 @@ class BaseDecorator < Draper::Decorator
   #
   def self.set_model_type: ((Class|Symbol|String|nil) mt) -> (Symbol | nil)
 
-  @model_type: Symbol
+  self.@model_type: Symbol
 
-  @ctrlr_type: Symbol
+  self.@ctrlr_type: Symbol
 
   # Set @object_class and @ar_class based on *obj*.
   #
@@ -369,7 +370,7 @@ class BaseDecorator < Draper::Decorator
   #
   def self.set_object_class: ((Class|Symbol|String|nil) obj, *(Class|Symbol|String|nil) other) -> (Class | nil)
 
-  @object_class: Class
+  self.@object_class: Class
 
   # to_class
   #

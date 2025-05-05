@@ -159,6 +159,8 @@ class Org < ApplicationRecord
   #
   def self.none: () -> Org
 
+  self.@null: Org
+
   # Return the Org instance indicated by the argument.
   #
   # @param [any, nil] v               Model, Hash, String, Integer

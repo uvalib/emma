@@ -56,7 +56,6 @@ module XmlHelper
   def html_truncate(str, length = nil, **opt)
     length ||= HTML_TRUNCATE_MAX_LENGTH
     str = to_utf(str, **opt)
-    # noinspection RubyMismatchedArgumentType
     return str if str.bytesize <= length
     opt[:omission] ||= HTML_TRUNCATE_OMISSION
     opt[:omission] = to_utf(opt[:omission], **opt)
@@ -122,7 +121,6 @@ module XmlHelper
           if opt[:content] || ((html = xml.to_s) == text)
             # No HTML entities, just simple characters.
             last = text.rindex(separator, last) || last if separator
-            # noinspection RubyMismatchedArgumentType
             text.slice(0, last)
           else
             # Do not break within an HTML entity.  HTML entities have to be

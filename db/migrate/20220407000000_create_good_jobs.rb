@@ -5,7 +5,6 @@
 
 class CreateGoodJobs < ActiveRecord::Migration[6.1]
 
-  # noinspection RubyResolve
   def change
 
     enable_extension 'pgcrypto'

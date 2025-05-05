@@ -57,9 +57,6 @@ class Api::Record
   #       *src* is *nil* [which may be the case if a Hash value was used and it
   #       gets interpreted as named parameters]).
   #
-  #--
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedVariableType
-  #++
   def initialize(src = nil, format: nil, wrap: nil, error: nil, **data)
     @serializer_type = format
     assert_serializer_type(@serializer_type) if @serializer_type

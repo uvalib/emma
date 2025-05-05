@@ -30,7 +30,6 @@ class Lookup::WorldCat::Record::Request < Lookup::WorldCat::Api::Record
   # :section:
   # ===========================================================================
 
-  # noinspection SpellCheckingInspection
   schema do
     has_one :version
     has_one :query

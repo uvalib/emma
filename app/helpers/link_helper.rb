@@ -91,7 +91,6 @@ module LinkHelper
     label   = sr_only << symbol
 
     if url
-      # noinspection RubyMismatchedArgumentType
       make_link(url, label, **opt)
     else
       if opt[:tabindex].to_i == -1

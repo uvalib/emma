@@ -78,7 +78,6 @@ module Emma::Common::HashMethods
   # @note Currently unused.
   # :nocov:
   def normalize_hash!(item)
-    # noinspection RubyMismatchedReturnType
     if item.class != ::Hash
       normalize_hash(item, debug: DEBUG_HASH)
     elsif !item.keys.all? { _1.is_a?(Symbol) }

@@ -133,7 +133,6 @@ class ApplicationJob::Response
   # @return [ApplicationJob::Response]
   #
   def self.wrap(item)
-    # noinspection RubyMismatchedReturnType
     item.is_a?(self) ? item : new(item)
   end
 

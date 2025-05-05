@@ -455,7 +455,6 @@ class Paginator
     # @return [nil]                       If *value* is invalid.
     #
     def page_path(value, page = nil)
-      # noinspection RubyMismatchedArgumentType
       value.is_a?(Symbol) ? page_history(value, page) : value.to_s.presence
     end
 
@@ -563,7 +562,6 @@ class Paginator
   #
   def page_source=(src)
     @page_items  = src if src.is_a?(Array)
-    # noinspection RubyMismatchedReturnType
     @page_source = (src if src.is_a?(ActiveRecord::Relation))
   end
 
@@ -583,7 +581,6 @@ class Paginator
   #
   def page_items=(values)
     @page_source = values if values.is_a?(ActiveRecord::Relation)
-    # noinspection RubyMismatchedReturnType
     @page_items  = (values if values.is_a?(Array))
   end
 
@@ -880,7 +877,6 @@ class Paginator
   def next_page_path(list: nil, **url_params)
     return if disabled
     list ||= page_items
-    # noinspection RailsParamDefResolve
     if list.try(:next).present?
 
       # General pagination parameters.

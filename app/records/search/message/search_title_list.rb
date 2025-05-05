@@ -54,7 +54,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
   # @option opt [Boolean, nil] :canonical   Passed to #aggregate.
   #
   def initialize(src, opt = nil)
-    # noinspection RubyScope, RubyMismatchedArgumentType
+    # noinspection RubyScope
     create_message_wrapper(opt) do |opt|
       @canonical  = opt.delete(:canonical)
       apply_wrap!(opt)
@@ -110,7 +110,6 @@ class Search::Message::SearchTitleList < Search::Api::Message
   def aggregate(src = nil, **opt)
     opt[:canonical] = canonical unless opt.key?(:canonical)
     file_level_records = src ? Array.wrap(src).compact_blank : records
-    # noinspection RubyMismatchedReturnType
     recursive_group_records(file_level_records) do |records_for_title|
       LIST_ELEMENT.new(records_for_title, **opt)
     end

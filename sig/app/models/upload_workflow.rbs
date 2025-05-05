@@ -950,7 +950,13 @@ class UploadWorkflow < Workflow::Base
 
   def self.configuration:  () -> Hash[Symbol,symHash]
   def self.state_label:    () -> Hash[Symbol,symHash]
-  #def self.workflow_type: () -> Symbol
   def self.variant_table:  () -> Hash[Symbol,Class]
   def self.variant_type:   () -> Symbol
+
+  self.@configuration:              Hash[Symbol,symHash]
+  self.@state_label:                Hash[Symbol,symHash]
+  self.@workflow_type:              Symbol
+  self.@variant_table:              Hash[Symbol,Class]
+  self.@variant_type:               Symbol
+  self.@workflow_state_column_name: Symbol
 end

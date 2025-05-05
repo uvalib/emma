@@ -1014,7 +1014,7 @@ appSetup(MODULE, function() {
     function allSearchTerms(target, caller, new_only) {
         const func    = caller || "allSearchTerms";
         const $rows   = target ? getSearchRow(target, func) : $search_bar_rows;
-        const queries = {}
+        const queries = {};
         $rows.each((_, row) => {
             const $row   = $(row);
             const $input = getSearchInput($row);
@@ -1192,7 +1192,7 @@ appSetup(MODULE, function() {
      */
     function allSearchFilters(target, caller, new_only) {
         const func    = caller || "allSearchFilters"; OUT.debug(func);
-        const filters = {}
+        const filters = {};
         const array   = (item) => {
             if (isEmpty(item))       { return [] }
             if (Array.isArray(item)) { return item.sort() }

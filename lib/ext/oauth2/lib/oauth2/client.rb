@@ -250,7 +250,6 @@ module OAuth2
       opts[:headers] = headers
       opts[:raise_errors] = false unless opts.key?(:raise_errors)
 
-      # noinspection RubyMismatchedArgumentType
       request(meth, options[:revoke_url], opts)
     end
 

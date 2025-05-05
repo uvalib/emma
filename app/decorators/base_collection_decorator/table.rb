@@ -42,7 +42,6 @@ module BaseCollectionDecorator::Table
   def table_label_with_count(label, count: nil, total: true, **opt)
     count ||= table_total
     total   = total ? 'total' : 'matches' unless total.is_a?(String) # TODO: I18n
-    # noinspection RubyMismatchedArgumentType
     label_with_count(label, count, unit: total, **opt)
   end
 
@@ -195,7 +194,6 @@ module BaseCollectionDecorator::Table
       decorate(item).table_entry(**row_opt)
     end
     rows.compact!
-    # noinspection RubyMismatchedReturnType
     separator ? safe_join(rows, separator) : rows
   end
 
@@ -215,7 +213,6 @@ module BaseCollectionDecorator::Table
     append_css!(inner, 'pageable') if local[:pageable]
     append_css!(inner, 'sortable') if local[:sortable]
     append_css!(inner, 'partial')  if local[:partial]
-    # noinspection RubyMismatchedArgumentType
     decorate(item).render_table_row(**opt) { |field, prop, **f_opt|
       sortable = local[:sortable] && (field != :actions)
       table_column_label(field, prop, **f_opt, sortable: sortable)
@@ -284,7 +281,6 @@ module BaseCollectionDecorator::Table
   # @return [ActiveRecord::Associations::CollectionAssociation]
   #
   def table_row_items(**opt)
-    # noinspection RubyMismatchedReturnType
     row_items(**opt)
   end
 

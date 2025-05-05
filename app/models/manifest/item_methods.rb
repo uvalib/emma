@@ -70,7 +70,6 @@ module Manifest::ItemMethods
     if cols.empty?
       rows.map { [_1.id, _1.fields] }.to_h
     else
-      # noinspection RailsParamDefResolve
       rows.pluck(:id, *cols).map { |id, *vals|
         attrs = cols.zip(vals).to_h
         if (err_cols = attrs[:field_error]&.keys&.excluding(*cols)).present?

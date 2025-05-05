@@ -110,7 +110,6 @@ module ApiMigrateHelper
           html_div(class: 'field') { config_term(:api_migrate, :no_changes) }
         end
       end
-    # noinspection RubyMismatchedReturnType, RubyMismatchedArgumentType
     column << fields
   end
 
@@ -138,7 +137,6 @@ module ApiMigrateHelper
       end
     column = html_tag(level, column, class: 'column')
     fields = html_div(fields, **f_opt)
-    # noinspection RubyMismatchedReturnType, RubyMismatchedArgumentType
     column << fields
   end
 
@@ -159,7 +157,6 @@ module ApiMigrateHelper
   # @return [Array<ActiveSupport::SafeBuffer>]
   #
   def change_table_head
-    # noinspection RubyMismatchedArgumentType
     @change_table_head ||=
       ROW_PARTS.map.with_index { |kv, col| change_table_cell(*kv, 0, col) }
   end
@@ -175,7 +172,6 @@ module ApiMigrateHelper
   def change_table_line(field, values, row:)
     values = values.transform_values(&:inspect)
     parts  = ROW_PARTS.merge(values, field: field)
-    # noinspection RubyMismatchedArgumentType
     parts.map.with_index { |kv, col| change_table_cell(*kv, row, col) }
   end
 

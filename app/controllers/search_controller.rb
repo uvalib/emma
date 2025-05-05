@@ -103,7 +103,6 @@ class SearchController < ApplicationController
     titles = title_results?
     @list  = index_search(titles: titles, save: !playback, **prm)
     err    = @list.exec_report if @list.error?
-    # noinspection RubyMismatchedArgumentType
     paginator.finalize(@list, as: (titles ? :titles : :records), **prm)
     respond_to do |format|
       format.html
@@ -205,7 +204,6 @@ class SearchController < ApplicationController
   def validate
     __debug_route
     ids = params[:identifier].presence
-    # noinspection RubyMismatchedArgumentType
     render json: validate_identifiers(ids) if ids
   end
 

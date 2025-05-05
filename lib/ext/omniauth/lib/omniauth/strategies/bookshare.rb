@@ -27,9 +27,6 @@ module OmniAuth
     # +Bookshare+.  Thus, these methods are overridden explicitly in order to
     # ensure consistency.
     #
-    #--
-    # noinspection LongLine
-    #++
     class Bookshare < OmniAuth::Strategies::OAuth2
 
       include Emma::Common
@@ -43,9 +40,7 @@ module OmniAuth
 
       args %i[client_id client_secret]
 
-      # noinspection RubyMismatchedArgumentType
       option :name,          name&.demodulize&.to_s&.underscore
-      # noinspection RubyMismatchedArgumentType
       option :client_id,     BOOKSHARE_API_KEY
       option :client_secret, ''
       option :client_options, {
@@ -84,7 +79,6 @@ module OmniAuth
         end
         OmniAuth.config.before_request_phase&.call(env)
 
-        # noinspection RubyResolve
         if session['omniauth.params'].key?(:commit)
           log :info, 'By-passing request_phase (local developer uid/token)'
           authorize_params # Generate session['omniauth.state']
@@ -241,7 +235,6 @@ module OmniAuth
       # @return [::OAuth2::Client]
       #
       def client
-        # noinspection RubyResolve
         @client ||=
           ::OAuth2::Client.new(
             options.client_id,
@@ -280,9 +273,6 @@ module OmniAuth
       # @return [Array(Integer, Rack::Headers, Rack::BodyProxy)]
       # @return [Array(Integer, Hash{String=>any,nil},   Array<String>)]
       #
-      #--
-      # noinspection RubyScope
-      #++
       def callback_phase
         __ext_debug
         result = nil
@@ -296,7 +286,6 @@ module OmniAuth
         end
 
         # Raise an exception if the returned state doesn't match.
-        # noinspection RubyResolve
         unless options.provider_ignores_state
           state = params[:state]
           if state.blank? || (state != session.delete('omniauth.state'))
@@ -367,9 +356,6 @@ module OmniAuth
       #
       # @return [Array<(Integer, Hash{String=>any,nil}, Array<String>)>]
       #
-      #--
-      # noinspection RubyStringKeysInHashInspection
-      #++
       def call_redirect(location, **log_extra)
         __ext_debug do
           {
@@ -407,7 +393,6 @@ module OmniAuth
         __ext_debug
         code = request.params['code']
         prms = token_params.to_hash(symbolize_keys: true)
-        # noinspection RubyResolve
         opts = deep_symbolize(options.auth_token_params)
         client.auth_code.get_token(code, prms, opts)
           .tap { __ext_debug("--> #{_1.inspect}") }
@@ -464,9 +449,6 @@ module OmniAuth
       #   @option params [String] :access_token
       #   @option params [String] :token          Alias for :access_token.
       #
-      #--
-      # noinspection RubyMismatchedArgumentType
-      #++
       def synthetic_access_token(src)
         entry = token = nil
         if src.is_a?(String)
@@ -505,9 +487,6 @@ module OmniAuth
       #   @option params [String] :access_token
       #   @option params [String] :token          Alias for :access_token.
       #
-      #--
-      # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-      #++
       def synthetic_auth_hash(src)
         if src.is_a?(OmniAuth::AuthHash)
           return src
@@ -550,7 +529,6 @@ module OmniAuth
       # @return [OmniAuth::AuthHash]
       #
       def self.auth_hash(src)
-        # noinspection RailsParamDefResolve
         src  = src.try(:attributes)
         src  = src.try(:symbolize_keys) || {}
         cred = src.slice(:token, :expires, :expires_at, :refresh_token)
@@ -594,7 +572,6 @@ module OmniAuth
       #   @option params [String] :token          Alias for :access_token.
       #
       def self.synthetic_auth_hash(src, token = nil)
-        # noinspection RubyMismatchedReturnType
         return src if src.is_a?(OmniAuth::AuthHash)
         user = src.is_a?(String) ? src : src.try(:account)
         if user.nil? && (src = url_parameters(src).presence).is_a?(Hash)
@@ -603,7 +580,6 @@ module OmniAuth
           token ||= src[:access_token] || src[:token]
           token ||= src.dig(:credentials, :token)
         end
-        # noinspection RubyMismatchedArgumentType
         if !user.is_a?(String)
           Log.warn("#{__method__}: invalid user: #{user.inspect}") if user
         elsif (token ||= stored_auth.dig(user, :access_token)).is_a?(String)

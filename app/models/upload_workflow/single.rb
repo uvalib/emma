@@ -82,9 +82,6 @@ module UploadWorkflow::Single::Data
   #
   # @return [Upload, nil]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def set_data(data, **opt)
     data = super
 
@@ -111,7 +108,6 @@ module UploadWorkflow::Single::Data
 
       # Retrieve (or create) the record in the database table.
       if data.is_a?(Upload)
-        # noinspection RubyMismatchedVariableType
         @record   = data
         @existing = !@record.new_record?
 
@@ -216,7 +212,6 @@ module UploadWorkflow::Single::Data
       data = data.is_a?(Upload) ? data.fields : data.slice(*Upload.field_names)
       data.merge!(meta, repository: dr)
     else
-      # noinspection RubyMismatchedReturnType
       data.is_a?(Upload) ? data.fields : data
     end
   end
@@ -1296,7 +1291,6 @@ class UploadWorkflow::Single < UploadWorkflow
     opt[:variant] ||= (:remove if data.nil?)
     opt[:variant] ||= data.phase
     opt[:variant] ||= (data.state&.to_sym == FINAL_STATE) ? :edit : :create
-    # noinspection RubyMismatchedReturnType
     super
   end
 

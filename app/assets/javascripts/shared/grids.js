@@ -761,7 +761,7 @@ function setupGridRows($grid) {
     const $temp = $grid.find(ROW).filter(HIDDEN); // Hidden template rows.
 
     let $cols;
-    $temp.each((_,   row) => { $cols = setupGridColumns(row) })
+    $temp.each((_,   row) => { $cols = setupGridColumns(row) });
     $rows.each((idx, row) => { $cols = setupGridColumns(row, (idx + 1)) });
 
     const row_cnt = Number($grid.attr("aria-rowcount")) || 0;
@@ -996,7 +996,7 @@ function logGridEventAnalysis(result, event, key, caller) {
         for (const [k, v] of Object.entries(obj)) {
             OUT.debug(...msg, `${k.padEnd(width)} =`, v);
         }
-    }
+    };
     OUT.debug(`*** ${"".padEnd(72,"v")} ***`);
     log_values(prop);
     log_values(result);

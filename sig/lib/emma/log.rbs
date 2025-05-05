@@ -13,6 +13,8 @@ module Emma::Log
   #
   def self.logger: () -> Emma::Logger
 
+  self.@logger: Emma::Logger
+
   # Add a log message.
   #
   # If the first element of *args* is a Symbol, that is taken to be the calling

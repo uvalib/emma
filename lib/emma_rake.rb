@@ -116,7 +116,6 @@ module EmmaRake
   #
   def task_option(flag, args = nil)
     flag = %W[--#{flag} -#{flag} #{flag}]
-    # noinspection RubyMismatchedReturnType
     [args, cli_task_options].compact_blank.find do |options|
       options.find do |opt|
         opt, val = opt.is_a?(Array) ? opt.map(&:to_s) : opt.split('=', 2)
@@ -131,7 +130,6 @@ module EmmaRake
   # @return [Array<String>]
   #
   def cli_task_options
-    # noinspection RubyMismatchedReturnType
     @cli_task_options ||= (start = $*.index('--')) ? $*[(start+1)..] : []
   end
 

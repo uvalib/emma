@@ -64,7 +64,6 @@ module BaseDecorator::Table
   # @return [ActiveRecord::Associations::CollectionAssociation]
   #
   def table_row_items(**opt)
-    # noinspection RubyMismatchedReturnType
     row_items(**opt)
   end
 

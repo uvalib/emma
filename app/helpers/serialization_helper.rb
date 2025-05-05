@@ -85,7 +85,6 @@ module SerializationHelper
   #
   def make_xml(item, separator: "\n", name: nil, serializer: nil)
     return if item.blank?
-    # noinspection RubyMismatchedArgumentType
     if item.is_a?(Hash)
       serializer ||= Search::Api::Serializer::Xml.new
       make_opt     = { separator: separator, serializer: serializer }

@@ -115,7 +115,6 @@ module BaseDecorator::Retrieval
   # @return [ActiveSupport::SafeBuffer]
   #
   def ia_retrieval_link(url, **opt)
-    # noinspection RubyMismatchedReturnType
     download_control(url: url, **opt)
   end
 
@@ -141,7 +140,6 @@ module BaseDecorator::Retrieval
   def bv_retrieval_link(url, **opt)
     file = url.split('/').last
     url  = '/retrieval?url=%s' % url_escape(url)
-    # noinspection RubyMismatchedReturnType
     download_control(url: url, file: file, plain: true, **opt)
   end
 

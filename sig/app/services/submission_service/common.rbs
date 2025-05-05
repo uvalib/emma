@@ -29,11 +29,13 @@ module SubmissionService::Common
 
   # How long the total request sequence took.
   #
+  # @param [Float]   t_end            Default: `end_time` or `timestamp`.
+  # @param [Float]   t_start          Default: `start_time`.
   # @param [Integer] precision        Digits after the decimal point.
   #
   # @return [Float] Wall clock time in seconds; zero if not finished.
   #
-  def duration: (?precision: Integer) -> Float
+  def duration: (?Float t_end, ?Float t_start, ?precision: Integer) -> Float
 
   private
 

@@ -93,7 +93,6 @@ class SampleGenerator
   # @return [Class]
   #
   def model_class(item = nil)
-    # noinspection RubyMismatchedReturnType
     item ? super : (@model_class ||= super(context))
   end
 
@@ -284,9 +283,6 @@ class SampleGenerator
   # @yieldparam [Hash] attr   Field values for the new record.
   # @yieldreturn [void]       The block may update *attr* directly.
   #
-  #--
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-  #++
   def fields(src = nil, **opt, &blk)
     fld = opt.slice!(*FIELDS_OPT) # Extract any additional field values.
     src = :example     if src.nil?
@@ -536,7 +532,6 @@ class UploadSampleGenerator < SampleGenerator
   def sample_for_create(**opt, &blk)
     current = create_id && model_class.find_by(id: create_id)
     current&.delete
-    # noinspection RubyMismatchedReturnType
     super.tap do |record|
       self.create_id = record.id if record.save!
       record.set_state('validating')
@@ -550,7 +545,6 @@ class UploadSampleGenerator < SampleGenerator
   # @return [Upload]
   #
   def sample_for_update(**opt, &blk)
-    # noinspection RubyMismatchedReturnType
     super.tap do |record|
       record.set_state('validating')
     end

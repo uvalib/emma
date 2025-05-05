@@ -43,7 +43,7 @@ module BaseCollectionDecorator::Table
   # @see #TABLE_HEAD_STICKY
   # @see #TABLE_HEAD_DARK
   #
-  def render_table: (?tag: Symbol|nil, ?total: Integer|bool, ?css: String|nil, **untyped opt) { (symHash, Array[Model], symHash) -> void } -> ActiveSupport::SafeBuffer
+  def render_table: (?tag: Symbol|nil, ?total: Integer|bool, ?css: String|nil, **untyped opt) ?{ (symHash, Array[Model], symHash) -> void } -> ActiveSupport::SafeBuffer
 
   ALL_RECORDS: String
 
@@ -80,8 +80,8 @@ module BaseCollectionDecorator::Table
   # @return [Array<ActiveSupport::SafeBuffer>]  If :separator is *nil*.
   #
   def table_entries
-    : (?row: Integer, ?separator: String, **untyped opt) { (Model, symHash) -> ActiveSupport::SafeBuffer } -> ActiveSupport::SafeBuffer
-    | (?row: Integer,  separator: nil,    **untyped opt) { (Model, symHash) -> ActiveSupport::SafeBuffer } -> Array[ActiveSupport::SafeBuffer]
+    : (?row: Integer, ?separator: String, **untyped opt) -> ActiveSupport::SafeBuffer
+    | (?row: Integer,  separator: nil,    **untyped opt) -> Array[ActiveSupport::SafeBuffer]
 
   # Render column headings for a table of model items.
   #

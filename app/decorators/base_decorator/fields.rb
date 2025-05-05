@@ -80,9 +80,6 @@ module BaseDecorator::Fields
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def render_json_data(value, outer: nil, css: '.data-list', **opt)
     value &&= json_parse(value) unless value.is_a?(Hash)
     outer   = outer&.dup || {}
@@ -184,9 +181,6 @@ module BaseDecorator::Fields
   # the configuration for :file_data.  (This allows [:file_data][:id] to be
   # associated with the proper field configuration.)
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def property_pairs(
     action:     nil,
     only:       nil,
@@ -534,7 +528,6 @@ module BaseDecorator::Fields
     **opt
   )
     base ||= model_html_id(field || label)
-    # noinspection RubyMismatchedArgumentType
     html_id(name, base, group, index, underscore: false, **opt)
   end
 
@@ -591,9 +584,6 @@ module BaseDecorator::Fields
   #
   # @type [Regexp]
   #
-  #--
-  # noinspection SpellCheckingInspection
-  #++
   SECTION_TITLE_RE =
     /^(PART|[CDILMVX]+\.?|[cdilmvx]+\.|\d+\.|v\.) +(.*)/.freeze
 
@@ -622,7 +612,6 @@ module BaseDecorator::Fields
       return value.flat_map { format_description(_1, separator: separator) }
     end
     # Look for signs of structure, otherwise just treat as unstructured.
-    # noinspection RubyMismatchedArgumentType
     case text
       when /"";/                     then double_quotes_to_sections(text)
       when /\.--v\. */               then double_dash_to_sections(text)

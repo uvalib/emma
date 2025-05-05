@@ -113,7 +113,6 @@ class LookupService::RemoteService < ApiService
   #
   def duration(precision: 2)
     return 0.0 unless finished?
-    # noinspection RubyMismatchedArgumentType
     (end_time - start_time).round(precision).to_f
   end
 

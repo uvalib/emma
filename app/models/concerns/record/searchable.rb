@@ -417,7 +417,6 @@ module Record::Searchable
         else                          day = value
       end
     end
-    # noinspection RubyMismatchedReturnType
     return day, !!month, !!year
   end
 
@@ -475,7 +474,6 @@ module Record::Searchable
       msg &&= msg % { type: [base_class, opt[:type]].compact.join('::') }
       meth  = msg && (log.is_a?(Symbol) ? log : "#{self_class}.#{__method__}")
       Log.warn("#{meth}: #{msg}") if msg
-      # noinspection RubyMismatchedArgumentType
       raise err, msg if err
     end
 
@@ -497,7 +495,6 @@ module Record::Searchable
     def latest_for_sid(sid = nil, sort: nil, **opt)
       result = matching_sid(sid, **opt) or return
       sort ||= :created_at
-      # noinspection RubyMismatchedReturnType
       result.order(sort).last
     end
 

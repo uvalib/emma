@@ -135,7 +135,6 @@ module Record::Testing
         end
         return unless ex.present?
         __debug_banner("#{self.class}.#{meth} #{ex.class}")
-        # noinspection RubyMismatchedArgumentType
         raise_failure(ex)
       end
 

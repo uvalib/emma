@@ -113,15 +113,11 @@ module Emma::Debug
     # @return [Hash]
     # @return [nil]                   If *value* is invalid or indeterminate.
     #
-    #--
-    # noinspection RailsParamDefResolve
-    #++
     def __debug_session_hash(value = nil)
       value ||= try(:request)
       value   = value.session if value.respond_to?(:session)
       value ||= try(:session)
       if value.respond_to?(:to_hash)
-        # noinspection RubyMismatchedReturnType
         value.to_hash
       elsif value.respond_to?(:each)
         Hash.new.tap { |result| value.each { |k, v| result[k] = v } }
@@ -136,7 +132,6 @@ module Emma::Debug
     # @return [nil]                   If *value* is invalid or indeterminate.
     #
     def __debug_env_hash(value = nil)
-      # noinspection RailsParamDefResolve
       value ||= try(:request)
       value = value.env if value.respond_to?(:env)
       value&.to_hash&.sort&.to_h
@@ -150,11 +145,9 @@ module Emma::Debug
     # @return [nil]                   If *value* is invalid or indeterminate.
     #
     def __debug_header_hash(value = nil)
-      # noinspection RailsParamDefResolve
       value ||= try(:request)
       value = value.headers if value.respond_to?(:headers)
       if value.respond_to?(:to_hash)
-        # noinspection RubyMismatchedReturnType
         value.to_hash
       elsif value.respond_to?(:each)
         Hash.new.tap do |result|
@@ -453,9 +446,6 @@ module Emma::Debug
     #
     # @return [nil]
     #
-    #--
-    # noinspection RailsParamDefResolve
-    #++
     def __debug_route(controller: nil, action: nil, **opt, &blk)
       action ||= calling_method
       leader   = __debug_route_label(controller: controller, action: action)
@@ -561,9 +551,6 @@ module Emma::Debug
   #
   # @return [nil]
   #
-  #--
-  # noinspection RailsParamDefResolve
-  #++
   def __log_activity(*message, user: nil, addr: nil, anonymous: false, **opt)
     user ||= try(:current_user) || ('anonymous' if anonymous) or return
     addr ||= try(:request).try(:ip) || '-'
@@ -585,7 +572,6 @@ module Emma::Debug
     yield
     $stderr.string
   ensure
-    # noinspection RubyMismatchedReturnType
     $stderr = saved
   end
 =end

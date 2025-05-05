@@ -158,7 +158,6 @@ class Issn < PublicationIdentifier
       if digits&.size == ISSN_DIGITS
         final  = digits.last.upcase
         digits = digits[0...-1]
-        # noinspection RubyMismatchedArgumentType
         check  = checksum(digits)
         if !validate || (check == final)
           digits << check

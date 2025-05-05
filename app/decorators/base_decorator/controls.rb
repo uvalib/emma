@@ -170,7 +170,6 @@ module BaseDecorator::Controls
     trace_attrs!(opt, __method__)
     append_css!(opt, 'invisible') unless allowed && visible
     prepend_css!(opt, css, action)
-    # noinspection RubyMismatchedArgumentType
     case path
       when :button then html_button(icon, **opt)
       else              make_link(path, icon, **opt)

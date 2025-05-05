@@ -927,7 +927,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
             tip += "\n\nNOTE:";
             tip += "The placement of this item seems to be anomalous, ";
             tip += "however that may just be due to a bad guess about how ";
-            tip += "the actual relevancy is determined by the index."
+            tip += "the actual relevancy is determined by the index.";
             return $score.addClass("error").attr("title", tip);
         }
     }
@@ -1851,7 +1851,7 @@ Emma.SEARCH_ANALYSIS && appSetup(MODULE, function() {
          */
         _markItemAsError(item) {
             const $item = $(item);
-            $item.addClass(ERROR_MARKER)
+            $item.addClass(ERROR_MARKER);
             this._itemStateTip($item, Emma.Terms.search_analysis.error);
             return true;
         }

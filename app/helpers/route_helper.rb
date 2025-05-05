@@ -60,7 +60,6 @@ module RouteHelper
     ca  = opt.extract!(:controller, :ctrlr, :action)
     ctr = ca[:ctrlr]  || ca[:controller] || ctr
     act = ca[:action] || act
-    # noinspection RubyMismatchedReturnType
     case (path = route_helper(ctr, act, base: base))
       when Symbol then result = try(path, **opt)
       when Proc   then result = path.call(**opt)

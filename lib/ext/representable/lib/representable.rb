@@ -155,6 +155,7 @@ module Representable
       #   @param [Array<Symbol>] constants
       #
       def __debug_lambda(mode, *constants)
+        # noinspection RubyUnusedLocalVariable (RubyMine analyzer fails here)
         case mode
           when :input  then return unless DEBUG_INPUT
           when :output then return unless DEBUG_OUTPUT
@@ -214,9 +215,6 @@ module Representable
       #   @param [String]        label
       #   @param [Array<Symbol>] methods
       #
-      #--
-      # noinspection RubyMismatchedArgumentType
-      #++
       def __debug_method(mode, label, *methods)
         if mode == :input
           return unless DEBUG_INPUT
@@ -260,9 +258,6 @@ module Representable
 
     remove_const(:Class) if const_defined?(:Class, false)
 
-    #--
-    # noinspection RubyConstantNamingConvention
-    #++
     Class = ->(input, options) do
       binding = options[:binding]
       unless (obj_class = binding.evaluate_option(:class, input, options))
@@ -317,7 +312,6 @@ module Representable
 
   remove_const(:RenderDefault)
 
-  # noinspection RubyConstantNamingConvention
   RenderDefault = ->(input, options) do
     input unless options[:binding].skipable_empty_value?(input)
   end

@@ -56,7 +56,6 @@ module ApplicationJob::Logging
   #
   def perform_now(*args, **opt)
     if is_a?(Class)
-      # noinspection RubyArgCount
       super(*args, **opt)
     else
       set_arguments(*args, **opt) if args.present?
@@ -129,13 +128,11 @@ module ApplicationJob::Logging
     if job.is_a?(Class)
       job_tag(job)
     else
-      # noinspection RubyMismatchedArgumentType
       "#{job_tag(job)} arguments: #{arguments_inspect(job)}"
     end
   end
 
   def arguments_inspect(job = nil)
-    # noinspection RailsParamDefResolve
     (job || self).try(:arguments)&.map { item_inspect(_1) }&.join(' | ')
   end
 
@@ -187,7 +184,6 @@ module ApplicationJob::Logging
       when /^#{TAG_LEADER} /      then job = args.shift
       else                             job = self
     end
-    # noinspection RubyMismatchedArgumentType
     opt[:leader]    = "#{job_tag(job)}:" unless opt.key?(:leader)
     opt[:compact]   = true               unless opt.key?(:compact)
     opt[:separator] = "\n\t"             unless opt.key?(:separator)

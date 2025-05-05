@@ -56,9 +56,6 @@ module Api::Shared::CommonMethods
   #
   # @param [Api::Record, nil] rec  Default: `self`.
   #
-  #--
-  # noinspection RailsParamDefResolve
-  #++
   def canonical?(rec = nil)
     rec ||= self
     if (elements = rec.try(:elements))
@@ -190,7 +187,6 @@ module Api::Shared::CommonMethods
   #
   def get_values(*fields, target: nil, **)
     target ||= self
-    # noinspection RubyMismatchedReturnType
     fields.find { |meth|
       values = meth && Array.wrap(target.try(meth)).compact_blank
       break values.map(&:to_s) if values.present?
@@ -440,7 +436,6 @@ module Api::Shared::CommonMethods
     value = get_field_value(data, field)
     array = value.is_a?(Array)
     value = Array.wrap(value)
-    # noinspection RubyMismatchedArgumentType
     value = value.take(limit) if non_negative(limit)
     value = Array.wrap(yield(value) || value) if block_given?
     case mode

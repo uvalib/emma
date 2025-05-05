@@ -184,7 +184,7 @@ class ManifestsTest < ApplicationSystemTestCase
   #
   # @return [void]
   #
-  def fill_cell: (Symbol|String key, untyped value, row: Integer) -> void
+  def fill_cell: (Symbol|String key, untyped value, ?row: Integer) -> void
 
   # Return the path to the CSV import file fixture.
   #

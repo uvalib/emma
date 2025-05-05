@@ -19,9 +19,6 @@ module LookupService::WorldCat::Common
 
   public
 
-  #--
-  # noinspection SpellCheckingInspection
-  #++
   WORLDCAT_SCHEMA = {
     marc:   (WORLDCAT_MARCXML     = 'info:srw/schema/1/marcxml'),
     dc:     (WORLDCAT_DUBLIN_CORE = 'info:srw/schema/1/dc'),

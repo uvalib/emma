@@ -31,9 +31,6 @@ module SubmissionService::Action::Cancel
   #
   # @return [SubmissionService::ControlResponse] The value assigned to @result.
   #
-  #--
-  # noinspection RailsParamDefResolve, RubyMismatchedReturnType
-  #++
   def batch_cancel(request = nil, manifest: nil, job: nil, **opt)
     self.request      = request ||= pre_flight(:stop, manifest)
     self.start_time ||= request[:start_time]  || timestamp

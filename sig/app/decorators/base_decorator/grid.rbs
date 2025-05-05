@@ -265,7 +265,9 @@ module BaseDecorator::Grid
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def grid_head_label: (?(String|nil) text, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+  def grid_head_label
+    : (?nil   text, ?css: String, **untyped opt) { () -> String } -> ActiveSupport::SafeBuffer
+    | (String text, ?css: String, **untyped opt)                  -> ActiveSupport::SafeBuffer
 
   ROW_CONTROLS: String
 

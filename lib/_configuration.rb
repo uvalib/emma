@@ -605,7 +605,6 @@ module Configuration
       break literals << v unless v.is_a?(Symbol) # A literal (non-key) value.
       keys << v # Only include the keys before the first literal value.
     end
-    # noinspection RubyMismatchedArgumentType
     if key.start_with?(root)
       result = found = missing = nil
       [key, *keys].find do |k|

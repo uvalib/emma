@@ -72,9 +72,6 @@ class Model::AsyncCallback
   #   @option opt [ApplicationRecord]  :cb_receiver   Required.
   #   @option opt [Symbol]             :cb_method     Required.
   #
-  #--
-  # noinspection RubyMismatchedVariableType
-  #++
   def initialize(src = nil, meth = nil, callback = nil, **opt)
     __debug_items(binding)
     if src.is_a?(CLASS) || src.is_a?(Hash)

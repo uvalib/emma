@@ -117,7 +117,6 @@ class FileParser::Ocf < FileParser
     doc    &&= Nokogiri.XML(doc)
 
     # Parse <package><metadata> for metadata values.
-    # noinspection RubyMismatchedArgumentType
     (doc&.xpath('//xmlns:metadata')&.children || []).each do |element|
       next unless element.element?
       if element.name.include?('metadata')
@@ -136,7 +135,6 @@ class FileParser::Ocf < FileParser
     end
 
     # Parse <package><manifest> for cover image reference.
-    # noinspection RubyMismatchedArgumentType
     (doc&.xpath('//xmlns:manifest')&.children || []).each do |element|
       next unless element.element?
       next unless (cover = retrieve_cover_image(element, cover_id))

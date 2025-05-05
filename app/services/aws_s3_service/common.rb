@@ -51,9 +51,6 @@ module AwsS3Service::Common
   # === Usage Notes
   # Clears and/or sets @exception as a side-effect.
   #
-  #--
-  # noinspection RubyScope, RubyMismatchedArgumentType
-  #++
   def api(operation, *items, **opt)
     clear_error
     error = nil
@@ -135,7 +132,6 @@ module AwsS3Service::Common
   # @return [String, nil]
   #
   def submission_id(item)
-    # noinspection RubyMismatchedReturnType
     case item
       when Upload, AwsS3::Message::SubmissionRequest
         item.submission_id
@@ -188,7 +184,6 @@ module AwsS3Service::Common
     opt[:meth] ||= calling_method
     super
   rescue => error
-    # noinspection RubyMismatchedReturnType
     set_error(error)
   end
 
@@ -208,7 +203,6 @@ module AwsS3Service::Common
     opt[:meth] ||= calling_method
     super
   rescue => error
-    # noinspection RubyMismatchedReturnType
     set_error(error)
   end
 
@@ -228,7 +222,6 @@ module AwsS3Service::Common
     opt[:meth] ||= calling_method
     super
   rescue => error
-    # noinspection RubyMismatchedReturnType
     set_error(error)
   end
 
@@ -255,7 +248,6 @@ module AwsS3Service::Common
     opt[:meth] ||= calling_method
     super
   rescue => error
-    # noinspection RubyMismatchedReturnType
     set_error(error)
   end
 

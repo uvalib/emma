@@ -347,8 +347,9 @@ module ModelConcern
   # Select records for a specific model record (or all records if specified as
   # '*', 'all', or 'false').
   #
-  # @param [Hash]  opt                May be modified.
-  # @param [Class] model
+  # @param [Hash]   opt               May be modified.
+  # @param [Symbol] id_key
+  # @param [Class]  model
   #
   def filter_by_model!(opt, id_key: nil, model: model_class)
     m_key = model.model_key

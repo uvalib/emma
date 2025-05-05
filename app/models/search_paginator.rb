@@ -38,7 +38,6 @@ class SearchPaginator < Paginator
   #   @param [Hash]               opt     Passed to #next_page_path.
   #
   def finalize(values, as: nil, **opt)
-    # noinspection RubyMismatchedArgumentType
     if values.is_a?(Hash)
       super(values, **opt)
     else

@@ -17,7 +17,6 @@ Rails.application.routes.draw do
 
   root 'home#main'
 
-  # noinspection RailsParamDefResolve
   resource :home, controller: 'home', as: '', only: [] do
     get :main, as: 'home'
     get :welcome
@@ -212,7 +211,6 @@ Rails.application.routes.draw do
   # Health check
   # ===========================================================================
 
-  # noinspection RailsParamDefResolve
   resource :health, controller: 'health', only: [] do
     get :version
     get :check
@@ -420,7 +418,6 @@ end
 
 # Non-functional hints for RubyMine type checking.
 # :nocov:
-# noinspection RubyInstanceMethodNamingConvention
 unless ONLY_FOR_DOCUMENTATION
   def account_index_path(...);                     end
   def account_index_url(...);                      end
@@ -815,7 +812,6 @@ elsif !ONLY_FOR_DOCUMENTATION
   def sign_in_as_url(...);  end
 end
 
-# noinspection RubyInstanceMethodNamingConvention
 if !SHIBBOLETH
   def user_shibboleth_omniauth_authorize_path(...)  = not_implemented
   def user_shibboleth_omniauth_authorize_url(...)   = not_implemented

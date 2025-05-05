@@ -290,7 +290,6 @@ module Record::EmmaIdentification
     id_key  = opt.key?(:id_key)  ? opt[:id_key]  : id_column
     sid_key = opt.key?(:sid_key) ? opt[:sid_key] : sid_column
     if id_key || sid_key
-      # noinspection RubyMismatchedArgumentType
       opt.merge!(item) if item.is_a?(Hash)
       alt = id_key && alt_id_key(opt)
       opt = id_term(item, **opt).merge!(opt.slice(alt))
@@ -483,9 +482,6 @@ module Record::EmmaIdentification
       #
       # @return [String]
       #
-      #--
-      # noinspection RbsMissingTypeSignature
-      #++
       def identifier
         sid_value || super
       end

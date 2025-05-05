@@ -919,7 +919,7 @@ appSetup(MODULE, function() {
                 const files    = event.target.files || [];
                 const filename = (files[0] || {}).name;
                 if (uploader.displayFilename(filename)) {
-                    uploader.fileSelectButton().removeClass(BEST_CHOICE_MARKER)
+                    uploader.fileSelectButton().removeClass(BEST_CHOICE_MARKER);
                     enableSubmit($form);
                 }
             }
@@ -4294,7 +4294,7 @@ appSetup(MODULE, function() {
         }
         const $buttons = fieldDisplayFilterButtons($form);
         const $button  = $buttons.filter(`[value="${mode}"]`);
-        $button.prop("checked", true)
+        $button.prop("checked", true);
         $button.trigger("change");
     }
 

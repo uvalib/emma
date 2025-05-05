@@ -144,9 +144,6 @@ module BaseDecorator::Pagination
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def page_count_and_number(
     list:    nil,
     count:   nil,
@@ -421,7 +418,6 @@ module BaseDecorator::Pagination
     prefix = opt.delete(:prefix)
     suffix = opt.delete(:suffix)
     label  = safe_join([prefix, label, suffix].compact)
-    # noinspection RubyMismatchedArgumentType
     if link
       make_link(path, label, **opt)
     else

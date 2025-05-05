@@ -34,7 +34,6 @@ module BaseCollectionDecorator::List
     index ||= paginator.first_index
     lines =
       object.map.with_index(index) do |item, idx|
-        # noinspection RailsParamDefResolve
         g = item.try(:state_group)
         decorate(item).list_row(**opt, index: idx, row: (row + idx), group: g)
       end

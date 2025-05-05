@@ -139,7 +139,6 @@ module Model
   # @return [nil]                     Only if *fatal* is *false*.
   #
   def self.configuration_fields(type, fatal: true)
-    # noinspection RubyMismatchedArgumentType
     if !(arg = type).is_a?(Symbol) && !(type = model_for(type))
       error = "#{arg}: not a model type"
     elsif fields_table[type]
@@ -186,7 +185,6 @@ module Model
   # @return [Hash{Symbol=>ModelConfig}]
   #
   def self.fields_table
-    # noinspection RbsMissingTypeSignature
     @fields_table ||= {}
   end
 

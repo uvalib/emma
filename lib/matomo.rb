@@ -115,9 +115,6 @@ module Matomo
   #
   # @type [Hash{String=>String}]
   #
-  #--
-  # noinspection RubyStringKeysInHashInspection
-  #++
   LIVE_CATEGORY = {
     'Actions'   => 'General_Actions',
     'Goals'     => 'Goals_Goals',
@@ -130,9 +127,6 @@ module Matomo
   #
   # @type [Hash{String=>String}]
   #
-  #--
-  # noinspection RubyStringKeysInHashInspection
-  #++
   LIVE_SUBCATEGORY = {
     'All Channels'              => 'Referrers_WidgetGetAll',
     'Devices'                   => 'DevicesDetection_Devices',

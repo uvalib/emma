@@ -326,7 +326,6 @@ module Record::Uploadable
     __output "!!! #{__method__}: #{error.class}: #{error.message}"
     raise error
   ensure
-    # noinspection RubyScope, RubyMismatchedReturnType
     io&.close
   end
 

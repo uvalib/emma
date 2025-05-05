@@ -38,7 +38,6 @@ class LookupService::Data
     elsif !src.is_a?(LookupService::Data::Item)
       Log.warn("#{self.class}: #{src.class}: unexpected")
     end
-    # noinspection RubyMismatchedVariableType, RubyMismatchedArgumentType
     @table      = tab || make_table(src)
     @diagnostic = dia.presence
   end
@@ -129,7 +128,6 @@ class LookupService::Data
   # @return [LookupService::Data]
   #
   def self.wrap(item)
-    # noinspection RubyMismatchedReturnType
     item.is_a?(self) ? item : new(item)
   end
 
@@ -140,7 +138,6 @@ end
 #
 class LookupService::Data::Item < Search::Record::MetadataRecord
 
-  # noinspection RubyMismatchedArgumentType
   schema_from superclass
 
   # ===========================================================================
@@ -287,7 +284,6 @@ class LookupService::Data::Item < Search::Record::MetadataRecord
   # @return [LookupService::Data::Item]
   #
   def self.wrap(item)
-    # noinspection RubyMismatchedReturnType
     item.is_a?(self) ? item : new(item)
   end
 

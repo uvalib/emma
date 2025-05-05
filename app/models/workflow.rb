@@ -120,7 +120,6 @@ module Workflow::Base::Roles
   def set_wf_user(user = nil)
     role = set_wf_role(user)
     user = role.to_s if user.nil? || user.is_a?(Symbol)
-    # noinspection RubyMismatchedReturnType
     @wf_user = user
   end
 
@@ -866,7 +865,6 @@ module Workflow::Base::States
   def state_object(state = nil)
     state = state.to_sym       if state.is_a?(String)
     state = spec.states[state] if state.is_a?(Symbol)
-    # noinspection RubyMismatchedReturnType
     state || current_state
   end
 

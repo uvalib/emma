@@ -76,9 +76,6 @@ class Field::Type
   # @param [any, nil]            value
   # @param [Hash]                opt    To #option if present.
   #
-  #--
-  # noinspection RubyMismatchedVariableType
-  #++
   def initialize(src, field = nil, prop: nil, model: nil, value: nil, **opt)
     @base  = src
     @range = nil
@@ -117,7 +114,6 @@ class Field::Type
   def content(labels: false)
     res = value.presence || range
     res = Array.wrap(res)
-    # noinspection RailsParamDefResolve
     res = res.map { labels[_1] || _1 } if labels &&= base.try(:pairs)
     (mode == :single) ? res.first : res
   end

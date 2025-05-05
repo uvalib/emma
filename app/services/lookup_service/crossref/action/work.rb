@@ -20,7 +20,6 @@ module LookupService::Crossref::Action::Work
   public
 
   # @private
-  # noinspection SpellCheckingInspection
   QUERY_PREFIX = {
     affiliation:              'affiliation',
     author:                   'author',

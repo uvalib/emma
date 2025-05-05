@@ -25,7 +25,6 @@ module IaDownloadConcern
   # @return [IaDownloadService]
   #
   def ia_download_api
-    # noinspection RubyMismatchedReturnType
     api_service(IaDownloadService)
   end
 

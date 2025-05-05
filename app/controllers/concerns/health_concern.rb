@@ -247,9 +247,6 @@ module HealthConcern
   #
   # @return [HealthStatus]
   #
-  #--
-  # noinspection RubyScope, RubyMismatchedArgumentType
-  #++
   def status_report(subsystem, entry = nil)
     entry ||= HEALTH_CHECK[subsystem] || INVALID_HEALTH_CHECK
     lockout = RunState.unavailable?

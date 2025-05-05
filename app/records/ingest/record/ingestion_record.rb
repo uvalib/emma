@@ -47,7 +47,6 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
   # @raise [Record::SubmitError]      If metadata was malformed.
   #
   def initialize(src, opt = nil)
-    # noinspection RailsParamDefResolve
     if (data = src.try(:emma_metadata) || src.try(:dig, :emma_metadata))
       # === Required fields ===
       data[:emma_repository]         ||= src[:repository]

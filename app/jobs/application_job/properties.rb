@@ -89,7 +89,6 @@ module ApplicationJob::Properties
   # @type [Symbol, nil]
   #
   def queue_key_for(val)
-    # noinspection RailsParamDefResolve
     case val
       when Integer then QUEUE_PRIORITY.invert[val]
       else              val.try(:queue_key) || val.try(:to_sym)
@@ -102,9 +101,6 @@ module ApplicationJob::Properties
   #
   # @type [Integer, nil]
   #
-  #--
-  # noinspection RailsParamDefResolve
-  #++
   def priority_for(val)
     return val                                if val.nil? || val.is_a?(Integer)
     return QUEUE_PRIORITY[queue_key_for(val)] if val.respond_to?(:to_sym)
@@ -191,7 +187,6 @@ module ApplicationJob::Properties
     # @type [Integer]
     #
     def base_priority
-      # noinspection RubyMismatchedReturnType
       priority.is_a?(Integer) ? priority : QUEUE_PRIORITY[queue_key]
     end
 

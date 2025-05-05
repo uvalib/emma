@@ -126,7 +126,6 @@ module SessionConcern
     user     = user[:uid] || user['uid'] if user.is_a?(Hash)
     user     = user.account              if user.respond_to?(:account)
     user     = user.to_s.presence || config_term(:session, :unknown_user)
-    # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
     config_page(:user_sessions, action, status, user: user)
   end
 
@@ -246,9 +245,6 @@ module SessionConcern
   #
   # @return [any, nil]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def abbreviate_param(item, p_max: MAX_LAST_OP_PARAM)
     item = item.to_s if item.is_a?(Symbol)
     case item
@@ -275,7 +271,6 @@ module SessionConcern
   def escaped_value(item)
     result = item.is_a?(Symbol) ? item.to_s : item
     result = result.to_json unless result.is_a?(String)
-    # noinspection RubyMismatchedArgumentType
     Rack::Utils.escape(result)
   end
 
@@ -438,9 +433,6 @@ module SessionConcern
   # block, whereas :api_error_message shows the ApiService::Error that is
   # created in ApiService::Common#api.
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def session_update
     error = nil
     yield
@@ -520,9 +512,6 @@ module SessionConcern
       #
       # @see UserConcern#role_failure
       #
-      #--
-      # noinspection RbsMissingTypeSignature
-      #++
       def require_no_authentication
         super
         flash_message = session.delete('app.devise.failure.message')

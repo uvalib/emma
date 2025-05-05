@@ -206,7 +206,7 @@ class EnrollmentDecorator < BaseDecorator
         v_opt[:id]                = l_opt[:for] = "#{v_id}-#{subfield}"
         v_opt[:'aria-labelledby'] = l_opt[:id]  = "#{l_id}-#{subfield}"
         v_opt[:'data-subfield']   = l_opt[:'data-subfield'] = subfield
-        # noinspection RubyMismatchedArgumentType
+
         label = render_form_pair_label(k, **prepend_css(l_opt, row_cls))
         input = value[k]
         input = render_form_input(name, input, **prepend_css(v_opt, row_cls))

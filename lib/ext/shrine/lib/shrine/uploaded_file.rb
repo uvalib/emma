@@ -134,7 +134,6 @@ class Shrine
       #
       def open(**options)
         __ext_debug { options }
-        # noinspection RubyMismatchedReturnType
         super
       end
 

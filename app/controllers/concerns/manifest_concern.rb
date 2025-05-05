@@ -37,7 +37,6 @@ module ManifestConcern
   # @return [Manifest]              A fresh record unless *item* is a Manifest.
   #
   def find_manifest(item = nil, **opt)
-    # noinspection RubyMismatchedReturnType
     find_record(item, **opt)
   end
 
@@ -79,9 +78,6 @@ module ManifestConcern
   # @yieldparam [Manifest] record
   # @yieldreturn [void]
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def find_record(item = nil, **opt, &blk)
     return super if blk
     authorized_session
@@ -103,9 +99,6 @@ module ManifestConcern
   # @yieldparam [Hash] attr           Supplied attributes for the new record.
   # @yieldreturn [void]
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def new_record(prm = nil, **opt, &blk)
     return super if blk
     authorized_session
@@ -131,9 +124,6 @@ module ManifestConcern
   # @yieldparam [Hash] attr           Supplied attributes for the new record.
   # @yieldreturn [void]
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def create_record(prm = nil, fatal: true, **opt, &blk)
     return super if blk
     authorized_session
@@ -154,9 +144,6 @@ module ManifestConcern
   # @yieldparam [Manifest] record     May be altered by the block.
   # @yieldreturn [void]               Block not called if *record* is *nil*.
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def edit_record(item = nil, **opt, &blk)
     return super if blk
     super do |record|
@@ -182,9 +169,6 @@ module ManifestConcern
   # @yieldparam [Hash]     attr       New field(s) to be assigned to *record*.
   # @yieldreturn [void]               Block not called if *record* is *nil*.
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def update_record(item = nil, fatal: true, **opt, &blk)
     return super if blk
     super do |_record, attr|
@@ -231,9 +215,6 @@ module ManifestConcern
   # @yieldparam [Manifest] record
   # @yieldreturn [String,nil]         Error message if *record* unacceptable.
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def destroy_records(items = nil, fatal: true, **opt, &blk)
     return super if blk
     authorized_session
@@ -428,7 +409,6 @@ module ManifestConcern
   #
   def pagination_setup(paginator: Manifest::Paginator, **opt)
     opt[:id] ||= identifier
-    # noinspection RubyMismatchedReturnType
     super
   end
 

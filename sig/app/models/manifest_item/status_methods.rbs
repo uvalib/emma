@@ -11,8 +11,8 @@ module ManifestItem::StatusMethods
   # @return [ManifestItem, Hash]
   #
   def update_status!
-    : ( (symHash)          item, file: bool|nil, data: bool|nil, ready: bool|nil, overwrite: bool, **untyped added) -> symHash
-    | (?(ManifestItem|nil) item, file: bool|nil, data: bool|nil, ready: bool|nil, overwrite: bool, **untyped added) -> ManifestItem
+    : (?(ManifestItem|nil) item, ?file: bool|nil, ?data: bool|nil, ?ready: bool|nil, ?overwrite: bool, **untyped added) -> ManifestItem
+    | ( (symHash)          item, ?file: bool|nil, ?data: bool|nil, ?ready: bool|nil, ?overwrite: bool, **untyped added) -> symHash
 
   # @private
   UPDATE_STATUS_OPT: symArray

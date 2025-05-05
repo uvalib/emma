@@ -406,7 +406,6 @@ class Search::Record::TitleRecord < Search::Api::Record
             value.map { make_comparable(_1) }.compact_blank.sort
           end
         else
-          # noinspection RubyMismatchedReturnType
           if id_field?(field)
             value
           else
@@ -696,7 +695,6 @@ class Search::Record::TitleRecord < Search::Api::Record
       def <=>(other)
         other_min = other.try(:minimum) || other.try(:[], :min) || 0
         other_max = other.try(:maximum) || other.try(:[], :max) || other_min
-        # noinspection RubyMismatchedReturnType
         (minimum <=> other_min).nonzero? || (maximum <=> other_max)
       end
 
@@ -727,9 +725,6 @@ class Search::Record::TitleRecord < Search::Api::Record
     #
     # @param [String, Integer, Hash, nil] term
     #
-    #--
-    # noinspection RubyMismatchedArgumentType
-    #++
     def initialize(term = nil)
       @level = {}
       case term
@@ -859,7 +854,6 @@ class Search::Record::TitleRecord < Search::Api::Record
       other = Number.new(other) if other && !other.is_a?(Number)
       other_min, other_max = other&.number_range || [0, 0]
       self_min,  self_max  = number_range
-      # noinspection RubyMismatchedReturnType
       (self_min <=> other_min)&.nonzero? || (self_max <=> other_max)
     end
 
@@ -898,11 +892,9 @@ class Search::Record::TitleRecord < Search::Api::Record
   def initialize(src, opt = nil)
     opt = opt&.dup || {}
     @canonical = opt.delete(:canonical).present?
-    # noinspection RubyMismatchedVariableType
     @hierarchy = @exemplar = nil
     super(nil, **opt)
     initialize_attributes
-    # noinspection RubyMismatchedArgumentType
     self.records = copy_records(src)
     @exemplar    = make_exemplar
   end
@@ -1123,7 +1115,6 @@ class Search::Record::TitleRecord < Search::Api::Record
   #   @return [Hash, Array, any] Same type, possibly a modified copy.
   #
   def self.symbolize_values(item)
-    # noinspection RubyMismatchedReturnType
     case item
       when Hash   then item.transform_values { symbolize_values(_1) }
       when Array  then item.map { symbolize_values(_1) }

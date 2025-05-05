@@ -119,7 +119,6 @@ module Emma
           message, progname = [progname, nil]
         end
       end
-      # noinspection RubyMismatchedReturnType
       filter_out?(message) or super
     end
 
@@ -137,6 +136,7 @@ module Emma
     # return [any, nil]
     #
     def silence(severity = Logger::ERROR)
+      # noinspection RubyArgCount (RubyMine analyzer fails here)
       ::Logger.suppressed? ? yield(self) : super
     end
 

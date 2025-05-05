@@ -153,7 +153,7 @@ class AccountController < ApplicationController
   #
   # @see AccountConcern#get_accounts
   #
-  def list_items: (?(symHash|nil) prm, for_org: bool) -> symHash
+  def list_items: (?(symHash|nil) prm, ?for_org: bool) -> symHash
 
   # === GET /account/show_current
   #

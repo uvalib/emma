@@ -33,7 +33,6 @@ module FormHelper
         hidden_field_tag("#{k}[]", value, id: "#{id}-#{index}")
       }.join(separator).html_safe
     else
-      # noinspection RubyMismatchedReturnType
       hidden_field_tag(k, v, id: id)
     end
   end

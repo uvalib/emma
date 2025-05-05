@@ -24,7 +24,6 @@ module SubmissionConcern
   # @return [SubmissionService]
   #
   def submission_api
-    # noinspection RubyMismatchedReturnType
     api_service(SubmissionService)
   end
 

@@ -103,9 +103,6 @@ module LayoutHelper::SearchBar
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                             Search unavailable for *target*.
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def search_bar_container(
     target:   nil,
     fields:   nil,
@@ -349,7 +346,6 @@ module LayoutHelper::SearchBar
   # @return [nil]                       No non-empty value was found.
   #
   def search_input_field(ctrlr = nil, **opt)
-    # noinspection RubyMismatchedReturnType
     opt[:field]&.to_sym || search_input_type(ctrlr, **opt)[:field]
   end
 
@@ -362,7 +358,6 @@ module LayoutHelper::SearchBar
   # @return [nil]                       No non-empty value was found.
   #
   def search_input_label(ctrlr = nil, **opt)
-    # noinspection RubyMismatchedReturnType
     search_input_type(ctrlr, **opt)[:label]
   end
 
@@ -375,7 +370,6 @@ module LayoutHelper::SearchBar
   # @return [nil]                       No non-empty value was found.
   #
   def search_input_placeholder(ctrlr = nil, **opt)
-    # noinspection RubyMismatchedReturnType
     search_input_type(ctrlr, **opt)[:placeholder]
   end
 
@@ -421,7 +415,6 @@ module LayoutHelper::SearchBar
   #
   def search_input_target(ctrlr = nil, target: nil, **)
     ctrlr = search_target(ctrlr || target)
-    # noinspection RubyMismatchedReturnType
     ctrlr if SEARCH_BAR.dig(ctrlr, :enabled)
   end
 

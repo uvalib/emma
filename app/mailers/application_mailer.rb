@@ -62,7 +62,6 @@ class ApplicationMailer < ActionMailer::Base
   #
   def fetch_message(src, **opt)
     src = src[:body] if src.is_a?(Hash)
-    # noinspection RubyMismatchedReturnType, RubyMismatchedArgumentType
     case (src = src.presence)
       when nil                        then return
       when /\A *(https?:[^\n]+) *\z/  then fetch_remote_message($1, **opt)
@@ -149,7 +148,6 @@ class ApplicationMailer < ActionMailer::Base
       msg  = msg.to_s.presence
       html = html?(msg)
     end
-    # noinspection RubyMismatchedArgumentType
     case
       when html then process_html(msg, **opt)
       when msg  then process_text(msg, **opt)
@@ -202,8 +200,9 @@ class ApplicationMailer < ActionMailer::Base
   # @return [Hash]
   #
   def process_text(msg, **)
-    result = {}
+    # noinspection RubyArgCount (RubyMine analyzer fails here)
     lines  = msg.is_a?(Array) ? msg.dup : msg.split("\n")
+    result = {}
 
     # Look for overrides of mail options (e.g. "Subject: MAIL SUBJECT LINE").
     while lines.first&.match(/^([a-z_-]+):\s*([^\n]*)$/i) do
@@ -443,7 +442,6 @@ class ApplicationMailer < ActionMailer::Base
     options = { partial: options } unless options.is_a?(Hash)
     options = options.merge(formats: %i[html])
     content = capture { render(options, locals, &block) }
-    # noinspection RubyMismatchedReturnType
     as_text(content)
   end
 

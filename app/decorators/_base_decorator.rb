@@ -112,7 +112,6 @@ class BaseDecorator < Draper::Decorator
       id ||= (item if item.is_a?(Array))
       id ||= object_class.try_key(item, :id)
       id ||= try(:object).try(:id)
-      # noinspection RubyMismatchedReturnType
       id.is_a?(Array) ? id.join(',') : id
     end
 
@@ -310,7 +309,6 @@ class BaseDecorator < Draper::Decorator
     # create a new object as well (which can lead to unexpected results).
     #
     def dup
-      # noinspection RubyMismatchedReturnType
       self.class.new(object.presence)
     end
 
@@ -319,7 +317,6 @@ class BaseDecorator < Draper::Decorator
     # create a new object as well (which can lead to unexpected results).
     #
     def deep_dup
-      # noinspection RubyMismatchedReturnType
       dup
     end
 
@@ -470,7 +467,6 @@ class BaseDecorator < Draper::Decorator
     def back_path(opt = nil, fallback: 'javascript:history.back();')
       opt ||= request_values(:referrer, :url, :fullpath)
       ref = referrer(opt).presence
-      # noinspection RubyMismatchedArgumentType
       if ref && same_request?(opt)
         uri = URI(ref)
         uri.path = '/' + uri.path.delete_prefix('/').split('/').shift
@@ -581,7 +577,6 @@ class BaseDecorator < Draper::Decorator
     #
     def page_value(value, default: true, **opt)
       action = opt.delete(:action) || context[:action]
-      # noinspection RubyMismatchedArgumentType
       value  = action_config(action)&.dig(value) if value.is_a?(Symbol)
       if value
         interpolate(value, object, **opt)
@@ -645,7 +640,6 @@ class BaseDecorator < Draper::Decorator
     # @return [Object]
     #
     def null_object
-      # noinspection RubyMismatchedArgumentType
       object_class.new(nil)
     end
 
@@ -664,7 +658,6 @@ class BaseDecorator < Draper::Decorator
     # @return [BaseDecorator]
     #
     def decorate(item, **opt)
-      # noinspection RubyMismatchedArgumentType
       generate(item, force: true, **opt)
     end
 
@@ -682,8 +675,7 @@ class BaseDecorator < Draper::Decorator
       sub = ObjectClassMap.get(item) || OtherClassMap.get(item)
       raise "No decorator for #{item.class}" unless sub || force || item.nil?
       opt[:from_internal] = true
-      # noinspection RubyMismatchedArgumentType, RubyArgCount
-      # noinspection RubyMismatchedReturnType
+      # noinspection RubyArgCount
       sub&.new(item, **opt) || new(item, **opt)
     end
 
@@ -710,7 +702,6 @@ class BaseDecorator < Draper::Decorator
         __output "#{ldr}.#{m} ->\t#{loc&.join(':')}"
       end
     rescue => error
-      # noinspection RubyScope
       __output "#{typ} METHOD SKIPPING #{self} - #{error}"
     end
 
@@ -722,7 +713,6 @@ class BaseDecorator < Draper::Decorator
 
     def self.included(base)
       if base.is_a?(Module) && (base.to_s.demodulize == 'SharedClassMethods')
-        # noinspection RbsMissingTypeSignature
         base.module_eval do
 
           # Override BaseDecorator::SharedClassMethods#null_object in order to
@@ -778,7 +768,6 @@ class BaseDecorator
     end
     ctx = initialize_context(action: DEFAULT_ACTION, **opt)
     obj = null_object if obj.nil?
-    # noinspection RubyMismatchedArgumentType
     super(obj, context: ctx)
   end
 
@@ -840,7 +829,6 @@ class BaseDecorator
       mod, obj = args
     end
 
-    # noinspection RubyMismatchedArgumentType
     set_model_type(mod)
     set_object_class(obj, *other)&.include(Draper::Decoratable)
 
@@ -866,9 +854,6 @@ class BaseDecorator
   #
   # @return [Symbol, nil]
   #
-  #--
-  # noinspection RailsParamDefResolve, RubyMismatchedVariableType
-  #++
   def self.set_model_type(mt)
     raise 'Nil model_type' unless mt
     ct = mt.try(:ctrlr_type) || mt.try(:controller)&.name || mt.try(:name)
@@ -888,9 +873,6 @@ class BaseDecorator
   #
   # @return [Class, nil]
   #
-  #--
-  # noinspection RubyResolve, RubyMismatchedVariableType
-  #++
   def self.set_object_class(obj, *other)
     meth          = "BaseDecorator.#{__method__}"
     @object_class = obj = to_class(obj, meth) or raise 'FATAL'
@@ -1145,9 +1127,6 @@ class BaseDecorator
   #
   # @return [any, nil]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def self.fetch_property(item)
     return fetch_properties(item) if item.is_a?(Hash)
     item = safe_const_get(item)   if item.is_a?(Symbol)

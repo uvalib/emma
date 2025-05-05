@@ -320,16 +320,12 @@ class DownloadController < ApplicationController
   #
   # @return [Hash]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def list_items(prm = nil, for_org: false, for_user: false)
     prm ||= paginator.initial_parameters
     current_org!(prm)  if for_org
     current_user!(prm) if for_user
     items = find_or_match_records(**prm)
     paginator.finalize(items, **prm)
-    # noinspection RubyMismatchedReturnType
     prm
   end
 

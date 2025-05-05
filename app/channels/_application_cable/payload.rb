@@ -89,7 +89,6 @@ module ApplicationCable::Payload
     store ||= {}
     payload = payload_normalize(opt, except: []).extract!(*template.keys)
     if values.is_a?(store.class)
-      # noinspection RubyMismatchedArgumentType
       store.update(values)
     else
       store.update(template)

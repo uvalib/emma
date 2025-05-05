@@ -47,7 +47,7 @@ class ConfigEntry[U] < Hash[Symbol,U]
 
   def value_type: () -> Class?
 
-  def value_type?: () -> bool
+  def value_type?: (*untyped _ignored) -> bool
 end
 
 # A configuration entry for a field for a specific controller/action.

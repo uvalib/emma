@@ -63,7 +63,6 @@ module BaseDecorator::Hierarchy
     # Get a line for each metadata field/pair and plus interstitial content.
     lines = item_lines(hierarchy, opt)
     trace_attrs!(opt, __method__)
-    # noinspection RubyMismatchedArgumentType
     lines.map! { _1.is_a?(Hash) ? render_field(_1, opt) : ERB::Util.h(_1) }
     lines.unshift(nil).join(separator).html_safe
   end

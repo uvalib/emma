@@ -145,6 +145,6 @@ module FileFormat::Xml
   #   @param [Nokogiri::XML::Element] inner
   #
   def __debug_parse
-    : (Symbol meth, (Nokogiri::XML::NodeSet|Nokogiri::XML::Element) element, ?Nokogiri::XML::Element inner) -> nil
-    | (             (Nokogiri::XML::NodeSet|Nokogiri::XML::Element) element, ?Nokogiri::XML::Element inner) -> nil
+    : (             (Nokogiri::XML::NodeSet|Nokogiri::XML::Element) element, ?Nokogiri::XML::Element inner) -> nil
+    | (Symbol meth, (Nokogiri::XML::NodeSet|Nokogiri::XML::Element) element, ?Nokogiri::XML::Element inner) -> nil
 end

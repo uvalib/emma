@@ -264,7 +264,6 @@ module SysHelper::Settings
   # @return [ActiveSupport::SafeBuffer]
   #
   def app_origin_marker(src, css: '.origin', **opt)
-    # noinspection RubyMismatchedReturnType
     return src       if src.is_a?(ActiveSupport::SafeBuffer)
     return html_span if src.is_a?(FalseClass)
     src = nil        if src.is_a?(TrueClass)

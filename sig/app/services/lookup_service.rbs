@@ -91,6 +91,8 @@ class LookupService
   #
   def self.service_table: () -> Hash[Class,symArray]
 
+  self.@service_table: Hash[Class,symArray]
+
   # Access remote services asynchronously.
   #
   # @param [LookupService::Request] request

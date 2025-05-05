@@ -31,9 +31,6 @@ module SubmissionService::Action::Control
   #
   # @return [SubmissionService::ControlResponse] The value assigned to @result.
   #
-  #--
-  # noinspection RailsParamDefResolve, RubyMismatchedReturnType
-  #++
   def batch_pause(request = nil, manifest: nil, job: nil, **opt)
     self.request      = request ||= pre_flight(:pause, manifest)
     self.start_time ||= request[:start_time]  || timestamp
@@ -57,9 +54,6 @@ module SubmissionService::Action::Control
   #
   # @return [SubmissionService::ControlResponse] The value assigned to @result.
   #
-  #--
-  # noinspection RailsParamDefResolve, RubyMismatchedReturnType
-  #++
   def batch_resume(request = nil, manifest: nil, job: nil, **opt)
     self.request      = request ||= pre_flight(:resume, manifest)
     self.start_time ||= request[:start_time]  || timestamp

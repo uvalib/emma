@@ -102,7 +102,7 @@ module SysHelper::Settings
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def app_origin_marker: (Symbol|String|bool|nil src, css: String, **untyped opt) -> ActiveSupport::SafeBuffer
+  def app_origin_marker: (Symbol|String|bool|nil src, ?css: String, **untyped opt) -> ActiveSupport::SafeBuffer
 
   private
 

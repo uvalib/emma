@@ -107,7 +107,6 @@ module SerializationConcern
     items.try(:map!) { |v| { item_name => v } }       if item_name
     items = { properties: prop, list_name => items }  if list_name
     items = { wrap_name => items }                    if wrap_name
-    # noinspection RubyMismatchedReturnType
     items
   end
 
@@ -126,7 +125,6 @@ module SerializationConcern
       else                        entry = item
     end
     name ||= :item unless entry.is_a?(Hash)
-    # noinspection RubyMismatchedReturnType
     name ? { name.to_sym => entry } : entry
   end
 

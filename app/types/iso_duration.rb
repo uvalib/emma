@@ -76,7 +76,6 @@ class IsoDuration < ScalarType
     def normalize(v)
       v = clean(v)
       v = nil if v.is_a?(String) && !MATCH_PATTERN.any? { |_, p| v.match?(p) }
-      # noinspection RubyMismatchedArgumentType
       v.is_a?(ActiveSupport::Duration) ? from_duration(v) : v.to_s
     end
 

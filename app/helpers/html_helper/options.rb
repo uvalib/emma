@@ -56,7 +56,6 @@ module HtmlHelper::Options
   #
   def merge_html_options(html_opt, *args)
     html_opt = html_opt&.dup || {}
-    # noinspection RubyMismatchedArgumentType
     merge_html_options!(html_opt, *args)
   end
 

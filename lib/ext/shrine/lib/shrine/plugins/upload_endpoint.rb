@@ -29,9 +29,6 @@ class Shrine
     #
     # @see file:javascripts/shared/uploader.js *onFileUploadSuccess()*
     #
-    #--
-    # noinspection RubyMismatchedReturnType
-    #++
     def make_response(uploaded_file, request)
       return super if @rack_response
       body = uploaded_file.data.merge(emma_data: uploaded_file.emma_metadata)

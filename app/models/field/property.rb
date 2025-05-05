@@ -97,7 +97,6 @@ module Field::Property
     prop = prop.to_s.titleize            if prop.is_a?(Symbol)
     prop = { label: prop }               if prop.is_a?(String)
     prop = {}                            unless prop.is_a?(Hash)
-    # noinspection RubyMismatchedArgumentType
     prop = { field: field }.merge!(prop) if field && !prop.key?(:field)
     prop = prop.merge(field: field)      if field && (prop[:field] != field)
     prop.map { |item, value|

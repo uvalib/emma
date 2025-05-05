@@ -78,7 +78,6 @@ module CssHelper
   #   @return [Hash]
   #
   def append_css(html_opt, *classes)
-    # noinspection RubyMismatchedArgumentType
     if html_opt.is_a?(Hash)
       html_opt = dup_options(html_opt)
       append_css!(html_opt, *classes)
@@ -126,7 +125,6 @@ module CssHelper
   #   @return [Hash]
   #
   def prepend_css(html_opt, *classes)
-    # noinspection RubyMismatchedArgumentType
     if html_opt.is_a?(Hash)
       html_opt = dup_options(html_opt)
       prepend_css!(html_opt, *classes)
@@ -211,7 +209,6 @@ module CssHelper
   # @return [Hash]
   #
   def dup_options(html_opt)
-    # noinspection RubyMismatchedReturnType
     html_opt.presence ? deep_dup_options(html_opt) : {}
   end
 

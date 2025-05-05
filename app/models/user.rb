@@ -266,9 +266,6 @@ class User < ApplicationRecord
 
   # Indicate whether the user has the :developer role.
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def developer?
     @developer = has_role?(:developer) if @developer.nil?
     @developer
@@ -276,9 +273,6 @@ class User < ApplicationRecord
 
   # Indicate whether the user has the :administrator role.
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def administrator?
     @administrator = has_role?(:administrator) if @administrator.nil?
     @administrator
@@ -286,9 +280,6 @@ class User < ApplicationRecord
 
   # Indicate whether the user has the :manager role.
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def manager?
     @manager = has_role?(:manager) if @manager.nil?
     @manager
@@ -333,7 +324,6 @@ class User < ApplicationRecord
   # @type [Hash{String=>Symbol}]
   #
   def self.test_users
-    # noinspection RbsMissingTypeSignature
     @test_users ||=
       begin
         test_names = %w[test\\_%@%]
@@ -382,7 +372,6 @@ class User < ApplicationRecord
   def self.instance_for(v)
     v &&= try_key(v, model_key) || v
     return v if v.is_a?(self) || v.nil?
-    # noinspection RubyMismatchedReturnType
     case (v = uid(v) || v)
       when Integer then find_by(id: v)
       when String  then where(email: v).or(where(preferred_email: v)).first

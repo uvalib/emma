@@ -48,11 +48,9 @@ module HtmlHelper::Symbols
     html = text.is_a?(ActiveSupport::SafeBuffer)
     text = text.to_s unless text.is_a?(String)
 
-    # noinspection RubyMismatchedReturnType
     return html ? text : ERB::Util.h(text) unless text.match?(SYMBOLS)
 
     if html && (parts = text.scan(FOR_ELEMENTS)).present?
-      # noinspection RubyMismatchedArgumentType
       parts.flat_map {
         part = []
         part << _1.presence && hide_symbols(_1)           # leading text

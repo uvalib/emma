@@ -124,7 +124,6 @@ module PanelHelper
     panel = content || yield
     panel = html_div(panel, **opt)
 
-    # noinspection RubyMismatchedReturnType
     label << panel
   end
 

@@ -80,7 +80,6 @@ module Emma::Json
       else
         raise "#{arg.class} unexpected"
     end
-    # noinspection RubyMismatchedReturnType
     case res
       when Hash  then str ? res.deep_stringify_keys : res
       when Array then res.map { str && _1.try(:deep_stringify_keys) || _1 }

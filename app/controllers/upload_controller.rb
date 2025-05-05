@@ -420,9 +420,6 @@ class UploadController < ApplicationController
   #
   # @return [Hash]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def list_items(prm = nil, for_org: false, for_user: false)
     prm ||= paginator.initial_parameters
     current_org!(prm)  if for_org
@@ -432,7 +429,6 @@ class UploadController < ApplicationController
     paginator.finalize(items, **prm)
     items = find_or_match_records(groups: :only, **prm) if prm.delete(:group)
     @group_counts = items[:groups]
-    # noinspection RubyMismatchedReturnType
     prm
   end
 
@@ -680,7 +676,6 @@ class UploadController < ApplicationController
     __log_activity
     __debug_route
     @item = wf_single(event: :cancel)
-    # noinspection RubyMismatchedArgumentType
     if request.get?
       redirect_to(params[:redirect] || upload_index_path)
     else

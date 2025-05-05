@@ -67,11 +67,9 @@ class DataController < ApplicationController
     __log_activity
     __debug_route
     default_format(:html)
-    # noinspection RubyMismatchedArgumentType
     table = params[:id] ? array_param(params[:id]) : data_params[:tables]
     return redirect_to action: :index                if table.nil?
     return redirect_to action: :index, tables: table if table.many?
-    # noinspection RubyMismatchedVariableType
     @name = table.first
     @item = get_table_records(@name)
     respond_to(request.format)

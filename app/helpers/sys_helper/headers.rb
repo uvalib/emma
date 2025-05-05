@@ -58,7 +58,6 @@ module SysHelper::Headers
   # @return [Array<String>]
   #
   def request_headers_names
-    # noinspection SpellCheckingInspection
     @request_headers_names ||=
       header_names { |a|
 

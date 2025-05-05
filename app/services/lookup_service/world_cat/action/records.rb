@@ -43,7 +43,6 @@ module LookupService::WorldCat::Action::Records
       terms[:limit] ||= LimitTerms.new
       terms[:limit].add(:lang_code, 'eng')
     end
-    # noinspection RubyMismatchedArgumentType
     opt[:query] = make_query(terms)
 
     opt = get_parameters(__method__, **opt)
@@ -73,7 +72,6 @@ module LookupService::WorldCat::Action::Records
     end
   end
     .tap do |method|
-      # noinspection SpellCheckingInspection
       add_api method => {
         alias: {
           limit:          :maximumRecords,
@@ -113,7 +111,6 @@ module LookupService::WorldCat::Action::Records
     api_return(Lookup::WorldCat::Message::Oclc)
   end
     .tap do |method|
-      # noinspection SpellCheckingInspection
       add_api method => {
         optional: {
           recordSchema: String,
@@ -141,7 +138,6 @@ module LookupService::WorldCat::Action::Records
     api_return(Lookup::WorldCat::Message::Isbn)
   end
     .tap do |method|
-      # noinspection SpellCheckingInspection
       add_api method => {
         optional: {
           recordSchema: String,
@@ -169,7 +165,6 @@ module LookupService::WorldCat::Action::Records
     api_return(Lookup::WorldCat::Message::Issn)
   end
     .tap do |method|
-      # noinspection SpellCheckingInspection
       add_api method => {
         optional: {
           recordSchema: String,
@@ -204,7 +199,6 @@ module LookupService::WorldCat::Action::Records
     api_return(Lookup::WorldCat::Message::Lccn)
   end
     .tap do |method|
-      # noinspection SpellCheckingInspection
       add_api method => {
         optional: {
           recordSchema: String,
@@ -237,7 +231,6 @@ module LookupService::WorldCat::Action::Records
     api_return(Lookup::WorldCat::Message::OpenSearch)
   end
     .tap do |method|
-      # noinspection SpellCheckingInspection
       add_api method => {
         alias: {
           limit:          :count,
@@ -478,9 +471,6 @@ module LookupService::WorldCat::Action::Records
 
   # Terms which limit search results.
   #
-  #--
-  # noinspection SpellCheckingInspection
-  #++
   class LimitTerms < Terms
 
     # Method keyword parameter mapped to prefix (to be appended to "srw.") for
@@ -519,9 +509,6 @@ module LookupService::WorldCat::Action::Records
 
   # Terms which specify search results.
   #
-  #--
-  # noinspection SpellCheckingInspection
-  #++
   class QueryTerms < Terms
 
     # Method keyword parameter mapped to prefix (to be appended to "srw.") for
@@ -599,6 +586,7 @@ module LookupService::WorldCat::Action::Records
     # @return [self, nil]
     #
     def add_terms(prefix, item)
+      # noinspection RubyArgCount (RubyMine analyzer fails here)
       super do |term|
         pre, val = term.split(':', 2)
         ID_PREFIXES.include?(pre.to_sym) ? val : term

@@ -51,7 +51,6 @@ module Search::Shared::ScoreMethods
   #
   def total_score(precision: nil, **opt)
     result = get_scores(**opt).values.compact.sum
-    # noinspection RubyMismatchedArgumentType
     precision ? result.round(precision) : result
   end
 
@@ -247,7 +246,6 @@ module Search::Shared::ScoreMethods
     original   = no_break&.join
     substitute = no_break&.map&.with_index(2) { |_, i| i.chr }&.join
 
-    # noinspection RubyMismatchedArgumentType
     value = send(value) if value.is_a?(Symbol)
     words = Array.wrap(value).map(&:to_s)
     words.map! { _1.gsub(/'s(\W|$)/i, '\1') }                     # NOTE: [1]

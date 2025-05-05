@@ -271,9 +271,6 @@ module HtmlHelper::Tags
   #
   # @see ActionView::Helpers::TagHelper#content_tag
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def html_tag(tag, *args, separator: "\n", **opt)
     lvl = positive(tag)
     tag = nil if tag.is_a?(Numeric)

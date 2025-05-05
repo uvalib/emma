@@ -50,7 +50,6 @@ module Lookup::RemoteService::Shared::IdentifierMethods
 
   # @private
   # @type [Hash{Symbol=>String}]
-  # noinspection SpellCheckingInspection
   ID_SORT = {
     isbn_13: '   a',
     isbn_10: '   b',

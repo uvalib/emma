@@ -128,7 +128,6 @@ module BaseDecorator::Form
       opt[:field] = field
       opt[:prop]  = prop
       opt[:index] = (0 if prop[:readonly])
-      # noinspection RubyMismatchedArgumentType
       render_form_pair(label, value, **opt)
     }.compact.unshift(nil).join(separator).html_safe
   end
@@ -275,7 +274,6 @@ module BaseDecorator::Form
       l_opt[:for]              = v_id     if input
       l_opt[:'data-label-for'] = v_id     if group
       l_opt[:tag]              = :div     if group || file_data
-      # noinspection RubyMismatchedArgumentType
       parts << render_form_pair_label(field, label, **l_opt)
     end
 
@@ -293,7 +291,6 @@ module BaseDecorator::Form
     parts << send(render_method, name, value, **v_opt)
 
     # Other content if provided.
-    # noinspection RubyMismatchedArgumentType
     parts.concat Array.wrap(yield(field, raw_val, prop, **opt)) if block_given?
 
     safe_join(parts)
@@ -327,7 +324,6 @@ module BaseDecorator::Form
     # Encapsulate the text in its own element to ensure separation from added
     # icon(s).
     if label.is_a?(ActiveSupport::SafeBuffer)
-      # noinspection RubyMismatchedArgumentType
       text  = sanitized_string(label).squish
     else
       text  = (label || field).to_s
@@ -845,7 +841,6 @@ module BaseDecorator::Form
     end
     opt[:multipart]    = true
     opt[:autocomplete] = 'off'
-    # noinspection RubyMismatchedReturnType
     opt
   end
 
@@ -1034,9 +1029,6 @@ module BaseDecorator::Form
   #
   # @see file:app/assets/javascripts/feature/model-form.js *submitButton()*
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def form_button(
     type,
     action:   nil,

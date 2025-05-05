@@ -204,7 +204,7 @@ class UploadController < ApplicationController
   #
   # @return [Hash]
   #
-  def list_items: (?(symHash|nil) prm, for_org: bool, for_user: bool) -> symHash
+  def list_items: (?(symHash|nil) prm, ?for_org: bool, ?for_user: bool) -> symHash
 
   # === GET /upload/show_select
   #

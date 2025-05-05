@@ -522,7 +522,7 @@ appSetup(MODULE, function() {
     const $title_editor  = $title_heading.find(TITLE_EDITOR);
     const $title_input   = $title_editor.find('input[name="name"]');
     const $title_update  = $title_editor.find(TITLE_UPDATE);
-    const $title_cancel  = $title_editor.find(TITLE_CANCEL)
+    const $title_cancel  = $title_editor.find(TITLE_CANCEL);
 
     /**
      * The container for the grid and pagination controls.
@@ -3723,7 +3723,7 @@ appSetup(MODULE, function() {
      */
     function setRowChanged(row, setting) {
         //OUT.debug(`setRowChanged: "${setting}"; row =`, row);
-        const $row    = dataRow(row)
+        const $row    = dataRow(row);
         const changed = (setting !== false);
         $row.data(ROW_CHANGED_DATA, changed);
         return changed;
@@ -3739,7 +3739,7 @@ appSetup(MODULE, function() {
      */
     function updateRowChanged(row, setting) {
         OUT.debug(`updateRowChanged: "${setting}"; row =`, row);
-        const $row   = dataRow(row)
+        const $row   = dataRow(row);
         const change = isDefined(setting) ? setting : evaluateRowChanged($row);
         setRowChanged($row, change);
         $row.toggleClass(CHANGED_MARKER, change);
@@ -5764,7 +5764,7 @@ appSetup(MODULE, function() {
      */
     const FIELD_MAP = {
         repository: "emma_repository",
-    }
+    };
 
     /**
      * Extract a field value from a data object, translating between

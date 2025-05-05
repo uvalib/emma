@@ -70,7 +70,7 @@ module BaseCollectionDecorator::Form
   #
   # @return [Array<String>]
   #
-  def item_ids: (?(Model|String|Array[Model|String]|nil) items) -> strArray
+  def item_ids: (?(Model|String|Array[Model|String]|nil) items, **untyped _ignored) -> strArray
 
   private
 

@@ -215,7 +215,6 @@ module Api::Serializer::Associations
       scalar = "Axiom::Types::#{base}"
       record = "#{service_name}::Record::#{name}"
 
-      # noinspection RubyMismatchedReturnType
       (scalar.safe_constantize    if scalar_types.include?(base))      ||
       (base.to_s.safe_constantize if enumeration_types.include?(base)) ||
       (base.to_s.safe_constantize if base.to_s.start_with?('Iso'))     ||
@@ -236,7 +235,6 @@ module Api::Serializer::Associations
     def decorator_class(record_class)
       ->(*args, **opt) do
         # NOTE: This is still problematic for some XML deserialization.
-        # noinspection RailsParamDefResolve
         begin
           opt      = args.last.merge(opt) if args.last.is_a?(Hash)
           current  = opt.dig(:options, :doc)&.class&.to_s

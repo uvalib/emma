@@ -92,9 +92,6 @@ module OmniAuth
       #
       # @return [String]
       #
-      #--
-      # noinspection RubyMismatchedReturnType
-      #++
       def uid
         @uid
       end

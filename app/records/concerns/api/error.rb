@@ -226,7 +226,6 @@ class Api::Error < ExecError
       keys = []
       keys << :"emma.error.#{source}.#{key}" if source
       keys << :"emma.error.api.#{key}"
-      # noinspection RubyMismatchedReturnType
       config_entry(keys, fallback: fallback)
     end
 

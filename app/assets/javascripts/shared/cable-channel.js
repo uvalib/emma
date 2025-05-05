@@ -367,7 +367,7 @@ export class CableChannel extends BaseClass {
      */
     setError(text, ...log_extra) {
         //this._debug(`setError: ${text}`, ...log_extra);
-        const data = log_extra.map(v => asString(v)).join(", ")
+        const data = log_extra.map(v => asString(v)).join(", ");
         this.error = data ? `${text}: ${data}` : text;
     }
 

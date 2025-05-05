@@ -85,7 +85,6 @@ module Record::Reportable
   # :nocov:
   def set_exec_report(value = nil)
     @exec_report ||= ExecReport.new(self)
-    # noinspection RubyMismatchedArgumentType
     @exec_report.set(value || ExecError::DEFAULT_ERROR)
     set_report_column(@exec_report.serialize)
     @exec_report

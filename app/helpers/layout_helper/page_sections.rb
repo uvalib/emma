@@ -129,11 +129,9 @@ module LayoutHelper::PageSections
   def page_text(controller: nil, action: nil, type: nil)
     controller ||= params[:controller]
     action     ||= params[:action]
-    # noinspection RubyMismatchedArgumentType
     entry = config_page_section(controller, action)
     types = type ? Array.wrap(type).compact.map!(&:to_sym) : []
     types = %i[description text] if types.excluding(:description).blank?
-    # noinspection RubyMismatchedReturnType
     types.find do |t|
       if (text = entry[:"#{t}_html"]).present?
         case text

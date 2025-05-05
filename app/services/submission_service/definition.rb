@@ -27,9 +27,6 @@ module SubmissionService::Definition
   #
   # @return [SubmissionService::Request]   The value for @request.
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def pre_flight(meth, arg = nil, items = nil, **opt)
     meth, arg, items = [nil, meth, arg] unless meth.nil? || meth.is_a?(Symbol)
     command = meth && (meth != SubmissionService::Request::DEFAULT_COMMAND)
@@ -78,7 +75,6 @@ module SubmissionService::Definition
     rsp[:manifest_id] ||= opt[:manifest_id]
     rsp[:diagnostic]    = rsp.diagnostic if extended
     rsp[:error]         = rsp.error      if extended
-    # noinspection RubyMismatchedReturnType
     rsp
   end
 

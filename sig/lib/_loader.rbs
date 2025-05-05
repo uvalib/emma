@@ -49,8 +49,8 @@ class Object
   # original method.
   #
   def override
-    : (Hash[Module,Module])      { (Module) -> untyped } -> void
-    | (Module mod, Module? mod2) { (Module) -> untyped } -> void
+    : (Hash[Module,Module])      ?{ (Module) -> untyped } -> void
+    | (Module mod, Module? mod2) ?{ (Module) -> untyped } -> void
 
   # Alternate syntax which does not expect a block (so braces will be interpreted
   # as part of the hash argument).

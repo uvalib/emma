@@ -119,7 +119,6 @@ class ExecReport
   # @return [Exception, nil]
   #
   def exception
-    # noinspection RubyMismatchedReturnType
     parts.find { ex = _1.exception and return ex }
   end
 
@@ -177,9 +176,6 @@ class ExecReport
 
   # Values relating to analyzing/constructing error reports.
   #
-  #--
-  # noinspection RubyMismatchedConstantType
-  #++
   module Constants
 
     TOPIC_KEY   = :topic
@@ -258,9 +254,6 @@ class ExecReport
     #
     # @return [Array<Hash>, Hash, nil]
     #
-    #--
-    # noinspection RubyMismatchedReturnType
-    #++
     def serialize_filter(part)
       case part
         when Array
@@ -433,7 +426,6 @@ class ExecReport
           result[HTML_KEY] = src.html_safe? unless result.key?(HTML_KEY)
 
         when Exception
-          # noinspection RubyMismatchedArgumentType
           src    = ExecError.new(src) unless src.is_a?(ExecError)
           result = { TOPIC_KEY => src.message&.dup }
           result[DETAILS_KEY]   = src.messages[1..]&.deep_dup
@@ -877,7 +869,6 @@ class ExecReport
   # @return [ExecReport]
   #
   def self.[](src)
-    # noinspection RubyMismatchedReturnType
     src.is_a?(self) ? src : new(src)
   end
 
@@ -1030,7 +1021,6 @@ class ExecReport::Part
   # @return [ActiveSupport::SafeBuffer]
   #
   def html_safe
-    # noinspection RubyMismatchedReturnType
     to_s(html: true)
   end
 
@@ -1059,7 +1049,6 @@ class ExecReport::Part
     # @return [Array<Hash{Symbol=>String,Array<String>}>, nil]
     #
     def deserialize(src)
-      # noinspection RubyMismatchedReturnType
       message_hash(src).presence
     end
 
@@ -1168,7 +1157,6 @@ class ExecReport::Part
     def render_topic(src, **opt)
       opt[:separator] ||= opt[:t_sep] || TOPIC_SEP
       src = extract_topic(src)   unless src.is_a?(String)
-      # noinspection RubyMismatchedArgumentType
       render_portion(src, **opt) if src.present?
     end
 
@@ -1186,7 +1174,6 @@ class ExecReport::Part
       opt[:separator] ||= opt[:d_sep] || DETAILS_SEP
       src = [src]                if src.is_a?(String)
       src = extract_details(src) unless src.is_a?(Array)
-      # noinspection RubyMismatchedArgumentType
       render_portion(src, **opt) if src.present?
     end
 
@@ -1319,7 +1306,6 @@ class ExecReport::Part
   # @return [Integer, nil]
   #
   def http_status
-    # noinspection RubyMismatchedReturnType
     info[__method__]
   end
 
@@ -1336,7 +1322,6 @@ class ExecReport::Part
   # @return [ExecReport::Part]
   #
   def self.[](src)
-    # noinspection RubyMismatchedReturnType
     src.is_a?(self) ? src : new(src)
   end
 

@@ -294,7 +294,6 @@ module Record::Steppable
       group = state_group(group)
       group = nil if group == :all
     end
-    # noinspection RubyMismatchedArgumentType
     STATE_GROUP.dig(group, :label)
   end
 
@@ -502,7 +501,6 @@ module Record::Steppable
     # @return [Array<Symbol>]
     #
     def get_state_names(item = nil)
-      # noinspection RubyMismatchedArgumentType
       super(item || self)
     end
 
@@ -690,7 +688,6 @@ module Record::Steppable
     # @return [Hash]
     #
     def state_table(item = nil)
-      # noinspection RubyMismatchedArgumentType
       item and super or @state_table ||= super(self)
     end
 
@@ -767,7 +764,6 @@ module Record::Steppable
     # @param [Model, String, Symbol, nil] item  Default: `self`.
     #
     def existing_entry?(item = nil)
-      # noinspection RubyMismatchedArgumentType
       super(item || self)
     end
 
@@ -916,7 +912,6 @@ module Record::Steppable
     # @return [Class<Model::WorkflowJob>]
     #
     def job_class(item = nil)
-      # noinspection RubyMismatchedArgumentType
       item and super or @job_class ||= super(self)
     end
 

@@ -163,6 +163,8 @@ class User < ApplicationRecord
   #
   def self.test_users: () -> Hash[String,Symbol]
 
+  self.@test_users: Hash[String,Symbol]
+
   # Get the database entry for the indicated user and update it with additional
   # information from the provider.
   #

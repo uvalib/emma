@@ -592,7 +592,6 @@ class AppSettings < AppGlobal
     def self.storage_value(v) = must_be_overridden
 
     def self.constant_map
-      # noinspection RbsMissingTypeSignature
       @constant_map ||= {
         BATCH_SIZE:                   Record::Properties,
         BULK_DB_BATCH_SIZE:           UploadWorkflow::Bulk::External,
@@ -638,7 +637,6 @@ class AppSettings < AppGlobal
     end
 
     def self.spacer_key
-      # noinspection RbsMissingTypeSignature
       @spacer_key = @spacer_key&.succ || :"#{type_key}_1"
     end
 
@@ -657,7 +655,6 @@ class AppSettings < AppGlobal
     end
 
     def self.spacer_key
-      # noinspection RbsMissingTypeSignature
       @spacer_key = @spacer_key&.succ || :"#{type_key}_1"
     end
 
@@ -775,7 +772,6 @@ class AppSettings < AppGlobal
       return if values.blank?
       values = values.transform_values { prepare(_1) }
       opt[:only] = FLAGS + VALUES if opt.slice(:only, :type).blank?
-      # noinspection RubyMismatchedArgumentType
       filter_all(values, **opt)
     end
 
@@ -810,9 +806,6 @@ class AppSettings < AppGlobal
     #
     # @note Currently unused.
     #
-    #--
-    # noinspection RubyMismatchedArgumentType
-    #++
     # :nocov:
     def inspect_all(values = nil, **opt)
       values = values ? filter_all(values, **opt) : get_item(**opt)
@@ -837,7 +830,6 @@ class AppSettings < AppGlobal
     # @note Currently used only by #inspect_all.
     # :nocov:
     def encode_symbols(item)
-      # noinspection RubyMismatchedArgumentType
       case item
         when Hash   then item.transform_values { encode_symbols(_1) }
         when Array  then item.map { encode_symbols(_1) }
@@ -945,7 +937,6 @@ class AppSettings < AppGlobal
     #
     def update(values)
       values = json_parse(values) if values.is_a?(String)
-      # noinspection RubyMismatchedArgumentType
       set_item(values, replace: false)
     end
 

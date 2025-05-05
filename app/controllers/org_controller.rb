@@ -306,7 +306,6 @@ class OrgController < ApplicationController
     prm ||= paginator.initial_parameters
     items = find_or_match_records(**prm)
     paginator.finalize(items, **prm)
-    # noinspection RubyMismatchedReturnType
     prm
   end
 

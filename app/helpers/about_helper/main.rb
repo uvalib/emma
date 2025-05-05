@@ -74,7 +74,6 @@ module AboutHelper::Main
     links   = project_links.presence
     heading = (config_page(:about, :index, :section, :links) if heading)
     prepend_css!(opt, css)
-    # noinspection RubyMismatchedArgumentType
     project_table_section(links, heading, **opt)
   end
 
@@ -90,7 +89,6 @@ module AboutHelper::Main
     links   = project_refs.presence
     heading = (config_page(:about, :index, :section, :refs) if heading)
     prepend_css!(opt, css)
-    # noinspection RubyMismatchedArgumentType
     project_table_section(links, heading, **opt)
   end
 

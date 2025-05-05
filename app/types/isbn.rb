@@ -168,7 +168,6 @@ class Isbn < PublicationIdentifier
       digits = isbn.delete('^0-9')
       length = digits.size
       digits = digits[0...-1]
-      # noinspection RubyMismatchedArgumentType
       (length == ISBN_13_DIGITS) && (isbn13_checksum(digits) == check)
     end
 
@@ -186,7 +185,6 @@ class Isbn < PublicationIdentifier
       else
         digits = digits[0...-1]
       end
-      # noinspection RubyMismatchedArgumentType
       (length == ISBN_10_DIGITS) && (isbn10_checksum(digits) == check)
     end
 
@@ -209,9 +207,6 @@ class Isbn < PublicationIdentifier
     #
     # @return [String, nil]
     #
-    #--
-    # noinspection RubyMismatchedArgumentType
-    #++
     def to_isbn13(v, log: true, **)
       digits = identifier(v)&.delete('^0-9xX')
       isbn10 = (digits&.size == ISBN_10_DIGITS)
@@ -238,9 +233,6 @@ class Isbn < PublicationIdentifier
     #
     # @return [String, nil]
     #
-    #--
-    # noinspection RubyMismatchedArgumentType
-    #++
     def to_isbn10(v, log: true, **)
       digits = identifier(v)&.delete('^0-9xX')
       isbn13 = (digits&.size == ISBN_13_DIGITS)
@@ -281,7 +273,6 @@ class Isbn < PublicationIdentifier
     def checksum(isbn, validate: false, **)
       final  = isbn.last.upcase
       digits = isbn.delete('^0-9xX')
-      # noinspection RubyMismatchedArgumentType
       case digits.size
         when ISBN_13_DIGITS                 # Full ISBN-13.
           digits = digits[0...-1]

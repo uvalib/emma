@@ -76,9 +76,6 @@ class AwsS3::Message::SubmissionRequest < AwsS3::Api::Message
   #
   # @option opt [Aws::S3::Object] :file   Override file for submission.
   #
-  #--
-  # noinspection RubyMismatchedVariableType
-  #++
   def initialize(src, **opt)
     @file = @file_key = nil
     case src
@@ -135,7 +132,6 @@ class AwsS3::Message::SubmissionRequest < AwsS3::Api::Message
   # @return [AwsS3::Message::SubmissionRequest]
   #
   def self.[](record)
-    # noinspection RubyMismatchedReturnType
     record.is_a?(self) ? record : new(record)
   end
 

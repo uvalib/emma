@@ -56,7 +56,6 @@ class LookupService::Request
   def initialize(items = nil)
     @table = TEMPLATE.deep_dup
     return if items.blank?
-    # noinspection RubyMismatchedArgumentType
     if items.is_a?(self.class)
       @table.merge!(items.deep_dup)
     elsif items.is_a?(Hash)
@@ -230,7 +229,6 @@ class LookupService::Request
   # @return [LookupService::Request]
   #
   def self.wrap(item)
-    # noinspection RubyMismatchedReturnType
     item.is_a?(self) ? item : new(item)
   end
 

@@ -313,9 +313,6 @@ module ApiService::Exceptions
   #
   # @return [void]
   #
-  #--
-  # noinspection RailsParamDefResolve
-  #++
   def log_exception(error, action: @action, response: @response, meth: nil)
     response ||= error.try(:http_response) || error.try(:response)
     message    = error.try(:message).inspect
@@ -332,7 +329,6 @@ module ApiService::Exceptions
       line.join('; ')
     end
     __debug_line(leader: '!!!') do
-      # noinspection RubyMismatchedArgumentType
       [service_name] << action.inspect << message << error.class
     end
   end

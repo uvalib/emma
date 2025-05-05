@@ -28,6 +28,7 @@ module CanCan
     public
 
     def current_ability
+      # noinspection RubyArgCount (RubyMine analyzer fails here)
       @current_ability ||= current_user&.ability || ::Ability.new
     end
 

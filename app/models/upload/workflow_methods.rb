@@ -334,7 +334,6 @@ module Upload::WorkflowMethods
       "#{old_state.inspect} -> #{new_state.inspect}"
     end
     unless new_state == old_state
-      # noinspection RubyMismatchedArgumentType
       set_field_direct(column, new_state.presence)
     end
     new_state.to_sym

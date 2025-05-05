@@ -27,7 +27,6 @@ module Api::Record::Schema
     # @return [Api::Serializer::Json]
     #
     def json_serializer
-      # noinspection RubyMismatchedReturnType
       serializers[:json]
     end
 
@@ -36,7 +35,6 @@ module Api::Record::Schema
     # @return [Api::Serializer::Xml]
     #
     def xml_serializer
-      # noinspection RubyMismatchedReturnType
       serializers[:xml]
     end
 
@@ -45,7 +43,6 @@ module Api::Record::Schema
     # @return [Api::Serializer::Obj]
     #
     def obj_serializer
-      # noinspection RubyMismatchedReturnType
       serializers[:obj]
     end
 

@@ -107,9 +107,6 @@ module FlashHelper
   #
   # @return [Boolean]
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def flash_reset
     @flash_reset = true if @flash_reset.nil?
     @flash_reset
@@ -211,7 +208,6 @@ module FlashHelper
     # @return [FlashPart]
     #
     def self.[](other)
-      # noinspection RubyMismatchedReturnType
       other.is_a?(self) ? other : new(other)
     end
 
@@ -428,7 +424,6 @@ module FlashHelper
   #
   def flash_target(type)
     type = type&.to_sym
-    # noinspection RubyMismatchedReturnType
     FLASH_TARGETS.include?(type) ? type : FLASH_TARGETS.first
   end
 
@@ -633,9 +628,6 @@ module FlashHelper
   #   @return [Array<ActiveSupport::SafeBuffer,String>]
   #   @return [Array<ActiveSupport::SafeBuffer>]        If :html is *true*.
   #
-  #--
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-  #++
   def flash_item(item, **opt)
     if item.is_a?(Array)
       return [] if item.blank?
@@ -737,7 +729,6 @@ module FlashHelper
     keys << :"emma.error.#{meth}.#{topic}"                if meth
     keys << :"emma.error.#{scope}.#{topic}"               if scope
     keys << :"emma.error.#{topic}"
-    # noinspection RubyMismatchedReturnType
     config_entry(keys, i_key => msg, fallback: ExecError::DEFAULT_ERROR, **opt)
   end
 

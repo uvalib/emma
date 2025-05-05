@@ -38,7 +38,6 @@ module Emma::Mime
   # @return [nil]
   #
   def ext_to_mime(ext)
-    # noinspection RubyMismatchedArgumentType
     result = Marcel::MimeType.for(extension: ext)
     result unless result == Marcel::MimeType::BINARY
   end

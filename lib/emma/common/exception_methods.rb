@@ -60,7 +60,6 @@ module Emma::Common::ExceptionMethods
   #
   def self_class(this = SelfContext)
     this = self if this == SelfContext
-    # noinspection RubyMismatchedReturnType
     this.is_a?(Class) ? this : this.class
   end
 
@@ -98,7 +97,6 @@ module Emma::Common::ExceptionMethods
   #
   def re_raise_if_internal_exception(error)
     return unless internal_exception?(error)
-    # noinspection RailsParamDefResolve, RubyMismatchedArgumentType
     if application_deployed? && try(:request)&.format&.html?
       Log.warn { "CREATING INTERNAL EXCEPTION #{error}" }
     else

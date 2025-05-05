@@ -114,7 +114,6 @@ module SearchService::Testing
       tests = 0
 
       # === Bogus parameters (should be ignored)
-      # noinspection SpellCheckingInspection
       if BAD_PARAM & faults
         tests += 1
         opt[:bad]      = 'bad_param'

@@ -62,7 +62,6 @@ module Record::Sortable
   #
   def sort_scope(col, tbl)
     raise unless tbl == :manifest_items
-    # noinspection RubyMismatchedReturnType
     case col.to_sym
       when :to_delete_item_count    then scope_to_delete(tbl)
       when :never_saved_item_count  then scope_never_saved(tbl)

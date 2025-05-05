@@ -31,7 +31,6 @@ module BaseCollectionDecorator::Grid
   # @see BaseCollectionDecorator::Row#row_items
   #
   def grid_row_items(**opt)
-    # noinspection RubyMismatchedReturnType
     row_items(**opt)
   end
 

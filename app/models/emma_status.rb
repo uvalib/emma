@@ -48,7 +48,6 @@ class EmmaStatus < ApplicationRecord
   # @see #INGEST_API_KEY
   #
   def self.api_version
-    # noinspection RubyMismatchedReturnType
     where(item: API_VERSION_ITEM, active: true).last
   rescue ActiveRecord::ConnectionNotEstablished
     Log.info { "#{__method__}: no database" }

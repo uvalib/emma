@@ -82,7 +82,6 @@ module LayoutHelper::Common
   def search_form_with_hidden(target, id = nil, hidden: nil, **opt)
     return if (path = search_target_path(target)).blank?
     include_hidden = hidden.present? || (id.present? && (path == request.path))
-    # noinspection RubyMismatchedArgumentType
     before, after = (hidden_parameters_for(id, hidden) if include_hidden)
     elements = [*before, *yield, *after]
     opt[:method] ||= :get

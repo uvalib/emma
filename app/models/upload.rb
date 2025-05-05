@@ -185,7 +185,6 @@ class Upload < ApplicationRecord
   #
   def set_model_options(options)
     options = options[:options] if options.is_a?(Hash)
-    # noinspection RubyMismatchedReturnType, RubyMismatchedVariableType
     if options.is_a?(Upload::Options)
       @model_options = options.dup
     else
@@ -442,7 +441,6 @@ class Upload < ApplicationRecord
     super(attr)
 
     # Fetch the file source if named via :file_path and not deferred.
-    # noinspection RubyMismatchedReturnType
     fetch_and_upload_file(@file_path) if fetch_file
 
   rescue => error # TODO: remove - testing
@@ -597,7 +595,6 @@ class Upload < ApplicationRecord
     msg &&= msg % { type: [base_class, opt[:type]].compact.join('::') }
     meth  = msg && (log.is_a?(Symbol) ? log : "#{self.class}.#{__method__}")
     Log.warn("#{meth}: #{msg}") if msg
-    # noinspection RubyMismatchedArgumentType
     raise err, msg if err
   end
 
@@ -630,7 +627,6 @@ class Upload < ApplicationRecord
     v &&= try_key(v, :submission) || v
     return v if v.is_a?(self) || v.nil?
     sid = try_key(v, :submission_id) || v
-    # noinspection RubyMismatchedReturnType
     valid_sid?(sid) ? find_by(submission_id: sid) : super
   end
 
@@ -745,7 +741,6 @@ class Upload < ApplicationRecord
     #
     def sid_counter
       @sid_counter &&= (@sid_counter + 1) % 100
-      # noinspection RubyMismatchedReturnType
       @sid_counter ||= rand(100) % 100
     end
 

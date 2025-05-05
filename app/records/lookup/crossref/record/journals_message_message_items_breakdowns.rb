@@ -10,7 +10,7 @@ __loading_begin(__FILE__)
 # @see https://api.crossref.org/swagger-ui/index.html#model-JournalsMessageMessageItemsBreakdowns
 #
 #--
-# noinspection RubyClassModuleNamingConvention, LongLine
+# noinspection LongLine
 #++
 class Lookup::Crossref::Record::JournalsMessageMessageItemsBreakdowns < Lookup::Crossref::Api::Record
 

@@ -122,7 +122,6 @@ class ApplicationCable::Response < Hash
   # @return [ApplicationCable::Response]
   #
   def self.wrap(payload, **opt)
-    # noinspection RubyMismatchedReturnType
     if payload.is_a?(self) && opt.except(*ignored_keys).blank?
       payload
     else

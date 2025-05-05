@@ -87,7 +87,6 @@ class SortOrder < Hash
   # @param [Hash]     opt             Passed to #parse.
   #
   def initialize(value = nil, **opt)
-    # noinspection RubyMismatchedArgumentType
     case (value &&= parse(value, meth: 'SortOrder', fatal: true, **opt))
       when String then @raw_sql = value
       when Hash   then update(value)
@@ -198,7 +197,6 @@ class SortOrder < Hash
   # @return [SortOrder]
   #
   def self.wrap(item, **opt)
-    # noinspection RubyMismatchedReturnType
     item.is_a?(self) ? item : new(item, **opt)
   end
 
@@ -326,7 +324,6 @@ class SortOrder < Hash
   def self.error(msg = nil, field: nil, fatal: nil, meth: nil, **)
     msg = Array.wrap(msg || yield).join('; ')
     msg = [meth, field, msg].compact.join(': ')
-    # noinspection RubyMismatchedArgumentType
     fatal and raise(msg) or Log.error(msg)
   end
 

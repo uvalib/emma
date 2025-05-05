@@ -95,9 +95,6 @@ module Api::Serializer::Xml::Schema
   #
   # @type [Hash{String=>String}]
   #
-  #--
-  # noinspection RubyStringKeysInHashInspection
-  #++
   DEFAULT_XML_NAMESPACES = {
     'xmlns'    => 'https://emma.lib.virginia.edu/schema',
     'xmlns:xs' => 'http://www.w3.org/2001/XMLSchema'

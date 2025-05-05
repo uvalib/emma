@@ -238,9 +238,6 @@ class IsoDate < ScalarType
     #
     # @return [String, Date, Time, IsoDate, any, nil]
     #
-    #--
-    # noinspection RubyMismatchedArgumentType
-    #++
     def translate(value)
       return value unless value.is_a?(String)
       result = pdf_date_translate(value)

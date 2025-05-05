@@ -250,7 +250,6 @@ module TestHelper::SystemTests::Common
       flunk "Browser on page #{current} and not on #{expected}"
     end
 
-    # noinspection RubyMismatchedReturnType
     found
   end
 
@@ -356,7 +355,6 @@ module TestHelper::SystemTests::Common
   #
   def assert_not_authorized(action)
     action = not_authorized_for(action) if action.is_a?(Symbol)
-    # noinspection RubyMismatchedArgumentType
     assert_flash(action) if action.is_a?(String)
   end
 
@@ -382,7 +380,7 @@ module TestHelper::SystemTests::Common
     case action&.to_sym
       when :admin_only  then ADMIN_ONLY
       when :sign_in     then AUTH_FAILURE
-      when nil          then 'You are not authorized'        
+      when nil          then 'You are not authorized'
       when :index       then 'You are not authorized to list'
       when :show        then 'You are not authorized to view'
       when :new         then 'You are not authorized to create'

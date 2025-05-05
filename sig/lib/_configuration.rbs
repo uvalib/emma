@@ -84,7 +84,7 @@ module Configuration
     #
     # @return [Array<String>]         Error messages.
     #
-    def validate: (output: bool, fatal: bool, prefix: String, **untyped _ignored) -> strArray
+    def validate: (?output: bool, ?fatal: bool, ?prefix: String, **untyped _ignored) -> strArray
 
     # Original configuration entries from `ENV`.
     #

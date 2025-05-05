@@ -3,9 +3,6 @@
 # frozen_string_literal: true
 # warn_indent:           true
 
-#--
-# noinspection RubyClassModuleNamingConvention
-#++
 class AddLastIndexedSubmissionIdToManifestItems < ActiveRecord::Migration[7.0]
 
   def change

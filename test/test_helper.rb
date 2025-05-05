@@ -211,7 +211,6 @@ if PARALLEL_TESTS
     module RubymineTestDataExt
 
       def klass=(klass)
-        # noinspection RbsMissingTypeSignature
         klass.is_a?(Struct) ? (@klass = klass) : super
       end
 

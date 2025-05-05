@@ -152,7 +152,7 @@ class SortOrder < Hash[Symbol,Symbol]
   #
   # @return [nil]
   #
-  def self.error: (?untyped? msg, ?field: untyped?, ?fatal: bool|nil, ?meth: Symbol|String|nil, **untyped _ignored) { () -> untyped } -> nil
+  def self.error: (?untyped? msg, ?field: untyped?, ?fatal: bool|nil, ?meth: Symbol|String|nil, **untyped _ignored) ?{ () -> untyped } -> nil
 
-  def error: (?untyped? msg, ?field: untyped?, ?fatal: bool|nil, ?meth: Symbol|String|nil, **untyped _ignored) { () -> untyped } -> nil
+  def error: (?untyped? msg, ?field: untyped?, ?fatal: bool|nil, ?meth: Symbol|String|nil, **untyped _ignored) ?{ () -> untyped } -> nil
 end

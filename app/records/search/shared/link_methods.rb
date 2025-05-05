@@ -66,7 +66,6 @@ module Search::Shared::LinkMethods
     path = absolute_path(path, src) || path
     make_path(path, id)
   rescue RuntimeError => error
-    # noinspection RubyScope
     Log.warn { "#{__method__}: #{src}: #{error.class}: #{error.message}" }
   end
 
@@ -91,7 +90,6 @@ module Search::Shared::LinkMethods
     raise 'no download_url'  if url.blank?
     url % { id: id, fmt: fmt, download_path: path }
   rescue RuntimeError => error
-    # noinspection RubyScope
     Log.warn { "#{__method__}: #{src}: #{error.class}: #{error.message}" }
   end
 

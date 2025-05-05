@@ -12,7 +12,6 @@ module LookupService::WorldCat::Properties
 end
 
 # :nocov:
-# noinspection SpellCheckingInspection
 unless ONLY_FOR_DOCUMENTATION
 =begin # NOTE: preserved for possible future use
 # LookupService::WorldCatV2::Properties
@@ -28,7 +27,6 @@ module LookupService::WorldCatV2::Properties
   public
 
   # @type [Array<String>]
-  # noinspection SpellCheckingInspection
   ITEM_TYPE = %w[
     Archv
     ArtChapter
@@ -57,7 +55,6 @@ module LookupService::WorldCatV2::Properties
   SEARCH_ITEM_TYPE = ITEM_TYPE.map(&:downcase).deep_freeze
 
   # @type [Array<String>]
-  # noinspection SpellCheckingInspection
   ITEM_SUBTYPE = %w(
     archv-digital
     archv-
@@ -122,7 +119,6 @@ module LookupService::WorldCatV2::Properties
   ).freeze
 
   # @type [Array<String>]
-  # noinspection SpellCheckingInspection
   FORMAT_TYPE = %w[
     2D
     Artcl
@@ -147,7 +143,6 @@ module LookupService::WorldCatV2::Properties
   ].freeze
 
   # @type [Array<String>]
-  # noinspection SpellCheckingInspection
   FACET = %w(
     subject
     creator
@@ -165,7 +160,6 @@ module LookupService::WorldCatV2::Properties
   ).freeze
 
   # @type [Array<String>]
-  # noinspection SpellCheckingInspection
   SORT_ORDER = %w[
     bestMatch
     library
@@ -178,7 +172,6 @@ module LookupService::WorldCatV2::Properties
   ].freeze
 
   # @type [Array<String>]
-  # noinspection SpellCheckingInspection
   SUBJECT_TYPES = [
     "LC subject headings for children's literature",
     'Library of Congress Subject Headings',
@@ -191,7 +184,6 @@ module LookupService::WorldCatV2::Properties
   ].freeze
 
   # @type [Array<String>]
-  # noinspection SpellCheckingInspection
   RELATIONSHIP_TYPES = [
     'unknown',
     'resource',

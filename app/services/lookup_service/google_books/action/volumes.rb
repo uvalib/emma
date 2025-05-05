@@ -18,7 +18,6 @@ module LookupService::GoogleBooks::Action::Volumes
   public
 
   # @private
-  # noinspection SpellCheckingInspection
   QUERY_PREFIX = {
     author:     'inauthor',    # Look for text in the authors.
     isbn:       'isbn',

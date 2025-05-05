@@ -108,9 +108,6 @@ module AccountConcern
   # @yieldparam [User] record
   # @yieldreturn [void]
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def find_record(item = nil, **opt, &blk)
     return super if blk
     authorized_session
@@ -132,9 +129,6 @@ module AccountConcern
   # @yieldparam [Hash] attr           Supplied attributes for the new record.
   # @yieldreturn [void]
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def new_record(prm = nil, **opt, &blk)
     return super if blk
     authorized_session
@@ -161,9 +155,6 @@ module AccountConcern
   # @yieldparam [Hash] attr           Supplied attributes for the new record.
   # @yieldreturn [void]
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def create_record(prm = nil, fatal: true, **opt, &blk)
     return super if blk
     authorized_session
@@ -250,9 +241,6 @@ module AccountConcern
   # @yieldparam [User] record         May be altered by the block.
   # @yieldreturn [void]               Block not called if *record* is *nil*.
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def edit_record(item = nil, **opt, &blk)
     return super if blk
     super do |record|
@@ -278,9 +266,6 @@ module AccountConcern
   # @yieldparam [Hash] attr           New field(s) to be assigned to *record*.
   # @yieldreturn [void]               Block not called if *record* is *nil*.
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def update_record(item = nil, fatal: true, **opt, &blk)
     return super if blk
     super do |record, attr|
@@ -411,9 +396,6 @@ module AccountConcern
   # @yieldparam [User] record
   # @yieldreturn [String,nil]         Error message if *record* unacceptable.
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def destroy_records(items = nil, fatal: true, **opt, &blk)
     return super if blk
     unauthorized unless administrator? || manager?
@@ -443,7 +425,6 @@ module AccountConcern
     keys  = Record::Searchable::MAKE_RELATION_OPT
     opt   = normalize_sort_order!(hash_terms.extract!(*keys))
     terms = terms.push(hash_terms).flatten.compact_blank
-    # noinspection RubyMismatchedArgumentType
     terms.map! { _1.is_a?(Hash) ? normalize_predicates!(_1) : _1 }
     case
       when terms.present?           then opt[:columns] = columns
@@ -515,7 +496,6 @@ module AccountConcern
   # @return [User::Paginator]
   #
   def pagination_setup(paginator: User::Paginator, **opt)
-    # noinspection RubyMismatchedReturnType
     super
   end
 

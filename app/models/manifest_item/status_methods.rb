@@ -54,7 +54,6 @@ module ManifestItem::StatusMethods
       item[:ready_status] = evaluate_ready_status(item, **added)
     end
 
-    # noinspection RubyMismatchedReturnType
     item
   end
 
@@ -384,7 +383,6 @@ module ManifestItem::StatusMethods
   #
   def get_file_data(item)
     item ||= default_to_self
-    # noinspection RubyMismatchedReturnType
     item[:file_data]&.symbolize_keys || (item.is_a?(Hash) ? item : {})
   end
 

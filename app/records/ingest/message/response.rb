@@ -36,7 +36,6 @@ class Ingest::Message::Response < Ingest::Api::Message
     # noinspection RubyScope
     create_message_wrapper(opt) do |opt|
       super(nil, opt)
-      # noinspection RubyMismatchedArgumentType
       initialize_exec_report(exception)
       self.messages.concat(exec_report.error_messages)
     end

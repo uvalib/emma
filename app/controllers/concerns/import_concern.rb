@@ -47,7 +47,6 @@ module ImportConcern
       data, name = extract_from(src)
       type ||= name.to_s.downcase.split('.').last&.to_sym || :text
     end
-    # noinspection RubyMismatchedArgumentType
     case type
       when nil   then Log.warn { "#{__method__}: no :src or :data" }
       when :csv  then from_csv(data)

@@ -197,9 +197,6 @@ module UploadConcern
   #
   # @see UploadWorkflow::Single::Create::States#on_creating_entry
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def new_record(prm = nil, **opt, &blk)
     not_implemented 'CANNOT HANDLE prm' if prm # TODO: ???
     not_implemented 'CANNOT HANDLE blk' if blk # TODO: ???
@@ -220,9 +217,6 @@ module UploadConcern
   #
   # @see UploadWorkflow::Single::Create::States#on_submitting_entry
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def create_record(prm = nil, fatal: true, **opt, &blk)
     not_implemented 'CANNOT HANDLE prm' if prm # TODO: ???
     not_implemented 'CANNOT HANDLE blk' if blk # TODO: ???
@@ -243,9 +237,6 @@ module UploadConcern
   #
   # @see UploadWorkflow::Single::Edit::States#on_editing_entry
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def edit_record(item = nil, **opt, &blk)
     not_implemented 'CANNOT HANDLE item' if item # TODO: ???
     not_implemented 'CANNOT HANDLE blk'  if blk  # TODO: ???
@@ -269,9 +260,6 @@ module UploadConcern
   #
   # @see UploadWorkflow::Single::Edit::States#on_modifying_entry
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def update_record(item = nil, fatal: true, **opt, &blk)
     not_implemented 'CANNOT HANDLE item' if item # TODO: ???
     not_implemented 'CANNOT HANDLE blk'  if blk  # TODO: ???
@@ -291,9 +279,6 @@ module UploadConcern
   #
   # @see UploadWorkflow::Single::Remove::States#on_removing_entry
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def delete_records(items = nil, **opt, &blk)
     not_implemented 'CANNOT HANDLE items' if items # TODO: ???
     not_implemented 'CANNOT HANDLE blk'   if blk   # TODO: ???
@@ -316,9 +301,6 @@ module UploadConcern
   #
   # @see UploadWorkflow::Single::Remove::States#on_removed_entry
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def destroy_records(items = nil, fatal: true, **opt, &blk)
     not_implemented 'CANNOT HANDLE items' if items # TODO: ???
     not_implemented 'CANNOT HANDLE blk'   if blk   # TODO: ???
@@ -439,7 +421,6 @@ module UploadConcern
     opt[:user]    ||= @user
     opt[:params]  ||= workflow_parameters
     opt[:options] ||= model_options
-    # noinspection RubyMismatchedArgumentType
     @workflow = UploadWorkflow::Single.generate(rec, **opt)
     @workflow.send("#{event}!", data)
     raise_failure(from, @workflow.failures) if @workflow.failures?
@@ -464,7 +445,6 @@ module UploadConcern
     opt[:params]  ||= workflow_parameters
     opt[:options] ||= model_options
     opt[:html]      = params[:format].blank? || (params[:format] == 'html')
-    # noinspection RubyMismatchedArgumentType
     @workflow = UploadWorkflow::Single.check_status(rec, **opt)
     @workflow.results
   rescue Workflow::Error => error
@@ -677,7 +657,6 @@ module UploadConcern
   # @return [Upload::Paginator]
   #
   def pagination_setup(paginator: Upload::Paginator, **opt)
-    # noinspection RubyMismatchedReturnType
     super
   end
 
@@ -726,7 +705,6 @@ module UploadConcern
   #
   def index_redirect
     return unless identifier&.to_s&.match?(/[^[:alnum:]]/)
-    # noinspection RailsParamDefResolve
     redirect_to action: :index, selected: identifier
   end
 

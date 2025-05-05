@@ -48,7 +48,6 @@ module SysHelper::Common
         tip   = cfg[:tooltip]
         l_opt = opt.merge(cfg[:link_opt] || {}).merge!(title: tip).compact
         note  = tip ? html_div(class: 'note') { tip.delete_suffix('.') } : ''
-        # noinspection RubyMismatchedArgumentType
         make_link(path, label, **l_opt) << note
       end
     }.compact
@@ -87,7 +86,6 @@ module SysHelper::Common
       hdrs = hdrs.is_a?(Array) ? hdrs.flatten : Array.wrap(hdrs)
       hdrs = hdrs.map! { [_1, request.get_header(_1)] }.to_h
     end
-    # noinspection RubyMismatchedArgumentType
     safe_join(dt_dd_pairs(hdrs), "\n")
   end
 
@@ -248,7 +246,6 @@ module SysHelper::Common
     result.presence || "COULD NOT RUN #{command.inspect}"
   ensure
     err_file&.close
-    # noinspection RubyMismatchedReturnType
     err_file&.unlink
   end
 

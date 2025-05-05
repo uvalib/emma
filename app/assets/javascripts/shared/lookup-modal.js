@@ -1726,7 +1726,7 @@ export class LookupModal extends ModalDialog {
      * @returns {LookupResponseItem}
      */
     getColumnValues($entry, fields) {
-        const columns = fields || this.DATA_COLUMNS
+        const columns = fields || this.DATA_COLUMNS;
         return toObject(columns, c => this.getColumnValue($entry, c));
     }
 
@@ -1891,7 +1891,7 @@ export class LookupModal extends ModalDialog {
      */
     fillEntry($entry, item, fields) {
         const data    = item || {};
-        const columns = fields || this.DATA_COLUMNS
+        const columns = fields || this.DATA_COLUMNS;
         columns.forEach(col => this.setColumnValue($entry, col, data[col]));
         return $entry;
     }

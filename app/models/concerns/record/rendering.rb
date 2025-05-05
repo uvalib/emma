@@ -63,7 +63,6 @@ module Record::Rendering
     ident ||= label.nil?
     ident &&= item.try(:identifier) || item_identity(item)
     ident &&= config_term(:record, :item, id: ident)
-    # noinspection RubyMismatchedReturnType
     (label && ident) && "#{label} (#{ident})" || label || ident || default
   end
 
@@ -84,9 +83,6 @@ module Record::Rendering
   # This exists solely to avoid a 'require' cycle by not making the module
   # dependent on Record::EmmaIdentification.
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def item_identity(item, meths: %i[sid_value id_value])
     meths.each { value = item.try(_1)             and return value }
     meths.each { value = try(_1, item)            and return value }

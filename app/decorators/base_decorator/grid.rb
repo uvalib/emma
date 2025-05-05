@@ -37,7 +37,6 @@ module BaseDecorator::Grid
   # @see BaseDecorator::Row#row_items
   #
   def grid_row_items(**opt)
-    # noinspection RubyMismatchedReturnType
     row_items(**opt)
   end
 
@@ -375,7 +374,6 @@ module BaseDecorator::Grid
     opt[:outer]    = append_css(opt[:outer], 'hidden')
     opt[:template] = true
     trace_attrs!(opt, __method__)
-    # noinspection RubyMismatchedArgumentType
     render_grid_data_row(model, **opt)
   end
 
@@ -790,7 +788,6 @@ module BaseDecorator::Grid
   # @return [GridIndex, nil]
   #
   def grid_index(item)
-    # noinspection RubyMismatchedReturnType
     return item if item.is_a?(GridIndex)
     GridIndex.new(item, grid_header_rows) unless item.blank?
   end

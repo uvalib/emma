@@ -338,7 +338,7 @@ export function serverSend(ctr_act, send_options) {
         }
         cb_done?.(result, warn, err, xhr);
         cb_comm?.(!offline, warn, err, xhr);
-    }
+    };
     if (debug) {
         OUT.debug(`${caller}: ctrlr   = "${ctrlr || apiController()}"`);
         OUT.debug(`${caller}: action  = "${action}"`);

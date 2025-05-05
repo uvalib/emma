@@ -312,7 +312,6 @@ class PublicationIdentifier < ScalarType
   # PublicationIdentifier::Methods#create.
   #
   def self.identifier_classes
-    # noinspection RbsMissingTypeSignature
     @identifier_classes ||= [Doi, Isbn, Issn, Upc, Oclc, Lccn]
   end
 
@@ -321,7 +320,6 @@ class PublicationIdentifier < ScalarType
   # @return [Array<Symbol>]
   #
   def self.identifier_types
-    # noinspection RbsMissingTypeSignature
     @identifier_types ||= identifier_classes.map(&:type)
   end
 
@@ -330,7 +328,6 @@ class PublicationIdentifier < ScalarType
   # @return [Hash{Symbol=>Class<PublicationIdentifier>}]
   #
   def self.subclass_map
-    # noinspection RbsMissingTypeSignature
     @subclass_map ||= identifier_classes.map { [_1.type, _1] }.to_h
   end
 
@@ -341,7 +338,6 @@ class PublicationIdentifier < ScalarType
   # @return [Class<PublicationIdentifier>, nil]
   #
   def self.subclass(type = nil)
-    # noinspection RubyMismatchedReturnType
     case type
       when Symbol, String then subclass_map[type.to_sym]
       when Class          then type if type < PublicationIdentifier

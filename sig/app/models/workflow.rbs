@@ -446,7 +446,7 @@ module Workflow::Base::States
   #
   HIDDEN_STATE: symArray
 
-  @prev_state: Symbol | nil
+  self.@prev_state: Symbol | nil
 
   # state_object
   #

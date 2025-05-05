@@ -315,6 +315,7 @@ class SearchTest < ApplicationSystemTestCase
         else                             [:download,  '.download']
       end
 
+    # noinspection RailsI18nInspection
     config  = I18n.t('emma.page._generic.download.link')
 
     run_test(meth || __method__) do

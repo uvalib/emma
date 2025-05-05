@@ -132,7 +132,6 @@ module IngestService::Testing
       meth = opt[:meth]&.to_sym || calling_method
       inject_exception(meth) and return
       item = opt[:body] || (args[1].is_a?(Array) ? args[1] : args[1..])
-      # noinspection RubyMismatchedArgumentType
       inject_fault!(meth, item)
       super
     end
@@ -173,7 +172,6 @@ module IngestService::Testing
       end
 
       # === Bad data for fields expecting single string values.
-      # noinspection SpellCheckingInspection
       if STRING_FIELDS_BAD & faults
         tests += 1
         #value = '.bad,%s;with/punct+and"unbalanced double quote'

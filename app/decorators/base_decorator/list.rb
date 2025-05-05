@@ -60,7 +60,6 @@ module BaseDecorator::List
     prepend_css!(opt, 'empty') if list.blank?
     prepend_css!(opt, css)
     html_tag(level, **opt) do
-      # noinspection RubyMismatchedArgumentType
       count ? label_with_count(title, count) : title
     end
   end
@@ -130,7 +129,6 @@ module BaseDecorator::List
     separator ||= DEFAULT_ELEMENT_SEPARATOR
 
     pairs = list_field_values(**vp_opt, **pp_opt, **fv_opt, **t_opt)
-    # noinspection RubyMismatchedArgumentType
     pairs.map.with_index(1) { |(field, prop), pos|
       label = prop[:label] || labelize(field)
       value = prop[:value]
@@ -222,9 +220,6 @@ module BaseDecorator::List
   # callers should be prepared to handle that possibility, since subclass
   # override(s) may return *nil*.
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def render_pair(
     label,
     value,
@@ -467,7 +462,6 @@ module BaseDecorator::List
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_empty_value(message: NO_RESULTS, **opt)
-    # noinspection RubyMismatchedReturnType
     render_pair(nil, message, **opt, index: hex_rand)
   end
 
@@ -508,7 +502,6 @@ module BaseDecorator::List
   # @return [nil]                     If *value* or *object* is *nil*.
   #
   def list_field_value(value, field:, **opt)
-    # noinspection RubyMismatchedArgumentType
     value = field_value(nil, field, opt) if value.nil? && field.is_a?(Symbol)
     value = value.value                  if value.is_a?(Field::Type)
     value = value.to_s                   if value.is_a?(FalseClass)
@@ -539,7 +532,6 @@ module BaseDecorator::List
   #
   def field_value(item, m, opt = nil)
     item ||= object
-    # noinspection RailsParamDefResolve
     if (data = item.try(:emma_metadata))&.key?(m)
       data[m]
     elsif item.try(:extended_field_names)&.include?(m)
@@ -684,9 +676,6 @@ module BaseDecorator::List
   # @yield To supply additional parts within .number element.
   # @yieldreturn [Array<ActiveSupport::SafeBuffer>,ActiveSupport::SafeBuffer]
   #
-  #--
-  # noinspection RailsParamDefResolve
-  #++
   def list_item_number(
     index:,
     level:  nil,
@@ -763,7 +752,6 @@ module BaseDecorator::List
     value ||= index ? "#{index + 1}" : ''
     value   = html_span(value, **v_opt)
 
-    # noinspection RubyMismatchedReturnType
     label << value
   end
 
@@ -859,9 +847,6 @@ module BaseDecorator::List
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  #--
-  # noinspection RubyAssignmentExpressionInConditionalInspection
-  #++
   def thumbnail(link: false, placeholder: true, css: '.thumbnail', **opt)
     ph    = placeholder.presence
     local = opt.extract!(:meth, :alt, *ITEM_ENTRY_OPT)
@@ -875,7 +860,6 @@ module BaseDecorator::List
       opt[:id] = "container-img-#{id}"
       opt[:'data-group'] = local[:group] if local[:group].present?
       opt[:'data-turbolinks-permanent'] = true
-      # noinspection RubyMismatchedArgumentType
       image_element(url, link: link, alt: alt, row: row, **opt)
     end ||
       (ph && placeholder_element(comment: 'no thumbnail', **opt))
@@ -894,9 +878,6 @@ module BaseDecorator::List
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  #--
-  # noinspection RubyAssignmentExpressionInConditionalInspection
-  #++
   def cover(link: false, placeholder: true, css: '.cover-image', **opt)
     ph    = placeholder.presence
     local = opt.extract!(:meth, :alt, *ITEM_ENTRY_OPT)
@@ -908,7 +889,6 @@ module BaseDecorator::List
       alt  = local[:alt] || config_lookup('cover.image.alt', item: id)
       row  = positive(local[:row])
       opt[:'data-group'] = local[:group] if local[:group].present?
-      # noinspection RubyMismatchedArgumentType
       image_element(url, link: link, alt: alt, row: row, **opt)
     end ||
       (ph && placeholder_element(comment: 'no cover image', **opt))
@@ -948,7 +928,6 @@ module BaseDecorator::List
   #
   def model_item_id(**opt)
     obj = object.presence
-    # noinspection RailsParamDefResolve
     id  = obj.try(:submission_id) || obj.try(:identifier) || hex_rand
     html_id(model_type, id, underscore: false, **opt)
   end
@@ -958,7 +937,6 @@ module BaseDecorator::List
   # @return [String,nil]
   #
   def title_id_values
-    # noinspection RailsParamDefResolve
     records = object.presence.try(:records)
     titles  = records&.map(&:emma_titleId)&.compact
     titles.uniq.join(',') if titles.present?
@@ -969,7 +947,6 @@ module BaseDecorator::List
   # @return [Symbol, nil]
   #
   def state_group(...)
-    # noinspection RailsParamDefResolve
     object.presence.try(:state_group)
   end
 
@@ -981,7 +958,6 @@ module BaseDecorator::List
   #
   def get_thumbnail_image(meth: :thumbnail_image, **)
     @thumbnail ||= thumbnail_data
-    # noinspection RubyMismatchedArgumentType
     @thumbnail ||=
       meth && (object.respond_to?(meth) ? object.send(meth) : try(meth))
   end
@@ -994,7 +970,6 @@ module BaseDecorator::List
   #
   def get_cover_image(meth: :cover_image, **)
     @cover_image ||= cover_data
-    # noinspection RubyMismatchedArgumentType
     @cover_image ||=
       meth && (object.respond_to?(meth) ? object.send(meth) : try(meth))
   end

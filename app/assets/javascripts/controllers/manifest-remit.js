@@ -125,7 +125,7 @@ appSetup(MODULE, function() {
     const LOCAL_FILE_CLASS          = "local-file";
     const FILE_BUTTON_CLASS         = "file-button";
 
-    const SUBMISSION_COUNTS_CLASS   = "submission-counts"
+    const SUBMISSION_COUNTS_CLASS   = "submission-counts";
     const TOTAL_COUNT_CLASS         = "total";
     const READY_COUNT_CLASS         = "ready";
     const TRANSMITTING_COUNT_CLASS  = "transmitting";
@@ -1281,7 +1281,7 @@ appSetup(MODULE, function() {
             if (was === now) {
                 OUT.debug(`${func}: indeterminate "${was}" no change for`,item)
             } else {
-                OUT.debug("${func}: indeterminate", was, "->", now, "for",item)
+                OUT.debug("${func}: indeterminate", was, "->", now, "for",item);
                 cb.indeterminate = now;
             }
         }
@@ -2264,7 +2264,7 @@ appSetup(MODULE, function() {
         OUT.debug(`Queueing local file "${obj.name}" for item ${item_id}`,obj);
         let file = obj;
         if (item_id) {
-            file.meta ||= {}
+            file.meta ||= {};
             file.meta.manifest_item_id = item_id.toString();
         }
         localFileSelection().push(file);

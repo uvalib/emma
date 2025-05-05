@@ -87,9 +87,7 @@ class FileUploader < Shrine
   #
   # @param [IO, StringIO] io
   #
-  # @return [void]
-  #
-  def self.with_file: ((IO|StringIO) io) -> void
+  def self.with_file: [T](untyped io) { (untyped) -> T } -> T
 
   # initialize
   #

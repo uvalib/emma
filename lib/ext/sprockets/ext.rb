@@ -28,7 +28,6 @@ module Sprockets
     Log.new(src, *args, **opt)
   end
 
-  # noinspection RbsMissingTypeSignature
   @logger = local_logger(@logger)
 
 end

@@ -777,7 +777,7 @@ export class NavGroup extends BaseClass {
         const $entry   = !$control && this.testEntry($tgt);
         const to_entry = !!$entry;
         const to_other = inside    && !to_ctrl && !to_entry;
-        const $target  = to_other  && maybeFocusable($tgt) && $tgt || undefined
+        const $target  = to_other  && maybeFocusable($tgt) && $tgt || undefined;
 
         const in_modal = !!$target && !to_ctrl && !to_entry;
         const in_group = !in_modal && to_other && contains($group, $tgt);
@@ -870,7 +870,7 @@ export class NavGroup extends BaseClass {
             for (const [k, v] of Object.entries(obj)) {
                 this._debug(...msg, `${k.padEnd(width)} =`, v);
             }
-        }
+        };
         this._debug(`*** ${"".padEnd(72,"v")} ***`);
         log_values(prop);
         log_values(result);

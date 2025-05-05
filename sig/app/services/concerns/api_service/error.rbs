@@ -144,6 +144,8 @@ class ApiService::Error < Api::Error
   # @see ApiService::Error#generate_error_classes
   #
   def self.error_classes: () -> Hash[Symbol,Class]
+
+  self.@error_classes: Hash[Symbol,Class]
 end
 
 # Exception raised to indicate that the user was not authorized to perform

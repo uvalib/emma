@@ -275,7 +275,7 @@ module SubmissionService::Action::Submit
   # @yieldparam  [ManifestItem] rec   The record itself.
   # @yieldreturn [any, nil]           False or *nil* to indicate failure.
   #
-  def run_step: (Array[ManifestItem] records, ?wait: Integer|Float|nil, **untyped opt) -> StepResult
+  def run_step: (Array[ManifestItem] records, ?wait: Integer|Float|nil, **untyped opt) ?{ (String id, ManifestItem rec) -> untyped } -> StepResult
 
   # Emit a console line tracing the *meth* submission step.
   #

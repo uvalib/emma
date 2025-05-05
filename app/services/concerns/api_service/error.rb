@@ -161,7 +161,6 @@ class ApiService::Error < Api::Error
     # @return [Hash]
     #
     def extract_headers(src)
-      # noinspection RailsParamDefResolve
       headers = src.try(:response_headers) || src.try(:headers) || src
       headers = (headers.presence if headers.is_a?(Hash))
       headers&.transform_keys { _1.to_s.downcase } || {}
@@ -173,9 +172,6 @@ class ApiService::Error < Api::Error
     #
     # @return [String]
     #
-    #--
-    # noinspection RailsParamDefResolve
-    #++
     def extract_body(src)
       body   = nil
       body ||= src.try(:response_body)
@@ -213,7 +209,6 @@ class ApiService::Error < Api::Error
     # @return [String, nil]
     #
     def aws_error_header(src)
-      # noinspection SpellCheckingInspection
       extract_headers(src)['x-amzn-errortype'].presence
     end
 

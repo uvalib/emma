@@ -67,7 +67,7 @@ module LinkHelper
   # === Usage Notes
   # This method assumes that local paths are always relative.
   #
-  def make_link: (String path, ?(String|nil) label, **untyped opt) { () -> String } -> ActiveSupport::SafeBuffer
+  def make_link: (String path, ?(String|nil) label, **untyped opt) ?{ () -> String } -> ActiveSupport::SafeBuffer
 
   # Produce a link to an external site which opens in a new browser tab.
   #

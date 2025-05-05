@@ -125,9 +125,6 @@ module LayoutHelper::SearchFilters
     #   @param [Array<Array>]  menu_pairs
     #   @param [Hash]          opt
     #
-    #--
-    # noinspection RubyMismatchedArgumentType
-    #++
     def make_menu(menu_name, values, **opt)
       config  = values.is_a?(Hash) ? values : current_menu_config(menu_name)
       pairs   = config[:menu]
@@ -142,7 +139,6 @@ module LayoutHelper::SearchFilters
           when String
             config_item(values).invert
           else
-            # noinspection RailsParamDefResolve
             values = values.try(:pairs) || values.try(:values) || values
             values.is_a?(Hash) ? values.invert : values
         end
@@ -685,7 +681,6 @@ module LayoutHelper::SearchFilters
     end
     menu  = menu_control(menu_name, label_id: l_id, **m_opt) or return
     label = menu_label(menu_name, label: label, id: l_id, **l_opt)
-    # noinspection RubyMismatchedReturnType
     label << menu
   end
 
@@ -858,7 +853,6 @@ module LayoutHelper::SearchFilters
     l_id  = "#{menu_name}_label"
     ctrl  = date_control(menu_name, label_id: l_id, **opt) or return
     label = date_label(menu_name, label: label, id: l_id, **opt)
-    # noinspection RubyMismatchedReturnType
     label << ctrl
   end
 

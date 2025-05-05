@@ -68,7 +68,6 @@ module DownloadConcern
   # @return [Download::Paginator]
   #
   def pagination_setup(paginator: Download::Paginator, **opt)
-    # noinspection RubyMismatchedReturnType
     super
   end
 

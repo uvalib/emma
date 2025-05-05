@@ -144,7 +144,6 @@ module JobMethods
   # @return [ActiveRecord::Relation]
   #
   def for(stream)
-    # noinspection RubyMismatchedReturnType
     where(%Q(#{stream_name} = '#{stream}'))
   end
 

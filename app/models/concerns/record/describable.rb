@@ -73,7 +73,6 @@ module Record::Describable
         value %= format if format
         [key, value]
       }.compact.to_h.presence
-    # noinspection RubyMismatchedReturnType
     terms ? (text % terms) : text
   end
   # :nocov:

@@ -61,7 +61,6 @@ module Upload::RenderMethods
     label ||= ident
     file    = (item[:filename] || item['filename'] if item.is_a?(Hash))
     file  ||= item.try(:filename)
-    # noinspection RubyMismatchedReturnType
     (label && file) && "#{label} (#{file})" || label || file || default
   end
 

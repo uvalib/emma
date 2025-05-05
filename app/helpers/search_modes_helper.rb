@@ -172,7 +172,6 @@ module SearchModesHelper
     return false if false?(guard)
     return true  if true?(guard)
     return false if (guards = Array.wrap(guard).compact.map!(&:to_sym)).blank?
-    # noinspection RubyMismatchedArgumentType
     guards.all? { (m = CONFIG_CONDITION[_1]).is_a?(Proc) ? m.call : try(m) }
   end
 

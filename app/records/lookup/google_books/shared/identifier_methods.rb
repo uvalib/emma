@@ -59,7 +59,6 @@ module Lookup::GoogleBooks::Shared::IdentifierMethods
 
   # @private
   # @type [Hash{Symbol=>String}]
-  # noinspection SpellCheckingInspection
   ID_SORT = {
     lccn:    '   a',
     isbn_13: '   b',

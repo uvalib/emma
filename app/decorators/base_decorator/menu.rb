@@ -56,7 +56,6 @@ module BaseDecorator::Menu
     table  ||= action_links
 
     action   = action&.to_sym
-    # noinspection RubyMismatchedArgumentType
     action   = action && table.dig(action, :action) || action
     path     = h.get_path_for(ctrlr, action)
     model    = object_class

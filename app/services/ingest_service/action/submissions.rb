@@ -301,7 +301,6 @@ module IngestService::Action::Submissions
         else             attr = { emma_repositoryRecordId: item }
       end
     else
-      # noinspection RailsParamDefResolve
       case (i = item)
         when Model then attr = i.try(:emma_metadata)&.presence&.dup || i.fields
         when Hash  then attr = i.symbolize_keys

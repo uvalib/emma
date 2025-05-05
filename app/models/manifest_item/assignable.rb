@@ -63,7 +63,6 @@ module ManifestItem::Assignable
   # @return [Hash{String=>Symbol}]
   #
   def key_mapping
-    # noinspection RubyMismatchedReturnType
     @key_mapping ||= super
   end
 

@@ -61,9 +61,6 @@ module BaseDecorator::Links
   # @yieldparam  [String] terms
   # @yieldreturn [String]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def model_link(item, **opt)
     trace_attrs!(opt, __method__)
     local  = opt.extract!(*MODEL_LINK_OPT)
@@ -237,7 +234,6 @@ module BaseDecorator::Links
     action  = (opt.delete(:action)  || action  || current)&.to_sym
     table ||= action_links(**opt)
     table[action]&.dup&.tap do |entry|
-      # noinspection RubyMismatchedArgumentType
       if base_action(action) == base_action(current)
         entry[:an] = ANOTHER
       elsif entry[:an].nil?

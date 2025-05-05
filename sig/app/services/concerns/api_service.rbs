@@ -49,6 +49,8 @@ class ApiService
     #
     def self.table: ((User|String|nil) user) -> Hash[Class,(ApiService|nil)]
 
+    self.@table: Hash[Class,(ApiService|nil)]
+
     # Remove all services for user
     #
     # @param [User, String] user
@@ -79,6 +81,8 @@ class ApiService
   # @return [Logger]
   #
   def self.api_logger: () -> Logger
+
+  self.@api_logger: Logger
 
   # Generate a list of service classes.
   #
@@ -164,6 +168,10 @@ class ApiService
   #                 added by this method as a hint for the API Explorer.
   #
   def self.add_api: (Hash[Symbol,symHash] prop, ?(String|nil) topic) -> void
+
+  self.@all_methods: symHash
+
+  self.@true_methods: symHash
 
   # Properties for each method which implements an API request.
   #

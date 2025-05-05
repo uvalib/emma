@@ -89,6 +89,12 @@ type decoratorRowItems = Array[Model] | ActiveRecord::Relation | ActiveRecord::A
 # Overrides and supplements to current RBS definitions
 # =============================================================================
 
+module AbstractController
+  module Rendering
+    def render: (*untyped args) ?{ () -> untyped } -> untyped
+  end
+end
+
 module ActionCable
   module Channel
     class Base
@@ -107,6 +113,9 @@ module ActionController
   module Flash
     def redirect_to: (?(ActiveRecord::Base|String|Proc|Hash[untyped,untyped]) options, ?Hash[untyped,untyped] response_options_and_flash) -> untyped
   end
+  module MimeResponds
+    def respond_to: (*untyped mimes) ?{ (untyped) -> untyped } -> untyped
+  end
   module Redirecting
     def redirect_to: (?(ActiveRecord::Base|String|Proc|Hash[untyped,untyped]) options, ?Hash[untyped,untyped] response_options) -> untyped
   end
@@ -119,9 +128,16 @@ module ActionDispatch
       def assert_redirected_to: ((String|Hash[untyped,untyped]) options, ?(String|nil) message) -> true
     end
   end
+  class SystemTestCase < ActiveSupport::TestCase
+    def self.driven_by: (untyped driver, ?options: ::Hash[untyped, untyped] options, ?screen_size: ::Array[untyped] screen_size, ?using: ::Symbol using) ?{ () -> untyped } -> untyped
+  end
 end
 
 module ActionMailer
+  class Base < AbstractController::Base
+    def mail: (?anyHash) ?{ (untyped) -> void } -> Mail::Message
+    def self.with: (?anyHash) -> untyped
+  end
   class Preview
   end
   module MailHelper
@@ -142,6 +158,12 @@ end
 
 # NOTE: overrides .gem_rbs_collection/activesupport/7.0/activesupport-generated.rbs
 module ActiveSupport
+
+  module Cache
+    class Store
+      def fetch: (untyped name, ?untyped? options) ?{ (untyped) -> untyped } -> untyped
+    end
+  end
 
   class BroadcastLogger
     include ActiveSupport::LoggerSilence
@@ -201,6 +223,20 @@ module ActionView
 end
 
 module ActiveRecord
+
+  module Associations
+    class CollectionProxy < Relation
+      def find: (*untyped args) ?{ (untyped) -> untyped } -> untyped
+    end
+  end
+
+  module AttributeMethods
+    module Read
+      def read_attribute: (untyped attr_name) ?{ () -> untyped } -> untyped
+      def _read_attribute: (untyped attr_name) ?{ () -> untyped } -> untyped
+      alias attribute _read_attribute
+    end
+  end
 
   module Callbacks
     module ClassMethods
@@ -407,6 +443,12 @@ module Concurrent
   end
 end
 
+class CSV
+  def self.read
+    : (String | IO path, ?headers: true | :first_row | Array[untyped] | String, **untyped options) -> ::CSV::Table[CSV::Row]
+    | (String | IO path, ?::Hash[Symbol, untyped] options) -> ::Array[::Array[String?]]
+end
+
 module Devise
   module Models
     module DatabaseAuthenticatable
@@ -583,6 +625,10 @@ class Hash[unchecked out K, unchecked out V] < Object
 
   # NOTE: overrides .gem_rbs_collection/activesupport/7.0/activesupport-generated.rbs
 
+  def deep_merge: (untyped other_hash) ?{ () -> untyped } -> untyped
+
+  def deep_merge!: (untyped other_hash) ?{ () -> untyped } -> untyped
+
   def deep_transform_keys
     : ()                    -> Enumerator[K, self]
     | () { (K) -> untyped } -> Hash[untyped, V]
@@ -702,7 +748,7 @@ end
 # NOTE: overrides gems/rbs-*/core/module.rbs
 class Module < Object
 
-  def self.constants: () -> Array[Symbol]
+  def self.constants: (?bool inherited) -> Array[Symbol]
 
 end
 
@@ -811,6 +857,11 @@ end
 module Rails
   class Application
     def config: () -> Rails::Application::Configuration
+  end
+  class Engine
+    class Configuration < ::Rails::Railtie::Configuration
+      def generators: () ?{ (Rails::Configuration::Generators) -> void } -> Rails::Configuration::Generators
+    end
   end
 end
 

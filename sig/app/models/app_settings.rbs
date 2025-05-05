@@ -153,6 +153,8 @@ class AppSettings < AppGlobal
 
     def self.spacer_key: () -> Symbol
 
+    self.@spacer_key: Symbol
+
     def self.storage_value: (untyped v) -> (bool | nil)
   end
 
@@ -162,6 +164,8 @@ class AppSettings < AppGlobal
     def self.type_key: () -> Symbol
 
     def self.spacer_key: () -> Symbol
+
+    self.@spacer_key: Symbol
 
     def self.storage_value: (untyped v) -> untyped
   end

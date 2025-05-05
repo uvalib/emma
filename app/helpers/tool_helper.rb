@@ -82,7 +82,6 @@ module ToolHelper
     path ||= url_for(controller: :tool, action: action, only_path: true)
     l_css  = %w[action]
     l_css << (user ? 'role-failure' : 'sign-in-required') unless allow
-    # noinspection RubyMismatchedArgumentType
     link   = make_link(path, label, **append_css(l_css))
 
     n_css  = %w[notice]

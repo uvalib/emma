@@ -3,9 +3,6 @@
 # frozen_string_literal: true
 # warn_indent:           true
 
-#--
-# noinspection RubyClassModuleNamingConvention
-#++
 class CreateIndexGoodJobsJobsOnPriorityCreatedAtWhenUnfinished < ActiveRecord::Migration[7.0]
 
   disable_ddl_transaction!

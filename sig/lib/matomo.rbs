@@ -256,15 +256,16 @@ module Matomo
   #
   # @return [Hash]
   #
-  def self.process_report_result: ((Array[symHash]|symHash|nil) values, target: Symbol|nil, **untyped _ignored) -> symHash
+  def self.process_report_result: ((Array[symHash]|symHash|nil) values, ?target: Symbol|nil, **untyped _ignored) -> symHash
 
   # Construct a `<dt>` name from a report value.
   #
-  # @param [Hash{Symbol=>any}]
+  # @param [Hash{Symbol=>any}] value
+  # @param [String, nil]       note   Appended to name if present
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def self.report_label: (symHash value) -> ActiveSupport::SafeBuffer
+  def self.report_label: (symHash value, ?note: String|nil, **untyped _ignored) -> ActiveSupport::SafeBuffer
 
   # Generate an HTML `<img>` element.
   #

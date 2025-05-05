@@ -5,9 +5,6 @@
 
 __loading_begin(__FILE__)
 
-#--
-# noinspection RubyConstantNamingConvention
-#++
 Boolean = Axiom::Types::Boolean
 
 # Base class for custom scalar types.

@@ -177,7 +177,6 @@ module TestHelper::Utility
   #
   def find_user(user)
     user = user_entry(user) if user.is_a?(String)
-    # noinspection RubyMismatchedArgumentType
     case user
       when :anonymous then nil
       when Symbol     then users(user)
@@ -253,7 +252,6 @@ module TestHelper::Utility
   #
   def find_org(org)
     org = org_entry(org) if org.is_a?(String)
-    # noinspection RubyMismatchedArgumentType
     case org
       when :none  then nil
       when Symbol then orgs(org)
@@ -322,7 +320,6 @@ module TestHelper::Utility
   # @return [Integer, nil]
   #
   def uid(item)
-    # noinspection RubyMismatchedArgumentType
     case item
       when nil    then return
       when Symbol then item = users(item)
@@ -345,7 +342,6 @@ module TestHelper::Utility
   # @return [Integer, nil]
   #
   def oid(item)
-    # noinspection RubyMismatchedArgumentType
     case item
       when nil     then return
       when Symbol  then item = orgs(item)

@@ -84,7 +84,6 @@ module BaseDecorator::Common
   def trace_attrs(opt = nil, meth = nil)
     opt    = opt&.dup || {}
     meth ||= calling_method
-    # noinspection RubyMismatchedArgumentType
     trace_attrs!(opt, meth)
   end
     .tap { define_method(_1) { |*arg| arg[0]&.dup || {} } unless DEBUG_ATTRS }

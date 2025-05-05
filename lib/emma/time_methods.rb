@@ -45,9 +45,6 @@ module Emma::TimeMethods
   #
   # @type [Float]
   #
-  #--
-  # noinspection SpellCheckingInspection, RubyMismatchedConstantType
-  #++
   EPSILON = Process.clock_getres(:TIMES_BASED_CLOCK_PROCESS_CPUTIME_ID)
 
   # ===========================================================================
@@ -78,7 +75,6 @@ module Emma::TimeMethods
   def time_span(start_time, end_time = nil)
     end_time ||= timestamp
     start_time = end_time unless start_time.is_a?(Numeric)
-    # noinspection RubyMismatchedArgumentType
     delta = end_time - start_time
     time  = delta.abs
     sign  = ('-' unless time == delta)

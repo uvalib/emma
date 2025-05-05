@@ -63,7 +63,6 @@ class SubmissionService::Request
     arg    ||= opt_args
     m_id     = opt_args[:manifest_id] ||= extract_manifest_id(arg, **opt)
     opt_args[:items] ||= extract_items(arg, **opt, manifest_id: m_id)
-    # noinspection RubyMismatchedArgumentType
     @table = template.merge(opt_args)
   end
 
@@ -143,7 +142,6 @@ class SubmissionService::Request
   # @return [SubmissionService::Request]
   #
   def self.wrap(item)
-    # noinspection RubyMismatchedReturnType
     item.is_a?(self) ? item : new(item)
   end
 
@@ -255,7 +253,6 @@ class SubmissionService::BatchSubmitRequest < SubmissionService::Request
   # @return [Array<SubmissionService::SubmitRequest>]
   #
   def items
-    # noinspection RubyMismatchedReturnType
     super
   end
 

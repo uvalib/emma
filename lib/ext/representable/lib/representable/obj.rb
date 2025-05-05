@@ -56,7 +56,6 @@ module Representable
     def to_obj(*args)
       opt  = args.last.is_a?(::Hash) ? args.pop : {}
       hash = to_hash(*args)
-      # noinspection RubyMismatchedArgumentType
       hash_render(hash, **opt)
     end
 

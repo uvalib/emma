@@ -14,7 +14,6 @@
     set_page_description(title)
   end
 
-  # noinspection SpellCheckingInspection
   command = 'uptime && echo && ps auxww'
   command = ["#{command}k-%cpu,-%mem,+pid", command]
 

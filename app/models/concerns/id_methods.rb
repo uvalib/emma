@@ -192,7 +192,6 @@ module IdMethods
     def for_user(user = nil, **opt)
       user = extract_value!(user, opt, :user, __method__)
       user = uid(user)
-      # noinspection RubyMismatchedReturnType
       where(user_key => user, **opt)
     end
 
@@ -207,7 +206,6 @@ module IdMethods
     def for_org(org = nil, **opt)
       org = extract_value!(org, opt, :org, __method__)
       org = oid(org)
-      # noinspection RubyMismatchedReturnType
       where(org_key => org, **opt)
     end
 

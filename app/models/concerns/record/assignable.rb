@@ -55,9 +55,6 @@ module Record::Assignable
   #
   # @return [Hash]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def normalize_attributes(attr, **opt)
     opt  = opt[:attr_opt].merge(opt.except(:attr_opt)) if opt[:attr_opt]
     meth = opt[:meth] || __method__
@@ -170,7 +167,6 @@ module Record::Assignable
   # @return [Hash{String=>Symbol}]
   #
   def key_mapping
-    # noinspection RubyMismatchedReturnType
     EnumType.comparable_map(database_columns.keys)
   end
 
@@ -353,7 +349,6 @@ module Record::Assignable
   # @return [any, nil]
   #
   def normalize_single(v, type, **opt)
-    # noinspection RubyMismatchedArgumentType
     case type
       when Class        then normalize_class(v, type, **opt)
       when true, false  then normalize_bool(v)
@@ -546,7 +541,6 @@ module Record::Assignable
     #
     def set_model_options(options)
       options = options[:options] if options.is_a?(Hash)
-      # noinspection RubyMismatchedReturnType, RubyMismatchedVariableType
       if options.is_a?(::Options)
         @model_options = options.dup
       else

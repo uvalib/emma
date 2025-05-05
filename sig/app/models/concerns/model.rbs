@@ -108,6 +108,8 @@ module Model
   #
   def self.fields_table: () -> Hash[Symbol,ModelConfig]
 
+  self.@fields_table: Hash[Symbol,ModelConfig]
+
   # Combine configuration settings for a given model/controller.
   #
   # @param [Symbol] type
@@ -189,7 +191,7 @@ module Model
   #
   # @return [ActionConfig, nil]
   #
-  def self.context_fields: (untyped? item) -> (ActionConfig | nil)
+  def self.context_fields: (untyped? item, Symbol action) -> (ActionConfig | nil)
 
   # Get configured record fields relevant to an :index action for the indicated
   # model/controller.

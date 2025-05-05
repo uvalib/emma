@@ -96,7 +96,6 @@ class ManifestItemDecorator < BaseDecorator
     #
     def manifest_for(item = nil, **opt)
       item = opt[:manifest] || opt[:manifest_id] || item || try(:object)
-      # noinspection RubyMismatchedReturnType, RailsParamDefResolve
       case item
         when String   then item
         when Manifest then item.id
@@ -465,7 +464,6 @@ class ManifestItemDecorator < BaseDecorator
       end
       parts = Array.wrap((yield if block_given?))
       super(col, **opt) do
-        # noinspection RubyMismatchedArgumentType
         control_group(l_id) do
           parts << field_details(col, prop)
           parts << type_details(col, prop)
@@ -763,7 +761,6 @@ class ManifestItemDecorator < BaseDecorator
           stat = S_BLANK     if stat.is_a?(FalseClass) || stat.nil?
           stat = stat.to_sym if stat.is_a?(String)
           col_opt[:label] = (stat[:label] if stat.is_a?(Hash))
-          # noinspection RubyMismatchedArgumentType
           submit_status_value(type, stat, **col_opt)
         end
 
@@ -1123,7 +1120,6 @@ class ManifestItemDecorator < BaseDecorator
     # @return [ActiveSupport::SafeBuffer]
     #
     def row_detail_value(value, css: VALUE_CLASS, **opt)
-      # noinspection RubyMismatchedArgumentType
       value = row_field_error_details(value, **opt) if value.is_a?(Hash)
       opt[:separator] = HTML_BREAK unless opt.key?(:separator)
       append_css!(opt, css)
@@ -1325,7 +1321,6 @@ class ManifestItemDecorator
   # @return [ActiveSupport::SafeBuffer]
   #
   def grid_item(**opt)
-    # noinspection RailsParamDefResolve
     opt[:group]       ||= object.try(:state_group)
     opt[:field_error] ||= object.field_error unless opt[:template]
     super

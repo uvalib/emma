@@ -36,9 +36,6 @@ module EnrollmentConcern
   # @yieldparam [Hash] attr           Supplied attributes for the new record.
   # @yieldreturn [void]
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def create_record(prm = nil, fatal: true, **opt, &blk)
     opt.reverse_merge!(recaptcha: true) if recaptcha_active?
     return super if blk
@@ -63,9 +60,6 @@ module EnrollmentConcern
   # @yieldparam [Enrollment] record May be altered by the block.
   # @yieldreturn [void]                 Block not called if *record* is *nil*.
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def edit_record(item = nil, **opt, &blk)
     return super if blk
     unauthorized unless administrator?
@@ -89,9 +83,6 @@ module EnrollmentConcern
   # @yieldparam [Hash] attr             New field(s) to be assigned to *record*
   # @yieldreturn [void]                 Block not called if *record* is *nil*
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def update_record(item = nil, fatal: true, **opt, &blk)
     return super if blk
     super do |record, attr|
@@ -133,9 +124,6 @@ module EnrollmentConcern
   # @yieldparam [Enrollment] record
   # @yieldreturn [String,nil]         Error message if *record* unacceptable.
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def destroy_records(items = nil, fatal: true, **opt, &blk)
     return super if blk
     unauthorized unless administrator?
@@ -212,7 +200,6 @@ module EnrollmentConcern
   #
   def pagination_setup(paginator: Enrollment::Paginator, **opt)
     opt[:id] ||= identifier
-    # noinspection RubyMismatchedReturnType
     super
   end
 
@@ -246,7 +233,6 @@ module EnrollmentConcern
     item, _prm = model_request_params(item)
     __debug_items("WF #{self.class} #{__method__}") {{ opt: _prm, item: item }}
     time = opt.delete(:time) || DateTime.now
-    # noinspection RubyMismatchedReturnType
     find_record(item, **opt).tap do |record|
       @new_org, @new_users = record.complete_enrollment(updated_at: time)
       record.destroy
@@ -268,7 +254,6 @@ module EnrollmentConcern
   # @return [void]
   #
   def generate_new_users_emails(**opt)
-    # noinspection RubyMismatchedArgumentType
     generate_new_org_emails(new_users, **opt)
   end
 

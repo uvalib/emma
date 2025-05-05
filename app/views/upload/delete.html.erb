@@ -6,7 +6,6 @@
 
   list  ||= @list
   recs    = list&.select { _1.is_a?(Upload) }
-  # noinspection RubyMismatchedArgumentType
   dec     = UploadsDecorator.new(recs, list: list, **context)
   list    = dec.object
 

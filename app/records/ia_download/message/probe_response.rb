@@ -63,7 +63,6 @@ class IaDownload::Message::ProbeResponse < IaDownload::Api::Message
       else               @error   = true
     end
     if @error && message.blank?
-      # noinspection RubyMismatchedArgumentType
       self.message =
         case src
           when Hash

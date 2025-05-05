@@ -48,7 +48,6 @@ end
 def to_utf8(v)
   return v unless v.is_a?(String)
   return v if (enc = v.encoding) == (utf = Encoding::UTF_8)
-  # noinspection RubyMismatchedArgumentType
   Encoding::Converter.new(enc, utf).convert(v) rescue v.dup.force_encoding(utf)
 end
 

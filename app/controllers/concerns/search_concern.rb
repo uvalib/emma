@@ -37,7 +37,6 @@ module SearchConcern
   #
   def search_api
     engine = requested_engine(SearchService)
-    # noinspection RubyMismatchedReturnType
     engine ? SearchService.new(base_url: engine) : api_service(SearchService)
   end
 
@@ -406,7 +405,6 @@ module SearchConcern
   # @return [SearchPaginator]
   #
   def pagination_setup(paginator: SearchPaginator, **opt)
-    # noinspection RubyMismatchedReturnType
     super
   end
 

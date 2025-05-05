@@ -365,7 +365,6 @@ class Shrine
       #
       def reload
         __ext_debug
-        # noinspection RubyMismatchedReturnType
         super
       end
 

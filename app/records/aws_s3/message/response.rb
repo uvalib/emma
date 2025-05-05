@@ -36,7 +36,7 @@ class AwsS3::Message::Response < AwsS3::Api::Message
   # @param [Hash]                                                       opt
   #
   def initialize(src, sent = nil, **opt)
-    # noinspection RubyScope, RubyMismatchedArgumentType
+    # noinspection RubyScope
     create_message_wrapper(opt) do |opt|
       super(nil, opt)
       self.succeeded = sids_for(sent)

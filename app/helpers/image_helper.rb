@@ -107,7 +107,6 @@ module ImageHelper
     opt[:data] = opt[:data]&.merge(data) || data
     opt[:alt]  = IMAGE_PLACEHOLDER_ALT
     prepend_css!(opt, css)
-    # noinspection RubyMismatchedReturnType
     image_tag(image, opt)
   end
 

@@ -33,7 +33,7 @@ class Search::Message::SearchRecordList < Search::Api::Message
   # @param [Hash, nil]                                   opt
   #
   def initialize(src, opt = nil)
-    # noinspection RubyScope, RubyMismatchedArgumentType
+    # noinspection RubyScope
     create_message_wrapper(opt) do |opt|
       apply_wrap!(opt)
       super(src, opt)

@@ -337,9 +337,6 @@ class SearchDecorator
   #
   # @return [ActiveSupport::SafeBuffer, nil]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType, RailsParamDefResolve
-  #++
   def extended_title
     date    = Search::Record::TitleRecord.item_date(object).presence
     parts   = object.try(:all_item_numbers, '&thinsp;|&thinsp;'.html_safe)
@@ -541,7 +538,6 @@ class SearchDecorator
 
     # Include data to be used to create a Download entry when the user clicks
     # on the retrieval link.
-    # noinspection RailsParamDefResolve
     obj = object.try(:exemplar) || object
     opt[:'data-dl-src'] ||= obj.emma_repository
     opt[:'data-dl-rec'] ||= obj.emma_repositoryRecordId
@@ -761,9 +757,6 @@ class SearchDecorator
   #
   # @return [Hash]
   #
-  #--
-  # noinspection RailsParamDefResolve
-  #++
   def score_values
     return {} if blank?
     {

@@ -46,9 +46,6 @@ module LayoutHelper::Status
   #   A non-default :engine parameter value ("production", "staging", "qa").
   #   @return [String, nil]
   #
-  #--
-  # noinspection RubyMismatchedConstantType
-  #++
   EngineStatus = Struct.new(:service, :url, :key, :fix)
 
   # ===========================================================================

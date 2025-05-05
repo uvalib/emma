@@ -76,7 +76,6 @@ module ApiService::Properties
   # @return [String]
   #
   def service_name(...)
-    # noinspection RailsParamDefResolve
     @service_name ||= ApiService.name_for(try(:name) || self.class.try(:name))
   end
 
@@ -187,7 +186,6 @@ module ApiService::Properties
   # @see "en.emma.service.*.endpoint"
   #
   def engines
-    # noinspection RubyUnusedLocalVariable
     meth = "#{service_name}.#{__method__}"
     prop = configuration[:endpoint]
     prop = { default_engine_key => prop } unless prop.is_a?(Hash)
@@ -246,7 +244,6 @@ module ApiService::Properties
   #
   def engine_key(value)
     if value.is_a?(String) && value.include?('/')
-      # noinspection RubyMismatchedReturnType
       engines.find { |key, url| break key if value == url }
     elsif engines.include?((key = value.to_s.downcase.to_sym))
       key

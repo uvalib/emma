@@ -471,7 +471,6 @@ class ApiMigrate
       if value.is_a?(Array)
         value.flat_map { normalize_creator(_1) }.compact.uniq
       else
-        # noinspection RubyMismatchedReturnType
         BOGUS_CREATOR.find do |match|
           return if match.is_a?(Regexp) ? (value =~ match) : (value == match)
         end || value
@@ -527,7 +526,6 @@ class ApiMigrate
         value.flat_map { normalize_metadata_source(_1) }.uniq
       else
         values = normalize_text_list(value)
-        # noinspection SpellCheckingInspection
         values.map { _1.gsub('Vanderbitl', 'Vanderbilt') }
       end
     end
@@ -540,6 +538,7 @@ class ApiMigrate
     #
     def normalize_text_list(value)
       value = Array.wrap(value).join("\n") unless value.is_a?(String)
+      # noinspection RubyArgCount (RubyMine analyzer fails here)
       value.split(/(?<=\w)\.(?=\s|\z)|[,;|\t\n]/).map!(&:strip).compact_blank
     end
 
@@ -588,7 +587,6 @@ class ApiMigrate
     # quality.
     #
     def summarize_quality(value)
-      # noinspection RubyMismatchedReturnType
       return value unless value.is_a?(Array)
       TextQuality.values.reverse.find { value.include?(_1) }
     end
@@ -862,7 +860,6 @@ class ApiMigrate
   def initialize(key = nil, report: nil, log: nil, fatal: true, **)
     @report = report.is_a?(Hash) ? report : ({} unless false?(report))
     @log    = log.present?
-    # noinspection RubyMismatchedVariableType
     @name   = key ? migration_name(key) : CONFIGURATION_ENTRY.keys.last
     error   =
       if !@name

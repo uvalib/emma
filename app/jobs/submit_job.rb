@@ -134,7 +134,6 @@ class SubmitJob < ApplicationJob
       end
     response =
       service.process(request, **opt, callback: step_callback).tap do |rsp|
-        # noinspection RubyMismatchedArgumentType
         overtime = deadline && past_due(deadline)
         status   = :done
         rsp[:class]    = rsp.class.name
@@ -288,7 +287,6 @@ class SubmitJobCallbackJob < ApplicationJob
     start_time = job[:start]    || end_time
     timeout    = job[:timeout]
     deadline   = job[:deadline] || (timeout && (start_time + timeout))
-    # noinspection RubyMismatchedArgumentType
     overtime   = deadline && past_due(deadline, end_time)
 
     resp[:job_id]     = batch.id

@@ -71,7 +71,6 @@ class Search::Record::MetadataRecord < Search::Api::Record
   #
   def initialize(src = nil, opt = nil)
     opt ||= {}
-    # noinspection RubyMismatchedArgumentType
     super(src, **opt)
     normalize_data_fields!
   end

@@ -169,10 +169,8 @@ class Ability
       alias_action(*actions, to: name) unless actions.blank?
     end
     user, role = [nil, user] unless user.is_a?(User) || role.nil?
-    # noinspection RubyMismatchedVariableType
     @role = RolePrototype.cast(user&.role || role)
     @role = RolePrototype(:anonymous) unless @role&.valid?
-    # noinspection RubyMismatchedArgumentType
     case @role.to_sym
       when :developer     then act_as_developer(user)
       when :administrator then act_as_administrator(user)

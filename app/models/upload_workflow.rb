@@ -446,7 +446,6 @@ module UploadWorkflow::Properties
     value = parameters[key]
     return false if false?(value)
     value = positive(value)
-    # noinspection RubyMismatchedReturnType
     value ? [value, MAX_BATCH_SIZE].min : OPTION_PARAMETER_DEFAULT[key]
   end
 
@@ -466,7 +465,6 @@ module UploadWorkflow::Properties
   # @see Workflow::Base::Properties#parameters
   #
   def parameters
-    # noinspection RailsParamDefResolve
     try(:model_params) || super || {}
   end
 
@@ -491,7 +489,6 @@ module UploadWorkflow::Properties
     prm   ||= parameters
     value   = prm&.dig(key)
     default = OPTION_PARAMETER_DEFAULT[key]
-    # noinspection RubyMismatchedReturnType
     case value
       when true, false then value
       when nil         then default
@@ -831,7 +828,6 @@ module UploadWorkflow::External
     succeeded = []
     failed    = []
     counter   = 0
-    # noinspection RubyMismatchedArgumentType
     items.each_slice(size) do |batch|
       throttle(counter)
       min = size * counter
@@ -911,7 +907,6 @@ module UploadWorkflow::External
     error &&= "No Upload #{error}"
 
     if record
-      # noinspection RubyMismatchedReturnType
       record
     elsif id.nil? || Upload.id_term(id).values.first.blank?
       Log.info { "#{meth}: #{error} (no record specified)" }
@@ -946,7 +941,6 @@ module UploadWorkflow::External
   def new_record(data = nil)
     __debug_items("UPLOAD WF #{__method__}", binding)
     Upload.new(data).tap do |record|
-      # noinspection RubyMismatchedArgumentType
       p = model_options.title_prefix and add_title_prefix(record, prefix: p)
     end
   end
@@ -1059,7 +1053,6 @@ module UploadWorkflow::External
     fault!(data) # @see UploadWorkflow::Testing
     record = data.is_a?(Upload) ? data : new_record(data)
     record.save if record.new_record?
-    # noinspection RubyMismatchedReturnType
     record
   end
 
@@ -1093,7 +1086,6 @@ module UploadWorkflow::External
     elsif record.new_record?
       record.save
     end
-    # noinspection RubyMismatchedReturnType
     record
   end
 
@@ -1156,7 +1148,6 @@ module UploadWorkflow::External
         rollback.reject! { sids.include?(_1.submission_id) }
       end
       succeeded = []      if atomic
-      # noinspection RubyMismatchedArgumentType
       failed.concat(kept) if kept.present?
       rollback.each(&:delete_file)
     end
@@ -1299,7 +1290,6 @@ module UploadWorkflow::External
   #
   def normalize_index_items(*items, meth: nil, max: INGEST_MAX_SIZE)
     items = items.flatten.compact
-    # noinspection RubyMismatchedReturnType
     return items unless items.size > max
     error = "#{meth || __method__}: item count: #{item.size} > #{max}"
     Log.error(error)
@@ -1802,7 +1792,6 @@ class UploadWorkflow < Workflow::Base
       # @return [Hash{Symbol=>Hash}]
       #
       def self.configuration
-        # noinspection RbsMissingTypeSignature
         @configuration ||= super
       end
 
@@ -1811,7 +1800,6 @@ class UploadWorkflow < Workflow::Base
       # @return [Hash{Symbol=>Hash}]
       #
       def self.state_label
-        # noinspection RbsMissingTypeSignature
         @state_label ||= super
       end
 
@@ -1826,7 +1814,6 @@ class UploadWorkflow < Workflow::Base
       # @return [Symbol]
       #
       def self.workflow_type
-        # noinspection RbsMissingTypeSignature
         @workflow_type ||= super
       end
 
@@ -1835,7 +1822,6 @@ class UploadWorkflow < Workflow::Base
       # @return [Hash{Symbol=>Class<UploadWorkflow>}]
       #
       def self.variant_table
-        # noinspection RbsMissingTypeSignature
         @variant_table ||= subclasses.map { [_1.variant_type, _1] }.sort.to_h
       end
 
@@ -1875,7 +1861,6 @@ class UploadWorkflow < Workflow::Base
           # @see Workflow::ClassMethods#workflow_column
           #
           def self.workflow_column(...)
-            # noinspection RbsMissingTypeSignature
             @workflow_state_column_name ||=
               safe_const_get(:STATE_COLUMN) || super
           end
@@ -1887,7 +1872,6 @@ class UploadWorkflow < Workflow::Base
           # @see Workflow::Base#variant_type
           #
           def self.variant_type
-            # noinspection RbsMissingTypeSignature
             @variant_type ||= name.demodulize.to_s.underscore.to_sym
           end
 

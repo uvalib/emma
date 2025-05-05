@@ -120,7 +120,6 @@ module ApiService::Common
   def latest_endpoint(prm = nil)
     prm = (prm || @params).dup
     prm.delete(:api_key) unless prm.delete(:complete)
-    # noinspection RubyMismatchedArgumentType
     prm = url_query(prm).presence
     [@action, prm].compact.join('?')
   end
@@ -151,9 +150,6 @@ module ApiService::Common
   # === Usage Notes
   # Clears and/or sets @exception as a side-effect.
   #
-  #--
-  # noinspection RubyScope, RubyMismatchedArgumentType
-  #++
   def api(verb, *args, **opt)
     clear_error
     @action = @response = error = nil
@@ -354,9 +350,6 @@ module ApiService::Common
   # === Usage Notes
   # If overridden, this should be called first via 'super'.
   #
-  #--
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-  #++
   def api_options(params = nil)
     params = @params if params.nil?
     params = params.except(*IGNORED_PARAMETERS)
@@ -689,7 +682,6 @@ module ApiService::Common
     opts_hdrs.transform_values! { _1&.inspect || '(none)' }
     body = "BODY:\n#{body.presence&.pretty_inspect}"
     opt  = full ? { max: nil } : {}
-    # noinspection RubyMismatchedArgumentType
     __debug_impl(leader: '>>>', separator: DEBUG_SEPARATOR, **opt) do
       [service_name] << action.inspect << opts_hdrs << body
     end
@@ -706,9 +698,6 @@ module ApiService::Common
   #
   # @return [void]
   #
-  #--
-  # noinspection RailsParamDefResolve
-  #++
   def __debug_api_response(
     response: @response,
     error:    @exception,
@@ -736,7 +725,6 @@ module ApiService::Common
     end
 
     __debug_impl(leader: '<<<', separator: DEBUG_SEPARATOR, max: nil) do
-      # noinspection RubyMismatchedArgumentType
       [service_name] << action.inspect << status << "DATA: #{data}"
     end
   end

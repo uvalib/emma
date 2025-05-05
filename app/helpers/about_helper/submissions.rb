@@ -89,7 +89,6 @@ module AboutHelper::Submissions
       counts = format_counts(items)
       [org, counts] if counts.present?
     }.compact.sort_by { |key, counts|
-      # noinspection RubyMismatchedArgumentType
       about_sort(key, counts, since: since)
     }.to_h
   end

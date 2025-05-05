@@ -191,10 +191,11 @@ module ModelConcern
   # Select records for a specific model record (or all records if specified as
   # '*', 'all', or 'false').
   #
-  # @param [Hash]  opt                May be modified.
-  # @param [Class] model
+  # @param [Hash]   opt               May be modified.
+  # @param [Symbol] id_key
+  # @param [Class]  model
   #
-  def filter_by_model!: (symHash opt, ?model: Class) -> void
+  def filter_by_model!: (symHash opt, ?id_key: Symbol|nil, ?model: Class) -> void
 
   # Limit records to those in the given state (or records with an empty state
   # field if specified as 'nil', 'empty', or 'missing').
@@ -463,7 +464,7 @@ module ModelConcern
   #
   # @return [Boolean]                 *true* if verified.
   #
-  def verified: (Model|nil record, **untyped opt) -> bool
+  def verified: (?(Model|nil) record, **untyped opt) -> bool
 
   # @private
   UNSET: Symbol

@@ -365,7 +365,6 @@ module Import
     if field.is_a?(Array)
       meth  = field.last
       field = field.first
-      # noinspection RubyMismatchedArgumentType
       value = meth.is_a?(Proc) ? meth.call(v) : send(meth, v)
       return field, value
     elsif field && respond_to?(field)
@@ -396,7 +395,6 @@ module Import
       mod = "Import::#{mod.camelize}" unless mod.start_with?('Import::')
       mod = mod.safe_constantize
     end
-    # noinspection RubyMismatchedReturnType
     return mod if mod.is_a?(Module)
     Log.error(__method__) { "#{arg}: invalid importer" }
   end

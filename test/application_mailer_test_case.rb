@@ -29,7 +29,6 @@ class ApplicationMailerTestCase < ActionMailer::TestCase
       assert_emails(1) { email.deliver_later }
     end
     conf = I18n.t("emma.mail.#{type}", default: {})
-    # noinspection RubyMismatchedArgumentType
     check_email(email, **conf.slice(:subject, :heading), **opt)
   end
 

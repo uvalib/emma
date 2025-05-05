@@ -145,10 +145,10 @@ module SubmissionService::Properties
   # @return [Integer, nil]
   #
   def batch_option
-    : (Numeric|nil value, Integer|true     default) -> Integer
-    | (true        value, Integer|bool|nil default) -> Integer
-    | (false       value, Integer|bool|nil default) -> nil
-    | (nil         value, false|nil        default) -> nil
+    : (Numeric|nil value, ?(Integer|true)     default) -> Integer
+    | (true        value, ?(Integer|bool|nil) default) -> Integer
+    | (false       value, ?(Integer|bool|nil) default) -> nil
+    | (nil         value, ?(false|nil)        default) -> nil
 
   # slice_option
   #

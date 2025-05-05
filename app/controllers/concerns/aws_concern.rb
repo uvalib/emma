@@ -42,7 +42,6 @@ module AwsConcern
   # @return [AwsS3Service]
   #
   def aws_api
-    # noinspection RubyMismatchedReturnType
     api_service(AwsS3Service)
   end
 
@@ -95,7 +94,6 @@ module AwsConcern
       Deployment.values.map(&:to_sym)
     else
       values.map! { |v|
-        # noinspection SpellCheckingInspection
         case v.to_s.downcase
           when /prod(uction)?/                then :production
           when /stag(ing)?/, /dev(elopment)?/ then :staging

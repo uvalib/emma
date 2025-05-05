@@ -54,7 +54,6 @@ module Record::Identification
   # @return [Class<ApplicationRecord>]
   #
   def record_class_for(item)
-    # noinspection RubyMismatchedReturnType
     case
       when Record.model_class?(item)       then item
       when Record.model_class?(item.class) then item.class
@@ -208,7 +207,6 @@ module Record::Identification
 
     id_key = opt.key?(:id_key) ? opt[:id_key] : id_column
     if id_key
-      # noinspection RubyMismatchedArgumentType
       opt.merge!(item) if item.is_a?(Hash)
       alt = alt_id_key(opt)
       opt = id_term(item, **opt).merge!(opt.slice(alt))
@@ -456,7 +454,6 @@ module Record::Identification
     min = (min_id ||= minimum_id).to_s
     max = (max_id ||  maximum_id).to_s
     ids.map! { [_1.to_i, min_id].max }.sort!.uniq!
-    # noinspection RubyMismatchedArgumentType
     ids =
       ids.chunk_while { |prev, this| (prev + 1) == this }.map do |range|
         first = range.shift
@@ -581,7 +578,6 @@ module Record::Identification
     # @see Record::Identification#record_class
     #
     def self.record_class
-      # noinspection RubyMismatchedReturnType
       self
     end
 
@@ -676,9 +672,6 @@ module Record::Identification
       #
       # @return [String]
       #
-      #--
-      # noinspection RbsMissingTypeSignature
-      #++
       def identifier
         id_value || super
       end

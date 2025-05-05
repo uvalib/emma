@@ -28,7 +28,6 @@ class RolePrototype < EnumType
   # @return [String]
   #
   def self.comparable(key)
-    # noinspection SpellCheckingInspection
     case (value = super)
       when 'staff'  then 'uploadonly'
       when 'guest'  then 'observer'

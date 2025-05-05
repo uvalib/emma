@@ -86,9 +86,6 @@ module OrgConcern
   # @yieldparam [Org] record
   # @yieldreturn [void]
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def find_record(item = nil, **opt, &blk)
     return super if blk
     unauthorized unless administrator? || manager?
@@ -110,9 +107,6 @@ module OrgConcern
   # @yieldparam [Hash] attr           Supplied attributes for the new record.
   # @yieldreturn [void]
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def new_record(prm = nil, **opt, &blk)
     return super if blk
     unauthorized unless administrator?
@@ -133,9 +127,6 @@ module OrgConcern
   # @yieldparam [Hash] attr           Supplied attributes for the new record.
   # @yieldreturn [void]
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def create_record(prm = nil, fatal: true, **opt, &blk)
     return super if blk
     unauthorized unless administrator?
@@ -160,9 +151,6 @@ module OrgConcern
   # @yieldparam [Org] record          May be altered by the block.
   # @yieldreturn [void]               Block not called if *record* is *nil*.
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def edit_record(item = nil, **opt, &blk)
     return super if blk
     unauthorized unless administrator? || manager?
@@ -188,9 +176,6 @@ module OrgConcern
   # @yieldparam [Hash] attr           New field(s) to be assigned to *record*.
   # @yieldreturn [void]               Block not called if *record* is *nil*.
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def update_record(item = nil, fatal: true, **opt, &blk)
     return super if blk
     unauthorized unless administrator? || manager?
@@ -238,9 +223,6 @@ module OrgConcern
   # @yieldparam [Org] record
   # @yieldreturn [String,nil]         Error message if *record* unacceptable.
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def destroy_records(items = nil, fatal: true, **opt, &blk)
     return super if blk
     unauthorized unless administrator?
@@ -317,7 +299,6 @@ module OrgConcern
   #
   def pagination_setup(paginator: Org::Paginator, **opt)
     opt[:id] ||= identifier
-    # noinspection RubyMismatchedReturnType
     super
   end
 

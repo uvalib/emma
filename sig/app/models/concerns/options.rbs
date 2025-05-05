@@ -49,6 +49,8 @@ class Options
 
   def model_class: () -> Class
 
+  self.@model_class: Class
+
   # The parameter key denoting a collection of model field values in URL
   # parameters.
   #
@@ -60,6 +62,8 @@ class Options
 
   def model_key: () -> Symbol
 
+  self.@model_key: Symbol
+
   # The parameter key denoting the identity of a model instance in URL
   # parameters.
   #
@@ -70,6 +74,8 @@ class Options
   def self.model_id_key: () -> Symbol
 
   def model_id_key: () -> Symbol
+
+  self.@model_id_key: Symbol
 
   # Indicate whether the item is a valid option.
   #

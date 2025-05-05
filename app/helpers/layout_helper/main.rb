@@ -116,7 +116,6 @@ module LayoutHelper::Main
   # @return [ActiveSupport::SafeBuffer, nil]
   #
   def page_heading_help(help)
-    # noinspection RubyMismatchedReturnType
     return help if help.html_safe?
     topic = Array.wrap(help).first(2).compact
     help_popup(*topic) if topic.present?

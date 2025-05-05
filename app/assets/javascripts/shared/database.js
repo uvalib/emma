@@ -590,7 +590,7 @@ export const DB = (function() {
             store_name  ||= transaction.objectStoreNames[0] || defaultStore();
             store = transaction.objectStore(store_name);
             if (debug_store && _debugging()) {
-                _log(func, `object store "${store_name}" properties:`)
+                _log(func, `object store "${store_name}" properties:`);
                 console.log("    .name          =", store.name);
                 console.log("    .keyPath       =", store.keyPath);
                 console.log("    .indexNames    =", store.indexNames);
@@ -777,10 +777,10 @@ export const DB = (function() {
     function clearObjectStore(store_name, callback) {
         const func  = "DB.clearObjectStore";
         const name  = store_name || defaultStore();
-        const store = dbObjectStore(func, name)
+        const store = dbObjectStore(func, name);
         const req   = store.clear();
         const cb    = () => callback?.(req.transaction.db);
-        const if_ok = () => { _log(func, `"${name}" cleared`); cb() }
+        const if_ok = () => { _log(func, `"${name}" cleared`); cb() };
         dbRequest(func, req, if_ok, cb);
     }
 
@@ -843,7 +843,7 @@ export const DB = (function() {
             } else {
                 _debug(func, "all DB items processed");
             }
-        }
+        };
         dbRequest(func, request, if_ok, if_err);
     }
 
@@ -867,7 +867,7 @@ export const DB = (function() {
             const items = event.target.result;
             _debug(func, `${key}="${value}"`, `${items.length} items`);
             callback?.(items);
-        }
+        };
         dbRequest(func, request, if_ok, if_err);
     }
 
@@ -891,7 +891,7 @@ export const DB = (function() {
             const number = event.target.result;
             _debug(func, `${key}="${value}"`, `${number} items found`);
             callback?.(number);
-        }
+        };
         dbRequest(func, request, if_ok, if_err);
     }
 
@@ -916,7 +916,7 @@ export const DB = (function() {
             const keys = event.target.result;
             _debug(func, `${key}="${value}"`, `${keys.length} keys`);
             callback?.(keys);
-        }
+        };
         dbRequest(func, request, if_ok, if_err);
     }
 

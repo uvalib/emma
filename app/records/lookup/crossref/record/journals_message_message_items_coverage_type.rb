@@ -10,7 +10,7 @@ __loading_begin(__FILE__)
 # @see https://api.crossref.org/swagger-ui/index.html#model-JournalsMessageMessageItemsCoverageType
 #
 #--
-# noinspection RubyClassModuleNamingConvention, LongLine
+# noinspection LongLine
 #++
 class Lookup::Crossref::Record::JournalsMessageMessageItemsCoverageType < Lookup::Crossref::Api::Record
 

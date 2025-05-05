@@ -244,7 +244,7 @@ class RunState < Hash[untyped, untyped]
   #
   # @return [nil]
   #
-  def self.warn: (*untyped args, ?meth: Symbol|nil) { () -> untyped } -> nil
+  def self.warn: (*untyped args, ?meth: Symbol|nil) ?{ () -> untyped } -> nil
 
   # Add a debug-level log message.
   #
@@ -254,7 +254,7 @@ class RunState < Hash[untyped, untyped]
   #
   # @return [nil]
   #
-  def self.debug: (*untyped args, ?meth: Symbol|nil) { () -> untyped } -> nil
+  def self.debug: (*untyped args, ?meth: Symbol|nil) ?{ () -> untyped } -> nil
 
   # Add a log message.
   #
@@ -265,5 +265,5 @@ class RunState < Hash[untyped, untyped]
   #
   # @return [nil]
   #
-  def self.log: (*untyped args, level: Integer|Symbol|nil, ?meth: Symbol|nil) { () -> untyped } -> nil
+  def self.log: (*untyped args, level: Integer|Symbol|nil, ?meth: Symbol|nil) ?{ () -> untyped } -> nil
 end

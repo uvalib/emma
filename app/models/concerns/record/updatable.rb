@@ -199,7 +199,6 @@ module Record::Updatable
     # @note From Upload::WorkflowMethods#set_fields_direct
     #
     def set_fields_direct(pairs)
-      # noinspection RailsParamDefResolve
       case
         when readonly?   then send(:_raise_readonly_record_error)
         when destroyed?  then nil

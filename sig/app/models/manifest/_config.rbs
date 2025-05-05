@@ -12,6 +12,6 @@ module Manifest::Config
   # @return [*, Manifest]
   #
   def default_to_self
-    :     (nil item, ?from: Symbol|nil) -> Manifest
-    | [T] (T   item, ?from: Symbol|nil) -> T
+    :     (?nil item, ?from: Symbol|nil) -> Manifest
+    | [T] ( T   item, ?from: Symbol|nil) -> T
 end

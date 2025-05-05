@@ -65,6 +65,8 @@ module SubmissionService::Common
 
   # How long the total request sequence took.
   #
+  # @param [Float]   t_end            Default: `end_time` or `timestamp`.
+  # @param [Float]   t_start          Default: `start_time`.
   # @param [Integer] precision        Digits after the decimal point.
   #
   # @return [Float] Wall clock time in seconds; zero if not finished.
@@ -73,7 +75,6 @@ module SubmissionService::Common
     return 0.0 if t_start.nil? && !finished?
     t_start ||= start_time
     t_end   ||= end_time || timestamp
-    # noinspection RubyMismatchedArgumentType
     (t_end - t_start).round(precision).to_f
   end
 

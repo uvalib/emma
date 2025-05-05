@@ -14,7 +14,6 @@ class CreateGoodJobExecutionDuration < ActiveRecord::Migration[7.1]
       end
     end
 
-    # noinspection RailsParamDefResolve
     add_column :good_job_executions, :duration, :interval
   end
 

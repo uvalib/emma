@@ -96,7 +96,6 @@ class Ingest::Record::IdentifierRecord < Ingest::Api::Record
     return emma_recordId if emma_recordId.present?
     parts = [emma_repository, emma_repositoryRecordId, dc_format]
     parts << emma_formatVersion unless no_version
-    # noinspection RubyMismatchedReturnType
     parts.compact_blank.join('-').presence
   end
 

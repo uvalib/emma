@@ -144,7 +144,6 @@ class RunState < Hash
   # @param [any, nil] source          String, Boolean, Hash, RunState
   #
   def initialize(source = nil)
-    # noinspection RubyMismatchedArgumentType
     if source.nil? || true?(source)
       merge!(AVAILABLE_DEFAULTS)
     elsif false?(source)
@@ -263,9 +262,6 @@ class RunState < Hash
   #
   # @type [Hash{String=>String}]
   #
-  #--
-  # noinspection RubyMismatchedConstantType
-  #++
   ABBREV_UNIT = {
     sec: 'second',
     min: 'minute',
@@ -307,7 +303,6 @@ class RunState < Hash
         unit = ABBREV_UNIT[abbr]
         "#{$1}.#{unit}"
       end
-      # noinspection RubyMismatchedArgumentType
       v = eval(v) rescue nil
     end
     return v if v.nil? || v.is_a?(Time)
@@ -458,7 +453,6 @@ class RunState < Hash
           f.flock(File::LOCK_EX)
           f.write(state)
         end
-        # noinspection RubyMismatchedReturnType
         state
       rescue => error
         warn(error)

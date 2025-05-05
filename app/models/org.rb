@@ -130,7 +130,6 @@ class Org < ApplicationRecord
   # @return [Array<Integer>]
   #
   def user_ids
-    # noinspection RubyMismatchedReturnType
     users.pluck(:id)
   end
 
@@ -141,7 +140,6 @@ class Org < ApplicationRecord
   # @note Currently unused.
   # :nocov:
   def user_accounts
-    # noinspection RubyMismatchedReturnType
     users.pluck(:email)
   end
   # :nocov:
@@ -250,7 +248,6 @@ class Org < ApplicationRecord
 
     error %= { field: 'organization name' } # TODO: I18n
     Log.info { "#{__method__} #{error}" }
-    # noinspection RubyMismatchedArgumentType
     raise (fatal.is_a?(Class) ? fatal : RuntimeError), error if fatal
   end
 
@@ -279,7 +276,6 @@ class Org < ApplicationRecord
 
     error %= { field: 'abbreviation' } # TODO: I18n
     Log.info { "#{__method__} #{error}" }
-    # noinspection RubyMismatchedArgumentType
     raise (fatal.is_a?(Class) ? fatal : RuntimeError), error if fatal
   end
 
@@ -292,7 +288,6 @@ class Org < ApplicationRecord
   # @return [Org]
   #
   def self.none
-    # noinspection RbsMissingTypeSignature
     @null ||= new(
       id:           INTERNAL_ID,
       short_name:   INTERNAL[:short_name],
@@ -315,7 +310,6 @@ class Org < ApplicationRecord
   def self.instance_for(v)
     v &&= try_key(v, model_key) || v
     return v if v.is_a?(self) || v.nil?
-    # noinspection RubyMismatchedReturnType
     case (v = oid(v) || v)
       when INTERNAL_ID then none
       when Integer     then find_by(id: v)

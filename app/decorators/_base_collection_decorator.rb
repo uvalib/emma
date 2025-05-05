@@ -152,7 +152,6 @@ class BaseCollectionDecorator
     with = opt.delete(:with) || self.class.decorator_class
     ctx  = initialize_context(action: DEFAULT_ACTION, **opt)
     obj  = ctx[:paginator] if obj.nil?
-    # noinspection RubyMismatchedArgumentType
     super(obj, with: with, context: ctx)
   end
 
@@ -180,9 +179,6 @@ class BaseCollectionDecorator
   #
   # @return [void]
   #
-  #--
-  # noinspection RbsMissingTypeSignature
-  #++
   def self.collection_of(base)
     unless base.is_a?(Class) && (base < BaseDecorator)
       raise 'Indicate the BaseDecorator subclass for list elements'

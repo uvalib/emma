@@ -35,7 +35,6 @@ module Emma::Log
   # @return [Emma::Logger]
   #
   def self.logger
-    # noinspection RbsMissingTypeSignature
     @logger ||= new(progname: 'EMMA')
   end
 
@@ -150,7 +149,6 @@ module Emma::Log
   # @return [Integer]
   #
   def self.level_for(value, default = :unknown)
-    # noinspection RubyMismatchedReturnType
     return value if value.is_a?(Integer)
     value = value.to_s.downcase.to_sym unless value.is_a?(Symbol)
     LOG_LEVEL[value] || LOG_LEVEL[default]
@@ -251,9 +249,6 @@ module Emma::Log
   #
   # @return [String]
   #
-  #--
-  # noinspection RbsMissingTypeSignature
-  #++
   def self.anonymous_progname(base_name: 'EMM%d', increment: true)
     @anonymous_count ||= 0
     @anonymous_count += 1 if increment
@@ -306,7 +301,6 @@ module Emma::Log
       update.(ActiveSupport::BroadcastLogger.new(*loggers))
 
     elsif src.nil? || src.is_a?(::Logger)
-      # noinspection RubyMismatchedArgumentType
       update.(new(src, **opt))
 
     else
@@ -319,9 +313,6 @@ end
 
 # Defined as an "alias" for Emma::Log without needing to "include Emma".
 #
-#--
-# noinspection RubyConstantNamingConvention
-#++
 Log = Emma::Log
 
 __loading_end(__FILE__)

@@ -103,7 +103,6 @@ module TestHelper::SystemTests::Authentication
   def sign_in_out(expect:, verify: true)
     done, error = false, nil
     yield
-    # noinspection RubyMismatchedArgumentType
     done = flash?(notice: expect, fatal: verify)
   rescue Minitest::Assertion => e
     error = e

@@ -177,7 +177,6 @@ module Serializable
 
   THIS_MODULE = self
 
-  # noinspection RbsMissingTypeSignature
   class_methods do
 
     __included(self, THIS_MODULE)

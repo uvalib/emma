@@ -10,7 +10,7 @@ __loading_begin(__FILE__)
 # @see https://api.crossref.org/swagger-ui/index.html#model-WorksMessageMessageItemsAssertionExplanation
 #
 #--
-# noinspection RubyClassModuleNamingConvention, LongLine
+# noinspection LongLine
 #++
 class Lookup::Crossref::Record::WorksMessageMessageItemsAssertionExplanation < Lookup::Crossref::Api::Record
 

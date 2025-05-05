@@ -16,7 +16,7 @@ class DebugTiming
 
   def self.start: () -> Float
 
-  @start: Float
+  self.@start: Float
 
   def self.now: () -> Float
 
@@ -26,7 +26,7 @@ class DebugTiming
 
   def self.level: () -> Integer
 
-  @level: Integer
+  self.@level: Integer
 
   def self.push_level: () -> Integer
 

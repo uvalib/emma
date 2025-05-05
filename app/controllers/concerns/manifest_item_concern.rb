@@ -115,7 +115,6 @@ module ManifestItemConcern
   def extract_manifest_id(prm)
     item = prm[:manifest_id] || prm[:manifest]
     item = item.id if item.is_a?(Manifest)
-    # noinspection RubyMismatchedReturnType
     item.presence
   end
 
@@ -248,9 +247,6 @@ module ManifestItemConcern
   # @yieldparam [ManifestItem] record
   # @yieldreturn [void]
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def find_record(item = nil, **opt, &blk)
     return super if blk
     authorized_session
@@ -272,9 +268,6 @@ module ManifestItemConcern
   # @yieldparam [Hash] attr           Supplied attributes for the new record.
   # @yieldreturn [void]
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def new_record(prm = nil, **opt, &blk)
     return super if blk
     authorized_session
@@ -295,9 +288,6 @@ module ManifestItemConcern
   # @yieldparam [Hash] attr           Supplied attributes for the new record.
   # @yieldreturn [void]
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def create_record(prm = nil, fatal: true, **opt, &blk)
     revalidate = { revalidate: true }
     opt[:attr_opt] = opt[:attr_opt]&.reverse_merge!(revalidate) || revalidate
@@ -322,9 +312,6 @@ module ManifestItemConcern
   # @yieldparam [ManifestItem] record
   # @yieldreturn [void] Block not called if *record* is *nil*.
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def edit_record(item = nil, **opt, &blk)
     return item  if item.is_a?(ManifestItem)
     return super if blk
@@ -350,9 +337,6 @@ module ManifestItemConcern
   # @yieldparam [Hash]         attr   New field(s) to be assigned to *record*.
   # @yieldreturn [void]               Block not called if *record* is *nil*.
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def update_record(item = nil, fatal: true, **opt, &blk)
     return super if blk
     keep_date = updated_at = old_values = nil
@@ -406,9 +390,6 @@ module ManifestItemConcern
   # @yieldparam [ManifestItem] record
   # @yieldreturn [String,nil]         Error message if *record* unacceptable.
   #
-  #--
-  # noinspection RubyMismatchedReturnType
-  #++
   def destroy_records(items = nil, fatal: true, **opt, &blk)
     return super if blk
     authorized_session
@@ -850,7 +831,6 @@ module ManifestItemConcern
   # @return [ManifestItem::Paginator]
   #
   def pagination_setup(paginator: ManifestItem::Paginator, **opt)
-    # noinspection RubyMismatchedReturnType
     super
   end
 

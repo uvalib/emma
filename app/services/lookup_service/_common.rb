@@ -77,7 +77,6 @@ module LookupService::Common
   # @return [PublicationIdentifier, nil]
   #
   def id_obj(type, id = nil, copy: false, **)
-    # noinspection RubyMismatchedReturnType
     if type.is_a?(PublicationIdentifier)
       Log.warn("#{__method__}: ignoring id #{id.inspect}") if id
       copy ? type.dup : type

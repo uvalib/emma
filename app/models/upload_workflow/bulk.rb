@@ -201,7 +201,6 @@ module UploadWorkflow::Bulk::External
           entry.promote_file
           entry
         rescue => error
-          # noinspection RailsParamDefResolve
           msg = error.try(:messages) || [error.message]
           failed << db_failed_format(entry, msg, counter)
           Log.error { "#{__method__}: #{error.class}: %s" % msg.join('; ') }
@@ -285,7 +284,6 @@ module UploadWorkflow::Bulk::External
       if atomic
         Upload.transaction do
           db_action.call.tap do |count|
-            # noinspection RubyMismatchedArgumentType
             unless count == ids.size
               msg = [__method__]
               msg << 'atomic delete failed'
@@ -302,7 +300,6 @@ module UploadWorkflow::Bulk::External
     Log.error { "#{__method__}: #{error.class}: #{error.message}" }
     raise error
   ensure
-    # noinspection RubyScope
     if success
       return ids, []
     else
@@ -434,7 +431,6 @@ module UploadWorkflow::Bulk::External
   # @return [Array<FlashPart>]
   #
   def db_failed_format!(items, message, position = 0)
-    # noinspection RubyMismatchedReturnType
     items.map!.with_index(position.next) do |item, pos|
       db_failed_format(item, message, pos)
     end

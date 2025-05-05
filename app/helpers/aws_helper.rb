@@ -35,7 +35,6 @@ module AwsHelper
   AWS_FILTER_OPT   = %i[after before prefix prefix_limit].freeze
   AWS_RENDER_OPT   = %i[heading html object].freeze
 
-  # noinspection RubyMismatchedConstantType
   S3_BUCKET_DEFAULT_SORT = config_page(:upload,:search_filters,:sort,:default)
   S3_BUCKET_PRIMARY_SORT = :prefix
 
@@ -196,9 +195,6 @@ module AwsHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [Array<Hash>]                           If *html* is *false*.
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def render_s3_bucket(bucket, objects, css: '.aws-bucket', **opt)
     local  = opt.extract!(*AWS_BUCKET_OPT)
     after  = local[:after].try(:to_datetime)
@@ -255,7 +251,6 @@ module AwsHelper
     end
 
     # Return the hashes themselves if not rendering HTML.
-    # noinspection RubyMismatchedReturnType
     return objects unless html
 
     # Generate a heading if a bucket (name) was provided.
@@ -327,7 +322,6 @@ module AwsHelper
     values  = obj.is_a?(Hash) ? obj.dup : s3_object_values(obj)
 
     # If not rendering HTML then just return with the column values.
-    # noinspection RubyMismatchedReturnType
     return values unless html
 
     # Render each column value.
@@ -462,9 +456,6 @@ module AwsHelper
   #
   # @return [Array<Hash>]
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def sort_objects!(array, sort_keys = nil)
     primary_sort   = transform_sort_keys(S3_BUCKET_PRIMARY_SORT)
     secondary_sort = transform_sort_keys(sort_keys || S3_BUCKET_DEFAULT_SORT)

@@ -63,5 +63,5 @@ module TestHelper::SystemTests::Authentication
   # @yield  Sign-in/sign-out actions.
   # @yieldreturn [void]
   #
-  def sign_in_out: (expect: String, ?verify: bool) -> bool
+  def sign_in_out: (expect: String, ?verify: bool) ?{ () -> void } -> bool
 end

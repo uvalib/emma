@@ -116,7 +116,6 @@ class LookupService
   # @see LookupService::RemoteService::Properties#priority
   #
   def self.service_table
-    # noinspection RbsMissingTypeSignature
     @service_table ||=
       RemoteService.subclasses.select(&:enabled?).sort_by(&:name).map { |srv|
         [srv, srv.types]

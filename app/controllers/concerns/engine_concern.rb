@@ -33,7 +33,6 @@ module EngineConcern
   # @return [String]
   #
   def service_name(service)
-    # noinspection RailsParamDefResolve
     service.try(:service_name) || ApiService.name_for(service)
   end
 
@@ -139,7 +138,6 @@ module EngineConcern
     end
     val = nil if val && (val == service.default_engine_key)
     url = nil if url && (url == service.default_engine_url)
-    # noinspection RubyMismatchedArgumentType
     set_session_engine(service, (val || url))
     redirect_to opt if in_params
   end

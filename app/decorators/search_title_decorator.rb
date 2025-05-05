@@ -35,7 +35,6 @@ class SearchTitleDecorator < SearchDecorator
     trace_attrs!(opt, __method__)
     if present?
       added = {}
-      # noinspection RailsParamDefResolve
       if relevancy_scores?
         added = object.try(:get_scores, precision: 2, all: true) || {}
         added[:sort_date] = object.try(:emma_sortDate).presence

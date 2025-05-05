@@ -70,7 +70,6 @@ class FileParser::Word < FileParser
     result = {}
     doc    = get_archive_entry('docProps/core.xml', file_handle)
     doc  &&= Nokogiri.XML(doc)
-    # noinspection RubyMismatchedArgumentType
     (doc&.xpath('.//cp:coreProperties')&.children || []).each do |element|
       next unless element.element?
       __debug_parse(element)

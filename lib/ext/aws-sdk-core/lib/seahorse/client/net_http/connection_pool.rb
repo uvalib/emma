@@ -13,7 +13,6 @@ module Seahorse
   module Client
     module NetHttp
       class ConnectionPool
-        # noinspection RbsMissingTypeSignature
         @default_logger =
           if (logger = Aws.config[:logger])
             Log.new(logger)

@@ -175,7 +175,7 @@ module CssHelper
   #
   # @return [String]
   #
-  def hex_rand: (?digits: Integer|nil, upper: bool|nil) -> String
+  def hex_rand: (?digits: Integer|nil, ?upper: bool|nil) -> String
 
   # Create a unique CSS identifier from *base* and a random hex digit string.
   #

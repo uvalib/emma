@@ -62,7 +62,6 @@ module TestHelper::SystemTests::Index
 
     # Validate pagination if provided.
     if index || page
-      # noinspection RubyMismatchedArgumentType
       size  ||= Paginator.get_page_size(controller: ctrlr)
       page  ||= (index - 1) / size
       index ||= (page * size) + 1
@@ -85,7 +84,6 @@ module TestHelper::SystemTests::Index
   #
   def title_terms(ctrlr, **terms)
     ctrlr = controller_name(ctrlr)
-    # noinspection RubyMismatchedArgumentType
     SearchTermsHelper.search_terms(ctrlr, pairs: terms).values.map { |term|
       if term.query?
         array_string(term.names, inspect: true)

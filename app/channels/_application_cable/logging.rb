@@ -36,7 +36,6 @@ module ApplicationCable::Logging
     arg ||= self
     name  = arg.is_a?(Class) ? arg : arg.class
     tag ||= ('CLASS' if arg.is_a?(Class))
-    # noinspection RailsParamDefResolve
     tag ||= arg.try(:connection_identifier) || arg.try(:stream_id)
     tid ||= thread_name
     "#{TAG_LEADER} #{name} [#{tid}] [#{tag}]"

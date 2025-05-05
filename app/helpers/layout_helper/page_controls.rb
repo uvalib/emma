@@ -148,7 +148,6 @@ module LayoutHelper::PageControls
     item_id  = path_opt.delete(:id)
     ctrlr    = ctrlr&.to_sym
     action   = action&.to_sym
-    # noinspection RubyMismatchedArgumentType
     base     = action && base_action(action)
     special  = action && (action != base)
     action   = base if special && item_id

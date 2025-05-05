@@ -68,7 +68,6 @@ class Logger
     # @return [TrueClass]
     #
     def add(severity, message = nil, progname = nil)
-      # noinspection RubyMismatchedReturnType
       suppressed? || super
     end
 

@@ -125,7 +125,6 @@ class SubmissionService < ApiService
   def make_request(request = nil, meth: nil, manifest: nil, **opt)
     request, meth = [nil, request] if request.is_a?(Symbol)
     request ||= pre_flight(meth, manifest, **opt)
-    # noinspection RubyMismatchedArgumentType
     SubmissionService.make_request(request, **opt, service: self)
   end
 
@@ -179,7 +178,6 @@ class SubmissionService < ApiService
     opt[:simulation]  = true if SIMULATION_ONLY && !opt.key?(:simulation)
     opt.compact!
     request = pre_flight(request, **opt)
-    # noinspection RubyMismatchedArgumentType
     case
       when no_job   then process(request, **opt)
       when no_async then schedule_sync(request, **opt)
@@ -203,7 +201,6 @@ class SubmissionService < ApiService
   # @return [SubmitJob, nil]
   #
   def self.schedule_async(request, **opt)
-    # noinspection RubyMismatchedReturnType
     SubmitJob.perform_later(request, **opt) || nil
   end
 
@@ -215,7 +212,6 @@ class SubmissionService < ApiService
   # @return [Hash]
   #
   def self.schedule_sync(request, **opt)
-    # noinspection RubyMismatchedReturnType
     SubmitJob.perform_now(request, **opt)
   end
 
@@ -252,7 +248,6 @@ class SubmissionService < ApiService
   #
   def process(request, **opt)
     opt[:service] ||= self
-    # noinspection RubyMismatchedArgumentType
     if request.is_a?(SubmissionService::BatchSubmitRequest)
       process_batch(request, **opt)
     else
@@ -277,7 +272,6 @@ class SubmissionService < ApiService
   #
   def process_batch(request, **opt)
     requests = request.requests
-    # noinspection RubyMismatchedReturnType
     case
       when opt[:no_job]   then requests.map { process_all(_1, **opt) }
       when opt[:no_async] then requests.map { schedule_sync(_1, **opt) }

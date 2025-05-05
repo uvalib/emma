@@ -146,7 +146,7 @@ module EnrollmentConcern
   #
   # @return [Enrollment, nil]
   #
-  def finalize_enrollment: (untyped item, **untyped opt) -> (Enrollment | nil)
+  def finalize_enrollment: (?untyped item, **untyped opt) -> (Enrollment | nil)
 
   # Indicate whether #generate_new_users_emails should be run for users of a
   # new organization.

@@ -188,7 +188,6 @@ module Api::Serializer::Schema
     name = name.to_s       if name.is_a?(Symbol) || name.is_a?(Class)
     name = name.class.to_s unless name.is_a?(String)
     name = name.demodulize
-    # noinspection RubyMismatchedReturnType
     case mode
       when :default, nil          then name
       when :underscore            then name.underscore

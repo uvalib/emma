@@ -55,7 +55,6 @@ module FileNaming
     def daisy_type(type, handle)
       return unless %i[daisy daisyAudio].include?(type&.to_sym)
       return unless FileHandle.compatible?(handle)
-      # noinspection RubyMismatchedArgumentType
       get_archive_entry('.mp3', handle) ? :daisyAudio : :daisy
     end
 

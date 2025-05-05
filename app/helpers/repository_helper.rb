@@ -86,7 +86,6 @@ module RepositoryHelper
   #
   def repository_for(url, obj = nil, field: :emma_repository)
     url, obj = [nil, url] if url && !url.is_a?(String)
-    # noinspection RubyMismatchedArgumentType
     (obj&.try(field) || obj&.try(:[], field) || url_repository(url))&.to_sym
   end
 

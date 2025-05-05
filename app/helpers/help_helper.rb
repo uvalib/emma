@@ -192,7 +192,6 @@ module HelpHelper
   #
   def help_topic(topic)
     return if topic.blank?
-    # noinspection RubyMismatchedReturnType
     case (topic = topic.to_sym)
       when :org  then :organization
       when :user then :account
@@ -337,7 +336,6 @@ module HelpHelper
     asset, alt = entry.is_a?(Hash) ? [entry[:asset], entry[:alt]] : entry
     asset     ||= "help/#{name}.png"
     opt[:alt] ||= alt || name.to_s.tr('_', ' ').capitalize << ' illustration'
-    # noinspection RubyMismatchedReturnType
     image_tag(asset_path(asset), **opt)
   end
 
@@ -559,7 +557,6 @@ module HelpHelper
     # @return [String, nil]
     #
     def text_value(cfg, *names)
-      # noinspection RubyMismatchedReturnType
       names.find do |name|
         if (value = cfg[:"#{name}_html"]&.strip).present?
           return value.html_safe? ? value : value.html_safe

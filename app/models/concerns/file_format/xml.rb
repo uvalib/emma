@@ -142,7 +142,6 @@ module FileFormat::Xml
   # @return [nil]
   #
   def parse_meta(elem)
-    # noinspection RailsParamDefResolve
     return unless elem.try(:name) == 'meta'
     attrs = get_attributes(elem)
     key   = make_key(attrs[:property] || attrs[:name])
@@ -158,9 +157,6 @@ module FileFormat::Xml
   # @return [Array(Symbol,String)]
   # @return [Array(Symbol,nil)]
   #
-  #--
-  # noinspection RailsParamDefResolve
-  #++
   def get_properties(elem)
     name  = elem.try(:name) || elem.class.name
     value = elem.try(:content)&.to_s&.strip

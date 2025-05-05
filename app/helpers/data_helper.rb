@@ -62,7 +62,6 @@ module DataHelper
           names.delete(match.to_s)
         end
       }.compact
-    # noinspection RubyMismatchedReturnType
     names.sort.concat(later)
   end
 
@@ -165,7 +164,6 @@ module DataHelper
     errors = []
     errors << invalid_table_name(name) unless table_name?(name)
     if cols.present?
-      # noinspection RailsParamDefResolve
       cols.map! { _1.is_a?(Symbol) ? _1.to_s : (_1.try(:name) || _1) }
       cols, blanks = cols.partition(&:present?)
       if (error = blank_columns(*blanks)).present?
@@ -338,7 +336,6 @@ module DataHelper
     **opt
   )
     records ||= []
-    # noinspection RubyMismatchedArgumentType
     tbl_opt = { id: name.presence && html_id(name) }.compact
     headers = name ? table_column_names(name, *cols) : records.first&.keys
 

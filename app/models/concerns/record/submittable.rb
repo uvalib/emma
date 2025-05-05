@@ -63,7 +63,6 @@ module Record::Submittable
       if item.is_a?(Entry)
         item.current_phase&.new_submission?
       else
-        # noinspection RailsParamDefResolve
         item.try(:new_submission?)
       end || false
 =end
@@ -177,7 +176,6 @@ module Record::Submittable
       elsif record&.new_record?
         record.save!
       end
-      # noinspection RubyMismatchedReturnType
       record
     end
 
@@ -441,7 +439,6 @@ module Record::Submittable
     #
     def normalize_index_items(*items, meth: nil, max: INGEST_MAX_SIZE)
       items = items.flatten.compact
-      # noinspection RubyMismatchedReturnType
       return items unless items.size > max
       error = "#{meth || __method__}: item count: #{item.size} > #{max}"
       Log.error(error)
@@ -734,7 +731,6 @@ module Record::Submittable
           result = {}
           Log.error { "#{__method__}: expected 'items' type: #{items.class}" }
       end
-      # noinspection RubyMismatchedReturnType
       empty_key ? result : result.delete_if { |repo, _| repo.blank? }
     end
 
@@ -791,7 +787,6 @@ module Record::Submittable
       # After all batch operations have completed, truncate the database table
       # (i.e., so that the next entry starts with id == 1) if appropriate.
       if model_options.truncate_delete && (ids == %w[*])
-        # noinspection RailsParamDefResolve
         if failed.present?
           Log.warn('database not truncated due to the presence of errors')
         elsif !self.class.try(:connection)&.truncate(self.class.table_name)
@@ -849,7 +844,6 @@ module Record::Submittable
       succeeded = []
       failed    = []
       counter   = 0
-      # noinspection RubyMismatchedArgumentType
       items.each_slice(size) do |batch|
         throttle(counter)
         min = size * counter
@@ -936,7 +930,6 @@ module Record::Submittable
       # Include the new submission in the index if specified.
       return item, [] unless index
 
-      # noinspection RubyMismatchedArgumentType
       succeeded, failed, _ = add_to_index(item, atomic: atomic)
       return succeeded.first, failed
     end

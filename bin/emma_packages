@@ -27,7 +27,7 @@ require 'pp'
 PROJECT_DIR = '/home/rwl/Work/emma'
 SRC_FILE    = 'package.json'
 
-# noinspection SpellCheckingInspection, LongLine
+# noinspection LongLine
 URL = {
   'jquery'  => 'code.jquery.com/jquery-%{version}.min.js',
   'select2' => 'cdnjs.cloudflare.com/ajax/libs/select2/%{version}/%{type}/select2.min.%{type}',
@@ -80,7 +80,6 @@ end
 #
 def get_packages(file)
   file ||= SRC_FILE
-  # noinspection RubyMismatchedArgumentType
   text = File.read(file);                 # debug("text == #{text.inspect}")
   json = JSON.parse(text);                # debug("json == #{json.inspect}")
   pkgs = json&.dig('dependencies')&.keys;   debug("pkgs == #{pkgs.inspect}")

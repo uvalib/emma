@@ -100,7 +100,6 @@ end
 def include_submodules(base, filename = nil, and_extend: false)
   curr_constants = constants(false)
   if filename.present?
-    # noinspection RubyMismatchedArgumentType
     require_submodules(filename)
     curr_constants = constants(false) - curr_constants
   end

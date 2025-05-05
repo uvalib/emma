@@ -146,7 +146,6 @@ module Emma::Common::NumericMethods
     fmt = (digits &&= positive(digits)) ? "%0#{digits}#{hex}" : "%#{hex}"
     fmt % value
   rescue ArgumentError, TypeError
-    # noinspection RubyScope
     fmt % 0
   end
 

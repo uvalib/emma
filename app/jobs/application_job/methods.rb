@@ -27,9 +27,6 @@ module ApplicationJob::Methods
   #
   # @type [Symbol]
   #
-  #--
-  # noinspection RubyMismatchedConstantType
-  #++
   MAIN_JOB_RESULT_COLUMN = JOB_RESULT_COLUMNS.first
 
   # ===========================================================================

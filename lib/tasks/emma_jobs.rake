@@ -117,7 +117,6 @@ namespace 'emma:jobs' do
   # @return [Array<Class>]
   #
   def record_classes(c = ActiveRecord::Base)
-    # noinspection SpellCheckingInspection
     return []  if c.name.nil? || c.name.start_with?('HABTM_')
     return [c] if c.ancestors.include?(JobMethods)
     c.subclasses.flat_map { record_classes(_1) }.compact

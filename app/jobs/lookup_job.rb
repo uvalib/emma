@@ -60,7 +60,6 @@ class LookupJob < ApplicationJob
     opt[:deadline] ||= (start + timeout) if timeout
     opt[:job_type] ||= service.is_a?(Array) ? :waiter : :worker
 
-    # noinspection RubyMismatchedArgumentType
     if opt[:job_type] == :worker
       worker_task(record, service, request, **opt)
     else
@@ -159,7 +158,6 @@ class LookupJob < ApplicationJob
     status   = opt[:status]   || :done
 
     LookupService.get_from(service, request).tap do |rsp|
-      # noinspection RubyMismatchedArgumentType
       status = :late if (overtime = deadline && past_due(deadline))
       rsp[:class]    = rsp.class.name
       rsp[:job_id]   = job_id
@@ -222,7 +220,6 @@ class LookupJob < ApplicationJob
       job_id = data&.dig(:active_job_id)
       if job_table.include?(job_id)
         w_opt = { job_id: job_id, waiter_id: waiter_id, **job_opt, **opt }
-        # noinspection RubyMismatchedArgumentType
         if (result = worker_task_completion(job_table, data, request, **w_opt))
           notifications_unsubscribe
           record.update(output: result)
@@ -245,9 +242,6 @@ class LookupJob < ApplicationJob
   # @return [LookupChannel::LookupResponse]   If all tasks have completed.
   # @return [nil]                             If worker task(s) are pending.
   #
-  #--
-  # noinspection RubyMismatchedArgumentType
-  #++
   def worker_task_completion(job_table, data, request, **opt)
     job_opt   = opt.extract!(:job_id, :waiter_id, *JOB_OPT)
     job_id    = job_opt[:job_id]

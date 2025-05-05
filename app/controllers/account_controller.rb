@@ -327,12 +327,10 @@ class AccountController < ApplicationController
   #
   def list_items(prm = nil, for_org: false)
     prm ||= paginator.initial_parameters
-    # noinspection RubyMismatchedArgumentType
     current_org!(prm) if for_org
     terms = prm.delete(:like)
     items = get_accounts(*terms, **prm)
     paginator.finalize(items, **prm)
-    # noinspection RubyMismatchedReturnType
     prm
   end
 

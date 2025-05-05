@@ -54,7 +54,6 @@ module Emma::Common::FormatMethods
     text ||= ''.html_safe
     html   = text.is_a?(ActiveSupport::SafeBuffer)
     text   = ERB::Util.h(text) unless html
-    # noinspection RubyMismatchedReturnType
     (html && !force) ? text : text.gsub(/[ \t]/, '&nbsp;').html_safe
   end
 
@@ -72,7 +71,6 @@ module Emma::Common::FormatMethods
   # @return [ActiveSupport::SafeBuffer]
   #
   def labelize(text, count: nil, breakable: true, **)
-    # noinspection RubyMismatchedReturnType
     return text if text.is_a?(ActiveSupport::SafeBuffer)
     result =
       Array.wrap(text)
@@ -193,7 +191,6 @@ module Emma::Common::FormatMethods
   #   @return [String]
   #
   def strip_quotes(term, separator: ', ')
-    # noinspection RubyMismatchedReturnType
     if term.is_a?(Array)
       terms = term.map { strip_quotes(_1, separator: separator) }
       html  = terms.all?(&:html_safe?)

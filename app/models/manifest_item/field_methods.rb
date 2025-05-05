@@ -112,7 +112,6 @@ module ManifestItem::FieldMethods
   def set_backup!(item = nil, **added)
     item ||= default_to_self
     item[:backup] = get_backup(item, **added)
-    # noinspection RubyMismatchedReturnType
     item
   end
 

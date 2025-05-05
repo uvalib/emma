@@ -34,9 +34,6 @@ module SubmissionService::Action::Submit
   #
   # @return [SubmissionService::SubmitResponse] The value assigned to @result.
   #
-  #--
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-  #++
   def batch_create(request = nil, manifest: nil, items: nil, **opt)
     self.request      = request ||= pre_flight(manifest, items, **opt)
     self.start_time   = request[:start_time]  ||= timestamp
@@ -59,9 +56,6 @@ module SubmissionService::Action::Submit
   #
   # @note Currently unused.
   # :nocov:
-  #--
-  # noinspection RubyMismatchedArgumentType, RubyMismatchedReturnType
-  #++
   def batch_update(request = nil, manifest: nil, items: nil, **opt)
     self.request      = request ||= pre_flight(manifest, items, **opt)
     self.start_time   = request[:start_time]  ||= timestamp
@@ -362,9 +356,6 @@ module SubmissionService::Action::Submit
   #
   # @return [StepResult]
   #
-  #--
-  # noinspection RubyScope
-  #++
   def submission_step(
     items,
     step:,
@@ -907,7 +898,6 @@ module SubmissionService::Action::Submit
     end
 
     def min_max
-      # noinspection RubyMismatchedArgumentType
       min = index ? (percentile * index) : ((scale - percentile) / 2)
       min...(min + percentile)
     end
@@ -945,7 +935,6 @@ module SubmissionService::Action::Submit
     # @return [Integer]
     #
     def new_step
-      # noinspection RubyMismatchedReturnType
       index(index&.succ || 0)
     end
 
@@ -974,7 +963,6 @@ module SubmissionService::Action::Submit
         parts << (err || msg)
       }.join(' | ')
       $stderr.puts line
-      # noinspection RubyMismatchedArgumentType
       raise err              if err
       pause(work, item.size) if work
     end
@@ -984,9 +972,6 @@ module SubmissionService::Action::Submit
     # @param [Float,Range<Float>] time
     # @param [Numeric, nil]       factor
     #
-    #--
-    # noinspection RubyMismatchedArgumentType
-    #++
     def pause(time, factor = nil)
       if factor && (factor != 1)
         if time.is_a?(Range)

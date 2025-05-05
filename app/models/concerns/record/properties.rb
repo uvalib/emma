@@ -315,7 +315,6 @@ module Record::Properties
     value = parameters[key]
     return false if false?(value)
     value = positive(value)
-    # noinspection RubyMismatchedReturnType
     value ? [value, MAX_BATCH_SIZE].min : OPTION_PARAMETER_DEFAULT[key]
   end
 
@@ -334,7 +333,6 @@ module Record::Properties
   # @see ::Options#model_params
   #
   def parameters
-    # noinspection RailsParamDefResolve
     try(:model_params) || try(:params) || {}
   end
 
@@ -359,7 +357,6 @@ module Record::Properties
     prm   ||= parameters
     value   = prm&.dig(key)
     default = OPTION_PARAMETER_DEFAULT[key]
-    # noinspection RubyMismatchedReturnType
     case value
       when true, false then value
       when nil         then default

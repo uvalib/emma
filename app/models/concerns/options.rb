@@ -70,7 +70,6 @@ class Options
   # @type [Class]
   #
   def self.model_class
-    # noinspection RbsMissingTypeSignature
     @model_class ||= safe_const_get(:MODEL, false) || module_parent
   end
 
@@ -80,7 +79,6 @@ class Options
   # @type [Symbol]
   #
   def self.model_key
-    # noinspection RbsMissingTypeSignature
     @model_key ||=
       model_class.try(__method__) || model_class.model_name.singular.to_sym
   end
@@ -91,7 +89,6 @@ class Options
   # @type [Symbol]
   #
   def self.model_id_key
-    # noinspection RbsMissingTypeSignature
     @model_id_key ||= model_class.try(__method__) || :"#{model_key}_id"
   end
 

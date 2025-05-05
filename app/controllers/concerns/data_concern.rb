@@ -87,6 +87,7 @@ module DataConcern
   # @return [Array<String>, nil]      *nil* if *value* is *nil*.
   #
   def array_param(value)
+    # noinspection RubyArgCount (RubyMine analyzer fails here)
     value = value.split(',')                  if value.is_a?(String)
     value.map { _1.to_s.strip }.compact_blank if value.is_a?(Array)
   end
@@ -162,7 +163,6 @@ module DataConcern
     opt     = data_params.merge(**opt)
     columns = Array.wrap(opt.delete(:columns)).presence
     records = submission_records(table, **opt)
-    # noinspection RubyMismatchedArgumentType
     if records.first.is_a?(Hash)
       modify_submission_records!(records, columns)
     else
@@ -254,9 +254,6 @@ module DataConcern
   #
   # @return [Array<Array>]
   #
-  #--
-  # noinspection RubyInstanceMethodNamingConvention
-  #++
   def modify_submission_records_for_html!(records, columns = nil)
     indices   = submission_result_indices(columns)
     state_idx = SUBMISSION_COLUMNS.index(:state)

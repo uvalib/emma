@@ -1284,7 +1284,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      * @returns {LookupResponseItem}
      */
     function getColumnValues($entry, fields) {
-        const columns = fields || LookupModal.DATA_COLUMNS
+        const columns = fields || LookupModal.DATA_COLUMNS;
         return toObject(columns, c => getColumnValue($entry, c));
     }
 
@@ -1449,7 +1449,7 @@ export async function setupFor(base, show_hooks, hide_hooks) {
      */
     function fillEntry($entry, item, fields) {
         const data    = item || {};
-        const columns = fields || LookupModal.DATA_COLUMNS
+        const columns = fields || LookupModal.DATA_COLUMNS;
         columns.forEach(col => setColumnValue($entry, col, data[col]));
         return $entry;
     }

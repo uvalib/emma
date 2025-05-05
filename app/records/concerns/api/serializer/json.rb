@@ -81,7 +81,6 @@ class Api::Serializer::Json < Api::Serializer
   # @return [nil]                 If *data* is neither a String nor a Hash.
   #
   def set_source_data(data)
-    # noinspection RubyMismatchedReturnType
     @source_data ||=
       if data.is_a?(String)
         data.dup
