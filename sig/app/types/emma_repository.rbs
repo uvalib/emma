@@ -60,6 +60,12 @@ class EmmaRepository < EnumType
   #
   COLLECTION: symArray
 
+  # The repositories whose items come from Internet Archive.
+  #
+  # @type [Array<Symbol>]
+  #
+  IA_HOSTED: symArray
+
   # The repositories that require the "partner repository workflow".
   #
   # @type [Array<Symbol>]
@@ -81,4 +87,60 @@ class EmmaRepository < EnumType
   # @type [Array<Symbol>]
   #
   def self.collection: () -> symArray
+
+  # The repositories whose items come from Internet Archive.
+  #
+  # @type [Array<Symbol>]
+  #
+  def self.ia_hosted: () -> symArray
+
+  # Indicate whether `*v*` represents a partner repository.
+  #
+  # @param [any, nil] v
+  #
+  def self.partner?: (untyped v) -> bool
+
+  # Indicate whether `*v*` represents a repository that can handle
+  # "partner repository workflow" requests.
+  #
+  # @param [any, nil] v
+  #
+  def self.s3_queue?: (untyped v) -> bool
+
+  # Indicate whether `*v*` represents an EMMA publisher collection.
+  #
+  # @param [any, nil] v
+  #
+  def self.collection?: (untyped v) -> bool
+
+  # Indicate whether `*v*` represents a repository hosted by Internet Archive.
+  #
+  # @param [any, nil] v
+  #
+  def self.ia_hosted?: (untyped v) -> bool
+
+  # Indicate whether the instance is a partner repository.
+  #
+  # @param [any, nil] v               Default: #value.
+  #
+  def partner?: (untyped v) -> bool
+
+  # Indicate whether the instance is a "partner repository workflow"
+  # repository.
+  #
+  # @param [any, nil] v               Default: #value.
+  #
+  def s3_queue?: (untyped v) -> bool
+
+  # Indicate whether the instance is an EMMA publisher collection.
+  #
+  # @param [any, nil] v               Default: #value.
+  #
+  def collection?: (?untyped v) -> bool
+
+  # Indicate whether the instance is a repository hosted by Internet Archive.
+  #
+  # @param [any, nil] v               Default: #value.
+  #
+  def ia_hosted?: (?untyped v) -> bool
 end

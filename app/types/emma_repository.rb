@@ -88,6 +88,12 @@ class EmmaRepository < EnumType
   #
   COLLECTION = ACTIVE.select { |_, config| config[:collection] }.keys.freeze
 
+  # The repositories whose items come from Internet Archive.
+  #
+  # @type [Array<Symbol>]
+  #
+  IA_HOSTED = ACTIVE.select { |_, config| config[:ia_hosted] }.keys.freeze
+
   # ===========================================================================
   # :section: Class methods
   # ===========================================================================
@@ -120,6 +126,96 @@ class EmmaRepository < EnumType
   #
   def self.collection
     COLLECTION
+  end
+
+  # The repositories whose items come from Internet Archive.
+  #
+  # @type [Array<Symbol>]
+  #
+  def self.ia_hosted
+    IA_HOSTED
+  end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
+  # Indicate whether `*v*` represents a partner repository.
+  #
+  # @param [any, nil] v
+  #
+  def self.partner?(v)
+    v = normalize(v).to_sym unless v.is_a?(Symbol)
+    partner.include?(v)
+  end
+
+  # Indicate whether `*v*` represents a repository that can handle
+  # "partner repository workflow" requests.
+  #
+  # @param [any, nil] v
+  #
+  def self.s3_queue?(v)
+    v = normalize(v).to_sym unless v.is_a?(Symbol)
+    s3_queue.include?(v)
+  end
+
+  # Indicate whether `*v*` represents an EMMA publisher collection.
+  #
+  # @param [any, nil] v
+  #
+  def self.collection?(v)
+    v = normalize(v).to_sym unless v.is_a?(Symbol)
+    collection.include?(v)
+  end
+
+  # Indicate whether `*v*` represents a repository hosted by Internet Archive.
+  #
+  # @param [any, nil] v
+  #
+  def self.ia_hosted?(v)
+    v = normalize(v).to_sym unless v.is_a?(Symbol)
+    ia_hosted.include?(v)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Indicate whether the instance is a partner repository.
+  #
+  # @param [any, nil] v               Default: #value.
+  #
+  def partner?(v = nil)
+    self.class.partner?(v || value)
+  end
+
+  # Indicate whether the instance is a "partner repository workflow"
+  # repository.
+  #
+  # @param [any, nil] v               Default: #value.
+  #
+  def s3_queue?(v = nil)
+    self.class.s3_queue?(v || value)
+  end
+
+  # Indicate whether the instance is an EMMA publisher collection.
+  #
+  # @param [any, nil] v               Default: #value.
+  #
+  def collection?(v = nil)
+    self.class.collection?(v || value)
+  end
+
+  # Indicate whether the instance is a repository hosted by Internet Archive.
+  #
+  # @param [any, nil] v               Default: #value.
+  #
+  def ia_hosted?(v = nil)
+    self.class.ia_hosted?(v || value)
   end
 
   # ===========================================================================

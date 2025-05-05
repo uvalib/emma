@@ -269,9 +269,8 @@ class Search::Record::TitleRecord < Search::Api::Record
       return if rec.blank?
       value = rec.try(:bib_seriesPosition).presence
       value ||=
-        case repository(rec)&.to_sym
-          when :internetArchive, :ace
-            positive(repo_id(rec)&.sub(/^[a-z].*?[a-z_.]0(\d\d\d).*$/i, '\1'))
+        if EmmaRepository.ia_hosted?(repository(rec))
+          positive(repo_id(rec)&.sub(/^[a-z].*?[a-z_.]0(\d\d\d).*$/i, '\1'))
         end
       value &&= Number.new(value)
       value if value && (1...1000).cover?(value.number_value)

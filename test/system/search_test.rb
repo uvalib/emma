@@ -309,10 +309,10 @@ class SearchTest < ApplicationSystemTestCase
     start_url = url_for(**PRM, action: :index, repository: repo, **opt)
 
     action, selector, format =
-      case repo
-        when :ace, :internetArchive then [:retrieval, '.probe', :pdf]
-        when :biblioVault           then [:retrieval, '.download']
-        else                             [:download,  '.download']
+      case
+        when EmmaRepository.ia_hosted?(repo)  then [:retrieval, '.probe', :pdf]
+        when EmmaRepository.collection?(repo) then [:retrieval, '.download']
+        else                                       [:download,  '.download']
       end
 
     # noinspection RailsI18nInspection

@@ -116,7 +116,7 @@ module Record::EmmaIdentification
   #
   def emma_native?(item)
     repo = repository_value(item)
-    !EmmaRepository.partner.include?(repo&.to_sym)
+    !EmmaRepository.partner?(repo)
   end
 
   # Indicate whether the item should involve requests queued through an
@@ -128,7 +128,7 @@ module Record::EmmaIdentification
     repo = repository_value(item)
     repo = nil if repo && EmmaRepository.default?(repo)
     repo = get_value(item, :rem_source) if repo.nil?
-    EmmaRepository.s3_queue.include?(repo&.to_sym)
+    EmmaRepository.s3_queue?(repo)
   end
 
   # Extract the repository associated with the item.

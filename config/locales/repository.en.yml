@@ -20,6 +20,7 @@ en:
         s3:             true  # @see AwsS3Service::Properties::S3_BUCKET
         partner:        false # Submitted via the normal EMMA-native workflow.
         metadata:       true  # Source site contributes to the Unified Index.
+        ia_hosted:      false # Source items come from Internet Archive.
         collection:     false # EMMA collection pseudo repository.
         logo:           # Logo image (@see LogoHelper::LOGO_TYPES)
           default:      ~  # ... for generic usage.
@@ -54,6 +55,7 @@ en:
         download_url:   '%{download_path}?identifier=%{id}&type=%{fmt}'
 
       _internetArchive: &IA_TEMPLATE
+        ia_hosted:      true
         title_path:     'https://archive.org/details'
         record_src:     'Internet Archive'
         download_src:   'Internet Archive'

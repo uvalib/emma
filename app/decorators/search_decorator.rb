@@ -477,7 +477,7 @@ class SearchDecorator
     url   ||= object.record_title_url
     repo    = repository_for(url, object)
     return record_popup(**opt)     if EmmaRepository.default?(repo)
-    return collection_popup(**opt) if EmmaRepository.collection.include?(repo)
+    return collection_popup(**opt) if EmmaRepository.collection?(repo)
     label ||= CGI.unescape(object.emma_repositoryRecordId)
     return ERB::Util.h(label) unless url
     opt[:title] ||=
