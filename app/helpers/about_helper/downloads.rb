@@ -93,7 +93,7 @@ module AboutHelper::Downloads
   # A page section for all EMMA downloads.
   #
   # @param [Boolean] heading          If *false*, do not include `h2` heading
-  # @param [Hash]    opt              Passed to #project_submissions.
+  # @param [Hash]    opt              Passed to #project_downloads.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

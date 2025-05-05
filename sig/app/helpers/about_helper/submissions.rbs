@@ -51,15 +51,14 @@ module AboutHelper::Submissions
   # Generate a table of organizations and their submission counts in descending
   # order.
   #
-  # @param [ActiveSupport::Duration, Date, Integer, nil] since
-  # @param [Hash] opt                 Passed to 'uploads' #where clause except:
+  # @param [Hash] opt                 Passed to #filter_submissions except:
   #
   # @option opt [Boolean] :no_admin   If *false* include admin users in counts.
   # @option opt [Boolean] :first      If *false* do not include :first element.
   #
   # @return [Hash{Org=>Integer,Symbol=>String}]
   #
-  def org_submission_counts: (?since: ActiveSupport::Duration|Date|Integer|nil, **untyped opt) -> Hash[(Org|Symbol),(Integer|String)]
+  def org_submission_counts: (**untyped opt) -> Hash[(Org|Symbol),(Integer|String)]
 
   private
 

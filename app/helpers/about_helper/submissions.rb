@@ -46,8 +46,8 @@ module AboutHelper::Submissions
   # @return [ActiveSupport::SafeBuffer, nil]
   #
   def recent_submissions_section(heading: true, **opt)
-    since     = opt.delete(:since) || recent_date
-    counts, _ = project_submissions(since: since, **opt)
+    opt[:since] ||= recent_date
+    counts, _ = project_submissions(**opt)
     return if counts.blank?
     heading &&= submissions_heading(:recent)
     safe_join([heading, counts].compact_blank)
@@ -99,25 +99,23 @@ module AboutHelper::Submissions
   # Generate a table of organizations and their submission counts in descending
   # order.
   #
-  # @param [ActiveSupport::Duration, Date, Integer, nil] since
-  # @param [Hash] opt                 Passed to 'uploads' #where clause except:
+  # @param [Hash] opt                 Passed to #filter_submissions except:
   #
   # @option opt [Boolean] :no_admin   If *false* include admin users in counts.
   # @option opt [Boolean] :first      If *false* do not include :first element.
   #
   # @return [Hash{Org=>Integer,Symbol=>String}]
   #
-  def org_submission_counts(since: nil, **opt)
-    since &&= recent_date(since)
-    fc_opt  = opt.extract!(:no_admin)
-    first   = ([] if opt.key?(:first) ? opt.delete(:first) : !since)
+  def org_submission_counts(**opt)
+    fc_opt = opt.extract!(:no_admin)
+    first  = ([] if opt.key?(:first) ? opt.delete(:first) : !opt[:since])
     Org.all.map { |org|
       records = filter_submissions(org.uploads, **opt)
       counts  = submission_format_counts(records, **fc_opt)
       first << records.last if first # Returned in reverse order.
       [org, counts] if counts.present?
     }.compact.sort_by { |key, counts|
-      about_sort(key, counts, since: since)
+      about_sort(key, counts, **opt)
     }.to_h.tap { |result|
       if (first = first&.compact).present?
         result[:first] = about_date(first.min { _1.created_at })
