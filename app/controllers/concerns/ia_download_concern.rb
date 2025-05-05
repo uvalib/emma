@@ -5,8 +5,8 @@
 
 __loading_begin(__FILE__)
 
-# Controller support methods for downloads from Internet Archive (including
-# items held there on behalf of ACE/ScholarsPortal).
+# Controller support methods for retrieval of items from Internet Archive
+# (including items held there on behalf of ACE/ScholarsPortal).
 #
 module IaDownloadConcern
 
@@ -20,7 +20,7 @@ module IaDownloadConcern
 
   public
 
-  # Access the Internet Archive download service.
+  # Access the Internet Archive retrieval service.
   #
   # @return [IaDownloadService]
   #
@@ -40,7 +40,7 @@ module IaDownloadConcern
   #
   SEND_DATA_OPT = %i[filename disposition status].freeze
 
-  # Check for availability of a download from Internet Archive.  If the file
+  # Check for availability of a retrieval from Internet Archive.  If the file
   # requires on-the-fly generation, this will be triggered here.
   #
   # @param [String]         identifier  IA item identifier.
@@ -55,7 +55,7 @@ module IaDownloadConcern
     ia_download_api.probe(**opt)
   end
 
-  # Send a copy of a file downloaded from Internet Archive.
+  # Send a copy of a file retrieved from Internet Archive.
   #
   # This should only be invoked after #ia_download_probe indicates that the
   # requested content file has been generated.

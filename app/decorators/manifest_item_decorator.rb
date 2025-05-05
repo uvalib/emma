@@ -324,8 +324,8 @@ class ManifestItemDecorator < BaseDecorator
       super
     end
 
-    # This is a variation for ensuring that the `<div>` enclosing the checkbox
-    # list element is not given `role='group'`.
+    # This is a variation for ensuring that the `div` enclosing the checkbox
+    # list element is not given `role="group"`.
     #
     # @param [String] name
     # @param [Array]  value
@@ -695,7 +695,7 @@ class ManifestItemDecorator < BaseDecorator
     # @param [String]  css
     # @param [Hash]    opt
     #
-    # @option opt [Boolean] :wrap     If *false*, don't wrap in `<thead>`.
+    # @option opt [Boolean] :wrap     If *false*, don't wrap in `thead`.
     #
     # @return [ActiveSupport::SafeBuffer]
     #

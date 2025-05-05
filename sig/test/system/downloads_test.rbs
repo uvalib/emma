@@ -81,9 +81,9 @@ class DownloadsTest < ApplicationSystemTestCase
 
   # Perform a test to create a new download event.
   #
-  # Because :record and :link fields are made developer-only in
-  # "emma.page.download.display_fields" those fields do not appear in the
-  # form for administrator.
+  # Because :record and :link fields in "en.emma.page.download.display_fields"
+  # are made developer-only, those fields do not appear in the form for
+  # users with the Administrator role.
   #
   # @param [User, nil]   user
   # @param [Symbol, nil] meth         Calling test method.

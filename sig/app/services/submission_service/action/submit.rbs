@@ -81,9 +81,9 @@ module SubmissionService::Action::Submit
   # Process a request to submit a set of ManifestItems by aggregating them into
   # "slices" which pass through submission steps together.
   #
-  # The up side is that this reduces the number of transmissions to external
-  # services; the down side is that a failure at any step results in the
-  # failure of all items in that "slice".
+  # The upside is that this reduces the number of transmissions to external
+  # services; the downside is that a failure at any step results in the failure
+  # of all items in that "slice".
   #
   # @param [String, ManifestItem, Array, ActiveRecord::Relation] items
   # @param [Integer]                                             slice

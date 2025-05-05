@@ -59,7 +59,7 @@ en:
 
         # @see IaDownloadService::Error.error_classes
 
-        _name:          'Internet Archive download service'
+        _name:          'Internet Archive retrieval service'
 
       ingest:
 

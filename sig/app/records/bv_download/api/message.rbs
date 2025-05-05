@@ -1,5 +1,5 @@
-# The base class for inbound messages from the UVALIB-hosted AWS S3 BiblioVault
-# collections.
+# The base class for inbound messages from the AWS S3 bucket containing the
+# EMMA publisher collections.
 #
 class BvDownload::Api::Message < BvDownload::Api::Record
   include Api::Message

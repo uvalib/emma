@@ -28,7 +28,7 @@ module BvDownloadService::Properties
   #
   def configuration: () -> symHash
 
-  # The default BiblioVault collections engine API key.
+  # The default EMMA publisher collections engine API key.
   #
   # @return [Symbol]
   #

@@ -130,7 +130,7 @@ module BaseDecorator::Retrieval
     ia_retrieval_link(url, **opt)
   end
 
-  # Produce a link to retrieve a file from a BiblioVault collection.
+  # Produce a link to retrieve a file from an EMMA publisher collection.
   #
   # @param [String] url
   # @param [Hash]   opt               Passed to #retrieval_link

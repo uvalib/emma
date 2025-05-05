@@ -231,9 +231,9 @@ module HtmlHelper::Tags
   #
   # @param [String]   summary         The text visible when not expanded.
   # @param [Array<*>] content         Appended to the '.content' element.
-  # @param [String]   id              Passed to the inner `<summary>` element.
-  # @param [String]   title           Passed to the inner `<summary>` element.
-  # @param [Hash]     opt             Passed to the outer `<details>` element.
+  # @param [String]   id              Passed to the inner `summary` element.
+  # @param [String]   title           Passed to the inner `summary` element.
+  # @param [Hash]     opt             Passed to the outer `details` element.
   # @param [Proc]     blk             Appended to the '.content' element.
   #
   # @return [ActiveSupport::SafeBuffer]

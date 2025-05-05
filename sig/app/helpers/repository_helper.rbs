@@ -24,7 +24,7 @@ module RepositoryHelper
   #
   def oa_link?: ((String|nil) url) -> bool
 
-  # Indicate whether the given URL is BiblioVault collection link.
+  # Indicate whether the given URL is an EMMA publisher collection item link.
   #
   # @param [String, nil] url
   #
@@ -133,7 +133,7 @@ module RepositoryHelper
   #
   def oa_retrieval_link: (String url, **untyped opt) -> ActiveSupport::SafeBuffer
 
-  # Produce a link to retrieve a file from a BiblioVault collection.
+  # Produce a link to retrieve a file from an EMMA publisher collection.
   #
   # @param [String] url
   # @param [Hash]   opt               Passed to #retrieval_link

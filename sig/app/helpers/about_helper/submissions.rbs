@@ -5,7 +5,7 @@ module AboutHelper::Submissions
 
   # A page section for recent EMMA submissions, if any.
   #
-  # @param [Boolean] heading          If *false*, do not include `<h2>` heading
+  # @param [Boolean] heading          If *false*, do not include `h2` heading
   # @param [Hash]    opt              Passed to #project_submissions.
   #
   # @option opt [ActiveSupport::Duration, Date, Integer] :since   Default:
@@ -17,7 +17,7 @@ module AboutHelper::Submissions
 
   # A page section for all EMMA submissions.
   #
-  # @param [Boolean] heading          If *false*, do not include `<h2>` heading
+  # @param [Boolean] heading          If *false*, do not include `h2` heading
   # @param [Hash]    opt              Passed to #project_submissions.
   #
   # @return [ActiveSupport::SafeBuffer]

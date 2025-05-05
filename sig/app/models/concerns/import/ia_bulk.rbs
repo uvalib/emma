@@ -125,7 +125,7 @@ module Import::IaBulk
   #
   def text_quality_value: (untyped v) -> (String | nil)
 
-  # Base Internet Archive download path.
+  # Base Internet Archive retrieval path.
   #
   # NOTE: This has been superseded by IA_DOWNLOAD_API_URL.
   #

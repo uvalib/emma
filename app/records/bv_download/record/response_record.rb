@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# A response from the UVALIB service which hosts the BiblioVault collections.
+# A response from the AWS S3 bucket containing the EMMA publisher collections.
 #
 # @note This is unused and may go away.
 #

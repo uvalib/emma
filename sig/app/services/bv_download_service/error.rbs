@@ -1,4 +1,4 @@
-# Generic exception for BiblioVault collections download problems.
+# Generic exception for EMMA publisher collections retrieval problems.
 #
 # === Usage Notes
 # This is generally *not* the base class for exceptions in the

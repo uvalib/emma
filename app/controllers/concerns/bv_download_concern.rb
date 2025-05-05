@@ -5,8 +5,8 @@
 
 __loading_begin(__FILE__)
 
-# Controller support methods for downloads from EMMA collections originating
-# from BiblioVault.
+# Controller support methods for retrieval of EMMA publisher collection items
+# stored on AWS S3.
 #
 # Currently, there is only one collection (:bibliovault_ump) but future
 # collections will use the same logic.
@@ -23,7 +23,7 @@ module BvDownloadConcern
 
   public
 
-  # Access the UVALIB BiblioVault collections service.
+  # Access the EMMA publisher collections retrieval service.
   #
   # @return [BvDownloadService]
   #
@@ -44,7 +44,7 @@ module BvDownloadConcern
   #
   SEND_DATA_OPT = %i[filename disposition status].freeze
 
-  # Send a copy of an item from a BiblioVault collection.
+  # Send a copy of an item from an EMMA publisher collection.
   #
   # @param [String] url               Original S3 item URL.
   # @param [Hash]   opt               Passed to BvDownloadService#api_download.

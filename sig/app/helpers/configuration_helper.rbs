@@ -153,7 +153,7 @@ module ConfigurationHelper
   #
   # === Implementation Notes
   # This method does not have an embedded fallback value -- it assumes that
-  # some form of 'emma.generic.unit' will be found if there is no definition
+  # some form of "en.emma.generic.unit" will be found if there is no definition
   # for the given controller.
   #
   def config_interpolations: (?ctrlr: String|Symbol|nil, ?action: String|Symbol|nil, ?brief: bool, ?long: bool, ?mode: Symbol|nil, ?count: Integer|nil, ?plural: bool|nil, **untyped units) -> Hash[Symbol,String]

@@ -6,8 +6,8 @@ module ApplicationHelper
   include ConfigurationHelper
 
   # Raw configuration entries for each controller that supplies content (i.e.,
-  # those controllers with a subdirectory in app/view) plus 'emma.generic'
-  # and distinct entries for each 'emma.user' Devise controller.
+  # those controllers with a subdirectory in app/view) plus "en.emma.generic"
+  # and distinct entries for each "en.emma.user" Devise controller.
   #
   # @type [Hash{Symbol=>Hash}]
   #

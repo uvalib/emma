@@ -279,7 +279,7 @@ module ConfigurationHelper
   #
   # === Implementation Notes
   # This method does not have an embedded fallback value -- it assumes that
-  # some form of 'emma.generic.unit' will be found if there is no definition
+  # some form of "en.emma.generic.unit" will be found if there is no definition
   # for the given controller.
   #
   def config_interpolations(

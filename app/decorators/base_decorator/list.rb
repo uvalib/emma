@@ -67,7 +67,7 @@ module BaseDecorator::List
   # Append a parenthesized count to a label.
   #
   # @param [String]      label
-  # @param [Integer]     count        Wrapped in a `<span>`.
+  # @param [Integer]     count        Wrapped in a `span` element.
   # @param [String, nil] unit         Appended to the displayed count value.
   # @param [String]      css          CSS class/selector for count element.
   # @param [Hash]        opt          Passed to count element.

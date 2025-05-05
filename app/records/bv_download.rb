@@ -5,7 +5,8 @@
 
 __loading_begin(__FILE__)
 
-# Namespace for objects related to UVALIB-hosted BiblioVault collections.
+# Namespace for objects related to accessing the AWS S3 bucket containing the
+# EMMA publisher collections.
 #
 module BvDownload
   module Api;     end

@@ -254,7 +254,7 @@ class AccountDecorator
   #
   # @param [User, Ability, nil] target      Default: #current_ability.
   # @param [Hash]               columns:    Default: #ABILITY_COLUMNS.
-  # @param [Hash]               table_opt   To outer `<table>` element.
+  # @param [Hash]               table_opt   To outer `table` element.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

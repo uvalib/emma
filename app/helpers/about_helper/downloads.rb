@@ -69,7 +69,7 @@ module AboutHelper::Downloads
 
   # A page section for recent EMMA downloads, if any.
   #
-  # @param [Boolean] heading          If *false*, do not include `<h2>` heading
+  # @param [Boolean] heading          If *false*, do not include `h2` heading
   # @param [Hash]    opt              Passed to #project_downloads.
   #
   # @option opt [ActiveSupport::Duration, Date, Integer] :since   Default:
@@ -88,7 +88,7 @@ module AboutHelper::Downloads
 
   # A page section for all EMMA downloads.
   #
-  # @param [Boolean] heading          If *false*, do not include `<h2>` heading
+  # @param [Boolean] heading          If *false*, do not include `h2` heading
   # @param [Hash]    opt              Passed to #project_submissions.
   #
   # @return [ActiveSupport::SafeBuffer]

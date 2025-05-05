@@ -19,7 +19,7 @@ module AboutHelper::Members
 
   # An element containing a list of EMMA member organizations.
   #
-  # @param [Boolean] heading          If *false*, do not include `<h2>` heading
+  # @param [Boolean] heading          If *false*, do not include `h2` heading
   # @param [String]  css              Characteristic CSS class/selector.
   # @param [Hash]    opt              Passed to the container element.
   #

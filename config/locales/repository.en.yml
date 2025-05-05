@@ -165,7 +165,7 @@ en:
         title_path:     'https://openalex.org/works'
 
       # =======================================================================
-      # EMMA collection "pseudo repository"
+      # EMMA publisher collections
       # =======================================================================
 
       bibliovault_ump:  &UNIVERSITY_MICHIGAN_PRESS

@@ -18,7 +18,7 @@ module IaDownloadService::Action::Records
 
   public
 
-  # Check for availability of a download from Internet Archive.  If the file
+  # Check for availability of a retrieval from Internet Archive.  If the file
   # requires on-the-fly generation, this will be triggered here.
   #
   # If the generation is in progress, the return status will be
@@ -34,14 +34,14 @@ module IaDownloadService::Action::Records
     api_return(IaDownload::Message::ProbeResponse).to_h
   end
 
-  # Get a download from Internet Archive, possibly generated on-the-fly.
+  # Retrieve an item from Internet Archive.
   #
   # This should only be invoked after #probe indicates that the requested
-  # content file has been generated.
+  # content file has already been generated.
   #
   # @param [Hash] opt                 Includes :identifier and :type.
   #
-  # @raise [ExecError]                If the download failed.
+  # @raise [ExecError]                If the retrieval failed.
   #
   # @return [Array(String,String,String)]
   # @return [Array(String,String,nil)]

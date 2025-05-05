@@ -44,7 +44,7 @@ module RepositoryHelper
     url.to_s.strip.match?(%r{^https?://([^./]+\.)*openalex\.org/}i)
   end
 
-  # Indicate whether the given URL is BiblioVault collection link.
+  # Indicate whether the given URL is an EMMA publisher collection item link.
   #
   # @param [String, nil] url
   #
@@ -193,7 +193,7 @@ module RepositoryHelper
     retrieval_link(url, **opt)
   end
 
-  # Produce a link to retrieve a file from a BiblioVault collection.
+  # Produce a link to retrieve a file from an EMMA publisher collection.
   #
   # @param [String] url
   # @param [Hash]   opt               Passed to #retrieval_link

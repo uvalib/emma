@@ -92,7 +92,7 @@ module SysHelper::Common
   # Translate Hash keys and values into pairs of dt and dd elements.
   #
   # @param [Hash] pairs
-  # @param [Hash] opt                 Passed to `<dt>` and `<dd>`.
+  # @param [Hash] opt                 Passed to `dt` and `dd` elements.
   #
   # @return [Array<ActiveSupport::SafeBuffer>]
   #
@@ -160,7 +160,7 @@ module SysHelper::Common
   # @param [Symbol, Hash]      headers  Where the keys become CSS class names.
   # @param [Boolean]           sort
   # @param [String]            css      Characteristic CSS class/selector.
-  # @param [Hash]              opt      Passed to the outer `<table>` element.
+  # @param [Hash]              opt      Passed to the outer `table` element.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

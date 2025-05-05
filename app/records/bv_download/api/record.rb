@@ -5,8 +5,8 @@
 
 __loading_begin(__FILE__)
 
-# The base class for objects relating to the UVALIB-hosted AWS S3 BiblioVault
-# collections.
+# The base class for objects relating to the AWS S3 bucket containing the
+# EMMA publisher collections.
 #
 class BvDownload::Api::Record < Api::Record
 

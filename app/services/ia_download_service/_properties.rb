@@ -23,7 +23,7 @@ module IaDownloadService::Properties
   #
   CONFIGURATION = config_section(:service, :ia_download).deep_freeze
 
-  # Authorization header for IA download requests.
+  # Authorization header for IA retrieval requests.
   #
   # @type [String]
   #

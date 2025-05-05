@@ -612,7 +612,7 @@ class UploadsDecorator < BaseCollectionDecorator
     opt[:url]          = delete_select_path
     opt[:method]     ||= :get
     opt[:autocomplete] = 'off'
-    opt[:local]        = true # Turns off "data-remote='true'".
+    opt[:local]        = true # Turns off `data-remote="true"`.
 
     prepend_css!(opt, css, model_type)
 

@@ -11,8 +11,8 @@
 
   host  ||= @host
 
-  # Special support for using this endpoint for the display of BiblioVault
-  # collection items.  @see UploadDecorator#value_pairs
+  # Special support for using this endpoint for the display of items from EMMA
+  # publisher collections.  @see UploadDecorator#value_pairs
   url     = item.emma_metadata[:emma_retrievalLink]
   fake    = url&.match?(/bibliovault/i)
   file    = fake && File.basename(url)

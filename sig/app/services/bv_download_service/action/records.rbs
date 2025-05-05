@@ -1,10 +1,10 @@
-# Methods which support acquiring a record from the UVALIB-hosted AWS S3
-# BiblioVault collections.
+# Methods which support acquiring a record from the AWS S3 bucket containing
+# the EMMA publisher collections.
 #
 module BvDownloadService::Action::Records
   include BvDownloadService::Common
 
-  # Get the contents of an item from a BiblioVault collection.
+  # Get the contents of an item from an EMMA publisher collection.
   #
   # @param [String] item
   # @param [Hash]   opt               Passed to #aws_get_file.

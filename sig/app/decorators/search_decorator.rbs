@@ -280,6 +280,7 @@ class SearchDecorator
   # @see RepositoryHelper#emma_retrieval_link
   # @see BaseDecorator::Retrieval#bv_retrieval_link
   # @see BaseDecorator::Retrieval#ia_retrieval_link
+  # @see BaseDecorator::Retrieval#oa_retrieval_link
   # @see file:javascripts/feature/download.js *notAuthorizedMessage()*
   # @see file:javascripts/feature/download.js *beforeDownload()*
   #

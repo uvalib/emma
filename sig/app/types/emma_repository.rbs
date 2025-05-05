@@ -54,7 +54,7 @@ class EmmaRepository < EnumType
   #
   S3_QUEUE: symArray
 
-  # The repositories that represent BiblioVault collections.
+  # The repositories that represent EMMA publisher collections.
   #
   # @type [Array<Symbol>]
   #
@@ -76,7 +76,7 @@ class EmmaRepository < EnumType
   #
   def self.s3_queue: () -> symArray
 
-  # The repositories that represent BiblioVault collections.
+  # The repositories that represent EMMA publisher collections.
   #
   # @type [Array<Symbol>]
   #

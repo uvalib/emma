@@ -264,7 +264,7 @@ module Import::IaBulk
 
   protected
 
-  # Base Internet Archive download path.
+  # Base Internet Archive retrieval path.
   #
   # NOTE: This has been superseded by IA_DOWNLOAD_API_URL.
   #

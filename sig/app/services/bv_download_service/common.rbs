@@ -7,7 +7,7 @@ module BvDownloadService::Common
 
   include AwsS3::Shared::AwsMethods
 
-  # Retrieve a copy of a file and download it to the browser.
+  # Retrieve a copy of a file and send it to the browser.
   #
   # @param [ActionDispatch::Response] response  Client response object.
   # @param [String, nil]              url       Default: `#base_url`.

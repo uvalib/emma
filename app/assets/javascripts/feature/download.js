@@ -3,7 +3,7 @@
 // A small portion of this module involves displaying the inline message that
 // indicates sign-in is required on download links in an anonymous session.
 // The rest involves the UI for managing the download of Internet Archive items
-// via their Printdisabled Unencrypted Ebook API.
+// via their "Printdisabled Unencrypted Ebook API".
 
 
 import { AppDebug }                         from "../application/debug";

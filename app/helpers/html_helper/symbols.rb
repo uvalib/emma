@@ -38,7 +38,7 @@ module HtmlHelper::Symbols
   # `span.symbol` with 'aria-hidden' and all other runs of characters will be
   # wrapped in `span.text` (unless *text* is already ActiveSupport::SafeBuffer)
   #
-  # If not, *text* will be returned HTML-ready with no `<span>`s added.
+  # If not, *text* will be returned HTML-ready with no `span`s added.
   #
   # @param [String, nil] text
   #

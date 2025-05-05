@@ -106,7 +106,7 @@ module PanelHelper
   # @param [String, nil] content      If *nil*, must be provided via the block.
   # @param [String]      label        The visible portion next to the toggle.
   # @param [String]      css          Characteristic CSS class/selector.
-  # @param [Hash]        opt          Passed to the content wrapping `<div>`.
+  # @param [Hash]        opt          Passed to the content wrapping `div`.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

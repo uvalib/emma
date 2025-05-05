@@ -5,8 +5,8 @@
 
 __loading_begin(__FILE__)
 
-# Acquire file content for downloading from the UVALIB service which hosts
-# BiblioVault collections.
+# Acquire file content for downloading from the AWS S3 bucket containing the
+# EMMA publisher collections.
 #
 # Currently, there are no data fields associated with the received message; the
 # body of the response is the content of the file being downloaded.

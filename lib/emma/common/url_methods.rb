@@ -75,7 +75,7 @@ module Emma::Common::UrlMethods
   # @param [Array<URI,String,Array,Hash>] args
   # @param [Hash]                         opt   Passed to #extract_url_query.
   #
-  # @option opt [Boolean] :decorate   If *false*, do not modify keys for multi-
+  # @option opt [Boolean] :decorate   If *false*, do not modify keys for multi
   #                                     element array values (default: *true*).
   #
   # @option opt [Boolean] :unescape   If *true*, unescape values

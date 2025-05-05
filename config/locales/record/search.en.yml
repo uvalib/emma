@@ -20,8 +20,8 @@
 # while allowing the field properties in the context of search results to
 # differ from the properties in the context of the submission form.
 #
-# E.g., the entry for `Model#fields_table[:search][:index][:dc_title]` is made
-# from the (normalized) properties of "emma.record.upload.emma_data.dc_title"
+# E.g., the entry for `Model#fields_table[:search][:index][:dc_title]` is from
+# the (normalized) properties of "en.emma.record.upload.emma_data.dc_title"
 # merged with the properties defined here for "en.emma.record.search.dc_title".
 #
 # That entry can include multiple properties, or it can be just a string (which

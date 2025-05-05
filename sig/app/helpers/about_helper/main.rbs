@@ -14,7 +14,7 @@ module AboutHelper::Main
   # By default, a section heading is prepended only if the content does not
   # have a heading element.
   #
-  # @param [Boolean,nil] heading      If *false*, do not include `<h2>` heading
+  # @param [Boolean,nil] heading      If *false*, do not include `h2` heading
   # @param [String]      css          Characteristic CSS class/selector.
   # @param [Hash]        opt          Passed to the container element.
   #
@@ -24,7 +24,7 @@ module AboutHelper::Main
 
   # An element containing useful project-related links.
   #
-  # @param [Boolean] heading          If *false*, do not include `<h2>` heading
+  # @param [Boolean] heading          If *false*, do not include `h2` heading
   # @param [String]  css              Characteristic CSS class/selector.
   # @param [Hash]    opt              Passed to the container element.
   #
@@ -34,7 +34,7 @@ module AboutHelper::Main
 
   # An element containing links to project-related reference material.
   #
-  # @param [Boolean] heading          If *false*, do not include `<h2>` heading
+  # @param [Boolean] heading          If *false*, do not include `h2` heading
   # @param [String]  css              Characteristic CSS class/selector.
   # @param [Hash]    opt              Passed to the container element.
   #
@@ -60,7 +60,7 @@ module AboutHelper::Main
 
   private
 
-  # A scrubber for ensuring that the content does not have `<h1>`.
+  # A scrubber for ensuring that the content does not have an `h1` element.
   #
   # @type [Loofah::Scrubber]
   #

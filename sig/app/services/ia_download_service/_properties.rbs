@@ -9,7 +9,7 @@ module IaDownloadService::Properties
   #
   CONFIGURATION: symHash
 
-  # Authorization header for IA download requests.
+  # Authorization header for IA retrieval requests.
   #
   # @type [String]
   #
