@@ -9,11 +9,17 @@ module AboutHelper::Downloads
   #
   ABOUT_DOWNLOADS_CONFIG: Hash[Symbol,symHash]
 
+  # About Downloads sections headings.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  ABOUT_DOWNLOADS_HEADING: Hash[Symbol,String]
+
   # About Downloads sections configuration.
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  ABOUT_DOWNLOADS: Hash[Symbol,symHash]
+  ABOUT_DOWNLOADS_SECTION: Hash[Symbol,symHash]
 
   # A list of in-page links to the section groups on the page.
   #
@@ -24,7 +30,7 @@ module AboutHelper::Downloads
   # A page section target that is independent of the set of the related
   # page sections that follow it.
   #
-  # @param [Symbol] by
+  # @param [Symbol] by                One of `ABOUT_DOWNLOADS_SECTION.keys`.
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt
   #
@@ -56,18 +62,20 @@ module AboutHelper::Downloads
   # An element containing a list of EMMA downloads.
   #
   # @param [ActiveSupport::Duration, Date, Integer, nil] since
-  # @param [Symbol] by                Either :org or :source
+  # @param [Symbol] by                One of `ABOUT_DOWNLOADS_SECTION.keys`.
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               Passed to the container element.
   #
-  # @return [ActiveSupport::SafeBuffer, nil]
+  # @return [Array(ActiveSupport::SafeBuffer, String>]
+  # @return [Array(ActiveSupport::SafeBuffer, nil>]
+  # @return [Array(nil, nil>]
   #
-  def project_downloads: (?since: ActiveSupport::Duration|Date|Integer|nil, ?by: Symbol, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def project_downloads: (?since: ActiveSupport::Duration|Date|Integer|nil, ?by: Symbol, **untyped opt) -> ( [ActiveSupport::SafeBuffer, (String|nil)] | [nil, nil] )
 
   # Generate a table of download counts in descending order.
   #
-  # @param [Symbol] by                Either :org or :source
-  # @param [Hash]   opt
+  # @param [Symbol] by                One of `ABOUT_DOWNLOADS_SECTION.keys`.
+  # @param [Hash]   opt               Passed to count method.
   #
   # @return [Hash{Org=>Integer}]
   #
@@ -76,31 +84,67 @@ module AboutHelper::Downloads
   # Generate a table of organizations and their download counts in descending
   # order.
   #
-  # @param [Hash] opt                 Passed to #filter_downloads.
+  # @param [Hash] opt                 Passed to #filter_downloads except:
+  #
+  # @option opt [Boolean] :no_admin   If *false* include admin users in counts.
+  # @option opt [Boolean] :first      If *false* do not include :first element.
   #
   # @return [Hash{Org=>Integer}]
   #
-  def org_download_counts: (**untyped opt) -> Hash[Org,Integer]
+  def org_download_counts: (**untyped opt) -> Hash[(Org|Symbol),(Integer|String)]
 
   # Generate a table of repository sources and their download counts in
   # descending order.
   #
-  # @param [Hash] opt                 Passed to #filter_downloads.
+  # @param [Hash] opt                 Passed to #filter_downloads except:
   #
-  # @return [Hash{Org=>Integer}]
+  # @option opt [Boolean] :no_admin   If *false* include admin users in counts.
+  # @option opt [Boolean] :first      If *false* do not include :first element.
   #
-  def src_download_counts: (**untyped opt) -> Hash[Org,Integer]
+  # @return [Hash{String=>Integer,Symbol=>String}]
+  #
+  def src_download_counts: (**untyped opt) -> Hash[(String|Symbol),(Integer|String)]
 
   # Generate a table of publishers and their download counts in descending
   # order.
   #
-  # @param [Hash] opt                 Passed to #filter_downloads.
+  # @param [Hash] opt                 Passed to #filter_downloads except:
   #
-  # @return [Hash{Org=>Integer}]
+  # @option opt [Boolean] :no_admin   If *false* include admin users in counts.
+  # @option opt [Boolean] :first      If *false* do not include :first element.
   #
-  def pub_download_counts: (**untyped opt) -> Hash[Org,Integer]
+  # @return [Hash{String=>Integer,Symbol=>String}]
+  #
+  def pub_download_counts: (**untyped opt) -> Hash[(String|Symbol),(Integer|String)]
 
   private
+
+  # Generate an EMMA downloads table header based on the category and section.
+  #
+  # @param [Symbol] kind              One of `ABOUT_DOWNLOADS_HEADING.keys`.
+  # @param [Symbol] section           One of `ABOUT_DOWNLOADS_SECTION.keys`.
+  # @param [String] earliest          Date of earliest record.
+  # @param [Hash]   opt               Passed to heading element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def downloads_heading: (Symbol kind, Symbol section, ?earliest: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Generate EMMA downloads table columns based on the section.
+  #
+  # @param [Symbol] section           One of `ABOUT_DOWNLOADS_SECTION.keys`.
+  #
+  # @return [Array<String>]
+  #
+  def downloads_columns: (Symbol section) -> strArray
+
+  # EMMA downloads interpolation values based on the section.
+  #
+  # @param [Symbol] section           One of `ABOUT_DOWNLOADS_SECTION.keys`.
+  #
+  # @return [Hash]
+  #
+  def downloads_values: (Symbol section) -> symHash
 
   # Create a query to filter download items.
   #
@@ -114,9 +158,10 @@ module AboutHelper::Downloads
 
   # Generate a table of formats and their counts in descending order.
   #
-  # @param [*] items
+  # @param [*]       items            Records or relation.
+  # @param [Boolean] no_admin         If *false* include admin users in counts.
   #
   # @return [Hash{String=>Integer}]
   #
-  def format_counts: (ActiveRecord::Relation|ActiveRecord::QueryMethods::WhereChain[ActiveRecord::Relation] items) -> Hash[String,Integer]
+  def download_format_counts: (ActiveRecord::Relation|ActiveRecord::QueryMethods::WhereChain[ActiveRecord::Relation]|Array[Download] items, ?no_admin: bool, **untyped _ignored) -> Hash[String,Integer]
 end

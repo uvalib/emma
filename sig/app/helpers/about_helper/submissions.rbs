@@ -3,6 +3,18 @@
 module AboutHelper::Submissions
   include AboutHelper::Common
 
+  # About Submissions configuration.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  ABOUT_SUBMISSIONS_CONFIG: Hash[Symbol,symHash]
+
+  # About Submissions sections headings.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  ABOUT_SUBMISSIONS_HEADING: Hash[Symbol,String]
+
   # A page section for recent EMMA submissions, if any.
   #
   # @param [Boolean] heading          If *false*, do not include `h2` heading
@@ -30,17 +42,67 @@ module AboutHelper::Submissions
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               Passed to the container element.
   #
-  # @return [ActiveSupport::SafeBuffer, nil]
+  # @return [Array(ActiveSupport::SafeBuffer, String>]
+  # @return [Array(ActiveSupport::SafeBuffer, nil>]
+  # @return [Array(nil, nil>]
   #
-  def project_submissions: (?since: ActiveSupport::Duration|Date|Integer|nil, ?css: String, **untyped opt) -> (ActiveSupport::SafeBuffer | nil)
+  def project_submissions: (?since: ActiveSupport::Duration|Date|Integer|nil, ?css: String, **untyped opt) -> ( [ActiveSupport::SafeBuffer, (String|nil)] | [nil, nil] )
 
   # Generate a table of organizations and their submission counts in descending
   # order.
   #
   # @param [ActiveSupport::Duration, Date, Integer, nil] since
-  # @param [Hash] opt                 Passed to 'uploads' #where clause.
+  # @param [Hash] opt                 Passed to 'uploads' #where clause except:
   #
-  # @return [Hash{Org=>Integer}]
+  # @option opt [Boolean] :no_admin   If *false* include admin users in counts.
+  # @option opt [Boolean] :first      If *false* do not include :first element.
   #
-  def org_submission_counts: (?since: ActiveSupport::Duration|Date|Integer|nil, **untyped opt) -> Hash[Org,Integer]
+  # @return [Hash{Org=>Integer,Symbol=>String}]
+  #
+  def org_submission_counts: (?since: ActiveSupport::Duration|Date|Integer|nil, **untyped opt) -> Hash[(Org|Symbol),(Integer|String)]
+
+  private
+
+  # Generate an EMMA submissions table header based on the category.
+  #
+  # @param [Symbol] kind              One of `ABOUT_DOWNLOADS_HEADING.keys`.
+  # @param [String] earliest          Date of earliest record.
+  # @param [Hash]   opt               Passed to heading element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def submissions_heading: (Symbol kind, ?earliest: String, **untyped opt) -> ActiveSupport::SafeBuffer
+
+  # Generate EMMA submissions table columns.
+  #
+  # @return [Array<String>]
+  #
+  def submissions_columns: () -> strArray
+
+  # EMMA submissions interpolation values.
+  #
+  # @return [Hash]
+  #
+  def submissions_values: () -> symHash
+
+  # Create a query to filter submitted items.
+  #
+  # @param [ActiveRecord::Relation]                      items
+  # @param [ActiveSupport::Duration, Date, Integer, nil] since
+  # @param [Hash]                                        opt    Added terms.
+  #
+  # @return [ActiveRecord::Relation, ActiveRecord::QueryMethods::WhereChain]
+  #
+  def filter_submissions: (ActiveRecord::Relation items, ?since: ActiveSupport::Duration|Date|Integer|nil, **untyped opt) -> (ActiveRecord::Relation | ActiveRecord::QueryMethods::WhereChain[ActiveRecord::Relation])
+
+  # Generate a table of formats and their counts in descending order.
+  #
+  # @param [*]    items               Records or relation.
+  # @param [Hash] opt
+  #
+  # @option opt [Boolean] :no_admin   If *false* include admin users in counts.
+  #
+  # @return [Hash{String=>Integer}]
+  #
+  def submission_format_counts: (ActiveRecord::Relation|ActiveRecord::QueryMethods::WhereChain[ActiveRecord::Relation]|Array[Download] items, **untyped opt) -> Hash[String,Integer]
 end

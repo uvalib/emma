@@ -740,6 +740,7 @@ en:
         title:              'EMMA and the EMMA project [main]'
         tooltip:            'About EMMA and the EMMA project [main]'
         content_url:        'https://emma.uvacreate.virginia.edu/jmu2m/about.html'
+        recent:             30 # days
 
         page_controls:
           label:            'About:'
@@ -788,9 +789,9 @@ en:
             label:          'Submissions'
             title:          'EMMA Submissions'
             tooltip:        'EMMA submissions by organization'
-            section:
-              recent:       'Recent EMMA Submissions (last 30 days)'
-              total:        'All EMMA Submissions'
+            heading:
+              recent:       'Recent EMMA Submissions (last %{recent} days)'
+              total:        'All EMMA Submissions (%{earliest} to present)'
             columns:
               - 'Organization'
               - 'Submissions'
@@ -804,22 +805,20 @@ en:
             title:          'EMMA Downloads'
             tooltip:        'EMMA downloads by organization'
             section:
-              recent:       'Recent EMMA Downloads (last 30 days)'
-              total:        'All EMMA Downloads'
               org:
+                name:       'Organization'
                 label:      'By Organization'
-                recent:     'Recent EMMA Downloads By Organization (last 30 days)'
-                total:      'All EMMA Downloads By Organization'
               source:
+                name:       'Source'
                 label:      'By Source'
-                recent:     'Recent EMMA Downloads By Source (last 30 days)'
-                total:      'All EMMA Downloads By Source'
               publisher:
+                name:       'Publisher'
                 label:      'By Publisher'
-                recent:     'Recent EMMA Downloads By Publisher (last 30 days)'
-                total:      'All EMMA Downloads By Publisher'
+            heading:
+              recent:       'Recent EMMA Downloads %{label} (last %{recent} days)'
+              total:        'All EMMA Downloads %{label} (%{earliest} to present)'
             columns:
-              - 'Organization'
+              - '%{name}'
               - 'Downloads'
               - 'Formats'
             role:           administrator

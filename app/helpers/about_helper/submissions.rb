@@ -17,6 +17,24 @@ module AboutHelper::Submissions
 
   public
 
+  # About Submissions configuration.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  ABOUT_SUBMISSIONS_CONFIG = config_page_section(:about, :submissions)
+
+  # About Submissions sections headings.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  ABOUT_SUBMISSIONS_HEADING = ABOUT_SUBMISSIONS_CONFIG[:heading]
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # A page section for recent EMMA submissions, if any.
   #
   # @param [Boolean] heading          If *false*, do not include `h2` heading
@@ -28,11 +46,10 @@ module AboutHelper::Submissions
   # @return [ActiveSupport::SafeBuffer, nil]
   #
   def recent_submissions_section(heading: true, **opt)
-    since  = opt.delete(:since) || recent_date
-    counts = project_submissions(since: since, **opt)
+    since     = opt.delete(:since) || recent_date
+    counts, _ = project_submissions(since: since, **opt)
     return if counts.blank?
-    heading &&= config_page(:about, :submissions, :section, :recent)
-    heading &&= html_h2(heading)
+    heading &&= submissions_heading(:recent)
     safe_join([heading, counts].compact_blank)
   end
 
@@ -44,9 +61,9 @@ module AboutHelper::Submissions
   # @return [ActiveSupport::SafeBuffer]
   #
   def total_submissions_section(heading: true, **opt)
-    counts = project_submissions(**opt) || none_placeholder
-    heading &&= config_page(:about, :submissions, :section, :total)
-    heading &&= html_h2(heading)
+    counts, first_date = project_submissions(**opt)
+    counts  ||= none_placeholder
+    heading &&= submissions_heading(:total, earliest: first_date)
     safe_join([heading, counts].compact_blank)
   end
 
@@ -62,35 +79,118 @@ module AboutHelper::Submissions
   # @param [String] css               Characteristic CSS class/selector.
   # @param [Hash]   opt               Passed to the container element.
   #
-  # @return [ActiveSupport::SafeBuffer, nil]
+  # @return [Array(ActiveSupport::SafeBuffer, String>]
+  # @return [Array(ActiveSupport::SafeBuffer, nil>]
+  # @return [Array(nil, nil>]
   #
   def project_submissions(since: nil, css: '.project-submissions', **opt)
-    return if (items = org_submission_counts(since: since)).blank?
-    cols = config_page(:about, :submissions, :columns)
+    items = org_submission_counts(since: since)
+    first = items.delete(:first)
+    return if items.blank?
+    columns = submissions_columns
     prepend_css!(opt, css)
-    about_table(items, cols, **opt) do |key|
-      name_of(key, by: :org)
-    end
+    table =
+      about_table(items, columns, **opt) do |key|
+        about_name(key, by: :org)
+      end
+    return table, first
   end
 
   # Generate a table of organizations and their submission counts in descending
   # order.
   #
   # @param [ActiveSupport::Duration, Date, Integer, nil] since
-  # @param [Hash] opt                 Passed to 'uploads' #where clause.
+  # @param [Hash] opt                 Passed to 'uploads' #where clause except:
   #
-  # @return [Hash{Org=>Integer}]
+  # @option opt [Boolean] :no_admin   If *false* include admin users in counts.
+  # @option opt [Boolean] :first      If *false* do not include :first element.
+  #
+  # @return [Hash{Org=>Integer,Symbol=>String}]
   #
   def org_submission_counts(since: nil, **opt)
     since &&= recent_date(since)
+    fc_opt  = opt.extract!(:no_admin)
+    first   = ([] if opt.key?(:first) ? opt.delete(:first) : !since)
     Org.all.map { |org|
-      items = org.uploads.where(state: :completed, **opt)
-      items = items.and(items.where('uploads.created_at >= ?', since)) if since
-      counts = format_counts(items)
+      records = filter_submissions(org.uploads, **opt)
+      counts  = submission_format_counts(records, **fc_opt)
+      first << records.last if first # Returned in reverse order.
       [org, counts] if counts.present?
     }.compact.sort_by { |key, counts|
       about_sort(key, counts, since: since)
-    }.to_h
+    }.to_h.tap { |result|
+      if (first = first&.compact).present?
+        result[:first] = about_date(first.min { _1.created_at })
+      end
+    }
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  # Generate an EMMA submissions table header based on the category.
+  #
+  # @param [Symbol] kind              One of `ABOUT_DOWNLOADS_HEADING.keys`.
+  # @param [String] earliest          Date of earliest record.
+  # @param [Hash]   opt               Passed to heading element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def submissions_heading(kind, earliest: nil, **opt)
+    heading = ABOUT_SUBMISSIONS_HEADING[kind]
+    values  = submissions_values.merge!(earliest: earliest)
+    html_h2(id: "#{kind}_heading", **opt) do
+      interpolate(heading, values)
+    end
+  end
+
+  # Generate EMMA submissions table columns.
+  #
+  # @return [Array<String>]
+  #
+  def submissions_columns
+    columns = ABOUT_SUBMISSIONS_CONFIG[:columns]
+    values  = submissions_values
+    deep_interpolate(columns, **values)
+  end
+
+  # EMMA submissions interpolation values.
+  #
+  # @return [Hash]
+  #
+  def submissions_values
+    { recent: RECENT }
+  end
+
+  # Create a query to filter submitted items.
+  #
+  # @param [ActiveRecord::Relation]                      items
+  # @param [ActiveSupport::Duration, Date, Integer, nil] since
+  # @param [Hash]                                        opt    Added terms.
+  #
+  # @return [ActiveRecord::Relation, ActiveRecord::QueryMethods::WhereChain]
+  #
+  def filter_submissions(items, since: nil, **opt)
+    since &&= recent_date(since)
+    query1 = items.where(state: :completed, **opt)
+    query2 = (items.where('uploads.created_at >= ?', since) if since)
+    (query1 && query2) ? query1.and(query2) : (query1 || query2 || items)
+  end
+
+  # Generate a table of formats and their counts in descending order.
+  #
+  # @param [*]    items               Records or relation.
+  # @param [Hash] opt
+  #
+  # @option opt [Boolean] :no_admin   If *false* include admin users in counts.
+  #
+  # @return [Hash{String=>Integer}]
+  #
+  def submission_format_counts(items, **opt)
+    download_format_counts(items, **opt)
   end
 
 end

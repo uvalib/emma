@@ -7,7 +7,7 @@
 
 date   = recent_date
 recent = org_submission_counts(since: date).transform_keys { _1.long_name }
-total  = org_submission_counts.transform_keys { _1.long_name }
+total  = org_submission_counts(first: false).transform_keys { _1.long_name }
 
 entries_for = ->(items) do
   items.each do |name, counts|

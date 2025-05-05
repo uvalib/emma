@@ -7,11 +7,11 @@
 
 date       = recent_date
 org_recent = org_download_counts(since: date).transform_keys { _1.long_name }
-org_total  = org_download_counts.transform_keys { _1.long_name }
+org_total  = org_download_counts(first: false).transform_keys { _1.long_name }
 src_recent = src_download_counts(since: date)
-src_total  = src_download_counts
+src_total  = src_download_counts(first: false)
 pub_recent = pub_download_counts(since: date)
-pub_total  = pub_download_counts
+pub_total  = pub_download_counts(first: false)
 
 entries_for = ->(items) do
   items.transform_values do |counts|
