@@ -104,7 +104,7 @@ def __output_impl(*args, **opt)
   indent = (' ' * indent if indent.positive?) if indent.is_a?(Integer)
   indent = "#{OUTPUT_PREFIX}#{indent}"
   leader = "#{indent}#{opt[:leader]}"
-  leader << ' ' unless (leader == indent) || leader.match?(/\s$/)
+  leader += ' ' unless (leader == indent) || leader.match?(/\s$/)
 
   # Combine arguments and block results into a single string.
   args.concat(Array.wrap(yield)) if block_given?

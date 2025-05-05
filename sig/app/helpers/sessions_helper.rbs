@@ -3,6 +3,8 @@
 module SessionsHelper
   include IdentityHelper
 
+  include LinkHelper
+
   # Default sign-in tooltip.
   #
   # @type [String]

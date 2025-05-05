@@ -180,47 +180,51 @@ module Api::Shared::CommonMethods
   # @param [Array<Symbol>] path
   # @param [Symbol]        field
   # @param [Api::Record]   target     Default: `self`.
-  # @param [Boolean]       clean      If *true* run result through #clean.
   # @param [Hash]          opt        Passed to #clean.
+  #
+  # @option opt [Boolean] :clean      If *true*, force result through #clean.
   #
   # @return [any, nil]
   #
-  def find_item: (*Symbol path, Symbol field, ?target: Api::Record|nil, ?clean: bool, **untyped opt) -> (untyped | nil)
+  def find_item: (*Symbol path, Symbol field, ?target: Api::Record|nil, **untyped opt) -> (untyped | nil)
 
   # find_items
   #
   # @param [Array<Symbol>] path
   # @param [Symbol]        field
   # @param [Api::Record]   target     Default: `self`.
-  # @param [Boolean]       clean      If *true* run result through #clean.
   # @param [Hash]          opt        Passed to #clean.
+  #
+  # @option opt [Boolean] :clean      If *true*, force results through #clean.
   #
   # @return [Array]
   #
-  def find_items: (*Symbol path, Symbol field, ?target: Api::Record|nil, ?clean: bool, **untyped opt) -> anyArray
+  def find_items: (*Symbol path, Symbol field, ?target: Api::Record|nil, **untyped opt) -> anyArray
 
   # find_value
   #
   # @param [Array<Symbol>] path
   # @param [Symbol]        field
   # @param [String]        separator  Used if the item is an array.
-  # @param [Boolean]       clean      If *false*, do not #clean.
   # @param [Hash]          opt        Passed to #find_values.
+  #
+  # @option opt [Boolean] :clean      If *false*, do not #clean.
   #
   # @return [String, nil]
   #
-  def find_value: (*Symbol path, Symbol field, ?separator: String, ?clean: bool, **untyped opt) -> (String | nil)
+  def find_value: (*Symbol path, Symbol field, ?separator: String, **untyped opt) -> (String | nil)
 
   # find_values
   #
   # @param [Array<Symbol>] path
   # @param [Symbol]        field
-  # @param [Boolean]       clean      If *false*, do not #clean.
   # @param [Hash]          opt        Passed to #find_items.
+  #
+  # @option opt [Boolean] :clean      If *false*, do not #clean.
   #
   # @return [Array<String>]
   #
-  def find_values: (*Symbol path, Symbol field, ?clean: bool, **untyped opt) -> strArray
+  def find_values: (*Symbol path, Symbol field, **untyped opt) -> strArray
 
   # Get the target field value.
   #

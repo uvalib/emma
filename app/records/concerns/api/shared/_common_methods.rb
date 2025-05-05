@@ -306,12 +306,13 @@ module Api::Shared::CommonMethods
   # @param [Array<Symbol>] path
   # @param [Symbol]        field
   # @param [Api::Record]   target     Default: `self`.
-  # @param [Boolean]       clean      If *true* run result through #clean.
   # @param [Hash]          opt        Passed to #clean.
+  #
+  # @option opt [Boolean] :clean      If *true*, force result through #clean.
   #
   # @return [any, nil]
   #
-  def find_item(*path, field, target: nil, clean: false, **opt)
+  def find_item(*path, field, target: nil, **opt)
     target ||= self
     unless target.respond_to?(field)
       path.each do |part|
@@ -320,12 +321,11 @@ module Api::Shared::CommonMethods
       end
     end
     result = target.try(field)&.presence
-    if !result || !(clean || opt.present?)
-      result
-    elsif !result.is_a?(Array)
-      clean(result, **opt)
-    else
-      result.map { clean(_1, **opt) }
+    clean_ = opt.key?(:clean) ? opt.delete(:clean) : opt.present?
+    case
+      when !result || !clean_   then result
+      when !result.is_a?(Array) then clean(result, **opt)
+      else                           result.map { clean(_1, **opt) }
     end
   end
 
@@ -334,16 +334,14 @@ module Api::Shared::CommonMethods
   # @param [Array<Symbol>] path
   # @param [Symbol]        field
   # @param [Api::Record]   target     Default: `self`.
-  # @param [Boolean]       clean      If *true* run result through #clean.
   # @param [Hash]          opt        Passed to #clean.
+  #
+  # @option opt [Boolean] :clean      If *true*, force results through #clean.
   #
   # @return [Array]
   #
-  def find_items(*path, field, target: nil, clean: false, **opt)
-    clean  = true if opt.present?
-    result = Array.wrap(find_item(*path, field, target: target))
-    result = result.map { clean(_1, **opt) } if clean
-    result
+  def find_items(*path, field, target: nil, **opt)
+    Array.wrap(find_item(*path, field, target: target, **opt))
   end
 
   # find_value
@@ -351,13 +349,13 @@ module Api::Shared::CommonMethods
   # @param [Array<Symbol>] path
   # @param [Symbol]        field
   # @param [String]        separator  Used if the item is an array.
-  # @param [Boolean]       clean      If *false*, do not #clean.
   # @param [Hash]          opt        Passed to #find_values.
+  #
+  # @option opt [Boolean] :clean      If *false*, do not #clean.
   #
   # @return [String, nil]
   #
-  def find_value(*path, field, separator: '; ', clean: true, **opt)
-    opt[:clean] = clean
+  def find_value(*path, field, separator: '; ', **opt)
     find_values(*path, field, **opt).presence&.join(separator)
   end
 
@@ -365,14 +363,14 @@ module Api::Shared::CommonMethods
   #
   # @param [Array<Symbol>] path
   # @param [Symbol]        field
-  # @param [Boolean]       clean      If *false*, do not #clean.
   # @param [Hash]          opt        Passed to #find_items.
+  #
+  # @option opt [Boolean] :clean      If *false*, do not #clean.
   #
   # @return [Array<String>]
   #
-  def find_values(*path, field, clean: true, **opt)
-    opt[:clean] = clean
-    find_items(*path, field, **opt).compact_blank.map!(&:to_s)
+  def find_values(*path, field, **opt)
+    find_items(*path, field, clean: true, **opt).compact_blank.map!(&:to_s)
   end
 
   # ===========================================================================

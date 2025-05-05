@@ -266,10 +266,11 @@ module ParamsConcern
       key   = context ? "app.#{context}.debug" : 'app.debug'
       log   = "#{__method__}: #{key}=#{debug.inspect} -> %s"
       state =
-        if debug.to_s.casecmp?('reset') then Log.info(log % 'RESET') || off
-        elsif false?(debug)             then Log.info(log % 'OFF')   || off
-        elsif true?(debug)              then Log.info(log % 'ON')    || on
-        else                                 Log.warn(log % 'UNEXPECTED')
+        case
+          when debug.to_s.casecmp?('reset') then Log.info(log % 'RESET') || off
+          when false?(debug)                then Log.info(log % 'OFF')   || off
+          when true?(debug)                 then Log.info(log % 'ON')    || on
+          else                                   Log.warn(log % 'UNEXPECTED')
         end
       case state
         when true, false then session[key] = state

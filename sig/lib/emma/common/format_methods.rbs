@@ -56,7 +56,7 @@ module Emma::Common::FormatMethods
   # If the term is already quoted, those quotation marks are preserved.
   #
   # @param [any, nil] term
-  # @param [String]   quote
+  # @param [String]   q_char
   # @param [String]   separator
   #
   # @return [ActiveSupport::SafeBuffer, String]
@@ -65,33 +65,33 @@ module Emma::Common::FormatMethods
   # === Variations
   # +
   #
-  # @overload quote(terms, quote: '"', separator: ', ')
+  # @overload quote(terms, q_char: '"', separator: ', ')
   #   @param [Array<ActiveSupport::SafeBuffer>] terms
-  #   @param [String]                           quote
+  #   @param [String]                           q_char
   #   @param [String]                           separator
   #   @return [ActiveSupport::SafeBuffer]
   #
-  # @overload quote(term, quote: '"', separator: ', ')
+  # @overload quote(term, q_char: '"', separator: ', ')
   #   @param [ActiveSupport::SafeBuffer] term
-  #   @param [String]                    quote
+  #   @param [String]                    q_char
   #   @param [String]                    separator
   #   @return [ActiveSupport::SafeBuffer]
   #
-  # @overload quote(terms, quote: '"', separator: ', ')
+  # @overload quote(terms, q_char: '"', separator: ', ')
   #   @param [Array]  terms
-  #   @param [String] quote
+  #   @param [String] q_char
   #   @param [String] separator
   #   @return [String]
   #
-  # @overload quote(term, quote: '"', separator: ', ')
+  # @overload quote(term, q_char: '"', separator: ', ')
   #   @param [any, nil] term
-  #   @param [String]   quote
+  #   @param [String]   q_char
   #   @param [String]   separator
   #   @return [String]
   #
   def quote
-    : (ActiveSupport::SafeBuffer|Array[ActiveSupport::SafeBuffer] terms, ?quote: String, ?separator: String) -> ActiveSupport::SafeBuffer
-    | (untyped                                                    terms, ?quote: String, ?separator: String) -> String
+    : (ActiveSupport::SafeBuffer|Array[ActiveSupport::SafeBuffer] terms, ?q_char: String, ?separator: String) -> ActiveSupport::SafeBuffer
+    | (untyped                                                    terms, ?q_char: String, ?separator: String) -> String
 
   # Remove pairs of surrounding quotation marks from a term.
   #

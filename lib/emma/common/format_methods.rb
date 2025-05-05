@@ -102,7 +102,7 @@ module Emma::Common::FormatMethods
   # If the term is already quoted, those quotation marks are preserved.
   #
   # @param [any, nil] term
-  # @param [String]   quote
+  # @param [String]   q_char
   # @param [String]   separator
   #
   # @return [ActiveSupport::SafeBuffer, String]
@@ -111,51 +111,50 @@ module Emma::Common::FormatMethods
   # === Variations
   #++
   #
-  # @overload quote(terms, quote: '"', separator: ', ')
+  # @overload quote(terms, q_char: '"', separator: ', ')
   #   @param [Array<ActiveSupport::SafeBuffer>] terms
-  #   @param [String]                           quote
+  #   @param [String]                           q_char
   #   @param [String]                           separator
   #   @return [ActiveSupport::SafeBuffer]
   #
-  # @overload quote(term, quote: '"', separator: ', ')
+  # @overload quote(term, q_char: '"', separator: ', ')
   #   @param [ActiveSupport::SafeBuffer] term
-  #   @param [String]                    quote
+  #   @param [String]                    q_char
   #   @param [String]                    separator
   #   @return [ActiveSupport::SafeBuffer]
   #
-  # @overload quote(terms, quote: '"', separator: ', ')
+  # @overload quote(terms, q_char: '"', separator: ', ')
   #   @param [Array]  terms
-  #   @param [String] quote
+  #   @param [String] q_char
   #   @param [String] separator
   #   @return [String]
   #
-  # @overload quote(term, quote: '"', separator: ', ')
+  # @overload quote(term, q_char: '"', separator: ', ')
   #   @param [any, nil] term
-  #   @param [String]   quote
+  #   @param [String]   q_char
   #   @param [String]   separator
   #   @return [String]
   #
-  def quote(term, quote: '"', separator: ', ')
-    # noinspection RubyMismatchedReturnType
+  def quote(term, q_char: '"', separator: ', ')
     if term.is_a?(Array)
-      terms = term.map { quote(_1, quote: quote, separator: separator) }
+      terms = term.map { quote(_1, q_char: q_char, separator: separator) }
       html  = terms.all?(&:html_safe?)
       html ? html_join(terms, separator) : terms.join(separator)
 
     elsif !term.is_a?(String)
-      "#{quote}#{term}#{quote}"
+      "#{q_char}#{term}#{q_char}"
 
     elsif term.html_safe?
-      quote  = ERB::Util.h(quote)
-      quotes = [*HTML_QUOTES, quote].uniq
+      q_char = ERB::Util.h(q_char)
+      quotes = [*HTML_QUOTES, q_char].uniq
       quoted = quotes.any? { term.start_with?(_1) && term.end_with?(_1) }
-      quoted ? term : "#{quote}#{term}#{quote}".html_safe
+      quoted ? term : "#{q_char}#{term}#{q_char}".html_safe
 
     else
       term   = term.strip
-      quotes = [*QUOTE_MARKS, quote].uniq
+      quotes = [*QUOTE_MARKS, q_char].uniq
       quoted = quotes.any? { term.start_with?(_1) && term.end_with?(_1) }
-      quoted ? term : "#{quote}#{term}#{quote}"
+      quoted ? term : "#{q_char}#{term}#{q_char}"
     end
   end
 

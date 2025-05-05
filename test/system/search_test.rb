@@ -335,7 +335,9 @@ class SearchTest < ApplicationSystemTestCase
       # link for the specified format.
       links   = nil
       entries = all('.search-list-item')
-      if format
+      if entries.empty?
+        flunk "Empty search results for #{start_url.inspect}"
+      elsif format
         match = %Q(#{selector}[path*="type=#{format}"])
         entry =
           entries.find { |e| links = e.all(match, visible: false).presence }

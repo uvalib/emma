@@ -78,6 +78,7 @@
 
   # Page anchors
 
+  nav_help          = 'organization_help_nav'
   overview_help     = 'organization_overview_help'
   list_all_help     = 'organization_list_all_help'
   list_org_help     = 'organization_show_select_help'
@@ -98,8 +99,8 @@
   You must be <%= signed_in -%> in order to view EMMA member organizations.
 </p>
 
-<nav role="navigation" aria-labelledby="organization_help_nav">
-  <div id="organization_help_nav" class="sr-only">
+<nav role="navigation" aria-labelledby="<%= nav_help -%>">
+  <div id="<%= nav_help -%>" class="sr-only">
     Topics in this section:
   </div>
   <ul>

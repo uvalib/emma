@@ -116,6 +116,7 @@
 
   # Page anchors
 
+  nav_help          = 'manifest_help_nav'
   overview_help     = 'manifest_overview_help'
   grid_help         = 'manifest_grid_help'
   submission_help   = 'manifest_submission_help'
@@ -150,8 +151,8 @@
   uploads.
 </p>
 
-<nav role="navigation" aria-labelledby="manifest_help_nav">
-  <div id="manifest_help_nav" class="sr-only">
+<nav role="navigation" aria-labelledby="<%= nav_help -%>">
+  <div id="<%= nav_help -%>" class="sr-only">
     Topics in this section:
   </div>
   <ul>

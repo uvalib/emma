@@ -217,9 +217,6 @@ module ApiService::Common
   # the results to be sent in chunks to the browser as they are received from
   # the remote system.
   #
-  #--
-  # noinspection RubyUnusedLocalVariable
-  #++
   def api_download(response, url: nil, headers: {}, new_tab: false, meth: nil, **opt)
     total_size = group_size = chunks = start_time = total_duration = 0
     show_value = show_line = show_chunks = debug_chunks = nil
@@ -258,6 +255,7 @@ module ApiService::Common
           'req.uri':    req.uri,
           'req.header': req.to_hash,
         }.each_pair { show_value.(_1, _2) }
+        # noinspection RubyUnusedLocalVariable
         start_time = Time.current
       end
       http.request(req) do |remote_response|
@@ -275,7 +273,7 @@ module ApiService::Common
         if DEBUG_DOWNLOAD
           msgs = { remote: remote_response, client: response }
           header_defaults.each_key do |h|
-            msgs.each_pair { |k, v| show_value.("#{k}[#{h}]", k[h]) }
+            msgs.each_key { |k| show_value.("#{k}[#{h}]", k[h]) }
           end
         end
         remote_response.read_body do |chunk|

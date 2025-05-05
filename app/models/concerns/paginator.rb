@@ -918,12 +918,10 @@ class Paginator
   # @return [Integer]
   #
   def first_index
-    property[:first_index] ||=
-      if disabled
-        0
-      else
-        positive(page_offset) || ((page_number - 1) * page_size)
-      end
+    property[:first_index] ||= 0                              if disabled
+    property[:first_index] ||= positive(page_offset)
+    property[:first_index] ||= (page_number - 1) * page_size  if page_size
+    property[:first_index]
   end
 
   # Set the item index of the first item on the current page.
@@ -941,12 +939,9 @@ class Paginator
   # @return [Integer]
   #
   def last_index
-    property[:last_index] ||=
-      if disabled
-        size - 1
-      else
-        first_index + (page_size - 1)
-      end
+    property[:last_index] ||= size - 1                      if disabled
+    property[:last_index] ||= first_index + (page_size - 1) if page_size
+    property[:last_index]
   end
 
   # Set the item index of the first item on the current page.

@@ -54,6 +54,7 @@
 
   # Page anchors
 
+  nav_help          = 'downloads_help_nav'
   list_all_help     = 'downloads_list_all_help'
   list_org_help     = 'downloads_list_org_help'
   list_own_help     = 'downloads_list_own_help'
@@ -64,8 +65,8 @@
 
 -%>
 
-<nav role="navigation" aria-labelledby="downloads_help_nav">
-  <div id="downloads_help_nav" class="sr-only">
+<nav role="navigation" aria-labelledby="<%= nav_help -%>">
+  <div id="<%= nav_help -%>" class="sr-only">
     Topics in this section:
   </div>
   <ul>

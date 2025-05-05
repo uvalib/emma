@@ -27,6 +27,8 @@ en:
       topic:
 
         _template:      &TOPIC_TEMPLATE
+          topic:        ~ # The phrase for %{topic} interpolation.
+          Topic:        ~ # The phrase for %{Topic} interpolation.
           label:        'EMMA %{Topic} Help'
           title:        'EMMA %{Topic}'
           tooltip:      'Help with EMMA %{topic}'

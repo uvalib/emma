@@ -306,7 +306,7 @@ class Search::Message::SearchTitleList < Search::Api::Message
   # @return [Hash]
   #
   def to_h(item: nil, **)
-    super.tap do |result|
+    super().tap do |result|
       if item.present?
         result[:titles]&.map! do |title|
           title[:records].map! { |rec| { record: rec } }

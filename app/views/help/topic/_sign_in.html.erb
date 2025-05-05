@@ -25,6 +25,7 @@
 
   # Page anchors
 
+  nav_help          = 'sign_in_help_nav'
   local_help        = 'local_sign_in_help'
   remote_help       = 'remote_sign_in_help'
 
@@ -36,8 +37,8 @@
   yourself by signing in.
 </p>
 
-<nav role="navigation" aria-labelledby="sign_in_help_nav">
-  <div id="sign_in_help_nav" class="sr-only">
+<nav role="navigation" aria-labelledby="<%= nav_help -%>">
+  <div id="<%= nav_help -%>" class="sr-only">
     Topics in this section:
   </div>
   <ul>

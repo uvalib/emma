@@ -12,6 +12,7 @@ module ImageHelper
   include Emma::Common
 
   include HtmlHelper
+  include LinkHelper
 
   # ===========================================================================
   # :section:

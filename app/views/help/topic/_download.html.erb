@@ -37,6 +37,7 @@
 
   # Page anchors
 
+  nav_help            = 'download_help_nav'
   ace_help            = 'download_ace_help'
   ia_help             = 'download_internetArchive_help'
   oa_help             = 'download_openAlex_help'
@@ -54,8 +55,8 @@
   on the download link to initiate a download.
 </p>
 
-<nav role="navigation" aria-labelledby="download_help_nav">
-  <div id="download_help_nav" class="sr-only">
+<nav role="navigation" aria-labelledby="<%= nav_help -%>">
+  <div id="<%= nav_help -%>" class="sr-only">
     Topics in this section:
   </div>
   <ul>

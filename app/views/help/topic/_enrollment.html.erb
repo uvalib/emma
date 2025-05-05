@@ -62,6 +62,7 @@
 
   # Page anchors
 
+  nav_help          = 'enrollment_help_nav'
   overview_help     = 'enrollment_overview_help'
   list_all_help     = 'enrollment_list_all_help'
   show_select_help  = 'enrollment_show_select_help'
@@ -75,8 +76,8 @@
 -%>
 
 <%- if administrator -%>
-  <nav role="navigation" aria-labelledby="enrollment_help_nav">
-    <div id="enrollment_help_nav" class="sr-only">
+  <nav role="navigation" aria-labelledby="<%= nav_help -%>">
+    <div id="<%= nav_help -%>" class="sr-only">
       Topics in this section:
     </div>
     <ul>

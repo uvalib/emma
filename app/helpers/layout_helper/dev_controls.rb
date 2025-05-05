@@ -13,6 +13,7 @@ module LayoutHelper::DevControls
 
   include ConfigurationHelper
   include IdentityHelper
+  include LinkHelper
   include ParamsHelper
   include SessionDebugHelper
 

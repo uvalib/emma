@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 module SessionsHelper
 
   include IdentityHelper
+  include LinkHelper
 
   # ===========================================================================
   # :section:

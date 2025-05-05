@@ -83,6 +83,7 @@
 
   # Page anchors
 
+  nav_help          = 'search_help_nav'
   overview_help     = 'search_overview_help'
 
   types_help        = 'search_type_help'
@@ -111,8 +112,8 @@
 
 -%>
 
-<nav role="navigation" aria-labelledby="search_help_nav">
-  <div id="search_help_nav" class="sr-only">
+<nav role="navigation" aria-labelledby="<%= nav_help -%>">
+  <div id="<%= nav_help -%>" class="sr-only">
     Topics in this section:
   </div>
   <ul>

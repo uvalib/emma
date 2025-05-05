@@ -93,6 +93,7 @@
 
   # Page anchors
 
+  nav_help          = 'upload_help_nav'
   overview_help     = 'upload_overview_help'
   list_all_help     = 'upload_list_all_help'
   list_org_help     = 'upload_list_org_help'
@@ -122,8 +123,8 @@
   to make changes to an existing repository entry.
 </p>
 
-<nav role="navigation" aria-labelledby="upload_help_nav">
-  <div id="upload_help_nav" class="sr-only">
+<nav role="navigation" aria-labelledby="<%= nav_help -%>">
+  <div id="<%= nav_help -%>" class="sr-only">
     Topics in this section:
   </div>
   <ul>

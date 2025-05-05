@@ -7,4 +7,4 @@
 
 item ||= @item
 
-json.partial! 'download/details', item: @item
+json.partial! 'download/details', item: item

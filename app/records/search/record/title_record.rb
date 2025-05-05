@@ -1401,7 +1401,8 @@ class Search::Record::TitleRecord < Search::Api::Record
   def to_h(item: nil, **)
     wrap = item.present?
     tree = field_hierarchy(wrap: wrap)
-    hash = wrap ? wrap_array!(super, :records) : super
+    hash = super()
+    hash = wrap_array!(hash, :records) if wrap
     hash.reverse_merge!(fields: reject_blanks(tree))
   end
 
