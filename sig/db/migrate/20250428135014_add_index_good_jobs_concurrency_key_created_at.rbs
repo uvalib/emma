@@ -1,0 +1,3 @@
+class AddIndexGoodJobsConcurrencyKeyCreatedAt < ActiveRecord::Migration
+  def change: () -> untyped
+end
