@@ -109,11 +109,12 @@ module AboutHelper::Submissions
   def org_submission_counts(**opt)
     fc_opt = opt.extract!(:no_admin)
     first  = ([] if opt.key?(:first) ? opt.delete(:first) : !opt[:since])
-    Org.all.map { |org|
-      records = filter_submissions(org.uploads, **opt)
-      counts  = submission_format_counts(records, **fc_opt)
-      first << records.last if first # Returned in reverse order.
-      [org, counts] if counts.present?
+    items  = filter_submissions(Upload.all.order(:created_at), **opt)
+    items.group_by { _1.org }.map { |(org, records)|
+      next if org.nil?
+      next if (counts = submission_format_counts(records, **fc_opt)).blank?
+      first << records.first if first
+      [org, counts]
     }.compact.sort_by { |key, counts|
       about_sort(key, counts, **opt)
     }.to_h.tap { |result|

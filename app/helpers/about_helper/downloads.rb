@@ -167,11 +167,12 @@ module AboutHelper::Downloads
   def org_download_counts(**opt)
     fc_opt = opt.extract!(:no_admin)
     first  = ([] if opt.key?(:first) ? opt.delete(:first) : !opt[:since])
-    Org.all.map { |org|
-      records = filter_downloads(org.downloads, **opt)
-      counts  = download_format_counts(records, **fc_opt)
+    items  = filter_downloads(Download.all, **opt)
+    items.group_by { _1.org }.map { |(org, records)|
+      next if org.nil?
+      next if (counts = download_format_counts(records, **fc_opt)).blank?
       first << records.first if first
-      [org, counts] if counts.present?
+      [org, counts]
     }.compact.sort_by { |key, counts|
       about_sort(key, counts, **opt)
     }.to_h.tap { |result|
