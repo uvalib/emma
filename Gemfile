@@ -108,7 +108,6 @@ gem 'activerecord-session_store'
 gem 'csv'
 gem 'draper'
 gem 'iso-639'
-gem 'rack-attack'
 gem 'sanitize'
 gem 'workflow', '< 3.0'
 
