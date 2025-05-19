@@ -186,8 +186,8 @@ module Configuration
           e = "#{e.class} #{e.inspect}"
           "#{prefix} #{k} | ENV_VAR = #{v} | ENV = #{e}"
         }.compact
-      warnings.each { Log.info(_1) }  if output
-      errors.each { Log.warn(_1) }    if output
+      warnings.each { __output(_1) }  if output
+      errors.each { __output(_1) }    if output
       raise prefix                    if fatal && errors.present?
       warnings + errors
     end
