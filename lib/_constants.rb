@@ -243,6 +243,15 @@ LOG_SILENCER_ENDPOINTS =
     end
   }.compact.map(&:freeze).freeze
 
+# AWS healthcheck hosts whose activity is not logged for GET "/home/welcome".
+#
+# @type [Array<IPAddr>]
+#
+LOG_SILENCER_WELCOME =
+  ENV_VAR['LOG_SILENCER_WELCOME'].then { |ranges|
+    ranges.is_a?(Array) ? ranges : ranges.to_s.strip.split(/[;,|\t\n]/)
+  }.map { ip_range(_1)&.freeze }.compact.freeze
+
 # =============================================================================
 # Debugging
 # =============================================================================

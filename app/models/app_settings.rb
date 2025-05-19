@@ -320,6 +320,7 @@ class AppSettings < AppGlobal
     # === Logging
     :LOG_SILENCER,
     :LOG_SILENCER_ENDPOINTS,
+    :LOG_SILENCER_WELCOME,
     nil,
 
     # === Testing

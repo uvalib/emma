@@ -87,8 +87,12 @@ class HomeController < ApplicationController
   # @see #welcome_path                Route helper
   #
   def welcome
-    __log_activity
-    __debug_route
+    if LOG_SILENCER_WELCOME.any? { _1.include?(request.remote_ip) }
+      Log.silence(true)
+    else
+      __log_activity
+      __debug_route
+    end
   end
 
   # === GET /home/dashboard

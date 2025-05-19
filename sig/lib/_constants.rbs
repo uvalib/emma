@@ -168,6 +168,12 @@ LOG_SILENCER: bool
 #
 LOG_SILENCER_ENDPOINTS: Array[String|Regexp]
 
+# AWS healthcheck hosts whose activity is not logged for GET "/home/welcome".
+#
+# @type [Array<IPAddr>]
+#
+LOG_SILENCER_WELCOME: Array[IPAddr]
+
 # Control creation of 'data-trace-*' attributes on HTML elements.
 #
 # @see BaseDecorator::Common#trace_attrs

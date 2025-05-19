@@ -97,6 +97,16 @@ class Object
     :     (String arg) -> (Regexp | nil)
     |     (Regexp arg) -> Regexp
     | [T] (T      arg) -> nil
+
+  # Interpret *arg* as an IP address range.
+  #
+  # Addresses with octets of "0" are translated into CIDR block form.
+  #
+  # @param [IPAddr,String,nil] arg
+  #
+  # @return [IPAddr, nil]
+  #
+  def ip_range: ((IPAddr|String|nil) arg) -> (IPAddr | nil)
 end
 
 module ExecutionProperty

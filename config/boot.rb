@@ -152,9 +152,31 @@ def regexp(arg)
     when /^%r\[(.*)\]$/               then src = $1
     when /^\(\?([-mix]{3,4}):(.*)\)$/ then src, opt = $2, $1
   end
-  src = src.gsub(/\\\\/, '\\') if src && opt
-  opt = opt.split('-').first   if opt
-  Regexp.new(src, opt)         if src
+  src = src.gsub(%r{\\\\/}, '/') if src && opt
+  src = src.gsub(/\\\\/, '\\')   if src && opt
+  opt = opt.split('-').first     if opt
+  Regexp.new(src, opt)           if src
+end
+
+# Interpret *arg* as an IP address range.
+#
+# Addresses with octets of "0" are translated into CIDR block form.
+#
+# @param [IPAddr,String,nil] arg
+#
+# @return [IPAddr, nil]
+#
+def ip_range(arg)
+  return arg if arg.nil? || arg.is_a?(IPAddr)
+  return if (arg = arg.to_s.strip).blank?
+  case arg
+    when /\.0\.0\.0$/ then IPAddr.new("#{arg}/8")
+    when /\.0\.0$/    then IPAddr.new("#{arg}/16")
+    when /\.0$/       then IPAddr.new("#{arg}/24")
+    else                   IPAddr.new(arg)
+  end
+rescue IPAddr::InvalidAddressError
+  nil
 end
 
 # =============================================================================

@@ -682,6 +682,9 @@ module IO::Like
   extend _ToIO
 end
 
+class IPAddr
+end
+
 # NOTE: overrides gems/rbs-*/core/kernel.rbs
 module Kernel
 
