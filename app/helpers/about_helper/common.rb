@@ -46,6 +46,31 @@ module AboutHelper::Common
     end
   end
 
+  # A faster way of grouping records containing a :user_id reference by
+  # organization than the `has_one :org` association.
+  #
+  # @param [ActiveRecord::Relation] items
+  #
+  # @return [Hash{Org=>Array<ApplicationRecord>}]
+  #
+  def org_records(items)
+    items.group_by { user_org[_1.user_id] }
+  end
+
+  # Generate a table mapping User ID to Org.
+  #
+  # @return [Hash{Integer=>Org,nil}]
+  #
+  def user_org
+    @user_org ||=
+      begin
+        orgs = Org.all.map { |org| [org&.id, org] }.to_h
+        User.all.pluck(:id, :org_id).map { |(user_id, org_id)|
+          [user_id, orgs[org_id]]
+        }.to_h
+      end
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================

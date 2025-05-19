@@ -21,6 +21,23 @@ module AboutHelper::Common
   #
   def recent_date: (?(ActiveSupport::Duration|Date|Integer|nil) previous) -> (Date | nil)
 
+  # A faster way of grouping records containing a :user_id reference by
+  # organization than the `has_one :org` association.
+  #
+  # @param [ActiveRecord::Relation] items
+  #
+  # @return [Hash{Org=>Array<ApplicationRecord>}]
+  #
+  def org_records: (ActiveRecord::Relation|ActiveRecord::QueryMethods::WhereChain[ActiveRecord::Relation] items) -> Hash[Org,Array[ApplicationRecord]]
+
+  # Generate a table mapping User ID to Org.
+  #
+  # @return [Hash{Integer=>Org,nil}]
+  #
+  def user_org: () -> Hash[Integer,(Org|nil)]
+
+  @user_org: Hash[Integer,(Org|nil)]
+
   # A fallback element indicating "NONE".
   #
   # @param [Hash] opt

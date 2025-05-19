@@ -110,7 +110,7 @@ module AboutHelper::Submissions
     fc_opt = opt.extract!(:no_admin)
     first  = ([] if opt.key?(:first) ? opt.delete(:first) : !opt[:since])
     items  = filter_submissions(Upload.all.order(:created_at), **opt)
-    items.group_by { _1.org }.map { |(org, records)|
+    org_records(items).map { |org, records|
       next if org.nil?
       next if (counts = submission_format_counts(records, **fc_opt)).blank?
       first << records.first if first

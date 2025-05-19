@@ -168,7 +168,7 @@ module AboutHelper::Downloads
     fc_opt = opt.extract!(:no_admin)
     first  = ([] if opt.key?(:first) ? opt.delete(:first) : !opt[:since])
     items  = filter_downloads(Download.all, **opt)
-    items.group_by { _1.org }.map { |(org, records)|
+    org_records(items).map { |org, records|
       next if org.nil?
       next if (counts = download_format_counts(records, **fc_opt)).blank?
       first << records.first if first
