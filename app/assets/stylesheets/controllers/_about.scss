@@ -48,7 +48,12 @@
 .project-downloads,
 .project-submissions {
 
-    @include table.grid-table(3);
+    &.fast {
+        @include table.grid-table(2);
+    }
+    &:not(.fast) {
+        @include table.grid-table(3);
+    }
 
     tbody tr * {
         justify-self: start;

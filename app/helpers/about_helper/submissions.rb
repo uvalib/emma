@@ -35,6 +35,16 @@ module AboutHelper::Submissions
 
   public
 
+  # A list of in-page links to the section groups on the page.
+  #
+  # @param [Hash] opt                 Passed to #about_toc.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def about_submissions_toc(**opt)
+    about_toc(**opt)
+  end
+
   # A page section for recent EMMA submissions, if any.
   #
   # @param [Boolean] heading          If *false*, do not include `h2` heading
@@ -76,21 +86,22 @@ module AboutHelper::Submissions
   # An element containing a list of EMMA submissions.
   #
   # @param [ActiveSupport::Duration, Date, Integer, nil] since
-  # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to the container element.
+  # @param [Boolean] fast             Passed to #org_submission_counts.
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to the container element.
   #
   # @return [Array(ActiveSupport::SafeBuffer, String>]
   # @return [Array(ActiveSupport::SafeBuffer, nil>]
   # @return [Array(nil, nil>]
   #
-  def project_submissions(since: nil, css: '.project-submissions', **opt)
-    items = org_submission_counts(since: since)
+  def project_submissions(since: nil, fast: false, css: '.project-submissions', **opt)
+    items = org_submission_counts(since: since, fast: fast)
     first = items.delete(:first)
     return if items.blank?
     columns = submissions_columns
     prepend_css!(opt, css)
     table =
-      about_table(items, columns, **opt) do |key|
+      about_table(items, columns, fast: fast, **opt) do |key|
         about_name(key, by: :org)
       end
     return table, first
@@ -101,13 +112,14 @@ module AboutHelper::Submissions
   #
   # @param [Hash] opt                 Passed to #filter_submissions except:
   #
+  # @option opt [Boolean] :fast       If *true* do not generate format counts.
   # @option opt [Boolean] :no_admin   If *false* include admin users in counts.
   # @option opt [Boolean] :first      If *false* do not include :first element.
   #
   # @return [Hash{Org=>Integer,Symbol=>String}]
   #
   def org_submission_counts(**opt)
-    fc_opt = opt.extract!(:no_admin)
+    fc_opt = opt.extract!(:fast, :no_admin)
     first  = ([] if opt.key?(:first) ? opt.delete(:first) : !opt[:since])
     items  = filter_submissions(Upload.all.order(:created_at), **opt)
     org_records(items).map { |org, records|
@@ -182,9 +194,7 @@ module AboutHelper::Submissions
   # Generate a table of formats and their counts in descending order.
   #
   # @param [*]    items               Records or relation.
-  # @param [Hash] opt
-  #
-  # @option opt [Boolean] :no_admin   If *false* include admin users in counts.
+  # @param [Hash] opt                 Passed to #download_format_counts.
   #
   # @return [Hash{String=>Integer}]
   #

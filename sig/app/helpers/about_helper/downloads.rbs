@@ -23,9 +23,11 @@ module AboutHelper::Downloads
 
   # A list of in-page links to the section groups on the page.
   #
+  # @param [Hash] opt                 Passed to #about_toc.
+  #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def about_downloads_toc: () -> ActiveSupport::SafeBuffer
+  def about_downloads_toc: (**untyped opt) -> ActiveSupport::SafeBuffer
 
   # A page section target that is independent of the set of the related
   # page sections that follow it.
@@ -62,15 +64,16 @@ module AboutHelper::Downloads
   # An element containing a list of EMMA downloads.
   #
   # @param [ActiveSupport::Duration, Date, Integer, nil] since
-  # @param [Symbol] by                One of `ABOUT_DOWNLOADS_SECTION.keys`.
-  # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to the container element.
+  # @param [Boolean] fast             Passed to #download_counts.
+  # @param [Symbol]  by               One of `ABOUT_DOWNLOADS_SECTION.keys`.
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to the container element.
   #
   # @return [Array(ActiveSupport::SafeBuffer, String>]
   # @return [Array(ActiveSupport::SafeBuffer, nil>]
   # @return [Array(nil, nil>]
   #
-  def project_downloads: (?since: ActiveSupport::Duration|Date|Integer|nil, ?by: Symbol, **untyped opt) -> ( [ActiveSupport::SafeBuffer, (String|nil)] | [nil, nil] )
+  def project_downloads: (?by: Symbol, ?since: ActiveSupport::Duration|Date|Integer|nil, ?fast: bool, **untyped opt) -> ( [ActiveSupport::SafeBuffer, (String|nil)] | [nil, nil] )
 
   # Generate a table of download counts in descending order.
   #
@@ -86,6 +89,7 @@ module AboutHelper::Downloads
   #
   # @param [Hash] opt                 Passed to #filter_downloads except:
   #
+  # @option opt [Boolean] :fast       If *true* do not generate format counts.
   # @option opt [Boolean] :no_admin   If *false* include admin users in counts.
   # @option opt [Boolean] :first      If *false* do not include :first element.
   #
@@ -98,6 +102,7 @@ module AboutHelper::Downloads
   #
   # @param [Hash] opt                 Passed to #filter_downloads except:
   #
+  # @option opt [Boolean] :fast       If *true* do not generate format counts.
   # @option opt [Boolean] :no_admin   If *false* include admin users in counts.
   # @option opt [Boolean] :first      If *false* do not include :first element.
   #
@@ -110,6 +115,7 @@ module AboutHelper::Downloads
   #
   # @param [Hash] opt                 Passed to #filter_downloads except:
   #
+  # @option opt [Boolean] :fast       If *true* do not generate format counts.
   # @option opt [Boolean] :no_admin   If *false* include admin users in counts.
   # @option opt [Boolean] :first      If *false* do not include :first element.
   #
@@ -159,9 +165,10 @@ module AboutHelper::Downloads
   # Generate a table of formats and their counts in descending order.
   #
   # @param [*]       items            Records or relation.
+  # @param [Boolean] fast             If *true* do not generate format counts.
   # @param [Boolean] no_admin         If *false* include admin users in counts.
   #
   # @return [Hash{String=>Integer}]
   #
-  def download_format_counts: (ActiveRecord::Relation|ActiveRecord::QueryMethods::WhereChain[ActiveRecord::Relation]|Array[Download] items, ?no_admin: bool, **untyped _ignored) -> Hash[String,Integer]
+  def download_format_counts: (ActiveRecord::Relation|ActiveRecord::QueryMethods::WhereChain[ActiveRecord::Relation]|Array[Download] items, ?fast: bool, ?no_admin: bool|nil, **untyped _ignored) -> Hash[String,Integer]
 end

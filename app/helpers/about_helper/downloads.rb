@@ -43,14 +43,14 @@ module AboutHelper::Downloads
 
   # A list of in-page links to the section groups on the page.
   #
+  # @param [Hash] opt                 Passed to #about_toc.
+  #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def about_downloads_toc
-    html_ul do
+  def about_downloads_toc(**opt)
+    about_toc(**opt) do
       ABOUT_DOWNLOADS_SECTION.map do |type, cfg|
-        html_li do
-          make_link("#by_#{type}", cfg[:label])
-        end
+        make_link("#by_#{type}", cfg[:label])
       end
     end
   end
@@ -113,23 +113,24 @@ module AboutHelper::Downloads
   # An element containing a list of EMMA downloads.
   #
   # @param [ActiveSupport::Duration, Date, Integer, nil] since
-  # @param [Symbol] by                One of `ABOUT_DOWNLOADS_SECTION.keys`.
-  # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to the container element.
+  # @param [Boolean] fast             Passed to #download_counts.
+  # @param [Symbol]  by               One of `ABOUT_DOWNLOADS_SECTION.keys`.
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to the container element.
   #
   # @return [Array(ActiveSupport::SafeBuffer, String>]
   # @return [Array(ActiveSupport::SafeBuffer, nil>]
   # @return [Array(nil, nil>]
   #
-  def project_downloads(since: nil, by: :org, css: '.project-downloads', **opt)
-    items = download_counts(by: by, since: since)
+  def project_downloads(by: :org, since: nil, fast: false, css: '.project-downloads', **opt)
+    items = download_counts(by: by, since: since, fast: fast)
     first = items.delete(:first)
     return if items.blank?
     since &&= recent_date(since)
     columns = downloads_columns(by)
     prepend_css!(opt, css)
     table =
-      about_table(items, columns, **opt) do |key|
+      about_table(items, columns, fast: fast, **opt) do |key|
         p_opt = { by => key, start_date: since }.compact
         path  = downloads_url(**p_opt)
         name  = about_name(key, by: by)
@@ -159,13 +160,14 @@ module AboutHelper::Downloads
   #
   # @param [Hash] opt                 Passed to #filter_downloads except:
   #
+  # @option opt [Boolean] :fast       If *true* do not generate format counts.
   # @option opt [Boolean] :no_admin   If *false* include admin users in counts.
   # @option opt [Boolean] :first      If *false* do not include :first element.
   #
   # @return [Hash{Org=>Integer,Symbol=>String}]
   #
   def org_download_counts(**opt)
-    fc_opt = opt.extract!(:no_admin)
+    fc_opt = opt.extract!(:fast, :no_admin)
     first  = ([] if opt.key?(:first) ? opt.delete(:first) : !opt[:since])
     items  = filter_downloads(Download.all, **opt)
     org_records(items).map { |org, records|
@@ -187,13 +189,14 @@ module AboutHelper::Downloads
   #
   # @param [Hash] opt                 Passed to #filter_downloads except:
   #
+  # @option opt [Boolean] :fast       If *true* do not generate format counts.
   # @option opt [Boolean] :no_admin   If *false* include admin users in counts.
   # @option opt [Boolean] :first      If *false* do not include :first element.
   #
   # @return [Hash{String=>Integer,Symbol=>String}]
   #
   def src_download_counts(**opt)
-    fc_opt = opt.extract!(:no_admin)
+    fc_opt = opt.extract!(:fast, :no_admin)
     first  = opt.key?(:first) ? opt.delete(:first) : !opt[:since]
     items  = filter_downloads(Download.all, **opt)
     items.group_by { _1.source }.map { |(source, records)|
@@ -211,13 +214,14 @@ module AboutHelper::Downloads
   #
   # @param [Hash] opt                 Passed to #filter_downloads except:
   #
+  # @option opt [Boolean] :fast       If *true* do not generate format counts.
   # @option opt [Boolean] :no_admin   If *false* include admin users in counts.
   # @option opt [Boolean] :first      If *false* do not include :first element.
   #
   # @return [Hash{String=>Integer,Symbol=>String}]
   #
   def pub_download_counts(**opt)
-    fc_opt = opt.extract!(:no_admin)
+    fc_opt = opt.extract!(:fast, :no_admin)
     first  = opt.key?(:first) ? opt.delete(:first) : !opt[:since]
     items  = filter_downloads(Download.all, **opt)
     items.group_by { _1.publisher }.map { |(publisher, records)|
@@ -294,12 +298,15 @@ module AboutHelper::Downloads
   # Generate a table of formats and their counts in descending order.
   #
   # @param [*]       items            Records or relation.
+  # @param [Boolean] fast             If *true* do not generate format counts.
   # @param [Boolean] no_admin         If *false* include admin users in counts.
   #
   # @return [Hash{String=>Integer}]
   #
-  def download_format_counts(items, no_admin: production_deployment?, **)
+  def download_format_counts(items, fast: false, no_admin: nil, **)
+    return { all: items.size } if fast
     counts = {}
+    no_admin = production_deployment? if no_admin.nil?
     items.each do |item|
       next if no_admin && item.user.administrator?
       format = DublinCoreFormat(item.fmt)&.label || 'unknown'

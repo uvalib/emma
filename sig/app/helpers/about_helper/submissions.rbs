@@ -15,6 +15,14 @@ module AboutHelper::Submissions
   #
   ABOUT_SUBMISSIONS_HEADING: Hash[Symbol,String]
 
+  # A list of in-page links to the section groups on the page.
+  #
+  # @param [Hash] opt                 Passed to #about_toc.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def about_submissions_toc: (**untyped opt) -> ActiveSupport::SafeBuffer
+
   # A page section for recent EMMA submissions, if any.
   #
   # @param [Boolean] heading          If *false*, do not include `h2` heading
@@ -39,20 +47,22 @@ module AboutHelper::Submissions
   # An element containing a list of EMMA submissions.
   #
   # @param [ActiveSupport::Duration, Date, Integer, nil] since
-  # @param [String] css               Characteristic CSS class/selector.
-  # @param [Hash]   opt               Passed to the container element.
+  # @param [Boolean] fast             Passed to #org_submission_counts.
+  # @param [String]  css              Characteristic CSS class/selector.
+  # @param [Hash]    opt              Passed to the container element.
   #
   # @return [Array(ActiveSupport::SafeBuffer, String>]
   # @return [Array(ActiveSupport::SafeBuffer, nil>]
   # @return [Array(nil, nil>]
   #
-  def project_submissions: (?since: ActiveSupport::Duration|Date|Integer|nil, ?css: String, **untyped opt) -> ( [ActiveSupport::SafeBuffer, (String|nil)] | [nil, nil] )
+  def project_submissions: (?since: ActiveSupport::Duration|Date|Integer|nil, ?fast: bool, ?css: String, **untyped opt) -> ( [ActiveSupport::SafeBuffer, (String|nil)] | [nil, nil] )
 
   # Generate a table of organizations and their submission counts in descending
   # order.
   #
   # @param [Hash] opt                 Passed to #filter_submissions except:
   #
+  # @option opt [Boolean] :fast       If *true* do not generate format counts.
   # @option opt [Boolean] :no_admin   If *false* include admin users in counts.
   # @option opt [Boolean] :first      If *false* do not include :first element.
   #
@@ -97,9 +107,7 @@ module AboutHelper::Submissions
   # Generate a table of formats and their counts in descending order.
   #
   # @param [*]    items               Records or relation.
-  # @param [Hash] opt
-  #
-  # @option opt [Boolean] :no_admin   If *false* include admin users in counts.
+  # @param [Hash] opt                 Passed to #download_format_counts.
   #
   # @return [Hash{String=>Integer}]
   #

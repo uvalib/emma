@@ -7,14 +7,17 @@
   cfg   ||= current_config_page_section
   help  ||= nil # %i[about submissions]
   title ||= cfg[:title]
+
+  opt = { fast: !true?(params[:complete]) }
 -%>
 
 <%= page_heading(title, help: help) %>
+<%= page_description_section(about_submissions_toc(**opt)) %>
 <%= page_description_section %>
 
 <%= page_directions_section %>
 <%= scroll_to_top_target %>
-<%= recent_submissions_section %>
-<%= total_submissions_section %>
+<%= recent_submissions_section(**opt) %>
+<%= total_submissions_section(**opt) %>
 
 <%= page_notes_section %>

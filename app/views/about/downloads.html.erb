@@ -7,23 +7,25 @@
   cfg   ||= current_config_page_section
   help  ||= %i[about_downloads]
   title ||= cfg[:title]
+
+  opt = { fast: !true?(params[:complete]) }
 -%>
 
 <%= page_heading(title, help: help) %>
-<%= page_description_section(about_downloads_toc) %>
+<%= page_description_section(about_downloads_toc(**opt)) %>
 <%= page_description_section %>
 <%= page_directions_section %>
 
-<%= downloads_section(by: :org) %>
-<%= recent_downloads_section(by: :org) %>
-<%= total_downloads_section(by: :org) %>
+<%= downloads_section(by: :org, **opt) %>
+<%= recent_downloads_section(by: :org, **opt) %>
+<%= total_downloads_section(by: :org, **opt) %>
 
-<%= downloads_section(by: :source) %>
-<%= recent_downloads_section(by: :source) %>
-<%= total_downloads_section(by: :source) %>
+<%= downloads_section(by: :source, **opt) %>
+<%= recent_downloads_section(by: :source, **opt) %>
+<%= total_downloads_section(by: :source, **opt) %>
 
-<%= downloads_section(by: :publisher) %>
-<%= recent_downloads_section(by: :publisher) %>
-<%= total_downloads_section(by: :publisher) %>
+<%= downloads_section(by: :publisher, **opt) %>
+<%= recent_downloads_section(by: :publisher, **opt) %>
+<%= total_downloads_section(by: :publisher, **opt) %>
 
 <%= page_notes_section %>
