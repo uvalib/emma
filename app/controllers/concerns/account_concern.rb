@@ -183,15 +183,15 @@ module AccountConcern
         if (role = RolePrototype(attr[:role])).nil?
           attr[:role] = @new_admin ? :administrator : :standard
         else
-          non_org   = %w[developer administrator]
-          org_roles = (RolePrototype.values - non_org).excluding('anonymous')
-          error =
-            if @new_admin && !(roles = non_org).include?(role)
-              'role must be %{roles} if no organization'
-            elsif !(roles = org_roles).include?(role)
-              "role must be %{roles} for organization #{oid}"
-            end
-          if error
+          non_org = %w[developer administrator]
+          if @new_admin
+            roles = non_org
+            error = 'role must be %{roles} if no organization'
+          else
+            roles = RolePrototype.values.excluding('anonymous', *non_org)
+            error = "role must be %{roles} for organization #{oid}"
+          end
+          unless roles.include?(role)
             roles = roles.map { RolePrototype(_1).label }.join(' or ')
             invalid_attr(:role, role.label, error % { roles: roles })
           end
@@ -305,15 +305,15 @@ module AccountConcern
         elsif role == record.role
           skip << :role
         else
-          non_org   = %w[developer administrator]
-          org_roles = (RolePrototype.values - non_org).excluding('anonymous')
-          error =
-            if @new_admin && !(roles = non_org).include?(role)
-              'role must be %{roles} if no organization'
-            elsif !(roles = org_roles).include?(role)
-              "role must be %{roles} for organization #{oid}"
-            end
-          if error
+          non_org = %w[developer administrator]
+          if @new_admin
+            roles = non_org
+            error = 'role must be %{roles} if no organization'
+          else
+            roles = RolePrototype.values.excluding('anonymous', *non_org)
+            error = "role must be %{roles} for organization #{oid}"
+          end
+          unless roles.include?(role)
             roles = roles.map { RolePrototype(_1).label }.join(' or ')
             invalid_attr(:role, role.label, error % { roles: roles })
           end
