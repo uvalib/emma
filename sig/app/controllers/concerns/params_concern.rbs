@@ -30,7 +30,7 @@ module ParamsConcern
   #
   # @param [any, nil] id
   #
-  def current_id?: (untyped id) -> bool
+  def current_id?: (?untyped id) -> bool
 
   # The identifier of the current model instance which #CURRENT_ID represents.
   #
