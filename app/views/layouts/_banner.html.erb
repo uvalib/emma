@@ -5,7 +5,13 @@
   # noinspection RubyUnusedLocalVariable
   skip ||= false and return
 
-  notice =
+  # NOTE: Indicate EMMA service termination.
+  notice = [
+    'The EMMA service will be turned off on September 15, 2025.',
+    'Please download any materials you need before then.'
+  ].join("\n")
+
+  notice ||=
     unless production_deployment?
       title = "#{application_deployment} system".capitalize
       text  = 'This system is for development and deployment staging.'
